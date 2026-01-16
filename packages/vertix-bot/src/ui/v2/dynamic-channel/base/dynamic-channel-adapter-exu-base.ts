@@ -10,15 +10,17 @@ import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-
 
 import type {
     UIAdapterReplyContext,
+    UIAdapterStartContext,
     UIDefaultButtonChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { VoiceChannel } from "discord.js";
+import type { Message, MessageComponentInteraction, ModalSubmitInteraction, VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 export abstract class DynamicChannelAdapterExuBase<
     TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction
-> extends UIAdapterExecutionStepsBase<VoiceChannel, TInteraction> {
+> extends UIAdapterExecutionStepsBase<UIAdapterStartContext, TInteraction> {
     protected dynamicChannelService: DynamicChannelService;
 
     public static getName() {
@@ -32,14 +34,78 @@ export abstract class DynamicChannelAdapterExuBase<
     }
 
     public getChannelTypes() {
-        return [ ChannelType.GuildVoice ];
+        return [ ChannelType.GuildVoice, ChannelType.GuildText ];
     }
 
     public getPermissions() {
         return new PermissionsBitField( 0n );
     }
 
-    public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
-        return await dynamicChannelRequirements( interaction );
+    public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {
+        const channel = await this.resolveTargetChannel( interaction );
+
+        return ( await dynamicChannelRequirements( interaction, channel ) ) ?? false;
     }
+
+    public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
+        await this.hydrateInteractionChannel( interaction as TInteraction );
+
+        return super.run( interaction );
+    }
+
+    public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
+        await this.hydrateMessageChannel( message, newArgs );
+
+        return super.editMessage( message, newArgs );
+    }
+
+    protected async resolveTargetChannel( interaction: TInteraction ) {
+        const args = this.getArgsManager().getArgs( this, interaction );
+
+        return this.dynamicChannelService.resolveTargetChannel( interaction, args );
+    }
+
+    protected async hydrateInteractionChannel( interaction: TInteraction ) {
+        const channel = await this.resolveTargetChannel( interaction );
+
+        if ( !channel ) {
+            return;
+        }
+
+        this.applyResolvedChannelToInteraction( interaction, channel );
+    }
+
+    protected async hydrateMessageChannel( message: Message<true>, newArgs?: UIArgs ) {
+        const args = newArgs ?? this.getArgsManager().getArgs( this, message );
+        const channel = await this.dynamicChannelService.resolveTargetChannel( message, args );
+
+        if ( !channel ) {
+            return;
+        }
+
+        try {
+            Object.defineProperty( message, "channel", { value: channel } );
+        } catch {
+        }
+    }
+
+    private applyResolvedChannelToInteraction( interaction: TInteraction, channel: VoiceChannel ) {
+        if ( interaction.channel?.id === channel.id ) {
+            return;
+        }
+
+        try {
+            Object.defineProperty( interaction, "channel", { value: channel } );
+        } catch {
+        }
+
+        try {
+            Object.defineProperty( interaction, "channelId", { value: channel.id } );
+        } catch {
+        }
+    }
+
+    protected readonly shouldDeletePreviousReply = () => {
+        return true;
+    };
 }

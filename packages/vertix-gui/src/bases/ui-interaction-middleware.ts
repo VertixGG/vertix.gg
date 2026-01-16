@@ -144,11 +144,16 @@ export class UIInteractionMiddleware<
             requiredTypes = normalizeChannelTypesForRuntime( requiredTypesRaw ) as ChannelType[],
             expectedTypes = requiredTypes.map( ( type ) => ChannelType[ type as ChannelType ] ?? String( type ) ).join( ", " );
 
+        UIInteractionMiddleware.debugger.log(
+            this.ensureChannel,
+            `Channel check - required: [${ requiredTypes.join( ", " ) }], channel.type: ${ channel.type }, includes: ${ requiredTypes.includes( channel.type ) }`
+        );
+
         if ( requiredTypes.includes( channel.type ) ) {
             return callback?.() || true;
         }
 
-        UIInteractionMiddleware.debugger.log(
+        this.logger.warn(
             this.ensureChannel,
             `Channel type mismatch. Expected: '${ expectedTypes }' but got: '${ ChannelType[ channel.type ] }'`
         );

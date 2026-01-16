@@ -39,6 +39,7 @@ export interface SetupWizardFlowData extends UIFlowWizardData {
     dynamicChannelButtonsTemplate?: string[];
     dynamicChannelMentionable?: boolean;
     dynamicChannelAutoSave?: boolean;
+    dynamicChannelControlChannelAutoCreate?: boolean;
 
     // Step 3 data
     dynamicChannelVerifiedRoles?: string[];

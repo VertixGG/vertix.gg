@@ -4,6 +4,7 @@ export interface MasterChannelSettingsInterface {
     dynamicChannelAutoSave: boolean;
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
+    dynamicChannelControlChannelId: string | null;
     dynamicChannelLogsChannelId: string | null;
     dynamicChannelMentionable: boolean;
     dynamicChannelNameTemplate: string;
@@ -12,6 +13,7 @@ export interface MasterChannelSettingsInterface {
 
 export interface MasterChannelConstantsInterface {
     dynamicChannelsCategoryName: string;
+    dynamicChannelControlChannelName: string;
 
     dynamicChannelStatePrivate: string;
     dynamicChannelStatePublic: string;

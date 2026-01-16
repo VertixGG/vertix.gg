@@ -61,7 +61,7 @@ import type UIService from "@vertix.gg/gui/src/ui-service";
 
 async function onCreateMasterChannelClicked(
     context: IWizardAdapterContext<WizardInteractions>,
-    interaction: UIDefaultButtonChannelTextInteraction
+    interaction: WizardInteractions
 ) {
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupStep1Component" );
 }
@@ -115,6 +115,10 @@ async function onConfigExtrasSelected(
 
             case "dynamicChannelAutoSave":
                 args.dynamicChannelAutoSave = !!parseInt( parted[ 1 ] );
+                break;
+
+            case "dynamicChannelControlChannelAutoCreate":
+                args.dynamicChannelControlChannelAutoCreate = !!parseInt( parted[ 1 ] );
                 break;
         }
     } );
@@ -209,10 +213,13 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
         "> ⫸ ∙ Auto save dynamic channels: " +
         vars.configAutoSave +
         "\n" +
+        "> ▥ ∙ Auto create panel channel: " +
+        vars.configControlChannelAutoCreate +
+        "\n" +
         "\n" +
         "You can keep the default settings by pressing **( `Next ▶` )** button." +
         "\n\n" +
-        "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase)."
+        "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v3)."
     )
     .setOptions( ( vars ) => ( {
         on: "`🟢∙On`",
@@ -228,6 +235,10 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
         configAutoSave: {
             [ vars.configAutoSaveEnabled ]: vars.on,
             [ vars.configAutoSaveDisabled ]: vars.off
+        },
+        configControlChannelAutoCreate: {
+            [ vars.configControlChannelAutoCreateEnabled ]: vars.on,
+            [ vars.configControlChannelAutoCreateDisabled ]: vars.off
         },
         footer: {
             [ vars.defaultFooter ]: "Newly created dynamic channels through this master channel will be affected by the configuration you have selected.",
@@ -262,6 +273,9 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
 
             configAutoSave: args.dynamicChannelAutoSave ?
                 vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,
+
+            configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ?
+                vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,
 
             message: buttonsLength ?
                 vars.defaultMessage : vars.noButtonsMessage,
@@ -442,7 +456,8 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
                         transition: "VertixBot/UI-General/SetupNewWizardFlow/Transitions/UpdateConfigExtras",
                         mutations: [
                             { type: "set", path: [ "dynamicChannelMentionable" ] },
-                            { type: "set", path: [ "dynamicChannelAutoSave" ] }
+                            { type: "set", path: [ "dynamicChannelAutoSave" ] },
+                            { type: "set", path: [ "dynamicChannelControlChannelAutoCreate" ] }
                         ],
                         navigation: {
                             targetState: "VertixBot/UI-General/SetupNewWizardFlow/States/Step2Buttons",
@@ -496,11 +511,19 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     } )
     .onBeforeBuildPrototype( async( context, args, _from, interaction ) => {
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {
-            case "VertixBot/UI-General/SetupStep2Component":
+            case "VertixBot/UI-V3/SetupStep2Component":
                 args._configExtraMenuDisableLogsChannelOption = true;
+                args._configExtraMenuEnableControlChannelAutoCreateOption = true;
+
+                if ( args.dynamicChannelControlChannelAutoCreate === undefined && interaction ) {
+                    args.dynamicChannelControlChannelAutoCreate = true;
+                    context.setArgs( interaction, {
+                        dynamicChannelControlChannelAutoCreate: true
+                    } );
+                }
                 break;
 
-            case "VertixBot/UI-General/SetupStep3Component":
+            case "VertixBot/UI-V3/SetupStep3Component":
                 args._wizardShouldDisableFinishButton = !args.dynamicChannelVerifiedRoles?.length;
                 break;
         }
@@ -521,6 +544,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         const mentionable: boolean = args.dynamicChannelMentionable || false;
         const autosave: boolean = args.dynamicChannelAutoSave || false;
         const verifiedRoles: string[] = args.dynamicChannelVerifiedRoles || [ interaction.guildId ];
+        const controlChannelAutoCreate = !!args.dynamicChannelControlChannelAutoCreate;
 
         const result = await masterChannelService.createMasterChannel( {
             guildId: interaction.guildId,
@@ -529,6 +553,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             dynamicChannelButtonsTemplate: templateButtons,
             dynamicChannelMentionable: mentionable,
             dynamicChannelAutoSave: autosave,
+            dynamicChannelControlChannelAutoCreate: controlChannelAutoCreate,
             dynamicChannelVerifiedRoles: verifiedRoles,
             version: VERSION_UI_V3
         } );

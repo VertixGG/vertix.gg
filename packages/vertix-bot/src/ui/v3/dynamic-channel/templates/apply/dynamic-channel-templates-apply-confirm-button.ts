@@ -23,7 +23,7 @@ export class DynamicChannelTemplatesApplyConfirmButton extends UIElementButtonBa
     }
 
     public async getEmoji() {
-        return EmojiManager.$.getMarkdown( "ChannelTemplates" );
+        return EmojiManager.$.getMarkdown( "Templates" );
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {

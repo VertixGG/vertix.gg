@@ -16,6 +16,8 @@ import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui
 
 import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+import { ChannelType } from "discord.js";
+
 import type { VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
@@ -77,7 +79,7 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
     ): Promise<DynamicChannelUIDataResult | null> {
         const { ownerId } = identifier;
 
-        const channel = identifier.channel ?? null;
+        const channel = identifier.channel?.type === ChannelType.GuildVoice ? identifier.channel : null;
         const channelId = channel?.id || identifier.channelId;
         const guildId = identifier.guildId ?? ( channel ? channel.guild.id : undefined );
         const requestedMasterChannelId = identifier.masterChannelId ?? null;

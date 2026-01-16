@@ -3,6 +3,7 @@ export { ClaimStartAdapter } from "@vertix.gg/bot/src/ui/v3/claim/start/claim-st
 export { ClaimVoteAdapter } from "@vertix.gg/bot/src/ui/v3/claim/vote/claim-vote-adapter";
 export { SetupEditAdapter } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-adapter";
 export { DynamicChannelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/dynamic-channel-adapter";
+export { DynamicChannelPanelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel-panel/dynamic-channel-panel-adapter";
 export { DynamicChannelLimitAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-adapter";
 export { DynamicChannelClearChatAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/clear-chat/dynamic-channel-clear-chat-adapter";
 export { DynamicChannelRenameAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-adapter";

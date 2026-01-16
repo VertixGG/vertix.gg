@@ -5,6 +5,90 @@
   "elements": {
     "buttons": [
       {
+        "name": "VertixBot/UI-General/ChannelNameTemplateEditButton",
+        "content": {
+          "label": "Edit Channel Name"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DoneButton",
+        "content": {
+          "label": "✓ Done"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/LanguageChooseButton",
+        "content": {
+          "label": "Choose Your Language"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/NoButton",
+        "content": {
+          "label": "👎 No"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupBadwordsEditButton",
+        "content": {
+          "label": "Edit Bad Words"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateButton",
+        "content": {
+          "label": "Create Master Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateV3Button",
+        "content": {
+          "label": "Create Master Channel (V3)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeInviteButton",
+        "content": {
+          "label": "Invite Vertix"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeSetupButton",
+        "content": {
+          "label": "Setup"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeSupportButton",
+        "content": {
+          "label": "Community Server"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardBackButton",
+        "content": {
+          "label": "◀ Back"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardFinishButton",
+        "content": {
+          "label": "✔ Finish"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardNextButton",
+        "content": {
+          "label": "Next ▶"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/YesButton",
+        "content": {
+          "label": "👍 Yes"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/ClaimStartButton",
         "content": {
           "label": "Claim"
@@ -197,93 +281,23 @@
         "content": {
           "label": "Apply Only"
         }
-      },
-      {
-        "name": "VertixBot/UI-General/ChannelNameTemplateEditButton",
-        "content": {
-          "label": "Edit Channel Name"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/DoneButton",
-        "content": {
-          "label": "✓ Done"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/LanguageChooseButton",
-        "content": {
-          "label": "Choose Your Language"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/NoButton",
-        "content": {
-          "label": "👎 No"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupBadwordsEditButton",
-        "content": {
-          "label": "Edit Bad Words"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterCreateButton",
-        "content": {
-          "label": "Create Master Channel"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterCreateV3Button",
-        "content": {
-          "label": "Create Master Channel (V3)"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WelcomeInviteButton",
-        "content": {
-          "label": "Invite Vertix"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WelcomeSetupButton",
-        "content": {
-          "label": "Setup"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WelcomeSupportButton",
-        "content": {
-          "label": "Community Server"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WizardBackButton",
-        "content": {
-          "label": "◀ Back"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WizardFinishButton",
-        "content": {
-          "label": "✔ Finish"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WizardNextButton",
-        "content": {
-          "label": "Next ▶"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/YesButton",
-        "content": {
-          "label": "👍 Yes"
-        }
       }
     ],
     "textInputs": [
+      {
+        "name": "VertixBot/UI-General/BadwordsInput",
+        "content": {
+          "label": "SEPARATE BY `,` FOR NON-EXACT MATCHES USE `*`",
+          "placeholder": "None"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ChannelNameTemplateInput",
+        "content": {
+          "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
+          "placeholder": "{user}'s Channel"
+        }
+      },
       {
         "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
         "content": {
@@ -321,23 +335,82 @@
         "content": {
           "label": "CHOOSE NAME FOR YOUR CHANNEL"
         }
-      },
-      {
-        "name": "VertixBot/UI-General/BadwordsInput",
-        "content": {
-          "label": "SEPARATE BY `,` FOR NON-EXACT MATCHES USE `*`",
-          "placeholder": "None"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/ChannelNameTemplateInput",
-        "content": {
-          "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
-          "placeholder": "{user}'s Channel"
-        }
       }
     ],
     "selectMenus": [
+      {
+        "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
+        "content": {
+          "placeholder": "⌘ ∙ Configuration",
+          "selectOptions": [
+            {
+              "label": "{dynamicChannelMentionableLabel} {state}"
+            },
+            {
+              "label": "{dynamicChannelAutoSaveLabel} {state}"
+            },
+            {
+              "label": "{dynamicChannelLogsChannelLabel} {state}"
+            }
+          ],
+          "options": {
+            "state": {
+              "{stateOn}": "∙🟢 On",
+              "{stateOff}": "∙🔴 Off"
+            },
+            "dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
+            "dynamicChannelAutoSaveLabel": "⫸ ∙ Auto save dynamic channel",
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Send logs to custom channel"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/LanguageSelectMenu",
+        "content": {
+          "placeholder": "🌍 Select Language",
+          "selectOptions": [
+            {
+              "label": "🇺🇸 English"
+            },
+            {
+              "label": "🇷🇺 Russian"
+            },
+            {
+              "label": "🇬🇷 Greek"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
+        "content": {
+          "placeholder": "❖ ∙ Edit Master Channel(s)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ Everyone role",
+          "selectOptions": [
+            {
+              "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}"
+            }
+          ],
+          "options": {
+            "state": {
+              "{stateOn}": "∙🟢 On",
+              "{stateOff}": "∙🔴 Off"
+            },
+            "dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesMenu",
+        "content": {
+          "placeholder": "Select Verified Roles"
+        }
+      },
       {
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
@@ -595,83 +668,132 @@
             }
           ]
         }
-      },
-      {
-        "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
-        "content": {
-          "placeholder": "⌘ ∙ Configuration",
-          "selectOptions": [
-            {
-              "label": "{dynamicChannelMentionableLabel} {state}"
-            },
-            {
-              "label": "{dynamicChannelAutoSaveLabel} {state}"
-            },
-            {
-              "label": "{dynamicChannelLogsChannelLabel} {state}"
-            }
-          ],
-          "options": {
-            "state": {
-              "{stateOn}": "∙🟢 On",
-              "{stateOff}": "∙🔴 Off"
-            },
-            "dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
-            "dynamicChannelAutoSaveLabel": "⫸ ∙ Auto save dynamic channel",
-            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Send logs to custom channel"
-          }
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/LanguageSelectMenu",
-        "content": {
-          "placeholder": "🌍 Select Language",
-          "selectOptions": [
-            {
-              "label": "🇺🇸 English"
-            },
-            {
-              "label": "🇷🇺 Russian"
-            },
-            {
-              "label": "🇬🇷 Greek"
-            }
-          ]
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
-        "content": {
-          "placeholder": "❖ ∙ Edit Master Channel(s)"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-        "content": {
-          "placeholder": "🛡️ ∙ Everyone role",
-          "selectOptions": [
-            {
-              "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}"
-            }
-          ],
-          "options": {
-            "state": {
-              "{stateOn}": "∙🟢 On",
-              "{stateOff}": "∙🔴 Off"
-            },
-            "dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
-          }
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/VerifiedRolesMenu",
-        "content": {
-          "placeholder": "Select Verified Roles"
-        }
       }
     ]
   },
   "embeds": [
+    {
+      "name": "VertixBot/UI-General/DisabledWhileClaimEmbed",
+      "content": {
+        "title": "😈 The action is disabled",
+        "description": "The action is disabled while the claim is in progress.\n\nPlease wait until the claim is completed."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/InvalidChannelTypeEmbed",
+      "content": {
+        "title": "# Oops! This component is restricted in this channel type.",
+        "description": "The action is restricted in channel type, but available channel types:\n\n{allowedTypes}\n\nPlease retry the action in a different channel.",
+        "arrayOptions": {
+          "allowedTypes": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/LanguageEmbed",
+      "content": {
+        "title": "🌍  Select language",
+        "description": "__Current Selected Language__: **{currentLanguage}**\n\nDidn't find your language?\n\nYou can be the one to translate bot to your language!\ncontact us at our support server, and be the one!\n\nFound mistake in translation? Please let us know!",
+        "options": {
+          "currentLanguage": {
+            "en": "English",
+            "ru": "Russian",
+            "el": "Greek"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/MissingPermissionsEmbed",
+      "content": {
+        "title": "🔐  Oops! Certain permissions are required",
+        "description": "Some permissions are required to proceed, **{omitterDisplayName}** is missing the following permissions:\n\n{missingPermissions}",
+        "arrayOptions": {
+          "missingPermissions": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NothingChangedEmbed",
+      "content": {
+        "title": "🤷  Nothing changed",
+        "description": "This is may occur when you try to change something that is not changeable or is the same as before."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NotYourChannelEmbed",
+      "content": {
+        "title": "⛔  This is not your channel!",
+        "description": "But you can open your own channel :)\n\n Just click here: <#{masterChannelId}>"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupEmbed",
+      "content": {
+        "title": "🛠  Setup Vertix",
+        "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+        "options": {
+          "masterChannelMessage": {
+            "{masterChannels}": "\n{masterChannels}",
+            "{masterChannelMessageDefault}": "**None**"
+          },
+          "badwordsMessage": {
+            "{badwords}": "`{badwords}`",
+            "{badwordsMessageDefault}": "**None**"
+          },
+          "none": "**None**"
+        },
+        "arrayOptions": {
+          "masterChannels": {
+            "format": "{value}{separator}",
+            "separator": "\n",
+            "multiSeparator": "\n\n",
+            "options": {
+              "index": "**#{index}**",
+              "name": "▹ Name: <#{id}>",
+              "id": "▹ Channel ID: `{id}`",
+              "channelsTemplateName": "▹ Dynamic Channels Name: `{channelsTemplateName}`",
+              "channelsTemplateButtons": "▹ Buttons: **{channelsTemplateButtons}**",
+              "channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}",
+              "channelsLogsChannelId": "▹ Logs Channel: {channelsLogsChannelId}",
+              "channelsAutoSave": "▹ Auto Save: `{channelsAutoSave}`",
+              "version": "▹ UI Version: `{version}`"
+            }
+          },
+          "badwords": {
+            "format": "{value}{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed",
+      "content": {
+        "title": "🤷  You have reached your master channels limit",
+        "description": "You can create up to **{maxMasterChannels}** Master Channels in total."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SomethingWentWrongEmbed",
+      "content": {
+        "title": "🤷 Oops, an issue has occurred",
+        "description": "Something went wrong"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/WelcomeEmbed",
+      "content": {
+        "title": "༄ Vertix is here, let's get started!",
+        "description": "Welcome to Vertix, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU"
+      }
+    },
     {
       "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed",
       "content": {
@@ -2145,114 +2267,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/DisabledWhileClaimEmbed",
-      "content": {
-        "title": "😈 The action is disabled",
-        "description": "The action is disabled while the claim is in progress.\n\nPlease wait until the claim is completed."
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/InvalidChannelTypeEmbed",
-      "content": {
-        "title": "# Oops! This component is restricted in this channel type.",
-        "description": "The action is restricted in channel type, but available channel types:\n\n{allowedTypes}\n\nPlease retry the action in a different channel.",
-        "arrayOptions": {
-          "allowedTypes": {
-            "format": "- {value}{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/LanguageEmbed",
-      "content": {
-        "title": "🌍  Select language",
-        "description": "__Current Selected Language__: **{currentLanguage}**\n\nDidn't find your language?\n\nYou can be the one to translate bot to your language!\ncontact us at our support server, and be the one!\n\nFound mistake in translation? Please let us know!",
-        "options": {
-          "currentLanguage": {
-            "en": "English",
-            "ru": "Russian",
-            "el": "Greek"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/MissingPermissionsEmbed",
-      "content": {
-        "title": "🔐  Oops! Certain permissions are required",
-        "description": "Some permissions are required to proceed, **{omitterDisplayName}** is missing the following permissions:\n\n{missingPermissions}",
-        "arrayOptions": {
-          "missingPermissions": {
-            "format": "- {value}{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/NothingChangedEmbed",
-      "content": {
-        "title": "🤷  Nothing changed",
-        "description": "This is may occur when you try to change something that is not changeable or is the same as before."
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/NotYourChannelEmbed",
-      "content": {
-        "title": "⛔  This is not your channel!",
-        "description": "But you can open your own channel :)\n\n Just click here: <#{masterChannelId}>"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupEmbed",
-      "content": {
-        "title": "🛠  Setup Vertix",
-        "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
-        "options": {
-          "masterChannelMessage": {
-            "{masterChannels}": "\n{masterChannels}",
-            "{masterChannelMessageDefault}": "**None**"
-          },
-          "badwordsMessage": {
-            "{badwords}": "`{badwords}`",
-            "{badwordsMessageDefault}": "**None**"
-          },
-          "none": "**None**"
-        },
-        "arrayOptions": {
-          "masterChannels": {
-            "format": "{value}{separator}",
-            "separator": "\n",
-            "multiSeparator": "\n\n",
-            "options": {
-              "index": "**#{index}**",
-              "name": "▹ Name: <#{id}>",
-              "id": "▹ Channel ID: `{id}`",
-              "channelsTemplateName": "▹ Dynamic Channels Name: `{channelsTemplateName}`",
-              "channelsTemplateButtons": "▹ Buttons: **{channelsTemplateButtons}**",
-              "channelsVerifiedRoles": "▹ Verified Roles: {channelsVerifiedRoles}",
-              "channelsLogsChannelId": "▹ Logs Channel: {channelsLogsChannelId}",
-              "channelsAutoSave": "▹ Auto Save: `{channelsAutoSave}`",
-              "version": "▹ UI Version: `{version}`"
-            }
-          },
-          "badwords": {
-            "format": "{value}{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed",
-      "content": {
-        "title": "🤷  You have reached your master channels limit",
-        "description": "You can create up to **{maxMasterChannels}** Master Channels in total."
-      }
-    },
-    {
       "name": "VertixBot/UI-V3/SetupNewStep1Embed",
       "content": {
         "title": "Step 1 - Set Dynamic Channels Template Name",
@@ -2323,20 +2337,6 @@
           }
         }
       }
-    },
-    {
-      "name": "VertixBot/UI-General/SomethingWentWrongEmbed",
-      "content": {
-        "title": "🤷 Oops, an issue has occurred",
-        "description": "Something went wrong"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/WelcomeEmbed",
-      "content": {
-        "title": "༄ Vertix is here, let's get started!",
-        "description": "Welcome to Vertix, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU"
-      }
     }
   ],
   "markdowns": [
@@ -2354,6 +2354,18 @@
     }
   ],
   "modals": [
+    {
+      "name": "VertixBot/UI-General/BadwordsModal",
+      "content": {
+        "title": "Set bad words"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ChannelNameTemplateModal",
+      "content": {
+        "title": "Set dynamic channels name"
+      }
+    },
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
       "content": {
@@ -2388,18 +2400,6 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "Rename dynamic channel"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/BadwordsModal",
-      "content": {
-        "title": "Set bad words"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/ChannelNameTemplateModal",
-      "content": {
-        "title": "Set dynamic channels name"
       }
     }
   ]

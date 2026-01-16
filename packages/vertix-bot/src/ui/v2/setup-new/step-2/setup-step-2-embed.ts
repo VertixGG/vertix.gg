@@ -25,6 +25,10 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
         configAutoSaveEnabled: uiUtilsWrapAsTemplate( "configAutoSaveEnabled" ),
         configAutoSaveDisabled: uiUtilsWrapAsTemplate( "configAutoSaveDisabled" ),
 
+        configControlChannelAutoCreate: uiUtilsWrapAsTemplate( "configControlChannelAutoCreate" ),
+        configControlChannelAutoCreateEnabled: uiUtilsWrapAsTemplate( "configControlChannelAutoCreateEnabled" ),
+        configControlChannelAutoCreateDisabled: uiUtilsWrapAsTemplate( "configControlChannelAutoCreateDisabled" ),
+
         footer: uiUtilsWrapAsTemplate( "footer" ),
         defaultFooter: uiUtilsWrapAsTemplate( "defaultFooter" ),
         noButtonsFooter: uiUtilsWrapAsTemplate( "noButtonsFooter" )
@@ -63,10 +67,13 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             "> ⫸ ∙ Auto save dynamic channels: " +
             SetupStep2Embed.vars.configAutoSave +
             "\n" +
+            "> ▥ ∙ Auto create panel channel: " +
+            SetupStep2Embed.vars.configControlChannelAutoCreate +
+            "\n" +
             "\n" +
             "You can keep the default settings by pressing **( `Next ▶` )** button." +
             "\n\n" +
-            "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase)."
+            "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v2)."
         );
     }
 
@@ -87,6 +94,9 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
 
             configAutoSaveEnabled,
             configAutoSaveDisabled,
+
+            configControlChannelAutoCreateEnabled,
+            configControlChannelAutoCreateDisabled,
 
             defaultFooter,
             noButtonsFooter
@@ -111,6 +121,11 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
                 [ configAutoSaveDisabled ]: off
             },
 
+            configControlChannelAutoCreate: {
+                [ configControlChannelAutoCreateEnabled ]: on,
+                [ configControlChannelAutoCreateDisabled ]: off
+            },
+
             footer: {
                 [ defaultFooter ]:
                     "Newly created dynamic channels through this master channel will be affected by the configuration you have selected.",
@@ -130,6 +145,9 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             configAutoSave: args.dynamicChannelAutoSave
                 ? SetupStep2Embed.vars.configAutoSaveEnabled
                 : SetupStep2Embed.vars.configAutoSaveDisabled,
+            configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate
+                ? SetupStep2Embed.vars.configControlChannelAutoCreateEnabled
+                : SetupStep2Embed.vars.configControlChannelAutoCreateDisabled,
 
             message: buttonsLength ? SetupStep2Embed.vars.defaultMessage : SetupStep2Embed.vars.noButtonsMessage,
             footer: buttonsLength ? SetupStep2Embed.vars.defaultFooter : SetupStep2Embed.vars.noButtonsFooter,

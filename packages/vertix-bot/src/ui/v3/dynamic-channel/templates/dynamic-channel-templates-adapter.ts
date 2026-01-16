@@ -11,7 +11,7 @@ import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic
 import type { ChannelTemplate } from "@vertix.gg/base/src/interfaces/channel-template";
 import type {
     UIDefaultButtonChannelVoiceInteraction,
-    UIDefaultStringSelectMenuChannelVoiceInteraction,
+    UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction,
     UIDefaultModalChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
@@ -20,7 +20,7 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 
 type DefaultInteraction =
     | UIDefaultButtonChannelVoiceInteraction
-    | UIDefaultStringSelectMenuChannelVoiceInteraction
+    | UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction
     | UIDefaultModalChannelVoiceInteraction;
 
 const MAX_TEMPLATES = 5;
@@ -164,7 +164,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
             }
         );
 
-        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceInteraction>(
+        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
             "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
             async( context, interaction ) => {
                 if ( !interaction.deferred && !interaction.replied ) {
@@ -271,7 +271,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
             }
         );
 
-        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceInteraction>(
+        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
             "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
             async( context, interaction ) => {
                 if ( !interaction.deferred && !interaction.replied ) {

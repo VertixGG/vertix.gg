@@ -5,6 +5,90 @@
   "elements": {
     "buttons": [
       {
+        "name": "VertixBot/UI-General/ChannelNameTemplateEditButton",
+        "content": {
+          "label": "Изменить название канала"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DoneButton",
+        "content": {
+          "label": "✔ Готово"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/LanguageChooseButton",
+        "content": {
+          "label": "Выбрать язык"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/NoButton",
+        "content": {
+          "label": "👎 Нет"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupBadwordsEditButton",
+        "content": {
+          "label": "Изменить запрещенные слова"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateButton",
+        "content": {
+          "label": "Создать мастер-канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateV3Button",
+        "content": {
+          "label": "Создать мастер-канал (V3)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeInviteButton",
+        "content": {
+          "label": "Пригласить Vertix"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeSetupButton",
+        "content": {
+          "label": "Настройка"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeSupportButton",
+        "content": {
+          "label": "Сервер сообщества"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardBackButton",
+        "content": {
+          "label": "◀ Назад"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardFinishButton",
+        "content": {
+          "label": "✔ Готово"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardNextButton",
+        "content": {
+          "label": "Далее ▶"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/YesButton",
+        "content": {
+          "label": "👍 Да"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/ClaimStartButton",
         "content": {
           "label": "завоевать канал"
@@ -197,93 +281,23 @@
         "content": {
           "label": "Только для новых"
         }
-      },
-      {
-        "name": "VertixBot/UI-General/ChannelNameTemplateEditButton",
-        "content": {
-          "label": "Изменить название канала"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/DoneButton",
-        "content": {
-          "label": "✔ Готово"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/LanguageChooseButton",
-        "content": {
-          "label": "Выбрать язык"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/NoButton",
-        "content": {
-          "label": "👎 Нет"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupBadwordsEditButton",
-        "content": {
-          "label": "Изменить запрещенные слова"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterCreateButton",
-        "content": {
-          "label": "Создать мастер-канал"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterCreateV3Button",
-        "content": {
-          "label": "Создать мастер-канал (V3)"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WelcomeInviteButton",
-        "content": {
-          "label": "Пригласить Vertix"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WelcomeSetupButton",
-        "content": {
-          "label": "Настройка"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WelcomeSupportButton",
-        "content": {
-          "label": "Сервер сообщества"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WizardBackButton",
-        "content": {
-          "label": "◀ Назад"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WizardFinishButton",
-        "content": {
-          "label": "✔ Готово"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/WizardNextButton",
-        "content": {
-          "label": "Далее ▶"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/YesButton",
-        "content": {
-          "label": "👍 Да"
-        }
       }
     ],
     "textInputs": [
+      {
+        "name": "VertixBot/UI-General/BadwordsInput",
+        "content": {
+          "label": "РАЗДЕЛИТЕ = (,) НЕТОЧНОГО СОВПАДЕНИЯ = (*)",
+          "placeholder": "Нет"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ChannelNameTemplateInput",
+        "content": {
+          "label": "УСТАНОВИТЬ НАЗВАНИЕ ПО УМОЛЧАНИЮ",
+          "placeholder": "{user}'s Канал"
+        }
+      },
       {
         "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
         "content": {
@@ -321,23 +335,82 @@
         "content": {
           "label": "ВЫБЕРИТЕ ИМЯ ДЛЯ КАНАЛА"
         }
-      },
-      {
-        "name": "VertixBot/UI-General/BadwordsInput",
-        "content": {
-          "label": "РАЗДЕЛИТЕ = (,) НЕТОЧНОГО СОВПАДЕНИЯ = (*)",
-          "placeholder": "Нет"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/ChannelNameTemplateInput",
-        "content": {
-          "label": "УСТАНОВИТЬ НАЗВАНИЕ ПО УМОЛЧАНИЮ",
-          "placeholder": "{user}'s Канал"
-        }
       }
     ],
     "selectMenus": [
+      {
+        "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
+        "content": {
+          "placeholder": "⌘ ∙ Конфигурация",
+          "selectOptions": [
+            {
+              "label": "{dynamicChannelMentionableLabel} {state}"
+            },
+            {
+              "label": "{dynamicChannelAutoSaveLabel} {state}"
+            },
+            {
+              "label": "{dynamicChannelLogsChannelLabel} {state}"
+            }
+          ],
+          "options": {
+            "state": {
+              "{stateOn}": "∙🟢 Вкл",
+              "{stateOff}": "∙🔴 Выкл"
+            },
+            "dynamicChannelMentionableLabel": "@ ∙ Уведомления в основном сообщении",
+            "dynamicChannelAutoSaveLabel": "⫸ ∙ Авто сохранение динамического канала",
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Отправлять логи в конкретный канал"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/LanguageSelectMenu",
+        "content": {
+          "placeholder": "🌍 Выберите язык",
+          "selectOptions": [
+            {
+              "label": "🇺🇸 Английский"
+            },
+            {
+              "label": "🇬🇷 Греческий"
+            },
+            {
+              "label": "🇷🇺 Русский"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
+        "content": {
+          "placeholder": "❖ ∙ Редактировать главный канал(ы)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ Everyone рол",
+          "selectOptions": [
+            {
+              "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}"
+            }
+          ],
+          "options": {
+            "state": {
+              "{stateOn}": "∙🟢 Вкл",
+              "{stateOff}": "∙🔴 Выкл"
+            },
+            "dynamicChannelIncludeEveryoneRoleLabel": "@everyone рол"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesMenu",
+        "content": {
+          "placeholder": "Выберите роли"
+        }
+      },
       {
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
@@ -595,83 +668,132 @@
             }
           ]
         }
-      },
-      {
-        "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
-        "content": {
-          "placeholder": "⌘ ∙ Конфигурация",
-          "selectOptions": [
-            {
-              "label": "{dynamicChannelMentionableLabel} {state}"
-            },
-            {
-              "label": "{dynamicChannelAutoSaveLabel} {state}"
-            },
-            {
-              "label": "{dynamicChannelLogsChannelLabel} {state}"
-            }
-          ],
-          "options": {
-            "state": {
-              "{stateOn}": "∙🟢 Вкл",
-              "{stateOff}": "∙🔴 Выкл"
-            },
-            "dynamicChannelMentionableLabel": "@ ∙ Уведомления в основном сообщении",
-            "dynamicChannelAutoSaveLabel": "⫸ ∙ Авто сохранение динамического канала",
-            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Отправлять логи в конкретный канал"
-          }
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/LanguageSelectMenu",
-        "content": {
-          "placeholder": "🌍 Выберите язык",
-          "selectOptions": [
-            {
-              "label": "🇺🇸 Английский"
-            },
-            {
-              "label": "🇬🇷 Греческий"
-            },
-            {
-              "label": "🇷🇺 Русский"
-            }
-          ]
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
-        "content": {
-          "placeholder": "❖ ∙ Редактировать главный канал(ы)"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-        "content": {
-          "placeholder": "🛡️ ∙ Everyone рол",
-          "selectOptions": [
-            {
-              "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}"
-            }
-          ],
-          "options": {
-            "state": {
-              "{stateOn}": "∙🟢 Вкл",
-              "{stateOff}": "∙🔴 Выкл"
-            },
-            "dynamicChannelIncludeEveryoneRoleLabel": "@everyone рол"
-          }
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/VerifiedRolesMenu",
-        "content": {
-          "placeholder": "Выберите роли"
-        }
       }
     ]
   },
   "embeds": [
+    {
+      "name": "VertixBot/UI-General/DisabledWhileClaimEmbed",
+      "content": {
+        "title": "😈 Действие отключено",
+        "description": "Действие отключено во время процесса запроса.\n\nПожалуйста, подождите, пока запрос завершится."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/InvalidChannelTypeEmbed",
+      "content": {
+        "title": "# Ой! Этот компонент ограничен в данном типе канала.",
+        "description": "Действие ограничено в данном типе канала, но доступны следующие типы каналов:\n\n{allowedTypes}\n\nПожалуйста, повторите действие в другом канале.",
+        "arrayOptions": {
+          "allowedTypes": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/LanguageEmbed",
+      "content": {
+        "title": "🌍  Выберите язык",
+        "description": "__Текущий выбранный язык__: **{currentLanguage}**\n\nНе нашли свой язык?\n\nВы можете стать тем, кто переведет бота на ваш язык!\n Свяжитесь с намив нашем сервере поддержки и станьте одним из нас!\n\nОбнаружили ошибку в переводе? Пожалуйста, дайте нам знать!\n\nМы говорим на русском!",
+        "options": {
+          "currentLanguage": {
+            "en": "Английский",
+            "el": "Греческий",
+            "ru": "Русский"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/MissingPermissionsEmbed",
+      "content": {
+        "title": "🔐  Ой! Требуются определенные права доступа",
+        "description": "Для продолжения требуются некоторые права доступа, **{omitterDisplayName}** не имеет следующих разрешений:\n\n{missingPermissions}",
+        "arrayOptions": {
+          "missingPermissions": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NothingChangedEmbed",
+      "content": {
+        "title": "🤷 Ничего не изменилось",
+        "description": "Это может произойти, когда вы пытаетесь изменить что-то, что не может быть изменено, или остается таким же, как раньше."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NotYourChannelEmbed",
+      "content": {
+        "title": "⛔  Это не ваш канал!",
+        "description": "Но вы можете открыть свой собственный канал :)\n\n Просто нажмите здесь: <#{masterChannelId}>"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupEmbed",
+      "content": {
+        "title": "🛠  Настроить Vertix",
+        "description": "Откройте для себя безграничные возможности настройте и оптимизируйте свой сервер до совершенства!\n\nЧтобы создать новый мастер каналов, просто нажмите кнопку: \"`(➕ Создать мастер-канал)`\".\n\nмастер каналы - это генераторы динамических голосовых каналов, каждый с собственной уникальной конфигурацией.\n\nВозможность фильтрации неприемлемых слов позволяет настраивать ограничения для названий динамических каналов на уровне гильдии.\n\n_Текущие мастер каналы_:\n{masterChannelMessage}\n\n_Текущие неприемлемые слова_:\n{badwordsMessage}",
+        "options": {
+          "masterChannelMessage": {
+            "{masterChannels}": "\n{masterChannels}",
+            "{masterChannelMessageDefault}": "**Отсутствуют**"
+          },
+          "badwordsMessage": {
+            "{badwords}": "`{badwords}`",
+            "{badwordsMessageDefault}": "**Отсутствуют**"
+          },
+          "none": "**Нет**"
+        },
+        "arrayOptions": {
+          "masterChannels": {
+            "format": "{value}{separator}",
+            "separator": "\n",
+            "multiSeparator": "\n\n",
+            "options": {
+              "index": "**#{index}**",
+              "name": "▹ Имя: <#{id}>",
+              "id": "▹ ID канала: `{id}`",
+              "channelsTemplateName": "▹ Название динамического канала: `{channelsTemplateName}`",
+              "channelsTemplateButtons": "▹ Кнопки: **{channelsTemplateButtons}**",
+              "channelsVerifiedRoles": "▹ Роли: {channelsVerifiedRoles}",
+              "channelsLogsChannelId": "▹ Канал логов: {channelsLogsChannelId}",
+              "channelsAutoSave": "▹ Автосохранение: `{channelsAutoSave}`",
+              "version": "▹ UI Version: {version}"
+            }
+          },
+          "badwords": {
+            "format": "{value}{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed",
+      "content": {
+        "title": "🤷  Вы достигли лимита мастер каналов",
+        "description": "Вы можете создать не более **{maxMasterChannels}** мастер каналов в общей сложности."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SomethingWentWrongEmbed",
+      "content": {
+        "title": "🤷 Ой, произошла ошибка",
+        "description": "Что-то пошло не так"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/WelcomeEmbed",
+      "content": {
+        "title": "༄ Vertix здесь!",
+        "description": "Добро пожаловать в Vertix, невероятное дополнение для вашего сервера!\nДавайте сотрудничать и делать ваш сервер ещё лучше.\n\n**Настройка бота**\nНастройка бота - это легко! Просто следуйте этим простым шагам:\n- Введите `/setup`, чтобы создать ваш первый мастер-канал.\n- Нажмите \"`(➕ Создать мастер-канал)`\".\n- Измените названия каналов по умолчанию или нажмите **( `Далее ▶` )**, чтобы продолжить.\n- Выберите кнопки для канала или продолжайте со всеми функциями, затем нажмите **( `✓ Готово` )**.\n\nПоздравляем! Ваш мастер-канал создан. 🎉\n\nВы всегда можете изменить конфигурации, используя команду `/setup`.\n\n**Динамические каналы и мастер-канал**\nДинамические каналы наследуют все настройки от мастер-канала.\nЧтобы изменить настройки динамических каналов, просто настройте настройки мастер-канала `(➕ Новый канал)`.\n\n**Интерфейс кнопок**\nОбратите внимание, что интерфейс кнопок находится **внутри** динамического канала.\nВы можете получить к нему доступ, открыв чат динамического канала.\n\nЕсли вам нужна помощь или у вас есть какие-либо предложения, не стесняйтесь присоединиться к нашему серверу Discord! Мы будем рады помочь вам и услышать ваше мнение.\nПрисоединяйтесь к нам здесь: https://discord.gg/dEwKeQefUU"
+      }
+    },
     {
       "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed",
       "content": {
@@ -2145,114 +2267,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/DisabledWhileClaimEmbed",
-      "content": {
-        "title": "😈 Действие отключено",
-        "description": "Действие отключено во время процесса запроса.\n\nПожалуйста, подождите, пока запрос завершится."
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/InvalidChannelTypeEmbed",
-      "content": {
-        "title": "# Ой! Этот компонент ограничен в данном типе канала.",
-        "description": "Действие ограничено в данном типе канала, но доступны следующие типы каналов:\n\n{allowedTypes}\n\nПожалуйста, повторите действие в другом канале.",
-        "arrayOptions": {
-          "allowedTypes": {
-            "format": "- {value}{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/LanguageEmbed",
-      "content": {
-        "title": "🌍  Выберите язык",
-        "description": "__Текущий выбранный язык__: **{currentLanguage}**\n\nНе нашли свой язык?\n\nВы можете стать тем, кто переведет бота на ваш язык!\n Свяжитесь с намив нашем сервере поддержки и станьте одним из нас!\n\nОбнаружили ошибку в переводе? Пожалуйста, дайте нам знать!\n\nМы говорим на русском!",
-        "options": {
-          "currentLanguage": {
-            "en": "Английский",
-            "el": "Греческий",
-            "ru": "Русский"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/MissingPermissionsEmbed",
-      "content": {
-        "title": "🔐  Ой! Требуются определенные права доступа",
-        "description": "Для продолжения требуются некоторые права доступа, **{omitterDisplayName}** не имеет следующих разрешений:\n\n{missingPermissions}",
-        "arrayOptions": {
-          "missingPermissions": {
-            "format": "- {value}{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/NothingChangedEmbed",
-      "content": {
-        "title": "🤷 Ничего не изменилось",
-        "description": "Это может произойти, когда вы пытаетесь изменить что-то, что не может быть изменено, или остается таким же, как раньше."
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/NotYourChannelEmbed",
-      "content": {
-        "title": "⛔  Это не ваш канал!",
-        "description": "Но вы можете открыть свой собственный канал :)\n\n Просто нажмите здесь: <#{masterChannelId}>"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupEmbed",
-      "content": {
-        "title": "🛠  Настроить Vertix",
-        "description": "Откройте для себя безграничные возможности настройте и оптимизируйте свой сервер до совершенства!\n\nЧтобы создать новый мастер каналов, просто нажмите кнопку: \"`(➕ Создать мастер-канал)`\".\n\nмастер каналы - это генераторы динамических голосовых каналов, каждый с собственной уникальной конфигурацией.\n\nВозможность фильтрации неприемлемых слов позволяет настраивать ограничения для названий динамических каналов на уровне гильдии.\n\n_Текущие мастер каналы_:\n{masterChannelMessage}\n\n_Текущие неприемлемые слова_:\n{badwordsMessage}",
-        "options": {
-          "masterChannelMessage": {
-            "{masterChannels}": "\n{masterChannels}",
-            "{masterChannelMessageDefault}": "**Отсутствуют**"
-          },
-          "badwordsMessage": {
-            "{badwords}": "`{badwords}`",
-            "{badwordsMessageDefault}": "**Отсутствуют**"
-          },
-          "none": "**Нет**"
-        },
-        "arrayOptions": {
-          "masterChannels": {
-            "format": "{value}{separator}",
-            "separator": "\n",
-            "multiSeparator": "\n\n",
-            "options": {
-              "index": "**#{index}**",
-              "name": "▹ Имя: <#{id}>",
-              "id": "▹ ID канала: `{id}`",
-              "channelsTemplateName": "▹ Название динамического канала: `{channelsTemplateName}`",
-              "channelsTemplateButtons": "▹ Кнопки: **{channelsTemplateButtons}**",
-              "channelsVerifiedRoles": "▹ Роли: {channelsVerifiedRoles}",
-              "channelsLogsChannelId": "▹ Канал логов: {channelsLogsChannelId}",
-              "channelsAutoSave": "▹ Автосохранение: `{channelsAutoSave}`",
-              "version": "▹ UI Version: {version}"
-            }
-          },
-          "badwords": {
-            "format": "{value}{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed",
-      "content": {
-        "title": "🤷  Вы достигли лимита мастер каналов",
-        "description": "Вы можете создать не более **{maxMasterChannels}** мастер каналов в общей сложности."
-      }
-    },
-    {
       "name": "VertixBot/UI-V3/SetupNewStep1Embed",
       "content": {
         "title": "Шаг 1 - Установите шаблон имени для динамических каналов",
@@ -2323,20 +2337,6 @@
           }
         }
       }
-    },
-    {
-      "name": "VertixBot/UI-General/SomethingWentWrongEmbed",
-      "content": {
-        "title": "🤷 Ой, произошла ошибка",
-        "description": "Что-то пошло не так"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/WelcomeEmbed",
-      "content": {
-        "title": "༄ Vertix здесь!",
-        "description": "Добро пожаловать в Vertix, невероятное дополнение для вашего сервера!\nДавайте сотрудничать и делать ваш сервер ещё лучше.\n\n**Настройка бота**\nНастройка бота - это легко! Просто следуйте этим простым шагам:\n- Введите `/setup`, чтобы создать ваш первый мастер-канал.\n- Нажмите \"`(➕ Создать мастер-канал)`\".\n- Измените названия каналов по умолчанию или нажмите **( `Далее ▶` )**, чтобы продолжить.\n- Выберите кнопки для канала или продолжайте со всеми функциями, затем нажмите **( `✓ Готово` )**.\n\nПоздравляем! Ваш мастер-канал создан. 🎉\n\nВы всегда можете изменить конфигурации, используя команду `/setup`.\n\n**Динамические каналы и мастер-канал**\nДинамические каналы наследуют все настройки от мастер-канала.\nЧтобы изменить настройки динамических каналов, просто настройте настройки мастер-канала `(➕ Новый канал)`.\n\n**Интерфейс кнопок**\nОбратите внимание, что интерфейс кнопок находится **внутри** динамического канала.\nВы можете получить к нему доступ, открыв чат динамического канала.\n\nЕсли вам нужна помощь или у вас есть какие-либо предложения, не стесняйтесь присоединиться к нашему серверу Discord! Мы будем рады помочь вам и услышать ваше мнение.\nПрисоединяйтесь к нам здесь: https://discord.gg/dEwKeQefUU"
-      }
     }
   ],
   "markdowns": [
@@ -2354,6 +2354,18 @@
     }
   ],
   "modals": [
+    {
+      "name": "VertixBot/UI-General/BadwordsModal",
+      "content": {
+        "title": "Установить запрещенные слова"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ChannelNameTemplateModal",
+      "content": {
+        "title": "Имя для канала"
+      }
+    },
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
       "content": {
@@ -2388,18 +2400,6 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "Переименовать канал"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/BadwordsModal",
-      "content": {
-        "title": "Установить запрещенные слова"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/ChannelNameTemplateModal",
-      "content": {
-        "title": "Имя для канала"
       }
     }
   ]

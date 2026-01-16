@@ -10,7 +10,11 @@ import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { zFindRootPackageJsonPath } from "@zenflux/utils/workspace";
+
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 import type { Client } from "discord.js";
 
@@ -100,6 +104,19 @@ export class AppService extends ServiceBase {
         this.isActive = true;
 
         await Promise.all( this.onceReadyCallbacks.map( callback => callback() ) );
+
+        await this.refreshControlPanels( client );
+    }
+
+    private async refreshControlPanels( client: Client<true> ) {
+        const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+
+        if ( !dynamicChannelService ) {
+            this.logger.warn( this.refreshControlPanels, "DynamicChannelService not available, skipping panel refresh" );
+            return;
+        }
+
+        await dynamicChannelService.refreshControlPanels( client );
     }
 
     private async ensureBackwardCompatibility() {

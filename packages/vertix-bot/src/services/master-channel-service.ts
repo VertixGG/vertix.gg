@@ -36,6 +36,7 @@ import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel
 import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
+import type { UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
@@ -56,6 +57,7 @@ import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 interface IMasterChannelCreateCommonArgs extends Partial<MasterChannelSettingsInterface> {
     version: TVersionType;
     userOwnerId: string;
+    dynamicChannelControlChannelAutoCreate?: boolean;
 }
 
 interface IMasterChannelCreateInternalArgs extends IMasterChannelCreateCommonArgs {
@@ -85,6 +87,21 @@ interface IMasterChannelCreateResult {
 }
 
 const MAX_TIMEOUT_PER_CREATE = 10 * 1000;
+
+interface ICreateControlChannelArgs {
+    parent: CategoryChannel;
+    guild: Guild;
+    version: TVersionType;
+    userOwnerId: string;
+    masterChannel: GuildChannel;
+    controlChannelName: string;
+    buttonsTemplate: string[];
+}
+
+interface ICreateControlChannelResult {
+    channelId: string;
+    channel: UIAdapterStartContext;
+}
 
 export class MasterChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
@@ -127,6 +144,48 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             uiService: "VertixGUI/UIService",
             channelService: "VertixBot/Services/Channel",
             dynamicChannelService: "VertixBot/Services/DynamicChannel"
+        };
+    }
+
+    private async createControlChannelWithPanel(
+        args: ICreateControlChannelArgs
+    ): Promise<ICreateControlChannelResult | null> {
+        const { parent, guild, version, userOwnerId, masterChannel, controlChannelName, buttonsTemplate } = args;
+
+        const targetPosition = masterChannel.position + 1;
+
+        const controlChannelResult = await this.services.channelService.create( {
+            parent,
+            guild,
+            version,
+            userOwnerId,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DEFAULT_CHANNEL,
+            ownerChannelId: masterChannel.id,
+            name: controlChannelName,
+            type: ChannelType.GuildText,
+            position: targetPosition
+        } );
+
+        if ( !controlChannelResult ) {
+            return null;
+        }
+
+        const panelAdapterName = version === VERSION_UI_V3
+            ? "VertixBot/UI-V3/DynamicChannelPanelAdapter"
+            : "VertixBot/UI-V2/DynamicChannelPanelAdapter";
+
+        const panelAdapter = this.services.uiService.get( panelAdapterName );
+
+        if ( panelAdapter ) {
+            await panelAdapter.send( controlChannelResult.channel, {
+                dynamicChannelButtonsTemplate: buttonsTemplate,
+                channelId: ""
+            } );
+        }
+
+        return {
+            channelId: controlChannelResult.channel.id,
+            channel: controlChannelResult.channel
         };
     }
 
@@ -488,6 +547,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             VERSION_UI_V3
         );
 
+        const constants = config.get( "constants" );
+
+        const settings = config.get( "settings" );
+
         const { parent, guild } = args;
 
         const newVerifiedRoles = args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ];
@@ -503,7 +566,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             userOwnerId: args.userOwnerId,
             version: args.version,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: config.get( "constants" ).masterChannelName,
+            name: constants.masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: verifiedRolesWithPermissions,
             // TODO: Should be configurable.
@@ -512,6 +575,30 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         if ( !result ) {
             return null;
+        }
+
+        const masterChannel = result.channel;
+
+        const rawControlChannelId = typeof args.dynamicChannelControlChannelId === "string"
+            ? args.dynamicChannelControlChannelId
+            : null;
+
+        let controlChannelId = rawControlChannelId ?? settings.dynamicChannelControlChannelId;
+
+        if ( args.dynamicChannelControlChannelAutoCreate ) {
+            const controlChannelResult = await this.createControlChannelWithPanel( {
+                parent,
+                guild,
+                version: args.version,
+                userOwnerId: args.userOwnerId,
+                masterChannel,
+                controlChannelName: constants.dynamicChannelControlChannelName,
+                buttonsTemplate: args.dynamicChannelButtonsTemplate || settings.dynamicChannelButtonsTemplate
+            } );
+
+            if ( controlChannelResult ) {
+                controlChannelId = controlChannelResult.channelId;
+            }
         }
 
         const usedRoles = newVerifiedRoles
@@ -524,10 +611,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             } )
             .join( "," );
 
-        const usedButtonsInterface =
-            args.dynamicChannelButtonsTemplate || config.get( "settings" ).dynamicChannelButtonsTemplate;
+        const usedButtonsInterface = args.dynamicChannelButtonsTemplate || settings.dynamicChannelButtonsTemplate;
 
-        const usedNameTemplate = args.dynamicChannelNameTemplate || config.get( "settings" ).dynamicChannelNameTemplate;
+        const usedNameTemplate = args.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
 
         this.logger.admin(
             this.createMasterChannelInternalV3,
@@ -536,7 +622,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const db = await result.db;
 
-        await MasterChannelDataModelV3.$.setSettings( db.id, args, true );
+        await MasterChannelDataModelV3.$.setSettings( db.id, {
+            ...args,
+            dynamicChannelControlChannelId: controlChannelId
+        }, true );
 
         return result;
     }
@@ -562,6 +651,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 typeof args.dynamicChannelAutoSave === "boolean"
                     ? args.dynamicChannelAutoSave
                     : settings.dynamicChannelAutoSave,
+            newControlChannelId = settings.dynamicChannelControlChannelId,
             newVerifiedRoles = args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ];
 
         const verifiedRolesWithPermissions = newVerifiedRoles.map( ( roleId ) => ( {
@@ -586,11 +676,32 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             return null;
         }
 
+        const masterChannel = result.channel;
+
+        let controlChannelId = newControlChannelId;
+
+        if ( args.dynamicChannelControlChannelAutoCreate ) {
+            const controlChannelResult = await this.createControlChannelWithPanel( {
+                parent,
+                guild,
+                version: args.version,
+                userOwnerId: args.userOwnerId,
+                masterChannel,
+                controlChannelName: constants.dynamicChannelControlChannelName,
+                buttonsTemplate: newButtons
+            } );
+
+            if ( controlChannelResult ) {
+                controlChannelId = controlChannelResult.channelId;
+            }
+        }
+
         const masterChannelDB = await result.db;
 
         await MasterChannelDataManager.$.setAllSettings( masterChannelDB, {
             dynamicChannelAutoSave: newAutoSave,
             dynamicChannelButtonsTemplate: newButtons,
+            dynamicChannelControlChannelId: controlChannelId,
             // Since `LogsChannelId` not defined in the creation process but later via configuration.
             dynamicChannelLogsChannelId: settings.dynamicChannelLogsChannelId,
             dynamicChannelMentionable: newMentionable,

@@ -198,7 +198,12 @@ export abstract class UIAdapterExecutionStepsBase<
     ) {
         this.setStep( stepName, interaction );
 
-        return super.ephemeral( interaction, sendArgs, shouldDeletePreviousInteraction );
+        const argsWithStep = {
+            ...sendArgs,
+            _step: stepName
+        };
+
+        return super.ephemeral( interaction, argsWithStep, shouldDeletePreviousInteraction );
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {
@@ -253,13 +258,18 @@ export abstract class UIAdapterExecutionStepsBase<
             throw new Error( `Missing execution step: '${ stepName }'` );
         }
 
+        const argsWithStep = {
+            ...sendArgs,
+            _step: stepName
+        };
+
         return this.executeEditReplyStep(
             {
                 name: stepName,
                 ...step
             },
             interaction,
-            sendArgs
+            argsWithStep
         );
     }
 
@@ -292,6 +302,23 @@ export abstract class UIAdapterExecutionStepsBase<
 
             if ( args?.step ) {
                 return args.step;
+            }
+        }
+
+        if ( context ) {
+            const args = this.getArgsManager().getArgs( this, context );
+            const stepName = args?._step;
+
+            if ( typeof stepName === "string" ) {
+                const executionSteps = this.staticAdapterExecution.getExecutionStepsInternal();
+                const step = executionSteps[ stepName ];
+
+                if ( step ) {
+                    return {
+                        name: stepName,
+                        ...step
+                    };
+                }
             }
         }
 

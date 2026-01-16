@@ -45,9 +45,9 @@ const DynamicChannelTemplatesAppliedEmbed = new EmbedBuilder<UIArgs, typeof vars
         };
     } )
     .setDefaultVars( () => ( {
-        templatesEmoji: EmojiManager.$.getMarkdown( "ChannelTemplates" )
+        templatesEmoji: EmojiManager.$.getMarkdown( "Templates" )
     } ) )
     .build();
 
-export { DynamicChannelTemplatesAppliedEmbed, vars as DYNAMIC_CHANNEL_TEMPLATES_APPLIED_VARS };
+export { DynamicChannelTemplatesAppliedEmbed };
 

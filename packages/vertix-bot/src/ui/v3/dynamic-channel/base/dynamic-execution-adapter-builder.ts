@@ -6,16 +6,15 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type {
     UIAdapterReplyContext,
+    UIAdapterStartContext,
     UIDefaultButtonChannelVoiceInteraction,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-
-import type { VoiceChannel } from "discord.js";
 
 export class DynamicExecutionAdapterBuilder<
     TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction,
     TArgs extends UIArgs = UIArgs
 > extends ExecutionAdapterBuilder<
-        VoiceChannel,
+        UIAdapterStartContext,
         TInteraction,
         TArgs,
         typeof DynamicChannelAdapterExuBase<TInteraction>

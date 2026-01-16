@@ -11,13 +11,15 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type {
     UIDefaultButtonChannelVoiceInteraction,
-    UIDefaultStringSelectMenuChannelVoiceInteraction
+    UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { Message, VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
-type DefaultInteraction = UIDefaultStringSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
+type DefaultInteraction =
+    UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction |
+    UIDefaultButtonChannelVoiceInteraction;
 
 const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V3/DynamicChannelPrivacyAdapter"
@@ -36,7 +38,7 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
         message ? getArgsWithPermissions( message.channel as VoiceChannel ) : {}
     )
     .onEntityMap( async( { bindSelectMenu } ) => {
-        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceInteraction>(
+        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
             "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
             async( context, interaction ) => {
                 const state = interaction.values[ 0 ];

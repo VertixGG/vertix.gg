@@ -11,6 +11,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         dynamicChannelMentionableLabel: uiUtilsWrapAsTemplate( "dynamicChannelMentionableLabel" ),
         dynamicChannelLogsChannelLabel: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelLabel" ),
         dynamicChannelAutoSaveLabel: uiUtilsWrapAsTemplate( "dynamicChannelAutoSaveLabel" ),
+        dynamicChannelControlChannelAutoCreateLabel: uiUtilsWrapAsTemplate( "dynamicChannelControlChannelAutoCreateLabel" ),
 
         state: uiUtilsWrapAsTemplate( "state" ),
         stateOn: uiUtilsWrapAsTemplate( "stateOn" ),
@@ -38,6 +39,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
             dynamicChannelMentionableLabel,
             dynamicChannelLogsChannelLabel,
             dynamicChannelAutoSaveLabel,
+            dynamicChannelControlChannelAutoCreateLabel,
 
             state
         } = ConfigExtrasSelectMenu.vars;
@@ -67,6 +69,16 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
             } );
         }
 
+        if ( this.uiArgs?._configExtraMenuEnableControlChannelAutoCreateOption ) {
+            result.push( {
+                label: dynamicChannelControlChannelAutoCreateLabel + " " + state,
+                value:
+                    "dynamicChannelControlChannelAutoCreate" +
+                    UI_CUSTOM_ID_SEPARATOR +
+                    ( this.uiArgs?.dynamicChannelControlChannelAutoCreate ? "0" : "1" )
+            } );
+        }
+
         return result;
     }
 
@@ -81,7 +93,8 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
 
             dynamicChannelMentionableLabel: "@ ∙ Mention user in primary message",
             dynamicChannelAutoSaveLabel: "⫸ ∙ Auto save dynamic channel",
-            dynamicChannelLogsChannelLabel: "❯❯ ∙ Send logs to custom channel"
+            dynamicChannelLogsChannelLabel: "❯❯ ∙ Send logs to custom channel",
+            dynamicChannelControlChannelAutoCreateLabel: "▥ ∙ Auto create control panel channel"
         };
     }
 

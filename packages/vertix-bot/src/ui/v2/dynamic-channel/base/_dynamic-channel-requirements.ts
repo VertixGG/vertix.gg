@@ -1,4 +1,7 @@
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+
+import { ChannelType } from "discord.js";
+
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
@@ -7,21 +10,69 @@ import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from 
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
-import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { UIService } from "@vertix.gg/gui/src/ui-service";
+import type UIService from "@vertix.gg/gui/src/ui-service";
 
-export const dynamicChannelRequirements = async( interaction: UIAdapterReplyContext ) => {
-    if ( !interaction.channel ) {
+import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { VoiceChannel } from "discord.js";
+
+export async function dynamicChannelRequirements(
+    interaction: UIAdapterReplyContext,
+    channel?: VoiceChannel | null
+): Promise<boolean | undefined> {
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+
+    let resolvedChannel = channel ??
+        ( interaction.channel?.type === ChannelType.GuildVoice ? interaction.channel : null );
+
+    if ( !resolvedChannel ) {
+        const member = interaction.guild.members.cache.get( interaction.user.id ) ??
+            await interaction.guild.members.fetch( interaction.user.id ).catch( () => null );
+
+        const userVoiceChannel = member?.voice.channel;
+
+        GlobalLogger.$.log(
+            dynamicChannelRequirements,
+            `Checking user voice state - member: ${ member?.id ?? "null" }, userVoiceChannel: ${ userVoiceChannel?.id ?? "null" }, type: ${ userVoiceChannel?.type }`
+        );
+
+        if ( userVoiceChannel?.type === ChannelType.GuildVoice ) {
+            resolvedChannel = userVoiceChannel;
+        }
+    }
+
+    if ( !resolvedChannel ) {
+        const panelChannelDB = await ChannelModel.$.getByChannelId( interaction.channelId );
+        const masterChannelId = panelChannelDB?.ownerChannelId;
+
+        GlobalLogger.$.log(
+            dynamicChannelRequirements,
+            `No resolved channel - showing NoActiveDynamicChannelAdapter, masterChannelId: ${ masterChannelId ?? "null" }`
+        );
+
+        await uiService.get( "VertixBot/UI-General/NoActiveDynamicChannelAdapter" )?.ephemeral( interaction, {
+            masterChannelId
+        } );
+
         return false;
     }
 
-    const dynamicChannelDB = await ChannelModel.$.getByChannelId( interaction.channel.id );
+    const dynamicChannelDB = await ChannelModel.$.getByChannelId( resolvedChannel.id );
 
     if ( !dynamicChannelDB ) {
+        const panelChannelDB = await ChannelModel.$.getByChannelId( interaction.channelId );
+        const masterChannelId = panelChannelDB?.ownerChannelId;
+
+        GlobalLogger.$.warn(
+            dynamicChannelRequirements,
+            `No dynamic channel in DB - showing NoActiveDynamicChannelAdapter, masterChannelId: ${ masterChannelId ?? "null" }`
+        );
+
+        await uiService.get( "VertixBot/UI-General/NoActiveDynamicChannelAdapter" )?.ephemeral( interaction, {
+            masterChannelId
+        } );
+
         return false;
     }
-
-    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
     if ( interaction.user.id !== dynamicChannelDB.userOwnerId ) {
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannelDB.channelId );
@@ -67,4 +118,4 @@ export const dynamicChannelRequirements = async( interaction: UIAdapterReplyCont
     }
 
     return result;
-};
+}

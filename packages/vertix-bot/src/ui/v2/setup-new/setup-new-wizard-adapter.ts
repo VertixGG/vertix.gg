@@ -180,6 +180,14 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
         switch ( this.getCurrentExecutionStep( context )?.name ) {
             case "VertixBot/UI-V2/SetupStep2Component":
                 args._configExtraMenuDisableLogsChannelOption = true;
+                args._configExtraMenuEnableControlChannelAutoCreateOption = true;
+
+                if ( args.dynamicChannelControlChannelAutoCreate === undefined ) {
+                    args.dynamicChannelControlChannelAutoCreate = true;
+                    this.getArgsManager().setArgs( this, context, {
+                        dynamicChannelControlChannelAutoCreate: true
+                    } );
+                }
                 break;
 
             case "VertixBot/UI-V2/SetupStep3Component":
@@ -194,7 +202,8 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
             templateButtons: string[] = args.dynamicChannelButtonsTemplate,
             mentionable: boolean = args.dynamicChannelMentionable,
             autosave: boolean = args.dynamicChannelAutoSave,
-            verifiedRoles: string[] = args.dynamicChannelVerifiedRoles;
+            verifiedRoles: string[] = args.dynamicChannelVerifiedRoles,
+            controlChannelAutoCreate = !!args.dynamicChannelControlChannelAutoCreate;
 
         const result = await this.masterChannelService.createMasterChannel( {
             guildId: interaction.guildId,
@@ -207,6 +216,7 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
             dynamicChannelMentionable: mentionable,
             dynamicChannelAutoSave: autosave,
+            dynamicChannelControlChannelAutoCreate: controlChannelAutoCreate,
 
             dynamicChannelVerifiedRoles: verifiedRoles,
 
@@ -304,6 +314,10 @@ export class SetupNewWizardAdapter extends UIWizardAdapterBase<BaseGuildTextChan
 
                 case "dynamicChannelAutoSave":
                     argsToSet.dynamicChannelAutoSave = !!parseInt( parted[ 1 ] );
+                    break;
+
+                case "dynamicChannelControlChannelAutoCreate":
+                    argsToSet.dynamicChannelControlChannelAutoCreate = !!parseInt( parted[ 1 ] );
                     break;
             }
         } );

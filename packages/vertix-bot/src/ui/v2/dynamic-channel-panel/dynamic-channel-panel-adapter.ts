@@ -5,33 +5,33 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
 import { DynamicChannelAdapterBase } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/dynamic-channel-adapter-base";
 
-import { DynamicChannelComponent } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/dynamic-channel-component";
+import { DynamicChannelPanelComponent } from "@vertix.gg/bot/src/ui/v2/dynamic-channel-panel/dynamic-channel-panel-component";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
-import type { BaseMessageOptions, Message } from "discord.js";
+import type { Message } from "discord.js";
 
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type {
     UIAdapterStartContext,
     UIDefaultButtonChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
+export class DynamicChannelPanelAdapter extends DynamicChannelAdapterBase {
     public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelAdapter";
+        return "VertixBot/UI-V2/DynamicChannelPanelAdapter";
     }
 
     public static getComponent() {
-        return DynamicChannelComponent;
+        return DynamicChannelPanelComponent;
     }
 
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( !this.getArgsManager().getArgsById( this, message.id ) ) {
-            await this.awakeInternal( message, {} );
+            await this.awakeInternal( message, newArgs || {} );
         }
 
         return super.editMessage( message, newArgs );
@@ -41,33 +41,43 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         const resolvedChannel = await this.resolveChannelFromContext( channel, argsFromManager );
 
         if ( !resolvedChannel ) {
-            return {};
+            return {
+                dynamicChannelButtonsTemplate: argsFromManager?.dynamicChannelButtonsTemplate
+            };
         }
 
         return this.getAllArgs( resolvedChannel );
     }
 
-    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction ): Promise<UIArgs> {
+    protected async getReplyArgs( interaction: UIDefaultButtonChannelVoiceInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> {
+        const args = argsFromManager || {};
+
         const resolvedChannel = await this.resolveChannelFromContext(
             interaction.channel,
-            this.getArgsManager().getArgs( this, interaction )
+            args
         );
 
         if ( !resolvedChannel ) {
-            return {};
+            return {
+                dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
+            };
         }
 
         return this.getAllArgs( resolvedChannel );
     }
 
-    protected async getEditMessageArgs( message: Message<true> ) {
+    protected async getEditMessageArgs( message: Message<true>, argsFromManager?: UIArgs ) {
+        const args = argsFromManager || {};
+
         const resolvedChannel = await this.resolveChannelFromContext(
             message.channel as UIAdapterStartContext,
-            this.getArgsManager().getArgs( this, message )
+            args
         );
 
         if ( !resolvedChannel ) {
-            return {};
+            return {
+                dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
+            };
         }
 
         return this.getAllArgs( resolvedChannel );
@@ -88,22 +98,6 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
         this.bindButton( "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", this.onResetChannelButtonClicked );
         this.bindButton( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton", this.onClaimButtonClicked );
         this.bindButton( "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", this.onTransferOwnerButtonClicked );
-    }
-
-    protected getMessage(
-        from: UIAdapterBuildSource,
-        context: UIAdapterStartContext | UIDefaultButtonChannelVoiceInteraction,
-        argsFromManager: UIArgs
-    ): BaseMessageOptions {
-        const result = super.getMessage();
-
-        if ( "send" === from || "edit" === from || "edit-message" === from ) {
-            if ( argsFromManager.dynamicChannelMentionable ) {
-                result.content = "<@" + argsFromManager.ownerId + ">";
-            }
-        }
-
-        return result;
     }
 
     private async onRenameButtonClicked( interaction: UIDefaultButtonChannelVoiceInteraction ) {
@@ -143,7 +137,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
             message = Object.values( messages || {} )[ 0 ];
 
         if ( !message ) {
-            return DynamicChannelAdapter.logger.error(
+            return DynamicChannelPanelAdapter.logger.error(
                 this.onClaimButtonClicked,
                 `Guild id: ${ interaction.guildId }, Channel id: ${ interaction.channelId } - No message found`
             );
@@ -162,7 +156,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
                 return;
         }
 
-        DynamicChannelAdapter.logger.error(
+        DynamicChannelPanelAdapter.logger.error(
             this.onClaimButtonClicked,
             `Guild id: ${ interaction.guildId }, Channel id: ${ interaction.channelId } - Invalid state: ${ DynamicChannelVoteManager.$.getState( interaction.channelId ) }`
         );
@@ -201,7 +195,7 @@ export class DynamicChannelAdapter extends DynamicChannelAdapterBase {
     private async getAllArgs( channel: VoiceChannel ) {
         const args: UIArgs = {
                 channelName: channel.name,
-                userLimit: ( channel as VoiceChannel ).userLimit,
+                userLimit: channel.userLimit,
 
                 isPrivate: ( await this.dynamicChannelService.getChannelState( channel ) ) === "private",
                 isHidden: ( await this.dynamicChannelService.getChannelVisibilityState( channel ) ) === "hidden",

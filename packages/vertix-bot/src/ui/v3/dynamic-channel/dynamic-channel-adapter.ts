@@ -9,7 +9,10 @@ import { DynamicChannelUIData } from "@vertix.gg/bot/src/data/dynamic-channel/dy
 
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
-import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type {
+    UIAdapterStartContext,
+    UIDefaultButtonChannelVoiceInteraction
+} from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { BaseMessageOptions, Message, VoiceChannel } from "discord.js";
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
@@ -360,7 +363,7 @@ class DynamicChannelAdapter extends DynamicChannelAdapterBase {
 
     protected getMessage(
         from: UIAdapterBuildSource,
-        context: VoiceChannel | UIDefaultButtonChannelVoiceInteraction,
+        context: UIAdapterStartContext | UIDefaultButtonChannelVoiceInteraction,
         argsFromManager: UIArgs
     ): BaseMessageOptions {
         const result = super.getMessage( from, context, argsFromManager );

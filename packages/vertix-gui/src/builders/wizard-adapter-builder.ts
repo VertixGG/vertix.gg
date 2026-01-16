@@ -30,14 +30,19 @@ export interface IWizardComponentConfig {
     baseComponent?: typeof UIWizardComponentBase;
 }
 
+type WizardAdapterBaseConstructor<TChannel extends UIAdapterStartContext, TInteraction extends UIAdapterReplyContext> =
+    ( abstract new ( ...args: never[] ) => UIWizardAdapterBase<TChannel, TInteraction> ) &
+    Omit<typeof UIWizardAdapterBase<TChannel, TInteraction>, "new">;
+
 export class WizardAdapterBuilder<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
-    TArgs extends UIArgs = UIArgs
+    TArgs extends UIArgs = UIArgs,
+    TBase extends WizardAdapterBaseConstructor<TChannel, TInteraction> = typeof UIWizardAdapterBase<TChannel, TInteraction>
 > extends AdapterBuilderBase<
         TChannel,
         TInteraction,
-        typeof UIWizardAdapterBase<TChannel, TInteraction>,
+        TBase,
         TArgs,
         IWizardAdapterContext<TInteraction, TArgs>
     > {
@@ -49,8 +54,8 @@ export class WizardAdapterBuilder<
     private onBeforeBackHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
     private onAfterFinishHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
 
-    public constructor( name: string ) {
-        super( name, UIWizardAdapterBase );
+    public constructor( name: string, adapterBase?: TBase ) {
+        super( name, ( adapterBase || UIWizardAdapterBase ) as TBase );
     }
 
     public setComponents( config: IWizardComponentConfig ): this {

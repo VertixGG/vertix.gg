@@ -32,6 +32,8 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
 
                 dynamicChannelButtonsTemplateByRole: {},
 
+                dynamicChannelControlChannelId: null,
+
                 dynamicChannelLogsChannelId: null,
 
                 dynamicChannelMentionable: true,
@@ -43,6 +45,8 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
 
             constants: {
                 dynamicChannelsCategoryName: "༄ Dynamic Channels",
+
+                dynamicChannelControlChannelName: "control-panel",
 
                 dynamicChannelStatePrivate: "🔴",
                 dynamicChannelStatePublic: "🟢",

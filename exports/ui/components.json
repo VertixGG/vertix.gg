@@ -3422,7 +3422,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelTemplates:1455093315862269963>"
+                                "emoji": "<:Templates:1455157166615826432>"
                             }
                         },
                         {
@@ -5071,7 +5071,7 @@
                                 "instanceType": "Dynamic",
                                 "label": "Apply Template",
                                 "style": "secondary",
-                                "emoji": "<:ChannelTemplates:1455093315862269963>"
+                                "emoji": "<:Templates:1455157166615826432>"
                             }
                         },
                         {
@@ -5139,7 +5139,7 @@
                                 "instanceType": "Dynamic",
                                 "label": "Apply Selected",
                                 "style": "success",
-                                "emoji": "<:ChannelTemplates:1455093315862269963>"
+                                "emoji": "<:Templates:1455157166615826432>"
                             }
                         },
                         {
@@ -5258,7 +5258,7 @@
                                 "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:ChannelTemplates:1455093315862269963>"
+                                "templatesEmoji": "<:Templates:1455157166615826432>"
                             }
                         }
                     }
@@ -5299,7 +5299,7 @@
                                 "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:ChannelTemplates:1455093315862269963>"
+                                "templatesEmoji": "<:Templates:1455157166615826432>"
                             }
                         }
                     }
@@ -5322,7 +5322,7 @@
                                 "appliedSettings": "{appliedSettings}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:ChannelTemplates:1455093315862269963>"
+                                "templatesEmoji": "<:Templates:1455157166615826432>"
                             }
                         }
                     }

@@ -26,6 +26,8 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
             constants: {
                 dynamicChannelsCategoryName: "༄ Dynamic Channels",
 
+                dynamicChannelControlChannelName: "control-panel",
+
                 dynamicChannelStatePrivate: "🔴",
                 dynamicChannelStatePublic: "🟢",
 
@@ -38,6 +40,8 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
                 dynamicChannelAutoSave: false,
 
                 dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( ( i ) => i.getId().toString() ),
+
+                dynamicChannelControlChannelId: null,
 
                 dynamicChannelLogsChannelId: null,
 

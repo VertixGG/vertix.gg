@@ -72,10 +72,13 @@ import type {
 } from "@vertix.gg/bot/src/definitions/dynamic-channel";
 
 import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type {
     Guild,
     APIPartialChannel,
+    Client,
     GuildMember,
     Interaction,
     Message,
@@ -414,42 +417,133 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     public async getPrimaryMessage( channel: VoiceChannel ) {
         let source = "cache";
 
-        let message;
+        const [ primaryMessageId, primaryMessageChannelId ] = await Promise.all( [
+            ChannelModel.$.findUnique<string>( {
+                where: { channelId: channel.id },
+                include: { data: true, key: "primaryMessageId" }
+            } ).then( ( result ) => result?.data ?? null ),
+            ChannelModel.$.findUnique<string>( {
+                where: { channelId: channel.id },
+                include: { data: true, key: "primaryMessageChannelId" }
+            } ).then( ( result ) => result?.data ?? null )
+        ] );
 
-        message = channel.messages.cache.at( 0 );
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
-        if ( !this.isPrimaryMessage( message ) ) {
-            const channelDB = await ChannelModel.$.findUnique<string>( {
-                where: {
-                    channelId: channel.id
-                },
-                include: {
-                    data: true,
-                    key: "primaryMessageId"
-                }
-            } );
+        const messageChannel = await this.resolvePrimaryMessageChannel( channel, masterChannelDB, primaryMessageChannelId );
 
-            if ( channelDB ) {
-                // TODO: ChannelDataManager.$.getSettingProperty( channelDB.id, "primaryMessageId" );
-                const primaryMessageId = channelDB.data;
+        let message = messageChannel.messages.cache.at( 0 );
 
-                if ( primaryMessageId ) {
-                    message = channel.messages.cache.get( primaryMessageId );
+        if ( !this.isPrimaryMessage( message ) && primaryMessageId ) {
+            message = messageChannel.messages.cache.get( primaryMessageId );
 
-                    if ( !message || !this.isPrimaryMessage( message ) ) {
-                        source = "fetch";
-                        message = await channel.messages.fetch( primaryMessageId );
-                    }
-                }
-
-                this.logger.debug(
-                    this.getPrimaryMessage,
-                    `Guild id: '${ channel.guildId }' - Fetching primary message for channel id: '${ channel.id }' source: '${ source }'`
-                );
+            if ( !message || !this.isPrimaryMessage( message ) ) {
+                source = "fetch";
+                message = await messageChannel.messages.fetch( primaryMessageId ).catch( () => undefined );
             }
         }
 
+        this.logger.debug(
+            this.getPrimaryMessage,
+            `Guild id: '${ channel.guildId }' - Fetching primary message for channel id: '${ channel.id }' source: '${ source }'`
+        );
+
         return message;
+    }
+
+    public async resolveTargetChannel(
+        interaction: UIAdapterReplyContext | Message<true>,
+        args?: UIArgs
+    ): Promise<VoiceChannel | null> {
+        if ( interaction.channel?.type === ChannelType.GuildVoice ) {
+            return interaction.channel;
+        }
+
+        const channelFromArgs = args?.channel as { id?: string } | null | undefined;
+        const channelIdFromArgs = typeof channelFromArgs?.id === "string" ? channelFromArgs.id : null;
+        const channelId = typeof args?.channelId === "string" ? args.channelId : channelIdFromArgs;
+
+        if ( channelId ) {
+            const cached = interaction.guild?.channels.cache.get( channelId );
+
+            if ( cached?.type === ChannelType.GuildVoice ) {
+                return cached;
+            }
+
+            const fetched = await interaction.guild?.channels.fetch( channelId ).catch( () => null );
+
+            if ( fetched?.type === ChannelType.GuildVoice ) {
+                return fetched;
+            }
+        }
+
+        if ( "user" in interaction && interaction.guild ) {
+            const member = interaction.guild.members.cache.get( interaction.user.id ) ??
+                await interaction.guild.members.fetch( interaction.user.id ).catch( () => null );
+
+            const userVoiceChannel = member?.voice.channel;
+
+            if ( userVoiceChannel?.type === ChannelType.GuildVoice ) {
+                return userVoiceChannel;
+            }
+        }
+
+        return null;
+    }
+
+    private async resolvePrimaryMessageChannel(
+        channel: VoiceChannel,
+        masterChannelDB: ChannelExtended | null,
+        storedChannelId: string | null
+    ) {
+        const storedChannel = await this.getPrimaryMessageChannelById( channel.guild, storedChannelId );
+
+        if ( storedChannel ) {
+            return storedChannel;
+        }
+
+        if ( masterChannelDB ) {
+            const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
+            const controlChannelId = settings.dynamicChannelControlChannelId;
+            const controlChannel = await this.getPrimaryMessageChannelById( channel.guild, controlChannelId );
+
+            if ( controlChannel?.type === ChannelType.GuildText ) {
+                return controlChannel;
+            }
+        }
+
+        return channel;
+    }
+
+    private async getPrimaryMessageChannelById(
+        guild: Guild,
+        channelId: string | null
+    ): Promise<TextChannel | VoiceChannel | null> {
+        if ( !channelId ) {
+            return null;
+        }
+
+        const cached = guild.channels.cache.get( channelId );
+
+        if ( cached?.type === ChannelType.GuildText ) {
+            return cached;
+        }
+
+        if ( cached?.type === ChannelType.GuildVoice ) {
+            return cached;
+        }
+
+        const fetched = await guild.channels.fetch( channelId ).catch( () => null );
+
+        if ( fetched?.type === ChannelType.GuildText ) {
+            return fetched;
+        }
+
+        if ( fetched?.type === ChannelType.GuildVoice ) {
+            return fetched;
+        }
+
+        return null;
     }
 
     public async getChannelState( channel: VoiceChannel ): Promise<ChannelState> {
@@ -507,8 +601,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-                     * TODO: This method should be dedicated and used in other places.
-                     */
+     * TODO: This method should be dedicated and used in other places.
+     */
     public async getChannelConfiguration(
         channel: VoiceChannel,
         userId: Snowflake,
@@ -774,6 +868,20 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                             key: "primaryMessageId"
                         },
                         primaryMessage.id
+                    );
+                }
+
+                if ( primaryMessage?.channel?.id ) {
+                    ChannelModel.$.getModelByVersion( masterChannelDB.version )?.create(
+                        {
+                            where: {
+                                id: dynamicChannelDB.id
+                            }
+                        },
+                        {
+                            key: "primaryMessageChannelId"
+                        },
+                        primaryMessage.channel.id
                     );
                 }
 
@@ -2235,6 +2343,68 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         return result;
+    }
+
+    public async refreshControlPanels( client: Client<true>, chunkSize = 5, messageFetchLimit = 100 ) {
+        this.logger.info( this.refreshControlPanels, "Starting control panels refresh..." );
+
+        const guilds = [ ...client.guilds.cache.values() ];
+        let refreshedCount = 0;
+
+        for ( let i = 0; i < guilds.length; i += chunkSize ) {
+            const chunk = guilds.slice( i, i + chunkSize );
+
+            await Promise.all( chunk.map( async( guild ) => {
+                const masterChannels = await ChannelModel.$.getMasters( guild.id );
+
+                for ( const masterChannelDB of masterChannels ) {
+                    const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
+                    const controlChannelId = settings.dynamicChannelControlChannelId;
+
+                    if ( !controlChannelId ) {
+                        continue;
+                    }
+
+                    const controlChannel = guild.channels.cache.get( controlChannelId ) ??
+                        await guild.channels.fetch( controlChannelId ).catch( () => null );
+
+                    if ( !controlChannel || controlChannel.type !== ChannelType.GuildText ) {
+                        continue;
+                    }
+
+                    const panelAdapterName = masterChannelDB.version === VERSION_UI_V3
+                        ? "VertixBot/UI-V3/DynamicChannelPanelAdapter"
+                        : "VertixBot/UI-V2/DynamicChannelPanelAdapter";
+
+                    const panelAdapter = this.services.uiService.get( panelAdapterName );
+
+                    if ( !panelAdapter ) {
+                        continue;
+                    }
+
+                    const panelArgs = {
+                        dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,
+                        channelId: ""
+                    };
+
+                    const messages = await controlChannel.messages.fetch( { limit: messageFetchLimit } );
+                    const firstBotMessage = messages
+                        .filter( m => m.author.id === client.user.id )
+                        .sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp )
+                        .first();
+
+                    if ( firstBotMessage ) {
+                        await panelAdapter.editMessage( firstBotMessage, panelArgs );
+                    } else {
+                        await panelAdapter.send( controlChannel, panelArgs );
+                    }
+
+                    refreshedCount++;
+                }
+            } ) );
+        }
+
+        this.logger.info( this.refreshControlPanels, `Control panels refresh completed. Refreshed ${ refreshedCount } panels.` );
     }
 
     private async onJoin( args: IChannelEnterGenericArgs ) {

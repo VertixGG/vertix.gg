@@ -800,6 +800,10 @@ export async function entryPoint( options: {
     GlobalLogger.$.info( entryPoint, "Registering services..." );
     GlobalLogger.$.info( entryPoint, "Establishing bot connection ..." );
 
+    EmojiManager.$.promise().then( () => {
+        GlobalLogger.$.info( entryPoint, "Emoji manager is initialized" );
+    } );
+
     const { default: botInitialize } = await import( "./vertix" );
     const client = await botInitialize( {
         enableListeners: options.enableListeners
@@ -812,11 +816,9 @@ export async function entryPoint( options: {
 
     GlobalLogger.$.info( entryPoint, "Services are registered" );
 
-    await registerUIAdapters();
+    await EmojiManager.$.promise();
 
-    await EmojiManager.$.promise().then( () => {
-        GlobalLogger.$.info( entryPoint, "Emoji manager is initialized" );
-    } );
+    await registerUIAdapters();
 
     await registerUILanguageManager( {
         shouldImport: false,

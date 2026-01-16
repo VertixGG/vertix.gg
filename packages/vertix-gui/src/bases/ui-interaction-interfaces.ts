@@ -31,6 +31,10 @@ export interface UIDefaultStringSelectMenuChannelVoiceInteraction extends String
     channel: VoiceChannel;
 }
 
+export interface UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction extends StringSelectMenuInteraction<"cached"> {
+    channel: VoiceChannel;
+}
+
 export interface UIDefaultUserSelectMenuChannelVoiceInteraction extends UserSelectMenuInteraction<"cached"> {
     channel: VoiceChannel;
 }

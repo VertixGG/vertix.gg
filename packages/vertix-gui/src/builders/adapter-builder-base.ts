@@ -80,10 +80,14 @@ type EntityMapHandler<TInteraction extends UIAdapterReplyContext, TArgs extends 
     binder: IBinder<TInteraction, TArgs, TContext>
 ) => Promise<void>;
 
+type AdapterBaseConstructor<TChannel extends UIAdapterStartContext, TInteraction extends UIAdapterReplyContext> =
+    ( abstract new ( ...args: never[] ) => UIAdapterBase<TChannel, TInteraction> ) &
+    Omit<typeof UIAdapterBase<TChannel, TInteraction>, "new">;
+
 export class AdapterBuilderBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext,
-    TAdapter extends  typeof UIAdapterBase <TChannel, TInteraction>,
+    TAdapter extends AdapterBaseConstructor<TChannel, TInteraction>,
     TArgs extends UIArgs,
     TContext extends IAdapterContext<TInteraction, TArgs>,
     TComponent extends UIComponentTypeConstructor = UIComponentTypeConstructor

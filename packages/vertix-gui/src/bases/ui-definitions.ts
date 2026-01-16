@@ -63,6 +63,8 @@ export type UIEntityTypesConstructor = UIEntityTypes | UIEntityConstructor | ( U
 export type UIComponentConstructor = { new ( args?: UICreateComponentArgs ): UIComponentBase };
 export type UIComponentTypeConstructor = typeof UIComponentBase & UIComponentConstructor;
 
+export type AbstractConstructor<T> = abstract new ( ...args: never[] ) => T;
+
 // export type UIEntityUnionTypes = UIEmbedTypes | UIElementsTypes;
 // export type UIEntityUnionTypesConstructor = UIElementsConstructor | UIEmbedConstructor;
 // export type UIEntityUnionTypesConstructorUnion = UIElementsTypesConstructor | UIEmbedTypesConstructor;

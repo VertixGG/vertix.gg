@@ -4,9 +4,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { WizardAdapterBuilder } from "@vertix.gg/gui/src/builders/wizard-adapter-builder";
-
-import {   ChannelType } from "discord.js";
+import { DynamicWizardAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-wizard-adapter-builder";
 
 import { DynamicChannelPrimaryMessageEditDescriptionComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/description/dynamic-channel-primary-message-edit-description-component";
 
@@ -116,10 +114,9 @@ async function onEditDescriptionModalSubmit(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent" );
 }
 
-const DynamicChannelPrimaryMessageEditAdapter = new WizardAdapterBuilder<VoiceChannel, DefaultInteraction, UIArgs>(
+const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<VoiceChannel, DefaultInteraction, UIArgs>(
     "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter"
 )
-    .setChannelTypes( [ ChannelType.GuildVoice, ChannelType.GuildText ] )
     .setComponents( {
         name: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
         components: [

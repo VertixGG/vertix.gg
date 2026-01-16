@@ -8,7 +8,7 @@ export class DynamicChannelTemplatesButton extends DynamicChannelButtonBase {
     }
 
     public static getBaseName() {
-        return "ChannelTemplates";
+        return "Templates";
     }
 
     public static getEmoji() {

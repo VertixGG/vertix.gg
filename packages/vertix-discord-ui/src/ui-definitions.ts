@@ -40,9 +40,17 @@ export interface UIButtonDefinition extends UIElementDefinitionBase {
     url?: string;
 }
 
+export interface UISelectOptionDefinition {
+    label?: string;
+    value?: string;
+    emoji?: string;
+    description?: string;
+}
+
 export interface UISelectMenuDefinition extends UIElementDefinitionBase {
     elementType: "select-menu" | "user-select" | "channel-select" | "role-select";
     placeholder?: string;
+    selectOptions?: ReadonlyArray<UISelectOptionDefinition>;
 }
 
 export type UIElementDefinition = UIButtonDefinition | UISelectMenuDefinition;
@@ -297,16 +305,46 @@ function parseElementDefinition( value: JsonObject ): UIElementDefinition | null
 
     if ( isUISelectElementType( elementType ) ) {
         const placeholder = asString( value[ "placeholder" ] );
+        const selectOptions = parseSelectOptions( value[ "selectOptions" ] );
 
         return {
             name,
             elementType,
             instanceType,
             placeholder: placeholder ?? undefined,
+            selectOptions: selectOptions.length > 0 ? selectOptions : undefined,
         };
     }
 
     return null;
+}
+
+function parseSelectOptions( value: JsonValue ): ReadonlyArray<UISelectOptionDefinition> {
+    if ( !Array.isArray( value ) ) {
+        return [];
+    }
+
+    const options: Array<UISelectOptionDefinition> = [];
+
+    for ( const optionValue of value ) {
+        if ( !isObject( optionValue ) ) {
+            continue;
+        }
+
+        const label = asString( optionValue[ "label" ] );
+        const optValue = asString( optionValue[ "value" ] );
+        const emoji = asString( optionValue[ "emoji" ] );
+        const description = asString( optionValue[ "description" ] );
+
+        options.push( {
+            label: label ?? undefined,
+            value: optValue ?? undefined,
+            emoji: emoji ?? undefined,
+            description: description ?? undefined,
+        } );
+    }
+
+    return options;
 }
 
 function parseEmbedsGroups( value: JsonValue ): ReadonlyArray<UIEmbedsGroup> {

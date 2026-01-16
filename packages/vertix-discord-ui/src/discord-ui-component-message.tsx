@@ -1,7 +1,7 @@
 import { DiscordMessage } from "./discord-message";
 import { DiscordUIComponentRenderer } from "./discord-ui-component-renderer";
 
-import type { UIElementOverride, UIEmbedOverride } from "./discord-ui-component-renderer";
+import type { UIElementOverride, UIEmbedOverride, ExpandedSelectMenuConfig } from "./discord-ui-component-renderer";
 
 export interface DiscordUIComponentMessageProps {
     author?: string;
@@ -20,6 +20,7 @@ export interface DiscordUIComponentMessageProps {
     interactionUser?: string;
     interactionUserAvatar?: string;
     interactionCommand?: string;
+    expandedSelectMenu?: ExpandedSelectMenuConfig;
 }
 
 export function DiscordUIComponentMessage( {
@@ -39,6 +40,7 @@ export function DiscordUIComponentMessage( {
     interactionUser,
     interactionUserAvatar,
     interactionCommand,
+    expandedSelectMenu,
 }: DiscordUIComponentMessageProps ) {
     return (
         <DiscordMessage
@@ -63,6 +65,7 @@ export function DiscordUIComponentMessage( {
                 preferredEmbedsGroup={ preferredEmbedsGroup }
                 preferredElementsGroup={ preferredElementsGroup }
                 hideElements={ hideElements }
+                expandedSelectMenu={ expandedSelectMenu }
             />
         </DiscordMessage>
     );

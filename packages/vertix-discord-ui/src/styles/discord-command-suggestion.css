@@ -1,0 +1,90 @@
+@import "./discord-tokens.css";
+
+.discord-command-suggestion {
+    background-color: #2b2d31;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: var(--discord-font-primary);
+    min-width: 300px;
+    max-width: 600px;
+}
+
+.discord-command-suggestion-header {
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: var(--discord-font-weight-semibold);
+    color: #949ba4;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.discord-command-suggestion-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.discord-command-suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    gap: 12px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    background-color: #35373c;
+}
+
+.discord-command-suggestion-item:hover {
+    background-color: #404249;
+}
+
+.discord-command-suggestion-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.discord-command-suggestion-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.discord-command-suggestion-icon svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+}
+
+.discord-command-suggestion-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.discord-command-suggestion-name {
+    font-size: 16px;
+    font-weight: var(--discord-font-weight-medium);
+    color: #ffffff;
+}
+
+.discord-command-suggestion-description {
+    font-size: 14px;
+    color: #949ba4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.discord-command-suggestion-bot {
+    font-size: 14px;
+    color: #949ba4;
+    flex-shrink: 0;
+}

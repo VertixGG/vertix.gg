@@ -1,0 +1,71 @@
+@import "./discord-tokens.css";
+
+.discord-button-select-dropdown {
+    background-color: #1e1f22;
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: var(--discord-font-primary);
+    min-width: 280px;
+    max-width: 400px;
+    padding: 4px 0;
+}
+
+.discord-button-select-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    gap: 12px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+}
+
+.discord-button-select-item:hover {
+    background-color: rgba(79, 84, 92, 0.3);
+}
+
+.discord-button-select-item.highlighted {
+    outline: 2px solid #ed4245;
+    outline-offset: -2px;
+    border-radius: 4px;
+}
+
+.discord-button-select-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.discord-button-select-emoji {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.discord-button-select-label {
+    font-size: 16px;
+    font-weight: var(--discord-font-weight-normal);
+    color: #ffffff;
+}
+
+.discord-button-select-checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s ease;
+    background-color: transparent;
+}
+
+.discord-button-select-checkbox.checked {
+    background-color: #5865f2;
+}
+
+.discord-button-select-checkbox svg {
+    width: 14px;
+    height: 14px;
+    color: white;
+}

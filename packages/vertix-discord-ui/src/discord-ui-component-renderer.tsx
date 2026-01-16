@@ -3,11 +3,12 @@ import * as React from "react";
 import { DiscordButton } from "./discord-button";
 import { DiscordEmbed } from "./discord-embed";
 import { DiscordSelectMenu } from "./discord-select-menu";
+import { DiscordSelectMenuDropdown } from "./discord-select-menu-dropdown";
 import { DISCORD_EMOJI_ICON_SRC_BY_NAME, DISCORD_EMOJI_ICON_SRC_BY_UNICODE } from "./discord-emojis";
 
 import { findUIEmbedDefinition, getUIComponentByName } from "./ui-definitions";
 
-import type { UIButtonStyle, UIComponent, UIElementItem, UIEmbedDefinition } from "./ui-definitions";
+import type { UIButtonStyle, UIComponent, UIElementItem, UIEmbedDefinition, UISelectMenuDefinition } from "./ui-definitions";
 
 type DiscordButtonVariant = "primary" | "secondary" | "success" | "danger" | "link" | "premium";
 
@@ -16,6 +17,7 @@ export interface UIElementOverride {
     disabled?: boolean;
     highlighted?: boolean;
     hidden?: boolean;
+    emoji?: string;
 }
 
 export interface UIEmbedOverride {
@@ -23,6 +25,21 @@ export interface UIEmbedOverride {
     description?: string;
     color?: number | string;
     templateEmbedName?: string;
+}
+
+export interface ExpandedSelectMenuOption {
+    iconEmoji?: string;
+    label: string;
+    description?: string;
+    selected?: boolean;
+    highlighted?: boolean;
+}
+
+export interface ExpandedSelectMenuConfig {
+    elementName: string;
+    options?: ReadonlyArray<ExpandedSelectMenuOption>;
+    highlightedValue?: string;
+    selectedValues?: ReadonlyArray<string>;
 }
 
 export interface DiscordUIComponentRendererProps {
@@ -34,6 +51,7 @@ export interface DiscordUIComponentRendererProps {
     preferredEmbedsGroup?: string;
     preferredElementsGroup?: string;
     hideElements?: boolean;
+    expandedSelectMenu?: ExpandedSelectMenuConfig;
 }
 
 interface ResolvedEmbedDefinition {
@@ -54,6 +72,7 @@ export function DiscordUIComponentRenderer( {
     preferredEmbedsGroup,
     preferredElementsGroup,
     hideElements,
+    expandedSelectMenu,
 }: DiscordUIComponentRendererProps ) {
     const [ component, setComponent ] = React.useState<UIComponent | null>( null );
     const [ resolvedEmbeds, setResolvedEmbeds ] = React.useState<ReadonlyArray<ResolvedEmbedDefinition>>( [] );
@@ -155,6 +174,7 @@ export function DiscordUIComponentRenderer( {
                         variables: variables,
                         elementOverrides: elementOverrides,
                         emojiIconSrcByUnicode,
+                        expandedSelectMenu,
                     } ) }
                 </div>
             ) }
@@ -223,16 +243,36 @@ function applyVariables( text: string | undefined, variables: Readonly<Record<st
     }
 
     let result = text;
+
+    const ESCAPED_OPEN_BRACE = "\u0000OPEN\u0000";
+    const ESCAPED_CLOSE_BRACE = "\u0000CLOSE\u0000";
+
+    result = result.replace( /\\{/g, ESCAPED_OPEN_BRACE );
+    result = result.replace( /\\}/g, ESCAPED_CLOSE_BRACE );
+
     if ( variables ) {
-        for ( const [ key, value ] of Object.entries( variables ) ) {
-            const regex = new RegExp( `{${ key }}`, "g" );
-            result = result.replace( regex, value );
+        let hasChanges = true;
+        let iterations = 0;
+        const maxIterations = 10;
+
+        while ( hasChanges && iterations < maxIterations ) {
+            hasChanges = false;
+            iterations += 1;
+
+            for ( const [ key, value ] of Object.entries( variables ) ) {
+                const regex = new RegExp( `\\{${ key }\\}`, "g" );
+                const newResult = result.replace( regex, value );
+
+                if ( newResult !== result ) {
+                    hasChanges = true;
+                    result = newResult;
+                }
+            }
         }
     }
 
-    // Clean up any remaining unreplaced variables like {title} or {description}
-    // to avoid showing raw template strings if they are not provided
-    result = result.replace( /{[a-zA-Z0-9_-]+}/g, "" );
+    result = result.replace( new RegExp( ESCAPED_OPEN_BRACE, "g" ), "{" );
+    result = result.replace( new RegExp( ESCAPED_CLOSE_BRACE, "g" ), "}" );
 
     return result;
 }
@@ -243,6 +283,7 @@ function renderElementRows(
         variables: Readonly<Record<string, string>> | undefined;
         elementOverrides: Readonly<Record<string, UIElementOverride>> | undefined;
         emojiIconSrcByUnicode: Readonly<Record<string, string>> | undefined;
+        expandedSelectMenu: ExpandedSelectMenuConfig | undefined;
     },
 ): React.ReactNode {
     const result: Array<React.ReactNode> = [];
@@ -307,6 +348,7 @@ function renderElement(
         variables: Readonly<Record<string, string>> | undefined;
         elementOverrides: Readonly<Record<string, UIElementOverride>> | undefined;
         emojiIconSrcByUnicode: Readonly<Record<string, string>> | undefined;
+        expandedSelectMenu: ExpandedSelectMenuConfig | undefined;
     },
 ): React.ReactNode {
     const override = context.elementOverrides?.[ item.element ];
@@ -320,8 +362,8 @@ function renderElement(
         const highlighted = override?.highlighted;
 
         const variant = mapButtonStyleToVariant( definition.style );
-        const icon = buildEmojiIcon( definition.emoji, context.emojiIconSrcByUnicode );
-        const emoji = icon ? undefined : definition.emoji;
+        const icon = buildEmojiIcon( override?.emoji ?? definition.emoji, context.emojiIconSrcByUnicode );
+        const emoji = icon ? undefined : ( override?.emoji ?? definition.emoji );
 
         return (
             <DiscordButton
@@ -343,15 +385,48 @@ function renderElement(
         || definition.elementType === "role-select"
     ) {
         const placeholder = applyVariables( definition.placeholder, context.variables );
+        const isExpanded = context.expandedSelectMenu?.elementName === item.element;
+        const expandedConfig = context.expandedSelectMenu;
+
+        let dropdownOptions: ReadonlyArray<ExpandedSelectMenuOption> | undefined;
+
+        if ( isExpanded && expandedConfig ) {
+            if ( expandedConfig.options ) {
+                dropdownOptions = expandedConfig.options;
+            } else {
+                const selectDef = definition as UISelectMenuDefinition;
+                if ( selectDef.selectOptions ) {
+                    dropdownOptions = selectDef.selectOptions.map( ( opt ) => ( {
+                        iconEmoji: opt.emoji,
+                        label: opt.label ?? "",
+                        description: opt.description,
+                        selected: expandedConfig.selectedValues?.includes( opt.value ?? "" ),
+                        highlighted: expandedConfig.highlightedValue === opt.value,
+                    } ) );
+                }
+            }
+        }
 
         return (
-            <DiscordSelectMenu
-                key={ item.element }
-                placeholder={ placeholder }
-                disabled={ override?.disabled }
-                highlighted={ Boolean( override?.highlighted ) }
-                emojiIconSrcByUnicode={ context.emojiIconSrcByUnicode }
-            />
+            <React.Fragment key={ item.element }>
+                <DiscordSelectMenu
+                    placeholder={ placeholder }
+                    disabled={ override?.disabled }
+                    highlighted={ Boolean( override?.highlighted ) }
+                    emojiIconSrcByUnicode={ context.emojiIconSrcByUnicode }
+                />
+                { isExpanded && dropdownOptions && (
+                    <DiscordSelectMenuDropdown
+                        options={ dropdownOptions.map( ( opt ) => ( {
+                            iconEmoji: opt.iconEmoji,
+                            label: opt.label,
+                            description: opt.description,
+                            selected: opt.selected,
+                            highlighted: opt.highlighted,
+                        } ) ) }
+                    />
+                ) }
+            </React.Fragment>
         );
     }
 

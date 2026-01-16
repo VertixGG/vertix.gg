@@ -204,3 +204,12 @@ export const InviteSchema = z.object( {
     temporary: z.boolean().optional().describe( "Temporary membership" ),
     unique: z.boolean().optional().describe( "Create unique invite" )
 } );
+
+export const SendFileSchema = z.object( {
+    channelId: z.string().describe( "Discord Channel ID" ),
+    url: z.string().optional().describe( "Public URL of the file to send" ),
+    base64: z.string().optional().describe( "Base64 encoded file content" ),
+    filename: z.string().describe( "Filename with extension (e.g., image.png)" ),
+    content: z.string().optional().describe( "Optional message content to send with the file" ),
+    spoiler: z.boolean().optional().describe( "Mark file as spoiler" )
+} );

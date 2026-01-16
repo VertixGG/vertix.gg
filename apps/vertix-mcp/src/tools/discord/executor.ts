@@ -29,7 +29,8 @@ import {
     GetMessagesSchema,
     SearchMembersSchema,
     GetAuditLogSchema,
-    InviteSchema
+    InviteSchema,
+    SendFileSchema
 } from "@vertix.gg/mcp/src/tools/discord/schemas";
 
 import type { TextChannel, NewsChannel, VoiceChannel, GuildTextBasedChannel } from "discord.js";
@@ -361,6 +362,11 @@ export async function executeDiscordTool( name: string, args: Record<string, unk
         case "discord_get_stickers": {
             const parsed = GuildIdSchema.parse( args );
             return getStickers( parsed.guildId );
+        }
+
+        case "discord_send_file": {
+            const parsed = SendFileSchema.parse( args );
+            return sendFile( parsed );
         }
 
         default:
@@ -1191,5 +1197,45 @@ async function getStickers( guildId: string ): Promise<ToolResult> {
         guildId,
         stickers: stickers.map( s => discordClient.serializeSticker( s ) ),
         count: stickers.size
+    };
+}
+
+async function sendFile( config: z.infer<typeof SendFileSchema> ): Promise<ToolResult> {
+    const channel = await discordClient.getChannel( config.channelId ) as GuildTextBasedChannel;
+
+    if ( ! channel || ! ( "send" in channel ) ) {
+        throw new Error( `Channel ${ config.channelId } is not a text channel` );
+    }
+
+    let attachment: { attachment: Buffer | string; name: string };
+
+    if ( config.url ) {
+        const response = await fetch( config.url );
+
+        if ( ! response.ok ) {
+            throw new Error( `Failed to fetch file from URL: ${ response.status } ${ response.statusText }` );
+        }
+
+        const buffer = Buffer.from( await response.arrayBuffer() );
+        const filename = config.spoiler ? `SPOILER_${ config.filename }` : config.filename;
+
+        attachment = { attachment: buffer, name: filename };
+    } else if ( config.base64 ) {
+        const buffer = Buffer.from( config.base64, "base64" );
+        const filename = config.spoiler ? `SPOILER_${ config.filename }` : config.filename;
+
+        attachment = { attachment: buffer, name: filename };
+    } else {
+        throw new Error( "Either url or base64 must be provided" );
+    }
+
+    const message = await channel.send( {
+        content: config.content,
+        files: [ attachment ]
+    } );
+
+    return {
+        success: true,
+        message: discordClient.serializeMessage( message )
     };
 }

@@ -757,5 +757,21 @@ export const discordToolDefinitions: Tool[] = [
             },
             required: [ "guildId" ]
         }
+    },
+    {
+        name: "discord_send_file",
+        description: "Send a file to a Discord channel. Provide either a public URL or base64 encoded content.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                channelId: { type: "string", description: "Discord Channel ID" },
+                url: { type: "string", description: "Public URL of the file to send" },
+                base64: { type: "string", description: "Base64 encoded file content" },
+                filename: { type: "string", description: "Filename with extension (e.g., image.png)" },
+                content: { type: "string", description: "Optional message content to send with the file" },
+                spoiler: { type: "boolean", description: "Mark file as spoiler" }
+            },
+            required: [ "channelId", "filename" ]
+        }
     }
 ];

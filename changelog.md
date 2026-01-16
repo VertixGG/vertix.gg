@@ -1,5 +1,14 @@
 # Changelog
 
+**Version: 0.0.13 ~ 16/01/2026**
+- New Feature:
+    - **Control Panel Channel**: A dedicated text channel is now automatically created alongside your Master Channel. This gives you a permanent place to manage all your dynamic voice channels, even when you're not in one.
+- Improvements:
+    - **Default Enabled**: The control panel channel is enabled by default when creating new Master Channels. You can toggle it off during setup if preferred.
+    - **Wizard Navigation**: Fixed an issue where "Next" and "Back" buttons weren't working correctly in some configuration wizards.
+
+---
+
 **Version: 0.0.12 ~ 02/01/2026**
 - Improvements:
     - **Stability**: Resolved Discord's `custom_id` character limit violation (100 chars) by migrating UI modules to a hashing strategy.

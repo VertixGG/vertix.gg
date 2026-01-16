@@ -1,0 +1,20 @@
+{
+    "name": "@vertix.gg/mcp",
+    "version": "0.0.0",
+    "license": "MIT",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "main": "index.ts",
+    "type": "module",
+    "scripts": {
+        "vertix-mcp:typecheck": "bunx --bun tsc --noEmit",
+        "vertix-mcp:start:dev": "bunx dotenv-cli -e ../../.env -- bun run --bun src/index.ts"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.24.3",
+        "@vertix.gg/base": "workspace:*",
+        "discord.js": "latest",
+        "dotenv": "^16.0.3",
+        "picocolors": "^1.0.1",
+        "zod": "^3.25.76"
+    }
+}

@@ -40,7 +40,7 @@
         "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:gui:jest )",
         "vertix:prisma:typecheck": "cd packages/vertix-prisma && bun run vertix-prisma:typecheck",
         "vertix:test-utils:typecheck": "cd packages/vertix-test-utils && bun run vertix-test-utils:typecheck",
-        "vertix:typecheck": "time ( bun run vertix:api:typecheck & bun run vertix:base:typecheck & bun run vertix:bot:typecheck & bun run vertix:gui:typecheck & bun run vertix:utils:typecheck & bun run vertix:prisma:typecheck & bun run vertix:test-utils:typecheck & bun run vertix:flow:typecheck & bun run vertix:website:typecheck )",
+        "vertix:typecheck": "time ( bun run vertix:api:typecheck & bun run vertix:base:typecheck & bun run vertix:bot:typecheck & bun run vertix:gui:typecheck & bun run vertix:mcp:typecheck & bun run vertix:utils:typecheck & bun run vertix:prisma:typecheck & bun run vertix:test-utils:typecheck & bun run vertix:flow:typecheck & bun run vertix:website:typecheck )",
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils",
         "vertix:utils:typecheck": "cd packages/vertix-utils && bun run vertix-utils:typecheck",
         "vertix:website:build": "cd apps/vertix-website && bun run vertix-website:build",
@@ -51,7 +51,9 @@
         "vertix:website:deploy": "cd apps/vertix-website && bun run vertix-website:deploy",
         "vertix:website:typecheck": "cd apps/vertix-website && bun run vertix-website:typecheck",
         "vertix:logger:start": "cd packages/vertix-logger && bun run vertix-logger:start",
-        "vertix:logger:dev": "cd packages/vertix-logger && bun run vertix-logger:dev"
+        "vertix:logger:dev": "cd packages/vertix-logger && bun run vertix-logger:dev",
+        "vertix:mcp:dev": "cd apps/vertix-mcp && bun run vertix-mcp:start:dev",
+        "vertix:mcp:typecheck": "cd apps/vertix-mcp && bun run vertix-mcp:typecheck"
     },
     "dependencies": {
         "@discordjs/rest": "^2.6.0",
@@ -67,6 +69,7 @@
         "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/discord-ui": "workspace:*",
         "@vertix.gg/gui": "workspace:*",
+        "@vertix.gg/mcp": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/test-utils": "workspace:*",
         "@vertix.gg/ui": "workspace:*",

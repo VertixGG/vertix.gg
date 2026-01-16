@@ -18,6 +18,17 @@
           "LOGGER_SERVER_HOST": "localhost"
         }
       },
+      "vertix-mcp": {
+        "command": "bun",
+        "args": [
+          "run",
+          "--bun",
+          "/Users/inewlegend/Desktop/dev/vertix.gg/apps/vertix-mcp/src/index.ts"
+        ],
+        "env": {
+          "AI_CHAT_DISCORD_TOKEN": "MTQ1NDc5MjY1OTE5MjI1NDU3OQ.Gb6dZr.rgpybcK5WvsFrCGwfn87revzGnQ2IkmVL4WKMs"
+        }
+      },
       "MCP Installer": {
         "command": "npx",
         "type": "stdio",

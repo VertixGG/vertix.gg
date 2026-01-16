@@ -72,7 +72,6 @@ export default function HowToSetup() {
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:33 PM"
                                 componentName="VertixBot/UI-V2/DynamicChannel"
-                                mention="@iNewLegend"
                                 variables={ {
                                     name: "iNewLegend's Office",
                                     limit: "Unlimited",

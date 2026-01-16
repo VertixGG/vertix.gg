@@ -50,6 +50,7 @@ import type { VoiceChannel } from "discord.js";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
 import type {
     UIDefaultButtonChannelTextInteraction,
@@ -160,7 +161,8 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         "**_⚙️ Configuration_**\n\n" +
         `@ ∙ Mention user in primary message: ${ v.configUserMention }\n` +
         `⫸ ∙ Auto save dynamic channels: ${ v.configAutoSave }\n` +
-        `❯❯ ∙ Send logs to custom channel: ${ v.configLogs }\n\n`
+        `❯❯ ∙ Send logs to custom channel: ${ v.configLogs }\n` +
+        `▥ ∙ Auto create control panel channel: ${ v.configControlChannelAutoCreate }\n\n`
     )
     .setOptions( ( v ) => ( {
         on: "`🟢∙On`",
@@ -180,6 +182,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         configLogs: {
             [ v.configLogsEnabled ]: v.on,
             [ v.configLogsDisabled ]: v.off
+        },
+        configControlChannelAutoCreate: {
+            [ v.configControlChannelAutoCreateEnabled ]: v.on,
+            [ v.configControlChannelAutoCreateDisabled ]: v.off
         }
     } ) )
     .setArrayOptions( {
@@ -222,6 +228,9 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             configUserMention: args.dynamicChannelMentionable ? v.configUserMentionEnabled : v.configUserMentionDisabled,
             configAutoSave: args.dynamicChannelAutoSave ? v.configAutoSaveEnabled : v.configAutoSaveDisabled,
             configLogs: processedLogsChannelId ? v.configLogsEnabled : v.configLogsDisabled,
+            configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ?
+                v.configControlChannelAutoCreateEnabled :
+                v.configControlChannelAutoCreateDisabled,
             dynamicChannelLogsChannelDisplay: processedLogsChannelId ? v.dynamicChannelLogsChannelSelected : v.dynamicChannelLogsChannelDefault,
             dynamicChannelButtonsTemplate: buttonsDisplay
         };
@@ -301,6 +310,9 @@ async function onSetupMasterEditSelected(
     if ( verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
         args.dynamicChannelIncludeEveryoneRole = true;
     }
+
+    args.dynamicChannelControlChannelAutoCreate = !!args.dynamicChannelControlChannelId;
+    args._configExtraMenuEnableControlChannelAutoCreateOption = true;
 
     args._wizardIsFinishButtonAvailable = true;
 
@@ -583,6 +595,8 @@ async function onConfigExtrasSelected(
     const args: UIArgs = context.getArgs( interaction ),
         values = interaction.values;
 
+    const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
+
     const masterChannelDB: ChannelExtended = {
         id: args.ChannelDBId,
         version: VERSION_UI_V3
@@ -605,6 +619,16 @@ async function onConfigExtrasSelected(
             case "dynamicChannelLogsChannel":
                 args.dynamicChannelLogsChannelId = null;
                 await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, args.dynamicChannelLogsChannelId );
+                break;
+
+            case "dynamicChannelControlChannelAutoCreate":
+                args.dynamicChannelControlChannelAutoCreate = !!parseInt( parted[ 1 ] );
+                await masterChannelService.updateControlChannel( {
+                    guildId: interaction.guildId,
+                    masterChannelId: args.masterChannelId,
+                    version: VERSION_UI_V3,
+                    enable: args.dynamicChannelControlChannelAutoCreate
+                } );
                 break;
         }
     }

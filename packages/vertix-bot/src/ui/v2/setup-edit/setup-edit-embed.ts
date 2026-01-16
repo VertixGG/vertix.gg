@@ -31,6 +31,10 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
         configLogsEnabled: uiUtilsWrapAsTemplate( "configLogsEnabled" ),
         configLogsDisabled: uiUtilsWrapAsTemplate( "configLogsDisabled" ),
 
+        configControlChannelAutoCreate: uiUtilsWrapAsTemplate( "configControlChannelAutoCreate" ),
+        configControlChannelAutoCreateEnabled: uiUtilsWrapAsTemplate( "configControlChannelAutoCreateEnabled" ),
+        configControlChannelAutoCreateDisabled: uiUtilsWrapAsTemplate( "configControlChannelAutoCreateDisabled" ),
+
         dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" ),
         dynamicChannelLogsChannelId: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelId" ),
 
@@ -85,6 +89,9 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
             "\n" +
             "❯❯ ∙ Send logs to custom channel: " +
             SetupEditEmbed.vars.configLogs +
+            "\n" +
+            "▥ ∙ Auto create control panel channel: " +
+            SetupEditEmbed.vars.configControlChannelAutoCreate +
             "\n\n"
         );
     }
@@ -110,7 +117,10 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
             configAutoSaveDisabled,
 
             configLogsEnabled,
-            configLogsDisabled
+            configLogsDisabled,
+
+            configControlChannelAutoCreateEnabled,
+            configControlChannelAutoCreateDisabled
         } = SetupEditEmbed.vars;
 
         return {
@@ -135,6 +145,11 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
             configLogs: {
                 [ configLogsEnabled ]: on,
                 [ configLogsDisabled ]: off
+            },
+
+            configControlChannelAutoCreate: {
+                [ configControlChannelAutoCreateEnabled ]: on,
+                [ configControlChannelAutoCreateDisabled ]: off
             }
         };
     }
@@ -176,6 +191,10 @@ export class SetupEditEmbed extends ChannelButtonsTemplateEmbed {
             configLogs: processedLogsChannelId
                 ? SetupEditEmbed.vars.configLogsEnabled
                 : SetupEditEmbed.vars.configLogsDisabled,
+
+            configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate
+                ? SetupEditEmbed.vars.configControlChannelAutoCreateEnabled
+                : SetupEditEmbed.vars.configControlChannelAutoCreateDisabled,
 
             dynamicChannelLogsChannelDisplay: processedLogsChannelId
                 ? SetupEditEmbed.vars.dynamicChannelLogsChannelSelected

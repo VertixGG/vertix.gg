@@ -22,6 +22,7 @@ import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 
 import type {
     UIDefaultButtonChannelTextInteraction,
@@ -237,6 +238,9 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, SetupEdi
             args.dynamicChannelIncludeEveryoneRole = true;
         }
 
+        args.dynamicChannelControlChannelAutoCreate = !!args.dynamicChannelControlChannelId;
+        args._configExtraMenuEnableControlChannelAutoCreateOption = true;
+
         // For verified roles.
         args._wizardIsFinishButtonAvailable = true;
 
@@ -402,6 +406,8 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, SetupEdi
         const args: UIArgs = this.getArgsManager().getArgs( this, interaction ),
             values = interaction.values;
 
+        const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
+
         // TODO: Find better way to handle this
         const masterChannelDB: any = {
             id: args.ChannelDBId,
@@ -434,6 +440,16 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, SetupEdi
                         masterChannelDB,
                         args.dynamicChannelLogsChannelId
                     );
+                    break;
+
+                case "dynamicChannelControlChannelAutoCreate":
+                    args.dynamicChannelControlChannelAutoCreate = !!parseInt( parted[ 1 ] );
+                    await masterChannelService.updateControlChannel( {
+                        guildId: interaction.guildId,
+                        masterChannelId: args.masterChannelId,
+                        version: VERSION_UI_V2,
+                        enable: args.dynamicChannelControlChannelAutoCreate
+                    } );
                     break;
             }
         }

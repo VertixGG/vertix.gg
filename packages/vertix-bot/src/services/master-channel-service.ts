@@ -103,6 +103,13 @@ interface ICreateControlChannelResult {
     channel: UIAdapterStartContext;
 }
 
+interface IUpdateControlChannelArgs {
+    guildId: string;
+    masterChannelId: string;
+    version: TVersionType;
+    enable: boolean;
+}
+
 export class MasterChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
     uiService: UIService;
@@ -187,6 +194,89 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             channelId: controlChannelResult.channel.id,
             channel: controlChannelResult.channel
         };
+    }
+
+    public async updateControlChannel( args: IUpdateControlChannelArgs ): Promise<string | null> {
+        const guild =
+            this.services.appService.getClient().guilds.cache.get( args.guildId ) ||
+            await this.services.appService.getClient().guilds.fetch( args.guildId );
+
+        const masterChannel = guild.channels.cache.get( args.masterChannelId ) ||
+            await guild.channels.fetch( args.masterChannelId ).catch( () => null );
+
+        if ( !masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
+            return null;
+        }
+
+        const masterChannelDB = await ChannelModel.$.getByChannelId( args.masterChannelId );
+
+        if ( !masterChannelDB ) {
+            return null;
+        }
+
+        const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
+        const controlChannelId = settings.dynamicChannelControlChannelId ?? null;
+
+        if ( !args.enable ) {
+            if ( controlChannelId ) {
+                const controlChannel = guild.channels.cache.get( controlChannelId ) ||
+                    await guild.channels.fetch( controlChannelId ).catch( () => null );
+
+                if ( controlChannel ) {
+                    await this.services.channelService.delete( {
+                        guild,
+                        channel: controlChannel as GuildChannel
+                    } );
+                }
+            }
+
+            await MasterChannelDataManager.$.setChannelControlChannel( masterChannelDB, null );
+
+            return null;
+        }
+
+        if ( controlChannelId ) {
+            const existing = guild.channels.cache.get( controlChannelId ) ||
+                await guild.channels.fetch( controlChannelId ).catch( () => null );
+
+            if ( existing ) {
+                return controlChannelId;
+            }
+        }
+
+        const config =
+            args.version === VERSION_UI_V3
+                ? ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 )
+                : ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
+
+        const constants = args.version === VERSION_UI_V3 ? config.get( "constants" ) : config.data.constants;
+        const defaultSettings = args.version === VERSION_UI_V3 ? config.get( "settings" ) : config.data.settings;
+
+        const buttonsTemplate = settings.dynamicChannelButtonsTemplate || defaultSettings.dynamicChannelButtonsTemplate;
+
+        const parent = masterChannel.parent;
+
+        if ( !parent || parent.type !== ChannelType.GuildCategory ) {
+            return null;
+        }
+
+        const controlChannelResult = await this.createControlChannelWithPanel( {
+            parent,
+            guild,
+            version: args.version,
+            userOwnerId: masterChannelDB.userOwnerId,
+            masterChannel: masterChannel as GuildChannel,
+            controlChannelName: constants.dynamicChannelControlChannelName,
+            buttonsTemplate
+        } );
+
+        if ( !controlChannelResult ) {
+            return null;
+        }
+
+        await MasterChannelDataManager.$.setChannelControlChannel( masterChannelDB, controlChannelResult.channelId );
+
+        return controlChannelResult.channelId;
     }
 
     public async onJoinMasterChannel( args: IChannelEnterGenericArgs ) {

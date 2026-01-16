@@ -300,4 +300,26 @@ export class MasterChannelDataManager extends InitializeBase {
             dynamicChannelLogsChannelId: channelId
         } );
     }
+
+    public async setChannelControlChannel(
+        masterChannelDB: ChannelExtended,
+        channelId: string | null,
+        shouldAdminLog = true
+    ) {
+        this.logger.log(
+            this.setChannelControlChannel,
+            `Master channel id: '${ masterChannelDB.id }' - Setting control panel channel: '${ channelId }'`
+        );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setChannelControlChannel,
+                `▥ Set control panel channel - masterChannelId: "${ masterChannelDB.id }" channelId: "${ channelId }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelControlChannelId: channelId
+        } );
+    }
 }

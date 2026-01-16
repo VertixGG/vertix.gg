@@ -20,6 +20,8 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
 
 import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
+import { DeleteButton } from "@vertix.gg/bot/src/ui/general/decision/delete-button";
+import { DeleteConfirmModal } from "@vertix.gg/bot/src/ui/general/decision/delete-confirm-modal";
 import { ConfigExtrasSelectMenu } from "@vertix.gg/bot/src/ui/general/config-extras/config-extras-select-menu";
 import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-modal";
 import { LogChannelSelectMenu } from "@vertix.gg/bot/src/ui/v3/logs-channel/log-channel-select-menu";
@@ -242,7 +244,7 @@ const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupE
     .addRow( [ SetupEditSelectEditOptionMenu ] )
     .addRow( [ ConfigExtrasSelectMenu ] )
     .addRow( [ LogChannelSelectMenu ] )
-    .addRow( [ DoneButton ] )
+    .addRow( [ DoneButton, DeleteButton ] )
     .build();
 
 const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsElementsGroup" )
@@ -277,6 +279,7 @@ const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ConfigComponen
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
     .addModal( ChannelNameTemplateModal )
+    .addModal( DeleteConfirmModal )
     .setDefaultElementsGroup( "VertixBot/UI-V3/SetupEditElementsGroup" )
     .setDefaultEmbedsGroup( "VertixBot/UI-V3/SetupEditEmbedGroup" )
     .setInstanceType( UIInstancesTypes.Static )
@@ -586,6 +589,55 @@ async function onDoneButtonClicked(
             .get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction, {} );
         return;
     }
+}
+
+async function onDeleteButtonClicked(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    await context.showModal( interaction, "VertixBot/UI-General/DeleteConfirmModal" );
+}
+
+async function onDeleteConfirmModalSubmitted(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultModalChannelTextInteraction
+) {
+    const inputId = context.customIdStrategy.generateId(
+        "VertixBot/UI-V3/SetupEditAdapter:VertixBot/UI-General/DeleteConfirmInput"
+    );
+
+    const value = interaction.fields.getTextInputValue( inputId );
+
+    if ( value.trim().toLowerCase() !== "delete" ) {
+        return;
+    }
+
+    const args: UIArgs = context.getArgs( interaction );
+    const masterChannelId = args.masterChannelId;
+
+    if ( typeof masterChannelId !== "string" || !masterChannelId ) {
+        return;
+    }
+
+    const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
+
+    const deleted = await masterChannelService.deleteMasterChannelWithCleanup( {
+        guildId: interaction.guildId,
+        masterChannelId
+    } );
+
+    if ( !deleted ) {
+        return;
+    }
+
+    context.deleteArgs( interaction );
+
+    if ( !interaction.channel ) {
+        return;
+    }
+
+    ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+        .get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction, {} );
 }
 
 async function onConfigExtrasSelected(
@@ -1171,6 +1223,23 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         );
 
         bindButton<UIDefaultButtonChannelTextInteraction>(
+            "VertixBot/UI-General/DeleteButton",
+            onDeleteButtonClicked,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupEditFlow",
+                        transition: "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
+                            executionStep: "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
+            }
+        );
+
+        bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/WizardBackButton",
             onBackButtonClicked,
             {
@@ -1202,6 +1271,23 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                         mutations: [
                             { type: "set", path: [ "dynamicChannelVerifiedRoles" ] }
                         ]
+                    }
+                ]
+            }
+        );
+
+        bindModal<UIDefaultModalChannelTextInteraction>(
+            "VertixBot/UI-General/DeleteConfirmModal",
+            onDeleteConfirmModalSubmitted,
+            {
+                flowTriggers: [
+                    {
+                        flowName: "VertixBot/UI-V3/SetupEditFlow",
+                        transition: "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed",
+                        navigation: {
+                            targetState: "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
+                            executionStep: "default"
+                        }
                     }
                 ]
             }

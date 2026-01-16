@@ -200,6 +200,11 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, SetupEdi
         );
 
         this.bindButton<UIDefaultButtonChannelTextInteraction>(
+            "VertixBot/UI-General/DeleteButton",
+            this.onDeleteButtonClicked
+        );
+
+        this.bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/WizardBackButton",
             this.onBackButtonClicked
         );
@@ -207,6 +212,11 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, SetupEdi
         this.bindButton<UIDefaultButtonChannelTextInteraction>(
             "VertixBot/UI-General/WizardFinishButton",
             this.onFinishButtonClicked
+        );
+
+        this.bindModal<UIDefaultModalChannelTextInteraction>(
+            "VertixBot/UI-General/DeleteConfirmModal",
+            this.onDeleteConfirmModalSubmitted
         );
     }
 
@@ -400,6 +410,48 @@ export class SetupEditAdapter extends AdminAdapterExuBase<VoiceChannel, SetupEdi
         }
 
         this.deleteArgs( interaction );
+    }
+
+    private async onDeleteButtonClicked( interaction: UIDefaultButtonChannelTextInteraction ) {
+        await this.showModal( "VertixBot/UI-General/DeleteConfirmModal", interaction );
+    }
+
+    private async onDeleteConfirmModalSubmitted( interaction: UIDefaultModalChannelTextInteraction ) {
+        const inputId = this.customIdStrategy.generateId(
+            "VertixBot/UI-V2/SetupEditAdapter:VertixBot/UI-General/DeleteConfirmInput"
+        );
+
+        const value = interaction.fields.getTextInputValue( inputId );
+
+        if ( value.trim().toLowerCase() !== "delete" ) {
+            return;
+        }
+
+        const args: UIArgs = this.getArgsManager().getArgs( this, interaction );
+        const masterChannelId = args.masterChannelId;
+
+        if ( typeof masterChannelId !== "string" || !masterChannelId ) {
+            return;
+        }
+
+        const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
+
+        const deleted = await masterChannelService.deleteMasterChannelWithCleanup( {
+            guildId: interaction.guildId,
+            masterChannelId
+        } );
+
+        if ( !deleted ) {
+            return;
+        }
+
+        this.deleteArgs( interaction );
+
+        if ( !interaction.channel ) {
+            return;
+        }
+
+        this.uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
     }
 
     private async onConfigExtrasSelected( interaction: UIDefaultStringSelectMenuChannelTextInteraction ) {

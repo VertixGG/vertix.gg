@@ -1,6 +1,7 @@
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
 import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
+import { DeleteButton } from "@vertix.gg/bot/src/ui/general/decision/delete-button";
 
 import { ConfigExtrasSelectMenu } from "@vertix.gg/bot/src/ui/general/config-extras/config-extras-select-menu";
 
@@ -14,6 +15,11 @@ export class SetupEditElementsGroup extends UIElementsGroupBase {
     }
 
     public static getItems() {
-        return [ [ SetupEditSelectEditOptionMenu ], [ ConfigExtrasSelectMenu ], [ LogChannelSelectMenu ], [ DoneButton ] ];
+        return [
+            [ SetupEditSelectEditOptionMenu ],
+            [ ConfigExtrasSelectMenu ],
+            [ LogChannelSelectMenu ],
+            [ DoneButton, DeleteButton ]
+        ];
     }
 }

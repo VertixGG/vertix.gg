@@ -5,6 +5,7 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 
 // TODO: Use index
 import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-modal";
+import { DeleteConfirmModal } from "@vertix.gg/bot/src/ui/general/decision/delete-confirm-modal";
 
 import { SetupEditElementsGroup } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit-elements-group";
 import { SetupEditButtonsElementsGroup } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-buttons/setup-edit-buttons-elements-group";
@@ -52,7 +53,7 @@ export class SetupEditComponent extends UIComponentBase {
     }
 
     protected static getModals() {
-        return [ ChannelNameTemplateModal ];
+        return [ ChannelNameTemplateModal, DeleteConfirmModal ];
     }
 
     public static getDefaultElementsGroup() {

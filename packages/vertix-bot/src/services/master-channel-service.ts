@@ -483,6 +483,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             `➖  Master channel has been deleted - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild.memberCount })`
         );
 
+        const masterChannelDB = await ChannelModel.$.getByChannelId( channel.id );
+
         const dynamicChannelsDB = await ChannelModel.$.getDynamicsByMasterId( channel.guildId, channel.id );
 
         for ( const dynamicChannelDB of dynamicChannelsDB ) {
@@ -503,11 +505,68 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             } );
         }
 
-        const where = {
-            channelId: channel.id
-        };
+        if ( masterChannelDB ) {
+            const where = {
+                channelId: channel.id
+            };
 
-        await ChannelModel.$.delete( where );
+            await ChannelModel.$.delete( where );
+        }
+    }
+
+    public async deleteMasterChannelWithCleanup( args: {
+        guildId: string;
+        masterChannelId: string;
+    } ) {
+        const guild =
+            this.services.appService.getClient().guilds.cache.get( args.guildId ) ||
+            await this.services.appService.getClient().guilds.fetch( args.guildId );
+
+        const masterChannel = guild.channels.cache.get( args.masterChannelId ) ||
+            await guild.channels.fetch( args.masterChannelId ).catch( () => null );
+
+        if ( !masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
+            return false;
+        }
+
+        const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannel.id );
+
+        if ( !masterChannelDB ) {
+            return false;
+        }
+
+        const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
+        const controlChannelId = settings.dynamicChannelControlChannelId ?? null;
+
+        if ( controlChannelId ) {
+            const controlChannel = guild.channels.cache.get( controlChannelId ) ||
+                await guild.channels.fetch( controlChannelId ).catch( () => null );
+
+            if ( controlChannel ) {
+                await this.services.channelService.delete( {
+                    guild,
+                    channel: controlChannel as GuildChannel
+                } );
+            }
+        }
+
+        const voiceChannel = masterChannel as VoiceBasedChannel;
+
+        await this.onDeleteMasterChannel( voiceChannel );
+
+        const parent = masterChannel.parent;
+
+        await voiceChannel.delete().catch( ( e ) => this.logger.error( this.deleteMasterChannelWithCleanup, "", e ) );
+
+        if ( parent && parent.type === ChannelType.GuildCategory ) {
+            const remaining = guild.channels.cache.filter( ( channel ) => channel.parentId === parent.id );
+
+            if ( remaining.size === 0 ) {
+                await CategoryManager.$.delete( parent );
+            }
+        }
+
+        return true;
     }
 
     public async createMasterChannel( args: IMasterChannelCreateArgs ) {

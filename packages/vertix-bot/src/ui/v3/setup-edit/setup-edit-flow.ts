@@ -51,7 +51,9 @@ export class SetupEditFlow extends UIFlowBase<string, string, SetupEditFlowData>
                 "VertixBot/UI-V3/SetupEditFlow/Transitions/LogChannelUpdated",
                 "VertixBot/UI-V3/SetupEditFlow/Transitions/NameTemplateSubmitted",
                 "VertixBot/UI-V3/SetupEditFlow/Transitions/Done",
-                "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenNameModal"
+                "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenNameModal",
+                "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal",
+                "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed"
             ],
             "VertixBot/UI-V3/SetupEditFlow/States/Buttons": [
                 "VertixBot/UI-V3/SetupEditFlow/Transitions/ShowButtonsEffect",
@@ -141,6 +143,16 @@ export class SetupEditFlow extends UIFlowBase<string, string, SetupEditFlowData>
                 targetFlowName: flowName
             },
             {
+                triggeringElementId: "VertixBot/UI-General/DeleteButton",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal",
+                targetFlowName: flowName
+            },
+            {
+                triggeringElementId: "VertixBot/UI-General/DeleteConfirmModal",
+                transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed",
+                targetFlowName: flowName
+            },
+            {
                 triggeringElementId: "VertixBot/UI-General/WizardBackButton",
                 transitionName: "VertixBot/UI-V3/SetupEditFlow/Transitions/Back",
                 targetFlowName: flowName
@@ -168,6 +180,8 @@ export class SetupEditFlow extends UIFlowBase<string, string, SetupEditFlowData>
             "VertixBot/UI-V3/SetupEditFlow/Transitions/VerifiedRolesEveryoneToggled": "VertixBot/UI-V3/SetupEditFlow/States/VerifiedRoles",
             "VertixBot/UI-V3/SetupEditFlow/Transitions/NameTemplateSubmitted": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
             "VertixBot/UI-V3/SetupEditFlow/Transitions/Done": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
+            "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
+            "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed": "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
             "VertixBot/UI-V3/SetupEditFlow/Transitions/Back": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
             "VertixBot/UI-V3/SetupEditFlow/Transitions/Finish": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview"
         };
@@ -180,7 +194,8 @@ export class SetupEditFlow extends UIFlowBase<string, string, SetupEditFlowData>
             "VertixBot/UI-V3/SetupEditFlow/Transitions/ShowButtonsEffect": [ "dynamicChannelButtonsTemplate" ],
             "VertixBot/UI-V3/SetupEditFlow/Transitions/VerifiedRolesUpdated": [ "dynamicChannelVerifiedRoles" ],
             "VertixBot/UI-V3/SetupEditFlow/Transitions/VerifiedRolesEveryoneToggled": [ "dynamicChannelVerifiedRoles" ],
-            "VertixBot/UI-V3/SetupEditFlow/Transitions/NameTemplateSubmitted": [ "masterChannelId" ]
+            "VertixBot/UI-V3/SetupEditFlow/Transitions/NameTemplateSubmitted": [ "masterChannelId" ],
+            "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed": [ "masterChannelId" ]
         };
     }
 

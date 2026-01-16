@@ -3055,7 +3055,9 @@
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/LogChannelUpdated",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/NameTemplateSubmitted",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/Done",
-                    "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenNameModal"
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenNameModal",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed"
                 ],
                 "hooks": [],
                 "options": {
@@ -3332,6 +3334,36 @@
                 ]
             },
             {
+                "from": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/DeleteButton/VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal",
+                        "sourceEntity": "VertixBot/UI-General/DeleteButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Modal/VertixBot/UI-General/DeleteConfirmModal/VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed",
+                        "sourceEntity": "VertixBot/UI-General/DeleteConfirmModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
                 "from": "VertixBot/UI-V3/SetupEditFlow/Transitions/Back",
                 "to": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
                 "triggeredBy": [
@@ -3403,6 +3435,12 @@
             },
             {
                 "transition": "VertixBot/UI-V3/SetupEditFlow/Transitions/NameTemplateSubmitted",
+                "fields": [
+                    "masterChannelId"
+                ]
+            },
+            {
+                "transition": "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed",
                 "fields": [
                     "masterChannelId"
                 ]
@@ -3488,6 +3526,16 @@
             {
                 "triggeringElementId": "VertixBot/UI-General/DoneButton",
                 "transitionName": "VertixBot/UI-V3/SetupEditFlow/Transitions/Done",
+                "targetFlowName": "VertixBot/UI-V3/SetupEditFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-General/DeleteButton",
+                "transitionName": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal",
+                "targetFlowName": "VertixBot/UI-V3/SetupEditFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-General/DeleteConfirmModal",
+                "transitionName": "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed",
                 "targetFlowName": "VertixBot/UI-V3/SetupEditFlow"
             },
             {

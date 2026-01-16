@@ -1,9 +1,9 @@
 {
     "schemaVersion": "1.0.0",
-    "exportedAt": "2026-01-07T05:40:51.198Z",
+    "exportedAt": "2026-01-16T08:49:09.823Z",
     "counts": {
-        "components": 39,
-        "adapters": 34,
+        "components": 42,
+        "adapters": 37,
         "flows": 22
     },
     "modules": [
@@ -14,47 +14,47 @@
     "moduleSummary": [
         {
             "module": "VertixBot/UI-General/Module",
-            "components": 6,
-            "adapters": 6,
+            "components": 7,
+            "adapters": 7,
             "flows": 5,
             "embeds": {
-                "total": 7,
-                "withDefinition": 7,
+                "total": 8,
+                "withDefinition": 8,
                 "missingDefinition": 0
             },
-            "componentsWithEmbeds": 6,
+            "componentsWithEmbeds": 7,
             "componentsWithMissingEmbeds": 0
         },
         {
             "module": "VertixBot/UI-V2/Module",
-            "components": 12,
-            "adapters": 12,
+            "components": 13,
+            "adapters": 13,
             "flows": 0,
             "embeds": {
-                "total": 49,
-                "withDefinition": 45,
+                "total": 50,
+                "withDefinition": 46,
                 "missingDefinition": 4
             },
-            "componentsWithEmbeds": 12,
+            "componentsWithEmbeds": 13,
             "componentsWithMissingEmbeds": 3
         },
         {
             "module": "VertixBot/UI-V3/Module",
-            "components": 21,
-            "adapters": 16,
+            "components": 22,
+            "adapters": 17,
             "flows": 14,
             "embeds": {
-                "total": 61,
-                "withDefinition": 61,
+                "total": 62,
+                "withDefinition": 62,
                 "missingDefinition": 0
             },
-            "componentsWithEmbeds": 21,
+            "componentsWithEmbeds": 22,
             "componentsWithMissingEmbeds": 0
         }
     ],
     "embedCoverage": {
-        "total": 117,
-        "withDefinition": 113,
+        "total": 120,
+        "withDefinition": 116,
         "missingDefinition": 4
     }
 }

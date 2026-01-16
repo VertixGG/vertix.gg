@@ -361,6 +361,22 @@
         ]
     },
     {
+        "name": "VertixBot/UI-General/NoActiveDynamicChannelAdapter",
+        "adapterKind": "base",
+        "component": "VertixBot/UI-General/NoActiveDynamicChannelComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Dynamic",
+        "permissions": "0",
+        "executionSteps": [],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-General/NoActiveDynamicChannelAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-General/AIAgentAdapter",
         "adapterKind": "base",
         "component": "VertixBot/UI-General/AIAgentComponent",
@@ -536,7 +552,8 @@
         "module": "VertixBot/UI-V2/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [],
@@ -550,7 +567,8 @@
         "module": "VertixBot/UI-V2/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [],
@@ -564,7 +582,8 @@
         "module": "VertixBot/UI-V2/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -607,7 +626,8 @@
         "module": "VertixBot/UI-V2/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -644,13 +664,29 @@
         "hooks": []
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelPanelAdapter",
+        "adapterKind": "base",
+        "component": "VertixBot/UI-V2/DynamicChannelPanel",
+        "module": "VertixBot/UI-V2/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [],
+        "bindings": [],
+        "hooks": []
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
         "module": "VertixBot/UI-V2/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -756,7 +792,8 @@
         "module": "VertixBot/UI-V2/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [],
@@ -770,7 +807,8 @@
         "module": "VertixBot/UI-V2/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -1183,7 +1221,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -1404,7 +1443,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -1511,7 +1551,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -1620,13 +1661,93 @@
         ]
     },
     {
+        "name": "VertixBot/UI-V3/DynamicChannelPanelAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V3/DynamicChannelPanel",
+        "module": "VertixBot/UI-V3/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelPanel/EmbedsGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelRenameButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelRenameButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelLimitMetaButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPrivacyButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelRegionButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelRegionButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelClearChatButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClearChatButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelResetChannelButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+                "kind": "button"
+            },
+            {
+                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTemplatesButton",
+                "kind": "button"
+            }
+        ],
+        "hooks": []
+    },
+    {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -2096,7 +2217,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -2192,7 +2314,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -2250,7 +2373,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -2365,7 +2489,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -2423,7 +2548,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -2548,7 +2674,8 @@
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Dynamic",
         "channelTypes": [
-            "GuildVoice"
+            "GuildVoice",
+            "GuildText"
         ],
         "permissions": "0",
         "executionSteps": [
@@ -3057,6 +3184,24 @@
                 ]
             },
             {
+                "entity": "VertixBot/UI-General/DeleteButton",
+                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/DeleteButton",
+                "kind": "button",
+                "flowTriggers": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/DeleteButton",
+                        "sourceEntity": "VertixBot/UI-General/DeleteButton",
+                        "handlerKind": "button",
+                        "flowName": "VertixBot/UI-V3/SetupEditFlow",
+                        "transition": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenDeleteModal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
+            },
+            {
                 "entity": "VertixBot/UI-General/WizardBackButton",
                 "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/WizardBackButton",
                 "kind": "button",
@@ -3097,6 +3242,24 @@
                                 ]
                             }
                         ]
+                    }
+                ]
+            },
+            {
+                "entity": "VertixBot/UI-General/DeleteConfirmModal",
+                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Modal/VertixBot/UI-General/DeleteConfirmModal",
+                "kind": "modal",
+                "flowTriggers": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Modal/VertixBot/UI-General/DeleteConfirmModal",
+                        "sourceEntity": "VertixBot/UI-General/DeleteConfirmModal",
+                        "handlerKind": "modal",
+                        "flowName": "VertixBot/UI-V3/SetupEditFlow",
+                        "transition": "VertixBot/UI-V3/SetupEditFlow/Transitions/DeleteConfirmed",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
+                            "executionStep": "default"
+                        }
                     }
                 ]
             }
@@ -3286,6 +3449,12 @@
                                 "type": "set",
                                 "path": [
                                     "dynamicChannelAutoSave"
+                                ]
+                            },
+                            {
+                                "type": "set",
+                                "path": [
+                                    "dynamicChannelControlChannelAutoCreate"
                                 ]
                             }
                         ]

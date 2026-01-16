@@ -856,7 +856,68 @@ export class UIDefinitionExporter extends UIBase {
             }
         }
 
+        if ( definition.elementType === "select-menu" ) {
+            const selectOptions = await this.extractSelectOptionsForElement( element, name );
+            if ( selectOptions?.length ) {
+                definition.selectOptions = selectOptions;
+            }
+        }
+
         return definition;
+    }
+
+    private async extractSelectOptionsForElement(
+        element: unknown,
+        elementName: string
+    ): Promise<Array<{ label?: string; value?: string; emoji?: string; description?: string }> | undefined> {
+        if ( !element || typeof element !== "function" ) {
+            return undefined;
+        }
+
+        const ElementClass = element as {
+            prototype?: {
+                getSelectOptions?: () => Promise<Array<{ label?: string; value?: string; emoji?: string; description?: string }>>;
+            };
+        };
+
+        const proto = ElementClass.prototype;
+
+        if ( !proto?.getSelectOptions ) {
+            return undefined;
+        }
+
+        try {
+            const mockInstance = Object.create( proto );
+            mockInstance.uiArgs = {};
+
+            const options = await mockInstance.getSelectOptions();
+
+            if ( !Array.isArray( options ) || options.length === 0 ) {
+                this.logger.debug(
+                    "extractSelectOptionsForElement",
+                    `No selectOptions found for '${ elementName }'`
+                );
+                return undefined;
+            }
+
+            this.logger.info(
+                "extractSelectOptionsForElement",
+                `Extracted ${ options.length } selectOptions for '${ elementName }'`
+            );
+
+            return options.map( ( opt ) => ( {
+                label: opt.label,
+                value: opt.value,
+                emoji: opt.emoji,
+                description: opt.description,
+            } ) );
+        } catch ( error ) {
+            this.logger.warn(
+                "extractSelectOptionsForElement",
+                `Failed to get selectOptions for '${ elementName }': ${ error }`
+            );
+            return undefined;
+        }
     }
 
     private resolveElementType(

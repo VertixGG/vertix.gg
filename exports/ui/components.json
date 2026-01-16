@@ -167,7 +167,25 @@
                                 "name": "VertixBot/UI-General/LanguageSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🌍 Select Language"
+                                "placeholder": "🌍 Select Language",
+                                "selectOptions": [
+                                    {
+                                        "label": "🇺🇸 English",
+                                        "value": "en"
+                                    },
+                                    {
+                                        "label": "🇺🇸 English",
+                                        "value": "en"
+                                    },
+                                    {
+                                        "label": "🇷🇺 Russian",
+                                        "value": "ru"
+                                    },
+                                    {
+                                        "label": "🇬🇷 Greek",
+                                        "value": "el"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -256,7 +274,27 @@
                                 "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "➕ ∙ Create Master Channel"
+                                "placeholder": "➕ ∙ Create Master Channel",
+                                "selectOptions": [
+                                    {
+                                        "label": "Dynamic Channel (V2)",
+                                        "value": "v2",
+                                        "emoji": "➕",
+                                        "description": "Classic dynamic voice channels"
+                                    },
+                                    {
+                                        "label": "Dynamic Channel (V3)",
+                                        "value": "v3",
+                                        "emoji": "✨",
+                                        "description": "Enhanced dynamic channels with more features"
+                                    },
+                                    {
+                                        "label": "Auto-Scaling Channel",
+                                        "value": "scaling",
+                                        "emoji": "📈",
+                                        "description": "Automatically scales based on member count"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -519,6 +557,47 @@
                             "instanceType": "Dynamic",
                             "title": "⛔  This is not your channel!",
                             "description": "But you can open your own channel :)\n\n Just click here: <#{masterChannelId}>",
+                            "color": 16732674,
+                            "vars": {
+                                "masterChannelId": "{masterChannelId}"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/NoActiveDynamicChannelComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/NoActiveDynamicChannelComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "⛔  No active dynamic channel",
+                            "description": "You don't own an active dynamic channel.\n\nJoin <#{masterChannelId}> to create your own channel first.",
                             "color": 16732674,
                             "vars": {
                                 "masterChannelId": "{masterChannelId}"
@@ -1525,6 +1604,170 @@
         }
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelPanel",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaRenameButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelMetaRenameButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Rename",
+                                "style": "secondary",
+                                "emoji": "✏️"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaLimitButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelMetaLimitButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Limit",
+                                "style": "secondary",
+                                "emoji": "✋"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Clear Chat",
+                                "style": "secondary",
+                                "emoji": "🧹"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "{displayText}",
+                                "style": "secondary",
+                                "emoji": "🚫"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "{displayText}",
+                                "style": "secondary",
+                                "emoji": "🐵"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "style": "secondary",
+                                "emoji": "👥"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Reset",
+                                "style": "secondary",
+                                "emoji": "🔃"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Transfer",
+                                "style": "secondary",
+                                "emoji": "🔀"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Claim",
+                                "style": "secondary",
+                                "emoji": "😈"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPanel/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "༄ Manage your Dynamic Channel",
+                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n{dynamicChannelButtonsTemplate}\n\n_Please be advised that the privilege to make alterations is vested solely to the channel owner._",
+                            "color": 3369963,
+                            "arrayOptions": {
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "{value}{separator}",
+                                    "separator": "\n",
+                                    "options": {
+                                        "0": "✏️ ∙ **Rename** - Change your channel name",
+                                        "1": "✋ ∙ **User Limit** - Set maximum users",
+                                        "2": "🧹 ∙ **Clear Chat** - Delete chat messages",
+                                        "3": "🚫 ∙ **Private** / 🌐 ∙ **Public** - Toggle privacy state",
+                                        "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown** - Toggle visibility",
+                                        "5": "👥 ∙ **Access** - Manage user permissions",
+                                        "6": "🔃 ∙ **Reset** - Reset channel settings",
+                                        "7": "😈 ∙ **Claim** - Claim abandoned channel",
+                                        "12": "🔀 ∙ **Transfer** - Transfer ownership"
+                                    }
+                                }
+                            },
+                            "vars": {
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": "VertixBot/UI-V2/DynamicChannelElementsGroup",
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
         "type": "component",
         "instanceType": "Dynamic",
@@ -2371,7 +2614,24 @@
                                 "name": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "◎ ∙ Select Edit Option"
+                                "placeholder": "◎ ∙ Select Edit Option",
+                                "selectOptions": [
+                                    {
+                                        "label": "∙ Edit Channel's Name",
+                                        "value": "edit-dynamic-channel-name",
+                                        "emoji": "#️⃣"
+                                    },
+                                    {
+                                        "label": "∙ Edit Channel's Buttons",
+                                        "value": "edit-dynamic-channel-buttons",
+                                        "emoji": "🎚"
+                                    },
+                                    {
+                                        "label": "∙ Edit Channel's Verified Roles",
+                                        "value": "edit-dynamic-channel-verified-roles",
+                                        "emoji": "🛡️"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -2382,7 +2642,21 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "⌘ ∙ Configuration"
+                                "placeholder": "⌘ ∙ Configuration",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelMentionableLabel} {state}",
+                                        "value": "dynamicChannelMentionable:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelAutoSaveLabel} {state}",
+                                        "value": "dynamicChannelAutoSave:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelLogsChannelLabel} {state}",
+                                        "value": "dynamicChannelLogsChannel:0"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -2407,6 +2681,16 @@
                                 "label": "✓ Done",
                                 "style": "success"
                             }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/DeleteButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/DeleteButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Delete",
+                                "style": "danger"
+                            }
                         }
                     ]
                 ]
@@ -2421,7 +2705,54 @@
                                 "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons"
+                                "placeholder": "🎚 Select Buttons",
+                                "selectOptions": [
+                                    {
+                                        "label": "Rename",
+                                        "value": "0",
+                                        "emoji": "✏️"
+                                    },
+                                    {
+                                        "label": "Limit",
+                                        "value": "1",
+                                        "emoji": "✋"
+                                    },
+                                    {
+                                        "label": "Clear Chat",
+                                        "value": "2",
+                                        "emoji": "🧹"
+                                    },
+                                    {
+                                        "label": "Public/Private",
+                                        "value": "3",
+                                        "emoji": "🚫"
+                                    },
+                                    {
+                                        "label": "Shown/Hidden",
+                                        "value": "4",
+                                        "emoji": "🐵"
+                                    },
+                                    {
+                                        "label": "Access",
+                                        "value": "5",
+                                        "emoji": "👥"
+                                    },
+                                    {
+                                        "label": "Reset",
+                                        "value": "6",
+                                        "emoji": "🔃"
+                                    },
+                                    {
+                                        "label": "Transfer",
+                                        "value": "12",
+                                        "emoji": "🔀"
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "7",
+                                        "emoji": "😈"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -2449,7 +2780,54 @@
                                 "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons"
+                                "placeholder": "🎚 Select Buttons",
+                                "selectOptions": [
+                                    {
+                                        "label": "Rename",
+                                        "value": "0",
+                                        "emoji": "✏️"
+                                    },
+                                    {
+                                        "label": "Limit",
+                                        "value": "1",
+                                        "emoji": "✋"
+                                    },
+                                    {
+                                        "label": "Clear Chat",
+                                        "value": "2",
+                                        "emoji": "🧹"
+                                    },
+                                    {
+                                        "label": "Public/Private",
+                                        "value": "3",
+                                        "emoji": "🚫"
+                                    },
+                                    {
+                                        "label": "Shown/Hidden",
+                                        "value": "4",
+                                        "emoji": "🐵"
+                                    },
+                                    {
+                                        "label": "Access",
+                                        "value": "5",
+                                        "emoji": "👥"
+                                    },
+                                    {
+                                        "label": "Reset",
+                                        "value": "6",
+                                        "emoji": "🔃"
+                                    },
+                                    {
+                                        "label": "Transfer",
+                                        "value": "12",
+                                        "emoji": "🔀"
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "7",
+                                        "emoji": "😈"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -2500,7 +2878,16 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🛡️ ∙ Everyone role"
+                                "placeholder": "🛡️ ∙ Everyone role",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}",
+                                        "value": "dynamicChannelIncludeEveryoneRole:1",
+                                        "emoji": {
+                                            "name": "🛡️"
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -2620,7 +3007,8 @@
             }
         ],
         "modals": [
-            "VertixBot/UI-General/ChannelNameTemplateModal"
+            "VertixBot/UI-General/ChannelNameTemplateModal",
+            "VertixBot/UI-General/DeleteConfirmModal"
         ],
         "modalDefinitions": [
             {
@@ -2633,6 +3021,20 @@
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 50
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/DeleteConfirmModal",
+                "title": "Confirm deletion",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-General/DeleteConfirmInput",
+                        "label": "TYPE DELETE TO CONFIRM",
+                        "placeholder": "DELETE",
+                        "style": "short",
+                        "minLength": 6,
+                        "maxLength": 6
                     }
                 ]
             }
@@ -2717,7 +3119,54 @@
                                 "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons"
+                                "placeholder": "🎚 Select Buttons",
+                                "selectOptions": [
+                                    {
+                                        "label": "Rename",
+                                        "value": "0",
+                                        "emoji": "✏️"
+                                    },
+                                    {
+                                        "label": "Limit",
+                                        "value": "1",
+                                        "emoji": "✋"
+                                    },
+                                    {
+                                        "label": "Clear Chat",
+                                        "value": "2",
+                                        "emoji": "🧹"
+                                    },
+                                    {
+                                        "label": "Public/Private",
+                                        "value": "3",
+                                        "emoji": "🚫"
+                                    },
+                                    {
+                                        "label": "Shown/Hidden",
+                                        "value": "4",
+                                        "emoji": "🐵"
+                                    },
+                                    {
+                                        "label": "Access",
+                                        "value": "5",
+                                        "emoji": "👥"
+                                    },
+                                    {
+                                        "label": "Reset",
+                                        "value": "6",
+                                        "emoji": "🔃"
+                                    },
+                                    {
+                                        "label": "Transfer",
+                                        "value": "12",
+                                        "emoji": "🔀"
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "7",
+                                        "emoji": "😈"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -2728,7 +3177,21 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "⌘ ∙ Configuration"
+                                "placeholder": "⌘ ∙ Configuration",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelMentionableLabel} {state}",
+                                        "value": "dynamicChannelMentionable:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelAutoSaveLabel} {state}",
+                                        "value": "dynamicChannelAutoSave:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelLogsChannelLabel} {state}",
+                                        "value": "dynamicChannelLogsChannel:0"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -2787,7 +3250,16 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🛡️ ∙ Everyone role"
+                                "placeholder": "🛡️ ∙ Everyone role",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}",
+                                        "value": "dynamicChannelIncludeEveryoneRole:1",
+                                        "emoji": {
+                                            "name": "🛡️"
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -3422,7 +3894,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:Templates:1455157166615826432>"
+                                "emoji": "<:Templates:1455093315862269963>"
                             }
                         },
                         {
@@ -3695,6 +4167,213 @@
             "embedAudit": {
                 "total": 3,
                 "withDefinition": 3,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelPanel",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelRenameButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelRenameButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:ChannelRename:1272447740034682952>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:UserLimit:1269654650206818316>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:ChannelPermissions:1269649241207210125>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:ChannelPrivacy:1269655669984985158>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelRegionButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelRegionButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:ChannelRegion:1272451511322017804>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:EditChannelMessage:1264200057981243415>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelClearChatButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelClearChatButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:ClearChat:1269552009753919550>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:ResetChannel:1269639351558606959>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:TransferChannel:1269643178856939581>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:Templates:1455093315862269963>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<:ClaimChannel:1272450707542245386>"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelPanel/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "༄ Manage your Dynamic Channel",
+                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n{dynamicChannelButtonsTemplate}\n\n_Please be advised that the privilege to make alterations is vested solely to the channel owner._",
+                            "image": "https://i.imgur.com/sGjDVJ4.png",
+                            "color": 3369963,
+                            "arrayOptions": {
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "{value}{separator}",
+                                    "separator": "\n\n",
+                                    "options": {
+                                        "rename": "<:ChannelRename:1272447740034682952> ・ **Rename** - Change your channel name",
+                                        "limit": "<:UserLimit:1269654650206818316> ・ **User Limit** - Set maximum users",
+                                        "access": "<:ChannelPermissions:1269649241207210125> ・ **Access** - Manage user permissions",
+                                        "privacy": "<:ChannelPrivacy:1269655669984985158> ・ **Privacy** - Toggle public/private state",
+                                        "region": "<:ChannelRegion:1272451511322017804> ・ **Region** - Change voice region",
+                                        "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ・ **Edit Message** - Customize primary message",
+                                        "clear-chat": "<:ClearChat:1269552009753919550> ・ **Clear Chat** - Delete chat messages",
+                                        "rest-channel": "<:ResetChannel:1269639351558606959> ・ **Reset** - Reset channel settings",
+                                        "transfer": "<:TransferChannel:1269643178856939581> ・ **Transfer** - Transfer ownership",
+                                        "templates": "<:Templates:1455093315862269963> ・ **Templates** - Save/load channel templates",
+                                        "claim-button": "<:ClaimChannel:1272450707542245386>・ **Claim** - Claim abandoned channel"
+                                    }
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                            },
+                            "defaultVars": {
+                                "dynamicChannelButtonsTemplate": [
+                                    "rename",
+                                    "limit",
+                                    "access",
+                                    "privacy",
+                                    "region",
+                                    "edit-primary-message",
+                                    "clear-chat",
+                                    "rest-channel",
+                                    "transfer",
+                                    "templates",
+                                    "claim-button"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPanel/EmbedsGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
                 "missingDefinition": 0
             }
         }
@@ -4577,7 +5256,24 @@
                                 "name": "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "⛉ ∙ Select Privacy State"
+                                "placeholder": "⛉ ∙ Select Privacy State",
+                                "selectOptions": [
+                                    {
+                                        "label": "Public",
+                                        "value": "public",
+                                        "emoji": "🌐"
+                                    },
+                                    {
+                                        "label": "Private",
+                                        "value": "private",
+                                        "emoji": "🚫"
+                                    },
+                                    {
+                                        "label": "Hidden",
+                                        "value": "hidden",
+                                        "emoji": "🙈"
+                                    }
+                                ]
                             }
                         }
                     ]
@@ -4690,7 +5386,65 @@
                                 "name": "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "⌖ ∙ Select Region"
+                                "placeholder": "⌖ ∙ Select Region",
+                                "selectOptions": [
+                                    {
+                                        "label": "Automatic",
+                                        "value": "auto"
+                                    },
+                                    {
+                                        "label": "Brazil",
+                                        "value": "brazil"
+                                    },
+                                    {
+                                        "label": "HongKong",
+                                        "value": "hongkong"
+                                    },
+                                    {
+                                        "label": "India",
+                                        "value": "india"
+                                    },
+                                    {
+                                        "label": "Japan",
+                                        "value": "japan"
+                                    },
+                                    {
+                                        "label": "Rotterdam",
+                                        "value": "rotterdam"
+                                    },
+                                    {
+                                        "label": "Russia",
+                                        "value": "russia"
+                                    },
+                                    {
+                                        "label": "Singapore",
+                                        "value": "singapore"
+                                    },
+                                    {
+                                        "label": "SouthAfrica",
+                                        "value": "southafrica"
+                                    },
+                                    {
+                                        "label": "Sydney",
+                                        "value": "sydney"
+                                    },
+                                    {
+                                        "label": "US Central",
+                                        "value": "us-central"
+                                    },
+                                    {
+                                        "label": "US East",
+                                        "value": "us-east"
+                                    },
+                                    {
+                                        "label": "US South",
+                                        "value": "us-south"
+                                    },
+                                    {
+                                        "label": "US West",
+                                        "value": "us-west"
+                                    }
+                                ]
                             }
                         }
                     ]
@@ -5071,7 +5825,7 @@
                                 "instanceType": "Dynamic",
                                 "label": "Apply Template",
                                 "style": "secondary",
-                                "emoji": "<:Templates:1455157166615826432>"
+                                "emoji": "<:Templates:1455093315862269963>"
                             }
                         },
                         {
@@ -5139,7 +5893,7 @@
                                 "instanceType": "Dynamic",
                                 "label": "Apply Selected",
                                 "style": "success",
-                                "emoji": "<:Templates:1455157166615826432>"
+                                "emoji": "<:Templates:1455093315862269963>"
                             }
                         },
                         {
@@ -5258,7 +6012,7 @@
                                 "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:Templates:1455157166615826432>"
+                                "templatesEmoji": "<:Templates:1455093315862269963>"
                             }
                         }
                     }
@@ -5299,7 +6053,7 @@
                                 "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:Templates:1455157166615826432>"
+                                "templatesEmoji": "<:Templates:1455093315862269963>"
                             }
                         }
                     }
@@ -5322,7 +6076,7 @@
                                 "appliedSettings": "{appliedSettings}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:Templates:1455157166615826432>"
+                                "templatesEmoji": "<:Templates:1455093315862269963>"
                             }
                         }
                     }
@@ -5569,7 +6323,24 @@
                                 "name": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "◎ ∙ Select Edit Option"
+                                "placeholder": "◎ ∙ Select Edit Option",
+                                "selectOptions": [
+                                    {
+                                        "label": "∙ Edit Channel's Name",
+                                        "value": "edit-dynamic-channel-name",
+                                        "emoji": "#️⃣"
+                                    },
+                                    {
+                                        "label": "∙ Edit Channel's Buttons",
+                                        "value": "edit-dynamic-channel-buttons",
+                                        "emoji": "🎚"
+                                    },
+                                    {
+                                        "label": "∙ Edit Channel's Verified Roles",
+                                        "value": "edit-dynamic-channel-verified-roles",
+                                        "emoji": "🛡️"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -5580,7 +6351,21 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "⌘ ∙ Configuration"
+                                "placeholder": "⌘ ∙ Configuration",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelMentionableLabel} {state}",
+                                        "value": "dynamicChannelMentionable:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelAutoSaveLabel} {state}",
+                                        "value": "dynamicChannelAutoSave:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelLogsChannelLabel} {state}",
+                                        "value": "dynamicChannelLogsChannel:0"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -5604,6 +6389,16 @@
                                 "instanceType": "Dynamic",
                                 "label": "✓ Done",
                                 "style": "success"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/DeleteButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/DeleteButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Delete",
+                                "style": "danger"
                             }
                         }
                     ]
@@ -5654,7 +6449,108 @@
                                 "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons"
+                                "placeholder": "🎚 Select Buttons",
+                                "selectOptions": [
+                                    {
+                                        "label": "Rename",
+                                        "value": "rename",
+                                        "emoji": {
+                                            "id": "1272447740034682952",
+                                            "name": "ChannelRename",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Limit",
+                                        "value": "limit",
+                                        "emoji": {
+                                            "id": "1269654650206818316",
+                                            "name": "UserLimit",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Access",
+                                        "value": "access",
+                                        "emoji": {
+                                            "id": "1269649241207210125",
+                                            "name": "ChannelPermissions",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Privacy",
+                                        "value": "privacy",
+                                        "emoji": {
+                                            "id": "1269655669984985158",
+                                            "name": "ChannelPrivacy",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Region",
+                                        "value": "region",
+                                        "emoji": {
+                                            "id": "1272451511322017804",
+                                            "name": "ChannelRegion",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Edit Primary Message",
+                                        "value": "edit-primary-message",
+                                        "emoji": {
+                                            "id": "1264200057981243415",
+                                            "name": "EditChannelMessage",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Clear Chat",
+                                        "value": "clear-chat",
+                                        "emoji": {
+                                            "id": "1269552009753919550",
+                                            "name": "ClearChat",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Reset",
+                                        "value": "rest-channel",
+                                        "emoji": {
+                                            "id": "1269639351558606959",
+                                            "name": "ResetChannel",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Transfer",
+                                        "value": "transfer",
+                                        "emoji": {
+                                            "id": "1269643178856939581",
+                                            "name": "TransferChannel",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Templates",
+                                        "value": "templates",
+                                        "emoji": {
+                                            "id": "1455093315862269963",
+                                            "name": "Templates",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "claim-button",
+                                        "emoji": {
+                                            "id": "1272450707542245386",
+                                            "name": "ClaimChannel",
+                                            "animated": false
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -5717,7 +6613,108 @@
                                 "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons"
+                                "placeholder": "🎚 Select Buttons",
+                                "selectOptions": [
+                                    {
+                                        "label": "Rename",
+                                        "value": "rename",
+                                        "emoji": {
+                                            "id": "1272447740034682952",
+                                            "name": "ChannelRename",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Limit",
+                                        "value": "limit",
+                                        "emoji": {
+                                            "id": "1269654650206818316",
+                                            "name": "UserLimit",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Access",
+                                        "value": "access",
+                                        "emoji": {
+                                            "id": "1269649241207210125",
+                                            "name": "ChannelPermissions",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Privacy",
+                                        "value": "privacy",
+                                        "emoji": {
+                                            "id": "1269655669984985158",
+                                            "name": "ChannelPrivacy",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Region",
+                                        "value": "region",
+                                        "emoji": {
+                                            "id": "1272451511322017804",
+                                            "name": "ChannelRegion",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Edit Primary Message",
+                                        "value": "edit-primary-message",
+                                        "emoji": {
+                                            "id": "1264200057981243415",
+                                            "name": "EditChannelMessage",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Clear Chat",
+                                        "value": "clear-chat",
+                                        "emoji": {
+                                            "id": "1269552009753919550",
+                                            "name": "ClearChat",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Reset",
+                                        "value": "rest-channel",
+                                        "emoji": {
+                                            "id": "1269639351558606959",
+                                            "name": "ResetChannel",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Transfer",
+                                        "value": "transfer",
+                                        "emoji": {
+                                            "id": "1269643178856939581",
+                                            "name": "TransferChannel",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Templates",
+                                        "value": "templates",
+                                        "emoji": {
+                                            "id": "1455093315862269963",
+                                            "name": "Templates",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "claim-button",
+                                        "emoji": {
+                                            "id": "1272450707542245386",
+                                            "name": "ClaimChannel",
+                                            "animated": false
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -5768,7 +6765,16 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🛡️ ∙ Everyone role"
+                                "placeholder": "🛡️ ∙ Everyone role",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}",
+                                        "value": "dynamicChannelIncludeEveryoneRole:1",
+                                        "emoji": {
+                                            "name": "🛡️"
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -5806,7 +6812,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n▥ ∙ Auto create control panel channel: {configControlChannelAutoCreate}\n\n",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -5827,6 +6833,10 @@
                                 "configLogs": {
                                     "{configLogsEnabled}": "{on}",
                                     "{configLogsDisabled}": "{off}"
+                                },
+                                "configControlChannelAutoCreate": {
+                                    "{configControlChannelAutoCreateEnabled}": "{on}",
+                                    "{configControlChannelAutoCreateDisabled}": "{off}"
                                 }
                             },
                             "arrayOptions": {
@@ -5851,6 +6861,9 @@
                                 "configLogs": "{configLogs}",
                                 "configLogsEnabled": "{configLogsEnabled}",
                                 "configLogsDisabled": "{configLogsDisabled}",
+                                "configControlChannelAutoCreate": "{configControlChannelAutoCreate}",
+                                "configControlChannelAutoCreateEnabled": "{configControlChannelAutoCreateEnabled}",
+                                "configControlChannelAutoCreateDisabled": "{configControlChannelAutoCreateDisabled}",
                                 "dynamicChannelNameTemplate": "{dynamicChannelNameTemplate}",
                                 "dynamicChannelLogsChannelId": "{dynamicChannelLogsChannelId}",
                                 "dynamicChannelLogsChannelDefault": "{dynamicChannelLogsChannelDefault}",
@@ -5952,7 +6965,8 @@
             }
         ],
         "modals": [
-            "VertixBot/UI-General/ChannelNameTemplateModal"
+            "VertixBot/UI-General/ChannelNameTemplateModal",
+            "VertixBot/UI-General/DeleteConfirmModal"
         ],
         "modalDefinitions": [
             {
@@ -5965,6 +6979,20 @@
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 50
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/DeleteConfirmModal",
+                "title": "Confirm deletion",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-General/DeleteConfirmInput",
+                        "label": "TYPE DELETE TO CONFIRM",
+                        "placeholder": "DELETE",
+                        "style": "short",
+                        "minLength": 6,
+                        "maxLength": 6
                     }
                 ]
             }
@@ -6049,7 +7077,108 @@
                                 "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons"
+                                "placeholder": "🎚 Select Buttons",
+                                "selectOptions": [
+                                    {
+                                        "label": "Rename",
+                                        "value": "rename",
+                                        "emoji": {
+                                            "id": "1272447740034682952",
+                                            "name": "ChannelRename",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Limit",
+                                        "value": "limit",
+                                        "emoji": {
+                                            "id": "1269654650206818316",
+                                            "name": "UserLimit",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Access",
+                                        "value": "access",
+                                        "emoji": {
+                                            "id": "1269649241207210125",
+                                            "name": "ChannelPermissions",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Privacy",
+                                        "value": "privacy",
+                                        "emoji": {
+                                            "id": "1269655669984985158",
+                                            "name": "ChannelPrivacy",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Region",
+                                        "value": "region",
+                                        "emoji": {
+                                            "id": "1272451511322017804",
+                                            "name": "ChannelRegion",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Edit Primary Message",
+                                        "value": "edit-primary-message",
+                                        "emoji": {
+                                            "id": "1264200057981243415",
+                                            "name": "EditChannelMessage",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Clear Chat",
+                                        "value": "clear-chat",
+                                        "emoji": {
+                                            "id": "1269552009753919550",
+                                            "name": "ClearChat",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Reset",
+                                        "value": "rest-channel",
+                                        "emoji": {
+                                            "id": "1269639351558606959",
+                                            "name": "ResetChannel",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Transfer",
+                                        "value": "transfer",
+                                        "emoji": {
+                                            "id": "1269643178856939581",
+                                            "name": "TransferChannel",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Templates",
+                                        "value": "templates",
+                                        "emoji": {
+                                            "id": "1455093315862269963",
+                                            "name": "Templates",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "claim-button",
+                                        "emoji": {
+                                            "id": "1272450707542245386",
+                                            "name": "ClaimChannel",
+                                            "animated": false
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -6060,7 +7189,21 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "⌘ ∙ Configuration"
+                                "placeholder": "⌘ ∙ Configuration",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelMentionableLabel} {state}",
+                                        "value": "dynamicChannelMentionable:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelAutoSaveLabel} {state}",
+                                        "value": "dynamicChannelAutoSave:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelLogsChannelLabel} {state}",
+                                        "value": "dynamicChannelLogsChannel:0"
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -6119,7 +7262,16 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🛡️ ∙ Everyone role"
+                                "placeholder": "🛡️ ∙ Everyone role",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}",
+                                        "value": "dynamicChannelIncludeEveryoneRole:1",
+                                        "emoji": {
+                                            "name": "🛡️"
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -6169,7 +7321,9 @@
                             "title": "Step 1 - Set Dynamic Channels Template Name",
                             "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1).",
                             "color": 3369963,
-                            "vars": {}
+                            "vars": {
+                                "dynamicChannelNameTemplate": "{dynamicChannelNameTemplate}"
+                            }
                         }
                     }
                 ]
@@ -6182,7 +7336,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> ▥ ∙ Auto create panel channel: {configControlChannelAutoCreate}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v3).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -6199,6 +7353,10 @@
                                 "configAutoSave": {
                                     "{configAutoSaveEnabled}": "{on}",
                                     "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "configControlChannelAutoCreate": {
+                                    "{configControlChannelAutoCreateEnabled}": "{on}",
+                                    "{configControlChannelAutoCreateDisabled}": "{off}"
                                 },
                                 "footer": {
                                     "{defaultFooter}": "Newly created dynamic channels through this master channel will be affected by the configuration you have selected.",
@@ -6219,6 +7377,7 @@
                                         "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
                                         "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
                                         "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
+                                        "templates": "<:Templates:1455093315862269963> ∙ **Templates**",
                                         "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
                                     }
                                 }
@@ -6235,6 +7394,9 @@
                                 "configAutoSave": "{configAutoSave}",
                                 "configAutoSaveEnabled": "{configAutoSaveEnabled}",
                                 "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "configControlChannelAutoCreate": "{configControlChannelAutoCreate}",
+                                "configControlChannelAutoCreateEnabled": "{configControlChannelAutoCreateEnabled}",
+                                "configControlChannelAutoCreateDisabled": "{configControlChannelAutoCreateDisabled}",
                                 "footer": "{footer}",
                                 "defaultFooter": "{defaultFooter}",
                                 "noButtonsFooter": "{noButtonsFooter}",
@@ -6374,7 +7536,9 @@
                             "title": "Step 1 - Set Dynamic Channels Template Name",
                             "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1).",
                             "color": 3369963,
-                            "vars": {}
+                            "vars": {
+                                "dynamicChannelNameTemplate": "{dynamicChannelNameTemplate}"
+                            }
                         }
                     }
                 ]
@@ -6428,7 +7592,108 @@
                                 "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons"
+                                "placeholder": "🎚 Select Buttons",
+                                "selectOptions": [
+                                    {
+                                        "label": "Rename",
+                                        "value": "rename",
+                                        "emoji": {
+                                            "id": "1272447740034682952",
+                                            "name": "ChannelRename",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Limit",
+                                        "value": "limit",
+                                        "emoji": {
+                                            "id": "1269654650206818316",
+                                            "name": "UserLimit",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Access",
+                                        "value": "access",
+                                        "emoji": {
+                                            "id": "1269649241207210125",
+                                            "name": "ChannelPermissions",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Privacy",
+                                        "value": "privacy",
+                                        "emoji": {
+                                            "id": "1269655669984985158",
+                                            "name": "ChannelPrivacy",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Region",
+                                        "value": "region",
+                                        "emoji": {
+                                            "id": "1272451511322017804",
+                                            "name": "ChannelRegion",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Edit Primary Message",
+                                        "value": "edit-primary-message",
+                                        "emoji": {
+                                            "id": "1264200057981243415",
+                                            "name": "EditChannelMessage",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Clear Chat",
+                                        "value": "clear-chat",
+                                        "emoji": {
+                                            "id": "1269552009753919550",
+                                            "name": "ClearChat",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Reset",
+                                        "value": "rest-channel",
+                                        "emoji": {
+                                            "id": "1269639351558606959",
+                                            "name": "ResetChannel",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Transfer",
+                                        "value": "transfer",
+                                        "emoji": {
+                                            "id": "1269643178856939581",
+                                            "name": "TransferChannel",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Templates",
+                                        "value": "templates",
+                                        "emoji": {
+                                            "id": "1455093315862269963",
+                                            "name": "Templates",
+                                            "animated": false
+                                        }
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "claim-button",
+                                        "emoji": {
+                                            "id": "1272450707542245386",
+                                            "name": "ClaimChannel",
+                                            "animated": false
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ],
@@ -6439,7 +7704,21 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "⌘ ∙ Configuration"
+                                "placeholder": "⌘ ∙ Configuration",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelMentionableLabel} {state}",
+                                        "value": "dynamicChannelMentionable:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelAutoSaveLabel} {state}",
+                                        "value": "dynamicChannelAutoSave:1"
+                                    },
+                                    {
+                                        "label": "{dynamicChannelLogsChannelLabel} {state}",
+                                        "value": "dynamicChannelLogsChannel:0"
+                                    }
+                                ]
                             }
                         }
                     ]
@@ -6455,7 +7734,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> ▥ ∙ Auto create panel channel: {configControlChannelAutoCreate}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v3).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -6472,6 +7751,10 @@
                                 "configAutoSave": {
                                     "{configAutoSaveEnabled}": "{on}",
                                     "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "configControlChannelAutoCreate": {
+                                    "{configControlChannelAutoCreateEnabled}": "{on}",
+                                    "{configControlChannelAutoCreateDisabled}": "{off}"
                                 },
                                 "footer": {
                                     "{defaultFooter}": "Newly created dynamic channels through this master channel will be affected by the configuration you have selected.",
@@ -6492,6 +7775,7 @@
                                         "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
                                         "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
                                         "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
+                                        "templates": "<:Templates:1455093315862269963> ∙ **Templates**",
                                         "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
                                     }
                                 }
@@ -6508,6 +7792,9 @@
                                 "configAutoSave": "{configAutoSave}",
                                 "configAutoSaveEnabled": "{configAutoSaveEnabled}",
                                 "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "configControlChannelAutoCreate": "{configControlChannelAutoCreate}",
+                                "configControlChannelAutoCreateEnabled": "{configControlChannelAutoCreateEnabled}",
+                                "configControlChannelAutoCreateDisabled": "{configControlChannelAutoCreateDisabled}",
                                 "footer": "{footer}",
                                 "defaultFooter": "{defaultFooter}",
                                 "noButtonsFooter": "{noButtonsFooter}",
@@ -6561,7 +7848,16 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "🛡️ ∙ Everyone role"
+                                "placeholder": "🛡️ ∙ Everyone role",
+                                "selectOptions": [
+                                    {
+                                        "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}",
+                                        "value": "dynamicChannelIncludeEveryoneRole:1",
+                                        "emoji": {
+                                            "name": "🛡️"
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ]

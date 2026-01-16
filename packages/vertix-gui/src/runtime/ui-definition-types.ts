@@ -16,6 +16,13 @@ export interface HookReference {
     options?: JsonObject;
 }
 
+export interface SelectOptionDefinition {
+    label?: string;
+    value?: string;
+    emoji?: string;
+    description?: string;
+}
+
 export interface ElementDefinition {
     name: string;
     elementType: "button" | "button-url" | "select-menu" | "user-select" | "role-select" | "channel-select" | "mentionable-select" | "text-input" | "unknown";
@@ -28,6 +35,7 @@ export interface ElementDefinition {
     placeholder?: string;
     disabled?: boolean;
     options?: JsonObject;
+    selectOptions?: SelectOptionDefinition[];
 }
 
 export interface ElementReference {

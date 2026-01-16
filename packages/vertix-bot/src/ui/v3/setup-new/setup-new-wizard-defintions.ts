@@ -1,7 +1,9 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 export const
-    STEP_1_EMBED_VARS = {},
+    STEP_1_EMBED_VARS = {
+        dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "dynamicChannelNameTemplate" )
+    },
     STEP_2_EMBED_VARS = {
         on: uiUtilsWrapAsTemplate( "on" ),
         off: uiUtilsWrapAsTemplate( "off" ),

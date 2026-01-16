@@ -1,4 +1,5 @@
 import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
@@ -46,6 +47,7 @@ import type { BaseGuildTextChannel } from "discord.js";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
+import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type {
     WizardInteractions,
@@ -189,14 +191,19 @@ async function onVerifiedRolesEveryoneSelected(
 const SetupStep1Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep1Embed", STEP_1_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setTitle( () => "Step 1 - Set Dynamic Channels Template Name" )
-    .setDescription( () =>
+    .setDescription( ( vars ) =>
         "You can specify a default name for dynamic channels that will be used when they are opened.\n\n" +
         "_Current template name_:\n" +
-        "`{dynamicChannelNameTemplate}`\n\n" +
+        "`" + vars.dynamicChannelNameTemplate + "`\n\n" +
         "You can keep the default settings by pressing **( `Next ▶` )** button.\n\n" +
         "Not sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
     )
     .setInstanceType( UIInstancesTypes.Dynamic )
+    .setLogic( ( args ) => ( {
+        dynamicChannelNameTemplate:
+            args?.dynamicChannelNameTemplate ||
+            ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V3 ).data.settings.dynamicChannelNameTemplate
+    } ) )
     .build();
 
 const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", STEP_2_EMBED_VARS )

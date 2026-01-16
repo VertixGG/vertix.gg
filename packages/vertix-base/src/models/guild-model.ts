@@ -27,6 +27,10 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return GuildModel.getInstance();
     }
 
+    private lastActiveUpdateCache: Map<string, number> = new Map();
+
+    private readonly LAST_ACTIVE_THROTTLE_MS = 1000 * 60 * 5; // 5 minutes
+
     public constructor() {
         super( isDebugEnabled( "CACHE", GuildModel.getName() ), isDebugEnabled( "MODEL", GuildModel.getName() ) );
     }
@@ -76,21 +80,40 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
     }
 
     public async updateLastActive( guildId: string ): Promise<boolean> {
+        const now = Date.now();
+        const lastUpdate = this.lastActiveUpdateCache.get( guildId );
+
+        if ( lastUpdate && ( now - lastUpdate ) < this.LAST_ACTIVE_THROTTLE_MS ) {
+            return true;
+        }
+
         try {
             await this.prisma.guild.update( {
                 where: { guildId },
                 data: { lastActiveAt: new Date() }
             } );
 
+            this.lastActiveUpdateCache.set( guildId, now );
+
             return true;
         } catch( e ) {
-            if ( e && typeof e === "object" && "code" in e && e.code === "P2025" ) {
-                this.logger.warn( this.updateLastActive, `Guild id: '${ guildId }' - Not found in database` );
+            if ( e && typeof e === "object" && "code" in e ) {
+                if ( e.code === "P2025" ) {
+                    this.logger.warn( this.updateLastActive, `Guild id: '${ guildId }' - Not found in database` );
 
-                return false;
+                    return false;
+                }
+
+                if ( e.code === "P2034" ) {
+                    this.logger.warn( this.updateLastActive, `Guild id: '${ guildId }' - Write conflict / Deadlock, skipping update` );
+
+                    return true;
+                }
             }
 
-            throw e;
+            this.logger.error( this.updateLastActive, `Guild id: '${ guildId }' - Unexpected error:`, e );
+
+            return true;
         }
     }
 

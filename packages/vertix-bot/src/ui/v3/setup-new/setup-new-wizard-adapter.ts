@@ -47,7 +47,7 @@ import type { BaseGuildTextChannel } from "discord.js";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterface, MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type {
     WizardInteractions,
@@ -541,10 +541,15 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         context: IWizardAdapterContext<WizardInteractions>,
         interaction: WizardInteractions
     ) => {
+        const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+            "Vertix/Config/MasterChannel",
+            VERSION_UI_V3
+        ).defaults;
+
         const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
 
         const args = context.getArgs( interaction ) || {};
-        const templateName: string = args.dynamicChannelNameTemplate || "{{username}}'s Channel";
+        const templateName: string = args.dynamicChannelNameTemplate || configV3.settings.dynamicChannelNameTemplate;
         const templateButtons: string[] = args.dynamicChannelButtonsTemplate?.length ?
             args.dynamicChannelButtonsTemplate :
             DynamicChannelPrimaryMessageElementsGroup.sortIds(

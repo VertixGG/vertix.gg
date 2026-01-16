@@ -1,6 +1,6 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/Robot.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
 
 import "./discord-chat-container.css";
 

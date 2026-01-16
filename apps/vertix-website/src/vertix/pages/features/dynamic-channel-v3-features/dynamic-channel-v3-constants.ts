@@ -9,7 +9,7 @@ export const DYNAMIC_CHANNEL_V3_EMOJIS = {
     resetChannel: "<:ResetChannel:1269639351558606959>",
     transferChannel: "<:TransferChannel:1269643178856939581>",
     claimChannel: "<:ClaimChannel:1272450707542245386>",
-    templates: "<:ChannelTemplates:1455093315862269963>",
+    templates: "<:Templates:1455157166615826432>",
 };
 
 export const DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES = {
@@ -26,5 +26,4 @@ export const DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES = {
     privacyEmoji: DYNAMIC_CHANNEL_V3_EMOJIS.privacy,
     regionEmoji: DYNAMIC_CHANNEL_V3_EMOJIS.region,
 };
-
 

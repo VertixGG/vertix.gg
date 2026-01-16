@@ -1,5 +1,5 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/Robot.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
 
 import { DYNAMIC_CHANNEL_V3_EMOJIS } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
 
@@ -37,5 +37,4 @@ export default function Region() {
         </div>
     );
 }
-
 

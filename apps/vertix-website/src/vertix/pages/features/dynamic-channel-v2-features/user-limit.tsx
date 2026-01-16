@@ -1,5 +1,5 @@
 import { DiscordUIComponentMessage, DiscordModal, DiscordInput } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/Robot.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
 
 export default function UserLimit() {
     return (

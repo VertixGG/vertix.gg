@@ -1,5 +1,5 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/Robot.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
 
 import "../../components/discord/discord-chat-container.css";
 
@@ -43,7 +43,7 @@ export default function BotSetup() {
             </div>
 
             <div className="mb-4 mt-4">
-            <div className="discord-chat-container m-0" style={ { minHeight: "500px" } }>
+                <div className="discord-chat-container m-0" style={ { minHeight: "500px" } }>
 
                     <DiscordUIComponentMessage
                         author="Vertix"

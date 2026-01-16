@@ -62,7 +62,7 @@ export const DISCORD_EMOJI_ICON_SRC_BY_NAME: Readonly<Record<string, string>> = 
     "ResetChannel": ResetChannelEmoji,
     "TransferChannel": TransferChannelEmoji,
     "ClaimChannel": ClaimChannelEmoji,
-    "ChannelTemplates": ChannelTemplatesEmoji,
+    "Templates": ChannelTemplatesEmoji,
 };
 
 export function getDiscordEmojiIcon( emoji: string ): React.ReactNode | null {

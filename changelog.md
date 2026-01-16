@@ -1,5 +1,13 @@
 # Changelog
 
+**Version: 0.0.14 ~ 16/01/2026**
+- New Feature:
+    - **Master Channel Deletion**: Added a delete action with confirmation that removes the control panel, all owned dynamic channels, the master channel, and cleans up empty categories.
+- Improvements:
+    - **Delete Flow Stability**: Prevented errors when the originating setup channel is removed during deletion.
+
+---
+
 **Version: 0.0.13 ~ 16/01/2026**
 - New Feature:
     - **Control Panel Channel**: A dedicated text channel is now automatically created alongside your Master Channel. This gives you a permanent place to manage all your dynamic voice channels, even when you're not in one.

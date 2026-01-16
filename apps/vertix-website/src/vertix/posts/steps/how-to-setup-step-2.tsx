@@ -1,4 +1,11 @@
-import { ArrowDown } from "@vertix.gg/website/src/vertix//ui/arrows";
+import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
+
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
+
+import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
+
+import { ArrowDown } from "@vertix.gg/website/src/vertix/ui/arrows";
 
 interface IHowToSetupStep2Props {
     displayStep?: boolean
@@ -21,71 +28,103 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                 continue with <b>( <code>default = All Buttons Enabled</code> )</b> by
                 pressing <a href={ `${ props.displayStep ? "#step-3" : "3" }` } className="btn btn-sm btn-primary">Next ▶</a>
                 <br/>
-                <img className="normalize" src="https://i.ibb.co/ZGCGwP1/setup-step-2-buttons-set-arrow-red.png"
-                    alt="s5"/>
+                <br/>
+                <div className="discord-chat-container border-box m-0">
+                    <DiscordUIComponentMessage
+                        author="Vertix"
+                        avatar={ VertixAvatar }
+                        timestamp="Today at 9:35 AM"
+                        componentName="VertixBot/UI-V2/SetupNewWizardComponent"
+                        preferredElementsGroup="VertixBot/UI-V2/SetupStep2Component/ElementsGroup"
+                        preferredEmbedsGroup="VertixBot/UI-V2/SetupStep2Component/EmbedsGroup"
+                        embedOverrides={ {
+                            "VertixBot/UI-V2/SetupStep2Embed": {
+                                title: "Step 2 - Dynamic Channels Setup",
+                                description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v2).",
+                            },
+                        } }
+                        ephemeral={ true }
+                        interactionUser="iNewLegend"
+                        interactionUserAvatar={ UserAvatar }
+                        interactionCommand="/setup"
+                        elementOverrides={ {
+                            "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu": { highlighted: true },
+                            "VertixBot/UI-General/WizardFinishButton": { hidden: true },
+                        } }
+                        expandedSelectMenu={ {
+                            elementName: "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
+                            selectedValues: [ "4", "5", "6", "7" ],
+                        } }
+                    />
+                </div>
             </li>
             <br/>
             <p>
                 Select buttons you wish to enable in your temporary dynamic channels that created by joining
                 this <b>Master Channel</b>.
-                <br/>
-                <img className="normalize" src="https://i.ibb.co/fn9Bsq2/e5.png" alt="s6"/>
+            </p>
+            <h5>What the buttons do?</h5>
+
+            <p><b>Basic Controls:</b></p>
+            <ul>
+                <li>✏️ <b>Rename</b> - Allow the channel owner to rename his channel.</li>
+                <li>✋ <b>User Limit</b> - Allow the channel owner to set members limit.</li>
+                <li>🧹 <b>Clear Chat</b> - Clear basic messages (not including embeds).</li>
+            </ul>
+
+            <p><b>Privacy & Visibility:</b></p>
+            <ul>
+                <li>🚫/🌐 <b>Private/Public</b> - Toggle channel connectivity.</li>
+                <li>🙈/🐵 <b>Hidden/Shown</b> - Toggle channel visibility.</li>
+            </ul>
+
+            <p><b>Access Management:</b></p>
+            <ul>
+                <li>👥 <b>Access</b> - Edit channel permissions with 4 sub-options:
+                    <ul>
+                        <li>👍 Grant Access - Allow user to see/connect even when private.</li>
+                        <li>👎 Remove Access - Revoke previously granted access.</li>
+                        <li>🫵 Block User - Kick and prevent user from connecting.</li>
+                        <li>🤙 Un-Block User - Remove the block.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p><b>Advanced:</b></p>
+            <ul>
+                <li>🔃 <b>Reset Channel</b> - Restore default state (name, limit, visibility, permissions).</li>
+                <li>🔀 <b>Transfer Ownership</b> - Transfer channel ownership to another user.</li>
+                <li>😈 <b>Claim Channel</b> - Claim ownership after owner leaves for 10 minutes.</li>
+            </ul>
+
+            <p className="pt-5">
+                Select the options that suit you, then click <a href={ `${ props.displayStep ? "#step-3" : "3" }` } className="btn btn-sm btn-primary">Next ▶</a> to continue.
             </p>
             <br/>
-            <p>
-                What the buttons do?
-                <ul className="fs-7">
-                    <li><b>( ✏️ ∙ Rename ) - Allow the channel owner to rename his channel.</b></li>
-                    <li><b>( ✋ ∙ User Limit ) - Allow the channel owner to set members limit over his
-                        channel.</b></li>
-                    <li><b>( 🧹 ∙ Clear Chat ) - Allow the channel owner clear basic messages, not including
-                        embeds.</b></li>
-                </ul>
-                <br/>
-
-                <ul className="fs-7">
-                    <li><b>( 🚫 ∙ Private / 🌐 ∙ Public ) - Allow the channel owner to change the state of
-                        channel</b> - ( Can <b>Connect</b>/Cannot <b>Connect</b> )
-                    </li>
-                    <li><b>( 🙈 ∙ Hidden / 🐵 ∙ Shown ) - Allow the channel owner to change visibility of
-                        channel</b> - ( Channel <b>Visible</b>/Channel <b>Hidden</b> )
-                    </li>
-                    <li><b>( 👥 ∙ Access ) - Allow the channel owner to edit permissions of his channel.</b> -
-                        The feature enables 4 menus described below:
-                    </li>
-
-                    <ul className="fs-7">
-                        <li><b>( 👍 Grant Access ) - Grant access with to user, the user will able to see or
-                            connect the chanel even if the state changed.</b></li>
-                        <li><b>( 👎 Remove Access ) - Remove access that described above.</b></li>
-                        <li><b>( 🫵 Block User Access ) - Block user access, kicks the user if he inside the
-                            channel - to user cannot connect or see channel anymore.</b></li>
-                        <li><b>( 🤙 Un-Block User Access ) - Removes the block that described above.</b></li>
-                    </ul>
-                </ul>
-                <br/>
-
-                <ul className="fs-7">
-                    <li><b>( 🔃 ∙ Reset Channel ) - Restore channel's default state</b> -
-                        ( <code>Name</code>, <code>User
-                            limit</code>, <code>State</code>, <code>Visibility</code>, <code>Granted
-                                users</code> ).
-                    </li>
-                    <li><b>( 🔀 ∙ Transfer ownership ) - Allow the channel owner transform ownership over the
-                        channel to someone else.</b></li>
-                    <li><b>( 😈 ∙ Claim Channel ) - Allow to take over the channel ownership after 10 minutes of
-                        owner leaving the channel</b> - Automatically disabled when <b>owner back</b> ).
-                    </li>
-                </ul>
-                <br/>
-
-                <br/>
-                Select the option that suits you the most, then click <a href={ `${ props.displayStep ? "#step-3" : "3" }` }
-                    className="btn btn-sm btn-primary">Next
-                    ▶</a> to continue.
-                <br/>
-                <img className="normalize" src="https://i.ibb.co/tBtNfKF/004.png" alt="s7"/>
-            </p>
+            <div className="discord-chat-container border-box m-0">
+                <DiscordUIComponentMessage
+                    author="Vertix"
+                    avatar={ VertixAvatar }
+                    timestamp="Today at 9:35 AM"
+                    componentName="VertixBot/UI-V2/SetupNewWizardComponent"
+                    preferredElementsGroup="VertixBot/UI-V2/SetupStep2Component/ElementsGroup"
+                    preferredEmbedsGroup="VertixBot/UI-V2/SetupStep2Component/EmbedsGroup"
+                    embedOverrides={ {
+                        "VertixBot/UI-V2/SetupStep2Embed": {
+                            title: "Step 2 - Dynamic Channels Setup",
+                            description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v2).",
+                        },
+                    } }
+                    ephemeral={ true }
+                    interactionUser="iNewLegend"
+                    interactionUserAvatar={ UserAvatar }
+                    interactionCommand="/setup"
+                    elementOverrides={ {
+                        "VertixBot/UI-General/WizardNextButton": { highlighted: true },
+                        "VertixBot/UI-General/WizardFinishButton": { hidden: true },
+                    } }
+                />
+            </div>
         </>
     );
 }

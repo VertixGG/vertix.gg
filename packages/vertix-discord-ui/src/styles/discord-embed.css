@@ -232,6 +232,7 @@
     gap: 8px;
     align-items: flex-start;
     width: 100%;
+    position: relative;
 }
 
 .discord-embed-footer {

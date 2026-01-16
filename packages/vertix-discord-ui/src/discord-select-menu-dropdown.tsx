@@ -11,11 +11,16 @@ export interface DiscordSelectMenuOption {
 
 export interface DiscordSelectMenuDropdownProps {
     options: ReadonlyArray<DiscordSelectMenuOption>;
+    absolute?: boolean;
 }
 
-export function DiscordSelectMenuDropdown( { options }: DiscordSelectMenuDropdownProps ) {
+export function DiscordSelectMenuDropdown( { options, absolute = false }: DiscordSelectMenuDropdownProps ) {
+    const className = absolute
+        ? "discord-select-menu-dropdown discord-select-menu-dropdown-absolute"
+        : "discord-select-menu-dropdown";
+
     return (
-        <div className="discord-select-menu-dropdown">
+        <div className={ className }>
             { options.map( ( option, index ) => (
                 <div
                     key={ index }

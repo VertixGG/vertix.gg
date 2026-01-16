@@ -77,6 +77,9 @@ export function DiscordUIComponentRenderer( {
     const [ component, setComponent ] = React.useState<UIComponent | null>( null );
     const [ resolvedEmbeds, setResolvedEmbeds ] = React.useState<ReadonlyArray<ResolvedEmbedDefinition>>( [] );
     const [ isLoading, setIsLoading ] = React.useState<boolean>( true );
+    const [ expandedElementName, setExpandedElementName ] = React.useState<string | null>(
+        expandedSelectMenu?.elementName ?? null
+    );
 
     React.useEffect( () => {
         let isMounted = true;
@@ -175,6 +178,10 @@ export function DiscordUIComponentRenderer( {
                         elementOverrides: elementOverrides,
                         emojiIconSrcByUnicode,
                         expandedSelectMenu,
+                        expandedElementName,
+                        onToggleExpand: ( elementName ) => {
+                            setExpandedElementName( ( prev ) => prev === elementName ? null : elementName );
+                        },
                     } ) }
                 </div>
             ) }
@@ -284,6 +291,8 @@ function renderElementRows(
         elementOverrides: Readonly<Record<string, UIElementOverride>> | undefined;
         emojiIconSrcByUnicode: Readonly<Record<string, string>> | undefined;
         expandedSelectMenu: ExpandedSelectMenuConfig | undefined;
+        expandedElementName: string | null;
+        onToggleExpand: ( elementName: string ) => void;
     },
 ): React.ReactNode {
     const result: Array<React.ReactNode> = [];
@@ -349,6 +358,8 @@ function renderElement(
         elementOverrides: Readonly<Record<string, UIElementOverride>> | undefined;
         emojiIconSrcByUnicode: Readonly<Record<string, string>> | undefined;
         expandedSelectMenu: ExpandedSelectMenuConfig | undefined;
+        expandedElementName: string | null;
+        onToggleExpand: ( elementName: string ) => void;
     },
 ): React.ReactNode {
     const override = context.elementOverrides?.[ item.element ];
@@ -385,8 +396,9 @@ function renderElement(
         || definition.elementType === "role-select"
     ) {
         const placeholder = applyVariables( definition.placeholder, context.variables );
-        const isExpanded = context.expandedSelectMenu?.elementName === item.element;
         const expandedConfig = context.expandedSelectMenu;
+        const isInteractive = expandedConfig?.elementName === item.element;
+        const isExpanded = isInteractive && context.expandedElementName === item.element;
 
         let dropdownOptions: ReadonlyArray<ExpandedSelectMenuOption> | undefined;
 
@@ -407,6 +419,10 @@ function renderElement(
             }
         }
 
+        const handleClick = isInteractive
+            ? () => context.onToggleExpand( item.element )
+            : undefined;
+
         return (
             <React.Fragment key={ item.element }>
                 <DiscordSelectMenu
@@ -414,9 +430,11 @@ function renderElement(
                     disabled={ override?.disabled }
                     highlighted={ Boolean( override?.highlighted ) }
                     emojiIconSrcByUnicode={ context.emojiIconSrcByUnicode }
+                    onClick={ handleClick }
                 />
                 { isExpanded && dropdownOptions && (
                     <DiscordSelectMenuDropdown
+                        absolute={ true }
                         options={ dropdownOptions.map( ( opt ) => ( {
                             iconEmoji: opt.iconEmoji,
                             label: opt.label,

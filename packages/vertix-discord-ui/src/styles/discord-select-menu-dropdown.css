@@ -9,6 +9,15 @@
     width: 100%;
     max-height: 215px;
     padding: 4px 0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+}
+
+.discord-select-menu-dropdown.discord-select-menu-dropdown-absolute {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    margin-top: 4px;
 }
 
 .discord-select-menu-dropdown-item {

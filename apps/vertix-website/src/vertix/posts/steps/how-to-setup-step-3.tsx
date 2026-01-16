@@ -1,3 +1,10 @@
+import { DiscordUIComponentMessage, DiscordRoleSelectDropdown } from "@vertix.gg/discord-ui";
+
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
+
+import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
+
 interface IHowToSetupStep3Props {
     displayStep?: boolean
 }
@@ -19,16 +26,40 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                 }
                 Or continue with <b>( <code>default = @everyone</code> recommended! )</b>
                 <br/>
-                <img className="normalize"
-                    src="https://i.ibb.co/DCvxSvG/setup-step-3-verfied-roles-arrow-red-on-select-roles.png"
-                    alt="s8"/>
+                <br/>
+                <div className="discord-chat-container border-box m-0">
+                    <DiscordUIComponentMessage
+                        author="Vertix"
+                        avatar={ VertixAvatar }
+                        timestamp="Today at 2:35 PM"
+                        componentName="VertixBot/UI-V3/SetupNewWizardComponent"
+                        preferredElementsGroup="VertixBot/UI-V3/SetupStep3Component/ElementsGroup"
+                        preferredEmbedsGroup="VertixBot/UI-V3/SetupStep3Component/EmbedsGroup"
+                        variables={ { verifiedRolesDisplay: "{verifiedRolesDefault}" } }
+                        ephemeral={ true }
+                        interactionUser="iNewLegend"
+                        interactionUserAvatar={ UserAvatar }
+                        interactionCommand="/setup"
+                        elementOverrides={ {
+                            "VertixBot/UI-General/VerifiedRolesMenu": { highlighted: true },
+                            "VertixBot/UI-General/WizardNextButton": { hidden: true },
+                        } }
+                    />
+                </div>
                 <br/>
                 <br/>
                 <p>Select <b>Verified Roles</b></p>
-                <img className="normalize" src="https://i.ibb.co/cY7NFgS/setup-step-3-trusted-members.png"
-                    alt="s8"/>
+                <DiscordRoleSelectDropdown
+                    roles={ [
+                        { name: "Bots", memberCount: 3, color: "#3498db" },
+                        { name: "Developer", memberCount: 3, color: "#2ecc71" },
+                        { name: "Manager", memberCount: 3, color: "#e67e22" },
+                        { name: "MEE6", memberCount: 1, color: "#99aab5" },
+                        { name: "Support", memberCount: 0, color: "#9b59b6" },
+                    ] }
+                />
 
-                <ul>
+                <ul className="pt-5">
                     <p>Do I need to set <b>Verified Roles</b>?</p>
                     <ul>
                         <li>
@@ -51,12 +82,47 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                 <br/>
                 Press <b>( ✔ Finish )</b> to generate your <b>Master Channel.</b>
                 <br/>
-                <img className="normalize" src="https://i.ibb.co/0FsSRDQ/setup-step-3-finish.png" alt="s8"/>
+                <br/>
+                <div className="discord-chat-container border-box m-0">
+                    <DiscordUIComponentMessage
+                        author="Vertix"
+                        avatar={ VertixAvatar }
+                        timestamp="Today at 4:26 PM"
+                        componentName="VertixBot/UI-V3/SetupNewWizardComponent"
+                        preferredElementsGroup="VertixBot/UI-V3/SetupStep3Component/ElementsGroup"
+                        preferredEmbedsGroup="VertixBot/UI-V3/SetupStep3Component/EmbedsGroup"
+                        variables={ { verifiedRolesDisplay: "@Trusted Members" } }
+                        ephemeral={ true }
+                        interactionUser="iNewLegend"
+                        interactionUserAvatar={ UserAvatar }
+                        interactionCommand="/setup"
+                        elementOverrides={ {
+                            "VertixBot/UI-General/WizardFinishButton": { highlighted: true },
+                            "VertixBot/UI-General/WizardNextButton": { hidden: true },
+                        } }
+                    />
+                </div>
                 <br/>
                 <br/>
                 <h4>Its done, the <b>Master Channel</b> created!</h4>
                 <br/>
-                <img className="normalize" src="https://i.ibb.co/jTqkr0j/setup-finish.png" alt="s9"/>
+                <div className="discord-chat-container border-box m-0">
+                    <DiscordUIComponentMessage
+                        author="Vertix"
+                        avatar={ VertixAvatar }
+                        timestamp="Today at 4:26 PM"
+                        componentName="VertixBot/UI-General/SetupComponent"
+                        variables={ {
+                            masterChannelMessage: "{masterChannels}",
+                            masterChannels: "**#1**\n▷ Name: 🔊 🆕 New Channel\n▷ Channel ID: 1121075197588541460\n▷ Dynamic Channels Name: `{user}'s Channel`\n▷ Buttons: ✏️, ✋, 🧹, 🚫, 🙈, 👥, 🔃, 🔀, 😈\n▷ Verified Roles: @Trusted Members",
+                            badwordsMessage: "`badword`",
+                        } }
+                        ephemeral={ true }
+                        interactionUser="iNewLegend"
+                        interactionUserAvatar={ UserAvatar }
+                        interactionCommand="/setup"
+                    />
+                </div>
                 <br/>
             </li>
         </>

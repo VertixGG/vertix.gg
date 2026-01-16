@@ -1,6 +1,14 @@
-import HowToSetupStep1 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-1";
-import HowToSetupStep2 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-2";
-import HowToSetupStep3 from "@vertix.gg/website/src/vertix//posts/steps/how-to-setup-step-3";
+import { DiscordCommandSuggestion, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
+
+import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
+
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+
+import "./how-to-setup.scss";
+
+import HowToSetupStep1 from "@vertix.gg/website/src/vertix/posts/steps/how-to-setup-step-1";
+import HowToSetupStep2 from "@vertix.gg/website/src/vertix/posts/steps/how-to-setup-step-2";
+import HowToSetupStep3 from "@vertix.gg/website/src/vertix/posts/steps/how-to-setup-step-3";
 
 export default function HowToSetup() {
     return (
@@ -13,7 +21,16 @@ export default function HowToSetup() {
                     <li>
                         Enter your discord server and type <code>/setup</code> in any channel.
                         <br/>
-                        <img className="normalize" src="https://i.ibb.co/LYkTJyh/e1.png" alt="s1"/>
+                        <br/>
+                        <DiscordCommandSuggestion
+                            searchTerm="/setup"
+                            items={ [ {
+                                command: "/setup",
+                                description: "Displaying Vertix setup wizard in ephemeral mode.",
+                                botName: "Vertix",
+                                botAvatar: VertixAvatar,
+                            } ] }
+                        />
                     </li>
                     <hr/>
                     <br/>
@@ -48,7 +65,42 @@ export default function HowToSetup() {
                         <br/>
                         On the right screen of the window you will see the interface.
                         <br/>
-                        <img className="normalize" src="https://i.ibb.co/55xpqZz/101.png" alt="s12"/>
+                        <br/>
+                        <div className="discord-chat-container border-box m-0">
+                            <DiscordUIComponentMessage
+                                author="Vertix"
+                                avatar={ VertixAvatar }
+                                timestamp="Today at 3:33 PM"
+                                componentName="VertixBot/UI-V2/DynamicChannel"
+                                mention="@iNewLegend"
+                                variables={ {
+                                    name: "iNewLegend's Office",
+                                    limit: "Unlimited",
+                                    state: "🌐 **Public**",
+                                    visibilityState: "😎 **Shown**",
+                                    displayText: "Private",
+                                } }
+                                elementOverrides={ {
+                                    "VertixBot/UI-V2/DynamicChannelPermissionsStateButton": {
+                                        label: "Private",
+                                        emoji: "🚫",
+                                    },
+                                    "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton": {
+                                        label: "Hidden",
+                                        emoji: "🙈",
+                                    },
+                                    "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton": {
+                                        label: "Access",
+                                    },
+                                    "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton": {
+                                        label: "Reset Channel",
+                                    },
+                                    "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": {
+                                        label: "Claim Channel",
+                                    },
+                                } }
+                            />
+                        </div>
                     </li>
                 </ul>
 

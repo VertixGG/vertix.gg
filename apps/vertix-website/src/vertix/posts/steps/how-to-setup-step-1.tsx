@@ -1,3 +1,10 @@
+import { DiscordUIComponentMessage, DiscordSelectMenuDropdown, DiscordModal, DiscordInput } from "@vertix.gg/discord-ui";
+
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
+
+import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
+
 interface IHowToSetupStep1Props {
     displayStep?: boolean
 }
@@ -12,7 +19,7 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                     ) : <h3>Channel's default name</h3>
                 }
                 <br/>
-                Click on <b>( ➕ Create Master Channel )</b> button to create new master channel.
+                Select <b>( ➕ ∙ Create Master Channel )</b> menu to create a new master channel.
                 <ul>
                     <li>What is a <b>Master Channel</b>?</li>
                     <ul>
@@ -30,7 +37,47 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                     </ul>
                 </ul>
                 <br/>
-                <img className="normalize" src="https://i.ibb.co/mNcTWQK/000.png" alt="s2"/>
+                <div className="discord-chat-container border-box m-0 box-normalize">
+                    <DiscordUIComponentMessage
+                        author="Vertix"
+                        avatar={ VertixAvatar }
+                        timestamp="Today at 9:13 AM"
+                        componentName="VertixBot/UI-General/SetupComponent"
+                        ephemeral={ true }
+                        interactionUser="iNewLegend"
+                        interactionUserAvatar={ UserAvatar }
+                        interactionCommand="/setup"
+                        elementOverrides={ {
+                            "VertixBot/UI-General/SetupMasterCreateSelectMenu": { highlighted: true }
+                        } }
+                    />
+                </div>
+                <br/>
+                <p>After clicking the menu, you will see the available options:</p>
+                <div style={ { maxWidth: "450px" } }>
+                    <DiscordSelectMenuDropdown
+                        options={ [
+                            {
+                                iconEmoji: "➕",
+                                label: "Dynamic Channel (V2)",
+                                description: "Classic dynamic voice channels",
+                                highlighted: true,
+                            },
+                            {
+                                iconEmoji: "✨",
+                                label: "Dynamic Channel (V3)",
+                                description: "Enhanced dynamic channels with more features",
+                            },
+                            {
+                                iconEmoji: "📈",
+                                label: "Auto-Scaling Channel",
+                                description: "Automatically scales based on member count",
+                            },
+                        ] }
+                    />
+                </div>
+                <br/>
+                <p>Select <b>Dynamic Channel (V2)</b> to continue with the classic setup.</p>
             </li>
             <br/>
             <li>
@@ -49,7 +96,27 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                     </ul>
                 </ul>
                 <br/>
-                <img className="normalize" src="https://i.ibb.co/BVdjwFW/001.png" alt="s3"/>
+                <div className="discord-chat-container border-box m-0">
+                    <DiscordUIComponentMessage
+                        author="Vertix"
+                        avatar={ VertixAvatar }
+                        timestamp="Today at 9:13 AM"
+                        componentName="VertixBot/UI-V3/SetupNewWizardComponent"
+                        preferredElementsGroup="VertixBot/UI-V3/SetupStep1Component/ElementsGroup"
+                        preferredEmbedsGroup="VertixBot/UI-V3/SetupStep1Component/EmbedsGroup"
+                        variables={
+                            { dynamicChannelNameTemplate: "{user}'s Channel" }
+                        }
+                        ephemeral={ true }
+                        interactionUser="iNewLegend"
+                        interactionUserAvatar={ UserAvatar }
+                        interactionCommand="/setup"
+                        elementOverrides={ {
+                            "VertixBot/UI-General/ChannelNameTemplateEditButton": { highlighted: true },
+                            "VertixBot/UI-General/WizardFinishButton": { hidden: true },
+                        } }
+                    />
+                </div>
             </li>
             <br/>
 
@@ -65,17 +132,38 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                 </ul>
             </ul>
             <br/>
-            <img className="normalize" src="https://i.ibb.co/0Q6mRPM/002.png" alt="s3"/>
-            <p>
+            <DiscordModal title="Set dynamic channels name" showNotice={ true } cancelLabel="Cancel">
+                <DiscordInput
+                    label="SET DEFAULT DYNAMIC CHANNELS NAME"
+                    value="{user}'s Office"
+                />
+            </DiscordModal>
+            <p className="pt-5">
                 Press <div className="btn btn-primary user-select-none pe-none">Submit</div> to proceed.
             </p>
-            <img className="normalize" src="https://i.ibb.co/mHqSW4H/003.png" alt="s4"/>
-            <ul>
-                <li>
-                    <li>Then press <a href={ `${ props.displayStep ? "#step-2" : "2" }` } className="btn btn-sm btn-primary">Next ▶</a> to continue.
-                    </li>
-                </li>
-            </ul>
+            <br/>
+            <div className="discord-chat-container border-box m-0">
+                <DiscordUIComponentMessage
+                    author="Vertix"
+                    avatar={ VertixAvatar }
+                    timestamp="Today at 9:35 AM"
+                    componentName="VertixBot/UI-V3/SetupNewWizardComponent"
+                    preferredElementsGroup="VertixBot/UI-V3/SetupStep1Component/ElementsGroup"
+                    preferredEmbedsGroup="VertixBot/UI-V3/SetupStep1Component/EmbedsGroup"
+                    variables={ { dynamicChannelNameTemplate: "{user}'s Office" } }
+                    ephemeral={ true }
+                    interactionUser="iNewLegend"
+                    interactionUserAvatar={ UserAvatar }
+                    interactionCommand="/setup"
+                    elementOverrides={ {
+                        "VertixBot/UI-General/WizardNextButton": { highlighted: true },
+                        "VertixBot/UI-General/WizardFinishButton": { hidden: true },
+                    } }
+                />
+            </div>
+            <p className="pt-5">
+                Then press <a href={ `${ props.displayStep ? "#step-2" : "2" }` } className="btn btn-sm btn-primary">Next ▶</a> to continue next step.
+            </p>
         </>
     );
 }

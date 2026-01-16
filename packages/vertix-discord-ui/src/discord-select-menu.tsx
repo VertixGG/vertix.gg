@@ -7,6 +7,7 @@ export interface DiscordSelectMenuProps {
     disabled?: boolean;
     emojiIconSrcByUnicode?: Readonly<Record<string, string>>;
     highlighted?: boolean;
+    onClick?: () => void;
 }
 
 export function DiscordSelectMenu( {
@@ -14,6 +15,7 @@ export function DiscordSelectMenu( {
     disabled = false,
     emojiIconSrcByUnicode,
     highlighted = false,
+    onClick,
 }: DiscordSelectMenuProps ) {
     const resolvedPlaceholder = placeholder ? replaceEmojisWithIcons( placeholder, emojiIconSrcByUnicode ) : "";
 
@@ -23,6 +25,7 @@ export function DiscordSelectMenu( {
             className={ highlighted ? "discord-select-menu discord-select-menu-highlighted" : "discord-select-menu" }
             disabled={ disabled }
             aria-label={ placeholder }
+            onClick={ onClick }
         >
             <span
                 className="discord-select-menu-placeholder"

@@ -1,7 +1,7 @@
-import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
-
-import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
+import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder";
 
 // TODO: Use index
 import { ChannelNameTemplateModal } from "@vertix.gg/bot/src/ui/general/channel-name-template/channel-name-template-modal";
@@ -18,49 +18,20 @@ import { SetupEditButtonsEffectEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit
 import { SetupEditVerifiedRolesElementsGroup } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-verified-roles/setup-edit-verified-roles-elements-group";
 import { SetupEditVerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-verified-roles/setup-edit-verified-roles-embed";
 
-/**
- * Used to configure "Master Channel(s)".
- */
-export class SetupEditComponent extends UIComponentBase {
-    public static getName() {
-        return "VertixBot/UI-V2/ConfigComponent";
-    }
+const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V2/ConfigComponent" )
+    .addElementsGroup( SetupEditElementsGroup )
+    .addElementsGroup( SetupEditButtonsElementsGroup )
+    .addElementsGroup( SetupEditButtonsEffectElementsGroup )
+    .addElementsGroup( SetupEditVerifiedRolesElementsGroup )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
+    .addModal( ChannelNameTemplateModal )
+    .addModal( DeleteConfirmModal )
+    .setDefaultElementsGroup( "VertixBot/UI-V2/SetupEditElementsGroup" )
+    .setDefaultEmbedsGroup( "VertixBot/UI-V2/SetupEditEmbedGroup" )
+    .setInstanceType( UIInstancesTypes.Static )
+    .build();
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Static;
-    }
-
-    public static getElementsGroups() {
-        return [
-            SetupEditElementsGroup,
-
-            SetupEditButtonsElementsGroup,
-            SetupEditButtonsEffectElementsGroup,
-
-            SetupEditVerifiedRolesElementsGroup
-        ];
-    }
-
-    public static getEmbedsGroups() {
-        return [
-            UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ),
-
-            UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ),
-
-            UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed )
-        ];
-    }
-
-    protected static getModals() {
-        return [ ChannelNameTemplateModal, DeleteConfirmModal ];
-    }
-
-    public static getDefaultElementsGroup() {
-        return "VertixBot/UI-V2/SetupEditElementsGroup";
-    }
-
-    public static getDefaultEmbedsGroup() {
-        return "VertixBot/UI-V2/SetupEditEmbedGroup";
-    }
-}
+export { SetupEditComponent };

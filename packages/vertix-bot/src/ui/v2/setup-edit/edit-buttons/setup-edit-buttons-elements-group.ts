@@ -1,15 +1,12 @@
-import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
+import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group-builder";
 
 import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
 
 import { ChannelButtonsTemplateSelectMenu } from "@vertix.gg/bot/src/ui/v2/channel-buttons-template/channel-buttons-template-select-menu";
 
-export class SetupEditButtonsElementsGroup extends UIElementsGroupBase {
-    public static getName() {
-        return "VertixBot/UI-V2/SetupEditButtonsElementsGroup";
-    }
+const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V2/SetupEditButtonsElementsGroup" )
+    .addRow( [ ChannelButtonsTemplateSelectMenu ] )
+    .addRow( [ DoneButton ] )
+    .build();
 
-    public static getItems() {
-        return [ [ ChannelButtonsTemplateSelectMenu ], [ DoneButton ] ];
-    }
-}
+export { SetupEditButtonsElementsGroup };

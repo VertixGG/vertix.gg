@@ -174,10 +174,6 @@
                                         "value": "en"
                                     },
                                     {
-                                        "label": "🇺🇸 English",
-                                        "value": "en"
-                                    },
-                                    {
                                         "label": "🇷🇺 Russian",
                                         "value": "ru"
                                     },
@@ -2923,7 +2919,36 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupEditEmbed",
                         "definition": {
-                            "description": "{dynamicChannelButtonsTemplate}",
+                            "instanceType": "Dynamic",
+                            "title": "🔧  Configure Master Channel #{index}",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n▥ ∙ Auto create control panel channel: {configControlChannelAutoCreate}\n\n",
+                            "footer": "Note: Changing user mention will not affect already created dynamic channels.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "on": "`🟢∙On`",
+                                "off": "`🔴∙Off`",
+                                "dynamicChannelLogsChannelDisplay": {
+                                    "{dynamicChannelLogsChannelDefault}": "**None**",
+                                    "{dynamicChannelLogsChannelSelected}": "<#{dynamicChannelLogsChannelId}>"
+                                },
+                                "configUserMention": {
+                                    "{configUserMentionEnabled}": "{on}",
+                                    "{configUserMentionDisabled}": "{off}"
+                                },
+                                "configAutoSave": {
+                                    "{configAutoSaveEnabled}": "{on}",
+                                    "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "configLogs": {
+                                    "{configLogsEnabled}": "{on}",
+                                    "{configLogsDisabled}": "{off}"
+                                },
+                                "configControlChannelAutoCreate": {
+                                    "{configControlChannelAutoCreateEnabled}": "{on}",
+                                    "{configControlChannelAutoCreateDisabled}": "{off}"
+                                }
+                            },
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -2939,11 +2964,37 @@
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**"
                                     }
+                                },
+                                "verifiedRoles": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
                                 }
                             },
                             "vars": {
                                 "separator": "{separator}",
                                 "value": "{value}",
+                                "on": "{on}",
+                                "off": "{off}",
+                                "index": "{index}",
+                                "masterChannelId": "{masterChannelId}",
+                                "configUserMention": "{configUserMention}",
+                                "configUserMentionEnabled": "{configUserMentionEnabled}",
+                                "configUserMentionDisabled": "{configUserMentionDisabled}",
+                                "configAutoSave": "{configAutoSave}",
+                                "configAutoSaveEnabled": "{configAutoSaveEnabled}",
+                                "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "configLogs": "{configLogs}",
+                                "configLogsEnabled": "{configLogsEnabled}",
+                                "configLogsDisabled": "{configLogsDisabled}",
+                                "configControlChannelAutoCreate": "{configControlChannelAutoCreate}",
+                                "configControlChannelAutoCreateEnabled": "{configControlChannelAutoCreateEnabled}",
+                                "configControlChannelAutoCreateDisabled": "{configControlChannelAutoCreateDisabled}",
+                                "dynamicChannelNameTemplate": "{dynamicChannelNameTemplate}",
+                                "dynamicChannelLogsChannelId": "{dynamicChannelLogsChannelId}",
+                                "dynamicChannelLogsChannelDefault": "{dynamicChannelLogsChannelDefault}",
+                                "dynamicChannelLogsChannelSelected": "{dynamicChannelLogsChannelSelected}",
+                                "dynamicChannelLogsChannelDisplay": "{dynamicChannelLogsChannelDisplay}",
+                                "verifiedRoles": "{verifiedRoles}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
                             },
                             "defaultVars": {
@@ -3001,7 +3052,35 @@
                 "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed"
+                        "embed": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
+                            "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
+                            "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "verifiedRolesDisplay": {
+                                    "{verifiedRoles}": "{verifiedRoles}",
+                                    "{verifiedRolesDefault}": "**None**"
+                                }
+                            },
+                            "arrayOptions": {
+                                "verifiedRoles": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "verifiedRoles": "{verifiedRoles}",
+                                "verifiedRolesDisplay": "{verifiedRolesDisplay}",
+                                "verifiedRolesDefault": "{verifiedRolesDefault}",
+                                "index": "{index}"
+                            }
+                        }
                     }
                 ]
             }
@@ -3046,8 +3125,8 @@
         "options": {
             "embedAudit": {
                 "total": 4,
-                "withDefinition": 3,
-                "missingDefinition": 1
+                "withDefinition": 4,
+                "missingDefinition": 0
             }
         }
     },

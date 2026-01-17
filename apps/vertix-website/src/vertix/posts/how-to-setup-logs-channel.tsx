@@ -200,9 +200,6 @@ export default function HowToSetupLogsChannel() {
                     </div>
                 </li>
             </ol>
-
-            <br />
-            <p>Updated at: 24/06/2023</p>
         </div>
     );
 }

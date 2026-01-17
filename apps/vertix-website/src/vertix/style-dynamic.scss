@@ -61,9 +61,20 @@ code {
             padding: 40px 15px 15px;
         }
 
-        @include bootstrap.media-breakpoint-between(sm, md) {
-            padding: 35px;
+        @include bootstrap.media-breakpoint-between(xs, md) {
+            background-color: transparent;
+            width: 100%;
+            padding-top: 50px;
+            border-radius: 0;
+            border: 0;
+            box-shadow: none;
         }
+    }
+}
+
+.container {
+    @include bootstrap.media-breakpoint-between(xs, md) {
+        width: 100%;
     }
 }
 

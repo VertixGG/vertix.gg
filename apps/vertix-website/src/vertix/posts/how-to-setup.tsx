@@ -1,10 +1,8 @@
 import { DiscordCommandSuggestion, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 
-import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
-
 import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
 
-import "./how-to-setup.scss";
+import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
 import HowToSetupStep1 from "@vertix.gg/website/src/vertix/posts/steps/how-to-setup-step-1";
 import HowToSetupStep2 from "@vertix.gg/website/src/vertix/posts/steps/how-to-setup-step-2";

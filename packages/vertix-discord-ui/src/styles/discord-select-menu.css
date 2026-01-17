@@ -67,6 +67,14 @@
     flex: 0 0 auto;
 }
 
+.discord-select-menu-caret svg {
+    transition: transform 120ms ease;
+}
+
+.discord-select-menu-caret-expanded svg {
+    transform: rotate(180deg);
+}
+
 .discord-select-menu-caret-highlighted {
     outline: 3px solid #ed4245;
     outline-offset: 2px;

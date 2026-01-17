@@ -433,6 +433,7 @@ function renderElement(
                     highlighted={ Boolean( override?.highlighted ) }
                     selectedLabel={ override?.selectedLabel }
                     highlightedCaret={ Boolean( override?.highlightedCaret ) }
+                    expanded={ isExpanded }
                     emojiIconSrcByUnicode={ context.emojiIconSrcByUnicode }
                     onClick={ handleClick }
                 />

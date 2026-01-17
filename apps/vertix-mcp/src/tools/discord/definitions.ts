@@ -773,5 +773,49 @@ export const discordToolDefinitions: Tool[] = [
             },
             required: [ "channelId", "filename" ]
         }
+    },
+    {
+        name: "discord_send_dm",
+        description: "Send a direct message (private message) to a user",
+        inputSchema: {
+            type: "object",
+            properties: {
+                userId: { type: "string", description: "Discord User ID to send DM to" },
+                content: { type: "string", description: "Message content" },
+                embeds: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            title: { type: "string" },
+                            description: { type: "string" },
+                            color: { type: "number" },
+                            fields: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        name: { type: "string" },
+                                        value: { type: "string" },
+                                        inline: { type: "boolean" }
+                                    }
+                                }
+                            },
+                            footer: {
+                                type: "object",
+                                properties: {
+                                    text: { type: "string" },
+                                    iconUrl: { type: "string" }
+                                }
+                            },
+                            thumbnail: { type: "object", properties: { url: { type: "string" } } },
+                            image: { type: "object", properties: { url: { type: "string" } } }
+                        }
+                    },
+                    description: "Embed objects"
+                }
+            },
+            required: [ "userId" ]
+        }
     }
 ];

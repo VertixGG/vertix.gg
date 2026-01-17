@@ -213,3 +213,24 @@ export const SendFileSchema = z.object( {
     content: z.string().optional().describe( "Optional message content to send with the file" ),
     spoiler: z.boolean().optional().describe( "Mark file as spoiler" )
 } );
+
+export const SendDMSchema = z.object( {
+    userId: z.string().describe( "Discord User ID to send DM to" ),
+    content: z.string().optional().describe( "Message content" ),
+    embeds: z.array( z.object( {
+        title: z.string().optional(),
+        description: z.string().optional(),
+        color: z.number().optional(),
+        fields: z.array( z.object( {
+            name: z.string(),
+            value: z.string(),
+            inline: z.boolean().optional()
+        } ) ).optional(),
+        footer: z.object( {
+            text: z.string(),
+            iconUrl: z.string().optional()
+        } ).optional(),
+        thumbnail: z.object( { url: z.string() } ).optional(),
+        image: z.object( { url: z.string() } ).optional()
+    } ) ).optional().describe( "Embed objects" )
+} );

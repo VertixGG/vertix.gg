@@ -10,7 +10,8 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { environment } from "@vertix.gg/mcp/src/server/config/environment";
 
-import type { GuildChannelTypes ,
+import type {
+    GuildChannelTypes,
     Guild,
     GuildMember,
     User,
@@ -25,7 +26,8 @@ import type { GuildChannelTypes ,
     GuildAuditLogsEntry,
     ThreadChannel,
     GuildEmoji,
-    Sticker
+    Sticker,
+    MessageCreateOptions
 } from "discord.js";
 
 const logger = new Logger( "VertixMCP/DiscordClient", { skipEventBusHook: true } );
@@ -325,6 +327,17 @@ class DiscordClientService {
         }
 
         return result;
+    }
+
+    public async sendDM( userId: string, options: MessageCreateOptions ): Promise<Message> {
+        if ( ! this.client ) {
+            throw new Error( "Discord client not initialized" );
+        }
+
+        const user = await this.client.users.fetch( userId );
+        const dmChannel = await user.createDM();
+
+        return dmChannel.send( options );
     }
 }
 

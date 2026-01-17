@@ -30,7 +30,8 @@ import {
     SearchMembersSchema,
     GetAuditLogSchema,
     InviteSchema,
-    SendFileSchema
+    SendFileSchema,
+    SendDMSchema
 } from "@vertix.gg/mcp/src/tools/discord/schemas";
 
 import type { TextChannel, NewsChannel, VoiceChannel, GuildTextBasedChannel } from "discord.js";
@@ -367,6 +368,11 @@ export async function executeDiscordTool( name: string, args: Record<string, unk
         case "discord_send_file": {
             const parsed = SendFileSchema.parse( args );
             return sendFile( parsed );
+        }
+
+        case "discord_send_dm": {
+            const parsed = SendDMSchema.parse( args );
+            return sendDM( parsed );
         }
 
         default:
@@ -1232,6 +1238,31 @@ async function sendFile( config: z.infer<typeof SendFileSchema> ): Promise<ToolR
     const message = await channel.send( {
         content: config.content,
         files: [ attachment ]
+    } );
+
+    return {
+        success: true,
+        message: discordClient.serializeMessage( message )
+    };
+}
+
+async function sendDM( config: z.infer<typeof SendDMSchema> ): Promise<ToolResult> {
+    const embeds = config.embeds?.map( ( embed ) => ( {
+        title: embed.title,
+        description: embed.description,
+        color: embed.color,
+        fields: embed.fields,
+        footer: embed.footer ? {
+            text: embed.footer.text,
+            icon_url: embed.footer.iconUrl
+        } : undefined,
+        thumbnail: embed.thumbnail,
+        image: embed.image
+    } ) );
+
+    const message = await discordClient.sendDM( config.userId, {
+        content: config.content,
+        embeds
     } );
 
     return {

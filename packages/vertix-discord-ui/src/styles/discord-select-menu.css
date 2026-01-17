@@ -35,7 +35,25 @@
     text-overflow: ellipsis;
 }
 
+.discord-select-menu-selected {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: var(--discord-text-default);
+    font-weight: var(--discord-font-weight-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .discord-select-menu-placeholder .emoji {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+}
+
+.discord-select-menu-selected .emoji {
     width: 18px;
     height: 18px;
     flex: 0 0 auto;
@@ -47,6 +65,13 @@
     justify-content: center;
     color: var(--discord-text-muted);
     flex: 0 0 auto;
+}
+
+.discord-select-menu-caret-highlighted {
+    outline: 3px solid #ed4245;
+    outline-offset: 2px;
+    border-radius: 4px;
+    padding: 2px;
 }
 
 .discord-select-menu-highlighted {

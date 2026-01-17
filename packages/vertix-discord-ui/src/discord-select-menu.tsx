@@ -7,6 +7,8 @@ export interface DiscordSelectMenuProps {
     disabled?: boolean;
     emojiIconSrcByUnicode?: Readonly<Record<string, string>>;
     highlighted?: boolean;
+    selectedLabel?: string;
+    highlightedCaret?: boolean;
     onClick?: () => void;
 }
 
@@ -15,9 +17,16 @@ export function DiscordSelectMenu( {
     disabled = false,
     emojiIconSrcByUnicode,
     highlighted = false,
+    selectedLabel,
+    highlightedCaret = false,
     onClick,
 }: DiscordSelectMenuProps ) {
     const resolvedPlaceholder = placeholder ? replaceEmojisWithIcons( placeholder, emojiIconSrcByUnicode ) : "";
+    const resolvedSelectedLabel = selectedLabel
+        ? replaceEmojisWithIcons( selectedLabel, emojiIconSrcByUnicode )
+        : "";
+    const labelClassName = selectedLabel ? "discord-select-menu-selected" : "discord-select-menu-placeholder";
+    const labelValue = selectedLabel ? resolvedSelectedLabel : resolvedPlaceholder;
 
     return (
         <button
@@ -28,10 +37,17 @@ export function DiscordSelectMenu( {
             onClick={ onClick }
         >
             <span
-                className="discord-select-menu-placeholder"
-                dangerouslySetInnerHTML={ { __html: resolvedPlaceholder } }
+                className={ labelClassName }
+                dangerouslySetInnerHTML={ { __html: labelValue } }
             />
-            <span className="discord-select-menu-caret" aria-hidden="true">
+            <span
+                className={
+                    highlightedCaret
+                        ? "discord-select-menu-caret discord-select-menu-caret-highlighted"
+                        : "discord-select-menu-caret"
+                }
+                aria-hidden="true"
+            >
                 <svg
                     width="20"
                     height="20"

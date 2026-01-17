@@ -1,3 +1,41 @@
+import { DiscordUIComponentMessage, DiscordCommandSuggestion, DiscordMessage, DiscordEmbed } from "@vertix.gg/discord-ui";
+
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
+
+import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
+
+const DYNAMIC_BUTTON_LABELS = [
+    "✏️ ∙ **Rename**",
+    "✋ ∙ **User Limit**",
+    "🧹 ∙ **Clear Chat**",
+    "🚫 ∙ **Private** / 🌐 ∙ **Public**",
+    "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
+    "👥 ∙ **Access**",
+    "🔃 ∙ **Reset**",
+    "🔀 ∙ **Transfer**",
+    "😈 ∙ **Claim**"
+];
+
+const CONFIG_VARIABLES = {
+    index: "1",
+    masterChannelId: "1120213539064385597",
+    dynamicChannelNameTemplate: "{user}'s Channel",
+    dynamicChannelButtonsTemplate: DYNAMIC_BUTTON_LABELS.map( ( label ) => `- ( ${ label } )` ).join( "\n" ),
+    verifiedRoles: "@everyone",
+    dynamicChannelLogsChannelDisplay: "**None**",
+    configUserMention: "`🟢∙On`",
+    configAutoSave: "`🔴∙Off`",
+    configLogs: "`🔴∙Off`",
+    configControlChannelAutoCreate: "`🟢∙On`",
+};
+
+const CONFIG_VARIABLES_ENABLED = {
+    ...CONFIG_VARIABLES,
+    dynamicChannelLogsChannelDisplay: "#general",
+    configLogs: "`🟢∙On`",
+};
+
 export default function HowToSetupLogsChannel() {
     return (
         <div className="container box-1">
@@ -10,31 +48,126 @@ export default function HowToSetupLogsChannel() {
                 <li>
                     Enter your discord server and type <code>/setup</code> in any channel.
                     <br />
-                    <img className="normalize" src="https://i.ibb.co/LYkTJyh/e1.png" alt="e1" />
+                    <br />
+                    <div className="discord-chat-container border-box m-0 box-normalize">
+                        <DiscordCommandSuggestion
+                            searchTerm="/setup"
+                            items={ [
+                                {
+                                    command: "/setup",
+                                    description: "Displaying Vertix setup wizard in ephemeral mode.",
+                                    botName: "Vertix",
+                                    botAvatar: VertixAvatar
+                                }
+                            ] }
+                        />
+                    </div>
                 </li>
                 <br />
                 <li>
                     Please select the Master Channel from which you would like to receive logs for the associated dynamic channels.
                     <br />
-                    <img className="normalize" src="https://i.ibb.co/cDJzXX7/1.png" alt="e2" />
+                    <br />
+                    <div className="discord-chat-container border-box m-0">
+                        <DiscordUIComponentMessage
+                            author="Vertix"
+                            avatar={ VertixAvatar }
+                            timestamp="Today at 3:42 PM"
+                            componentName="VertixBot/UI-General/SetupComponent"
+                            ephemeral={ true }
+                            interactionUser="iNewLegend"
+                            interactionUserAvatar={ UserAvatar }
+                            interactionCommand="/setup"
+                            variables={ {
+                                masterChannelMessage: "**#1**\n▷ Name: 🔊 ➕ New Channel\n▷ Channel ID: 1120213539064385597\n▷ Dynamic Channels Name: `{user}'s Channel`\n▷ Buttons: ✏️, ✋, 🧹, 🚫, 🙈, 👥, 🔃, 🔀, 😈\n▷ Verified Roles: @everyone\n▷ Logs Channel: None",
+                                badwordsMessage: "`badword*`",
+                            } }
+                            elementOverrides={ {
+                                "VertixBot/UI-General/SetupMasterEditSelectMenu": { highlighted: true }
+                            } }
+                        />
+                    </div>
                 </li>
                 <br />
                 <li>
                     Click on <svg aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z"></path></svg> down arrow.
                     <br />
-                    <img className="normalize" src="https://i.ibb.co/Th6t7LS/2.png" alt="e3" />
+                    <br />
+                    <div className="discord-chat-container border-box m-0">
+                        <DiscordUIComponentMessage
+                            author="Vertix"
+                            avatar={ VertixAvatar }
+                            timestamp="Today at 3:42 PM"
+                            componentName="VertixBot/UI-V2/ConfigComponent"
+                            preferredElementsGroup="VertixBot/UI-V2/SetupEditElementsGroup"
+                            preferredEmbedsGroup="VertixBot/UI-V2/SetupEditEmbedGroup"
+                            ephemeral={ true }
+                            interactionUser="iNewLegend"
+                            interactionUserAvatar={ UserAvatar }
+                            interactionCommand="/setup"
+                            variables={ CONFIG_VARIABLES }
+                            elementOverrides={ {
+                                "VertixBot/UI-V2/LogChannelSelectMenu": { highlightedCaret: true },
+                                "VertixBot/UI-General/DeleteButton": { hidden: true },
+                            } }
+                        />
+                    </div>
                 </li>
                 <br />
                 <li>
                     Please choose the channel where you would like to display the logs.
                     <br />
-                    <img className="normalize" src="https://i.ibb.co/CKvmq3P/3.png" alt="e4" />
+                    <br />
+                    <div className="discord-chat-container border-box m-0">
+                        <DiscordUIComponentMessage
+                            author="Vertix"
+                            avatar={ VertixAvatar }
+                            timestamp="Today at 3:42 PM"
+                            componentName="VertixBot/UI-V2/ConfigComponent"
+                            preferredElementsGroup="VertixBot/UI-V2/SetupEditElementsGroup"
+                            preferredEmbedsGroup="VertixBot/UI-V2/SetupEditEmbedGroup"
+                            ephemeral={ true }
+                            interactionUser="iNewLegend"
+                            interactionUserAvatar={ UserAvatar }
+                            interactionCommand="/setup"
+                            variables={ CONFIG_VARIABLES_ENABLED }
+                            elementOverrides={ {
+                                "VertixBot/UI-General/DeleteButton": { hidden: true },
+                            } }
+                            expandedSelectMenu={ {
+                                elementName: "VertixBot/UI-V2/LogChannelSelectMenu",
+                                options: [
+                                    { label: "# general" }
+                                ]
+                            } }
+                        />
+                    </div>
                 </li>
                 <br />
                 <li>
                     Verify that <b>"</b><small>▹ ✎ ∙ Send logs to custom channel</small><b>"</b> is <code>🟢 On</code>.
                     <br />
-                    <img className="normalize" src="https://i.ibb.co/Qr2wDpz/4.png" alt="e5" />
+                    <br />
+                    <div className="discord-chat-container border-box m-0">
+                        <DiscordUIComponentMessage
+                            author="Vertix"
+                            avatar={ VertixAvatar }
+                            timestamp="Today at 3:42 PM"
+                            componentName="VertixBot/UI-V2/ConfigComponent"
+                            preferredElementsGroup="VertixBot/UI-V2/SetupEditElementsGroup"
+                            preferredEmbedsGroup="VertixBot/UI-V2/SetupEditEmbedGroup"
+                            ephemeral={ true }
+                            interactionUser="iNewLegend"
+                            interactionUserAvatar={ UserAvatar }
+                            interactionCommand="/setup"
+                            variables={ CONFIG_VARIABLES_ENABLED }
+                            elementOverrides={ {
+                                "VertixBot/UI-V2/LogChannelSelectMenu": { selectedLabel: "# general" },
+                                "VertixBot/UI-General/DoneButton": { highlighted: true },
+                                "VertixBot/UI-General/DeleteButton": { hidden: true },
+                            } }
+                        />
+                    </div>
                     <br />
                     <ul>
                         <h5>Note:</h5>
@@ -47,7 +180,24 @@ export default function HowToSetupLogsChannel() {
                 <li>
                     At this point, the logs channel is ready to receive logs from the associated dynamic channels.
                     <br />
-                    <img className="normalize" src="https://i.ibb.co/pzwpdMF/5.png" alt="e6" />
+                    <br />
+                    <div className="discord-chat-container border-box m-0">
+                        <DiscordMessage
+                            author="Vertix"
+                            avatar={ VertixAvatar }
+                            bot={ true }
+                            timestamp="Today at 3:44 PM"
+                        >
+                            <DiscordEmbed
+                                color="#0099ff"
+                                description="➤ ➕ Dynamic channel has been created, owner: iNewLegend\n\nChannel: `➕ New Channel` masterChannelId: `1120213539064385597` • Today at 3:44 PM"
+                            />
+                            <DiscordEmbed
+                                color="#0099ff"
+                                description="➤ ➖ Dynamic channel has been deleted, owner: iNewLegend\n\nChannel: `iNewLegend's Channel` masterChannelId: `1120213539064385597` • Today at 3:44 PM"
+                            />
+                        </DiscordMessage>
+                    </div>
                 </li>
             </ol>
 

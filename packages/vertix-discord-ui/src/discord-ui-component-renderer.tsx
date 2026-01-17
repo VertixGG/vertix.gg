@@ -16,6 +16,8 @@ export interface UIElementOverride {
     label?: string;
     disabled?: boolean;
     highlighted?: boolean;
+    selectedLabel?: string;
+    highlightedCaret?: boolean;
     hidden?: boolean;
     emoji?: string;
 }
@@ -429,6 +431,8 @@ function renderElement(
                     placeholder={ placeholder }
                     disabled={ override?.disabled }
                     highlighted={ Boolean( override?.highlighted ) }
+                    selectedLabel={ override?.selectedLabel }
+                    highlightedCaret={ Boolean( override?.highlightedCaret ) }
                     emojiIconSrcByUnicode={ context.emojiIconSrcByUnicode }
                     onClick={ handleClick }
                 />

@@ -190,11 +190,11 @@ export default function HowToSetupLogsChannel() {
                         >
                             <DiscordEmbed
                                 color="#0099ff"
-                                description="➤ ➕ Dynamic channel has been created, owner: iNewLegend\n\nChannel: `➕ New Channel` masterChannelId: `1120213539064385597` • Today at 3:44 PM"
+                                description="➤ ➕ Dynamic channel has been created, owner: iNewLegend<br/><br/>Channel: `➕ New Channel` masterChannelId: `1120213539064385597` • Today at 3:44 PM"
                             />
                             <DiscordEmbed
                                 color="#0099ff"
-                                description="➤ ➖ Dynamic channel has been deleted, owner: iNewLegend\n\nChannel: `iNewLegend's Channel` masterChannelId: `1120213539064385597` • Today at 3:44 PM"
+                                description="➤ ➖ Dynamic channel has been deleted, owner: iNewLegend<br/><br/>Channel: `iNewLegend's Channel` masterChannelId: `1120213539064385597` • Today at 3:44 PM"
                             />
                         </DiscordMessage>
                     </div>

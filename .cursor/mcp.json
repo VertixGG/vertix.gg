@@ -26,7 +26,8 @@
           "/Users/inewlegend/Desktop/dev/vertix.gg/apps/vertix-mcp/src/index.ts"
         ],
         "env": {
-          "AI_CHAT_DISCORD_TOKEN": "MTQ1NDc5MjY1OTE5MjI1NDU3OQ.Gb6dZr.rgpybcK5WvsFrCGwfn87revzGnQ2IkmVL4WKMs"
+          "AI_CHAT_DISCORD_TOKEN": "MTQ1NDc5MjY1OTE5MjI1NDU3OQ.Gb6dZr.rgpybcK5WvsFrCGwfn87revzGnQ2IkmVL4WKMs",
+          "LOGGER_DISABLED": "true"
         }
       },
       "MCP Installer": {

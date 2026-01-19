@@ -9,6 +9,7 @@ const TARGET_GUILD_ID = process.env.AI_CHAT_GUILD_ID;
 const TARGET_CHANNEL_ID = process.env.AI_CHAT_CHANNEL_ID;
 
 const DEFAULT_TYPING_INTERVAL_MS = 8000;
+const CONTEXT_MESSAGE_COUNT = 10;
 
 const PRIVATE_SYSTEM_PROMPT = `You are Vertix, a powerful Discord bot with FULL ACCESS to Discord operations. You are responding in a private admin channel.
 
@@ -111,7 +112,7 @@ export function mentionHandlerPrivate( client: Client ) {
             } finally {
                 stopTyping();
             }
-        } catch ( error ) {
+        } catch( error ) {
             GlobalLogger.$.error( mentionHandlerPrivate, "[PRIVATE] Failed to process mention", error );
 
             await message.reply( "Error processing request. Check logs for details." ).catch( () => {} );

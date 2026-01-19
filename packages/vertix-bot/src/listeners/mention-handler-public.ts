@@ -6,9 +6,10 @@ import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";
 import { runAgentChatWithSession } from "@vertix.gg/bot/src/utils/agent-client";
 
-import type { Client, Message, TextBasedChannel } from "discord.js";
+import type { Client, Message, TextBasedChannel, TextChannel } from "discord.js";
 
 const DEFAULT_TYPING_INTERVAL_MS = 8000;
+const CONTEXT_MESSAGE_COUNT = 10;
 
 const PUBLIC_SYSTEM_PROMPT = `You are Vertix, a Discord bot that helps manage dynamic voice channels. You are responding to a user who @mentioned you.
 
@@ -104,7 +105,7 @@ export function mentionHandlerPublic( client: Client ) {
             const stopTyping = startTypingHeartbeat( message.channel );
 
             try {
-                const contextInfo = buildContextInfo( message );
+                const contextInfo = await buildContextInfo( message );
                 const userMessage = formatMentionMessage( message, botId ) || content;
 
                 const isNewSession = ! session.conversationId;
@@ -158,7 +159,40 @@ function formatMentionMessage( message: Message<boolean>, botId?: string ): stri
     return `User (${ displayName }): ${ body }`;
 }
 
-function buildContextInfo( message: Message<boolean> ): string {
+async function fetchRecentMessages( message: Message<boolean> ): Promise<string> {
+    try {
+        const channel = message.channel;
+
+        if ( ! ( "messages" in channel ) ) {
+            return "";
+        }
+
+        const textChannel = channel as TextChannel;
+        const messages = await textChannel.messages.fetch( { limit: CONTEXT_MESSAGE_COUNT, before: message.id } );
+
+        if ( messages.size === 0 ) {
+            return "";
+        }
+
+        const formatted = [ ... messages.values() ]
+            .reverse()
+            .map( ( msg ) => {
+                const author = msg.member?.displayName || msg.author.username;
+                const isBot = msg.author.bot ? " [BOT]" : "";
+                const content = msg.content || "[no text content]";
+                const attachments = msg.attachments.size ? ` [+${ msg.attachments.size } attachment(s)]` : "";
+
+                return `${ author }${ isBot }: ${ content }${ attachments }`;
+            } )
+            .join( "\n" );
+
+        return `\nRecent conversation (oldest to newest):\n${ formatted }`;
+    } catch {
+        return "";
+    }
+}
+
+async function buildContextInfo( message: Message<boolean> ): Promise<string> {
     const guild = message.guild;
 
     if ( ! guild ) {
@@ -168,11 +202,13 @@ function buildContextInfo( message: Message<boolean> ): string {
     const channel = message.channel;
     const channelName = "name" in channel ? channel.name : "DM";
 
+    const recentMessages = await fetchRecentMessages( message );
+
     return `Context:
 - Guild: ${ guild.name } (ID: ${ guild.id })
 - Channel: #${ channelName } (ID: ${ message.channelId })
 - User: ${ message.author.username } (ID: ${ message.author.id })
-- Message ID: ${ message.id }`;
+- Message ID: ${ message.id }${ recentMessages }`;
 }
 
 function resolveTypingIntervalMs() {

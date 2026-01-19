@@ -6,6 +6,8 @@ import { QueryProvider } from "@zenflux/react-commander/query/provider";
 import { AuthenticatedQueryClient } from "@vertix.gg/dashboard/src/lib/query-client";
 
 import { ModulesQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/modules-query";
+import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/global-stats-query";
+import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-stats-query";
 
 import { AuthProvider, ProtectedRoute, LoginPage, ServerSelectionPage } from "@vertix.gg/dashboard/src/features/auth";
 
@@ -22,6 +24,8 @@ interface AppState {
 const client = new AuthenticatedQueryClient( API_CONFIG.BASE_URL );
 
 client.registerModule( ModulesQuery );
+client.registerModule( GlobalStatsQuery );
+client.registerModule( GuildStatsQuery );
 
 export function App() {
     return (

@@ -7,6 +7,7 @@ import healthRoutePlugin from "@vertix.gg/api/src/server/routes/health-route";
 import modulesRoutePlugin from "@vertix.gg/api/src/server/routes/modules-route";
 import flowsRoutePlugin from "@vertix.gg/api/src/server/routes/flows-route";
 import authRoutePlugin from "@vertix.gg/api/src/server/routes/auth-route";
+import dashboardRoutePlugin from "@vertix.gg/api/src/server/routes/dashboard-route";
 import { requireAuth } from "@vertix.gg/api/src/server/middleware/auth-middleware";
 import { discordConfig } from "@vertix.gg/api/src/server/config/discord";
 import { API_PREFIX } from "@vertix.gg/api/src/server/constants";
@@ -55,6 +56,7 @@ export async function createApp(): Promise<FastifyInstance> {
 
         await protectedRoutes.register( modulesRoutePlugin );
         await protectedRoutes.register( flowsRoutePlugin );
+        await protectedRoutes.register( dashboardRoutePlugin );
     }, { prefix: API_PREFIX } );
 
     return fastify;

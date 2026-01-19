@@ -49,8 +49,6 @@ const AuthProviderComponent: DCommandFunctionComponent<AuthProviderProps, AuthSt
     return <>{ children }</>;
 };
 
-AuthProviderComponent.getName = () => "Dashboard/Auth";
-
 export const AuthProvider = withCommands<AuthProviderProps, AuthState>(
     "Dashboard/Auth",
     AuthProviderComponent,

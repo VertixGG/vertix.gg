@@ -91,8 +91,6 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
     );
 };
 
-FlowEditorComponent.getName = () => "Dashboard/FlowEditor";
-
 export const FlowEditor = withCommands<FlowEditorProps, FlowEditorState>(
     "Dashboard/FlowEditor",
     FlowEditorComponent,

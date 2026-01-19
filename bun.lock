@@ -1195,7 +1195,7 @@
 
     "@zenflux/jest": ["@zenflux/jest@0.1.27", "", { "dependencies": { "@jest/core": "^29.7.0", "jest-config": "^29.7.0" }, "bin": { "@z-jest": "bin/cli.js" } }, "sha512-BT5pzTI/WkCsEO5Nn4ycsvqWxlmbEG4ovt5jPChaR7czwduxXQheMu+68aNH4Cr4Bm5mLy4HvvhLEuiMSP66cw=="],
 
-    "@zenflux/react-commander": ["@zenflux/react-commander@0.0.8", "", { "dependencies": { "eventemitter3": "^5.0.1" }, "peerDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0", "vite": "^5.4.5" } }, "sha512-uu6TrlyUK0OzU28XCJwyGplqvbq2A40l04yauDDoyL5aOKEPiPs5Qiitx8Xe8ZDrKkCKmqqLw2IELrPt+nlyNg=="],
+    "@zenflux/react-commander": ["@zenflux/react-commander@0.0.9", "", { "dependencies": { "eventemitter3": "^5.0.1" }, "peerDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0", "vite": "^5.4.5" } }, "sha512-YKj9K/T7Wq57xI3OfABk3hrTwUdlkaGc0XyK4X0rf1t7FS8/N4zNp54DEnI5KJGEL2H7c7JB8t2JNQ/FnxlyJA=="],
 
     "@zenflux/runner": ["@zenflux/runner@0.0.19", "", { "dependencies": { "@zenflux/typescript-vm": "0.1.22", "@zenflux/utils": "0.1.24" }, "bin": { "@z-runner": "src/index.js" } }, "sha512-yTvELmEJMHbPYErvOaMOaqJoz3vKeYDmQ5sqeI3kcUiDzouVAF0uXQw3L69S7oK4D43jaGdd3bM+goKB4/Kw4w=="],
 

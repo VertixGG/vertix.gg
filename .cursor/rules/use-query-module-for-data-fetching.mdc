@@ -1,0 +1,108 @@
+# Use QueryModule for Data Fetching
+
+When fetching data from APIs, use `QueryModuleBase` or `QueryListModuleBase` from `@zenflux/react-commander/query`, NOT commands.
+
+## Rules
+
+1. **Data Fetching**: Use `QueryModuleBase` / `QueryListModuleBase` for all GET requests
+2. **User Actions**: Use `CommandBase` only for user-triggered mutations (POST, PUT, DELETE) or state changes
+3. **QueryComponent**: Use `QueryComponent` to declaratively fetch and render data
+4. **Components with QueryComponent**: Components passed to `QueryComponent` MUST be wrapped with `withCommands`
+5. **Data from State**: Components read fetched data from **state** via `useCommandState`, NOT from props
+6. **Props for URL Params**: Use `props` only for URL path parameters (e.g., `guildId` for `/stats/guild/:guildId`)
+
+## Correct Example - Data Fetching
+
+### Query Module
+
+```typescript
+import { QueryModuleBase } from "@zenflux/react-commander/query/module-base";
+
+export class GlobalStatsQuery extends QueryModuleBase<GlobalStats> {
+    public static getName(): string {
+        return "dashboard/global-stats";
+    }
+
+    protected getResourceName(): string {
+        return "global-stats";
+    }
+
+    protected registerEndpoints(): void {
+        this.defineEndpoint<GlobalStats, GlobalStats>( "Dashboard/GlobalStats", {
+            method: "GET",
+            path: "dashboard/stats/global",
+            prepareData: ( response ) => response
+        } );
+    }
+}
+```
+
+### Component with withCommands
+
+Components read data from **state** via `useCommandState`, NOT from props. The QueryModule's `onMount` sets data into state.
+
+```typescript
+import { useCommandState } from "@zenflux/react-commander/hooks";
+import { withCommands } from "@zenflux/react-commander/with-commands";
+import { QueryComponent } from "@zenflux/react-commander/query/component";
+import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
+
+interface StatsDisplayProps {}
+
+interface StatsDisplayState {
+    globalStats: GlobalStats | null;
+}
+
+interface StatsSelectedState {
+    globalStats: StatsDisplayState[ "globalStats" ];
+}
+
+const INITIAL_STATE: StatsDisplayState = {
+    globalStats: null
+};
+
+const StatsDisplayComponent: DCommandFunctionComponent<StatsDisplayProps, StatsDisplayState> = () => {
+    const [ state ] = useCommandState<StatsDisplayState, StatsSelectedState>(
+        "Dashboard/GlobalStats",
+        ( state: StatsDisplayState ): StatsSelectedState => ( {
+            globalStats: state.globalStats
+        } )
+    );
+
+    return <div>{ state.globalStats?.totalGuilds }</div>;
+};
+
+const StatsDisplay = withCommands<StatsDisplayProps, StatsDisplayState>(
+    "Dashboard/GlobalStats",
+    StatsDisplayComponent,
+    INITIAL_STATE,
+    []
+);
+
+// Usage with QueryComponent
+<QueryComponent<GlobalStats, StatsDisplayProps, GlobalStats, StatsDisplayState>
+    fallback={ <LoadingSkeleton /> }
+    module={ GlobalStatsQuery }
+    component={ StatsDisplay }
+    props={ {} }
+/>
+```
+
+## Incorrect Example
+
+```typescript
+// DON'T use commands for fetching data
+export class FetchGlobalStatsCommand extends CommandBase<State> {
+    public async apply() {
+        const response = await apiClient.get( "/dashboard/stats/global" );
+        return this.setState( { globalStats: response.data } );
+    }
+}
+```
+
+## When to Use Commands
+
+- User clicks a button to perform an action
+- Form submissions
+- State mutations that don't involve fetching
+- Logout, login redirects, clearing state

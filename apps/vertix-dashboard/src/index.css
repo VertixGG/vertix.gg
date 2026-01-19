@@ -1,7 +1,32 @@
 @import "tailwindcss";
 @import "@vertix.gg/ui/src/styles.css";
 
+@theme {
+    --color-background: #0a1929;
+    --color-surface: #132f4c;
+    --color-surface-elevated: #1e3a5f;
+    --color-surface-hover: #243b53;
+
+    --color-border: #1e4976;
+    --color-border-muted: #162d4a;
+    --color-border-accent: rgba(0, 217, 255, 0.4);
+
+    --color-accent: #00d9ff;
+    --color-accent-muted: #14919b;
+    --color-accent-hover: #38bec9;
+
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #9fb3c8;
+    --color-text-muted: #627d98;
+    --color-text-accent: #00d9ff;
+
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+}
+
 body {
     margin: 0;
     padding: 0;
+    background: var(--color-background);
 }

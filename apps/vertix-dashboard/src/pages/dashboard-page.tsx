@@ -21,9 +21,9 @@ function LoadingSkeleton( { count }: { count: number } ) {
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             { [ ...Array( count ) ].map( ( _, i ) => (
-                <div key={ i } className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 animate-pulse">
-                    <div className="h-4 bg-zinc-700 rounded w-1/2 mb-2" />
-                    <div className="h-8 bg-zinc-700 rounded w-1/3" />
+                <div key={ i } className="bg-surface border border-border rounded-lg p-4 animate-pulse">
+                    <div className="h-4 bg-surface-elevated rounded w-1/2 mb-2" />
+                    <div className="h-8 bg-surface-elevated rounded w-1/3" />
                 </div>
             ) ) }
         </div>
@@ -54,7 +54,7 @@ const GlobalStatsDisplayComponent: DCommandFunctionComponent<GlobalStatsDisplayP
 
     if ( !state.globalStats ) {
         return (
-            <div className="text-zinc-500 text-center py-8">
+            <div className="text-text-muted text-center py-8">
                 Failed to load global stats
             </div>
         );
@@ -116,7 +116,7 @@ const GuildStatsDisplayComponent: DCommandFunctionComponent<GuildStatsDisplayPro
 
     if ( !state.guildStats ) {
         return (
-            <div className="text-zinc-500 text-center py-8">
+            <div className="text-text-muted text-center py-8">
                 No data available for this guild yet
             </div>
         );
@@ -145,7 +145,7 @@ interface GuildStatsSectionProps {
 function GuildStatsSection( { selectedGuild }: GuildStatsSectionProps ) {
     if ( !selectedGuild ) {
         return (
-            <div className="text-zinc-500 text-center py-8">
+            <div className="text-text-muted text-center py-8">
                 No guild selected
             </div>
         );
@@ -171,15 +171,15 @@ export function DashboardPage() {
 
     return (
         <div className="flex-1 p-6 overflow-auto">
-            <h1 className="text-2xl font-bold text-white mb-6">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-text-accent mb-6">Dashboard</h1>
 
             <section className="mb-8">
-                <h2 className="text-lg font-semibold text-zinc-300 mb-4">Guild Data</h2>
+                <h2 className="text-lg font-semibold text-text-secondary mb-4">Guild Data</h2>
                 <GuildStatsSection selectedGuild={ authState.selectedGuild } />
             </section>
 
             <section>
-                <h2 className="text-lg font-semibold text-zinc-300 mb-4">Global Data</h2>
+                <h2 className="text-lg font-semibold text-text-secondary mb-4">Global Data</h2>
                 <GlobalStatsSection />
             </section>
         </div>

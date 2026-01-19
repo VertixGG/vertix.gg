@@ -47,8 +47,8 @@ export function ServerSelectionPage() {
 
     if ( state.isLoadingGuilds ) {
         return (
-            <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
-                <div className="flex items-center gap-3 text-zinc-400">
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="flex items-center gap-3 text-text-accent">
                     <Loader2 className="w-5 h-5 animate-spin" />
                     <span>Loading servers...</span>
                 </div>
@@ -57,26 +57,26 @@ export function ServerSelectionPage() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
             <div className="max-w-2xl w-full">
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-white mb-2">
+                    <h1 className="text-2xl font-bold text-text-accent mb-2">
                         Select a Server
                     </h1>
-                    <p className="text-zinc-400">
+                    <p className="text-text-secondary">
                         Choose which Discord server you want to manage
                     </p>
                 </div>
 
                 { state.error && (
-                    <div className="mb-6 p-4 bg-red-900/20 border border-red-700/50 rounded-lg">
-                        <p className="text-red-400 text-sm text-center">{ state.error }</p>
+                    <div className="mb-6 p-4 bg-error/20 border border-error/50 rounded-lg">
+                        <p className="text-error text-sm text-center">{ state.error }</p>
                     </div>
                 ) }
 
                 <div className="grid gap-3">
                     { state.guilds.length === 0 ? (
-                        <div className="text-center py-8 text-zinc-400">
+                        <div className="text-center py-8 text-text-muted">
                             No servers found. You must be the owner of at least one Discord server.
                         </div>
                     ) : (
@@ -84,21 +84,21 @@ export function ServerSelectionPage() {
                             <button
                                 key={ guild.id }
                                 onClick={ () => handleSelectGuild( guild ) }
-                                className="flex items-center gap-4 p-4 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors text-left"
+                                className="flex items-center gap-4 p-4 bg-surface hover:bg-surface-elevated border border-border hover:border-border-accent rounded-lg transition-colors text-left"
                             >
                                 { guild.icon ? (
                                     <img
                                         src={ guild.icon }
                                         alt={ guild.name }
-                                        className="w-12 h-12 rounded-full"
+                                        className="w-12 h-12 rounded-full ring-2 ring-border"
                                     />
                                 ) : (
-                                    <div className="w-12 h-12 rounded-full bg-zinc-700 flex items-center justify-center">
-                                        <Server className="w-6 h-6 text-zinc-400" />
+                                    <div className="w-12 h-12 rounded-full bg-surface-elevated flex items-center justify-center ring-2 ring-border">
+                                        <Server className="w-6 h-6 text-accent-muted" />
                                     </div>
                                 ) }
                                 <div className="flex-1 min-w-0">
-                                    <div className="text-white font-medium truncate">
+                                    <div className="text-text-primary font-medium truncate">
                                         { guild.name }
                                     </div>
                                 </div>

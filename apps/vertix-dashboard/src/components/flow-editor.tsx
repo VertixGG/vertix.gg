@@ -1,13 +1,16 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
+import { buildFlowGraph } from "@vertix.gg/dashboard/src/lib/graph-builder";
 
 import { ModuleSelector } from "@vertix.gg/dashboard/src/components/module-selector";
 import { FlowViewer } from "@vertix.gg/dashboard/src/components/flow-viewer";
 import { FlowDetailsPanel } from "@vertix.gg/dashboard/src/components/flow-details-panel";
 import { ResizablePanel } from "@vertix.gg/dashboard/src/components/resizable-panel";
+import { EntityList } from "@vertix.gg/dashboard/src/components/entity-list";
 
 import type { ModuleInfo, ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
+import type { EntityType } from "@vertix.gg/dashboard/src/components/entity-list";
 import type { Node } from "@xyflow/react";
 
 export interface FlowEditorState {
@@ -15,6 +18,7 @@ export interface FlowEditorState {
     selectedModule: string | null;
     moduleFlowsData: ModuleFlowsResponse | null;
     selectedNode: Node | null;
+    centerOnSelect: boolean;
     isLoading: boolean;
     error: string | null;
 }
@@ -25,6 +29,7 @@ export function FlowEditor() {
         selectedModule: null,
         moduleFlowsData: null,
         selectedNode: null,
+        centerOnSelect: false,
         isLoading: true,
         error: null
     } );
@@ -91,9 +96,44 @@ export function FlowEditor() {
     const handleNodeSelect = useCallback( ( node: Node | null ) => {
         setState( ( prev ) => ( {
             ...prev,
-            selectedNode: node
+            selectedNode: node,
+            centerOnSelect: false
         } ) );
     }, [] );
+
+    const graphNodes = useMemo( () => {
+        if ( !state.moduleFlowsData ) {
+            return [];
+        }
+        return buildFlowGraph( state.moduleFlowsData ).nodes;
+    }, [ state.moduleFlowsData ] );
+
+    const handleEntitySelect = useCallback( ( entityType: EntityType, entityName: string ) => {
+        let matchedNode: Node | undefined;
+
+        if ( entityType === "flow" || entityType === "systemFlow" ) {
+            const flowNodeId = `flow-${ entityName }`;
+            matchedNode = graphNodes.find( ( node ) => node.id === flowNodeId );
+        } else if ( entityType === "component" ) {
+            matchedNode = graphNodes.find( ( node ) =>
+                node.data?.type === "component" && node.id.includes( entityName )
+            );
+        } else if ( entityType === "modal" ) {
+            const modalShortName = entityName.split( "/" ).pop()?.replace( /Modal$/, "" ) ?? "";
+            matchedNode = graphNodes.find( ( node ) => {
+                const label = node.data?.label;
+                return node.data?.type === "modal" && typeof label === "string" && label.includes( modalShortName );
+            } );
+        }
+
+        if ( matchedNode ) {
+            setState( ( prev ) => ( {
+                ...prev,
+                selectedNode: matchedNode,
+                centerOnSelect: true
+            } ) );
+        }
+    }, [ graphNodes ] );
 
     return (
         <div className="flex h-full">
@@ -118,6 +158,10 @@ export function FlowEditor() {
                             { state.error }
                         </div>
                     ) }
+                    <EntityList
+                        moduleFlowsData={ state.moduleFlowsData }
+                        onEntitySelect={ handleEntitySelect }
+                    />
                 </aside>
             </ResizablePanel>
 
@@ -135,6 +179,7 @@ export function FlowEditor() {
                         moduleFlowsData={ state.moduleFlowsData }
                         isLoading={ state.isLoading }
                         selectedNodeId={ state.selectedNode?.id ?? null }
+                        centerOnSelect={ state.centerOnSelect }
                         onNodeSelect={ handleNodeSelect }
                     />
                 </div>

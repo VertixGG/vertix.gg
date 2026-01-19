@@ -29,7 +29,10 @@ export const VIEWPORT_CONFIG = {
     MIN_ZOOM: 0.1,
     MAX_ZOOM: 2,
     DEFAULT_ZOOM: 0.5,
-    DEFAULT_POSITION: { x: 0, y: 0 }
+    DEFAULT_POSITION: { x: 0, y: 0 },
+    CENTER_ZOOM_THRESHOLD: 0.6,
+    CENTER_ZOOM_TARGET: 0.7,
+    CENTER_ANIMATION_DURATION: 500
 } as const;
 
 export const NODE_DIMENSIONS = {

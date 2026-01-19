@@ -10,7 +10,7 @@ import { ResizablePanel } from "@vertix.gg/dashboard/src/components/resizable-pa
 import type { ModuleInfo, ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { Node } from "@xyflow/react";
 
-export interface DashboardState {
+export interface FlowEditorState {
     modules: ModuleInfo[];
     selectedModule: string | null;
     moduleFlowsData: ModuleFlowsResponse | null;
@@ -19,8 +19,8 @@ export interface DashboardState {
     error: string | null;
 }
 
-export function DashboardMain() {
-    const [ state, setState ] = useState<DashboardState>( {
+export function FlowEditor() {
+    const [ state, setState ] = useState<FlowEditorState>( {
         modules: [],
         selectedModule: null,
         moduleFlowsData: null,
@@ -96,7 +96,7 @@ export function DashboardMain() {
     }, [] );
 
     return (
-        <div className="flex h-screen bg-zinc-900 text-white">
+        <div className="flex h-full">
             <ResizablePanel
                 defaultWidth={ 288 }
                 minWidth={ 250 }
@@ -106,7 +106,7 @@ export function DashboardMain() {
             >
                 <aside className="h-full bg-zinc-800 border-r border-zinc-700 flex flex-col">
                     <div className="p-4 border-b border-zinc-700">
-                        <h1 className="text-xl font-bold text-white">Vertix Dashboard</h1>
+                        <h2 className="text-lg font-semibold text-white">Modules</h2>
                     </div>
                     <ModuleSelector
                         modules={ state.modules }
@@ -121,7 +121,7 @@ export function DashboardMain() {
                 </aside>
             </ResizablePanel>
 
-            <main className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0">
                 <header className="h-12 border-b border-zinc-700 flex items-center px-4 bg-zinc-800/50">
                     <h2 className="text-sm font-medium text-zinc-300">
                         { state.selectedModule ? `Module: ${ state.selectedModule }` : "Module Viewer" }
@@ -138,7 +138,7 @@ export function DashboardMain() {
                         onNodeSelect={ handleNodeSelect }
                     />
                 </div>
-            </main>
+            </div>
 
             <ResizablePanel
                 defaultWidth={ 320 }

@@ -148,16 +148,13 @@ export default async function Main( { enableListeners }: {
 
     logger.log( Main, "Bot is starting..." );
 
-    const enableMentions = !! process.env.ENABLE_MENTION_HANDLER;
-
     const client = new Client( {
         intents: [
             "GuildIntegrations",
             "GuildInvites",
             "Guilds",
             "GuildVoiceStates",
-            "DirectMessages",
-            ... ( enableMentions ? [ "GuildMessages" as const, "MessageContent" as const ] : [] )
+            "DirectMessages"
         ],
         partials: [ Partials.Channel ],
         shards: "auto"
@@ -181,13 +178,8 @@ export default async function Main( { enableListeners }: {
                 continue;
             }
 
-            // mentionHandlerPublic requires ENABLE_MENTION_HANDLER to be set (main bot only)
-            if ( handler === handlers.mentionHandlerPublic && ! enableMentions ) {
-                continue;
-            }
-
-            // mentionHandlerPrivate runs on the AI client, not main client
-            if ( handler === handlers.mentionHandlerPrivate ) {
+            // Both mention handlers run on the AI client, not main client
+            if ( handler === handlers.mentionHandlerPublic || handler === handlers.mentionHandlerPrivate ) {
                 continue;
             }
 
@@ -219,6 +211,10 @@ export default async function Main( { enableListeners }: {
             const onAiLogin = async() => {
                 assert( aiClient.user );
                 logger.info( onAiLogin, `AI Chat Bot: '${ aiClient.user.username }' is authenticated` );
+
+                logger.log( onAiLogin, "Registering mentionHandlerPublic on AI client..." );
+                await handlers.mentionHandlerPublic( aiClient as Client<true> );
+                logger.log( onAiLogin, "mentionHandlerPublic registered on AI client" );
 
                 logger.log( onAiLogin, "Registering mentionHandlerPrivate on AI client..." );
                 await handlers.mentionHandlerPrivate( aiClient as Client<true> );

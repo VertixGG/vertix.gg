@@ -49,7 +49,7 @@ export function Sidebar() {
     const logoutCommand = useCommand( "Dashboard/Auth/Logout" );
     const clearSelectedGuildCommand = useCommand( "Dashboard/Auth/ClearSelectedGuild" );
 
-    const handleLogout = async () => {
+    const handleLogout = async() => {
         await logoutCommand.run( {} );
         navigate( "/login" );
     };
@@ -63,7 +63,7 @@ export function Sidebar() {
     const selectedGuild = state.selectedGuild;
 
     return (
-        <aside className="w-64 h-full bg-surface border-r border-border flex flex-col">
+        <aside className="w-55 h-full bg-surface border-r border-border flex flex-col">
             <div className="p-4 border-b border-border flex items-center gap-3">
                 <img src="/robot.png" alt="Robot" className="w-8 h-8" />
                 <h1 className="text-xl font-bold text-text-accent">Dashboard</h1>
@@ -117,11 +117,9 @@ export function Sidebar() {
                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-surface-elevated hover:bg-surface-hover rounded-lg text-text-secondary hover:text-text-accent transition-colors border border-border hover:border-border-accent"
                     >
                         <LogOut className="w-4 h-4" />
-                        <span>Logout</span>
                     </button>
                     <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-surface-elevated hover:bg-surface-hover rounded-lg text-text-secondary hover:text-text-accent transition-colors border border-border hover:border-border-accent">
                         <Settings className="w-4 h-4" />
-                        <span>Settings</span>
                     </button>
                 </div>
             </div>

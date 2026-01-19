@@ -39,6 +39,9 @@ type ChannelSession = {
 const channelSessions = new Map<string, ChannelSession>();
 const SESSION_TIMEOUT_MS = 300000;
 
+const PRIVATE_GUILD_ID = process.env.AI_CHAT_GUILD_ID;
+const PRIVATE_CHANNEL_ID = process.env.AI_CHAT_CHANNEL_ID;
+
 export function mentionHandlerPublic( client: Client ) {
     client.on( Events.MessageCreate, async( message ) => {
         try {
@@ -47,6 +50,11 @@ export function mentionHandlerPublic( client: Client ) {
             }
 
             if ( ! message.guild ) {
+                return;
+            }
+
+            // Skip private channel - handled by mentionHandlerPrivate
+            if ( message.guildId === PRIVATE_GUILD_ID && message.channelId === PRIVATE_CHANNEL_ID ) {
                 return;
             }
 

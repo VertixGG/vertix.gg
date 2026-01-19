@@ -20,7 +20,7 @@ import { DynamicChannelTransferOwnerFlow } from "@vertix.gg/bot/src/ui/v2/dynami
 
 import { SetupEditFlow } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit-flow";
 
-import { DynamicChannelFlow } from "@vertix.gg/bot/src/ui/general/flows/dynamic-channel-flow";
+import { DynamicChannelFlow } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/dynamic-channel-flow";
 
 import * as adapters from "@vertix.gg/bot/src/ui/v2/ui-adapters-index";
 

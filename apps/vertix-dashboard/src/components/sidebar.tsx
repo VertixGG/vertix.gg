@@ -1,11 +1,20 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
-import { LayoutDashboard, Boxes, Settings, LogOut } from "lucide-react";
+import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
+
+import { LayoutDashboard, Boxes, Settings, LogOut, User, ChevronUp } from "lucide-react";
+
+import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
 interface NavItem {
     label: string;
     path: string;
     icon: React.ReactNode;
+}
+
+interface SidebarSelectedState {
+    user: AuthState[ "user" ];
+    selectedGuild: AuthState[ "selectedGuild" ];
 }
 
 const navItems: NavItem[] = [
@@ -27,6 +36,32 @@ const navItems: NavItem[] = [
 ];
 
 export function Sidebar() {
+    const navigate = useNavigate();
+
+    const [ state ] = useCommandState<AuthState, SidebarSelectedState>(
+        "Dashboard/Auth",
+        ( state: AuthState ): SidebarSelectedState => ( {
+            user: state.user,
+            selectedGuild: state.selectedGuild
+        } )
+    );
+
+    const logoutCommand = useCommand( "Dashboard/Auth/Logout" );
+    const clearSelectedGuildCommand = useCommand( "Dashboard/Auth/ClearSelectedGuild" );
+
+    const handleLogout = async () => {
+        await logoutCommand.run( {} );
+        navigate( "/login" );
+    };
+
+    const handleSwitchServer = () => {
+        clearSelectedGuildCommand.run( {} );
+        navigate( "/select-server" );
+    };
+
+    const user = state.user;
+    const selectedGuild = state.selectedGuild;
+
     return (
         <aside className="w-64 h-full bg-zinc-800 border-r border-zinc-700 flex flex-col">
             <div className="p-4 border-b border-zinc-700">
@@ -54,15 +89,32 @@ export function Sidebar() {
 
             <div className="p-4 border-t border-zinc-700">
                 <div className="flex flex-col items-center gap-3 mb-4">
-                    <div className="w-16 h-16 rounded-full bg-zinc-700 flex items-center justify-center text-zinc-400 text-xs">
-                        Profile Image
-                    </div>
-                    <span className="text-white font-medium">{"{username}"}</span>
-                    <span className="text-zinc-400 text-sm">Discord Server: {"{discord-server-name}"}</span>
+                    { user?.avatar ? (
+                        <img
+                            src={ user.avatar }
+                            alt={ user.displayName }
+                            className="w-16 h-16 rounded-full"
+                        />
+                    ) : (
+                        <div className="w-16 h-16 rounded-full bg-zinc-700 flex items-center justify-center">
+                            <User className="w-8 h-8 text-zinc-400" />
+                        </div>
+                    ) }
+                    <span className="text-white font-medium">{ user?.displayName || "User" }</span>
+                    <button
+                        onClick={ handleSwitchServer }
+                        className="flex items-center gap-2 text-zinc-400 text-sm hover:text-zinc-200 transition-colors cursor-pointer"
+                    >
+                        <span>Server <code className="bg-zinc-700 px-1.5 py-0.5 rounded text-zinc-300">{ selectedGuild?.name || "None" }</code></span>
+                        <ChevronUp className="w-3.5 h-3.5" />
+                    </button>
                 </div>
 
                 <div className="flex gap-2">
-                    <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-lg text-zinc-300 transition-colors">
+                    <button
+                        onClick={ handleLogout }
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-lg text-zinc-300 transition-colors"
+                    >
                         <LogOut className="w-4 h-4" />
                         <span>Logout</span>
                     </button>

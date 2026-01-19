@@ -11,7 +11,9 @@
         "vertix-api:ts-node:start:dev": "tsx --tsconfig tsconfig.json --trace-exit --trace-uncaught --enable-source-maps src/index.ts"
     },
     "dependencies": {
+        "@fastify/cookie": "^11.0.2",
         "@fastify/cors": "^11.0.0",
+        "@fastify/session": "^11.1.1",
         "@fastify/type-provider-typebox": "^5.1.0",
         "@sinclair/typebox": "^0.34.30",
         "@vertix.gg/base": "workspace:*",

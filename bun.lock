@@ -68,7 +68,9 @@
       "name": "@vertix.gg/api",
       "version": "0.0.0",
       "dependencies": {
+        "@fastify/cookie": "^11.0.2",
         "@fastify/cors": "^11.0.0",
+        "@fastify/session": "^11.1.1",
         "@fastify/type-provider-typebox": "^5.1.0",
         "@sinclair/typebox": "^0.34.30",
         "@vertix.gg/base": "workspace:*",
@@ -481,6 +483,8 @@
 
     "@fastify/busboy": ["@fastify/busboy@2.1.1", "", {}, "sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA=="],
 
+    "@fastify/cookie": ["@fastify/cookie@11.0.2", "", { "dependencies": { "cookie": "^1.0.0", "fastify-plugin": "^5.0.0" } }, "sha512-GWdwdGlgJxyvNv+QcKiGNevSspMQXncjMZ1J8IvuDQk0jvkzgWWZFNC2En3s+nHndZBGV8IbLwOI/sxCZw/mzA=="],
+
     "@fastify/cors": ["@fastify/cors@11.2.0", "", { "dependencies": { "fastify-plugin": "^5.0.0", "toad-cache": "^3.7.0" } }, "sha512-LbLHBuSAdGdSFZYTLVA3+Ch2t+sA6nq3Ejc6XLAKiQ6ViS2qFnvicpj0htsx03FyYeLs04HfRNBsz/a8SvbcUw=="],
 
     "@fastify/error": ["@fastify/error@4.2.0", "", {}, "sha512-RSo3sVDXfHskiBZKBPRgnQTtIqpi/7zhJOEmAxCiBcM7d0uwdGdxLlsCaLzGs8v8NnxIRlfG0N51p5yFaOentQ=="],
@@ -492,6 +496,8 @@
     "@fastify/merge-json-schemas": ["@fastify/merge-json-schemas@0.2.1", "", { "dependencies": { "dequal": "^2.0.3" } }, "sha512-OA3KGBCy6KtIvLf8DINC5880o5iBlDX4SxzLQS8HorJAbqluzLRn80UXU0bxZn7UOFhFgpRJDasfwn9nG4FG4A=="],
 
     "@fastify/proxy-addr": ["@fastify/proxy-addr@5.1.0", "", { "dependencies": { "@fastify/forwarded": "^3.0.0", "ipaddr.js": "^2.1.0" } }, "sha512-INS+6gh91cLUjB+PVHfu1UqcB76Sqtpyp7bnL+FYojhjygvOPA9ctiD/JDKsyD9Xgu4hUhCSJBPig/w7duNajw=="],
+
+    "@fastify/session": ["@fastify/session@11.1.1", "", { "dependencies": { "fastify-plugin": "^5.0.1", "safe-stable-stringify": "^2.4.3" } }, "sha512-nuKwTHxh3eJsI4NJeXoYVGzXUsg+kH1WfHgS7IofVyVhmjc+A6qGr+29WQy8hYZiNtmCjfG415COpf5xTBkW4Q=="],
 
     "@fastify/type-provider-typebox": ["@fastify/type-provider-typebox@5.2.0", "", { "peerDependencies": { "@sinclair/typebox": ">=0.26 <=0.34" } }, "sha512-RoUFTQNYlaVM/gXosFqlrUAD/JHC+OXLcj4DxNoMOag2GI7OydfCt+3vdT+6D2daJwhGAdkpxB0wLNqS7gf4CQ=="],
 

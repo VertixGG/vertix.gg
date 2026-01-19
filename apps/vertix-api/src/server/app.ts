@@ -1,19 +1,28 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
+import session from "@fastify/session";
 
 import healthRoutePlugin from "@vertix.gg/api/src/server/routes/health-route";
 import modulesRoutePlugin from "@vertix.gg/api/src/server/routes/modules-route";
 import flowsRoutePlugin from "@vertix.gg/api/src/server/routes/flows-route";
+import authRoutePlugin from "@vertix.gg/api/src/server/routes/auth-route";
+import { requireAuth } from "@vertix.gg/api/src/server/middleware/auth-middleware";
+import { discordConfig } from "@vertix.gg/api/src/server/config/discord";
 import { API_PREFIX } from "@vertix.gg/api/src/server/constants";
 
 import type { FastifyInstance } from "fastify";
 
 const LOGGER_LEVEL = "info";
 
+const FRONTEND_URL = process.env.DASHBOARD_URL || "http://localhost:3020";
+
 const CORS_CONFIG = {
-    origin: true,
+    origin: [ FRONTEND_URL, "http://localhost:3020" ],
     credentials: true
 } as const;
+
+const SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 export async function createApp(): Promise<FastifyInstance> {
     const fastify = Fastify( {
@@ -24,9 +33,29 @@ export async function createApp(): Promise<FastifyInstance> {
 
     await fastify.register( cors, CORS_CONFIG );
 
+    await fastify.register( cookie );
+
+    await fastify.register( session, {
+        secret: discordConfig.getSessionSecret(),
+        cookie: {
+            secure: process.env.NODE_ENV === "production",
+            httpOnly: true,
+            sameSite: "lax",
+            maxAge: SESSION_MAX_AGE
+        },
+        saveUninitialized: false
+    } );
+
+    await fastify.register( authRoutePlugin, { prefix: API_PREFIX } );
+
     await fastify.register( healthRoutePlugin, { prefix: API_PREFIX } );
-    await fastify.register( modulesRoutePlugin, { prefix: API_PREFIX } );
-    await fastify.register( flowsRoutePlugin, { prefix: API_PREFIX } );
+
+    await fastify.register( async ( protectedRoutes ) => {
+        protectedRoutes.addHook( "preHandler", requireAuth );
+
+        await protectedRoutes.register( modulesRoutePlugin );
+        await protectedRoutes.register( flowsRoutePlugin );
+    }, { prefix: API_PREFIX } );
 
     return fastify;
 }

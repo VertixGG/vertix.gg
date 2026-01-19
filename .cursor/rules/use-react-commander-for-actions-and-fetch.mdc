@@ -1,0 +1,69 @@
+# Use @zenflux/react-commander for Actions and Data Fetching
+
+All user-triggered actions and data fetching operations must use `@zenflux/react-commander`.
+
+## Rules
+
+1. **User Actions**: Any action triggered by user interaction (button clicks, form submissions, selections) must dispatch a command via `useCommand`
+2. **Data Fetching**: All fetch/API calls must use the Query pattern (`QueryModuleBase`, `QueryListModuleBase`, `QueryComponent`)
+3. **State Management**: Component state that needs to be shared or persisted must use `useCommandState` with proper selectors
+4. **No Direct Fetch**: Never use `fetch`, `axios`, or similar directly in components - wrap in Query modules
+5. **No Local State for Shared Data**: Avoid `useState` for data that multiple components need access to
+
+## Correct Examples
+
+### User Action
+```typescript
+const selectEntity = useCommand( "Dashboard/FlowEditor/SelectEntity" );
+
+const handleClick = () => {
+    selectEntity.run( { entityType: "flow", entityName: "MyFlow" } );
+};
+```
+
+### Data Fetching
+```typescript
+export class ModulesQuery extends QueryListModuleBase<ModuleData[]> {
+    public static getName(): string {
+        return "Dashboard/Modules";
+    }
+
+    protected getEndpoint(): string {
+        return "/modules";
+    }
+}
+```
+
+### State Subscription
+```typescript
+const [ state ] = useCommandState<FlowEditorState, SelectedState>(
+    "Dashboard/FlowEditor",
+    ( state: FlowEditorState ): SelectedState => ( {
+        selectedNode: state.selectedNode
+    } )
+);
+```
+
+## Incorrect Examples
+
+```typescript
+// BAD: Direct fetch in component
+useEffect( () => {
+    fetch( "/api/modules" ).then( res => res.json() ).then( setData );
+}, [] );
+
+// BAD: Direct state mutation on user action
+const handleClick = () => {
+    setSelectedItem( item );
+};
+
+// BAD: Using useState for shared data
+const [ modules, setModules ] = useState<Module[]>( [] );
+```
+
+## Benefits
+
+- Centralized state management
+- Predictable data flow
+- Easier debugging and testing
+- Consistent patterns across the codebase

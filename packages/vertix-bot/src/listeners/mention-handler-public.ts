@@ -1,0 +1,219 @@
+import { Events } from "discord.js";
+
+import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
+
+import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";
+import { runAgentChatWithSession } from "@vertix.gg/bot/src/utils/agent-client";
+
+import type { Client, Message, TextBasedChannel } from "discord.js";
+
+const DEFAULT_TYPING_INTERVAL_MS = 8000;
+
+const PUBLIC_SYSTEM_PROMPT = `You are Vertix, a Discord bot that helps manage dynamic voice channels. You are responding to a user who @mentioned you.
+
+You have access to the vertix-mcp tools for reading Discord information (guilds, channels, members, messages, roles, etc.). These tools are READ-ONLY - you can view information but NOT modify anything.
+
+IMPORTANT RESTRICTIONS:
+- You CANNOT create, edit, or delete channels
+- You CANNOT kick, ban, or timeout users
+- You CANNOT manage roles or permissions
+- You CANNOT modify guild settings
+- You CAN read guild info, channels, members, messages, roles, voice states
+- You CAN send messages and reactions as responses
+- You CAN help users understand Vertix features
+
+When users ask about Vertix features, explain:
+- Dynamic voice channels that are created when users join a master channel
+- Channel ownership and customization options
+- Templates for saving channel configurations
+- Privacy settings (public, private, muted)
+
+Be helpful, concise, and friendly. If asked to do something you cannot do (modify guild), explain your read-only limitations politely.`;
+
+type ChannelSession = {
+    conversationId?: string;
+    lastActivity: number;
+};
+
+const channelSessions = new Map<string, ChannelSession>();
+const SESSION_TIMEOUT_MS = 300000;
+
+export function mentionHandlerPublic( client: Client ) {
+    client.on( Events.MessageCreate, async( message ) => {
+        try {
+            if ( message.author.bot ) {
+                return;
+            }
+
+            if ( ! message.guild ) {
+                return;
+            }
+
+            const botId = client.user?.id;
+
+            if ( ! botId ) {
+                return;
+            }
+
+            const isMentioned = message.mentions.has( botId );
+
+            if ( ! isMentioned ) {
+                return;
+            }
+
+            const guildId = message.guildId;
+
+            if ( guildId ) {
+                void GuildModel.$.updateLastActive( guildId ).then( ( updated ) => {
+                    if ( ! updated ) {
+                        void guildLeaveBecauseNotInDatabase( client, guildId );
+                    }
+                } );
+            }
+
+            const content = message.content
+                .replace( new RegExp( `<@!?${ botId }>`, "g" ), "" )
+                .trim();
+
+            if ( ! content && message.attachments.size === 0 ) {
+                await message.reply( "Hi! How can I help you? Ask me anything about Vertix or this server." );
+                return;
+            }
+
+            GlobalLogger.$.log( mentionHandlerPublic, `[PUBLIC] Processing mention from ${ message.author.username } in ${ message.guild.name }` );
+
+            const sessionKey = `${ guildId }-${ message.channelId }`;
+            let session = channelSessions.get( sessionKey );
+
+            if ( ! session || Date.now() - session.lastActivity > SESSION_TIMEOUT_MS ) {
+                session = { lastActivity: Date.now() };
+                channelSessions.set( sessionKey, session );
+            }
+
+            session.lastActivity = Date.now();
+
+            const stopTyping = startTypingHeartbeat( message.channel );
+
+            try {
+                const contextInfo = buildContextInfo( message );
+                const userMessage = formatMentionMessage( message, botId ) || content;
+
+                const isNewSession = ! session.conversationId;
+                const fullPrompt = isNewSession
+                    ? `${ PUBLIC_SYSTEM_PROMPT }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
+                    : userMessage;
+
+                const { response, conversationId } = await runAgentChatWithSession( fullPrompt, {
+                    conversationId: session.conversationId,
+                    readOnly: true,
+                    model: "gpt-5.1-codex-mini"
+                } );
+
+                if ( conversationId ) {
+                    session.conversationId = conversationId;
+                }
+
+                await message.reply( response );
+
+                GlobalLogger.$.log( mentionHandlerPublic, `[PUBLIC] Reply sent${ session.conversationId ? ` [session: ${ session.conversationId.slice( 0, 8 ) }...]` : "" }` );
+            } finally {
+                stopTyping();
+            }
+        } catch( error ) {
+            GlobalLogger.$.error( mentionHandlerPublic, "[PUBLIC] Failed to process mention", error );
+
+            await message.reply( "Sorry, I encountered an error processing your request. Please try again." ).catch( () => {} );
+        }
+    } );
+
+    cleanupOldSessions();
+}
+
+function formatMentionMessage( message: Message<boolean>, botId?: string ): string | null {
+    const attachments = message.attachments.size
+        ? ` [attachments: ${ [ ... message.attachments.values() ].map( ( file ) => file.name ?? file.url ).join( ", " ) }]`
+        : "";
+
+    const content = message.content
+        .replace( new RegExp( `<@!?${ botId }>`, "g" ), "" )
+        .trim();
+
+    const body = `${ content }${ attachments }`.trim();
+
+    if ( ! body ) {
+        return null;
+    }
+
+    const displayName = message.member?.displayName || message.author.username;
+
+    return `User (${ displayName }): ${ body }`;
+}
+
+function buildContextInfo( message: Message<boolean> ): string {
+    const guild = message.guild;
+
+    if ( ! guild ) {
+        return "";
+    }
+
+    const channel = message.channel;
+    const channelName = "name" in channel ? channel.name : "DM";
+
+    return `Context:
+- Guild: ${ guild.name } (ID: ${ guild.id })
+- Channel: #${ channelName } (ID: ${ message.channelId })
+- User: ${ message.author.username } (ID: ${ message.author.id })
+- Message ID: ${ message.id }`;
+}
+
+function resolveTypingIntervalMs() {
+    const configured = process.env.AI_CHAT_TYPING_INTERVAL_MS;
+    const value = configured ? Number( configured ) : Number.NaN;
+
+    if ( Number.isFinite( value ) && value >= 1000 ) {
+        return value;
+    }
+
+    return DEFAULT_TYPING_INTERVAL_MS;
+}
+
+function startTypingHeartbeat( channel: TextBasedChannel ) {
+    if ( ! isTypingCapableChannel( channel ) ) {
+        return () => undefined;
+    }
+
+    const intervalMs = resolveTypingIntervalMs();
+
+    void channel.sendTyping().catch( () => null );
+
+    const handle = setInterval( () => {
+        void channel.sendTyping().catch( () => null );
+    }, intervalMs );
+
+    return () => {
+        clearInterval( handle );
+    };
+}
+
+type TypingCapableChannel = TextBasedChannel & {
+    sendTyping(): Promise<void>;
+};
+
+function isTypingCapableChannel( channel: TextBasedChannel ): channel is TypingCapableChannel {
+    const candidate = channel as { sendTyping?: () => Promise<void> };
+
+    return typeof candidate.sendTyping === "function";
+}
+
+function cleanupOldSessions() {
+    setInterval( () => {
+        const now = Date.now();
+
+        for ( const [ key, session ] of channelSessions.entries() ) {
+            if ( now - session.lastActivity > SESSION_TIMEOUT_MS ) {
+                channelSessions.delete( key );
+            }
+        }
+    }, 60000 );
+}

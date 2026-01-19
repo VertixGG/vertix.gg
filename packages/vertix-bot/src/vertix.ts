@@ -148,6 +148,8 @@ export default async function Main( { enableListeners }: {
 
     logger.log( Main, "Bot is starting..." );
 
+    const enableMentions = !! process.env.ENABLE_MENTION_HANDLER;
+
     const client = new Client( {
         intents: [
             "GuildIntegrations",
@@ -155,9 +157,7 @@ export default async function Main( { enableListeners }: {
             "Guilds",
             "GuildVoiceStates",
             "DirectMessages",
-            //"GuildPresences",
-            //"GuildMessages",
-            //"MessageContent"
+            ... ( enableMentions ? [ "GuildMessages" as const, "MessageContent" as const ] : [] )
         ],
         partials: [ Partials.Channel ],
         shards: "auto"
@@ -181,8 +181,13 @@ export default async function Main( { enableListeners }: {
                 continue;
             }
 
-            // If AI_CHAT_DISCORD_TOKEN is set, agentChannelHandler will use its own client
-            if ( aiChatToken && handler === handlers.agentChannelHandler ) {
+            // mentionHandlerPublic requires ENABLE_MENTION_HANDLER to be set (main bot only)
+            if ( handler === handlers.mentionHandlerPublic && ! enableMentions ) {
+                continue;
+            }
+
+            // mentionHandlerPrivate runs on the AI client, not main client
+            if ( handler === handlers.mentionHandlerPrivate ) {
                 continue;
             }
 
@@ -215,9 +220,9 @@ export default async function Main( { enableListeners }: {
                 assert( aiClient.user );
                 logger.info( onAiLogin, `AI Chat Bot: '${ aiClient.user.username }' is authenticated` );
 
-                logger.log( onAiLogin, "Registering agentChannelHandler on AI client..." );
-                await handlers.agentChannelHandler( aiClient as Client<true> );
-                logger.log( onAiLogin, "agentChannelHandler registered on AI client" );
+                logger.log( onAiLogin, "Registering mentionHandlerPrivate on AI client..." );
+                await handlers.mentionHandlerPrivate( aiClient as Client<true> );
+                logger.log( onAiLogin, "mentionHandlerPrivate registered on AI client" );
 
                 logger.log( onAiLogin, "Registering interactionHandler on AI client..." );
                 await handlers.interactionHandler( aiClient as Client<true> );

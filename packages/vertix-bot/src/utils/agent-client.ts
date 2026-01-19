@@ -143,11 +143,25 @@ async function getCodexBinary(): Promise<string | null> {
 type CodexRunResult = {
     response: string;
     logs: Buffer;
+    conversationId?: string;
 };
 
 const EMPTY_LOGS = Buffer.alloc( 0 );
 
-async function runCodex( prompt: string, includeLogs: boolean ): Promise<CodexRunResult> {
+type ReasoningEffort = "low" | "medium" | "high" | "xhigh";
+
+type CodexRunOptions = {
+    includeLogs?: boolean;
+    conversationId?: string;
+    readOnly?: boolean;
+    model?: string;
+    reasoningEffort?: ReasoningEffort;
+};
+
+const DEFAULT_BOT_MODEL = process.env.AI_CHAT_MODEL || "gpt-5.1-codex-mini";
+
+async function runCodex( prompt: string, options: CodexRunOptions = {} ): Promise<CodexRunResult> {
+    const { includeLogs = false, conversationId, readOnly = false, model = DEFAULT_BOT_MODEL, reasoningEffort } = options;
     const codexBinary = await getCodexBinary();
 
     if ( !codexBinary ) {
@@ -165,23 +179,28 @@ async function runCodex( prompt: string, includeLogs: boolean ): Promise<CodexRu
     return await new Promise<CodexRunResult>( ( resolve ) => {
         const logsStream = logsFile ? fsNative.createWriteStream( logsFile, { flags: "w" } ) : null;
 
-        const child = spawn( codexBinary, [
-            "exec",
-            "-",
-            "--sandbox",
-            "read-only",
-            "-o",
-            outputFile
-        ], {
+        const baseArgs = [
+            "exec", "-",
+            "--sandbox", "read-only",
+            "-o", outputFile,
+            "--model", model
+        ];
+
+        const args = conversationId
+            ? [ ...baseArgs, "-c", conversationId ]
+            : baseArgs;
+
+        const child = spawn( codexBinary, args, {
             cwd: REPO_ROOT,
             env: {
                 ...process.env,
                 NODE_OPTIONS: "",
-                NODE_PATH: ""
+                NODE_PATH: "",
+                ... ( readOnly ? { VERTIX_MCP_READONLY: "true" } : {} )
             }
         } );
 
-        GlobalLogger.$.log( runCodex, `Executing Codex (${ codexBinary })...` );
+        GlobalLogger.$.log( runCodex, `Executing Codex (${ codexBinary }) [model: ${ model }]${ readOnly ? " [read-only]" : "" }${ conversationId ? ` [session: ${ conversationId.slice( 0, 8 ) }...]` : "" }...` );
 
         let hasTimedOut = false;
 
@@ -194,6 +213,7 @@ async function runCodex( prompt: string, includeLogs: boolean ): Promise<CodexRu
         let stdout = "";
         let stderr = "";
         let settled = false;
+        let extractedConversationId: string | undefined;
 
         const settle = async( response: string ) => {
             if ( settled ) {
@@ -227,7 +247,7 @@ async function runCodex( prompt: string, includeLogs: boolean ): Promise<CodexRu
                 await fs.unlink( logsFile );
             }
 
-            resolve( { response, logs } );
+            resolve( { response, logs, conversationId: extractedConversationId || conversationId } );
         };
 
         const onStdout = ( data: Buffer ) => {
@@ -235,7 +255,16 @@ async function runCodex( prompt: string, includeLogs: boolean ): Promise<CodexRu
                 logsStream.write( data );
             }
 
-            stdout = appendToLimitedBuffer( stdout, data.toString() );
+            const chunk = data.toString();
+            stdout = appendToLimitedBuffer( stdout, chunk );
+
+            if ( ! extractedConversationId ) {
+                const match = chunk.match( /conversation[:\s]+([a-f0-9-]{36})/i );
+
+                if ( match ) {
+                    extractedConversationId = match[ 1 ];
+                }
+            }
         };
 
         const onStderr = ( data: Buffer ) => {
@@ -302,13 +331,32 @@ async function runCodex( prompt: string, includeLogs: boolean ): Promise<CodexRu
 }
 
 export async function runAgentChat( prompt: string, _temperature = 0.7 ) {
-    const result = await runCodex( prompt, false );
+    const result = await runCodex( prompt, { includeLogs: false } );
 
     return result.response;
 }
 
-export async function runAgentChatWithLogs( prompt: string ) {
-    return await runCodex( prompt, true );
+export async function runAgentChatWithLogs( prompt: string, conversationId?: string ) {
+    return await runCodex( prompt, { includeLogs: true, conversationId } );
+}
+
+type SessionOptions = {
+    conversationId?: string;
+    readOnly?: boolean;
+    model?: string;
+    reasoningEffort?: ReasoningEffort;
+};
+
+export async function runAgentChatWithSession( prompt: string, options: SessionOptions = {} ) {
+    return await runCodex( prompt, { includeLogs: false, ...options } );
+}
+
+export function getAvailableModels() {
+    return [
+        "gpt-5.2-codex",
+        "gpt-5.1-codex-max",
+        "gpt-5.1-codex-mini"
+    ];
 }
 
 export function sanitizeResponse( text?: string | null ) {

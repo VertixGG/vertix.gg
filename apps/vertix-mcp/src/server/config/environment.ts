@@ -10,18 +10,31 @@ class Environment {
         return process.env.MCP_SERVER_VERSION || DEFAULT_MCP_SERVER_VERSION;
     }
 
+    public isReadOnlyMode(): boolean {
+        return process.env.VERTIX_MCP_READONLY === "true";
+    }
+
     public getDiscordToken(): string {
-        const token = process.env.AI_CHAT_DISCORD_TOKEN;
+        const isReadOnly = this.isReadOnlyMode();
+
+        const token = isReadOnly
+            ? process.env.DISCORD_TEST_TOKEN
+            : process.env.AI_CHAT_DISCORD_TOKEN;
 
         if ( ! token ) {
-            throw new Error( "AI_CHAT_DISCORD_TOKEN environment variable is required" );
+            const envVar = isReadOnly ? "DISCORD_TEST_TOKEN" : "AI_CHAT_DISCORD_TOKEN";
+            throw new Error( `${ envVar } environment variable is required for ${ isReadOnly ? "read-only" : "full" } mode` );
         }
 
         return token;
     }
 
     public hasDiscordToken(): boolean {
-        return !! process.env.AI_CHAT_DISCORD_TOKEN;
+        const isReadOnly = this.isReadOnlyMode();
+
+        return isReadOnly
+            ? !! process.env.DISCORD_TEST_TOKEN
+            : !! process.env.AI_CHAT_DISCORD_TOKEN;
     }
 }
 

@@ -1,0 +1,43 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Use SCREAMING_CASE Constants for Magic Values
+
+When using numeric or string values that represent configuration, thresholds, or fixed values, extract them into constants using SCREAMING_CASE format.
+
+## Rules
+
+1. **Extract magic numbers** - Don't use hard-coded values like `0.6`, `500`, `70` directly in code
+2. **Use SCREAMING_CASE** - Constants should be named in UPPER_SNAKE_CASE (e.g., `CENTER_ZOOM_THRESHOLD`, `ANIMATION_DURATION`)
+3. **Group related constants** - Place related constants in a single object (e.g., `VIEWPORT_CONFIG`, `EDGE_COLORS`)
+4. **Use `as const`** - Mark constant objects with `as const` for type safety
+5. **Centralize in constants file** - Keep constants in dedicated files like `constants.ts`
+
+## Examples
+
+### Correct
+
+```typescript
+export const VIEWPORT_CONFIG = {
+    MIN_ZOOM: 0.1,
+    MAX_ZOOM: 2,
+    CENTER_ZOOM_THRESHOLD: 0.6,
+    CENTER_ZOOM_TARGET: 0.7,
+    CENTER_ANIMATION_DURATION: 500
+} as const;
+
+const targetZoom = zoom < VIEWPORT_CONFIG.CENTER_ZOOM_THRESHOLD 
+    ? VIEWPORT_CONFIG.CENTER_ZOOM_TARGET 
+    : zoom;
+```
+
+### Incorrect
+
+```typescript
+const targetZoom = zoom < 0.6 ? 0.7 : zoom;
+
+reactFlowInstance.setCenter(x, y, { duration: 500 });
+```

@@ -1,11 +1,13 @@
+import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
+
 import type { Node } from "@xyflow/react";
 import type { ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { UIExportedFlow, UIExportedComponent } from "@vertix.gg/definitions/src/ui-export-definitions";
+import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
-interface FlowDetailsPanelProps {
-    moduleFlowsData: ModuleFlowsResponse | null;
-    selectedNode: Node | null;
-    onClearSelection: () => void;
+interface FlowDetailsPanelSelectedState {
+    moduleFlowsData: FlowEditorState[ "moduleFlowsData" ];
+    selectedNode: FlowEditorState[ "selectedNode" ];
 }
 
 function getFlowComponentNames( flow: UIExportedFlow, allComponents: UIExportedComponent[] ): string[] {
@@ -359,8 +361,22 @@ function ModuleOverview( props: { moduleFlowsData: ModuleFlowsResponse } ) {
     );
 }
 
-export function FlowDetailsPanel( props: FlowDetailsPanelProps ) {
-    const { moduleFlowsData, selectedNode, onClearSelection } = props;
+export function FlowDetailsPanel() {
+    const [ state ] = useCommandState<FlowEditorState, FlowDetailsPanelSelectedState>(
+        "Dashboard/FlowEditor",
+        ( state: FlowEditorState ): FlowDetailsPanelSelectedState => ( {
+            moduleFlowsData: state.moduleFlowsData,
+            selectedNode: state.selectedNode
+        } )
+    );
+
+    const selectNode = useCommand( "Dashboard/FlowEditor/SelectNode" );
+
+    const handleClearSelection = () => {
+        selectNode.run( { node: null, centerOnSelect: false } );
+    };
+
+    const { moduleFlowsData, selectedNode } = state;
 
     if ( !moduleFlowsData ) {
         return null;
@@ -379,7 +395,7 @@ export function FlowDetailsPanel( props: FlowDetailsPanelProps ) {
                 <NodeDetailsView
                     node={ selectedNode }
                     moduleFlowsData={ moduleFlowsData }
-                    onClearSelection={ onClearSelection }
+                    onClearSelection={ handleClearSelection }
                 />
             ) : (
                 <ModuleOverview moduleFlowsData={ moduleFlowsData } />

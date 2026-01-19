@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 
+import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
+
 import { Search, X } from "lucide-react";
 
-import { MINIMAP_COLORS } from "@vertix.gg/dashboard/src/lib/constants";
+import { MINIMAP_COLORS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
 
-import type { ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
+import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
 export type EntityType = "flow" | "systemFlow" | "component" | "modal";
 
@@ -15,13 +17,26 @@ interface EntityGroup {
     items: string[];
 }
 
-interface EntityListProps {
-    moduleFlowsData: ModuleFlowsResponse | null;
-    onEntitySelect?: ( entityType: EntityType, entityName: string ) => void;
+interface EntityListSelectedState {
+    moduleFlowsData: FlowEditorState[ "moduleFlowsData" ];
 }
 
-export function EntityList( { moduleFlowsData, onEntitySelect }: EntityListProps ) {
+export function EntityList() {
+    const [ state ] = useCommandState<FlowEditorState, EntityListSelectedState>(
+        "Dashboard/FlowEditor",
+        ( state: FlowEditorState ): EntityListSelectedState => ( {
+            moduleFlowsData: state.moduleFlowsData
+        } )
+    );
+
+    const selectEntity = useCommand( "Dashboard/FlowEditor/SelectEntity" );
+
+    const handleEntitySelect = ( entityType: EntityType, entityName: string ) => {
+        selectEntity.run( { entityType, entityName } );
+    };
+
     const [ searchTerm, setSearchTerm ] = useState( "" );
+    const moduleFlowsData = state.moduleFlowsData;
 
     const entityGroups = useMemo<EntityGroup[]>( () => {
         if ( !moduleFlowsData ) {
@@ -132,7 +147,7 @@ export function EntityList( { moduleFlowsData, onEntitySelect }: EntityListProps
                                     key={ item }
                                     className="px-4 py-1.5 text-sm text-zinc-300 hover:bg-zinc-700/50 rounded cursor-pointer truncate"
                                     title={ item }
-                                    onClick={ () => onEntitySelect?.( group.type, item ) }
+                                    onClick={ () => handleEntitySelect( group.type, item ) }
                                 >
                                     { item }
                                 </div>

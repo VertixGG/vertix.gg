@@ -1,4 +1,4 @@
-import { createModuleNode, createFlowNode, createComponentNode, createModalNode } from "@vertix.gg/dashboard/src/lib/node-builders";
+import { createModuleNode, createFlowNode, createComponentNode, createModalNode } from "@vertix.gg/dashboard/src/features/flow-editor/lib/node-builders";
 import {
     createModuleToFlowEdge,
     createFlowToComponentEdge,
@@ -8,27 +8,27 @@ import {
     createComponentToStateFallbackEdge,
     createStepTransitionEdge,
     createSystemFlowTransitionEdge
-} from "@vertix.gg/dashboard/src/lib/edge-builders";
+} from "@vertix.gg/dashboard/src/features/flow-editor/lib/edge-builders";
 import {
     findButtonFlowConnections,
     findButtonModalConnections,
     inferButtonModalConnections,
     getFlowStateComponents,
     getInitialComponent
-} from "@vertix.gg/dashboard/src/lib/flow-helpers";
+} from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
 import {
     extractComponentPreview,
     getButtonHandlePosition,
     sortModalsByButtonOrder
 
-} from "@vertix.gg/dashboard/src/lib/component-helpers";
+} from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
 
-import type { FlowStateComponent } from "@vertix.gg/dashboard/src/lib/flow-helpers";
-import type { ElementData, ComponentPreview } from "@vertix.gg/dashboard/src/lib/component-helpers";
+import type { FlowStateComponent } from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
+import type { ElementData, ComponentPreview } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
 import type { ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { UIExportedFlow, UIExportedComponent, UIExportEmbedDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
 import type { Node, Edge } from "@xyflow/react";
-import type { ButtonModalTrigger, ButtonFlowTrigger, StateTransitionTrigger } from "@vertix.gg/dashboard/src/lib/node-builders";
+import type { ButtonModalTrigger, ButtonFlowTrigger, StateTransitionTrigger } from "@vertix.gg/dashboard/src/features/flow-editor/lib/node-builders";
 
 type SelectMenuTriggeredTransition = UIExportedFlow[ "transitions" ][ number ] & {
     triggeredBy: NonNullable<UIExportedFlow[ "transitions" ][ number ][ "triggeredBy" ]>;

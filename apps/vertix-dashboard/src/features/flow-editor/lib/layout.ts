@@ -1,6 +1,6 @@
 import Dagre from "@dagrejs/dagre";
 
-import { LAYOUT_OPTIONS, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/lib/constants";
+import { LAYOUT_OPTIONS, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
 
 import type { Node, Edge } from "@xyflow/react";
 

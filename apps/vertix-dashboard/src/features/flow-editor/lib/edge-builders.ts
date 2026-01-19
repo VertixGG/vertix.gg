@@ -1,6 +1,6 @@
 import { MarkerType } from "@xyflow/react";
 
-import { EDGE_COLORS, EDGE_STYLES, MARKER_SIZES, Z_INDEX } from "@vertix.gg/dashboard/src/lib/constants";
+import { EDGE_COLORS, EDGE_STYLES, MARKER_SIZES, Z_INDEX } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
 
 import type { Edge } from "@xyflow/react";
 

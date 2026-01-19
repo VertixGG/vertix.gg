@@ -1,0 +1,71 @@
+# Prefer useCommandState Over Prop Drilling
+
+When using `@zenflux/react-commander`, prefer having child components subscribe to state directly using `useCommandState` with appropriate selectors, rather than passing state down through props.
+
+## Rules
+
+1. **Direct subscription** - Child components should use `useCommandState` to subscribe to only the state they need
+2. **Stable selectors** - Define selector functions outside the component or use stable references
+3. **Commands for actions** - Use `useCommand` for dispatching actions instead of callback props
+4. **Minimal selection** - Select only the specific properties needed, not the entire state
+
+## Example
+
+### ❌ Incorrect - Prop Drilling
+
+```typescript
+function Parent() {
+    const [ state ] = useCommandState<ParentState, SelectedState>( "App/Parent", selector );
+    
+    return (
+        <Child 
+            items={ state.items }
+            selectedId={ state.selectedId }
+            onSelect={ handleSelect }
+        />
+    );
+}
+
+function Child( { items, selectedId, onSelect }: ChildProps ) {
+    return items.map( item => (
+        <div onClick={ () => onSelect( item.id ) }>{ item.name }</div>
+    ) );
+}
+```
+
+### ✅ Correct - Direct Subscription
+
+```typescript
+function Parent() {
+    return <Child />;
+}
+
+interface ChildSelectedState {
+    items: ParentState[ "items" ];
+    selectedId: ParentState[ "selectedId" ];
+}
+
+function Child() {
+    const [ state ] = useCommandState<ParentState, ChildSelectedState>(
+        "App/Parent",
+        ( state: ParentState ): ChildSelectedState => ( {
+            items: state.items,
+            selectedId: state.selectedId
+        } )
+    );
+    
+    const selectItem = useCommand( "App/Parent/SelectItem" );
+    
+    return state.items.map( item => (
+        <div onClick={ () => selectItem.run( { id: item.id } ) }>{ item.name }</div>
+    ) );
+}
+```
+
+## Benefits
+
+- Components are self-contained and reusable
+- Reduces re-renders (only re-render when subscribed state changes)
+- Cleaner parent components
+- Easier to refactor and move components
+- Better separation of concerns

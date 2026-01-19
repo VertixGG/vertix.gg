@@ -1,6 +1,6 @@
 import type { Node } from "@xyflow/react";
 import type { UIExportedFlow } from "@vertix.gg/definitions/src/ui-export-definitions";
-import type { ComponentPreview } from "@vertix.gg/dashboard/src/lib/component-helpers";
+import type { ComponentPreview } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
 
 export interface ButtonModalTrigger {
     buttonName: string;

@@ -3,26 +3,45 @@ import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState 
 
 import "@xyflow/react/dist/style.css";
 
-import { nodeTypes } from "@vertix.gg/dashboard/src/components/flow-nodes";
-import { getLayoutedElements } from "@vertix.gg/dashboard/src/lib/layout";
-import { buildFlowGraph } from "@vertix.gg/dashboard/src/lib/graph-builder";
-import { LAYOUT_OPTIONS, VIEWPORT_CONFIG, MINIMAP_COLORS, BACKGROUND_CONFIG, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/lib/constants";
+import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
+
+import { nodeTypes } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes";
+import { getLayoutedElements } from "@vertix.gg/dashboard/src/features/flow-editor/lib/layout";
+import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
+import { LAYOUT_OPTIONS, VIEWPORT_CONFIG, MINIMAP_COLORS, BACKGROUND_CONFIG, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
 
 import type { Viewport, Node, ReactFlowInstance } from "@xyflow/react";
-import type { ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
+import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
-interface FlowViewerProps {
-    moduleFlowsData: ModuleFlowsResponse | null;
-    isLoading: boolean;
-    selectedNodeId: string | null;
-    centerOnSelect?: boolean;
-    onNodeSelect?: ( node: Node | null ) => void;
+interface FlowViewerSelectedState {
+    moduleFlowsData: FlowEditorState[ "moduleFlowsData" ];
+    isLoading: FlowEditorState[ "isLoading" ];
+    selectedNode: FlowEditorState[ "selectedNode" ];
+    centerOnSelect: FlowEditorState[ "centerOnSelect" ];
 }
 
-export function FlowViewer( props: FlowViewerProps ) {
-    const { moduleFlowsData, isLoading, selectedNodeId, centerOnSelect, onNodeSelect } = props;
+export function FlowViewer() {
+    const [ state ] = useCommandState<FlowEditorState, FlowViewerSelectedState>(
+        "Dashboard/FlowEditor",
+        ( state: FlowEditorState ): FlowViewerSelectedState => ( {
+            moduleFlowsData: state.moduleFlowsData,
+            isLoading: state.isLoading,
+            selectedNode: state.selectedNode,
+            centerOnSelect: state.centerOnSelect
+        } )
+    );
+
+    const selectNode = useCommand( "Dashboard/FlowEditor/SelectNode" );
+
+    const handleNodeSelect = ( node: Node | null ) => {
+        selectNode.run( { node, centerOnSelect: false } );
+    };
+
+    const { moduleFlowsData, isLoading, selectedNode, centerOnSelect } = state;
+    const selectedNodeId = selectedNode?.id ?? null;
 
     const reactFlowInstanceRef = useRef<ReactFlowInstance | null>( null );
+    const lastCenteredNodeRef = useRef<string | null>( null );
     const [ zoom, setZoom ] = useState<number>( VIEWPORT_CONFIG.DEFAULT_ZOOM );
 
     const handleMove = useCallback( ( _event: MouseEvent | TouchEvent | null, viewport: Viewport ) => {
@@ -57,7 +76,7 @@ export function FlowViewer( props: FlowViewerProps ) {
     const [ nodes, setNodes, onNodesChange ] = useNodesState( initialNodes );
     const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );
 
-    useMemo( () => {
+    useEffect( () => {
         setNodes( initialNodes );
         setEdges( initialEdges );
     }, [ initialNodes, initialEdges, setNodes, setEdges ] );
@@ -73,6 +92,11 @@ export function FlowViewer( props: FlowViewerProps ) {
 
     useEffect( () => {
         if ( !selectedNodeId || !centerOnSelect ) {
+            lastCenteredNodeRef.current = null;
+            return;
+        }
+
+        if ( lastCenteredNodeRef.current === selectedNodeId ) {
             return;
         }
 
@@ -86,6 +110,8 @@ export function FlowViewer( props: FlowViewerProps ) {
             return;
         }
 
+        lastCenteredNodeRef.current = selectedNodeId;
+
         const dimensionsByType: Record<string, { width: number; height: number }> = {
             moduleNode: NODE_DIMENSIONS.MODULE,
             flowNode: NODE_DIMENSIONS.FLOW,
@@ -95,7 +121,8 @@ export function FlowViewer( props: FlowViewerProps ) {
         };
 
         const dimensions = dimensionsByType[ selectedNode.type ?? "default" ] ?? dimensionsByType.default;
-        const targetZoom = zoom < VIEWPORT_CONFIG.CENTER_ZOOM_THRESHOLD ? VIEWPORT_CONFIG.CENTER_ZOOM_TARGET : zoom;
+        const currentZoom = reactFlowInstance.getZoom();
+        const targetZoom = currentZoom < VIEWPORT_CONFIG.CENTER_ZOOM_THRESHOLD ? VIEWPORT_CONFIG.CENTER_ZOOM_TARGET : currentZoom;
 
         reactFlowInstance.setCenter(
             selectedNode.position.x + dimensions.width / 2,
@@ -119,12 +146,12 @@ export function FlowViewer( props: FlowViewerProps ) {
     }, [ nodes, edges, setNodes, setEdges ] );
 
     const onNodeClick = useCallback( ( _event: React.MouseEvent, node: Node ) => {
-        onNodeSelect?.( node );
-    }, [ onNodeSelect ] );
+        handleNodeSelect( node );
+    }, [ handleNodeSelect ] );
 
     const onPaneClick = useCallback( () => {
-        onNodeSelect?.( null );
-    }, [ onNodeSelect ] );
+        handleNodeSelect( null );
+    }, [ handleNodeSelect ] );
 
     if ( isLoading ) {
         return (

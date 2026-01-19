@@ -65,6 +65,8 @@ export default defineConfig( ( { mode } ) => {
                 "@zenflux/react-commander",
                 "@xyflow/react",
                 "eventemitter3"
+            ],
+            exclude: [
             ]
         },
         define: {

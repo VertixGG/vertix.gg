@@ -157,13 +157,14 @@ export class Logger extends ObjectBase {
     }
 
     private getTime(): string {
-        const iso = new Date().toISOString().match( /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}\.\d{3})/ );
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const hour = now.getHours().toString().padStart( 2, "0" );
+        const minute = now.getMinutes().toString().padStart( 2, "0" );
 
-        if ( !iso ) {
-            return "Invalid Time";
-        }
-
-        return iso[ 1 ] + " " + iso[ 2 ];
+        return `${ year }-${ month }-${ day } ${ hour }:${ minute }`;
     }
 
     private getCallerName( caller: ICaller ) {
@@ -246,11 +247,12 @@ export class Logger extends ObjectBase {
             messagePrefix = `[${ this.messagePrefixes.join( "][" ) }]`;
         }
 
+        const timestamp = this.getTime();
         const timeDiff = ( new Date().getTime() - Logger.lastLogTime ).toString().padStart( 4, "0" );
 
         this.outputEvent( prefix, timeDiff, source, messagePrefix, message, params );
 
-        const output = `${ prefix }[+${ timeDiff }ms][${ source }]${ messagePrefix }: ${ message }`;
+        const output = `${ prefix }[${ timestamp }][+${ timeDiff }ms][${ source }]${ messagePrefix }: ${ message }`;
 
         console.log( output, ...params );
 

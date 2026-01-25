@@ -2,18 +2,14 @@
 
 **Version: 0.0.15 ~ 25/01/2026**
 - New Features:
-    - **Scaling Join Routing**: Joining the scaling master channel now moves members to the first available free scaling room (creates one if none exist).
-    - **Scaling Management in Setup**: Editing a scaling master now opens a dedicated management UI to update prefix and max members, and applies changes to existing scaling rooms.
-    - **Scaling Master Deletion**: Added delete action with confirmation that removes the scaling master, all owned scaling channels, and cleans up empty categories.
-    - **Channel Name Index Placeholder**: Added `{index}` placeholder support for dynamic channel templates and scaling prefixes (`{auto-scale}` alias supported).
+    - **Auto-Scaling Channels**: Automatically create and manage voice channels based on demand. When users join the master channel, they're moved to an available room (or a new one is created).
+    - **Scaling Channel Management**: Configure your scaling channels directly from `/setup` - set custom prefixes and max members per room.
+    - **Delete Scaling Channels**: Easily remove scaling setups with a confirmation dialog that cleans up all related channels.
+    - **Channel Numbering**: Use `{index}` in your channel names to automatically number them (e.g., "Room-1", "Room-2").
 - Improvements:
-    - **Setup Guidance**: Added `{user}` / `{index}` placeholder hints in template setup copy.
-    - **Localization**: Added translations for the scaling management UI across EN/RU/EL.
-    - **Versioning**: Renamed scaling channel version constant to `VERSION_SCALING_CHANNEL_UI_V1`.
-    - **Scaling Reindex**: Added a 5-minute reindex pass that renames scaling channels when `{index}`/alias placeholders are used.
-    - **Shared Utilities**: Created `ChannelUtils` class with `cacheOrFetchGuild` and `cleanupEmptyCategoryIfNeeded` for code reuse across services.
-    - **Index Placeholder Utilities**: Added shared `varsHasIndexPlaceholder` and `varsReplaceIndexPlaceholder` functions to reduce code duplication.
-    - **Scaling Master Type**: Added `MASTER_SCALING_CHANNEL` internal type to properly identify scaling masters without relying on version checks.
+    - **Helpful Hints**: Added placeholder suggestions when setting up channel name templates.
+    - **Auto-Renumbering**: Channels are automatically renumbered every 5 minutes to keep names consistent.
+    - **New Languages**: Scaling features now available in English, Russian, and Greek.
 
 ---
 

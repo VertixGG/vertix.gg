@@ -242,7 +242,12 @@ export class ChannelModel extends ModelWithDataBase<
     public async getMasters( guildId: string, dataKey?: string ) {
         const where: ChannelFindManyArgsWithDataIncludeKey[ "where" ] = {
             guildId,
-            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
+            internalType: {
+                in: [
+                    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+                    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL
+                ]
+            }
         };
 
         const include: ChannelFindManyArgsWithDataIncludeKey[ "include" ] | undefined = dataKey

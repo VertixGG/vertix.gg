@@ -1,18 +1,24 @@
 import { ChannelType } from "discord.js";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
-import type { CategoryChannel, Client, Guild } from "discord.js";
+import type { CategoryChannel, Guild, GuildBasedChannel } from "discord.js";
 import type { Logger } from "@vertix.gg/base/src/modules/logger";
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 export class ChannelUtils {
-    /**
-     * Fetches a guild from cache or API.
-     * Returns null if the guild cannot be found.
-     */
-    public static async cacheOrFetchGuild( client: Client, guildId: string ): Promise<Guild | null> {
+    public static async cacheOrFetchGuild( guildId: string ): Promise<Guild | null> {
+        const client = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" ).getClient();
+
         return client.guilds.cache.get( guildId ) ||
             await client.guilds.fetch( guildId ).catch( () => null );
+    }
+
+    public static async cacheOrFetchChannel( guild: Guild, channelId: string ): Promise<GuildBasedChannel | null> {
+        return guild.channels.cache.get( channelId ) ||
+            await guild.channels.fetch( channelId ).catch( () => null );
     }
 
     /**

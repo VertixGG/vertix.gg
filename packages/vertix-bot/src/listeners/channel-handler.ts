@@ -15,7 +15,7 @@ export function channelHandler( client: Client ) {
     const updateLastActive = ( guildId: string ) => {
         void GuildModel.$.updateLastActive( guildId ).then( ( updated ) => {
             if ( !updated ) {
-                void guildLeaveBecauseNotInDatabase( client, guildId );
+                void guildLeaveBecauseNotInDatabase( guildId );
             }
         } );
     };

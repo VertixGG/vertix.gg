@@ -195,7 +195,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         );
 
         for ( const { masterChannel } of scalingConfigs ) {
-            const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), masterChannel.guildId );
+            const guild = await ChannelUtils.cacheOrFetchGuild( masterChannel.guildId );
 
             if ( !guild ) {
                 this.debugger.log(
@@ -498,7 +498,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
     } ) {
         const { guildId, userOwnerId, prefix, maxMembers } = args;
 
-        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
 
         if ( !guild ) {
             this.logger.error( this.createScalingMasterChannel, `Guild not found: ${ guildId }` );
@@ -749,7 +749,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
     } ): Promise<boolean> {
         const { guildId, masterChannelId } = args;
 
-        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
 
         if ( !guild ) {
             this.logger.error( this.deleteScalingMasterChannelWithCleanup, `Guild not found: ${ guildId }` );
@@ -763,7 +763,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
             return false;
         }
 
-        const masterChannel = await ChannelUtils.cacheOrFetchGuild( guild, masterChannelDB.channelId );
+        const masterChannel = await ChannelUtils.cacheOrFetchChannel( guild, masterChannelDB.channelId );
 
         this.logger.info(
             this.deleteScalingMasterChannelWithCleanup,

@@ -3,17 +3,14 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
 
-import type { Client, Guild } from "discord.js";
+import type { Guild } from "discord.js";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 export async function guildGetMemberDisplayName( guild: string, userId: string ): Promise<string>;
 export async function guildGetMemberDisplayName( guild: Guild, userId: string ): Promise<string>;
 export async function guildGetMemberDisplayName( guild: Guild | string, userId: string ): Promise<string> {
     if ( "string" === typeof guild ) {
-        const appService = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" ),
-            client = appService.getClient();
-
-        const result = await ChannelUtils.cacheOrFetchGuild( client, guild );
+        const result = await ChannelUtils.cacheOrFetchGuild( guild );
 
         if ( result ) {
             guild = result;
@@ -49,7 +46,7 @@ export async function guildGetMembersCount( guild: Guild, cache = true ): Promis
 
 const leavingGuildIds = new Set<string>();
 
-export async function guildLeaveBecauseNotInDatabase( client: Client, guildId: string ): Promise<void> {
+export async function guildLeaveBecauseNotInDatabase( guildId: string ): Promise<void> {
     if ( leavingGuildIds.has( guildId ) ) {
         return;
     }
@@ -57,7 +54,7 @@ export async function guildLeaveBecauseNotInDatabase( client: Client, guildId: s
     leavingGuildIds.add( guildId );
 
     try {
-        const guild = await ChannelUtils.cacheOrFetchGuild( client, guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
 
         if ( !guild ) {
             GlobalLogger.$.warn(

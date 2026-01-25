@@ -18,7 +18,7 @@ export function interactionHandler( client: Client ) {
         if ( interaction.guildId ) {
             void GuildModel.$.updateLastActive( interaction.guildId ).then( ( updated ) => {
                 if ( !updated ) {
-                    void guildLeaveBecauseNotInDatabase( client, interaction.guildId );
+                    void guildLeaveBecauseNotInDatabase( interaction.guildId );
                 }
             } );
         }

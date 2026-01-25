@@ -202,13 +202,13 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async updateControlChannel( args: IUpdateControlChannelArgs ): Promise<string | null> {
-        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), args.guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( args.guildId );
 
         if ( !guild ) {
             return null;
         }
 
-        const masterChannel = await ChannelUtils.cacheOrFetchGuild( guild, args.masterChannelId );
+        const masterChannel = await ChannelUtils.cacheOrFetchChannel( guild, args.masterChannelId );
 
         if ( !masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
             return null;
@@ -225,7 +225,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         if ( !args.enable ) {
             if ( controlChannelId ) {
-                const controlChannel = await ChannelUtils.cacheOrFetchGuild( guild, controlChannelId );
+                const controlChannel = await ChannelUtils.cacheOrFetchChannel( guild, controlChannelId );
 
                 if ( controlChannel ) {
                     await this.services.channelService.delete( {
@@ -241,7 +241,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
 
         if ( controlChannelId ) {
-            const existing = await ChannelUtils.cacheOrFetchGuild( guild, controlChannelId );
+            const existing = await ChannelUtils.cacheOrFetchChannel( guild, controlChannelId );
 
             if ( existing ) {
                 return controlChannelId;
@@ -559,13 +559,13 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         guildId: string;
         masterChannelId: string;
     } ) {
-        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), args.guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( args.guildId );
 
         if ( !guild ) {
             return false;
         }
 
-        const masterChannel = await ChannelUtils.cacheOrFetchGuild( guild, args.masterChannelId );
+        const masterChannel = await ChannelUtils.cacheOrFetchChannel( guild, args.masterChannelId );
 
         if ( !masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
             return false;
@@ -581,7 +581,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         const controlChannelId = settings.dynamicChannelControlChannelId ?? null;
 
         if ( controlChannelId ) {
-            const controlChannel = await ChannelUtils.cacheOrFetchGuild( guild, controlChannelId );
+            const controlChannel = await ChannelUtils.cacheOrFetchChannel( guild, controlChannelId );
 
             if ( controlChannel ) {
                 await this.services.channelService.delete( {
@@ -616,7 +616,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             return result;
         }
 
-        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), args.guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( args.guildId );
 
         if ( !guild ) {
             return result;
@@ -678,7 +678,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 `Guild id: '${ guildId }' - Has reached master limit: '${ limit }'`
             );
 
-            const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), guildId );
+            const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
 
             this.logger.admin(
                 this.isReachedMasterLimit,

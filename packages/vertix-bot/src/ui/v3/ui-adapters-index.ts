@@ -15,3 +15,4 @@ export { DynamicChannelPrivacyAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-c
 export { DynamicChannelRegionAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-adapter";
 export { DynamicChannelTemplatesAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-adapter";
 export { SetupNewWizardAdapter } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-adapter";
+export { ScalingSetupEditAdapter } from "@vertix.gg/bot/src/ui/v3/scaling-setup/scaling-setup-edit-adapter";

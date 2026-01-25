@@ -27,7 +27,13 @@ import { Routes } from "discord-api-types/v10";
 
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
-import { VAR_DYNAMIC_CHANNEL_USER, VAR_DYNAMIC_CHANNEL_STATE, VAR_DYNAMIC_CHANNEL_GAME } from "@vertix.gg/base/src/definitions/vars";
+import {
+    varsHasIndexPlaceholder,
+    VAR_DYNAMIC_CHANNEL_GAME,
+    VAR_DYNAMIC_CHANNEL_INDEX,
+    VAR_DYNAMIC_CHANNEL_STATE,
+    VAR_DYNAMIC_CHANNEL_USER
+} from "@vertix.gg/base/src/definitions/vars";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -268,7 +274,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         userId: string,
         newName?: string,
     ): Promise<string> {
-        // Supported placeholders: {user}, {state}, {game}
+        // Supported placeholders: {user}, {state}, {game}, {index}
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id ),
             userDisplayName = await guildGetMemberDisplayName( channel.guild, userId );
 
@@ -279,23 +285,46 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const { settings } = this.config.data;
 
         if ( newName?.length ) {
+            const index = await this.getDynamicChannelTemplateIndex(
+                channel.guild.id,
+                masterChannelDB?.channelId ?? null,
+                channel.id,
+                newName
+            );
+
             return this.assembleChannelNameTemplate( newName, {
                 userDisplayName,
                 state: await this.getChannelState( channel ),
-                gameName
+                gameName,
+                index
             } );
         }
 
         if ( !masterChannelDB ) {
-            return settings.dynamicChannelNameTemplate.replace( VAR_DYNAMIC_CHANNEL_USER, userDisplayName );
+            const template = settings.dynamicChannelNameTemplate;
+            const index = varsHasIndexPlaceholder( template ) ? 1 : null;
+
+            return this.assembleChannelNameTemplate( template, {
+                userDisplayName,
+                state: await this.getChannelState( channel ),
+                gameName,
+                index
+            } );
         }
 
         const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );
+        const index = await this.getDynamicChannelTemplateIndex(
+            channel.guild.id,
+            masterChannelDB.channelId,
+            channel.id,
+            channelNameTemplate!
+        );
 
         return this.assembleChannelNameTemplate( channelNameTemplate!, {
             userDisplayName,
             state: await this.getChannelState( channel ),
-            gameName
+            gameName,
+            index
         } );
     }
 
@@ -305,14 +334,17 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userDisplayName: string | null;
             state: ChannelState | null;
             gameName?: string | null;
+            index?: number | null;
         } = {
             state: null,
             userDisplayName: null,
-            gameName: null
+            gameName: null,
+            index: null
         }
     ) {
         let state = "",
-            userDisplayName = "";
+            userDisplayName = "",
+            indexValue = "";
 
         const { constants } = this.config.data;
 
@@ -325,20 +357,65 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userDisplayName = args.userDisplayName.replace( /[^a-zA-Z0-9]/g, "" );
         }
 
+        if ( args.index != null ) {
+            indexValue = String( args.index );
+        }
+
         const replacements: Record<string, string> = {
             [ VAR_DYNAMIC_CHANNEL_STATE ]: state,
             [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName,
             [ VAR_DYNAMIC_CHANNEL_GAME ]: args.gameName ?? "",
+            [ VAR_DYNAMIC_CHANNEL_INDEX ]: indexValue,
             "{{username}}": userDisplayName,
             "{{user}}": userDisplayName,
             "{{state}}": state,
-            "{{game}}": args.gameName ?? ""
+            "{{game}}": args.gameName ?? "",
+            "{{index}}": indexValue,
+            "{auto-scale}": indexValue,
+            "{autoscale}": indexValue
         };
 
         return channelNameTemplate.replace(
             new RegExp( Object.keys( replacements ).map( key => key.replace( /[{}]/g, "\\$&" ) ).join( "|" ), "g" ),
             ( matched: any ) => replacements[ matched ]
         );
+    }
+
+    private async getDynamicChannelTemplateIndex(
+        guildId: string,
+        masterChannelId: string | null,
+        channelId: string | null,
+        template: string
+    ): Promise<number | null> {
+        if ( !varsHasIndexPlaceholder( template ) ) {
+            return null;
+        }
+
+        if ( !masterChannelId ) {
+            return 1;
+        }
+
+        const dynamicChannels = await ChannelModel.$.getDynamicsByMasterId( guildId, masterChannelId );
+
+        if ( !dynamicChannels.length ) {
+            return 1;
+        }
+
+        const sorted = [ ...dynamicChannels ].sort(
+            ( a, b ) => new Date( a.createdAt ).getTime() - new Date( b.createdAt ).getTime()
+        );
+
+        if ( channelId ) {
+            const index = sorted.findIndex( ( ch ) => ch.channelId === channelId );
+
+            if ( index >= 0 ) {
+                return index + 1;
+            }
+
+            return 1;
+        }
+
+        return sorted.length + 1;
     }
 
     public async getChannelUsersWithPermissionState(
@@ -785,10 +862,18 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             const member = guild.members.cache.get( userOwnerId );
             const gameName = member ? this.getUserCurrentGame( member ) : null;
 
+            const index = await this.getDynamicChannelTemplateIndex(
+                guild.id,
+                masterChannelDB.channelId,
+                null,
+                dynamicChannelTemplateName
+            );
+
             dynamicChannelName = await this.assembleChannelNameTemplate( dynamicChannelTemplateName, {
                 userDisplayName: displayName,
                 state: null,
-                gameName
+                gameName,
+                index
             } );
         }
 
@@ -1505,11 +1590,21 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             defaultDynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate(
                 master.db,
                 true
-            ),
-            defaultDynamicChannelName = defaultDynamicChannelTemplateName!.replace(
-                VAR_DYNAMIC_CHANNEL_USER,
-                await guildGetMemberDisplayName( channel.guild, userOwnerId )
             );
+
+        const ownerMember = channel.guild.members.cache.get( userOwnerId );
+        const ownerGameName = ownerMember ? this.getUserCurrentGame( ownerMember ) : null;
+        const defaultDynamicChannelName = await this.assembleChannelNameTemplate( defaultDynamicChannelTemplateName!, {
+            userDisplayName: await guildGetMemberDisplayName( channel.guild, userOwnerId ),
+            state: await this.getChannelState( channel ),
+            gameName: ownerGameName,
+            index: await this.getDynamicChannelTemplateIndex(
+                channel.guild.id,
+                master.db.channelId,
+                channel.id,
+                defaultDynamicChannelTemplateName!
+            )
+        } );
 
         const renameResult = await this.editChannelNameInternal( channel, defaultDynamicChannelName );
 

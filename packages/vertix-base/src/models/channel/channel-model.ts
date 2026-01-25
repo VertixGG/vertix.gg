@@ -338,6 +338,10 @@ export class ChannelModel extends ModelWithDataBase<
         return !!( await this.getByChannelId( channelId, cache ) )?.isScaling;
     }
 
+    public async isScalingMaster( channelId: string, cache = true ) {
+        return !!( await this.getByChannelId( channelId, cache ) )?.isScalingMaster;
+    }
+
     public async getScalingChannelsByMasterId( guildId: string, masterChannelId: string, cache = true ) {
         return this.findMany(
             {

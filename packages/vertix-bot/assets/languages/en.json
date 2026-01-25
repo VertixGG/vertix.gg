@@ -47,6 +47,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupScalingEditButton",
+        "content": {
+          "label": "Edit Scaling Settings"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Invite Vertix"
@@ -281,6 +287,12 @@
         "content": {
           "label": "Apply Only"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+        "content": {
+          "label": "Edit Settings"
+        }
       }
     ],
     "textInputs": [
@@ -296,6 +308,20 @@
         "content": {
           "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
           "placeholder": "{user}'s Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "CHANNEL NAME PREFIX",
+          "placeholder": "### Room - {index} ###"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
+        "content": {
+          "label": "MAX MEMBERS PER CHANNEL",
+          "placeholder": "10"
         }
       },
       {
@@ -2337,6 +2363,13 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
+      "content": {
+        "title": "📈  Auto-Scaling Channels #{scalingIndex}",
+        "description": "Configure your auto-scaling voice channels.\n\n➤ ∙ Master Channel: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Prefix: `{scalingPrefix}`\n➤ ∙ Max Members: `{scalingMaxMembers}`\n\nPlaceholders: `{index}` (alias: `{auto-scale}`)\n"
+      }
     }
   ],
   "markdowns": [
@@ -2364,6 +2397,12 @@
       "name": "VertixBot/UI-General/ChannelNameTemplateModal",
       "content": {
         "title": "Set dynamic channels name"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingConfigModal",
+      "content": {
+        "title": "📈 Configure Scaling Channel"
       }
     },
     {

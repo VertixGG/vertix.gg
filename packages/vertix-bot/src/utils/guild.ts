@@ -1,6 +1,7 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
+import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
 
 import type { Client, Guild } from "discord.js";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
@@ -12,11 +13,7 @@ export async function guildGetMemberDisplayName( guild: Guild | string, userId: 
         const appService = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" ),
             client = appService.getClient();
 
-        let result = client.guilds.cache.get( guild );
-
-        if ( !result ) {
-            result = await client.guilds.fetch( guild );
-        }
+        const result = await ChannelUtils.cacheOrFetchGuild( client, guild );
 
         if ( result ) {
             guild = result;
@@ -60,7 +57,7 @@ export async function guildLeaveBecauseNotInDatabase( client: Client, guildId: s
     leavingGuildIds.add( guildId );
 
     try {
-        const guild = client.guilds.cache.get( guildId ) || ( await client.guilds.fetch( guildId ).catch( () => null ) );
+        const guild = await ChannelUtils.cacheOrFetchGuild( client, guildId );
 
         if ( !guild ) {
             GlobalLogger.$.warn(

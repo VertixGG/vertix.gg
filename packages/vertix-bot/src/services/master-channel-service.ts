@@ -31,6 +31,8 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
+import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
+
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
@@ -39,6 +41,7 @@ import type UIService from "@vertix.gg/gui/src/ui-service";
 import type { UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
+import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
@@ -115,6 +118,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     uiService: UIService;
     channelService: ChannelService;
     dynamicChannelService: DynamicChannelService;
+    scalingChannelService: ScalingChannelService;
 }> {
     private debugger: Debugger;
 
@@ -150,7 +154,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             appService: "VertixBot/Services/App",
             uiService: "VertixGUI/UIService",
             channelService: "VertixBot/Services/Channel",
-            dynamicChannelService: "VertixBot/Services/DynamicChannel"
+            dynamicChannelService: "VertixBot/Services/DynamicChannel",
+            scalingChannelService: "VertixBot/Services/ScalingChannel"
         };
     }
 
@@ -197,12 +202,13 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async updateControlChannel( args: IUpdateControlChannelArgs ): Promise<string | null> {
-        const guild =
-            this.services.appService.getClient().guilds.cache.get( args.guildId ) ||
-            await this.services.appService.getClient().guilds.fetch( args.guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), args.guildId );
 
-        const masterChannel = guild.channels.cache.get( args.masterChannelId ) ||
-            await guild.channels.fetch( args.masterChannelId ).catch( () => null );
+        if ( !guild ) {
+            return null;
+        }
+
+        const masterChannel = await ChannelUtils.cacheOrFetchGuild( guild, args.masterChannelId );
 
         if ( !masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
             return null;
@@ -219,13 +225,12 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         if ( !args.enable ) {
             if ( controlChannelId ) {
-                const controlChannel = guild.channels.cache.get( controlChannelId ) ||
-                    await guild.channels.fetch( controlChannelId ).catch( () => null );
+                const controlChannel = await ChannelUtils.cacheOrFetchGuild( guild, controlChannelId );
 
                 if ( controlChannel ) {
                     await this.services.channelService.delete( {
                         guild,
-                        channel: controlChannel as GuildChannel
+                        channel: controlChannel
                     } );
                 }
             }
@@ -236,8 +241,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
 
         if ( controlChannelId ) {
-            const existing = guild.channels.cache.get( controlChannelId ) ||
-                await guild.channels.fetch( controlChannelId ).catch( () => null );
+            const existing = await ChannelUtils.cacheOrFetchGuild( guild, controlChannelId );
 
             if ( existing ) {
                 return controlChannelId;
@@ -296,6 +300,43 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         if ( !newState.member ) {
             this.logger.error( this.onJoinMasterChannel, `Could not find member channel id: '${ newState.channelId }'` );
+
+            return;
+        }
+
+        const masterChannelDB = await ChannelModel.$.getByChannelId( newState.channelId );
+
+        if ( !masterChannelDB ) {
+            this.logger.error( this.onJoinMasterChannel, `Master channel DB not found for id: '${ newState.channelId }'` );
+            return;
+        }
+
+        // Handle scaling master channels - no permissions check needed
+        if ( masterChannelDB.isScalingMaster ) {
+            const availableChannel = await this.services.scalingChannelService.getOrCreateAvailableChannel( {
+                guild,
+                masterChannel: masterChannelDB
+            } );
+
+            if ( !availableChannel ) {
+                this.logger.error(
+                    this.onJoinMasterChannel,
+                    `Guild id: '${ guild.id }' - Failed to find available scaling channel for master '${ masterChannelDB.id }'`
+                );
+                return;
+            }
+
+            await newState
+                .setChannel( availableChannel.id )
+                .then( () => {
+                    this.logger.log(
+                        this.onJoinMasterChannel,
+                        `Guild id: '${ guild.id }' - User '${ displayName }' moved to scaling channel '${ availableChannel.name }'`
+                    );
+                } )
+                .catch( ( error ) => {
+                    this.logger.error( this.onJoinMasterChannel, "Failed to move user to scaling channel", error );
+                } );
 
             return;
         }
@@ -518,12 +559,13 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         guildId: string;
         masterChannelId: string;
     } ) {
-        const guild =
-            this.services.appService.getClient().guilds.cache.get( args.guildId ) ||
-            await this.services.appService.getClient().guilds.fetch( args.guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), args.guildId );
 
-        const masterChannel = guild.channels.cache.get( args.masterChannelId ) ||
-            await guild.channels.fetch( args.masterChannelId ).catch( () => null );
+        if ( !guild ) {
+            return false;
+        }
+
+        const masterChannel = await ChannelUtils.cacheOrFetchGuild( guild, args.masterChannelId );
 
         if ( !masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
             return false;
@@ -539,13 +581,12 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         const controlChannelId = settings.dynamicChannelControlChannelId ?? null;
 
         if ( controlChannelId ) {
-            const controlChannel = guild.channels.cache.get( controlChannelId ) ||
-                await guild.channels.fetch( controlChannelId ).catch( () => null );
+            const controlChannel = await ChannelUtils.cacheOrFetchGuild( guild, controlChannelId );
 
             if ( controlChannel ) {
                 await this.services.channelService.delete( {
                     guild,
-                    channel: controlChannel as GuildChannel
+                    channel: controlChannel
                 } );
             }
         }
@@ -558,13 +599,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         await voiceChannel.delete().catch( ( e ) => this.logger.error( this.deleteMasterChannelWithCleanup, "", e ) );
 
-        if ( parent && parent.type === ChannelType.GuildCategory ) {
-            const remaining = guild.channels.cache.filter( ( channel ) => channel.parentId === parent.id );
-
-            if ( remaining.size === 0 ) {
-                await CategoryManager.$.delete( parent );
-            }
-        }
+        await ChannelUtils.cleanupEmptyCategoryIfNeeded( parent, guild, this.logger, this.deleteMasterChannelWithCleanup );
 
         return true;
     }
@@ -581,9 +616,11 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             return result;
         }
 
-        const guild =
-            this.services.appService.getClient().guilds.cache.get( args.guildId ) ||
-            ( await this.services.appService.getClient().guilds.fetch( args.guildId ) );
+        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), args.guildId );
+
+        if ( !guild ) {
+            return result;
+        }
 
         this.logger.info(
             this.createMasterChannel,
@@ -641,9 +678,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 `Guild id: '${ guildId }' - Has reached master limit: '${ limit }'`
             );
 
-            const guild =
-                this.services.appService.getClient().guilds.cache.get( guildId ) ||
-                ( await this.services.appService.getClient().guilds.fetch( guildId ) );
+            const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), guildId );
 
             this.logger.admin(
                 this.isReachedMasterLimit,

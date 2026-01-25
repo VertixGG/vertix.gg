@@ -8,7 +8,7 @@ import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-const VERSION_SCALING_CHANNEL = "0.0.0.1" as const;
+const VERSION_SCALING_CHANNEL_UI_V1 = "0.0.0.1" as const;
 
 export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingChannelConfigInterface> {
     private static instance: ScalingChannelDataModel;
@@ -51,16 +51,8 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
 
         return results.map( ( result ) => ( {
             masterChannel: result.channel,
-            settings: result.object as ScalingChannelConfigInterface[ "data" ][ "settings" ]
+            settings: result.object
         } ) );
-    }
-
-    public async setPrefix( ownerId: string, prefix: string ) {
-        return this.setSettings( ownerId, { scalingChannelPrefix: prefix } );
-    }
-
-    public async setMaxMembersPerChannel( ownerId: string, maxMembers: number ) {
-        return this.setSettings( ownerId, { scalingChannelMaxMembersPerChannel: maxMembers } );
     }
 
     public async setCategoryId( ownerId: string, categoryId: string | null ) {
@@ -70,16 +62,14 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
     public async setAllSettings( ownerId: string, settings: Partial<ScalingChannelConfigInterface[ "data" ][ "settings" ]> ) {
         return this.setSettings( ownerId, settings );
     }
-
     protected getDataVersion() {
-        return VERSION_SCALING_CHANNEL;
+        return VERSION_SCALING_CHANNEL_UI_V1;
     }
 
     protected getConfig() {
         return ConfigManager.$.get<ScalingChannelConfigInterface>(
             "Vertix/Config/ScalingChannel",
-            VERSION_SCALING_CHANNEL
+            VERSION_SCALING_CHANNEL_UI_V1
         );
     }
 }
-

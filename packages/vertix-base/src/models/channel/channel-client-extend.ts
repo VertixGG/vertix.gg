@@ -4,6 +4,7 @@ export interface ChannelExtended extends PrismaBot.Channel {
     isMaster: boolean;
     isDynamic: boolean;
     isScaling: boolean;
+    isScalingMaster: boolean;
 }
 
 export type ChannelExtendedIdVersionOnly = Pick<ChannelExtended, "id" | "version">;
@@ -57,6 +58,14 @@ const extendedModel = PrismaBot.Prisma.defineExtension( ( client ) => {
                     },
                     compute( model ) {
                         return model.internalType === E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL;
+                    }
+                },
+                isScalingMaster: {
+                    needs: {
+                        internalType: true
+                    },
+                    compute( model ) {
+                        return model.internalType === E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL;
                     }
                 }
             }

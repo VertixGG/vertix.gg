@@ -11,14 +11,17 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
 
+import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/definitions/vars";
+
 import { ChannelType } from "discord.js";
 
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
-import { VERSION_SCALING_CHANNEL } from "@vertix.gg/bot/src/config/scaling-channel-config";
+import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
+import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
 
 import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-import type { CategoryChannel, Guild, VoiceChannel } from "discord.js";
+import type { CategoryChannel, Guild, GuildChannel, VoiceChannel } from "discord.js";
 
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
@@ -32,6 +35,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
     channelService: ChannelService;
 }> {
     private readonly debugger: Debugger;
+    private reindexInterval?: NodeJS.Timeout;
 
     public static getName() {
         return "VertixBot/Services/ScalingChannel";
@@ -79,6 +83,8 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                         );
                     }
                 }
+
+                this.scheduleScalingReindex();
             } catch( error ) {
                 this.logger.error( this.initialize, "Failed to ensure scaling channels", error );
             }
@@ -132,7 +138,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         maxMembers: number,
         index: number
     ) {
-        const name = `${ prefix }-${ index }`;
+        const name = this.assembleScalingChannelName( prefix, index );
 
         this.logger.log( this.createScaledChannel, `Creating new scaling channel: ${ name } (limit: ${ maxMembers }) in guild ${ guild.name }` );
 
@@ -145,7 +151,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                 userOwnerId: master.userOwnerId,
                 ownerChannelId: master.id,
                 internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL,
-                version: VERSION_SCALING_CHANNEL,
+                version: VERSION_SCALING_CHANNEL_UI_V1,
                 type: ChannelType.GuildVoice
             } );
 
@@ -158,6 +164,332 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
+    private assembleScalingChannelName( prefix: string, index: number ) {
+        return varsReplaceIndexPlaceholder( prefix, index );
+    }
+
+    private scheduleScalingReindex() {
+        if ( this.reindexInterval ) {
+            return;
+        }
+
+        const intervalMs = 5 * 60 * 1000;
+
+        this.reindexInterval = setInterval( () => {
+            this.reindexScalingChannels().catch( ( error ) => {
+                this.logger.error( this.scheduleScalingReindex, "Failed to reindex scaling channels", error );
+            } );
+        }, intervalMs );
+
+        this.reindexScalingChannels().catch( ( error ) => {
+            this.logger.error( this.scheduleScalingReindex, "Failed to reindex scaling channels", error );
+        } );
+    }
+
+    private async reindexScalingChannels() {
+        const scalingConfigs = await ScalingChannelDataModel.$.getAllScalingSettings();
+
+        this.debugger.log(
+            this.reindexScalingChannels,
+            `Starting reindex pass for ${ scalingConfigs.length } scaling configurations`
+        );
+
+        for ( const { masterChannel } of scalingConfigs ) {
+            const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), masterChannel.guildId );
+
+            if ( !guild ) {
+                this.debugger.log(
+                    this.reindexScalingChannels,
+                    `Guild ${ masterChannel.guildId } not found, skipping master ${ masterChannel.id }`
+                );
+                continue;
+            }
+
+            const settings = await ScalingChannelDataModel.$.getScalingSettings( masterChannel.id );
+
+            if ( !settings?.scalingChannelPrefix ) {
+                this.debugger.log(
+                    this.reindexScalingChannels,
+                    `No prefix configured for master ${ masterChannel.id }, skipping`
+                );
+                continue;
+            }
+
+            if ( !varsHasIndexPlaceholder( settings.scalingChannelPrefix ) ) {
+                this.debugger.log(
+                    this.reindexScalingChannels,
+                    `Prefix "${ settings.scalingChannelPrefix }" does not use index placeholder for master ${ masterChannel.id }, skipping`
+                );
+                continue;
+            }
+
+            this.debugger.log(
+                this.reindexScalingChannels,
+                `Reindexing scaling channels for master ${ masterChannel.id } in guild ${ guild.name } with prefix "${ settings.scalingChannelPrefix }"`
+            );
+
+            await this.reindexScalingChannelsForMaster( guild, masterChannel.id, settings.scalingChannelPrefix );
+        }
+
+        this.debugger.log( this.reindexScalingChannels, "Reindex pass completed" );
+    }
+
+    private async reindexScalingChannelsForMaster(
+        guild: Guild,
+        masterChannelId: string,
+        prefix: string
+    ) {
+        const scalingChannelsDB = await ChannelModel.$.getScalingChannelsByMasterId( guild.id, masterChannelId );
+
+        if ( !scalingChannelsDB.length ) {
+            this.debugger.log(
+                this.reindexScalingChannelsForMaster,
+                `No scaling channels found in DB for master ${ masterChannelId }`
+            );
+            return;
+        }
+
+        this.debugger.log(
+            this.reindexScalingChannelsForMaster,
+            `Found ${ scalingChannelsDB.length } scaling channels in DB for master ${ masterChannelId }`
+        );
+
+        const scalingChannels: VoiceChannel[] = [];
+
+        for ( const channelDB of scalingChannelsDB ) {
+            const channel = guild.channels.cache.get( channelDB.channelId );
+
+            if ( channel && channel.isVoiceBased() ) {
+                scalingChannels.push( channel as VoiceChannel );
+            } else {
+                this.debugger.log(
+                    this.reindexScalingChannelsForMaster,
+                    `Channel ${ channelDB.channelId } not found in cache or not voice-based`
+                );
+            }
+        }
+
+        if ( !scalingChannels.length ) {
+            this.debugger.log(
+                this.reindexScalingChannelsForMaster,
+                `No valid scaling channels found in Discord cache for master ${ masterChannelId }`
+            );
+            return;
+        }
+
+        const sorted = [ ...scalingChannels ].sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp );
+
+        this.debugger.log(
+            this.reindexScalingChannelsForMaster,
+            `Processing ${ sorted.length } scaling channels for reindex`
+        );
+
+        let renamedCount = 0;
+
+        for ( let i = 0; i < sorted.length; ++i ) {
+            const channel = sorted[ i ];
+            const expectedName = this.assembleScalingChannelName( prefix, i + 1 );
+
+            if ( channel.name === expectedName ) {
+                this.debugger.log(
+                    this.reindexScalingChannelsForMaster,
+                    `Channel ${ channel.id } already has correct name "${ expectedName }"`
+                );
+                continue;
+            }
+
+            this.logger.log(
+                this.reindexScalingChannelsForMaster,
+                `Renaming channel ${ channel.id } from "${ channel.name }" to "${ expectedName }"`
+            );
+
+            await channel.edit( { name: expectedName } )
+                .then( () => {
+                    ++renamedCount;
+                    this.debugger.log(
+                        this.reindexScalingChannelsForMaster,
+                        `Successfully renamed channel ${ channel.id } to "${ expectedName }"`
+                    );
+                } )
+                .catch( ( error ) => this.logger.error( this.reindexScalingChannelsForMaster, `Failed to reindex channel ${ channel.id }`, error ) );
+        }
+
+        if ( renamedCount > 0 ) {
+            this.logger.log(
+                this.reindexScalingChannelsForMaster,
+                `Reindex complete for master ${ masterChannelId }: renamed ${ renamedCount } channels`
+            );
+        }
+    }
+
+    public async getOrCreateAvailableChannel( args: {
+        guild: Guild;
+        masterChannel: ChannelExtended;
+    } ): Promise<VoiceChannel | null> {
+        const { guild, masterChannel } = args;
+
+        const config = await ScalingChannelDataModel.$.getScalingSettings( masterChannel.id );
+
+        if ( !config ) {
+            return null;
+        }
+
+        const { scalingChannelCategoryId, scalingChannelPrefix, scalingChannelMaxMembersPerChannel } = config;
+
+        if ( !scalingChannelCategoryId || !scalingChannelPrefix || scalingChannelMaxMembersPerChannel == null ) {
+            return null;
+        }
+
+        const category = guild.channels.cache.get( scalingChannelCategoryId ) as CategoryChannel | undefined;
+
+        if ( !category ) {
+            return null;
+        }
+
+        let scalingChannels = await this.findScalingChannels( guild, masterChannel.id );
+
+        if ( scalingChannels.length === 0 ) {
+            const created = await this.createScaledChannel(
+                guild,
+                category,
+                masterChannel,
+                scalingChannelPrefix,
+                scalingChannelMaxMembersPerChannel,
+                1
+            );
+
+            if ( created?.channel && created.channel.isVoiceBased() ) {
+                return created.channel as VoiceChannel;
+            }
+
+            return null;
+        }
+
+        scalingChannels = [ ...scalingChannels ].sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp );
+
+        const isUnlimited = scalingChannelMaxMembersPerChannel <= 0;
+        const available = scalingChannels.find( ( channel ) =>
+            isUnlimited ? true : channel.members.size < scalingChannelMaxMembersPerChannel
+        );
+
+        if ( available ) {
+            return available;
+        }
+
+        const nextIndex = scalingChannels.length + 1;
+        const created = await this.createScaledChannel(
+            guild,
+            category,
+            masterChannel,
+            scalingChannelPrefix,
+            scalingChannelMaxMembersPerChannel,
+            nextIndex
+        );
+
+        if ( created?.channel && created.channel.isVoiceBased() ) {
+            return created.channel as VoiceChannel;
+        }
+
+        return null;
+    }
+
+    public async updateScalingSettings( args: {
+        guild: Guild;
+        masterChannelId: string;
+        prefix: string;
+        maxMembers: number;
+    } ) {
+        const { guild, masterChannelId, prefix, maxMembers } = args;
+
+        this.logger.log(
+            this.updateScalingSettings,
+            `Updating scaling settings for master ${ masterChannelId } in guild ${ guild.name }: prefix="${ prefix }", maxMembers=${ maxMembers }`
+        );
+
+        await ScalingChannelDataModel.$.setAllSettings( masterChannelId, {
+            scalingChannelPrefix: prefix,
+            scalingChannelMaxMembersPerChannel: maxMembers
+        } );
+
+        this.debugger.log(
+            this.updateScalingSettings,
+            `Settings saved to database for master ${ masterChannelId }`
+        );
+
+        const scalingChannelsDB = await ChannelModel.$.getScalingChannelsByMasterId( guild.id, masterChannelId );
+
+        if ( !scalingChannelsDB.length ) {
+            this.debugger.log(
+                this.updateScalingSettings,
+                `No scaling channels found in DB for master ${ masterChannelId }, nothing to update`
+            );
+            return;
+        }
+
+        this.debugger.log(
+            this.updateScalingSettings,
+            `Found ${ scalingChannelsDB.length } scaling channels in DB for master ${ masterChannelId }`
+        );
+
+        const scalingChannels: VoiceChannel[] = [];
+
+        for ( const channelDB of scalingChannelsDB ) {
+            const channel = guild.channels.cache.get( channelDB.channelId );
+
+            if ( channel && channel.isVoiceBased() ) {
+                scalingChannels.push( channel as VoiceChannel );
+            } else {
+                this.debugger.log(
+                    this.updateScalingSettings,
+                    `Channel ${ channelDB.channelId } not found in cache or not voice-based`
+                );
+            }
+        }
+
+        if ( !scalingChannels.length ) {
+            this.debugger.log(
+                this.updateScalingSettings,
+                `No valid scaling channels found in Discord cache for master ${ masterChannelId }`
+            );
+            return;
+        }
+
+        const sorted = [ ...scalingChannels ].sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp );
+
+        this.logger.log(
+            this.updateScalingSettings,
+            `Applying settings to ${ sorted.length } scaling channels for master ${ masterChannelId }`
+        );
+
+        let updatedCount = 0;
+
+        for ( let i = 0; i < sorted.length; ++i ) {
+            const channel = sorted[ i ];
+            const name = this.assembleScalingChannelName( prefix, i + 1 );
+
+            this.debugger.log(
+                this.updateScalingSettings,
+                `Updating channel ${ channel.id }: name="${ name }", userLimit=${ maxMembers }`
+            );
+
+            await channel
+                .edit( { name, userLimit: maxMembers } )
+                .then( () => {
+                    ++updatedCount;
+                    this.debugger.log(
+                        this.updateScalingSettings,
+                        `Successfully updated channel ${ channel.id }`
+                    );
+                } )
+                .catch( ( error ) => this.logger.error( this.updateScalingSettings, `Failed to update channel ${ channel.id }`, error ) );
+        }
+
+        this.logger.log(
+            this.updateScalingSettings,
+            `Settings update complete for master ${ masterChannelId }: updated ${ updatedCount }/${ sorted.length } channels`
+        );
+    }
+
     public async createScalingMasterChannel( args: {
         guildId: string;
         userOwnerId: string;
@@ -166,12 +498,16 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
     } ) {
         const { guildId, userOwnerId, prefix, maxMembers } = args;
 
-        const guild = this.services.appService.getClient().guilds.cache.get( guildId ) ||
-            await this.services.appService.getClient().guilds.fetch( guildId );
+        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), guildId );
+
+        if ( !guild ) {
+            this.logger.error( this.createScalingMasterChannel, `Guild not found: ${ guildId }` );
+            return { success: false, error: "Guild not found" };
+        }
 
         this.logger.info( this.createScalingMasterChannel, `Creating scaling master channel for guild ${ guild.name } (${ guildId })` );
 
-        const config = ConfigManager.$.get<ScalingChannelConfigInterface>( "Vertix/Config/ScalingChannel", VERSION_SCALING_CHANNEL );
+        const config = ConfigManager.$.get<ScalingChannelConfigInterface>( "Vertix/Config/ScalingChannel", VERSION_SCALING_CHANNEL_UI_V1 );
         const { constants, settings } = config.data;
 
         const effectivePrefix = prefix || settings.scalingChannelPrefix;
@@ -194,8 +530,8 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
             parent: category,
             name: constants.masterChannelName,
             userOwnerId,
-            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            version: VERSION_SCALING_CHANNEL,
+            internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL,
+            version: VERSION_SCALING_CHANNEL_UI_V1,
             type: ChannelType.GuildVoice
         } ).catch( ( error: Error ) => {
             this.logger.error( this.createScalingMasterChannel, "Failed to create master channel", error );
@@ -406,7 +742,108 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
             }
         }
     }
+
+    public async deleteScalingMasterChannelWithCleanup( args: {
+        guildId: string;
+        masterChannelId: string;
+    } ): Promise<boolean> {
+        const { guildId, masterChannelId } = args;
+
+        const guild = await ChannelUtils.cacheOrFetchGuild( this.services.appService.getClient(), guildId );
+
+        if ( !guild ) {
+            this.logger.error( this.deleteScalingMasterChannelWithCleanup, `Guild not found: ${ guildId }` );
+            return false;
+        }
+
+        const masterChannelDB = await ChannelModel.$.getById( masterChannelId );
+
+        if ( !masterChannelDB ) {
+            this.logger.error( this.deleteScalingMasterChannelWithCleanup, `Master channel DB not found: ${ masterChannelId }` );
+            return false;
+        }
+
+        const masterChannel = await ChannelUtils.cacheOrFetchGuild( guild, masterChannelDB.channelId );
+
+        this.logger.info(
+            this.deleteScalingMasterChannelWithCleanup,
+            `Deleting scaling master channel '${ masterChannelDB.channelId }' and all associated scaling channels in guild '${ guild.name }'`
+        );
+
+        this.logger.admin(
+            this.deleteScalingMasterChannelWithCleanup,
+            `➖  Scaling master channel is being deleted - "${ masterChannel?.name || masterChannelDB.channelId }" (${ guild.name }) (${ guild.memberCount })`
+        );
+
+        // 1. Delete all scaling channels associated with this master
+        const scalingChannelsDB = await ChannelModel.$.getScalingChannelsByMasterId( guildId, masterChannelId );
+
+        for ( const scalingChannelDB of scalingChannelsDB ) {
+            const scalingChannel = guild.channels.cache.get( scalingChannelDB.channelId );
+
+            if ( scalingChannel && !scalingChannel.isThread() ) {
+                this.logger.log(
+                    this.deleteScalingMasterChannelWithCleanup,
+                    `Deleting scaling channel: ${ scalingChannel.name } (${ scalingChannel.id })`
+                );
+
+                await this.services.channelService.delete( {
+                    guild,
+                    channel: scalingChannel as GuildChannel
+                } ).catch( ( error ) => {
+                    this.logger.error(
+                        this.deleteScalingMasterChannelWithCleanup,
+                        `Failed to delete scaling channel ${ scalingChannel.id }`,
+                        error
+                    );
+                } );
+            } else {
+                // Channel doesn't exist in Discord, just delete from DB
+                this.logger.log(
+                    this.deleteScalingMasterChannelWithCleanup,
+                    `Scaling channel not found in Discord, deleting DB entry: ${ scalingChannelDB.channelId }`
+                );
+
+                await ChannelModel.$.delete( { channelId: scalingChannelDB.channelId } ).catch( ( error ) => {
+                    this.logger.error(
+                        this.deleteScalingMasterChannelWithCleanup,
+                        `Failed to delete scaling channel DB entry ${ scalingChannelDB.channelId }`,
+                        error
+                    );
+                } );
+            }
+        }
+
+        // 2. Get parent category before deleting master channel
+        const parentCategory = masterChannel?.parent;
+
+        // 3. Delete the master channel from Discord
+        if ( masterChannel && masterChannel.isVoiceBased() ) {
+            await masterChannel.delete().catch( ( error ) => {
+                this.logger.error( this.deleteScalingMasterChannelWithCleanup, "Failed to delete master channel from Discord", error );
+            } );
+        }
+
+        // 4. Delete master channel from database
+        await ChannelModel.$.delete( { id: masterChannelId } ).catch( ( error ) => {
+            this.logger.error( this.deleteScalingMasterChannelWithCleanup, "Failed to delete master channel DB entry", error );
+        } );
+
+        // 5. Cleanup empty category
+        await ChannelUtils.cleanupEmptyCategoryIfNeeded(
+            parentCategory as CategoryChannel | null,
+            guild,
+            this.logger,
+            this.deleteScalingMasterChannelWithCleanup
+        );
+
+        this.logger.info(
+            this.deleteScalingMasterChannelWithCleanup,
+            `Successfully deleted scaling master channel and ${ scalingChannelsDB.length } scaling channels`
+        );
+
+        return true;
+    }
 }
 
 export default ScalingChannelService;
-

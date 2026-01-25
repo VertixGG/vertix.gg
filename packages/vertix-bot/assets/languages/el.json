@@ -47,6 +47,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupScalingEditButton",
+        "content": {
+          "label": "Επεξεργασία ρυθμίσεων κλιμάκωσης"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Προσκάλεσε το Vertix"
@@ -281,6 +287,12 @@
         "content": {
           "label": "Συγκεκριμένη Εφαρμογή"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+        "content": {
+          "label": "Επεξεργασία ρυθμίσεων"
+        }
       }
     ],
     "textInputs": [
@@ -296,6 +308,20 @@
         "content": {
           "label": "ΟΡΙΣΕ ΤΟ ΠΡΟΕΠΙΛΕΓΜΕΝΟ ΟΝΟΜΑ ΤΩΝ ΔΥΝΑΜΙΚΩΝ ΚΑΝΑΛΙΩΝ",
           "placeholder": "{user}'s Κανάλι"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "ΠΡΟΘΕΜΑ ΟΝΟΜΑΤΟΣ ΚΑΝΑΛΙΟΥ",
+          "placeholder": "### Room - {index} ###"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
+        "content": {
+          "label": "ΜΕΓ. ΜΕΛΗ ΑΝΑ ΚΑΝΑΛΙ",
+          "placeholder": "10"
         }
       },
       {
@@ -2337,6 +2363,13 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
+      "content": {
+        "title": "📈  Κανάλια Αυτόματης Κλιμάκωσης #{scalingIndex}",
+        "description": "Ρυθμίστε τα φωνητικά κανάλια αυτόματης κλιμάκωσης.\n\n➤ ∙ Κύριο κανάλι: <#{masterChannelId}>\n➤ ∙ ID καναλιού: `{masterChannelId}`\n➤ ∙ Πρόθεμα: `{scalingPrefix}`\n➤ ∙ Μέγ. μέλη: `{scalingMaxMembers}`\n\nΔείκτες: `{index}` (ψευδώνυμο: `{auto-scale}`)\n"
+      }
     }
   ],
   "markdowns": [
@@ -2364,6 +2397,12 @@
       "name": "VertixBot/UI-General/ChannelNameTemplateModal",
       "content": {
         "title": "Όρισε το όνομα του Δυναμικού Καναλιού"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingConfigModal",
+      "content": {
+        "title": "📈 Ρύθμιση καναλιού κλιμάκωσης"
       }
     },
     {

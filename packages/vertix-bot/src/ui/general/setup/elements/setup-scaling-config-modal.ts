@@ -4,7 +4,20 @@ import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
+
 import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+
+const getDefaultScalingPrefix = () => {
+    const config = ConfigManager.$.get<ScalingChannelConfigInterface>(
+        "Vertix/Config/ScalingChannel",
+        VERSION_SCALING_CHANNEL_UI_V1
+    ).data;
+
+    return config.constants?.scalingChannelDefaultPrefix || config.settings?.scalingChannelPrefix || "";
+};
 
 export class SetupScalingPrefixInput extends UIElementInputBase {
     public static getName() {
@@ -24,11 +37,11 @@ export class SetupScalingPrefixInput extends UIElementInputBase {
     }
 
     protected async getPlaceholder() {
-        return "Voice";
+        return getDefaultScalingPrefix();
     }
 
     protected override async getValue() {
-        return "Voice";
+        return this.uiArgs?.scalingPrefix || this.content?.placeholder || getDefaultScalingPrefix();
     }
 
     protected async getMinLength() {
@@ -62,7 +75,13 @@ export class SetupScalingMaxMembersInput extends UIElementInputBase {
     }
 
     protected override async getValue() {
-        return "10";
+        const value = this.uiArgs?.scalingMaxMembers;
+
+        if ( typeof value === "number" ) {
+            return value.toString();
+        }
+
+        return this.content?.placeholder || "10";
     }
 
     protected async getMinLength() {
@@ -91,6 +110,13 @@ export class SetupScalingConfigModal extends UIModalBase {
     }
 
     protected getTitle() {
+        const index = this.uiArgs?.scalingMasterChannelIndex;
+
+        if ( index === 0 || typeof index === "number" || typeof index === "string" ) {
+            const displayIndex = Number( index ) + 1;
+            return `📈 Configure Scaling Channel #${ displayIndex }`;
+        }
+
         return "📈 Configure Scaling Channel";
     }
 }

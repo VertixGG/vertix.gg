@@ -30,7 +30,7 @@ import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategi
 
 import { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
-import { VERSION_SCALING_CHANNEL } from "@vertix.gg/bot/src/config/scaling-channel-config";
+import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
 
 import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui/general/language/language-select-menu";
 
@@ -48,6 +48,7 @@ import { LanguageChooseButton } from "@vertix.gg/bot/src/ui/general/language/lan
 import { BadwordsModal } from "@vertix.gg/bot/src/ui/general/badwords/badwords-modal";
 
 import { SetupScalingConfigModal } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-config-modal";
+import { SetupScalingEditButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-edit-button";
 
 import { SETUP_EMBED_VARS } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
@@ -68,7 +69,8 @@ import type UIService from "@vertix.gg/gui/src/ui-service";
 
 import type {
     MasterChannelConfigInterface,
-    MasterChannelConfigInterfaceV3
+    MasterChannelConfigInterfaceV3,
+    ScalingChannelConfigInterface
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
@@ -115,6 +117,27 @@ async function onSelectEditMasterChannel(
     if ( !masterChannelDB ) {
         // TODO: Error...
         await context.editReply( interaction, {} );
+        return;
+    }
+
+    if ( masterChannelDB.version === VERSION_SCALING_CHANNEL_UI_V1 ) {
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const scalingSetupAdapter = uiService.get( "VertixBot/UI-V3/ScalingSetupEditAdapter" );
+
+        if ( !scalingSetupAdapter ) {
+            context.logger.error(
+                onSelectEditMasterChannel,
+                `Scaling setup adapter not found for master channel: ${ masterChannelDB.id }`
+            );
+            return;
+        }
+
+        await scalingSetupAdapter.runInitial( interaction, {
+            masterChannelIndex,
+            masterChannelDB
+        } );
+
+        context.deleteArgs( interaction );
         return;
     }
 
@@ -262,14 +285,26 @@ async function onScalingConfigModalSubmitted(
 
     const prefix = interaction.fields.getTextInputValue( prefixInputId );
     const maxMembersStr = interaction.fields.getTextInputValue( maxMembersInputId );
-    const maxMembers = parseInt( maxMembersStr, 10 ) || 10;
+    const parsedMaxMembers = parseInt( maxMembersStr, 10 );
+    const maxMembers = Number.isNaN( parsedMaxMembers ) ? 10 : parsedMaxMembers;
 
-    await scalingChannelService.createScalingMasterChannel( {
-        guildId: interaction.guild.id,
-        userOwnerId: interaction.user.id,
-        prefix,
-        maxMembers
-    } );
+    const args = context.getArgs( interaction );
+
+    if ( args?.scalingEditMasterChannelId ) {
+        await scalingChannelService.updateScalingSettings( {
+            guild: interaction.guild,
+            masterChannelId: args.scalingEditMasterChannelId,
+            prefix,
+            maxMembers
+        } );
+    } else {
+        await scalingChannelService.createScalingMasterChannel( {
+            guildId: interaction.guild.id,
+            userOwnerId: interaction.user.id,
+            prefix,
+            maxMembers
+        } );
+    }
 
     await context.editReply( interaction, {} );
 
@@ -376,16 +411,22 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             "Vertix/Config/MasterChannel",
             VERSION_UI_V3
         ).data;
+        const scalingConfig = ConfigManager.$.get<ScalingChannelConfigInterface>(
+            "Vertix/Config/ScalingChannel",
+            VERSION_SCALING_CHANNEL_UI_V1
+        ).data;
+        const scalingDefaultPrefix =
+            scalingConfig.constants?.scalingChannelDefaultPrefix || scalingConfig.settings?.scalingChannelPrefix || "";
 
         const channels = args?.masterChannels || [];
 
-        const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
-            const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
+    const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
+        const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
 
-            if ( version === VERSION_SCALING_CHANNEL ) {
+            if ( version === VERSION_SCALING_CHANNEL_UI_V1 ) {
                 const scalingSettings = await ScalingChannelDataModel.$.getScalingSettings( channel.id );
 
-                const prefix = scalingSettings?.scalingChannelPrefix || "Voice";
+                const prefix = scalingSettings?.scalingChannelPrefix || scalingDefaultPrefix;
                 const maxMembers = scalingSettings?.scalingChannelMaxMembersPerChannel || 10;
 
                 return [
@@ -394,6 +435,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                     `▹ Channel ID: \`${ channel.channelId }\``,
                     `▹ Scaling Prefix: \`${ prefix }\``,
                     `▹ Max Members: \`${ maxMembers }\``,
+                    `▹ Edit: \`/setup\` → \`Edit Scaling Settings\` (select **#${ index + 1 }**)`,
                     `▹ UI Version: \`${ version }\``
                 ];
             }
@@ -461,6 +503,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupElementsGroup" )
     .addRow( [ SetupMasterEditSelectMenu ] )
     .addRow( [ SetupMasterCreateSelectMenu ] )
+    .addRow( [ SetupScalingEditButton ] )
     .addRow( [ LanguageChooseButton, BadwordsEditButton ] )
     .build();
 
@@ -508,6 +551,42 @@ const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, SetupInteract
         return args;
     } )
     .onEntityMap( async( { bindButton, bindModal, bindSelectMenu } ) => {
+        bindButton<UIDefaultButtonChannelTextInteraction>(
+            "VertixBot/UI-General/SetupScalingEditButton",
+            async( context, interaction ) => {
+                await context.updateInteractionDefer( interaction );
+
+                const args = context.getArgs( interaction );
+                const channels = args?.masterChannels || [];
+                const scalingChannels = channels.filter( ( channel: any ) => channel?.version === VERSION_SCALING_CHANNEL_UI_V1 );
+
+                if ( scalingChannels.length !== 1 ) {
+                    return;
+                }
+
+                const scalingChannel = scalingChannels[ 0 ];
+                const scalingIndex = channels.findIndex( ( channel: any ) => channel?.id === scalingChannel?.id );
+
+                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                const scalingSetupAdapter = uiService.get( "VertixBot/UI-V3/ScalingSetupEditAdapter" );
+
+                if ( !scalingSetupAdapter ) {
+                    context.logger.error(
+                        "VertixBot/UI-General/SetupScalingEditButton",
+                        `Scaling setup adapter not found for master channel: ${ scalingChannel?.id }`
+                    );
+                    return;
+                }
+
+                await scalingSetupAdapter.runInitial( interaction, {
+                    masterChannelIndex: scalingIndex,
+                    masterChannelDB: scalingChannel
+                } );
+
+                context.deleteArgs( interaction );
+            }
+        );
+
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateSelectMenu",
             async( context, interaction ) => {

@@ -10,6 +10,10 @@ export interface ISetupArgs extends UIArgs {
     masterChannels?: PrismaBot.Channel[];
     badwords?: string[];
     maxMasterChannels?: number;
+    scalingEditMasterChannelId?: string;
+    scalingPrefix?: string;
+    scalingMaxMembers?: number;
+    scalingMasterChannelIndex?: string | number;
 }
 
 export const SETUP_EMBED_VARS = {

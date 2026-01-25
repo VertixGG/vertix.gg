@@ -2,7 +2,7 @@ import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
 
 import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-export const VERSION_SCALING_CHANNEL = "0.0.0.1" as const;
+export const VERSION_SCALING_CHANNEL_UI_V1 = "0.0.0.1" as const;
 
 export class ScalingChannelConfig extends ConfigBase<ScalingChannelConfigInterface> {
     public static getName() {
@@ -14,27 +14,26 @@ export class ScalingChannelConfig extends ConfigBase<ScalingChannelConfigInterfa
     }
 
     public getVersion() {
-        return VERSION_SCALING_CHANNEL;
+        return VERSION_SCALING_CHANNEL_UI_V1;
     }
 
     protected getDefaults(): ScalingChannelConfigInterface[ "defaults" ] {
         return {
             settings: {
-                scalingChannelPrefix: "Voice",
+                scalingChannelPrefix: "### Room - {index} ###",
                 scalingChannelMaxMembersPerChannel: 10,
                 scalingChannelMinAvailableChannels: 1,
                 scalingChannelCategoryId: null
             },
 
             constants: {
-                scalingChannelDefaultPrefix: "Voice",
+                scalingChannelDefaultPrefix: "### Room - {index} ###",
                 scalingChannelDefaultMaxMembers: 10,
                 scalingChannelCategoryName: "༄ Auto Scaling Channels",
-                masterChannelName: "➕ Join to Create"
+                masterChannelName: "⤢⤡ Join free channels"
             }
         };
     }
 }
 
 export default ScalingChannelConfig;
-

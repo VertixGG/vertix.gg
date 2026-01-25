@@ -1,5 +1,22 @@
 # Changelog
 
+**Version: 0.0.15 ~ 25/01/2026**
+- New Features:
+    - **Scaling Join Routing**: Joining the scaling master channel now moves members to the first available free scaling room (creates one if none exist).
+    - **Scaling Management in Setup**: Editing a scaling master now opens a dedicated management UI to update prefix and max members, and applies changes to existing scaling rooms.
+    - **Scaling Master Deletion**: Added delete action with confirmation that removes the scaling master, all owned scaling channels, and cleans up empty categories.
+    - **Channel Name Index Placeholder**: Added `{index}` placeholder support for dynamic channel templates and scaling prefixes (`{auto-scale}` alias supported).
+- Improvements:
+    - **Setup Guidance**: Added `{user}` / `{index}` placeholder hints in template setup copy.
+    - **Localization**: Added translations for the scaling management UI across EN/RU/EL.
+    - **Versioning**: Renamed scaling channel version constant to `VERSION_SCALING_CHANNEL_UI_V1`.
+    - **Scaling Reindex**: Added a 5-minute reindex pass that renames scaling channels when `{index}`/alias placeholders are used.
+    - **Shared Utilities**: Created `ChannelUtils` class with `cacheOrFetchGuild` and `cleanupEmptyCategoryIfNeeded` for code reuse across services.
+    - **Index Placeholder Utilities**: Added shared `varsHasIndexPlaceholder` and `varsReplaceIndexPlaceholder` functions to reduce code duplication.
+    - **Scaling Master Type**: Added `MASTER_SCALING_CHANNEL` internal type to properly identify scaling masters without relying on version checks.
+
+---
+
 **Version: 0.0.14 ~ 16/01/2026**
 - New Feature:
     - **Master Channel Deletion**: Added a delete action with confirmation that removes the control panel, all owned dynamic channels, the master channel, and cleans up empty categories.

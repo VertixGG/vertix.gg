@@ -47,6 +47,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupScalingEditButton",
+        "content": {
+          "label": "Изменить настройки масштабирования"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Пригласить Vertix"
@@ -281,6 +287,12 @@
         "content": {
           "label": "Только для новых"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+        "content": {
+          "label": "Изменить настройки"
+        }
       }
     ],
     "textInputs": [
@@ -296,6 +308,20 @@
         "content": {
           "label": "УСТАНОВИТЬ НАЗВАНИЕ ПО УМОЛЧАНИЮ",
           "placeholder": "{user}'s Канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "ПРЕФИКС ИМЕНИ КАНАЛА",
+          "placeholder": "### Room - {index} ###"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
+        "content": {
+          "label": "МАКС. УЧАСТНИКОВ НА КАНАЛ",
+          "placeholder": "10"
         }
       },
       {
@@ -2337,6 +2363,13 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
+      "content": {
+        "title": "📈  Автомасштабируемые каналы #{scalingIndex}",
+        "description": "Настройте ваши голосовые каналы с авто-масштабированием.\n\n➤ ∙ Мастер-канал: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Префикс: `{scalingPrefix}`\n➤ ∙ Макс. участников: `{scalingMaxMembers}`\n\nПлейсхолдеры: `{index}` (алиас: `{auto-scale}`)\n"
+      }
     }
   ],
   "markdowns": [
@@ -2364,6 +2397,12 @@
       "name": "VertixBot/UI-General/ChannelNameTemplateModal",
       "content": {
         "title": "Имя для канала"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingConfigModal",
+      "content": {
+        "title": "📈 Настроить масштабируемый канал"
       }
     },
     {

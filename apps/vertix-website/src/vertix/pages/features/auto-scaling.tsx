@@ -1,6 +1,11 @@
-import { DiscordChannelWizard, DiscordChannelDisplay } from "@vertix.gg/discord-ui";
+import { DiscordChannelWizard, DiscordChannelDisplay, DiscordUIComponentMessage, DiscordSelectMenuDropdown, DiscordModal, DiscordInput } from "@vertix.gg/discord-ui";
+
+import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import { AUTO_SCALING_CONFIG, autoScalingWizardSteps, reindexWizardSteps } from "../../shared/auto-scaling-data";
+
+import "../../components/discord/discord-chat-container.css";
 
 export default function AutoScalingPage() {
     return (
@@ -73,6 +78,70 @@ export default function AutoScalingPage() {
                             showNavigation={ true }
                             pauseOnHover={ true }
                         />
+                    </section>
+
+                    <hr />
+
+                    {/* Setup */}
+                    <section className="mb-5">
+                        <h3 className="mb-3">Setup</h3>
+                        <p className="text-secondary mb-4">
+                            Create auto-scaling channels using the <code>/setup</code> command.
+                        </p>
+
+                        <h5 className="text-info mb-3">Step 1: Run /setup and select Auto-Scaling</h5>
+                        <div className="discord-chat-container m-0 mb-4">
+                            <DiscordUIComponentMessage
+                                author="Vertix"
+                                avatar={ VertixAvatar }
+                                timestamp="Today at 9:13 AM"
+                                componentName="VertixBot/UI-General/SetupComponent"
+                                ephemeral={ true }
+                                interactionUser="iNewLegend"
+                                interactionUserAvatar={ UserAvatar }
+                                interactionCommand="/setup"
+                                elementOverrides={ {
+                                    "VertixBot/UI-General/SetupMasterCreateSelectMenu": { highlighted: true }
+                                } }
+                            />
+                        </div>
+
+                        <p className="text-secondary mb-3">Select <strong>Auto-Scaling Channel</strong> from the menu:</p>
+                        <div style={ { maxWidth: "450px" } } className="mb-4">
+                            <DiscordSelectMenuDropdown
+                                options={ [
+                                    {
+                                        iconEmoji: "➕",
+                                        label: "Dynamic Channel (V2)",
+                                        description: "Classic dynamic voice channels",
+                                    },
+                                    {
+                                        iconEmoji: "✨",
+                                        label: "Dynamic Channel (V3)",
+                                        description: "Enhanced dynamic channels with more features",
+                                    },
+                                    {
+                                        iconEmoji: "📈",
+                                        label: "Auto-Scaling Channel",
+                                        description: "Automatically scales based on member count",
+                                        highlighted: true,
+                                    },
+                                ] }
+                            />
+                        </div>
+
+                        <h5 className="text-info mb-3">Step 2: Configure scaling options</h5>
+                        <p className="text-secondary mb-3">Set the channel name prefix and max members per channel:</p>
+                        <DiscordModal title="📈 Configure Scaling Channel" showNotice={ false } cancelLabel="Cancel">
+                            <DiscordInput
+                                label="CHANNEL NAME PREFIX"
+                                value={ AUTO_SCALING_CONFIG.prefix }
+                            />
+                            <DiscordInput
+                                label="MAX MEMBERS PER CHANNEL"
+                                value={ String( AUTO_SCALING_CONFIG.maxMembers ) }
+                            />
+                        </DiscordModal>
                     </section>
 
                     <hr />

@@ -12,4 +12,5 @@ export * from "./discord-ui-component-renderer";
 export * from "./discord-ui-component-message";
 export * from "./discord-channel-list";
 export * from "./discord-channel-display";
+export * from "./discord-channel-wizard";
 export * from "./ui-definitions";

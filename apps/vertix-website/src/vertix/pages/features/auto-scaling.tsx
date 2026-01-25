@@ -1,91 +1,173 @@
-import { useSearchParams } from "react-router-dom";
+import { DiscordChannelWizard, DiscordChannelDisplay } from "@vertix.gg/discord-ui";
 
-import SearchableSelect from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
-
-import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
-
-import Overview from "@vertix.gg/website/src/vertix/pages/features/auto-scaling-features/overview";
-import Setup from "@vertix.gg/website/src/vertix/pages/features/auto-scaling-features/setup";
-import Configuration from "@vertix.gg/website/src/vertix/pages/features/auto-scaling-features/configuration";
-import ScalingTrigger from "@vertix.gg/website/src/vertix/pages/features/auto-scaling-features/scaling-trigger";
-import ChannelRouting from "@vertix.gg/website/src/vertix/pages/features/auto-scaling-features/channel-routing";
-import Maintenance from "@vertix.gg/website/src/vertix/pages/features/auto-scaling-features/maintenance";
-
-const FEATURE_OPTIONS = [
-    { label: "All Features", value: "all" },
-    { label: "Overview", value: "overview" },
-    { label: "Setup", value: "setup" },
-    { label: "Configuration", value: "configuration" },
-    { label: "Scaling Trigger", value: "scaling-trigger" },
-    { label: "Channel Routing", value: "channel-routing" },
-    { label: "Maintenance", value: "maintenance" },
-];
-
-const FEATURE_COMPONENTS: Record<string, JSX.Element> = {
-    "overview": <Overview />,
-    "setup": <Setup />,
-    "configuration": <Configuration />,
-    "scaling-trigger": <ScalingTrigger />,
-    "channel-routing": <ChannelRouting />,
-    "maintenance": <Maintenance />,
-};
+import { AUTO_SCALING_CONFIG, autoScalingWizardSteps, reindexWizardSteps } from "../../shared/auto-scaling-data";
 
 export default function AutoScalingPage() {
-    const [ searchParams, setSearchParams ] = useSearchParams();
-
-    const selectedFeature = searchParams.get( "feature" ) ?? "all";
-
-    const handleFeatureSelect = ( value: string ) => {
-        if ( value === "all" ) {
-            setSearchParams( {} );
-        } else {
-            setSearchParams( { feature: value } );
-        }
-    };
-
-    const renderFeatureContent = () => {
-        if ( selectedFeature === "all" || !FEATURE_COMPONENTS[ selectedFeature ] ) {
-            return (
-                <>
-                    <Overview />
-                    <hr />
-
-                    <Setup />
-                    <hr />
-
-                    <Configuration />
-                    <hr />
-
-                    <ScalingTrigger />
-                    <hr />
-
-                    <ChannelRouting />
-                    <hr />
-
-                    <Maintenance />
-                </>
-            );
-        }
-
-        return FEATURE_COMPONENTS[ selectedFeature ];
-    };
-
     return (
         <div className="container py-5">
             <div className="row justify-content-center">
-                <div className="col-12 col-xl-10 ">
-                    <h1 className="text-center">Auto-Scaling Channels - Features</h1>
-                    <hr/>
+                <div className="col-12 col-xl-10">
+                    <h1 className="text-center mb-4">Auto-Scaling Channels</h1>
 
-                    <SearchableSelect
-                        options={ FEATURE_OPTIONS }
-                        value={ selectedFeature }
-                        onSelect={ handleFeatureSelect }
-                        placeholder="Select Feature"
-                        defaultValue="all"
-                    />
+                    {/* Overview */}
+                    <section className="mb-5">
+                        <p className="fs-5 text-secondary text-center">
+                            Automated voice channel management that dynamically creates and manages
+                            channels based on user demand. Never run out of voice channel capacity again.
+                        </p>
+                    </section>
 
-                    { renderFeatureContent() }
+                    {/* Channel Types */}
+                    <section className="mb-5">
+                        <h3 className="mb-3">Channel Types</h3>
+                        <div className="row g-3 mb-4">
+                            <div className="col-md-6">
+                                <div className="p-3 bg-dark rounded border border-secondary h-100">
+                                    <h5 className="text-primary">Master Channel</h5>
+                                    <p className="text-secondary mb-0 small">
+                                        Entry point for routing. Users join here and are instantly moved to an available scaled channel.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="p-3 bg-dark rounded border border-secondary h-100">
+                                    <h5 className="text-success">Scaled Channels</h5>
+                                    <p className="text-secondary mb-0 small">
+                                        Voice channels where users communicate. Created automatically based on demand.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <DiscordChannelDisplay
+                            masterChannel={ { name: AUTO_SCALING_CONFIG.masterChannelName, active: false, userCount: 0 } }
+                            scaledChannels={ [
+                                {
+                                    id: "1", name: "Room-1", active: true, userCount: 2, maxUsers: 2,
+                                    users: [
+                                        { id: "1", username: "Alex", avatar: "https://cdn.discordapp.com/embed/avatars/0.png" },
+                                        { id: "2", username: "Jordan", avatar: "https://cdn.discordapp.com/embed/avatars/1.png" }
+                                    ]
+                                },
+                                {
+                                    id: "2", name: "Room-2", active: true, userCount: 1, maxUsers: 2,
+                                    users: [
+                                        { id: "3", username: "Sam", avatar: "https://cdn.discordapp.com/embed/avatars/2.png" }
+                                    ]
+                                },
+                                { id: "3", name: "Room-3", active: false, userCount: 0, maxUsers: 2 }
+                            ] }
+                            showMasterChannel={ true }
+                        />
+                    </section>
+
+                    <hr />
+
+                    {/* How It Works */}
+                    <section className="mb-5">
+                        <h3 className="mb-3">How It Works</h3>
+                        <DiscordChannelWizard
+                            steps={ autoScalingWizardSteps }
+                            autoPlay={ true }
+                            autoPlayInterval={ 4000 }
+                            showStepIndicators={ true }
+                            showNavigation={ true }
+                            pauseOnHover={ true }
+                        />
+                    </section>
+
+                    <hr />
+
+                    {/* Scaling Trigger */}
+                    <section className="mb-5">
+                        <h3 className="mb-3">Scaling Trigger</h3>
+                        <p className="text-secondary">
+                            New channels are created when <strong>either</strong> condition is met:
+                        </p>
+                        <div className="alert alert-secondary">
+                            <code>availableChannelsCount &lt;= minAvailableChannels</code>
+                            <span className="mx-2">OR</span>
+                            <code>totalAvailableSlots &lt;= 1</code>
+                        </div>
+                    </section>
+
+                    <hr />
+
+                    {/* Configuration */}
+                    <section className="mb-5">
+                        <h3 className="mb-3">Configuration</h3>
+                        <div className="table-responsive">
+                            <table className="table table-dark table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Option</th>
+                                        <th>Description</th>
+                                        <th>Default</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>categoryName</code></td>
+                                        <td>Discord category for scaled channels</td>
+                                        <td><code>{ AUTO_SCALING_CONFIG.categoryName }</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>masterChannelName</code></td>
+                                        <td>Entry point channel name</td>
+                                        <td><code>{ AUTO_SCALING_CONFIG.masterChannelName }</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>prefix</code></td>
+                                        <td>Channel name template with <code>{"{index}"}</code> placeholder</td>
+                                        <td><code>{ AUTO_SCALING_CONFIG.prefix }</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>maxMembers</code></td>
+                                        <td>Max users per channel (0 = unlimited)</td>
+                                        <td><code>{ AUTO_SCALING_CONFIG.maxMembers }</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>minAvailable</code></td>
+                                        <td>Minimum empty channels to maintain</td>
+                                        <td><code>{ AUTO_SCALING_CONFIG.minAvailable }</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <hr />
+
+                    {/* Maintenance */}
+                    <section className="mb-5">
+                        <h3 className="mb-3">Maintenance</h3>
+                        <div className="row g-4">
+                            <div className="col-lg-6">
+                                <h5>Auto Reindex</h5>
+                                <p className="text-secondary small">
+                                    Every 5 minutes, channels are renumbered to maintain consistent naming.
+                                </p>
+                                <DiscordChannelWizard
+                                    steps={ reindexWizardSteps }
+                                    autoPlay={ true }
+                                    autoPlayInterval={ 3000 }
+                                    showStepIndicators={ true }
+                                    showNavigation={ true }
+                                    pauseOnHover={ true }
+                                />
+                            </div>
+                            <div className="col-lg-6">
+                                <h5>Auto Cleanup</h5>
+                                <p className="text-secondary small">
+                                    When users leave, excess empty channels are removed. At least one empty channel is always kept as a buffer.
+                                </p>
+                                <ul className="text-secondary small">
+                                    <li>Triggered on user leave</li>
+                                    <li>Keeps 1 empty channel minimum</li>
+                                    <li>Removes excess empty channels</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>

@@ -1,0 +1,128 @@
+.discord-channel-wizard {
+    position: relative;
+    background: #2b2d31;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #3f4147;
+    width: 300px;
+    max-width: 300px;
+    box-sizing: border-box;
+}
+
+.discord-channel-wizard .discord-channel-display {
+    width: 100%;
+    max-width: 100%;
+}
+
+.discord-channel-wizard-header {
+    margin-bottom: 12px;
+}
+
+.discord-channel-wizard-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f2f3f5;
+    margin-bottom: 4px;
+}
+
+.discord-channel-wizard-step-number {
+    color: #5865f2;
+    font-weight: 700;
+}
+
+.discord-channel-wizard-description {
+    font-size: 0.875rem;
+    color: #b5bac1;
+    margin: 0;
+}
+
+.discord-channel-wizard-content {
+    transition: opacity 150ms ease-in-out;
+}
+
+.discord-channel-wizard-content.transitioning {
+    opacity: 0.5;
+}
+
+.discord-channel-wizard-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.discord-channel-wizard-nav-btn {
+    background: #3f4147;
+    border: none;
+    border-radius: 4px;
+    color: #f2f3f5;
+    font-size: 1.25rem;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 150ms ease;
+}
+
+.discord-channel-wizard-nav-btn:hover {
+    background: #4f545c;
+}
+
+.discord-channel-wizard-indicators {
+    display: flex;
+    gap: 8px;
+}
+
+.discord-channel-wizard-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4f545c;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 150ms ease, transform 150ms ease;
+}
+
+.discord-channel-wizard-indicator:hover {
+    background: #6d6f78;
+    transform: scale(1.2);
+}
+
+.discord-channel-wizard-indicator.active {
+    background: #5865f2;
+    transform: scale(1.25);
+}
+
+.discord-channel-wizard-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #3f4147;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+}
+
+.discord-channel-wizard-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #5865f2, #7289da);
+    animation: wizard-progress linear forwards;
+}
+
+.discord-channel-wizard-progress-bar.paused {
+    animation-play-state: paused;
+}
+
+@keyframes wizard-progress {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}

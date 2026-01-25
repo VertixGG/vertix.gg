@@ -7,6 +7,7 @@ import "./styles/discord-channel-display.css";
 import { DiscordChannelList, type DiscordChannelListProps, type DiscordChannelListItem } from "./discord-channel-list";
 
 export interface DiscordChannelDisplayProps extends React.HTMLAttributes<HTMLDivElement> {
+    categoryName?: string;
     masterChannel?: {
         name: string;
         active?: boolean;
@@ -18,6 +19,7 @@ export interface DiscordChannelDisplayProps extends React.HTMLAttributes<HTMLDiv
 }
 
 export const DiscordChannelDisplay: React.FC<DiscordChannelDisplayProps> = ( {
+    categoryName = "༄ Auto Scaling Channels",
     masterChannel,
     scaledChannels = [],
     showMasterChannel = true,
@@ -25,39 +27,28 @@ export const DiscordChannelDisplay: React.FC<DiscordChannelDisplayProps> = ( {
     className,
     ...props
 } ) => {
-    const masterChannelList: DiscordChannelListItem[] = masterChannel && showMasterChannel ? [
-        {
-            id: "master",
-            name: masterChannel.name,
-            active: masterChannel.active ?? false,
-            userCount: masterChannel.userCount ?? 0,
-            maxUsers: 0
-        }
-    ] : [];
+    const masterChannelItem: DiscordChannelListItem | null = masterChannel && showMasterChannel ? {
+        id: "master",
+        name: masterChannel.name,
+        active: masterChannel.active ?? false,
+        userCount: masterChannel.userCount ?? 0,
+        maxUsers: 0
+    } : null;
+
+    const allChannels: DiscordChannelListItem[] = [
+        ...( masterChannelItem ? [ masterChannelItem ] : [] ),
+        ...scaledChannels
+    ];
 
     return (
         <div className={ cn( "discord-channel-display", className ) } { ...props }>
-            { masterChannel && showMasterChannel && (
-                <DiscordChannelList
-                    { ...channelListProps }
-                    title="Voice Channels"
-                    iconEmoji="🔊"
-                    collapsible={ false }
-                    channels={ masterChannelList }
-                    className="discord-channel-display-master"
-                />
-            ) }
-            { scaledChannels.length > 0 && (
-                <DiscordChannelList
-                    { ...channelListProps }
-                    title="Auto Scaling Channels"
-                    iconEmoji="≈"
-                    collapsible={ channelListProps?.collapsible ?? true }
-                    showAddButton={ channelListProps?.showAddButton ?? false }
-                    channels={ scaledChannels }
-                    className="discord-channel-display-scaled"
-                />
-            ) }
+            <DiscordChannelList
+                { ...channelListProps }
+                title={ categoryName }
+                collapsible={ channelListProps?.collapsible ?? true }
+                showAddButton={ channelListProps?.showAddButton ?? true }
+                channels={ allChannels }
+            />
         </div>
     );
 };

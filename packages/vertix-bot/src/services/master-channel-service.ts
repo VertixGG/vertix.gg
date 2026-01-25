@@ -41,7 +41,6 @@ import type UIService from "@vertix.gg/gui/src/ui-service";
 import type { UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
-import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 
@@ -118,7 +117,6 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     uiService: UIService;
     channelService: ChannelService;
     dynamicChannelService: DynamicChannelService;
-    scalingChannelService: ScalingChannelService;
 }> {
     private debugger: Debugger;
 
@@ -154,8 +152,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             appService: "VertixBot/Services/App",
             uiService: "VertixGUI/UIService",
             channelService: "VertixBot/Services/Channel",
-            dynamicChannelService: "VertixBot/Services/DynamicChannel",
-            scalingChannelService: "VertixBot/Services/ScalingChannel"
+            dynamicChannelService: "VertixBot/Services/DynamicChannel"
         };
     }
 
@@ -227,10 +224,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             if ( controlChannelId ) {
                 const controlChannel = await ChannelUtils.cacheOrFetchChannel( guild, controlChannelId );
 
-                if ( controlChannel ) {
+                if ( controlChannel && "deletable" in controlChannel ) {
                     await this.services.channelService.delete( {
                         guild,
-                        channel: controlChannel
+                        channel: controlChannel as GuildChannel
                     } );
                 }
             }
@@ -308,36 +305,6 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         if ( !masterChannelDB ) {
             this.logger.error( this.onJoinMasterChannel, `Master channel DB not found for id: '${ newState.channelId }'` );
-            return;
-        }
-
-        // Handle scaling master channels - no permissions check needed
-        if ( masterChannelDB.isScalingMaster ) {
-            const availableChannel = await this.services.scalingChannelService.getOrCreateAvailableChannel( {
-                guild,
-                masterChannel: masterChannelDB
-            } );
-
-            if ( !availableChannel ) {
-                this.logger.error(
-                    this.onJoinMasterChannel,
-                    `Guild id: '${ guild.id }' - Failed to find available scaling channel for master '${ masterChannelDB.id }'`
-                );
-                return;
-            }
-
-            await newState
-                .setChannel( availableChannel.id )
-                .then( () => {
-                    this.logger.log(
-                        this.onJoinMasterChannel,
-                        `Guild id: '${ guild.id }' - User '${ displayName }' moved to scaling channel '${ availableChannel.name }'`
-                    );
-                } )
-                .catch( ( error ) => {
-                    this.logger.error( this.onJoinMasterChannel, "Failed to move user to scaling channel", error );
-                } );
-
             return;
         }
 
@@ -583,10 +550,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         if ( controlChannelId ) {
             const controlChannel = await ChannelUtils.cacheOrFetchChannel( guild, controlChannelId );
 
-            if ( controlChannel ) {
+            if ( controlChannel && "deletable" in controlChannel ) {
                 await this.services.channelService.delete( {
                     guild,
-                    channel: controlChannel
+                    channel: controlChannel as GuildChannel
                 } );
             }
         }

@@ -47,12 +47,6 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupScalingEditButton",
-        "content": {
-          "label": "Изменить настройки масштабирования"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Пригласить Vertix"

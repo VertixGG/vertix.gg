@@ -19,7 +19,6 @@ import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
 import { DeleteButton } from "@vertix.gg/bot/src/ui/general/decision/delete-button";
 import { DeleteConfirmModal } from "@vertix.gg/bot/src/ui/general/decision/delete-confirm-modal";
 import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
-import { SetupScalingEditButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-edit-button";
 import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
 
 import { ScalingSetupEditConfigButton } from "@vertix.gg/bot/src/ui/v3/scaling-setup/elements/scaling-setup-edit-config-button";
@@ -234,7 +233,7 @@ const ScalingSetupEditAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextCh
     "VertixBot/UI-V3/ScalingSetupEditAdapter"
 )
     .setComponent( ScalingSetupEditComponent )
-    .setExcludedElements( [ SetupMasterEditSelectMenu, SetupScalingEditButton ] )
+    .setExcludedElements( [ SetupMasterEditSelectMenu ] )
     .setExecutionSteps( {
         default: {},
         "VertixBot/UI-V3/ScalingSetupEdit": {
@@ -301,13 +300,6 @@ const ScalingSetupEditAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextCh
             }
         );
 
-        bindButton(
-            "VertixBot/UI-General/SetupScalingEditButton",
-            async( context, interaction ) => {
-                await hydrateScalingArgs( context, interaction );
-                await context.editReplyWithStep( interaction, "VertixBot/UI-V3/ScalingSetupEdit" );
-            }
-        );
     } )
     .build();
 

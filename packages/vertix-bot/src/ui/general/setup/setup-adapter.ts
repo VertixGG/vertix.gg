@@ -48,7 +48,6 @@ import { LanguageChooseButton } from "@vertix.gg/bot/src/ui/general/language/lan
 import { BadwordsModal } from "@vertix.gg/bot/src/ui/general/badwords/badwords-modal";
 
 import { SetupScalingConfigModal } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-config-modal";
-import { SetupScalingEditButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-edit-button";
 
 import { SETUP_EMBED_VARS } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
@@ -435,7 +434,6 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                     `▹ Channel ID: \`${ channel.channelId }\``,
                     `▹ Scaling Prefix: \`${ prefix }\``,
                     `▹ Max Members: \`${ maxMembers }\``,
-                    `▹ Edit: \`/setup\` → \`Edit Scaling Settings\` (select **#${ index + 1 }**)`,
                     `▹ UI Version: \`${ version }\``
                 ];
             }
@@ -503,7 +501,6 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupElementsGroup" )
     .addRow( [ SetupMasterEditSelectMenu ] )
     .addRow( [ SetupMasterCreateSelectMenu ] )
-    .addRow( [ SetupScalingEditButton ] )
     .addRow( [ LanguageChooseButton, BadwordsEditButton ] )
     .build();
 
@@ -551,42 +548,6 @@ const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, SetupInteract
         return args;
     } )
     .onEntityMap( async( { bindButton, bindModal, bindSelectMenu } ) => {
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupScalingEditButton",
-            async( context, interaction ) => {
-                await context.updateInteractionDefer( interaction );
-
-                const args = context.getArgs( interaction );
-                const channels = args?.masterChannels || [];
-                const scalingChannels = channels.filter( ( channel: any ) => channel?.version === VERSION_SCALING_CHANNEL_UI_V1 );
-
-                if ( scalingChannels.length !== 1 ) {
-                    return;
-                }
-
-                const scalingChannel = scalingChannels[ 0 ];
-                const scalingIndex = channels.findIndex( ( channel: any ) => channel?.id === scalingChannel?.id );
-
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                const scalingSetupAdapter = uiService.get( "VertixBot/UI-V3/ScalingSetupEditAdapter" );
-
-                if ( !scalingSetupAdapter ) {
-                    context.logger.error(
-                        "VertixBot/UI-General/SetupScalingEditButton",
-                        `Scaling setup adapter not found for master channel: ${ scalingChannel?.id }`
-                    );
-                    return;
-                }
-
-                await scalingSetupAdapter.runInitial( interaction, {
-                    masterChannelIndex: scalingIndex,
-                    masterChannelDB: scalingChannel
-                } );
-
-                context.deleteArgs( interaction );
-            }
-        );
-
         bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
             "VertixBot/UI-General/SetupMasterCreateSelectMenu",
             async( context, interaction ) => {

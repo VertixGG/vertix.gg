@@ -578,6 +578,14 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
             return;
         }
 
+        const isScalingMaster = await ChannelModel.$.isScalingMaster( newState.channelId );
+
+        if ( isScalingMaster ) {
+            this.debugger.log( this.onJoin, `Channel ${ newState.channelId } is scaling master, routing user` );
+            await this.handleJoinScalingMaster( args );
+            return;
+        }
+
         const isScaling = await ChannelModel.$.isScaling( newState.channelId );
 
         this.debugger.log( this.onJoin, `Channel ${ newState.channelId } is scaling: ${ isScaling }` );
@@ -585,6 +593,46 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         if ( isScaling ) {
             await this.handleJoinScaling( args );
         }
+    }
+
+    private async handleJoinScalingMaster( args: IChannelEnterGenericArgs ) {
+        const { newState } = args;
+        const guild = newState.guild;
+        const member = newState.member;
+        const masterChannelId = newState.channelId!;
+
+        if ( !member ) {
+            return;
+        }
+
+        const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannelId );
+
+        if ( !masterChannelDB ) {
+            this.logger.error( this.handleJoinScalingMaster, `Master channel DB not found: ${ masterChannelId }` );
+            return;
+        }
+
+        const availableChannel = await this.getOrCreateAvailableChannel( {
+            guild,
+            masterChannel: masterChannelDB
+        } );
+
+        if ( !availableChannel ) {
+            this.logger.error(
+                this.handleJoinScalingMaster,
+                `Guild id: '${ guild.id }' - Failed to find available scaling channel for master '${ masterChannelDB.id }'`
+            );
+            return;
+        }
+
+        this.logger.log(
+            this.handleJoinScalingMaster,
+            `Guild id: '${ guild.id }' - Moving user '${ member.displayName }' to scaling channel '${ availableChannel.name }'`
+        );
+
+        await member.voice.setChannel( availableChannel ).catch( ( error: Error ) => {
+            this.logger.error( this.handleJoinScalingMaster, `Failed to move member to scaling channel: ${ error.message }` );
+        } );
     }
 
     private async onLeave( args: IChannelLeaveGenericArgs ) {

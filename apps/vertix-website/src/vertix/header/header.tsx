@@ -103,6 +103,7 @@ export default function Header() {
                             <NavbarDropdown title="Features" items={ [
                                 { title: "Dynamic Channel V2", href: "/features/dynamic-channel-v2" },
                                 { title: "Dynamic Channel V3", href: "/features/dynamic-channel-v3" },
+                                { title: "Auto-Scaling Channels", href: "/features/auto-scaling" },
                             ] }/>
 
                             <NavbarDropdown title="How to" items={ [

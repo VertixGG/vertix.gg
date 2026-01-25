@@ -1,0 +1,73 @@
+@import "./discord-tokens.css";
+
+.discord-channel-display {
+    --discord-space-4: 4px;
+    --discord-space-12: 12px;
+
+    --discord-font-primary: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --discord-font-weight-normal: 400;
+    --discord-font-weight-medium: 500;
+    --discord-font-weight-semibold: 600;
+
+    --discord-opacity-white-8: rgba(255, 255, 255, 0.08);
+
+    --discord-background-gradient-chat: #313338;
+    --discord-background-surface-high: #2b2d31;
+
+    --discord-border-subtle: rgba(255, 255, 255, 0.08);
+    --discord-border-muted: rgba(255, 255, 255, 0.08);
+
+    --discord-text-default: #dbdee1;
+    --discord-text-strong: #f2f3f5;
+    --discord-text-muted: #b9bbbe;
+
+    --discord-white-500: #ffffff;
+    --discord-brand-500: #5865f2;
+    --discord-background-brand: #5865f2;
+    --discord-mention-background: rgba(88, 101, 242, 0.3);
+    --discord-mention-foreground: #c9cdfb;
+
+    --discord-control-secondary-background-default: #4e5058;
+    --discord-control-secondary-background-hover: #6d6f78;
+    --discord-control-secondary-background-active: #7d7f88;
+    --discord-control-secondary-text-default: #ffffff;
+
+    --discord-button-transition-duration: 0.2s;
+
+    width: 300px;
+    max-width: 300px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font-family: var(--discord-font-primary);
+    color: var(--discord-text-default);
+    background-color: var(--discord-background-gradient-chat);
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.discord-channel-display .discord-channel-list {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.discord-channel-display-master {
+    margin-bottom: 8px;
+}
+
+.discord-channel-display-scaled {
+    margin-bottom: 0;
+}
+
+.discord-embed-channel-list-content.discord-channel-display {
+    width: 300px;
+    max-width: 300px;
+    box-sizing: border-box;
+}

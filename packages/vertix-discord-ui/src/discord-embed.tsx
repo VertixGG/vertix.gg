@@ -15,6 +15,10 @@ import "./styles/discord-embed.css";
 
 import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
 
+import { DiscordChannelList } from "./discord-channel-list";
+import type { DiscordChannelListProps } from "./discord-channel-list";
+import { DiscordChannelDisplay, type DiscordChannelDisplayProps } from "./discord-channel-display";
+
 import type { Components } from "react-markdown";
 import type { VariantProps } from "class-variance-authority";
 
@@ -76,6 +80,8 @@ export interface DiscordEmbedProps
     embedVariant?: VariantProps<typeof discordEmbedVariants>[ "variant" ];
     colorVariant?: VariantProps<typeof discordEmbedContentVariants>[ "variant" ];
     emojiIconSrcByUnicode?: Readonly<Record<string, string>>;
+    channelList?: Omit<DiscordChannelListProps, "className">;
+    channelDisplay?: Omit<DiscordChannelDisplayProps, "className">;
     asChild?: boolean;
     [key: string]: unknown;
 }
@@ -107,6 +113,8 @@ export function DiscordEmbed( {
     embedVariant = "default",
     colorVariant,
     emojiIconSrcByUnicode,
+    channelList,
+    channelDisplay,
     asChild = false,
     children,
     ...props
@@ -273,6 +281,24 @@ export function DiscordEmbed( {
                         <img
                             src={ image.url }
                             alt="Embed"
+                        />
+                    </div>
+                ) }
+
+                { channelDisplay && (
+                    <div className="discord-embed-channel-list">
+                        <DiscordChannelDisplay
+                            { ...channelDisplay }
+                            className="discord-embed-channel-list-content"
+                        />
+                    </div>
+                ) }
+
+                { channelList && (
+                    <div className="discord-embed-channel-list">
+                        <DiscordChannelList
+                            { ...channelList }
+                            className="discord-embed-channel-list-content"
                         />
                     </div>
                 ) }

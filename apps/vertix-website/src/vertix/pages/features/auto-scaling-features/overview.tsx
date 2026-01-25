@@ -1,3 +1,5 @@
+import { DiscordChannelDisplay } from "@vertix.gg/discord-ui";
+
 export default function Overview() {
     return (
         <div className="mb-5">
@@ -23,7 +25,7 @@ export default function Overview() {
                     </div>
                     <div className="mb-4">
                         <h5>Channel Types</h5>
-                        <div className="table-responsive">
+                        <div className="table-responsive mb-3">
                             <table className="table table-dark table-bordered">
                                 <thead>
                                     <tr>
@@ -43,6 +45,66 @@ export default function Overview() {
                                 </tbody>
                             </table>
                         </div>
+                        <DiscordChannelDisplay
+                            masterChannel={ {
+                                name: "⤢⤡ Join free channels",
+                                active: false,
+                                userCount: 0
+                            } }
+                            scaledChannels={ [
+                                {
+                                    id: "1",
+                                    name: "### Room - 1 ###",
+                                    active: true,
+                                    userCount: 2,
+                                    maxUsers: 2,
+                                    status: {
+                                        text: "Gaming session",
+                                        editable: true
+                                    },
+                                    users: [
+                                        {
+                                            id: "1",
+                                            username: "Player1",
+                                            avatar: "https://cdn.discordapp.com/embed/avatars/0.png"
+                                        },
+                                        {
+                                            id: "2",
+                                            username: "Player2",
+                                            avatar: "https://cdn.discordapp.com/embed/avatars/1.png"
+                                        }
+                                    ],
+                                    showInvite: true
+                                },
+                                {
+                                    id: "2",
+                                    name: "### Room - 2 ###",
+                                    active: true,
+                                    userCount: 1,
+                                    maxUsers: 2,
+                                    users: [
+                                        {
+                                            id: "4",
+                                            username: "Player4",
+                                            avatar: "https://cdn.discordapp.com/embed/avatars/3.png"
+                                        }
+                                    ],
+                                    showInvite: true
+                                },
+                                {
+                                    id: "3",
+                                    name: "### Room - 3 ###",
+                                    active: false,
+                                    userCount: 0,
+                                    maxUsers: 2
+                                }
+                            ] }
+                            showMasterChannel={ true }
+                            channelListProps={ {
+                                collapsible: true,
+                                showAddButton: true
+                            } }
+                        />
                     </div>
                 </div>
             </div>

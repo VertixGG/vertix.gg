@@ -35,10 +35,10 @@ export default function Welcome() {
                     <TemporaryVoiceChannelsFeatures />
                     <hr />
 
-                    <SetupFeatures />
+                    <AutoScalingFeatures />
                     <hr />
 
-                    <AutoScalingFeatures />
+                    <SetupFeatures />
                     <hr />
 
                     <BotSetup />

@@ -10,4 +10,6 @@ export * from "./discord-role-select-dropdown";
 export * from "./discord-button-select-dropdown";
 export * from "./discord-ui-component-renderer";
 export * from "./discord-ui-component-message";
+export * from "./discord-channel-list";
+export * from "./discord-channel-display";
 export * from "./ui-definitions";

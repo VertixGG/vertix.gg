@@ -1,3 +1,5 @@
+import { DiscordChannelDisplay } from "@vertix.gg/discord-ui";
+
 export default function ScalingTrigger() {
     return (
         <div className="mb-5">
@@ -23,28 +25,101 @@ export default function ScalingTrigger() {
                     </div>
                     <div className="mb-4">
                         <h5>Example Scenario</h5>
-                        <div className="fs-5 text-secondary">
-                            <pre className="bg-dark p-3 rounded text-light">
-{`Configuration:
-  - Prefix: "gaming-{index}"
-  - Max Members: 15 per channel
-  - Min Available: 1
-
-Initial State:
-  Master Channel (entry point)
-  gaming-1 (0/15 members)
-
-After users join:
-  Master Channel
-  gaming-1 (15/15 members) <- FULL
-  gaming-2 (0/15 members)  <- auto-created
-
-More users join:
-  Master Channel
-  gaming-1 (15/15 members)
-  gaming-2 (8/15 members)
-  gaming-3 (0/15 members)  <- buffer channel`}
-                            </pre>
+                        <div className="fs-5 text-secondary mb-3">
+                            <p>
+                                <strong>Configuration:</strong> Prefix: <code>{ "gaming-{index}" }</code>, Max Members: 2 per channel, Min Available: 1
+                            </p>
+                        </div>
+                        <div className="mb-3">
+                            <h6 className="text-primary mb-2">Initial State</h6>
+                            <p className="text-secondary small mb-2">Starting with master channel and one empty scaled channel</p>
+                            <DiscordChannelDisplay
+                                masterChannel={ {
+                                    name: "⤢⤡ Join free channels",
+                                    active: false,
+                                    userCount: 0
+                                } }
+                                scaledChannels={ [
+                                    {
+                                        id: "1",
+                                        name: "gaming-1",
+                                        active: false,
+                                        userCount: 0,
+                                        maxUsers: 2
+                                    }
+                                ] }
+                                showMasterChannel={ true }
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <h6 className="text-warning mb-2">After users join: Channel full, new one created</h6>
+                            <p className="text-secondary small mb-2">When gaming-1 reaches capacity (2/2), gaming-2 is automatically created</p>
+                            <DiscordChannelDisplay
+                                masterChannel={ {
+                                    name: "⤢⤡ Join free channels",
+                                    active: false,
+                                    userCount: 0
+                                } }
+                                scaledChannels={ [
+                                    {
+                                        id: "1",
+                                        name: "gaming-1",
+                                        active: true,
+                                        userCount: 2,
+                                        maxUsers: 2
+                                    },
+                                    {
+                                        id: "2",
+                                        name: "gaming-2",
+                                        active: false,
+                                        userCount: 0,
+                                        maxUsers: 2
+                                    }
+                                ] }
+                                showMasterChannel={ true }
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <h6 className="text-success mb-2">More users join: Buffer channel created</h6>
+                            <p className="text-secondary small mb-2">System maintains buffer channels to ensure availability</p>
+                            <DiscordChannelDisplay
+                                masterChannel={ {
+                                    name: "⤢⤡ Join free channels",
+                                    active: false,
+                                    userCount: 0
+                                } }
+                                scaledChannels={ [
+                                    {
+                                        id: "1",
+                                        name: "gaming-1",
+                                        active: true,
+                                        userCount: 2,
+                                        maxUsers: 2
+                                    },
+                                    {
+                                        id: "2",
+                                        name: "gaming-2",
+                                        active: true,
+                                        userCount: 1,
+                                        maxUsers: 2,
+                                        users: [
+                                            {
+                                                id: "1",
+                                                username: "Gamer1",
+                                                avatar: "https://cdn.discordapp.com/embed/avatars/0.png"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        id: "3",
+                                        name: "gaming-3",
+                                        active: false,
+                                        userCount: 0,
+                                        maxUsers: 2
+                                    }
+                                ] }
+                                showMasterChannel={ true }
+                            />
                         </div>
                     </div>
                     <div className="mb-4">

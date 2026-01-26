@@ -8,6 +8,7 @@ import { AuthenticatedQueryClient } from "@vertix.gg/dashboard/src/lib/query-cli
 import { ModulesQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/modules-query";
 import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/global-stats-query";
 import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-stats-query";
+import { GuildManagementQuery } from "@vertix.gg/dashboard/src/features/management/query/guild-management-query";
 
 import { AuthProvider, ProtectedRoute, LoginPage, ServerSelectionPage } from "@vertix.gg/dashboard/src/features/auth";
 
@@ -26,6 +27,7 @@ const client = new AuthenticatedQueryClient( API_CONFIG.BASE_URL );
 client.registerModule( ModulesQuery );
 client.registerModule( GlobalStatsQuery );
 client.registerModule( GuildStatsQuery );
+client.registerModule( GuildManagementQuery );
 
 export function App() {
     return (

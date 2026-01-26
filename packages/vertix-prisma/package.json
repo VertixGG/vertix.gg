@@ -27,6 +27,18 @@
         "./._bot-client-library": {
             "require": "./src/prisma-bot-client/runtime/library.js",
             "types": "./src/prisma-bot-client/runtime/library.d.ts"
+        },
+        "./api-client": {
+            "default": "./src/prisma-api-client.ts",
+            "types": "./types/prisma-api-client.d.ts"
+        },
+        "./._api-client-internal": {
+            "require": "./src/prisma-api-client/index.js",
+            "types": "./src/prisma-api-client/index.d.ts"
+        },
+        "./._api-client-library": {
+            "require": "./src/prisma-api-client/runtime/library.js",
+            "types": "./src/prisma-api-client/runtime/library.d.ts"
         }
     },
     "devDependencies": {

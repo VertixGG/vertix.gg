@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "mcp__jetbrains__list_directory_tree",
+      "Bash(bun install:*)",
+      "Bash(bun add:*)",
+      "Bash(bun run:*)",
+      "Bash(bun tsc:*)"
     ]
   }
 }

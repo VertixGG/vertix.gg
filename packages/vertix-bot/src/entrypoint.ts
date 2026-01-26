@@ -517,6 +517,36 @@ async function registerLoggerServerService() {
     GlobalLogger.$.info( registerLoggerServerService, "Logger Server is now a standalone process. Services will connect as clients." );
 }
 
+async function registerIPCService() {
+    GlobalLogger.$.info( registerIPCService, "Registering IPC service..." );
+
+    const { IPCService } = await import( "@vertix.gg/base/src/modules/ipc" );
+
+    // Check if already registered (for hot reload)
+    const existing = ServiceLocator.$.get<typeof IPCService.prototype>( IPCService.getName(), { silent: true } );
+
+    if ( existing ) {
+        if ( existing.isReady() ) {
+            GlobalLogger.$.info( registerIPCService, "IPC service already registered and connected to Redis" );
+        } else {
+            GlobalLogger.$.warn( registerIPCService, "IPC service already registered but Redis not available" );
+        }
+        return;
+    }
+
+    ServiceLocator.$.register( IPCService );
+
+    const ipcService = await ServiceLocator.$.waitFor<typeof IPCService.prototype>( IPCService.getName(), {
+        timeout: 5000
+    } );
+
+    if ( ipcService.isReady() ) {
+        GlobalLogger.$.info( registerIPCService, "IPC service is registered and connected to Redis" );
+    } else {
+        GlobalLogger.$.warn( registerIPCService, "IPC service registered but Redis not available - dashboard management features will be disabled" );
+    }
+}
+
 async function registerMCPService() {
     GlobalLogger.$.info( registerMCPService, "Registering MCP service (Logger Client) ..." );
 
@@ -797,6 +827,10 @@ export async function entryPoint( options: {
     await PrismaBotClient.$.connect();
 
     GlobalLogger.$.info( entryPoint, "Database is connected" );
+
+    // Initialize IPC service (non-blocking, will warn if Redis unavailable)
+    await registerIPCService();
+
     GlobalLogger.$.info( entryPoint, "Registering services..." );
     GlobalLogger.$.info( entryPoint, "Establishing bot connection ..." );
 

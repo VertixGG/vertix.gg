@@ -53,7 +53,11 @@
         "vertix:logger:start": "cd packages/vertix-logger && bun run vertix-logger:start",
         "vertix:logger:dev": "cd packages/vertix-logger && bun run vertix-logger:dev",
         "vertix:mcp:dev": "cd apps/vertix-mcp && bun run vertix-mcp:start:dev",
-        "vertix:mcp:typecheck": "cd apps/vertix-mcp && bun run vertix-mcp:typecheck"
+        "vertix:mcp:typecheck": "cd apps/vertix-mcp && bun run vertix-mcp:typecheck",
+        "vertix:redis:start": "cd apps/redis && bun run start",
+        "vertix:redis:stop": "cd apps/redis && bun run stop",
+        "vertix:redis:logs": "cd apps/redis && bun run logs",
+        "vertix:redis:cli": "cd apps/redis && bun run cli"
     },
     "dependencies": {
         "@discordjs/rest": "^2.6.0",
@@ -84,6 +88,7 @@
         "discord.js": "latest",
         "elkjs": "^0.10.2",
         "fastmcp": "^1.27.7",
+        "ioredis": "^5.4.1",
         "nodemon": "^3.1.11",
         "picocolors": "^1.1.1",
         "zod": "^3.25.76"

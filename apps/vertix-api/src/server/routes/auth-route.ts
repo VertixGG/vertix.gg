@@ -3,12 +3,16 @@ import {
     exchangeCodeForToken,
     getDiscordUser,
     getDiscordGuilds,
-    formatDiscordUser,
-    generateState
+    generateState,
+    upsertUser,
+    upsertToken,
+    getUserById,
+    refreshAccessToken,
+    deleteUserToken
 } from "@vertix.gg/api/src/server/services/auth-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
-import type { AuthUser, DiscordGuild } from "@vertix.gg/api/src/server/services/auth-service";
+import type { DiscordGuild } from "@vertix.gg/api/src/server/services/auth-service";
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 
 export interface SelectedGuild {
@@ -19,9 +23,7 @@ export interface SelectedGuild {
 
 declare module "fastify" {
     interface Session {
-        user?: AuthUser;
-        accessToken?: string;
-        refreshToken?: string;
+        userId?: string;
         oauthState?: string;
         selectedGuild?: SelectedGuild;
     }
@@ -33,6 +35,8 @@ async function handleDiscordAuth( request: FastifyRequest, reply: FastifyReply )
     try {
         const state = generateState();
         request.session.oauthState = state;
+
+        await request.session.save();
 
         const authUrl = discordConfig.getAuthorizationUrl( state );
         return reply.redirect( authUrl );
@@ -62,12 +66,19 @@ async function handleDiscordCallback(
 
         const tokenData = await exchangeCodeForToken( code );
         const discordUser = await getDiscordUser( tokenData.access_token );
-        const user = formatDiscordUser( discordUser );
 
-        request.session.user = user;
-        request.session.accessToken = tokenData.access_token;
-        request.session.refreshToken = tokenData.refresh_token;
+        // Store user in database
+        const user = await upsertUser( discordUser );
+
+        // Store token in database
+        await upsertToken( user.id, tokenData );
+
+        // Session only stores userId reference
+        request.session.userId = user.id;
         delete request.session.oauthState;
+
+        // Explicitly save session before redirect
+        await request.session.save();
 
         return reply.redirect( FRONTEND_URL );
     } catch ( error ) {
@@ -77,23 +88,36 @@ async function handleDiscordCallback(
 }
 
 async function handleGetMe( request: FastifyRequest, reply: FastifyReply ) {
-    if ( !request.session.user ) {
+    if ( !request.session.userId ) {
         return reply.status( 401 ).send( { error: "Not authenticated" } );
     }
 
+    const user = await getUserById( request.session.userId );
+
+    if ( !user ) {
+        return reply.status( 401 ).send( { error: "User not found" } );
+    }
+
     return {
-        user: request.session.user,
+        user,
         selectedGuild: request.session.selectedGuild || null
     };
 }
 
 async function handleGetGuilds( request: FastifyRequest, reply: FastifyReply ) {
-    if ( !request.session.accessToken ) {
+    if ( !request.session.userId ) {
         return reply.status( 401 ).send( { error: "Not authenticated" } );
     }
 
     try {
-        const guilds = await getDiscordGuilds( request.session.accessToken );
+        // Get fresh access token (auto-refreshes if expired)
+        const accessToken = await refreshAccessToken( request.session.userId );
+
+        if ( !accessToken ) {
+            return reply.status( 401 ).send( { error: "Token expired, please re-login" } );
+        }
+
+        const guilds = await getDiscordGuilds( accessToken );
 
         const ownedGuilds = guilds
             .filter( ( guild: DiscordGuild ) => guild.owner )
@@ -117,7 +141,7 @@ async function handleSelectGuild(
     request: FastifyRequest<{ Body: { guildId: string; guildName: string; guildIcon: string | null } }>,
     reply: FastifyReply
 ) {
-    if ( !request.session.user ) {
+    if ( !request.session.userId ) {
         return reply.status( 401 ).send( { error: "Not authenticated" } );
     }
 
@@ -129,11 +153,18 @@ async function handleSelectGuild(
         icon: guildIcon
     };
 
+    await request.session.save();
+
     return { selectedGuild: request.session.selectedGuild };
 }
 
 async function handleLogout( request: FastifyRequest, reply: FastifyReply ) {
     try {
+        // Delete token from database
+        if ( request.session.userId ) {
+            await deleteUserToken( request.session.userId );
+        }
+
         await request.session.destroy();
         return { success: true };
     } catch ( error ) {

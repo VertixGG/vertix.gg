@@ -52,7 +52,7 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
             >
                 <aside className="h-full bg-zinc-800 border-r border-zinc-700 flex flex-col">
                     <div className="p-4 border-b border-zinc-700">
-                        <h2 className="text-lg font-semibold text-white">Modules</h2>
+                        <h2 className="text-md font-semibold text-white">Modules</h2>
                     </div>
                     <ModuleSelector />
                     { state.error && (
@@ -66,7 +66,7 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
 
             <div className="flex-1 flex flex-col min-w-0">
                 <header className="h-12 border-b border-zinc-700 flex items-center px-4 bg-zinc-800/50">
-                    <h2 className="text-sm font-medium text-zinc-300">
+                    <h2 className="text-xs font-small text-zinc-300">
                         { state.selectedModule ? `Module: ${ state.selectedModule }` : "Module Viewer" }
                     </h2>
                     { state.isLoading && (

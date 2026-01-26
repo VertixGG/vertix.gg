@@ -11,6 +11,22 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
 
+import {
+    IPC_CHANNELS,
+    MANAGEMENT_ACTIONS
+} from "@vertix.gg/base/src/modules/ipc";
+
+import type {
+    IPCService,
+    IPCMessage,
+    ManagementPayload,
+    CreateScalingSetupPayload,
+    UpdateScalingSettingsPayload,
+    TriggerReindexPayload,
+    TriggerCleanupPayload,
+    DeleteScalingSetupPayload
+} from "@vertix.gg/base/src/modules/ipc";
+
 import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/definitions/vars";
 
 import { ChannelType } from "discord.js";
@@ -33,6 +49,7 @@ import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 export class ScalingChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
     channelService: ChannelService;
+    ipcService: IPCService;
 }> {
     private readonly debugger: Debugger;
     private reindexInterval?: NodeJS.Timeout;
@@ -53,12 +70,18 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
-            channelService: "VertixBot/Services/Channel"
+            channelService: "VertixBot/Services/Channel",
+            ipcService: "VertixBase/Modules/IPCService"
         };
     }
 
     protected async initialize() {
         await super.initialize();
+
+        // Subscribe to IPC channel in background - don't block service startup
+        this.subscribeToIPCChannel().catch( () => {
+            // Error already logged in subscribeToIPCChannel
+        } );
 
         this.services.appService.onceReady( async() => {
             try {
@@ -89,6 +112,156 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                 this.logger.error( this.initialize, "Failed to ensure scaling channels", error );
             }
         } );
+    }
+
+    private async subscribeToIPCChannel() {
+        if ( !this.services.ipcService.isReady() ) {
+            this.logger.warn( this.subscribeToIPCChannel, "IPC service not available - dashboard management features will be disabled" );
+            return;
+        }
+
+        try {
+            await this.services.ipcService.subscribe<ManagementPayload>(
+                IPC_CHANNELS.MANAGEMENT,
+                this.handleIPCMessage.bind( this )
+            );
+
+            this.logger.log( this.subscribeToIPCChannel, "Subscribed to management IPC channel" );
+        } catch ( error ) {
+            this.logger.warn( this.subscribeToIPCChannel, "Failed to subscribe to IPC channel - dashboard management features will be disabled" );
+        }
+    }
+
+    private async handleIPCMessage( message: IPCMessage<ManagementPayload> ) {
+        const { payload } = message;
+
+        this.logger.log( this.handleIPCMessage, `Received IPC message: ${ payload.action }` );
+
+        switch ( payload.action ) {
+            case MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP:
+                await this.handleCreateScalingSetup( payload.data );
+                break;
+
+            case MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS:
+                await this.handleUpdateScalingSettings( payload.data );
+                break;
+
+            case MANAGEMENT_ACTIONS.TRIGGER_REINDEX:
+                await this.handleTriggerReindex( payload.data );
+                break;
+
+            case MANAGEMENT_ACTIONS.TRIGGER_CLEANUP:
+                await this.handleTriggerCleanup( payload.data );
+                break;
+
+            case MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP:
+                await this.handleDeleteScalingSetup( payload.data );
+                break;
+
+            default:
+                this.logger.warn( this.handleIPCMessage, `Unknown action: ${ ( payload as ManagementPayload ).action }` );
+        }
+    }
+
+    private async handleCreateScalingSetup( data: CreateScalingSetupPayload ) {
+        const { guildId, userOwnerId, prefix, maxMembers } = data;
+
+        this.logger.log(
+            this.handleCreateScalingSetup,
+            `Creating scaling setup for guild ${ guildId }`
+        );
+
+        const result = await this.createScalingMasterChannel( {
+            guildId,
+            userOwnerId,
+            prefix,
+            maxMembers
+        } );
+
+        if ( !result.success ) {
+            this.logger.error( this.handleCreateScalingSetup, `Failed to create scaling setup: ${ result.error }` );
+        } else {
+            this.logger.log( this.handleCreateScalingSetup, `Successfully created scaling setup for guild ${ guildId }` );
+        }
+    }
+
+    private async handleUpdateScalingSettings( data: UpdateScalingSettingsPayload ) {
+        const { guildId, masterChannelId, settings } = data;
+
+        this.logger.log(
+            this.handleUpdateScalingSettings,
+            `Updating scaling settings for master ${ masterChannelId } in guild ${ guildId }`
+        );
+
+        const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
+
+        if ( !guild ) {
+            this.logger.error( this.handleUpdateScalingSettings, `Guild not found: ${ guildId }` );
+            return;
+        }
+
+        await this.updateScalingSettings( {
+            guild,
+            masterChannelId,
+            prefix: settings.scalingChannelPrefix || "",
+            maxMembers: settings.scalingChannelMaxMembersPerChannel || 0
+        } );
+    }
+
+    private async handleTriggerReindex( data: TriggerReindexPayload ) {
+        const { guildId, masterChannelId } = data;
+
+        this.logger.log(
+            this.handleTriggerReindex,
+            `Triggering reindex for master ${ masterChannelId } in guild ${ guildId }`
+        );
+
+        const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
+
+        if ( !guild ) {
+            this.logger.error( this.handleTriggerReindex, `Guild not found: ${ guildId }` );
+            return;
+        }
+
+        const settings = await ScalingChannelDataModel.$.getScalingSettings( masterChannelId );
+
+        if ( !settings?.scalingChannelPrefix ) {
+            this.logger.error( this.handleTriggerReindex, `No prefix configured for master ${ masterChannelId }` );
+            return;
+        }
+
+        await this.reindexScalingChannelsForMaster( guild, masterChannelId, settings.scalingChannelPrefix );
+    }
+
+    private async handleTriggerCleanup( data: TriggerCleanupPayload ) {
+        const { guildId, masterChannelId } = data;
+
+        this.logger.log(
+            this.handleTriggerCleanup,
+            `Triggering cleanup for master ${ masterChannelId } in guild ${ guildId }`
+        );
+
+        const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
+
+        if ( !guild ) {
+            this.logger.error( this.handleTriggerCleanup, `Guild not found: ${ guildId }` );
+            return;
+        }
+
+        const scalingChannels = await this.findScalingChannels( guild, masterChannelId );
+
+        await this.cleanupExcessEmptyChannels( scalingChannels );
+    }
+
+    private async handleDeleteScalingSetup( data: DeleteScalingSetupPayload ) {
+        const { guildId, masterChannelId } = data;
+
+        this.logger.log(
+            this.handleDeleteScalingSetup,
+            `Deleting scaling setup for master ${ masterChannelId } in guild ${ guildId }`
+        );
+
+        await this.deleteScalingMasterChannelWithCleanup( { guildId, masterChannelId } );
     }
 
     public async ensureScalingChannelsForMaster(

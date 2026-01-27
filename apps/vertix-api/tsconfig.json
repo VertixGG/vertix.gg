@@ -6,11 +6,13 @@
         "rootDir": "./",
         "typeRoots": [
             "../../node_modules/@types",
-            "./types"
+            "./types",
+            "../../packages/vertix-prisma/types"
         ],
 
         "types": [
-            "node"
+            "node",
+            "prisma-bot-client.d.ts"
         ],
 
         "target": "ESNext",

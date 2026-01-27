@@ -25,7 +25,7 @@ const CORS_CONFIG = {
     credentials: true,
     methods: [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
     allowedHeaders: [ "Content-Type", "Authorization" ]
-} as const;
+};
 
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 

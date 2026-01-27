@@ -60,7 +60,7 @@ export async function exchangeCodeForToken( code: string ): Promise<TokenRespons
         throw new Error( `Failed to exchange code for token: ${ error }` );
     }
 
-    return response.json();
+    return await response.json() as TokenResponse;
 }
 
 export async function getDiscordUser( accessToken: string ): Promise<DiscordUser> {
@@ -74,7 +74,7 @@ export async function getDiscordUser( accessToken: string ): Promise<DiscordUser
         throw new Error( "Failed to fetch Discord user" );
     }
 
-    return response.json();
+    return await response.json() as DiscordUser;
 }
 
 export async function getDiscordGuilds( accessToken: string ): Promise<DiscordGuild[]> {
@@ -88,7 +88,7 @@ export async function getDiscordGuilds( accessToken: string ): Promise<DiscordGu
         throw new Error( "Failed to fetch Discord guilds" );
     }
 
-    return response.json();
+    return await response.json() as DiscordGuild[];
 }
 
 export function formatDiscordUser( discordUser: DiscordUser ): AuthUser {

@@ -1,75 +1,70 @@
 import { PrismaAPIClient } from "@vertix.gg/prisma/api-client";
 
 import type { SessionStore } from "@fastify/session";
-
-interface SessionData {
-    [ key: string ]: unknown;
-}
+import type { Session } from "fastify";
 
 export class PrismaSessionStore implements SessionStore {
     private getClient() {
         return PrismaAPIClient.$.getClient();
     }
 
-    async get( sessionId: string, callback: ( err: Error | null, session?: SessionData | null ) => void ): Promise<void> {
-        try {
-            const session = await this.getClient().session.findUnique( {
-                where: { sid: sessionId }
-            } );
-
+    get( sessionId: string, callback: ( err: Error | null, session?: Session | null ) => void ): void {
+        this.getClient().session.findUnique( {
+            where: { sid: sessionId }
+        } ).then( ( session ) => {
             if ( !session ) {
                 callback( null, null );
                 return;
             }
 
             if ( session.expiresAt < new Date() ) {
-                await this.getClient().session.delete( {
+                this.getClient().session.delete( {
                     where: { sid: sessionId }
+                } ).then( () => {
+                    callback( null, null );
+                } ).catch( ( error ) => {
+                    callback( error instanceof Error ? error : new Error( String( error ) ) );
                 } );
-                callback( null, null );
                 return;
             }
 
-            const data = JSON.parse( session.data ) as SessionData;
+            const data = JSON.parse( session.data ) as unknown as Session;
             callback( null, data );
-        } catch( error ) {
+        } ).catch( ( error ) => {
             callback( error instanceof Error ? error : new Error( String( error ) ) );
-        }
+        } );
     }
 
-    async set( sessionId: string, session: SessionData, callback: ( err?: Error ) => void ): Promise<void> {
-        try {
-            const expiresAt = new Date( Date.now() + ( ( session.cookie as { maxAge?: number } )?.maxAge || 7 * 24 * 60 * 60 * 1000 ) );
+    set( sessionId: string, session: Session, callback: ( err?: Error ) => void ): void {
+        const maxAge = ( session.cookie as { maxAge?: number } | undefined )?.maxAge || 7 * 24 * 60 * 60 * 1000;
+        const expiresAt = new Date( Date.now() + maxAge );
 
-            await this.getClient().session.upsert( {
-                where: { sid: sessionId },
-                update: {
-                    data: JSON.stringify( session ),
-                    expiresAt
-                },
-                create: {
-                    id: crypto.randomUUID(),
-                    sid: sessionId,
-                    data: JSON.stringify( session ),
-                    expiresAt
-                }
-            } );
-
+        this.getClient().session.upsert( {
+            where: { sid: sessionId },
+            update: {
+                data: JSON.stringify( session ),
+                expiresAt
+            },
+            create: {
+                id: crypto.randomUUID(),
+                sid: sessionId,
+                data: JSON.stringify( session ),
+                expiresAt
+            }
+        } ).then( () => {
             callback();
-        } catch( error ) {
+        } ).catch( ( error ) => {
             callback( error instanceof Error ? error : new Error( String( error ) ) );
-        }
+        } );
     }
 
-    async destroy( sessionId: string, callback: ( err?: Error ) => void ): Promise<void> {
-        try {
-            await this.getClient().session.deleteMany( {
-                where: { sid: sessionId }
-            } );
-
+    destroy( sessionId: string, callback: ( err?: Error ) => void ): void {
+        this.getClient().session.deleteMany( {
+            where: { sid: sessionId }
+        } ).then( () => {
             callback();
-        } catch( error ) {
+        } ).catch( ( error ) => {
             callback( error instanceof Error ? error : new Error( String( error ) ) );
-        }
+        } );
     }
 }

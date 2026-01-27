@@ -163,6 +163,28 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const targetPosition = masterChannel.position + 1;
 
+        // Control panel permissions: @everyone can only view, everything else is denied
+        const controlPanelPermissions = [
+            {
+                id: guild.roles.everyone.id,
+                allow: PermissionsBitField.Flags.ViewChannel,
+                deny: PermissionsBitField.Flags.SendMessages |
+                    PermissionsBitField.Flags.SendMessagesInThreads |
+                    PermissionsBitField.Flags.CreatePublicThreads |
+                    PermissionsBitField.Flags.CreatePrivateThreads |
+                    PermissionsBitField.Flags.AddReactions |
+                    PermissionsBitField.Flags.EmbedLinks |
+                    PermissionsBitField.Flags.AttachFiles |
+                    PermissionsBitField.Flags.UseExternalEmojis |
+                    PermissionsBitField.Flags.UseExternalStickers |
+                    PermissionsBitField.Flags.ManageMessages |
+                    PermissionsBitField.Flags.ManageThreads |
+                    PermissionsBitField.Flags.SendTTSMessages |
+                    PermissionsBitField.Flags.SendVoiceMessages |
+                    PermissionsBitField.Flags.SendPolls
+            }
+        ];
+
         const controlChannelResult = await this.services.channelService.create( {
             parent,
             guild,
@@ -172,7 +194,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             ownerChannelId: masterChannel.id,
             name: controlChannelName,
             type: ChannelType.GuildText,
-            position: targetPosition
+            position: targetPosition,
+            permissionOverwrites: controlPanelPermissions
         } );
 
         if ( !controlChannelResult ) {

@@ -262,7 +262,7 @@ export class AdapterBuilderBase<
             throw new Error( `A component must be set for adapter "${ builder.name }" before building.` );
         }
 
-        const BaseAdapter = builder.adatperBase as typeof UIAdapterBase<TChannel, TInteraction>;
+        const BaseAdapter = builder.adatperBase as unknown as typeof UIAdapterBase<TChannel, TInteraction>;
 
         function createAdapterClass() {
             const AdapterBuilderGenerated = class AdapterBuilderGenerated extends BaseAdapter {
@@ -366,7 +366,7 @@ export class AdapterBuilderBase<
                         const handlerArgs = await builder.editMessageArgsHandler(
                             this.getContext(),
                             message,
-                            argsFromManager
+                            argsFromManager ?? {}
                         );
 
                         if ( dataArgs ) {
@@ -380,7 +380,8 @@ export class AdapterBuilderBase<
                         return dataArgs;
                     }
 
-                    return super.getEditMessageArgs?.( message, argsFromManager );
+                    const superArgs = await super.getEditMessageArgs?.( message, argsFromManager ?? {} );
+                    return superArgs ?? {};
                 }
 
                 protected async onBeforeBuild( args: UIArgs, from: UIAdapterBuildSource, interaction?: TInteraction ) {

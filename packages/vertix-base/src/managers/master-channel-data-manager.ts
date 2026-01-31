@@ -58,12 +58,13 @@ export class MasterChannelDataManager extends InitializeBase {
         defaultSettings: Partial<MasterChannelSettingsAllVersions> = {}
     ): Promise<MasterChannelSettingsAllVersions> {
         const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, false, false );
+        const defaults = this.config.defaults.settings;
 
         if ( !settings ) {
-            return defaultSettings;
+            return { ...defaults, ...defaultSettings } as MasterChannelSettingsAllVersions;
         }
 
-        return Object.assign( defaultSettings, settings );
+        return { ...defaults, ...defaultSettings, ...settings } as MasterChannelSettingsAllVersions;
     }
 
     public async setAllSettings(
@@ -167,16 +168,21 @@ export class MasterChannelDataManager extends InitializeBase {
     }
 
     public async getChannelVerifiedRoles( masterChannelDB: ChannelExtended, guildId: string, cache = true ): Promise<string[]> {
-        return (
-            await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( result ) =>
-                result?.dynamicChannelVerifiedRoles.length ? result : { dynamicChannelVerifiedRoles: undefined }
-            )
-        )?.dynamicChannelVerifiedRoles ?? [ guildId ];
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
+            res?.dynamicChannelVerifiedRoles?.length
+                ? { ...defaults, ...res }
+                : { ...defaults, dynamicChannelVerifiedRoles: [] }
+        );
+        return result?.dynamicChannelVerifiedRoles?.length ? result.dynamicChannelVerifiedRoles : [ guildId ];
     }
 
     public async getChannelLogsChannelId( masterChannelDB: ChannelExtended ) {
-        return ( await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( result ) => result || null ) )
-            ?.dynamicChannelLogsChannelId;
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+        return result?.dynamicChannelLogsChannelId ?? undefined;
     }
 
     public async setChannelNameTemplate( masterChannelDB: ChannelExtended, newName: string ) {

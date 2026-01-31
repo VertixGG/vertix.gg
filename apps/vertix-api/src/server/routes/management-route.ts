@@ -5,7 +5,7 @@ import { RouteBase } from "@vertix.gg/api/src/bases/route-base";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
-import type { ManagementService, UpdateScalingSettingsInput } from "@vertix.gg/api/src/server/services/management-service";
+import type { ManagementService, UpdateScalingSettingsInput, UpdateDynamicSettingsInput } from "@vertix.gg/api/src/server/services/management-service";
 
 interface GuildParams {
     guildId: string;
@@ -15,9 +15,20 @@ interface ScalingMasterParams extends GuildParams {
     masterChannelId: string;
 }
 
+interface DynamicMasterParams extends GuildParams {
+    masterChannelId: string;
+}
+
 interface CreateScalingSetupBody {
     prefix?: string;
     maxMembers?: number;
+}
+
+interface CreateDynamicSetupBody {
+    version?: "v2" | "v3";
+    nameTemplate?: string;
+    autoSave?: boolean;
+    mentionable?: boolean;
 }
 
 interface UpdateScalingSettingsBody {
@@ -25,6 +36,28 @@ interface UpdateScalingSettingsBody {
     scalingChannelMaxMembersPerChannel?: number;
     scalingChannelMinAvailableChannels?: number;
     scalingChannelCategoryId?: string | null;
+}
+
+interface UpdateDynamicSettingsBody {
+    dynamicChannelNameTemplate?: string;
+    dynamicChannelAutoSave?: boolean;
+    dynamicChannelMentionable?: boolean;
+}
+
+/**
+ * Middleware to verify user has access to the requested guild.
+ * Checks that the guildId in params matches the user's selected guild in session.
+ */
+async function requireGuildAccess(
+    request: FastifyRequest<{ Params: GuildParams }>,
+    reply: FastifyReply
+) {
+    const { guildId } = request.params;
+    const selectedGuild = request.session.selectedGuild;
+
+    if ( !selectedGuild || selectedGuild.id !== guildId ) {
+        return reply.status( 403 ).send( { error: "Access denied" } );
+    }
 }
 
 export class ManagementRoute extends RouteBase {
@@ -54,12 +87,6 @@ export class ManagementRoute extends RouteBase {
             const { guildId } = request.params;
             const service = this.getService();
 
-            const hasAccess = await service.checkGuildAccess( guildId );
-
-            if ( !hasAccess ) {
-                return reply.status( 404 ).send( { error: "Guild not found" } );
-            }
-
             const details = await service.getGuildManagementDetails( guildId );
 
             if ( !details ) {
@@ -80,12 +107,6 @@ export class ManagementRoute extends RouteBase {
             const { guildId } = request.params;
             const { prefix, maxMembers } = request.body;
             const service = this.getService();
-
-            const hasAccess = await service.checkGuildAccess( guildId );
-
-            if ( !hasAccess ) {
-                return reply.status( 404 ).send( { error: "Guild not found" } );
-            }
 
             const userOwnerId = request.session.userId;
 
@@ -113,12 +134,6 @@ export class ManagementRoute extends RouteBase {
             const { guildId, masterChannelId } = request.params;
             const service = this.getService();
 
-            const hasAccess = await service.checkGuildAccess( guildId );
-
-            if ( !hasAccess ) {
-                return reply.status( 404 ).send( { error: "Guild not found" } );
-            }
-
             const details = await service.getScalingMasterDetails( guildId, masterChannelId );
 
             if ( !details ) {
@@ -140,12 +155,6 @@ export class ManagementRoute extends RouteBase {
             const settings = request.body as UpdateScalingSettingsInput;
             const service = this.getService();
 
-            const hasAccess = await service.checkGuildAccess( guildId );
-
-            if ( !hasAccess ) {
-                return reply.status( 404 ).send( { error: "Guild not found" } );
-            }
-
             const success = await service.updateScalingSettings( guildId, masterChannelId, settings );
 
             if ( !success ) {
@@ -165,12 +174,6 @@ export class ManagementRoute extends RouteBase {
         try {
             const { guildId, masterChannelId } = request.params;
             const service = this.getService();
-
-            const hasAccess = await service.checkGuildAccess( guildId );
-
-            if ( !hasAccess ) {
-                return reply.status( 404 ).send( { error: "Guild not found" } );
-            }
 
             const success = await service.triggerReindex( guildId, masterChannelId );
 
@@ -192,12 +195,6 @@ export class ManagementRoute extends RouteBase {
             const { guildId, masterChannelId } = request.params;
             const service = this.getService();
 
-            const hasAccess = await service.checkGuildAccess( guildId );
-
-            if ( !hasAccess ) {
-                return reply.status( 404 ).send( { error: "Guild not found" } );
-            }
-
             const success = await service.triggerCleanup( guildId, masterChannelId );
 
             if ( !success ) {
@@ -218,12 +215,6 @@ export class ManagementRoute extends RouteBase {
             const { guildId, masterChannelId } = request.params;
             const service = this.getService();
 
-            const hasAccess = await service.checkGuildAccess( guildId );
-
-            if ( !hasAccess ) {
-                return reply.status( 404 ).send( { error: "Guild not found" } );
-            }
-
             const success = await service.deleteScalingSetup( guildId, masterChannelId );
 
             if ( !success ) {
@@ -236,7 +227,98 @@ export class ManagementRoute extends RouteBase {
         }
     }
 
+    public async handleGetDynamicMasterDetails(
+        request: FastifyRequest<{ Params: DynamicMasterParams }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId, masterChannelId } = request.params;
+            const service = this.getService();
+
+            const details = await service.getDynamicMasterDetails( guildId, masterChannelId );
+
+            if ( !details ) {
+                return reply.status( 404 ).send( { error: "Dynamic master channel not found" } );
+            }
+
+            return details;
+        } catch( error ) {
+            handleError( this.handleGetDynamicMasterDetails, error, reply, "Failed to fetch dynamic master details" );
+        }
+    }
+
+    public async handleUpdateDynamicSettings(
+        request: FastifyRequest<{ Params: DynamicMasterParams; Body: UpdateDynamicSettingsBody }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId, masterChannelId } = request.params;
+            const settings = request.body as UpdateDynamicSettingsInput;
+            const service = this.getService();
+
+            const success = await service.updateDynamicSettings( guildId, masterChannelId, settings );
+
+            if ( !success ) {
+                return reply.status( 404 ).send( { error: "Dynamic master channel not found" } );
+            }
+
+            return { success: true };
+        } catch( error ) {
+            handleError( this.handleUpdateDynamicSettings, error, reply, "Failed to update dynamic settings" );
+        }
+    }
+
+    public async handleDeleteDynamicSetup(
+        request: FastifyRequest<{ Params: DynamicMasterParams }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId, masterChannelId } = request.params;
+            const service = this.getService();
+
+            const success = await service.deleteDynamicSetup( guildId, masterChannelId );
+
+            if ( !success ) {
+                return reply.status( 404 ).send( { error: "Dynamic master channel not found" } );
+            }
+
+            return { success: true };
+        } catch( error ) {
+            handleError( this.handleDeleteDynamicSetup, error, reply, "Failed to delete dynamic setup" );
+        }
+    }
+
+    public async handleCreateDynamicSetup(
+        request: FastifyRequest<{ Params: GuildParams; Body: CreateDynamicSetupBody }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId } = request.params;
+            const { version, nameTemplate, autoSave, mentionable } = request.body;
+            const service = this.getService();
+
+            const userOwnerId = request.session.userId;
+
+            if ( !userOwnerId ) {
+                return reply.status( 401 ).send( { error: "User not authenticated" } );
+            }
+
+            const success = await service.createDynamicSetup( guildId, userOwnerId, { version, nameTemplate, autoSave, mentionable } );
+
+            if ( !success ) {
+                return reply.status( 500 ).send( { error: "Failed to create dynamic setup" } );
+            }
+
+            return reply.status( 201 ).send( { success: true, message: "Dynamic setup creation initiated" } );
+        } catch( error ) {
+            handleError( this.handleCreateDynamicSetup, error, reply, "Failed to create dynamic setup" );
+        }
+    }
+
     protected registerRoutes( fastify: FastifyInstance ): void {
+        // Add guild access check to all routes
+        fastify.addHook( "preHandler", requireGuildAccess );
+
         fastify.get<{ Params: GuildParams }>(
             "/management/guild/:guildId",
             this.handleGetGuildManagement.bind( this )
@@ -270,6 +352,27 @@ export class ManagementRoute extends RouteBase {
         fastify.delete<{ Params: ScalingMasterParams }>(
             "/management/guild/:guildId/scaling/:masterChannelId",
             this.handleDeleteScalingSetup.bind( this )
+        );
+
+        // Dynamic channel routes
+        fastify.post<{ Params: GuildParams; Body: CreateDynamicSetupBody }>(
+            "/management/guild/:guildId/dynamic",
+            this.handleCreateDynamicSetup.bind( this )
+        );
+
+        fastify.get<{ Params: DynamicMasterParams }>(
+            "/management/guild/:guildId/dynamic/:masterChannelId",
+            this.handleGetDynamicMasterDetails.bind( this )
+        );
+
+        fastify.put<{ Params: DynamicMasterParams; Body: UpdateDynamicSettingsBody }>(
+            "/management/guild/:guildId/dynamic/:masterChannelId",
+            this.handleUpdateDynamicSettings.bind( this )
+        );
+
+        fastify.delete<{ Params: DynamicMasterParams }>(
+            "/management/guild/:guildId/dynamic/:masterChannelId",
+            this.handleDeleteDynamicSetup.bind( this )
         );
     }
 }

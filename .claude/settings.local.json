@@ -6,7 +6,15 @@
       "Bash(bun install:*)",
       "Bash(bun add:*)",
       "Bash(bun run:*)",
-      "Bash(bun tsc:*)"
+      "Bash(bun tsc:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl:*)",
+      "Bash(ls:*)",
+      "Bash(bunx --bun eslint:*)",
+      "Bash(bunx --bun tsc:*)",
+      "Bash(bunx tsc:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

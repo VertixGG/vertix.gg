@@ -14,9 +14,9 @@ async function registerServices() {
     // Register and wait for IPC service (needs Redis connection)
     const { IPCService } = await import( "@vertix.gg/base/src/modules/ipc" );
 
-    if ( !ServiceLocator.$.get( IPCService.getName(), { silent: true } ) ) {
-        ServiceLocator.$.register( IPCService );
-    }
+    // Force re-registration to pick up code changes
+    ServiceLocator.$.unregister( IPCService.getName() );
+    ServiceLocator.$.register( IPCService );
 
     await ServiceLocator.$.waitFor( IPCService.getName(), { timeout: 10000 } );
     logger.info( registerServices, "IPC service ready" );
@@ -24,9 +24,9 @@ async function registerServices() {
     // Register and wait for Discord service
     const { DiscordService } = await import( "@vertix.gg/api/src/server/services/discord-service" );
 
-    if ( !ServiceLocator.$.get( DiscordService.getName(), { silent: true } ) ) {
-        ServiceLocator.$.register( DiscordService );
-    }
+    // Force re-registration to pick up code changes
+    ServiceLocator.$.unregister( DiscordService.getName() );
+    ServiceLocator.$.register( DiscordService );
 
     await ServiceLocator.$.waitFor( DiscordService.getName(), { timeout: 5000 } );
     logger.info( registerServices, "Discord service ready" );
@@ -34,9 +34,9 @@ async function registerServices() {
     // Register Management service (depends on Discord and IPC - both already ready)
     const { ManagementService } = await import( "@vertix.gg/api/src/server/services/management-service" );
 
-    if ( !ServiceLocator.$.get( ManagementService.getName(), { silent: true } ) ) {
-        ServiceLocator.$.register( ManagementService );
-    }
+    // Force re-registration to pick up code changes
+    ServiceLocator.$.unregister( ManagementService.getName() );
+    ServiceLocator.$.register( ManagementService );
 
     await ServiceLocator.$.waitFor( ManagementService.getName(), { timeout: 5000 } );
     logger.info( registerServices, "Management service ready" );
@@ -44,9 +44,9 @@ async function registerServices() {
     // Register Management route
     const { ManagementRoute } = await import( "@vertix.gg/api/src/server/routes/management-route" );
 
-    if ( !ServiceLocator.$.get( ManagementRoute.getName(), { silent: true } ) ) {
-        ServiceLocator.$.register( ManagementRoute );
-    }
+    // Force re-registration to pick up code changes
+    ServiceLocator.$.unregister( ManagementRoute.getName() );
+    ServiceLocator.$.register( ManagementRoute );
 
     await ServiceLocator.$.waitFor( ManagementRoute.getName(), { timeout: 5000 } );
     logger.info( registerServices, "Management route ready" );

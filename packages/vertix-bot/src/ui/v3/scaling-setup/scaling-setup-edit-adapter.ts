@@ -35,6 +35,7 @@ import type {
 import type { BaseGuildTextChannel } from "discord.js";
 
 import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
+import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 import type UIService from "@vertix.gg/gui/src/ui-service";
 import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
@@ -134,9 +135,9 @@ async function onDeleteConfirmModalSubmitted(
         return;
     }
 
-    const scalingChannelService = ServiceLocator.$.get<ScalingChannelService>( "VertixBot/Services/ScalingChannel" );
+    const channelCleanupService = ServiceLocator.$.get<ChannelCleanupService>( "VertixBot/Services/ChannelCleanup" );
 
-    await scalingChannelService.deleteScalingMasterChannelWithCleanup( {
+    await channelCleanupService.deleteScalingMasterChannelWithCleanup( {
         guildId: interaction.guild.id,
         masterChannelId
     } );

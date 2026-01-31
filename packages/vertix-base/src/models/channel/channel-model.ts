@@ -215,7 +215,7 @@ export class ChannelModel extends ModelWithDataBase<
 
         const result = await this.model.delete( { where: deleteArgs } );
 
-        this.debugger.dumpDown( this.create, {
+        this.debugger.dumpDown( this.delete, {
             deleteArgs,
             result
         } );

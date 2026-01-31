@@ -1,22 +1,50 @@
-import { useState } from "react";
+import { withCommands } from "@zenflux/react-commander/with-commands";
+import { useCommandState, useComponent, useCommand } from "@zenflux/react-commander/hooks";
 
 import { Loader2, Plus, X } from "lucide-react";
 
-import type { CreateScalingSetupInput } from "@vertix.gg/dashboard/src/features/management/types";
+import {
+    CREATE_SCALING_FORM_INITIAL_STATE,
+    CREATE_SCALING_FORM_COMMANDS
+} from "@vertix.gg/dashboard/src/features/management/commands/create-scaling-form/create-scaling-form-commands";
 
-interface CreateScalingFormProps {
+import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
+import type { CreateScalingFormState } from "@vertix.gg/dashboard/src/features/management/commands/create-scaling-form/create-scaling-form-commands";
+
+export interface CreateScalingFormProps {
     isCreating: boolean;
-    onSubmit: ( input: CreateScalingSetupInput ) => void;
-    onCancel: () => void;
 }
 
-export function CreateScalingForm( { isCreating, onSubmit, onCancel }: CreateScalingFormProps ) {
-    const [ prefix, setPrefix ] = useState( "### Room - {index} ###" );
-    const [ maxMembers, setMaxMembers ] = useState( 10 );
+const CreateScalingFormComponent: DCommandFunctionComponent<CreateScalingFormProps, CreateScalingFormState> = ( {
+    isCreating
+} ) => {
+    const [ state ] = useCommandState<CreateScalingFormState, Pick<CreateScalingFormState, "prefix" | "maxMembers">>(
+        "Dashboard/Management/CreateScalingForm",
+        ( state ) => ( {
+            prefix: state.prefix,
+            maxMembers: state.maxMembers
+        } )
+    );
+
+    const formCommands = useComponent( "Dashboard/Management/CreateScalingForm" );
+    const createScalingSetup = useCommand( "Dashboard/Management/CreateScalingSetup" );
+    const hideCreateModal = useCommand( "Dashboard/Management/HideCreateModal" );
 
     const handleSubmit = ( e: React.FormEvent ) => {
         e.preventDefault();
-        onSubmit( { prefix, maxMembers } );
+        createScalingSetup.run( { input: { prefix: state.prefix, maxMembers: state.maxMembers } } );
+    };
+
+    const handleCancel = () => {
+        hideCreateModal.run( {} );
+    };
+
+    const handleUpdatePrefix = ( value: string ) => {
+        formCommands.run( "Dashboard/Management/CreateScalingForm/UpdatePrefix", { value } );
+    };
+
+    const handleUpdateMaxMembers = ( value: number ) => {
+        formCommands.run( "Dashboard/Management/CreateScalingForm/UpdateMaxMembers", { value } );
     };
 
     return (
@@ -25,7 +53,7 @@ export function CreateScalingForm( { isCreating, onSubmit, onCancel }: CreateSca
                 <div className="flex items-center justify-between p-4 border-b border-zinc-700">
                     <h2 className="text-lg font-semibold text-white">Create Auto-Scaling Setup</h2>
                     <button
-                        onClick={ onCancel }
+                        onClick={ handleCancel }
                         disabled={ isCreating }
                         className="p-1 text-zinc-400 hover:text-white rounded disabled:opacity-50"
                     >
@@ -40,14 +68,14 @@ export function CreateScalingForm( { isCreating, onSubmit, onCancel }: CreateSca
                         </label>
                         <input
                             type="text"
-                            value={ prefix }
-                            onChange={ ( e ) => setPrefix( e.target.value ) }
+                            value={ state.prefix }
+                            onChange={ ( e ) => handleUpdatePrefix( e.target.value ) }
                             disabled={ isCreating }
                             placeholder="### Room - {index} ###"
                             className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded text-white placeholder-zinc-400 focus:outline-none focus:border-blue-500 disabled:opacity-50"
                         />
                         <p className="mt-1 text-xs text-zinc-500">
-                            Use {"{index}"} as placeholder for channel number
+                            Use { "{index}" } as placeholder for channel number
                         </p>
                     </div>
 
@@ -57,8 +85,8 @@ export function CreateScalingForm( { isCreating, onSubmit, onCancel }: CreateSca
                         </label>
                         <input
                             type="number"
-                            value={ maxMembers }
-                            onChange={ ( e ) => setMaxMembers( parseInt( e.target.value ) || 0 ) }
+                            value={ state.maxMembers }
+                            onChange={ ( e ) => handleUpdateMaxMembers( parseInt( e.target.value ) || 0 ) }
                             disabled={ isCreating }
                             min={ 0 }
                             max={ 99 }
@@ -72,7 +100,7 @@ export function CreateScalingForm( { isCreating, onSubmit, onCancel }: CreateSca
                     <div className="flex gap-3 pt-2">
                         <button
                             type="button"
-                            onClick={ onCancel }
+                            onClick={ handleCancel }
                             disabled={ isCreating }
                             className="flex-1 px-4 py-2 bg-zinc-700 text-white rounded hover:bg-zinc-600 disabled:opacity-50 transition-colors"
                         >
@@ -100,4 +128,14 @@ export function CreateScalingForm( { isCreating, onSubmit, onCancel }: CreateSca
             </div>
         </div>
     );
-}
+};
+
+const CreateScalingForm = withCommands(
+    "Dashboard/Management/CreateScalingForm",
+    CreateScalingFormComponent,
+    CREATE_SCALING_FORM_INITIAL_STATE,
+    [ ...CREATE_SCALING_FORM_COMMANDS ]
+);
+
+export { CreateScalingForm };
+export default CreateScalingForm;

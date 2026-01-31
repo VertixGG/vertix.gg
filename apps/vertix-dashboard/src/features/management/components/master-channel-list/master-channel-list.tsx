@@ -1,14 +1,24 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
+
+import { withCommands } from "@zenflux/react-commander/with-commands";
+import { useCommandState, useComponent } from "@zenflux/react-commander/hooks";
 
 import { Search, X, Layers, Radio } from "lucide-react";
 
+import {
+    MASTER_CHANNEL_LIST_INITIAL_STATE,
+    MASTER_CHANNEL_LIST_COMMANDS
+} from "@vertix.gg/dashboard/src/features/management/commands/master-channel-list/master-channel-list-commands";
+
+import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
+import type { MasterChannelListState } from "@vertix.gg/dashboard/src/features/management/commands/master-channel-list/master-channel-list-commands";
 import type {
     ScalingMasterChannelInfo,
     DynamicMasterChannelInfo,
     MasterChannelType
 } from "@vertix.gg/dashboard/src/features/management/types";
 
-interface MasterChannelListProps {
+export interface MasterChannelListProps {
     scalingMasters: ScalingMasterChannelInfo[];
     dynamicMasters: DynamicMasterChannelInfo[];
     selectedId: string | null;
@@ -24,11 +34,24 @@ interface ChannelGroup {
         id: string;
         channelId: string;
         childCount: number;
+        version?: string;
     }>;
 }
 
-export function MasterChannelList( { scalingMasters, dynamicMasters, selectedId, onSelect }: MasterChannelListProps ) {
-    const [ searchTerm, setSearchTerm ] = useState( "" );
+const MasterChannelListComponent: DCommandFunctionComponent<MasterChannelListProps, MasterChannelListState> = ( {
+    scalingMasters,
+    dynamicMasters,
+    selectedId,
+    onSelect
+} ) => {
+    const [ state ] = useCommandState<MasterChannelListState, Pick<MasterChannelListState, "searchTerm">>(
+        "Dashboard/Management/MasterChannelList",
+        ( state ) => ( {
+            searchTerm: state.searchTerm
+        } )
+    );
+
+    const listCommands = useComponent( "Dashboard/Management/MasterChannelList" );
 
     const channelGroups = useMemo<ChannelGroup[]>( () => {
         return [
@@ -51,18 +74,19 @@ export function MasterChannelList( { scalingMasters, dynamicMasters, selectedId,
                 items: dynamicMasters.map( ( m ) => ( {
                     id: m.id,
                     channelId: m.channelId,
-                    childCount: m.dynamicChannelsCount
+                    childCount: m.dynamicChannelsCount,
+                    version: m.version
                 } ) )
             }
         ].filter( ( group ) => group.items.length > 0 );
     }, [ scalingMasters, dynamicMasters ] );
 
     const filteredGroups = useMemo( () => {
-        if ( !searchTerm.trim() ) {
+        if ( !state.searchTerm.trim() ) {
             return channelGroups;
         }
 
-        const lowerSearch = searchTerm.toLowerCase();
+        const lowerSearch = state.searchTerm.toLowerCase();
 
         return channelGroups
             .map( ( group ) => ( {
@@ -73,9 +97,17 @@ export function MasterChannelList( { scalingMasters, dynamicMasters, selectedId,
                 )
             } ) )
             .filter( ( group ) => group.items.length > 0 );
-    }, [ channelGroups, searchTerm ] );
+    }, [ channelGroups, state.searchTerm ] );
 
     const totalChannels = scalingMasters.length + dynamicMasters.length;
+
+    const handleSearchChange = ( value: string ) => {
+        listCommands.run( "Dashboard/Management/MasterChannelList/SetSearchTerm", { value } );
+    };
+
+    const handleClearSearch = () => {
+        listCommands.run( "Dashboard/Management/MasterChannelList/ClearSearchTerm", {} );
+    };
 
     if ( totalChannels === 0 ) {
         return (
@@ -95,13 +127,13 @@ export function MasterChannelList( { scalingMasters, dynamicMasters, selectedId,
                     <input
                         type="text"
                         placeholder="Search channels..."
-                        value={ searchTerm }
-                        onChange={ ( e ) => setSearchTerm( e.target.value ) }
+                        value={ state.searchTerm }
+                        onChange={ ( e ) => handleSearchChange( e.target.value ) }
                         className="w-full pl-8 pr-8 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
                     />
-                    { searchTerm && (
+                    { state.searchTerm && (
                         <button
-                            onClick={ () => setSearchTerm( "" ) }
+                            onClick={ handleClearSearch }
                             className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
                         >
                             <X className="w-4 h-4" />
@@ -111,7 +143,7 @@ export function MasterChannelList( { scalingMasters, dynamicMasters, selectedId,
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">
-                { filteredGroups.length === 0 && searchTerm && (
+                { filteredGroups.length === 0 && state.searchTerm && (
                     <div className="text-zinc-500 text-sm text-center py-4">
                         No matching channels
                     </div>
@@ -139,9 +171,20 @@ export function MasterChannelList( { scalingMasters, dynamicMasters, selectedId,
                                     onClick={ () => onSelect( item.id, group.type ) }
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span className="truncate" title={ item.channelId }>
-                                            { item.channelId }
-                                        </span>
+                                        <div className="flex items-center gap-1.5 min-w-0">
+                                            <span className="truncate" title={ item.channelId }>
+                                                { item.channelId }
+                                            </span>
+                                            { item.version && (
+                                                <span className={ `text-[10px] px-1 py-0.5 rounded flex-shrink-0 ${
+                                                    item.version === "0.0.0.3"
+                                                        ? "bg-blue-500/20 text-blue-400"
+                                                        : "bg-zinc-600/50 text-zinc-400"
+                                                }` }>
+                                                    { item.version === "0.0.0.3" ? "V3" : "V2" }
+                                                </span>
+                                            ) }
+                                        </div>
                                         <span className="text-xs text-zinc-500 ml-2 flex-shrink-0">
                                             { item.childCount } { group.type === "scaling" ? "scaling" : "dynamic" }
                                         </span>
@@ -154,4 +197,14 @@ export function MasterChannelList( { scalingMasters, dynamicMasters, selectedId,
             </div>
         </div>
     );
-}
+};
+
+const MasterChannelList = withCommands(
+    "Dashboard/Management/MasterChannelList",
+    MasterChannelListComponent,
+    MASTER_CHANNEL_LIST_INITIAL_STATE,
+    [ ...MASTER_CHANNEL_LIST_COMMANDS ]
+);
+
+export { MasterChannelList };
+export default MasterChannelList;

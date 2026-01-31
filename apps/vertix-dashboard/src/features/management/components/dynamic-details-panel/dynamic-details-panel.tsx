@@ -1,33 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-import { Layers, RefreshCw, Trash2, Settings, Hash, AlertTriangle } from "lucide-react";
+import { withCommands } from "@zenflux/react-commander/with-commands";
+import { useCommandState, useComponent, useCommand } from "@zenflux/react-commander/hooks";
 
-import { ScalingChannelCard } from "./scaling-channel-card";
-import { ScalingConfigForm } from "./scaling-config-form";
+import { Radio, RefreshCw, Trash2, Settings, Hash, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 
-import type { ScalingMasterDetails } from "@vertix.gg/dashboard/src/features/management/types";
-import type { ConfigFormState } from "@vertix.gg/dashboard/src/features/management/commands/management-commands";
+import { DynamicChannelCard } from "./dynamic-channel-card";
+import DynamicConfigForm from "./dynamic-config-form";
 
-interface ScalingDetailsPanelProps {
-    details: ScalingMasterDetails;
+import {
+    DYNAMIC_DETAILS_PANEL_INITIAL_STATE,
+    DYNAMIC_DETAILS_PANEL_COMMANDS
+} from "@vertix.gg/dashboard/src/features/management/commands/dynamic-details-panel/dynamic-details-panel-commands";
+
+import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
+import type { DynamicDetailsPanelState } from "@vertix.gg/dashboard/src/features/management/commands/dynamic-details-panel/dynamic-details-panel-commands";
+import type { DynamicMasterDetails } from "@vertix.gg/dashboard/src/features/management/types";
+
+export interface DynamicDetailsPanelProps {
+    details: DynamicMasterDetails;
     isSaving: boolean;
     isRefreshing: boolean;
-    isEditing: boolean;
-    showDeleteConfirm: boolean;
-    configForm: ConfigFormState;
     lastRefreshTime: Date | null;
-    onSaveSettings: () => void;
-    onRefresh: () => void;
-    onReindex: () => void;
-    onCleanup: () => void;
-    onDelete: () => void;
-    onStartEditing: () => void;
-    onStopEditing: () => void;
-    onShowDeleteConfirm: () => void;
-    onHideDeleteConfirm: () => void;
-    onUpdatePrefix: ( value: string ) => void;
-    onUpdateMaxMembers: ( value: number ) => void;
-    onUpdateMinAvailable: ( value: number ) => void;
 }
 
 function formatLastRefresh( date: Date | null ): string {
@@ -56,42 +50,58 @@ function formatLastRefresh( date: Date | null ): string {
     return date.toLocaleTimeString();
 }
 
-export function ScalingDetailsPanel( {
+const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPanelProps, DynamicDetailsPanelState> = ( {
     details,
     isSaving,
     isRefreshing,
-    isEditing,
-    showDeleteConfirm,
-    configForm,
-    lastRefreshTime,
-    onSaveSettings,
-    onRefresh,
-    onReindex,
-    onCleanup,
-    onDelete,
-    onStartEditing,
-    onStopEditing,
-    onShowDeleteConfirm,
-    onHideDeleteConfirm,
-    onUpdatePrefix,
-    onUpdateMaxMembers,
-    onUpdateMinAvailable
-}: ScalingDetailsPanelProps ) {
-    const [ , setTick ] = useState( 0 );
+    lastRefreshTime
+} ) => {
+    const [ state ] = useCommandState<DynamicDetailsPanelState, Pick<DynamicDetailsPanelState, "isEditing" | "showDeleteConfirm" | "tick">>(
+        "Dashboard/Management/DynamicDetailsPanel",
+        ( state ) => ( {
+            isEditing: state.isEditing,
+            showDeleteConfirm: state.showDeleteConfirm,
+            tick: state.tick
+        } )
+    );
 
-    const { master, scalingChannels } = details;
+    const panelCommands = useComponent( "Dashboard/Management/DynamicDetailsPanel" );
+
+    // Page-level commands via useCommand
+    const refreshSelected = useCommand( "Dashboard/Management/RefreshSelected" );
+    const deleteDynamicSetup = useCommand( "Dashboard/Management/DeleteDynamicSetup" );
+
+    const { master, dynamicChannels } = details;
 
     // Update the "X ago" display every 10 seconds
     useEffect( () => {
         const intervalId = setInterval( () => {
-            setTick( ( t ) => t + 1 );
+            panelCommands.run( "Dashboard/Management/DynamicDetailsPanel/Tick", {} );
         }, 10000 );
 
         return () => clearInterval( intervalId );
     }, [] );
 
+    const handleRefresh = () => {
+        refreshSelected.run( {} );
+    };
+
     const handleDelete = () => {
-        onDelete();
+        deleteDynamicSetup.run( { masterChannelId: master.id } );
+    };
+
+    const handleStartEditing = () => {
+        panelCommands.run( "Dashboard/Management/DynamicDetailsPanel/StartEditing", {
+            settings: master.settings
+        } );
+    };
+
+    const handleShowDeleteConfirm = () => {
+        panelCommands.run( "Dashboard/Management/DynamicDetailsPanel/ShowDeleteConfirm", {} );
+    };
+
+    const handleHideDeleteConfirm = () => {
+        panelCommands.run( "Dashboard/Management/DynamicDetailsPanel/HideDeleteConfirm", {} );
     };
 
     return (
@@ -99,12 +109,12 @@ export function ScalingDetailsPanel( {
             <div className="p-4 border-b border-zinc-700">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                            <Layers className="w-5 h-5 text-emerald-500" />
+                        <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                            <Radio className="w-5 h-5 text-blue-500" />
                         </div>
                         <div>
                             <h2 className="text-lg font-semibold text-white">
-                                { details.discord?.masterChannel?.name || "Auto-Scaling Master" }
+                                { details.discord?.masterChannel?.name || "Dynamic Master" }
                             </h2>
                             <p className="text-sm text-zinc-400">
                                 { details.discord?.category?.name ? (
@@ -120,7 +130,7 @@ export function ScalingDetailsPanel( {
                             { isRefreshing ? "Refreshing..." : formatLastRefresh( lastRefreshTime ) }
                         </span>
                         <button
-                            onClick={ onRefresh }
+                            onClick={ handleRefresh }
                             disabled={ isRefreshing || isSaving }
                             className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-700 rounded-lg transition-colors disabled:opacity-50"
                             title="Refresh"
@@ -132,20 +142,34 @@ export function ScalingDetailsPanel( {
 
                 <div className="grid grid-cols-3 gap-4 mt-4">
                     <div className="bg-zinc-800 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-white">{ scalingChannels.length }</div>
-                        <div className="text-xs text-zinc-400">Scaling Channels</div>
+                        <div className="text-2xl font-bold text-white">{ dynamicChannels.length }</div>
+                        <div className="text-xs text-zinc-400">Active Channels</div>
                     </div>
                     <div className="bg-zinc-800 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-white">
-                            { master.settings?.scalingChannelMaxMembersPerChannel || "Unlimited" }
+                        <div className="flex items-center gap-2">
+                            { master.settings?.dynamicChannelAutoSave ? (
+                                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                            ) : (
+                                <XCircle className="w-5 h-5 text-zinc-500" />
+                            ) }
+                            <span className="text-sm font-medium text-white">
+                                { master.settings?.dynamicChannelAutoSave ? "On" : "Off" }
+                            </span>
                         </div>
-                        <div className="text-xs text-zinc-400">Max Members/Channel</div>
+                        <div className="text-xs text-zinc-400">Auto-Save</div>
                     </div>
                     <div className="bg-zinc-800 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-white">
-                            { master.settings?.scalingChannelMinAvailableChannels || 1 }
+                        <div className="flex items-center gap-2">
+                            { master.settings?.dynamicChannelMentionable ? (
+                                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                            ) : (
+                                <XCircle className="w-5 h-5 text-zinc-500" />
+                            ) }
+                            <span className="text-sm font-medium text-white">
+                                { master.settings?.dynamicChannelMentionable ? "On" : "Off" }
+                            </span>
                         </div>
-                        <div className="text-xs text-zinc-400">Min Available</div>
+                        <div className="text-xs text-zinc-400">Mentionable</div>
                     </div>
                 </div>
             </div>
@@ -157,45 +181,40 @@ export function ScalingDetailsPanel( {
                             <Settings className="w-4 h-4" />
                             Configuration
                         </h3>
-                        { !isEditing && (
+                        { !state.isEditing && (
                             <button
-                                onClick={ onStartEditing }
-                                className="text-xs text-emerald-500 hover:text-emerald-400"
+                                onClick={ handleStartEditing }
+                                className="text-xs text-blue-500 hover:text-blue-400"
                             >
                                 Edit
                             </button>
                         ) }
                     </div>
 
-                    { isEditing ? (
-                        <ScalingConfigForm
+                    { state.isEditing ? (
+                        <DynamicConfigForm
+                            masterChannelId={ master.id }
                             settings={ master.settings }
-                            formState={ configForm }
                             isSaving={ isSaving }
-                            onUpdatePrefix={ onUpdatePrefix }
-                            onUpdateMaxMembers={ onUpdateMaxMembers }
-                            onUpdateMinAvailable={ onUpdateMinAvailable }
-                            onSave={ onSaveSettings }
-                            onCancel={ onStopEditing }
                         />
                     ) : (
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
-                                <span className="text-zinc-400">Prefix:</span>
+                                <span className="text-zinc-400">Name Template:</span>
                                 <span className="text-white font-mono">
-                                    { master.settings?.scalingChannelPrefix || "Not set" }
+                                    { master.settings?.dynamicChannelNameTemplate || "{username}'s Channel" }
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-zinc-400">Max Members:</span>
+                                <span className="text-zinc-400">Auto-Save:</span>
                                 <span className="text-white">
-                                    { master.settings?.scalingChannelMaxMembersPerChannel || "Unlimited" }
+                                    { master.settings?.dynamicChannelAutoSave ? "Enabled" : "Disabled" }
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-zinc-400">Min Available:</span>
+                                <span className="text-zinc-400">Mentionable:</span>
                                 <span className="text-white">
-                                    { master.settings?.scalingChannelMinAvailableChannels || 1 }
+                                    { master.settings?.dynamicChannelMentionable ? "Enabled" : "Disabled" }
                                 </span>
                             </div>
                         </div>
@@ -205,47 +224,23 @@ export function ScalingDetailsPanel( {
                 <div>
                     <h3 className="text-sm font-medium text-white flex items-center gap-2 mb-3">
                         <Hash className="w-4 h-4" />
-                        Scaling Channels ({ scalingChannels.length })
+                        Active Dynamic Channels ({ dynamicChannels.length })
                     </h3>
 
-                    { scalingChannels.length === 0 ? (
+                    { dynamicChannels.length === 0 ? (
                         <div className="bg-zinc-800/50 rounded-lg p-4 text-center text-zinc-500 text-sm">
-                            No scaling channels created yet
+                            No active dynamic channels. Users can create channels by joining the master channel.
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 gap-3">
-                            { scalingChannels.map( ( channel, index ) => (
-                                <ScalingChannelCard
+                            { dynamicChannels.map( ( channel ) => (
+                                <DynamicChannelCard
                                     key={ channel.id }
                                     channel={ channel }
-                                    index={ index }
-                                    maxMembers={ master.settings?.scalingChannelMaxMembersPerChannel }
                                 />
                             ) ) }
                         </div>
                     ) }
-                </div>
-
-                <div className="bg-zinc-800/50 rounded-lg p-4">
-                    <h3 className="text-sm font-medium text-white mb-3">Actions</h3>
-                    <div className="flex flex-wrap gap-2">
-                        <button
-                            onClick={ onReindex }
-                            disabled={ isSaving }
-                            className="flex items-center gap-2 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 disabled:opacity-50 text-white rounded text-sm transition-colors"
-                        >
-                            <RefreshCw className="w-4 h-4" />
-                            Reindex Channels
-                        </button>
-                        <button
-                            onClick={ onCleanup }
-                            disabled={ isSaving }
-                            className="flex items-center gap-2 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 disabled:opacity-50 text-white rounded text-sm transition-colors"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                            Cleanup Empty
-                        </button>
-                    </div>
                 </div>
 
                 <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
@@ -254,10 +249,10 @@ export function ScalingDetailsPanel( {
                         Danger Zone
                     </h3>
                     <p className="text-xs text-zinc-400 mb-3">
-                        Deleting this setup will remove the master channel and all associated scaling channels from Discord.
+                        Deleting this setup will remove the master channel and all associated dynamic channels from Discord.
                     </p>
 
-                    { showDeleteConfirm ? (
+                    { state.showDeleteConfirm ? (
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={ handleDelete }
@@ -267,7 +262,7 @@ export function ScalingDetailsPanel( {
                                 Yes, Delete Everything
                             </button>
                             <button
-                                onClick={ onHideDeleteConfirm }
+                                onClick={ handleHideDeleteConfirm }
                                 disabled={ isSaving }
                                 className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-white rounded text-sm transition-colors"
                             >
@@ -276,15 +271,25 @@ export function ScalingDetailsPanel( {
                         </div>
                     ) : (
                         <button
-                            onClick={ onShowDeleteConfirm }
+                            onClick={ handleShowDeleteConfirm }
                             className="flex items-center gap-2 px-3 py-1.5 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded text-sm transition-colors"
                         >
                             <Trash2 className="w-4 h-4" />
-                            Delete Scaling Setup
+                            Delete Dynamic Setup
                         </button>
                     ) }
                 </div>
             </div>
         </div>
     );
-}
+};
+
+const DynamicDetailsPanel = withCommands(
+    "Dashboard/Management/DynamicDetailsPanel",
+    DynamicDetailsPanelComponent,
+    DYNAMIC_DETAILS_PANEL_INITIAL_STATE,
+    [ ...DYNAMIC_DETAILS_PANEL_COMMANDS ]
+);
+
+export { DynamicDetailsPanel };
+export default DynamicDetailsPanel;

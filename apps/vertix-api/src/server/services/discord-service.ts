@@ -26,31 +26,27 @@ export interface DiscordChannelInfo {
 }
 
 export class DiscordService extends ServiceBase {
-    private botToken: string | null = null;
+    private botToken!: string;
 
     public static getName(): string {
         return "VertixAPI/Services/Discord";
     }
 
-    protected async initialize(): Promise<void> {
-        this.botToken = process.env.DISCORD_TEST_TOKEN || null;
+    public constructor() {
+        super();
 
-        if ( !this.botToken ) {
-            this.logger.warn( this.initialize, "DISCORD_TEST_TOKEN not set - Discord API features will be unavailable" );
-        } else {
-            this.logger.info( this.initialize, "Discord service initialized with bot token" );
+        const token = process.env.DISCORD_TEST_TOKEN || process.env.DISCORD_TOKEN;
+
+        if ( !token ) {
+            this.logger.error( "constructor", "DISCORD_TEST_TOKEN/DISCORD_TOKEN not set - cannot start API without Discord token" );
+            process.exit( 1 );
         }
-    }
 
-    public isReady(): boolean {
-        return this.botToken !== null;
+        this.botToken = token;
+        this.logger.info( "constructor", "Discord service initialized with bot token" );
     }
 
     public async fetchChannel( channelId: string ): Promise<DiscordAPIChannel | null> {
-        if ( !this.botToken ) {
-            return null;
-        }
-
         try {
             const response = await fetch( `${ DISCORD_API_BASE }/channels/${ channelId }`, {
                 headers: {
@@ -71,10 +67,6 @@ export class DiscordService extends ServiceBase {
     }
 
     public async fetchGuildChannels( guildId: string ): Promise<DiscordAPIChannel[]> {
-        if ( !this.botToken ) {
-            return [];
-        }
-
         try {
             const response = await fetch( `${ DISCORD_API_BASE }/guilds/${ guildId }/channels`, {
                 headers: {
@@ -95,10 +87,6 @@ export class DiscordService extends ServiceBase {
     }
 
     public async fetchGuild( guildId: string ): Promise<DiscordAPIGuild | null> {
-        if ( !this.botToken ) {
-            return null;
-        }
-
         try {
             const response = await fetch( `${ DISCORD_API_BASE }/guilds/${ guildId }?with_counts=true`, {
                 headers: {
@@ -133,13 +121,10 @@ export class DiscordService extends ServiceBase {
             scalingChannels: [] as DiscordChannelInfo[]
         };
 
-        if ( !this.botToken ) {
-            return result;
-        }
-
         try {
             // Fetch all guild channels at once (more efficient than individual requests)
             const allChannels = await this.fetchGuildChannels( guildId );
+
             const channelMap = new Map( allChannels.map( ( ch ) => [ ch.id, ch ] ) );
 
             // Find master channel

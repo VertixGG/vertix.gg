@@ -3,14 +3,22 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import {
-    IPCService,
     IPC_CHANNELS,
-    MANAGEMENT_ACTIONS
+    MANAGEMENT_ACTIONS,
+    MANAGEMENT_REQUEST_ACTIONS
 } from "@vertix.gg/base/src/modules/ipc";
 
-import { DiscordService } from "./discord-service";
+import type { DiscordService } from "./discord-service";
 
-import type { ManagementPayload, DiscordChannelInfo } from "@vertix.gg/base/src/modules/ipc";
+import type {
+    ManagementPayload,
+    DiscordChannelInfo,
+    IPCService,
+    GetScalingChannelInfoRequest,
+    GetScalingChannelInfoResponse,
+    GetDynamicChannelInfoRequest,
+    GetDynamicChannelInfoResponse
+} from "@vertix.gg/base/src/modules/ipc";
 
 function getClient() {
     return PrismaBotClient.$.getClient();
@@ -18,6 +26,9 @@ function getClient() {
 
 const SCALING_SETTINGS_KEY = "VertixBase/Models/ScalingChannelData/settings";
 const SCALING_DATA_VERSION = "0.0.0.1";
+
+const DYNAMIC_SETTINGS_KEY = "VertixBase/Models/MasterChannelData/settings";
+const DYNAMIC_DATA_VERSION = "0.0.0.3";
 
 export interface ScalingMasterChannelInfo {
     id: string;
@@ -39,6 +50,36 @@ export interface DynamicMasterChannelInfo {
     categoryId: string | null;
     createdAt: Date;
     dynamicChannelsCount: number;
+    version: string;
+    settings: {
+        dynamicChannelNameTemplate: string;
+        dynamicChannelAutoSave: boolean;
+        dynamicChannelMentionable: boolean;
+        dynamicChannelVerifiedRoles: string[];
+    } | null;
+}
+
+export interface DynamicChannelInfo {
+    id: string;
+    channelId: string;
+    userOwnerId: string | null;
+    createdAt: Date;
+    discord?: DiscordChannelInfo | null;
+}
+
+export interface DynamicMasterDetails {
+    master: DynamicMasterChannelInfo;
+    dynamicChannels: DynamicChannelInfo[];
+    discord?: {
+        masterChannel: DiscordChannelInfo | null;
+        category: DiscordChannelInfo | null;
+    };
+}
+
+export interface UpdateDynamicSettingsInput {
+    dynamicChannelNameTemplate?: string;
+    dynamicChannelAutoSave?: boolean;
+    dynamicChannelMentionable?: boolean;
 }
 
 export interface ScalingChannelInfo {
@@ -74,6 +115,13 @@ export interface CreateScalingSetupInput {
     maxMembers?: number;
 }
 
+export interface CreateDynamicSetupInput {
+    version?: "v2" | "v3";
+    nameTemplate?: string;
+    autoSave?: boolean;
+    mentionable?: boolean;
+}
+
 export class ManagementService extends ServiceWithDependenciesBase<{
     discordService: DiscordService;
     ipcService: IPCService;
@@ -91,8 +139,6 @@ export class ManagementService extends ServiceWithDependenciesBase<{
 
     protected async initialize(): Promise<void> {
         await super.initialize();
-
-        this.logger.info( this.initialize, "Management service initialized" );
     }
 
     private async publishManagementMessage( payload: ManagementPayload ): Promise<void> {
@@ -131,12 +177,20 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 where: {
                     guildId,
                     internalType: "MASTER_CREATE_CHANNEL"
+                },
+                include: {
+                    data: {
+                        where: {
+                            key: DYNAMIC_SETTINGS_KEY,
+                            version: DYNAMIC_DATA_VERSION
+                        }
+                    }
                 }
             } )
         ] );
 
         const scalingMasterChannels: ScalingMasterChannelInfo[] = await Promise.all(
-            scalingMasters.map( async ( master ) => {
+            scalingMasters.map( async( master ) => {
                 const scalingChannelsCount = await getClient().channel.count( {
                     where: {
                         ownerChannelId: master.id,
@@ -163,20 +217,30 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         );
 
         const dynamicMasterChannels: DynamicMasterChannelInfo[] = await Promise.all(
-            dynamicMasters.map( async ( master ) => {
+            dynamicMasters.map( async( master ) => {
+                // Dynamic channels store the Discord channel ID as ownerChannelId, not the DB record ID
                 const dynamicChannelsCount = await getClient().channel.count( {
                     where: {
-                        ownerChannelId: master.id,
+                        ownerChannelId: master.channelId,
                         internalType: "DYNAMIC_CHANNEL"
                     }
                 } );
+
+                const settingsData = master.data?.[ 0 ]?.object as Record<string, unknown> | null;
 
                 return {
                     id: master.id,
                     channelId: master.channelId,
                     categoryId: master.categoryId,
                     createdAt: master.createdAt,
-                    dynamicChannelsCount
+                    dynamicChannelsCount,
+                    version: master.version || "0.0.0.3",
+                    settings: settingsData ? {
+                        dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{username}'s Channel",
+                        dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
+                        dynamicChannelMentionable: ( settingsData.dynamicChannelMentionable as boolean ) ?? false,
+                        dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || []
+                    } : null
                 };
             } )
         );
@@ -218,13 +282,48 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             }
         } );
 
-        // Fetch Discord channel info directly using the bot token
+        // Fetch Discord channel info via IPC from the bot (which has real-time member counts)
         const scalingChannelIds = scalingChannels.map( ( ch ) => ch.channelId );
-        const discordInfo = await this.services.discordService.fetchScalingChannelInfo(
-            guildId,
-            master.channelId,
-            scalingChannelIds
-        );
+        let discordInfo: GetScalingChannelInfoResponse = {
+            masterChannel: null,
+            category: null,
+            scalingChannels: []
+        };
+
+        if ( this.services.ipcService.isReady() ) {
+            try {
+                const request: GetScalingChannelInfoRequest = {
+                    action: MANAGEMENT_REQUEST_ACTIONS.GET_SCALING_CHANNEL_INFO,
+                    guildId,
+                    masterChannelId: master.channelId,
+                    scalingChannelIds
+                };
+
+                discordInfo = await this.services.ipcService.request<GetScalingChannelInfoRequest, GetScalingChannelInfoResponse>(
+                    IPC_CHANNELS.MANAGEMENT_REQUEST,
+                    IPC_CHANNELS.MANAGEMENT_RESPONSE,
+                    request,
+                    5000 // 5 second timeout
+                );
+            } catch ( error ) {
+                this.logger.warn( this.getScalingMasterDetails, "Failed to fetch channel info via IPC, falling back to REST API", error );
+                // Fallback to REST API (won't have member counts)
+                const restInfo = await this.services.discordService.fetchScalingChannelInfo(
+                    guildId,
+                    master.channelId,
+                    scalingChannelIds
+                );
+                discordInfo = restInfo;
+            }
+        } else {
+            // Fallback to REST API when IPC not available
+            const restInfo = await this.services.discordService.fetchScalingChannelInfo(
+                guildId,
+                master.channelId,
+                scalingChannelIds
+            );
+            discordInfo = restInfo;
+        }
 
         const settingsData = master.data?.[ 0 ]?.object as Record<string, unknown> | null;
 
@@ -260,6 +359,129 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 category: discordInfo.category
             }
         };
+    }
+
+    public async getDynamicMasterDetails( guildId: string, masterChannelId: string ): Promise<DynamicMasterDetails | null> {
+        const master = await getClient().channel.findFirst( {
+            where: {
+                id: masterChannelId,
+                guildId,
+                internalType: "MASTER_CREATE_CHANNEL"
+            },
+            include: {
+                data: {
+                    where: {
+                        key: DYNAMIC_SETTINGS_KEY,
+                        version: DYNAMIC_DATA_VERSION
+                    }
+                }
+            }
+        } );
+
+        if ( !master ) {
+            return null;
+        }
+
+        // Dynamic channels store the Discord channel ID as ownerChannelId, not the DB record ID
+        const dynamicChannels = await getClient().channel.findMany( {
+            where: {
+                ownerChannelId: master.channelId,
+                internalType: "DYNAMIC_CHANNEL"
+            },
+            orderBy: {
+                createdAt: "asc"
+            }
+        } );
+
+        // Fetch Discord channel info via IPC from the bot (which has real-time member counts)
+        const dynamicChannelIds = dynamicChannels.map( ( ch ) => ch.channelId );
+        let discordInfo: GetDynamicChannelInfoResponse = {
+            masterChannel: null,
+            category: null,
+            dynamicChannels: []
+        };
+
+        if ( this.services.ipcService.isReady() ) {
+            try {
+                const request: GetDynamicChannelInfoRequest = {
+                    action: MANAGEMENT_REQUEST_ACTIONS.GET_DYNAMIC_CHANNEL_INFO,
+                    guildId,
+                    masterChannelId: master.channelId,
+                    dynamicChannelIds
+                };
+
+                discordInfo = await this.services.ipcService.request<GetDynamicChannelInfoRequest, GetDynamicChannelInfoResponse>(
+                    IPC_CHANNELS.MANAGEMENT_REQUEST,
+                    IPC_CHANNELS.MANAGEMENT_RESPONSE,
+                    request,
+                    5000
+                );
+            } catch ( error ) {
+                this.logger.warn( this.getDynamicMasterDetails, "Failed to fetch channel info via IPC, falling back to REST API", error );
+                // Fallback to REST API (won't have member counts)
+                const restInfo = await this.services.discordService.fetchScalingChannelInfo(
+                    guildId,
+                    master.channelId,
+                    dynamicChannelIds
+                );
+                // Convert REST response format to dynamic response format
+                discordInfo = {
+                    masterChannel: restInfo.masterChannel,
+                    category: restInfo.category,
+                    dynamicChannels: restInfo.scalingChannels
+                };
+            }
+        } else {
+            const restInfo = await this.services.discordService.fetchScalingChannelInfo(
+                guildId,
+                master.channelId,
+                dynamicChannelIds
+            );
+            discordInfo = {
+                masterChannel: restInfo.masterChannel,
+                category: restInfo.category,
+                dynamicChannels: restInfo.scalingChannels
+            };
+        }
+
+        const settingsData = master.data?.[ 0 ]?.object as Record<string, unknown> | null;
+
+        // Create a map of Discord channel info by channel ID
+        const discordChannelMap = new Map<string, DiscordChannelInfo>();
+
+        for ( const channel of discordInfo.dynamicChannels ) {
+            discordChannelMap.set( channel.id, channel );
+        }
+
+        const result = {
+            master: {
+                id: master.id,
+                channelId: master.channelId,
+                categoryId: master.categoryId,
+                createdAt: master.createdAt,
+                dynamicChannelsCount: dynamicChannels.length,
+                version: master.version || "0.0.0.3",
+                settings: settingsData ? {
+                    dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{username}'s Channel",
+                    dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
+                    dynamicChannelMentionable: ( settingsData.dynamicChannelMentionable as boolean ) ?? false,
+                    dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || []
+                } : null
+            },
+            dynamicChannels: dynamicChannels.map( ( channel ) => ( {
+                id: channel.id,
+                channelId: channel.channelId,
+                userOwnerId: channel.userOwnerId,
+                createdAt: channel.createdAt,
+                discord: discordChannelMap.get( channel.channelId ) || null
+            } ) ),
+            discord: {
+                masterChannel: discordInfo.masterChannel,
+                category: discordInfo.category
+            }
+        };
+
+        return result;
     }
 
     public async updateScalingSettings(
@@ -404,6 +626,100 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         return true;
     }
 
+    public async updateDynamicSettings(
+        guildId: string,
+        masterChannelId: string,
+        settings: UpdateDynamicSettingsInput
+    ): Promise<boolean> {
+        const master = await getClient().channel.findFirst( {
+            where: {
+                id: masterChannelId,
+                guildId,
+                internalType: "MASTER_CREATE_CHANNEL"
+            }
+        } );
+
+        if ( !master ) {
+            return false;
+        }
+
+        // Update the database directly so the UI sees changes immediately
+        const existingData = await getClient().channelData.findUnique( {
+            where: {
+                ownerId_key_version: {
+                    ownerId: masterChannelId,
+                    key: DYNAMIC_SETTINGS_KEY,
+                    version: DYNAMIC_DATA_VERSION
+                }
+            }
+        } );
+
+        const currentSettings = ( existingData?.object as Record<string, unknown> ) || {};
+        const updatedSettings = {
+            ...currentSettings,
+            ...settings
+        };
+
+        await getClient().channelData.upsert( {
+            where: {
+                ownerId_key_version: {
+                    ownerId: masterChannelId,
+                    key: DYNAMIC_SETTINGS_KEY,
+                    version: DYNAMIC_DATA_VERSION
+                }
+            },
+            update: {
+                object: updatedSettings
+            },
+            create: {
+                ownerId: masterChannelId,
+                key: DYNAMIC_SETTINGS_KEY,
+                version: DYNAMIC_DATA_VERSION,
+                object: updatedSettings
+            }
+        } );
+
+        // Send IPC message to bot so it can apply any necessary changes
+        try {
+            await this.publishManagementMessage( {
+                action: MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS,
+                data: {
+                    guildId,
+                    masterChannelId,
+                    settings
+                }
+            } );
+        } catch {
+            // IPC failure shouldn't fail the whole operation - settings are saved
+        }
+
+        return true;
+    }
+
+    public async deleteDynamicSetup( guildId: string, masterChannelId: string ): Promise<boolean> {
+        const master = await getClient().channel.findFirst( {
+            where: {
+                id: masterChannelId,
+                guildId,
+                internalType: "MASTER_CREATE_CHANNEL"
+            }
+        } );
+
+        if ( !master ) {
+            return false;
+        }
+
+        await this.publishManagementMessage( {
+            action: MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP,
+            data: {
+                guildId,
+                masterChannelId
+            }
+        } );
+
+        return true;
+    }
+
     public async createScalingSetup(
         guildId: string,
         userOwnerId: string,
@@ -431,13 +747,33 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         return true;
     }
 
-    public async checkGuildAccess( guildId: string ): Promise<boolean> {
+    public async createDynamicSetup(
+        guildId: string,
+        userOwnerId: string,
+        input: CreateDynamicSetupInput
+    ): Promise<boolean> {
         const guild = await getClient().guild.findUnique( {
             where: { guildId },
             select: { id: true }
         } );
 
-        return guild !== null;
+        if ( !guild ) {
+            return false;
+        }
+
+        await this.publishManagementMessage( {
+            action: MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP,
+            data: {
+                guildId,
+                userOwnerId,
+                version: input.version,
+                nameTemplate: input.nameTemplate,
+                autoSave: input.autoSave,
+                mentionable: input.mentionable
+            }
+        } );
+
+        return true;
     }
 }
 

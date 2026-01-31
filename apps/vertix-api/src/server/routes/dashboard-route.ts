@@ -1,12 +1,30 @@
 import {
     getGlobalStats,
     getGuildStats,
-    getGuildDetails,
-    checkGuildAccess
+    getGuildDetails
 } from "@vertix.gg/api/src/server/services/dashboard-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
+
+interface GuildParams {
+    guildId: string;
+}
+
+/**
+ * Middleware to verify user has access to the requested guild.
+ */
+async function requireGuildAccess(
+    request: FastifyRequest<{ Params: GuildParams }>,
+    reply: FastifyReply
+) {
+    const { guildId } = request.params;
+    const selectedGuild = request.session.selectedGuild;
+
+    if ( !selectedGuild || selectedGuild.id !== guildId ) {
+        return reply.status( 403 ).send( { error: "Access denied" } );
+    }
+}
 
 async function handleGetGlobalStats( _request: FastifyRequest, reply: FastifyReply ) {
     try {
@@ -18,18 +36,11 @@ async function handleGetGlobalStats( _request: FastifyRequest, reply: FastifyRep
 }
 
 async function handleGetGuildStats(
-    request: FastifyRequest<{ Params: { guildId: string } }>,
+    request: FastifyRequest<{ Params: GuildParams }>,
     reply: FastifyReply
 ) {
     try {
         const { guildId } = request.params;
-
-        const hasAccess = await checkGuildAccess( guildId );
-
-        if ( !hasAccess ) {
-            return reply.status( 404 ).send( { error: "Guild not found" } );
-        }
-
         const stats = await getGuildStats( guildId );
 
         if ( !stats ) {
@@ -43,18 +54,11 @@ async function handleGetGuildStats(
 }
 
 async function handleGetGuildDetails(
-    request: FastifyRequest<{ Params: { guildId: string } }>,
+    request: FastifyRequest<{ Params: GuildParams }>,
     reply: FastifyReply
 ) {
     try {
         const { guildId } = request.params;
-
-        const hasAccess = await checkGuildAccess( guildId );
-
-        if ( !hasAccess ) {
-            return reply.status( 404 ).send( { error: "Guild not found" } );
-        }
-
         const details = await getGuildDetails( guildId );
 
         if ( !details ) {
@@ -68,17 +72,23 @@ async function handleGetGuildDetails(
 }
 
 const dashboardRoutePlugin: FastifyPluginAsync = async ( fastify: FastifyInstance ): Promise<void> => {
+    // Global stats doesn't need guild access check
     fastify.get( "/dashboard/stats/global", handleGetGlobalStats );
 
-    fastify.get<{ Params: { guildId: string } }>(
-        "/dashboard/stats/guild/:guildId",
-        handleGetGuildStats
-    );
+    // Guild-specific routes need access check
+    fastify.register( async ( guildRoutes ) => {
+        guildRoutes.addHook( "preHandler", requireGuildAccess );
 
-    fastify.get<{ Params: { guildId: string } }>(
-        "/dashboard/guild/:guildId",
-        handleGetGuildDetails
-    );
+        guildRoutes.get<{ Params: GuildParams }>(
+            "/dashboard/stats/guild/:guildId",
+            handleGetGuildStats
+        );
+
+        guildRoutes.get<{ Params: GuildParams }>(
+            "/dashboard/guild/:guildId",
+            handleGetGuildDetails
+        );
+    } );
 };
 
 export default dashboardRoutePlugin;

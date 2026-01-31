@@ -1,39 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 import { withCommands } from "@zenflux/react-commander/with-commands";
 
-import { Layers, Radio, Loader2, Plus, RefreshCw } from "lucide-react";
+import { Layers, Radio, Loader2, Plus, RefreshCw, ChevronDown } from "lucide-react";
 
 import {
-    LoadGuildManagementCommand,
-    CreateScalingSetupCommand,
-    SelectMasterChannelCommand,
-    UpdateScalingSettingsCommand,
-    TriggerReindexCommand,
-    TriggerCleanupCommand,
-    DeleteScalingSetupCommand,
-    ClearErrorCommand,
-    ShowCreateModalCommand,
-    HideCreateModalCommand,
-    StartEditingConfigCommand,
-    StopEditingConfigCommand,
-    ShowDeleteConfirmCommand,
-    HideDeleteConfirmCommand,
-    UpdateConfigPrefixCommand,
-    UpdateConfigMaxMembersCommand,
-    UpdateConfigMinAvailableCommand,
-    ResetConfigFormCommand,
+    MANAGEMENT_COMMANDS,
     MANAGEMENT_INITIAL_STATE
-} from "@vertix.gg/dashboard/src/features/management/commands/management-commands";
-import { MasterChannelList } from "@vertix.gg/dashboard/src/features/management/components/master-channel-list";
-import { ScalingDetailsPanel } from "@vertix.gg/dashboard/src/features/management/components/scaling-details-panel";
-import { CreateScalingForm } from "@vertix.gg/dashboard/src/features/management/components/create-scaling-form";
+} from "@vertix.gg/dashboard/src/features/management/commands";
+
+import MasterChannelList from "@vertix.gg/dashboard/src/features/management/components/master-channel-list/master-channel-list";
+import ScalingDetailsPanel from "@vertix.gg/dashboard/src/features/management/components/scaling-details-panel/scaling-details-panel";
+import DynamicDetailsPanel from "@vertix.gg/dashboard/src/features/management/components/dynamic-details-panel/dynamic-details-panel";
+import CreateScalingForm from "@vertix.gg/dashboard/src/features/management/components/create-scaling-form/create-scaling-form";
+import CreateDynamicForm from "@vertix.gg/dashboard/src/features/management/components/create-dynamic-form/create-dynamic-form";
+
+import type { ManagementState, CreateModalType } from "@vertix.gg/dashboard/src/features/management/commands";
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
-import type { ManagementState } from "@vertix.gg/dashboard/src/features/management/commands/management-commands";
-import type { MasterChannelType, CreateScalingSetupInput } from "@vertix.gg/dashboard/src/features/management/types";
+import type { MasterChannelType } from "@vertix.gg/dashboard/src/features/management/types";
 
 interface AuthSelectedState {
     selectedGuild: AuthState[ "selectedGuild" ];
@@ -43,16 +30,13 @@ interface ManagementSelectedState {
     managementDetails: ManagementState[ "managementDetails" ];
     selectedMasterChannelId: ManagementState[ "selectedMasterChannelId" ];
     selectedMasterChannelType: ManagementState[ "selectedMasterChannelType" ];
-    scalingMasterDetails: ManagementState[ "scalingMasterDetails" ];
     isSaving: ManagementState[ "isSaving" ];
     isCreating: ManagementState[ "isCreating" ];
     isLoading: ManagementState[ "isLoading" ];
     error: ManagementState[ "error" ];
     lastRefreshTimestamp: ManagementState[ "lastRefreshTimestamp" ];
     showCreateModal: ManagementState[ "showCreateModal" ];
-    isEditingConfig: ManagementState[ "isEditingConfig" ];
-    showDeleteConfirm: ManagementState[ "showDeleteConfirm" ];
-    configForm: ManagementState[ "configForm" ];
+    createModalType: ManagementState[ "createModalType" ];
 }
 
 interface ManagementContentProps {
@@ -66,112 +50,59 @@ const ManagementContentComponent: DCommandFunctionComponent<ManagementContentPro
             managementDetails: state.managementDetails,
             selectedMasterChannelId: state.selectedMasterChannelId,
             selectedMasterChannelType: state.selectedMasterChannelType,
-            scalingMasterDetails: state.scalingMasterDetails,
             isSaving: state.isSaving,
             isCreating: state.isCreating,
             isLoading: state.isLoading,
             error: state.error,
             lastRefreshTimestamp: state.lastRefreshTimestamp,
             showCreateModal: state.showCreateModal,
-            isEditingConfig: state.isEditingConfig,
-            showDeleteConfirm: state.showDeleteConfirm,
-            configForm: state.configForm
+            createModalType: state.createModalType
         } )
     );
 
+    // Derive selected master from managementDetails - single source of truth
+    const selectedScalingMaster = state.selectedMasterChannelType === "scaling" && state.managementDetails
+        ? state.managementDetails.scalingMasterChannels.find( ( m ) => m.id === state.selectedMasterChannelId )
+        : null;
+
+    const selectedDynamicMaster = state.selectedMasterChannelType === "dynamic" && state.managementDetails
+        ? state.managementDetails.dynamicMasterChannels.find( ( m ) => m.id === state.selectedMasterChannelId )
+        : null;
+
+    const [ showCreateDropdown, setShowCreateDropdown ] = useState( false );
+
     const loadGuildManagement = useCommand( "Dashboard/Management/LoadGuildManagement" );
-    const createScalingSetup = useCommand( "Dashboard/Management/CreateScalingSetup" );
     const selectMasterChannel = useCommand( "Dashboard/Management/SelectMasterChannel" );
-    const updateScalingSettings = useCommand( "Dashboard/Management/UpdateScalingSettings" );
-    const triggerReindex = useCommand( "Dashboard/Management/TriggerReindex" );
-    const triggerCleanup = useCommand( "Dashboard/Management/TriggerCleanup" );
-    const deleteScalingSetup = useCommand( "Dashboard/Management/DeleteScalingSetup" );
     const clearError = useCommand( "Dashboard/Management/ClearError" );
     const showCreateModalCmd = useCommand( "Dashboard/Management/ShowCreateModal" );
-    const hideCreateModalCmd = useCommand( "Dashboard/Management/HideCreateModal" );
-    const startEditingConfig = useCommand( "Dashboard/Management/StartEditingConfig" );
-    const stopEditingConfig = useCommand( "Dashboard/Management/StopEditingConfig" );
-    const showDeleteConfirmCmd = useCommand( "Dashboard/Management/ShowDeleteConfirm" );
-    const hideDeleteConfirmCmd = useCommand( "Dashboard/Management/HideDeleteConfirm" );
-    const updateConfigPrefix = useCommand( "Dashboard/Management/UpdateConfigPrefix" );
-    const updateConfigMaxMembers = useCommand( "Dashboard/Management/UpdateConfigMaxMembers" );
-    const updateConfigMinAvailable = useCommand( "Dashboard/Management/UpdateConfigMinAvailable" );
-    const resetConfigForm = useCommand( "Dashboard/Management/ResetConfigForm" );
 
     useEffect( () => {
         loadGuildManagement.run( { guildId } );
     }, [ guildId ] );
 
-    // Poll for updates every minute when a scaling channel is selected
+    // Poll for updates every minute when a master channel is selected
     useEffect( () => {
-        if ( !state.selectedMasterChannelId || state.selectedMasterChannelType !== "scaling" ) {
+        if ( !state.selectedMasterChannelId || !state.selectedMasterChannelType ) {
             return;
         }
 
         const intervalId = setInterval( () => {
             selectMasterChannel.run( {
-                guildId,
                 masterChannelId: state.selectedMasterChannelId!,
-                type: "scaling"
+                type: state.selectedMasterChannelType!
             } );
         }, 60000 ); // 1 minute
 
         return () => clearInterval( intervalId );
-    }, [ guildId, state.selectedMasterChannelId, state.selectedMasterChannelType ] );
+    }, [ state.selectedMasterChannelId, state.selectedMasterChannelType ] );
 
     const handleSelectChannel = ( id: string, type: MasterChannelType ) => {
-        selectMasterChannel.run( { guildId, masterChannelId: id, type } );
+        selectMasterChannel.run( { masterChannelId: id, type } );
     };
 
-    const handleCreateScalingSetup = ( input: CreateScalingSetupInput ) => {
-        createScalingSetup.run( { guildId, input } );
-    };
-
-    const handleSaveSettings = () => {
-        if ( state.selectedMasterChannelId ) {
-            updateScalingSettings.run( {
-                guildId,
-                masterChannelId: state.selectedMasterChannelId,
-                settings: {
-                    scalingChannelPrefix: state.configForm.prefix,
-                    scalingChannelMaxMembersPerChannel: state.configForm.maxMembers,
-                    scalingChannelMinAvailableChannels: state.configForm.minAvailable
-                }
-            } );
-        }
-    };
-
-    const handleStopEditing = () => {
-        resetConfigForm.run( {} );
-        stopEditingConfig.run( {} );
-    };
-
-    const handleReindex = () => {
-        if ( state.selectedMasterChannelId ) {
-            triggerReindex.run( { guildId, masterChannelId: state.selectedMasterChannelId } );
-        }
-    };
-
-    const handleCleanup = () => {
-        if ( state.selectedMasterChannelId ) {
-            triggerCleanup.run( { guildId, masterChannelId: state.selectedMasterChannelId } );
-        }
-    };
-
-    const handleDelete = () => {
-        if ( state.selectedMasterChannelId ) {
-            deleteScalingSetup.run( { guildId, masterChannelId: state.selectedMasterChannelId } );
-        }
-    };
-
-    const handleRefresh = () => {
-        if ( state.selectedMasterChannelId && state.selectedMasterChannelType ) {
-            selectMasterChannel.run( {
-                guildId,
-                masterChannelId: state.selectedMasterChannelId,
-                type: state.selectedMasterChannelType
-            } );
-        }
+    const handleShowCreateModal = ( type: CreateModalType ) => {
+        setShowCreateDropdown( false );
+        showCreateModalCmd.run( { type } );
     };
 
     const handleRefreshList = () => {
@@ -200,7 +131,7 @@ const ManagementContentComponent: DCommandFunctionComponent<ManagementContentPro
         );
     }
 
-    const { managementDetails, selectedMasterChannelId, selectedMasterChannelType, scalingMasterDetails } = state;
+    const { managementDetails, selectedMasterChannelId, selectedMasterChannelType } = state;
 
     if ( !managementDetails ) {
         return (
@@ -226,20 +157,28 @@ const ManagementContentComponent: DCommandFunctionComponent<ManagementContentPro
                     <p className="text-sm text-center max-w-md mb-4">
                         This guild doesn't have any auto-scaling or dynamic channel setups yet.
                     </p>
-                    <button
-                        onClick={ () => showCreateModalCmd.run( {} ) }
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors flex items-center gap-2"
-                    >
-                        <Plus className="w-4 h-4" />
-                        Create Auto-Scaling Setup
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={ () => handleShowCreateModal( "scaling" ) }
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors flex items-center gap-2"
+                        >
+                            <Layers className="w-4 h-4" />
+                            Create Auto-Scaling
+                        </button>
+                        <button
+                            onClick={ () => handleShowCreateModal( "dynamic" ) }
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 transition-colors flex items-center gap-2"
+                        >
+                            <Radio className="w-4 h-4" />
+                            Create Dynamic
+                        </button>
+                    </div>
                 </div>
-                { state.showCreateModal && (
-                    <CreateScalingForm
-                        isCreating={ state.isCreating }
-                        onSubmit={ handleCreateScalingSetup }
-                        onCancel={ () => hideCreateModalCmd.run( {} ) }
-                    />
+                { state.showCreateModal && state.createModalType === "scaling" && (
+                    <CreateScalingForm isCreating={ state.isCreating } />
+                ) }
+                { state.showCreateModal && state.createModalType === "dynamic" && (
+                    <CreateDynamicForm isCreating={ state.isCreating } />
                 ) }
             </>
         );
@@ -260,13 +199,34 @@ const ManagementContentComponent: DCommandFunctionComponent<ManagementContentPro
                             >
                                 <RefreshCw className={ `w-4 h-4 ${ state.isLoading ? "animate-spin" : "" }` } />
                             </button>
-                            <button
-                                onClick={ () => showCreateModalCmd.run( {} ) }
-                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-700 rounded transition-colors"
-                                title="Create Auto-Scaling Setup"
-                            >
-                                <Plus className="w-4 h-4" />
-                            </button>
+                            <div className="relative">
+                                <button
+                                    onClick={ () => setShowCreateDropdown( !showCreateDropdown ) }
+                                    className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-700 rounded transition-colors flex items-center"
+                                    title="Create Setup"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    <ChevronDown className="w-3 h-3 ml-0.5" />
+                                </button>
+                                { showCreateDropdown && (
+                                    <div className="absolute right-0 mt-1 w-48 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg z-10">
+                                        <button
+                                            onClick={ () => handleShowCreateModal( "scaling" ) }
+                                            className="w-full px-3 py-2 text-left text-sm text-white hover:bg-zinc-700 flex items-center gap-2 rounded-t-lg"
+                                        >
+                                            <Layers className="w-4 h-4 text-blue-400" />
+                                            Auto-Scaling Setup
+                                        </button>
+                                        <button
+                                            onClick={ () => handleShowCreateModal( "dynamic" ) }
+                                            className="w-full px-3 py-2 text-left text-sm text-white hover:bg-zinc-700 flex items-center gap-2 rounded-b-lg"
+                                        >
+                                            <Radio className="w-4 h-4 text-green-400" />
+                                            Dynamic Channel Setup
+                                        </button>
+                                    </div>
+                                ) }
+                            </div>
                         </div>
                     </div>
                     <MasterChannelList
@@ -277,57 +237,49 @@ const ManagementContentComponent: DCommandFunctionComponent<ManagementContentPro
                     />
                 </div>
 
-            <div className="flex-1 flex flex-col bg-zinc-900">
-                { !selectedMasterChannelId ? (
-                    <div className="flex-1 flex items-center justify-center text-zinc-500">
-                        <div className="text-center">
-                            <Layers className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                            <p>Select a master channel to view details</p>
+                <div className="flex-1 flex flex-col bg-zinc-900">
+                    { !selectedMasterChannelId ? (
+                        <div className="flex-1 flex items-center justify-center text-zinc-500">
+                            <div className="text-center">
+                                <Layers className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                                <p>Select a master channel to view details</p>
+                            </div>
                         </div>
-                    </div>
-                ) : state.isLoading ? (
-                    <div className="flex-1 flex items-center justify-center">
-                        <Loader2 className="w-8 h-8 text-zinc-500 animate-spin" />
-                    </div>
-                ) : selectedMasterChannelType === "scaling" && scalingMasterDetails ? (
-                    <ScalingDetailsPanel
-                        details={ scalingMasterDetails }
-                        isSaving={ state.isSaving }
-                        isRefreshing={ state.isLoading }
-                        isEditing={ state.isEditingConfig }
-                        showDeleteConfirm={ state.showDeleteConfirm }
-                        configForm={ state.configForm }
-                        lastRefreshTime={ state.lastRefreshTimestamp ? new Date( state.lastRefreshTimestamp ) : null }
-                        onSaveSettings={ handleSaveSettings }
-                        onRefresh={ handleRefresh }
-                        onReindex={ handleReindex }
-                        onCleanup={ handleCleanup }
-                        onDelete={ handleDelete }
-                        onStartEditing={ () => startEditingConfig.run( {} ) }
-                        onStopEditing={ handleStopEditing }
-                        onShowDeleteConfirm={ () => showDeleteConfirmCmd.run( {} ) }
-                        onHideDeleteConfirm={ () => hideDeleteConfirmCmd.run( {} ) }
-                        onUpdatePrefix={ ( value ) => updateConfigPrefix.run( { value } ) }
-                        onUpdateMaxMembers={ ( value ) => updateConfigMaxMembers.run( { value } ) }
-                        onUpdateMinAvailable={ ( value ) => updateConfigMinAvailable.run( { value } ) }
-                    />
-                ) : selectedMasterChannelType === "dynamic" ? (
-                    <div className="flex-1 flex items-center justify-center text-zinc-500">
-                        <div className="text-center">
-                            <Radio className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                            <p>Dynamic channel management coming soon</p>
+                    ) : state.isLoading ? (
+                        <div className="flex-1 flex items-center justify-center">
+                            <Loader2 className="w-8 h-8 text-zinc-500 animate-spin" />
                         </div>
-                    </div>
-                ) : null }
+                    ) : selectedMasterChannelType === "scaling" && selectedScalingMaster?.scalingChannels ? (
+                        <ScalingDetailsPanel
+                            details={ {
+                                master: selectedScalingMaster,
+                                scalingChannels: selectedScalingMaster.scalingChannels,
+                                discord: selectedScalingMaster.discord
+                            } }
+                            isSaving={ state.isSaving }
+                            isRefreshing={ state.isLoading }
+                            lastRefreshTime={ state.lastRefreshTimestamp ? new Date( state.lastRefreshTimestamp ) : null }
+                        />
+                    ) : selectedMasterChannelType === "dynamic" && selectedDynamicMaster?.dynamicChannels ? (
+                        <DynamicDetailsPanel
+                            details={ {
+                                master: selectedDynamicMaster,
+                                dynamicChannels: selectedDynamicMaster.dynamicChannels,
+                                discord: selectedDynamicMaster.discord
+                            } }
+                            isSaving={ state.isSaving }
+                            isRefreshing={ state.isLoading }
+                            lastRefreshTime={ state.lastRefreshTimestamp ? new Date( state.lastRefreshTimestamp ) : null }
+                        />
+                    ) : null }
+                </div>
             </div>
-        </div>
-        { state.showCreateModal && (
-            <CreateScalingForm
-                isCreating={ state.isCreating }
-                onSubmit={ handleCreateScalingSetup }
-                onCancel={ () => hideCreateModalCmd.run( {} ) }
-            />
-        ) }
+            { state.showCreateModal && state.createModalType === "scaling" && (
+                <CreateScalingForm isCreating={ state.isCreating } />
+            ) }
+            { state.showCreateModal && state.createModalType === "dynamic" && (
+                <CreateDynamicForm isCreating={ state.isCreating } />
+            ) }
         </>
     );
 };
@@ -336,26 +288,7 @@ const ManagementContent = withCommands<ManagementContentProps, ManagementState>(
     "Dashboard/Management",
     ManagementContentComponent,
     MANAGEMENT_INITIAL_STATE,
-    [
-        LoadGuildManagementCommand,
-        CreateScalingSetupCommand,
-        SelectMasterChannelCommand,
-        UpdateScalingSettingsCommand,
-        TriggerReindexCommand,
-        TriggerCleanupCommand,
-        DeleteScalingSetupCommand,
-        ClearErrorCommand,
-        ShowCreateModalCommand,
-        HideCreateModalCommand,
-        StartEditingConfigCommand,
-        StopEditingConfigCommand,
-        ShowDeleteConfirmCommand,
-        HideDeleteConfirmCommand,
-        UpdateConfigPrefixCommand,
-        UpdateConfigMaxMembersCommand,
-        UpdateConfigMinAvailableCommand,
-        ResetConfigFormCommand
-    ]
+    [ ...MANAGEMENT_COMMANDS ]
 );
 
 export function ManagementPage() {

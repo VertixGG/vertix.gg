@@ -53,6 +53,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
+import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 
 import type {
     UIDefaultButtonChannelTextInteraction,
@@ -619,9 +620,9 @@ async function onDeleteConfirmModalSubmitted(
         return;
     }
 
-    const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
+    const channelCleanupService = ServiceLocator.$.get<ChannelCleanupService>( "VertixBot/Services/ChannelCleanup" );
 
-    const deleted = await masterChannelService.deleteMasterChannelWithCleanup( {
+    const deleted = await channelCleanupService.deleteDynamicMasterChannelWithCleanup( {
         guildId: interaction.guildId,
         masterChannelId
     } );

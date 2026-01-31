@@ -11,20 +11,14 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
 
-import {
-    IPC_CHANNELS,
-    MANAGEMENT_ACTIONS
-} from "@vertix.gg/base/src/modules/ipc";
-
 import type {
-    IPCService,
-    IPCMessage,
-    ManagementPayload,
     CreateScalingSetupPayload,
     UpdateScalingSettingsPayload,
     TriggerReindexPayload,
     TriggerCleanupPayload,
-    DeleteScalingSetupPayload
+    DeleteScalingSetupPayload,
+    GetScalingChannelInfoResponse,
+    DiscordChannelInfo
 } from "@vertix.gg/base/src/modules/ipc";
 
 import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/definitions/vars";
@@ -45,11 +39,12 @@ import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix
 
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
+import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 
 export class ScalingChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
     channelService: ChannelService;
-    ipcService: IPCService;
+    channelCleanupService: ChannelCleanupService;
 }> {
     private readonly debugger: Debugger;
     private reindexInterval?: NodeJS.Timeout;
@@ -71,17 +66,12 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         return {
             appService: "VertixBot/Services/App",
             channelService: "VertixBot/Services/Channel",
-            ipcService: "VertixBase/Modules/IPCService"
+            channelCleanupService: "VertixBot/Services/ChannelCleanup"
         };
     }
 
     protected async initialize() {
         await super.initialize();
-
-        // Subscribe to IPC channel in background - don't block service startup
-        this.subscribeToIPCChannel().catch( () => {
-            // Error already logged in subscribeToIPCChannel
-        } );
 
         this.services.appService.onceReady( async() => {
             try {
@@ -114,56 +104,69 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    private async subscribeToIPCChannel() {
-        if ( !this.services.ipcService.isReady() ) {
-            this.logger.warn( this.subscribeToIPCChannel, "IPC service not available - dashboard management features will be disabled" );
-            return;
+    /**
+     * Get scaling channel info for IPC request (called by ManagementIPCService)
+     */
+    public async getScalingChannelInfo(
+        guildId: string,
+        masterChannelId: string,
+        scalingChannelIds: string[]
+    ): Promise<GetScalingChannelInfoResponse> {
+        const result: GetScalingChannelInfoResponse = {
+            masterChannel: null,
+            category: null,
+            scalingChannels: []
+        };
+
+        const guild = this.services.appService.getClient().guilds.cache.get( guildId );
+
+        if ( !guild ) {
+            this.logger.warn( this.getScalingChannelInfo, `Guild not found: ${ guildId }` );
+            return result;
         }
 
-        try {
-            await this.services.ipcService.subscribe<ManagementPayload>(
-                IPC_CHANNELS.MANAGEMENT,
-                this.handleIPCMessage.bind( this )
-            );
+        // Get master channel info
+        const masterChannel = guild.channels.cache.get( masterChannelId );
 
-            this.logger.log( this.subscribeToIPCChannel, "Subscribed to management IPC channel" );
-        } catch ( error ) {
-            this.logger.warn( this.subscribeToIPCChannel, "Failed to subscribe to IPC channel - dashboard management features will be disabled" );
+        if ( masterChannel && masterChannel.isVoiceBased() ) {
+            result.masterChannel = this.getChannelInfo( masterChannel as VoiceChannel );
+
+            // Get category info
+            if ( masterChannel.parent ) {
+                result.category = {
+                    id: masterChannel.parent.id,
+                    name: masterChannel.parent.name,
+                    memberCount: 0,
+                    position: masterChannel.parent.position
+                };
+            }
         }
+
+        // Get scaling channels info
+        for ( const channelId of scalingChannelIds ) {
+            const channel = guild.channels.cache.get( channelId );
+
+            if ( channel && channel.isVoiceBased() ) {
+                result.scalingChannels.push( this.getChannelInfo( channel as VoiceChannel ) );
+            }
+        }
+
+        return result;
     }
 
-    private async handleIPCMessage( message: IPCMessage<ManagementPayload> ) {
-        const { payload } = message;
-
-        this.logger.log( this.handleIPCMessage, `Received IPC message: ${ payload.action }` );
-
-        switch ( payload.action ) {
-            case MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP:
-                await this.handleCreateScalingSetup( payload.data );
-                break;
-
-            case MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS:
-                await this.handleUpdateScalingSettings( payload.data );
-                break;
-
-            case MANAGEMENT_ACTIONS.TRIGGER_REINDEX:
-                await this.handleTriggerReindex( payload.data );
-                break;
-
-            case MANAGEMENT_ACTIONS.TRIGGER_CLEANUP:
-                await this.handleTriggerCleanup( payload.data );
-                break;
-
-            case MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP:
-                await this.handleDeleteScalingSetup( payload.data );
-                break;
-
-            default:
-                this.logger.warn( this.handleIPCMessage, `Unknown action: ${ ( payload as ManagementPayload ).action }` );
-        }
+    private getChannelInfo( channel: VoiceChannel ): DiscordChannelInfo {
+        return {
+            id: channel.id,
+            name: channel.name,
+            memberCount: channel.members.size,
+            position: channel.position
+        };
     }
 
-    private async handleCreateScalingSetup( data: CreateScalingSetupPayload ) {
+    /**
+     * Handle create scaling setup IPC action (called by ManagementIPCService)
+     */
+    public async handleCreateScalingSetup( data: CreateScalingSetupPayload ) {
         const { guildId, userOwnerId, prefix, maxMembers } = data;
 
         this.logger.log(
@@ -185,7 +188,10 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    private async handleUpdateScalingSettings( data: UpdateScalingSettingsPayload ) {
+    /**
+     * Handle update scaling settings IPC action (called by ManagementIPCService)
+     */
+    public async handleUpdateScalingSettings( data: UpdateScalingSettingsPayload ) {
         const { guildId, masterChannelId, settings } = data;
 
         this.logger.log(
@@ -208,7 +214,10 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    private async handleTriggerReindex( data: TriggerReindexPayload ) {
+    /**
+     * Handle trigger reindex IPC action (called by ManagementIPCService)
+     */
+    public async handleTriggerReindex( data: TriggerReindexPayload ) {
         const { guildId, masterChannelId } = data;
 
         this.logger.log(
@@ -233,7 +242,10 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         await this.reindexScalingChannelsForMaster( guild, masterChannelId, settings.scalingChannelPrefix );
     }
 
-    private async handleTriggerCleanup( data: TriggerCleanupPayload ) {
+    /**
+     * Handle trigger cleanup IPC action (called by ManagementIPCService)
+     */
+    public async handleTriggerCleanup( data: TriggerCleanupPayload ) {
         const { guildId, masterChannelId } = data;
 
         this.logger.log(
@@ -253,7 +265,10 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         await this.cleanupExcessEmptyChannels( scalingChannels );
     }
 
-    private async handleDeleteScalingSetup( data: DeleteScalingSetupPayload ) {
+    /**
+     * Handle delete scaling setup IPC action (called by ManagementIPCService)
+     */
+    public async handleDeleteScalingSetup( data: DeleteScalingSetupPayload ) {
         const { guildId, masterChannelId } = data;
 
         this.logger.log(
@@ -261,7 +276,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
             `Deleting scaling setup for master ${ masterChannelId } in guild ${ guildId }`
         );
 
-        await this.deleteScalingMasterChannelWithCleanup( { guildId, masterChannelId } );
+        await this.services.channelCleanupService.deleteScalingMasterChannelWithCleanup( { guildId, masterChannelId } );
     }
 
     public async ensureScalingChannelsForMaster(
@@ -962,108 +977,6 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                 this.logger.error( this.cleanupExcessEmptyChannels, `Failed to delete channel ${ channel.name }`, error );
             }
         }
-    }
-
-    public async deleteScalingMasterChannelWithCleanup( args: {
-        guildId: string;
-        masterChannelId: string;
-    } ): Promise<boolean> {
-        const { guildId, masterChannelId } = args;
-
-        const guild = await ChannelUtils.cacheOrFetchGuild( guildId );
-
-        if ( !guild ) {
-            this.logger.error( this.deleteScalingMasterChannelWithCleanup, `Guild not found: ${ guildId }` );
-            return false;
-        }
-
-        const masterChannelDB = await ChannelModel.$.getById( masterChannelId );
-
-        if ( !masterChannelDB ) {
-            this.logger.error( this.deleteScalingMasterChannelWithCleanup, `Master channel DB not found: ${ masterChannelId }` );
-            return false;
-        }
-
-        const masterChannel = await ChannelUtils.cacheOrFetchChannel( guild, masterChannelDB.channelId );
-
-        this.logger.info(
-            this.deleteScalingMasterChannelWithCleanup,
-            `Deleting scaling master channel '${ masterChannelDB.channelId }' and all associated scaling channels in guild '${ guild.name }'`
-        );
-
-        this.logger.admin(
-            this.deleteScalingMasterChannelWithCleanup,
-            `➖  Scaling master channel is being deleted - "${ masterChannel?.name || masterChannelDB.channelId }" (${ guild.name }) (${ guild.memberCount })`
-        );
-
-        // 1. Delete all scaling channels associated with this master
-        const scalingChannelsDB = await ChannelModel.$.getScalingChannelsByMasterId( guildId, masterChannelId );
-
-        for ( const scalingChannelDB of scalingChannelsDB ) {
-            const scalingChannel = guild.channels.cache.get( scalingChannelDB.channelId );
-
-            if ( scalingChannel && !scalingChannel.isThread() ) {
-                this.logger.log(
-                    this.deleteScalingMasterChannelWithCleanup,
-                    `Deleting scaling channel: ${ scalingChannel.name } (${ scalingChannel.id })`
-                );
-
-                await this.services.channelService.delete( {
-                    guild,
-                    channel: scalingChannel as GuildChannel
-                } ).catch( ( error ) => {
-                    this.logger.error(
-                        this.deleteScalingMasterChannelWithCleanup,
-                        `Failed to delete scaling channel ${ scalingChannel.id }`,
-                        error
-                    );
-                } );
-            } else {
-                // Channel doesn't exist in Discord, just delete from DB
-                this.logger.log(
-                    this.deleteScalingMasterChannelWithCleanup,
-                    `Scaling channel not found in Discord, deleting DB entry: ${ scalingChannelDB.channelId }`
-                );
-
-                await ChannelModel.$.delete( { channelId: scalingChannelDB.channelId } ).catch( ( error ) => {
-                    this.logger.error(
-                        this.deleteScalingMasterChannelWithCleanup,
-                        `Failed to delete scaling channel DB entry ${ scalingChannelDB.channelId }`,
-                        error
-                    );
-                } );
-            }
-        }
-
-        // 2. Get parent category before deleting master channel
-        const parentCategory = masterChannel?.parent;
-
-        // 3. Delete the master channel from Discord
-        if ( masterChannel && masterChannel.isVoiceBased() ) {
-            await masterChannel.delete().catch( ( error ) => {
-                this.logger.error( this.deleteScalingMasterChannelWithCleanup, "Failed to delete master channel from Discord", error );
-            } );
-        }
-
-        // 4. Delete master channel from database
-        await ChannelModel.$.delete( { id: masterChannelId } ).catch( ( error ) => {
-            this.logger.error( this.deleteScalingMasterChannelWithCleanup, "Failed to delete master channel DB entry", error );
-        } );
-
-        // 5. Cleanup empty category
-        await ChannelUtils.cleanupEmptyCategoryIfNeeded(
-            parentCategory as CategoryChannel | null,
-            guild,
-            this.logger,
-            this.deleteScalingMasterChannelWithCleanup
-        );
-
-        this.logger.info(
-            this.deleteScalingMasterChannelWithCleanup,
-            `Successfully deleted scaling master channel and ${ scalingChannelsDB.length } scaling channels`
-        );
-
-        return true;
     }
 }
 

@@ -17,6 +17,7 @@ import { UserModel } from "@vertix.gg/base/src/models/user-model";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import pc from "picocolors";
@@ -108,12 +109,19 @@ import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
+import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
+
+import type {
+    GetDynamicChannelInfoResponse,
+    DiscordChannelInfo
+} from "@vertix.gg/base/src/modules/ipc";
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
     channelService: ChannelService;
     uiService: UIService;
     uiVersioningAdapterService: UIAdapterVersioningService;
+    channelCleanupService: ChannelCleanupService;
 }> {
     private readonly debugger: Debugger;
 
@@ -158,12 +166,207 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         ] );
     }
 
+    /**
+     * Handle update dynamic settings IPC action (called by ManagementIPCService)
+     */
+    public async handleUpdateDynamicSettings( data: {
+        guildId: string;
+        masterChannelId: string;
+        settings: {
+            dynamicChannelNameTemplate?: string;
+            dynamicChannelAutoSave?: boolean;
+            dynamicChannelMentionable?: boolean;
+        };
+    } ) {
+        const { guildId, masterChannelId, settings } = data;
+
+        this.logger.log(
+            this.handleUpdateDynamicSettings,
+            `Updating dynamic settings for master ${ masterChannelId } in guild ${ guildId }`
+        );
+
+        try {
+            const masterChannelDB = await ChannelModel.$.getById( masterChannelId );
+
+            if ( !masterChannelDB ) {
+                this.logger.error( this.handleUpdateDynamicSettings, `Master channel not found: ${ masterChannelId }` );
+                return;
+            }
+
+            // Update settings in the database
+            if ( settings.dynamicChannelNameTemplate !== undefined ) {
+                await MasterChannelDataManager.$.setChannelNameTemplate( masterChannelDB, settings.dynamicChannelNameTemplate );
+            }
+
+            if ( settings.dynamicChannelAutoSave !== undefined ) {
+                await MasterChannelDataManager.$.setChannelAutoSave( masterChannelDB, settings.dynamicChannelAutoSave );
+            }
+
+            if ( settings.dynamicChannelMentionable !== undefined ) {
+                await MasterChannelDataManager.$.setChannelMentionable( masterChannelDB, settings.dynamicChannelMentionable );
+            }
+
+            this.logger.log(
+                this.handleUpdateDynamicSettings,
+                `Successfully updated dynamic settings for master ${ masterChannelId }`
+            );
+        } catch ( error ) {
+            this.logger.error( this.handleUpdateDynamicSettings, `Failed to update dynamic settings for master ${ masterChannelId }`, error );
+        }
+    }
+
+    /**
+     * Handle delete dynamic setup IPC action (called by ManagementIPCService)
+     */
+    public async handleDeleteDynamicSetup( data: {
+        guildId: string;
+        masterChannelId: string;
+    } ) {
+        const { guildId, masterChannelId } = data;
+
+        // masterChannelId from IPC is the database record ID, we need to get the Discord channel ID
+        const masterChannelDB = await ChannelModel.$.getById( masterChannelId );
+
+        if ( !masterChannelDB ) {
+            this.logger.error( this.handleDeleteDynamicSetup, `Master channel DB not found: ${ masterChannelId }` );
+            return;
+        }
+
+        this.logger.log(
+            this.handleDeleteDynamicSetup,
+            `Deleting dynamic setup for master ${ masterChannelDB.channelId } in guild ${ guildId }`
+        );
+
+        // Use channel cleanup service which handles:
+        // - Deleting all dynamic channels
+        // - Deleting the master channel
+        // - Cleaning up empty category
+        await this.services.channelCleanupService.deleteDynamicMasterChannelWithCleanup( {
+            guildId,
+            masterChannelId: masterChannelDB.channelId // Pass Discord channel ID
+        } );
+    }
+
+    /**
+     * Handle create dynamic setup IPC action (called by ManagementIPCService)
+     */
+    public async handleCreateDynamicSetup( data: {
+        guildId: string;
+        userOwnerId: string;
+        version?: "v2" | "v3";
+        nameTemplate?: string;
+        autoSave?: boolean;
+        mentionable?: boolean;
+    } ) {
+        const { guildId, userOwnerId, version, nameTemplate, autoSave, mentionable } = data;
+
+        // Map version string to version constant
+        const versionConstant = version === "v2" ? VERSION_UI_V2 : VERSION_UI_V3;
+
+        this.logger.log(
+            this.handleCreateDynamicSetup,
+            `Creating dynamic master channel setup for guild ${ guildId } with version ${ version || "v3" }`
+        );
+
+        try {
+            // Use ServiceLocator to get MasterChannelService to avoid circular dependency
+            const { MasterChannelService } = await import( "@vertix.gg/bot/src/services/master-channel-service" );
+            const masterChannelService = ServiceLocator.$.get<InstanceType<typeof MasterChannelService>>( MasterChannelService.getName() );
+
+            if ( !masterChannelService ) {
+                this.logger.error( this.handleCreateDynamicSetup, "MasterChannelService not available" );
+                return;
+            }
+
+            const result = await masterChannelService.createMasterChannel( {
+                guildId,
+                userOwnerId,
+                version: versionConstant,
+                dynamicChannelNameTemplate: nameTemplate,
+                dynamicChannelAutoSave: autoSave,
+                dynamicChannelMentionable: mentionable,
+                dynamicChannelControlChannelAutoCreate: true
+            } );
+
+            if ( result.code === "success" ) {
+                this.logger.log(
+                    this.handleCreateDynamicSetup,
+                    `Successfully created dynamic master channel setup for guild ${ guildId }`
+                );
+            } else {
+                this.logger.error(
+                    this.handleCreateDynamicSetup,
+                    `Failed to create dynamic master channel setup: ${ result.code }`
+                );
+            }
+        } catch ( error ) {
+            this.logger.error( this.handleCreateDynamicSetup, `Failed to create dynamic master channel setup for guild ${ guildId }`, error );
+        }
+    }
+
     public getDependencies() {
         return {
             appService: "VertixBot/Services/App",
             channelService: "VertixBot/Services/Channel",
             uiService: "VertixGUI/UIService",
-            uiVersioningAdapterService: "VertixGUI/UIVersioningAdapterService"
+            uiVersioningAdapterService: "VertixGUI/UIVersioningAdapterService",
+            channelCleanupService: "VertixBot/Services/ChannelCleanup"
+        };
+    }
+
+    /**
+     * Get dynamic channel info for IPC request (called by ManagementIPCService)
+     */
+    public async getDynamicChannelInfo(
+        guildId: string,
+        masterChannelId: string,
+        dynamicChannelIds: string[]
+    ): Promise<GetDynamicChannelInfoResponse> {
+        const result: GetDynamicChannelInfoResponse = {
+            masterChannel: null,
+            category: null,
+            dynamicChannels: []
+        };
+
+        const guild = this.services.appService.getClient().guilds.cache.get( guildId );
+
+        if ( !guild ) {
+            this.logger.warn( this.getDynamicChannelInfo, `Guild not found: ${ guildId }` );
+            return result;
+        }
+
+        const masterChannel = guild.channels.cache.get( masterChannelId );
+
+        if ( masterChannel && masterChannel.isVoiceBased() ) {
+            result.masterChannel = this.getChannelInfo( masterChannel as VoiceChannel );
+
+            if ( masterChannel.parent ) {
+                result.category = {
+                    id: masterChannel.parent.id,
+                    name: masterChannel.parent.name,
+                    memberCount: 0,
+                    position: masterChannel.parent.position
+                };
+            }
+        }
+
+        for ( const channelId of dynamicChannelIds ) {
+            const channel = guild.channels.cache.get( channelId );
+
+            if ( channel && channel.isVoiceBased() ) {
+                result.dynamicChannels.push( this.getChannelInfo( channel as VoiceChannel ) );
+            }
+        }
+
+        return result;
+    }
+
+    private getChannelInfo( channel: VoiceChannel ): DiscordChannelInfo {
+        return {
+            id: channel.id,
+            name: channel.name,
+            memberCount: channel.members.size,
+            position: channel.position
         };
     }
 

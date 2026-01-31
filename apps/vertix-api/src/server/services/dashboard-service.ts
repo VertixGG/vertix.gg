@@ -134,12 +134,3 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
         masterChannels: masterChannelInfos
     };
 }
-
-export async function checkGuildAccess( guildId: string ): Promise<boolean> {
-    const guild = await client.guild.findUnique( {
-        where: { guildId },
-        select: { id: true }
-    } );
-
-    return guild !== null;
-}

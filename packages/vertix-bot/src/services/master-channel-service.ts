@@ -545,55 +545,6 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public async deleteMasterChannelWithCleanup( args: {
-        guildId: string;
-        masterChannelId: string;
-    } ) {
-        const guild = await ChannelUtils.cacheOrFetchGuild( args.guildId );
-
-        if ( !guild ) {
-            return false;
-        }
-
-        const masterChannel = await ChannelUtils.cacheOrFetchChannel( guild, args.masterChannelId );
-
-        if ( !masterChannel || masterChannel.type !== ChannelType.GuildVoice ) {
-            return false;
-        }
-
-        const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannel.id );
-
-        if ( !masterChannelDB ) {
-            return false;
-        }
-
-        const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
-        const controlChannelId = settings.dynamicChannelControlChannelId ?? null;
-
-        if ( controlChannelId ) {
-            const controlChannel = await ChannelUtils.cacheOrFetchChannel( guild, controlChannelId );
-
-            if ( controlChannel && "deletable" in controlChannel ) {
-                await this.services.channelService.delete( {
-                    guild,
-                    channel: controlChannel as GuildChannel
-                } );
-            }
-        }
-
-        const voiceChannel = masterChannel as VoiceBasedChannel;
-
-        await this.onDeleteMasterChannel( voiceChannel );
-
-        const parent = masterChannel.parent;
-
-        await voiceChannel.delete().catch( ( e ) => this.logger.error( this.deleteMasterChannelWithCleanup, "", e ) );
-
-        await ChannelUtils.cleanupEmptyCategoryIfNeeded( parent, guild, this.logger, this.deleteMasterChannelWithCleanup );
-
-        return true;
-    }
-
     public async createMasterChannel( args: IMasterChannelCreateArgs ) {
         const result: IMasterChannelCreateResult = {
             code: MasterChannelCreateResultCode.Error

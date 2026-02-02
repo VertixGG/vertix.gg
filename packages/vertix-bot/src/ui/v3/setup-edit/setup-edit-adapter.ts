@@ -824,18 +824,26 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addState( "Default", { executionStep: "default" } )
             .addState( "EditMaster", {
                 executionStep: "VertixBot/UI-V3/SetupEditMaster",
+                elementsGroup: "VertixBot/UI-V3/SetupEditElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/SetupEditEmbedGroup",
                 previewDefaultVars: { index: "1", masterChannelId: "123456789", dynamicChannelNameTemplate: "{username}'s Channel" }
             } )
             .addState( "EditButtons", {
                 executionStep: "VertixBot/UI-V3/SetupEditButtons",
+                elementsGroup: "VertixBot/UI-V3/SetupEditButtonsElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/SetupEditButtonsEmbedGroup",
                 previewDefaultVars: { index: "1" }
             } )
             .addState( "EditButtonsEffect", {
                 executionStep: "VertixBot/UI-V3/SetupEditButtonsEffect",
+                elementsGroup: "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup",
                 previewDefaultVars: { index: "1" }
             } )
             .addState( "EditVerifiedRoles", {
                 executionStep: "VertixBot/UI-V3/SetupEditVerifiedRoles",
+                elementsGroup: "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup",
                 previewDefaultVars: { index: "1" }
             } )
             // Transitions from Default
@@ -953,28 +961,6 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "Delete",
                 onDeleteConfirmModalSubmitted
             );
-    } )
-    .setExecutionSteps( {
-        default: {},
-
-        "VertixBot/UI-V3/SetupEditMaster": {
-            elementsGroup: "VertixBot/UI-V3/SetupEditElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/SetupEditEmbedGroup"
-        },
-
-        "VertixBot/UI-V3/SetupEditButtons": {
-            elementsGroup: "VertixBot/UI-V3/SetupEditButtonsElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/SetupEditButtonsEmbedGroup"
-        },
-        "VertixBot/UI-V3/SetupEditButtonsEffect": {
-            elementsGroup: "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup"
-        },
-
-        "VertixBot/UI-V3/SetupEditVerifiedRoles": {
-            elementsGroup: "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup"
-        }
     } )
     .getStartArgs( async() => ( {} ) )
     .setShouldRequireArgs( () => true )

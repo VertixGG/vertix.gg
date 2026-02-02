@@ -27,12 +27,6 @@ import type UIService from "@vertix.gg/gui/src/ui-service";
 
 const logger = new Logger( "VertixBot/UI-V2/DynamicChannelPanelAdapter" );
 
-const DYNAMIC_CHANNEL_PANEL_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V2/DynamicChannelElementsGroup"
-    }
-} as const;
-
 async function resolveChannelFromContext(
     context: UIAdapterStartContext,
     argsFromManager?: UIArgs
@@ -192,14 +186,14 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
     "VertixBot/UI-V2/DynamicChannelPanelAdapter"
 )
     .setComponent( DynamicChannelPanelComponent )
-    .setExecutionSteps( DYNAMIC_CHANNEL_PANEL_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setHidden( true ) // Hide from visualization since DynamicChannelAdapter already shows the flow
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "default",
-                previewDefaultVars: { channelName: "My Channel", ownerId: "123456789" }
+                previewDefaultVars: { channelName: "My Channel", ownerId: "123456789" },
+                elementsGroup: "VertixBot/UI-V2/DynamicChannelElementsGroup"
             } )
             // Transitions (same as DynamicChannelAdapter, but hidden)
             .addTransition( "OpenRename", { from: "Default", to: "Default" } )
@@ -272,10 +266,6 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
     .build();
 
 class DynamicChannelPanelAdapter extends DynamicChannelPanelAdapterBase {
-    protected static override getExecutionSteps() {
-        return DYNAMIC_CHANNEL_PANEL_STEPS;
-    }
-
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( !this.getArgsManager().getArgsById( this, message.id ) ) {
             await this.awakeInternal( message, newArgs || {} );

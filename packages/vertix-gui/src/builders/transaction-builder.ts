@@ -25,7 +25,26 @@ export interface ElementHandlerBinding<TContext = unknown> {
 export type NavigationType = "editReply" | "ephemeral" | "silent";
 
 export interface StateConfig {
+    /**
+     * The execution step name for this state.
+     * Can be "default" for the default step, or a custom step name.
+     */
     executionStep: string;
+    /**
+     * The embeds group to use for this state's UI.
+     * If not specified, uses the component's default embeds group.
+     */
+    embedsGroup?: string | null;
+    /**
+     * The elements group to use for this state's UI.
+     * If not specified, uses the component's default elements group.
+     */
+    elementsGroup?: string | null;
+    /**
+     * The markdown group to use for this state's UI.
+     * If not specified, uses the component's default markdown group.
+     */
+    markdownGroup?: string | null;
     /**
      * How to navigate to this state.
      * - "editReply": Update the existing message (default)
@@ -316,6 +335,42 @@ export class TransactionBuilder<TContext = unknown> {
      */
     public getTransitions(): Map<string, TransitionConfig> {
         return new Map( this.transitions );
+    }
+
+    /**
+     * Derive UIExecutionSteps from the transaction states.
+     * This allows defineTransactions() to replace setExecutionSteps().
+     *
+     * Returns a map of execution step names to their configuration,
+     * derived from the state configs.
+     */
+    public getExecutionSteps(): Record<string, { embedsGroup?: string | null; elementsGroup?: string | null; markdownGroup?: string | null }> {
+        const steps: Record<string, { embedsGroup?: string | null; elementsGroup?: string | null; markdownGroup?: string | null }> = {};
+
+        for ( const [ , stateConfig ] of this.states ) {
+            const stepName = stateConfig.executionStep;
+
+            // Skip if we already have this step (first definition wins)
+            if ( steps[ stepName ] ) {
+                continue;
+            }
+
+            // Only add if there's at least one group defined
+            if ( stateConfig.embedsGroup !== undefined ||
+                 stateConfig.elementsGroup !== undefined ||
+                 stateConfig.markdownGroup !== undefined ) {
+                steps[ stepName ] = {
+                    ...( stateConfig.embedsGroup !== undefined && { embedsGroup: stateConfig.embedsGroup } ),
+                    ...( stateConfig.elementsGroup !== undefined && { elementsGroup: stateConfig.elementsGroup } ),
+                    ...( stateConfig.markdownGroup !== undefined && { markdownGroup: stateConfig.markdownGroup } )
+                };
+            } else {
+                // Add empty config for the step (allows step to exist with defaults)
+                steps[ stepName ] = {};
+            }
+        }
+
+        return steps;
     }
 
     /**

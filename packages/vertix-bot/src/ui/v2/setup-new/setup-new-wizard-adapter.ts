@@ -218,11 +218,13 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             .addState( "MaxMasterChannels", {
                 executionStep: "VertixBot/UI-V2/SetupNewWizardMaxMasterChannels",
                 navigationType: "ephemeral",
-                previewDefaultVars: { maxMasterChannels: "3" }
+                previewDefaultVars: { maxMasterChannels: "3" },
+                embedsGroup: "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup"
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V2/SetupNewWizardError",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
             // Start wizard
             .addTransition( "StartWizard", { from: "Default", to: "Step1" } )
@@ -279,15 +281,6 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
                 "SelectEveryoneRole",
                 onVerifiedRolesEveryoneSelected
             );
-    } )
-    .setExecutionSteps( {
-        "VertixBot/UI-V2/SetupNewWizardMaxMasterChannels": {
-            embedsGroup: "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup"
-        },
-
-        "VertixBot/UI-V2/SetupNewWizardError": {
-            embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-        }
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {

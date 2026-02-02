@@ -18,24 +18,10 @@ interface ModalSubmitInteractionDefault extends ModalMessageModalSubmitInteracti
     channel: VoiceChannel;
 }
 
-const LIMIT_STEPS = {
-    default: {},
-    "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInput": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbedGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelMetaLimitSuccess": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelMetaLimitError": {
-        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-    }
-} as const;
-
 const DynamicChannelMetaLimitAdapter = new DynamicExecutionAdapterBuilder<
     UIDefaultButtonChannelVoiceInteraction | ModalSubmitInteractionDefault
 >( "VertixBot/UI-V2/DynamicChannelMetaLimitAdapter" )
     .setComponent( DynamicChannelMetaLimitComponent )
-    .setExecutionSteps( LIMIT_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
@@ -45,16 +31,19 @@ const DynamicChannelMetaLimitAdapter = new DynamicExecutionAdapterBuilder<
             } )
             .addState( "InvalidInput", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInput",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { minValue: "0", maxValue: "99" }
             } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaLimitSuccess",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { userLimit: "10" }
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaLimitError",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
                 navigationType: "ephemeral"
             } )
             .addTransition( "SubmitInvalid", {

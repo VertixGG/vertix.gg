@@ -11,18 +11,6 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
-const RESET_CHANNEL_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButtonGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelPremiumResetChannelSuccess": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelPremiumResetChannelError": {
-        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-    }
-} as const;
-
 async function onResetChannelButtonClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction
@@ -51,18 +39,22 @@ const DynamicChannelPremiumResetChannelAdapter = new DynamicExecutionAdapterBuil
     "VertixBot/UI-V2/DynamicChannelPremiumResetChannelAdapter"
 )
     .setComponent( DynamicChannelPremiumResetChannelComponent )
-    .setExecutionSteps( RESET_CHANNEL_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
-            .addState( "Default", { executionStep: "default" } )
+            .addState( "Default", {
+                executionStep: "default",
+                elementsGroup: "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButtonGroup"
+            } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelPremiumResetChannelSuccess",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { code: "success" }
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelPremiumResetChannelError",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
                 navigationType: "ephemeral"
             } )
             .addTransition( "ResetSuccess", { from: "Default", to: "Success" } )

@@ -27,12 +27,6 @@ import type UIService from "@vertix.gg/gui/src/ui-service";
 
 const logger = new Logger( "VertixBot/UI-V2/DynamicChannelAdapter" );
 
-const DYNAMIC_CHANNEL_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V2/DynamicChannelElementsGroup"
-    }
-} as const;
-
 async function resolveChannelFromContext(
     context: UIAdapterStartContext,
     argsFromManager?: UIArgs
@@ -192,12 +186,12 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
     "VertixBot/UI-V2/DynamicChannelAdapter"
 )
     .setComponent( DynamicChannelComponent )
-    .setExecutionSteps( DYNAMIC_CHANNEL_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "default",
+                elementsGroup: "VertixBot/UI-V2/DynamicChannelElementsGroup",
                 previewDefaultVars: { channelName: "My Channel", ownerId: "123456789" }
             } )
             .addTransition( "OpenRename", { from: "Default", to: "Default" } )
@@ -259,10 +253,6 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
     .build();
 
 class DynamicChannelAdapter extends DynamicChannelAdapterBase {
-    protected static override getExecutionSteps() {
-        return DYNAMIC_CHANNEL_STEPS;
-    }
-
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( !this.getArgsManager().getArgsById( this, message.id ) ) {
             await this.awakeInternal( message, {} );

@@ -16,13 +16,6 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
 
-const REGION_STEPS = {
-    default: {
-        elementsGroup: DynamicChannelRegionComponent.getDefaultElementsGroup(),
-        embedsGroup: DynamicChannelRegionComponent.getDefaultEmbedsGroup()
-    }
-} as const;
-
 async function getArgs( channel: VoiceChannel ) {
     return {
         region: channel.rtcRegion
@@ -33,7 +26,6 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
     "VertixBot/UI-V3/DynamicChannelRegionAdapter"
 )
     .setComponent( DynamicChannelRegionComponent )
-    .setExecutionSteps( REGION_STEPS )
     .setInitiatorElement( DynamicChannelRegionButton )
     .defineTransactions( ( tx ) => {
         tx
@@ -41,7 +33,9 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             .addState( "Default", {
                 executionStep: "default",
                 navigationType: "editReply",
-                previewDefaultVars: { region: "us-west" }
+                previewDefaultVars: { region: "us-west" },
+                elementsGroup: DynamicChannelRegionComponent.getDefaultElementsGroup(),
+                embedsGroup: DynamicChannelRegionComponent.getDefaultEmbedsGroup()
             } )
             .addTransition( "SelectRegion", {
                 from: "Default",

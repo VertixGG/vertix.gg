@@ -18,24 +18,10 @@ interface ModalSubmitInteractionDefault extends ModalMessageModalSubmitInteracti
     channel: VoiceChannel;
 }
 
-const LIMIT_STEPS = {
-    default: {},
-    "VertixBot/UI-V3/DynamicChannelLimitInvalidInput": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelLimitSuccess": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelLimitError": {
-        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-    }
-} as const;
-
 const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
         UIDefaultButtonChannelVoiceInteraction | ModalSubmitInteractionDefault
 >( "VertixBot/UI-V3/DynamicChannelLimitAdapter" )
     .setComponent( DynamicChannelLimitComponent )
-    .setExecutionSteps( LIMIT_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
@@ -46,16 +32,19 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
             .addState( "InvalidInput", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelLimitInvalidInput",
                 navigationType: "ephemeral",
-                previewDefaultVars: { minValue: "0", maxValue: "99" }
+                previewDefaultVars: { minValue: "0", maxValue: "99" },
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbedGroup"
             } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelLimitSuccess",
                 navigationType: "ephemeral",
-                previewDefaultVars: { userLimit: "10" }
+                previewDefaultVars: { userLimit: "10" },
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbedGroup"
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelLimitError",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
             .addTransition( "SubmitInvalid", {
                 from: "Default",

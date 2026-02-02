@@ -64,8 +64,18 @@ export class WizardAdapterBuilder<
 
     /**
      * Define transactions (state machine) for this adapter.
+     *
+     * IMPORTANT: When using defineTransactions:
+     * - You cannot use onEntityMap() - bind handlers via tx.bindButton(), tx.bindModal(), etc.
+     * - You cannot use setExecutionSteps() - define step details in addState() instead.
      */
     public defineTransactions( configurator: ( tx: TransactionBuilder<IWizardAdapterContext<TInteraction, TArgs>> ) => void ): this {
+        if ( this.executionSteps ) {
+            throw new Error(
+                `Adapter "${ this.name }": Cannot use defineTransactions() when setExecutionSteps() is used. ` +
+                `Choose one approach: either setExecutionSteps() with onEntityMap(), or defineTransactions() alone.`
+            );
+        }
         const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
         this.transactions = new TransactionBuilder<IWizardAdapterContext<TInteraction, TArgs>>( flowName );
         configurator( this.transactions );
@@ -89,7 +99,19 @@ export class WizardAdapterBuilder<
         return this;
     }
 
+    /**
+     * Set execution steps for this adapter.
+     *
+     * NOTE: Cannot be used together with defineTransactions().
+     * When using defineTransactions(), execution steps are derived from state configurations.
+     */
     public setExecutionSteps( executionSteps: UIExecutionSteps ): this {
+        if ( this.transactions ) {
+            throw new Error(
+                `Adapter "${ this.name }": Cannot use setExecutionSteps() when defineTransactions() is used. ` +
+                `Define execution step details (embedsGroup, elementsGroup) in addState() instead.`
+            );
+        }
         this.executionSteps = executionSteps;
         return this;
     }
@@ -153,6 +175,10 @@ export class WizardAdapterBuilder<
             }
 
             protected static getExecutionSteps() {
+                // If transactions are defined, derive execution steps from them
+                if ( builder.transactions ) {
+                    return builder.transactions.getExecutionSteps();
+                }
                 return builder.executionSteps || {};
             }
 

@@ -32,118 +32,88 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
         DynamicChannelPermissionsStateButton,
         DynamicChannelPermissionsVisibilityButton
     ] )
-    .setExecutionSteps( {
-        default: {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsAccess": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsGranted": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsDenied": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsBlocked": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsKick": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStateShown": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStateError": {
-            embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-        },
-        "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged": {
-            embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
-        }
-    } )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
             // States
             .addState( "Default", {
                 executionStep: "default",
-                previewDefaultVars: { state: "public" }
+                previewDefaultVars: { state: "public" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
             } )
             .addState( "Granted", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsGranted",
                 navigationType: "ephemeral",
-                previewDefaultVars: { userGrantedDisplayName: "User" }
+                previewDefaultVars: { userGrantedDisplayName: "User" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"
             } )
             .addState( "Denied", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsDenied",
                 navigationType: "ephemeral",
-                previewDefaultVars: { userDeniedDisplayName: "User" }
+                previewDefaultVars: { userDeniedDisplayName: "User" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup"
             } )
             .addState( "Blocked", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsBlocked",
                 navigationType: "ephemeral",
-                previewDefaultVars: { userBlockedDisplayName: "User" }
+                previewDefaultVars: { userBlockedDisplayName: "User" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup"
             } )
             .addState( "Unblocked", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked",
                 navigationType: "ephemeral",
-                previewDefaultVars: { userUnBlockedDisplayName: "User" }
+                previewDefaultVars: { userUnBlockedDisplayName: "User" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup"
             } )
             .addState( "Kicked", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsKick",
                 navigationType: "ephemeral",
-                previewDefaultVars: { userKickedDisplayName: "User" }
+                previewDefaultVars: { userKickedDisplayName: "User" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
             } )
             .addState( "Public", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "public" }
+                previewDefaultVars: { state: "public" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
             } )
             .addState( "Private", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "private" }
+                previewDefaultVars: { state: "private" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
             } )
             .addState( "Hidden", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "hidden" }
+                previewDefaultVars: { state: "hidden" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
             } )
             .addState( "Shown", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateShown",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "shown" }
+                previewDefaultVars: { state: "shown" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
             .addState( "NothingChanged", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
             } )
             // Transitions - State changes
             .addTransition( "SetPublic", { from: [ "Default", "Private" ], to: "Public" } )

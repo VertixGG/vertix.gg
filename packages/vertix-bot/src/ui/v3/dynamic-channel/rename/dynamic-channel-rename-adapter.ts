@@ -23,24 +23,10 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 
 type DefaultInteraction = UIDefaultButtonChannelVoiceInteraction | UIDefaultModalChannelVoiceInteraction;
 
-const RENAME_STEPS = {
-    default: {},
-    "VertixBot/UI-V3/DynamicChannelRenameBadword": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelRenameSuccess": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelRenameRateLimited": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbedGroup"
-    }
-} as const;
-
 const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V3/DynamicChannelRenameAdapter"
 )
     .setComponent( DynamicChannelRenameComponent )
-    .setExecutionSteps( RENAME_STEPS )
     // Define transactions - states and transitions with automatic navigation
     .defineTransactions( ( tx ) => {
         tx
@@ -53,17 +39,20 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelRenameSuccess",
                 navigationType: "ephemeral",
-                previewDefaultVars: { channelName: "My Channel" }
+                previewDefaultVars: { channelName: "My Channel" },
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbedGroup"
             } )
             .addState( "Badword", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelRenameBadword",
                 navigationType: "ephemeral",
-                previewDefaultVars: { badword: "example" }
+                previewDefaultVars: { badword: "example" },
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbedGroup"
             } )
             .addState( "RateLimited", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelRenameRateLimited",
                 navigationType: "ephemeral",
-                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789" }
+                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789" },
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbedGroup"
             } )
             // Transitions
             .addTransition( "SubmitSuccess", { from: "Default", to: "Success" } )

@@ -45,76 +45,58 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
 )
     .setComponent( DynamicChannelTemplatesComponent )
     .setInitiatorElement( DynamicChannelTemplatesButton )
-    .setExecutionSteps( {
-        default: {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
-        },
-        "apply-menu": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesApplyElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
-        },
-        "apply-confirm": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
-        },
-        "manage-menu": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesManageElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbedGroup"
-        },
-        "delete-confirm": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesManageConfirmElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbedGroup"
-        },
-        "template-saved": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbedGroup"
-        },
-        "template-applied": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbedGroup"
-        },
-        "template-deleted": {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbedGroup"
-        }
-    } )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "default",
-                navigationType: "editReply"
+                navigationType: "editReply",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
             } )
             .addState( "ApplyMenu", {
                 executionStep: "apply-menu",
-                navigationType: "editReply"
+                navigationType: "editReply",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesApplyElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
             } )
             .addState( "ApplyConfirm", {
                 executionStep: "apply-confirm",
-                navigationType: "editReply"
+                navigationType: "editReply",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
             } )
             .addState( "ManageMenu", {
                 executionStep: "manage-menu",
-                navigationType: "editReply"
+                navigationType: "editReply",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesManageElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbedGroup"
             } )
             .addState( "DeleteConfirm", {
                 executionStep: "delete-confirm",
-                navigationType: "editReply"
+                navigationType: "editReply",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesManageConfirmElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbedGroup"
             } )
             .addState( "TemplateSaved", {
                 executionStep: "template-saved",
                 navigationType: "editReply",
-                previewDefaultVars: { templateName: "My Template" }
+                previewDefaultVars: { templateName: "My Template" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbedGroup"
             } )
             .addState( "TemplateApplied", {
                 executionStep: "template-applied",
-                navigationType: "editReply"
+                navigationType: "editReply",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbedGroup"
             } )
             .addState( "TemplateDeleted", {
                 executionStep: "template-deleted",
                 navigationType: "editReply",
-                previewDefaultVars: { deletedTemplateName: "My Template" }
+                previewDefaultVars: { deletedTemplateName: "My Template" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbedGroup"
             } )
             // Transitions
             .addTransition( "OpenApplyMenu", { from: "Default", to: "ApplyMenu" } )

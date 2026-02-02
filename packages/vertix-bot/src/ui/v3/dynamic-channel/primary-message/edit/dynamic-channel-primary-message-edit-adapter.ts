@@ -131,7 +131,9 @@ const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<
             // States
             .addState( "Confirm", {
                 executionStep: "default",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                elementsGroup: DynamicChannelPrimaryMessageEditComponent.getDefaultElementsGroup(),
+                embedsGroup: DynamicChannelPrimaryMessageEditComponent.getDefaultEmbedsGroup()
             } )
             .addState( "EditTitle", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent",
@@ -176,12 +178,6 @@ const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<
                 "DescriptionEdited",
                 onEditDescriptionModalSubmit
             );
-    } )
-    .setExecutionSteps( {
-        default: {
-            elementsGroup: DynamicChannelPrimaryMessageEditComponent.getDefaultElementsGroup(),
-            embedsGroup: DynamicChannelPrimaryMessageEditComponent.getDefaultEmbedsGroup()
-        }
     } )
     .setInitiatorElement( DynamicChannelPrimaryMessageEditButton )
     .getStartArgs( async() => ( {} ) )

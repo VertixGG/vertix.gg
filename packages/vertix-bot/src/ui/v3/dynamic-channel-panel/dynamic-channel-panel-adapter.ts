@@ -14,13 +14,6 @@ import type {
 import type { Message } from "discord.js";
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
-const DYNAMIC_CHANNEL_PANEL_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelPanel/EmbedsGroup"
-    }
-} as const;
-
 const logger = new Logger( "VertixBot/UI-V3/DynamicChannelPanelAdapter" );
 
 // Note: DynamicChannelPanelAdapter is a variant of DynamicChannelAdapter shown in panel channels.
@@ -29,7 +22,6 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
     "VertixBot/UI-V3/DynamicChannelPanelAdapter"
 )
     .setComponent( DynamicChannelPanelComponent )
-    .setExecutionSteps( DYNAMIC_CHANNEL_PANEL_STEPS )
     .setArgsDataSource( [ "all" ], DynamicChannelUIData.getName() )
     .defineTransactions( ( tx ) => {
         tx
@@ -37,7 +29,9 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "default",
-                previewDefaultVars: { channelName: "My Channel", ownerId: "123456789" }
+                previewDefaultVars: { channelName: "My Channel", ownerId: "123456789" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPanel/EmbedsGroup"
             } )
             // Transitions (same as DynamicChannelAdapter, but hidden)
             .addTransition( "OpenRename", { from: "Default", to: "Default" } )

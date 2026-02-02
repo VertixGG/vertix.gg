@@ -51,7 +51,19 @@ export class ExecutionAdapterBuilder<
         super( name, ( adapterBase || UIAdapterExecutionStepsBase ) as TBase );
     }
 
+    /**
+     * Set execution steps for this adapter.
+     *
+     * NOTE: Cannot be used together with defineTransactions().
+     * When using defineTransactions(), execution steps are derived from state configurations.
+     */
     public setExecutionSteps( executionSteps: UIExecutionSteps ): this {
+        if ( this.transactions ) {
+            throw new Error(
+                `Adapter "${ this.name }": Cannot use setExecutionSteps() when defineTransactions() is used. ` +
+                `Define execution step details (embedsGroup, elementsGroup) in addState() instead.`
+            );
+        }
         this.executionSteps = executionSteps;
         return this;
     }
@@ -96,28 +108,33 @@ export class ExecutionAdapterBuilder<
      * Define transactions (state machine) for this adapter.
      * Transactions automatically generate flow triggers that are injected into bindings.
      *
-     * IMPORTANT: When using defineTransactions, you cannot use onEntityMap.
-     * All element-to-handler bindings must be done via transaction methods:
-     * - tx.bindButton(elementId, handler)
-     * - tx.bindModal(elementId, handler)
-     * - tx.bindModalWithButtonHandler(buttonElement, modalName, handler)
-     * - tx.bindSelectMenu(elementId, handler)
-     * - tx.bindUserSelectMenu(elementId, handler)
+     * IMPORTANT: When using defineTransactions:
+     * - You cannot use onEntityMap() - bind handlers via tx.bindButton(), tx.bindModal(), etc.
+     * - You cannot use setExecutionSteps() - define step details in addState() instead.
      *
      * @example
      * .defineTransactions((tx) => {
      *   tx
      *     .setInitialState("Default")
-     *     .addState("Default", { executionStep: "default" })
+     *     .addState("Default", {
+     *       executionStep: "default",
+     *       elementsGroup: "MyElementsGroup",
+     *       embedsGroup: "MyEmbedsGroup"
+     *     })
      *     .addState("Public", { executionStep: "statePublic" })
      *     .addTransition("SetPublic", { from: "Default", to: "Public" })
-     *     .bindElement("VertixBot/UI-V3/StateButton", "SetPublic")
-     *     .bindButton("VertixBot/UI-V3/StateButton", async (context, interaction) => {
+     *     .bindButton("VertixBot/UI-V3/StateButton", "SetPublic", async (context, interaction) => {
      *       // handle button click
      *     });
      * })
      */
     public defineTransactions( configurator: ( tx: TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>> ) => void ): this {
+        if ( this.executionSteps ) {
+            throw new Error(
+                `Adapter "${ this.name }": Cannot use defineTransactions() when setExecutionSteps() is used. ` +
+                `Choose one approach: either setExecutionSteps() with onEntityMap(), or defineTransactions() alone.`
+            );
+        }
         const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
         this.transactions = new TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>>( flowName );
         configurator( this.transactions );
@@ -148,6 +165,10 @@ export class ExecutionAdapterBuilder<
             protected static dedicatedLogger = new Logger( builder.name );
 
             protected static getExecutionSteps() {
+                // If transactions are defined, derive execution steps from them
+                if ( builder.transactions ) {
+                    return builder.transactions.getExecutionSteps();
+                }
                 return builder.executionSteps || {};
             }
 

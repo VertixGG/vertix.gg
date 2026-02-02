@@ -38,31 +38,6 @@ function clearAcceptedInteraction( interaction: UIDefaultButtonChannelVoiceInter
     }
 }
 
-const TRANSFER_OWNER_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelTransferOwnerSelectUser": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbedGroup",
-        elementsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelected": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup",
-        elementsGroup: "VertixBot/UI-General/YesNoElementsGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelTransferOwnerSuccess": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup"
-    },
-
-    "VertixBot/UI-V2/DynamicChannelTransferDisabledByClaim": {
-        embedsGroup: "VertixBot/UI-General/DisabledWhileClaimEmbedGroup"
-    },
-
-    "VertixBot/UI-V2/DynamicChannelTransferError": {
-        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-    }
-} as const;
-
 async function onTransferOwnerButtonClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction
@@ -176,31 +151,40 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
 )
     .setComponent( DynamicChannelTransferOwnerComponent )
     .setExcludedElements( [ DynamicChannelTransferOwnerButton ] )
-    .setExecutionSteps( TRANSFER_OWNER_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
-            .addState( "Default", { executionStep: "default" } )
+            .addState( "Default", {
+                executionStep: "default",
+                elementsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup"
+            } )
             .addState( "SelectUser", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelTransferOwnerSelectUser",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbedGroup",
+                elementsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup"
             } )
             .addState( "UserSelected", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelected",
                 navigationType: "editReply",
-                previewDefaultVars: { userDisplayName: "User" }
+                previewDefaultVars: { userDisplayName: "User" },
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup",
+                elementsGroup: "VertixBot/UI-General/YesNoElementsGroup"
             } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelTransferOwnerSuccess",
-                navigationType: "editReply"
+                navigationType: "editReply",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup"
             } )
             .addState( "DisabledByClaim", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelTransferDisabledByClaim",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-General/DisabledWhileClaimEmbedGroup"
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelTransferError",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
             .addState( "Cancelled", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelTransferError",

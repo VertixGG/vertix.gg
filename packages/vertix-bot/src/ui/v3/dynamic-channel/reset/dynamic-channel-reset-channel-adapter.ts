@@ -9,42 +9,32 @@ import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
-const RESET_CHANNEL_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelResetChannelButtonGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelResetChannelSuccess": {
-        embedsGroup: "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelResetChannelVoteRequired": {
-        embedsGroup: "VertixBot/UI-General/TopGGVoteEmbedGroup"
-    },
-    "VertixBot/UI-V3/DynamicChannelResetChannelError": {
-        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-    }
-} as const;
-
 const DynamicChannelResetChannelAdapter = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(
     "VertixBot/UI-V3/DynamicChannelResetChannelAdapter"
 )
     .setComponent( DynamicChannelResetChannelComponent )
-    .setExecutionSteps( RESET_CHANNEL_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
-            .addState( "Default", { executionStep: "default" } )
+            .addState( "Default", {
+                executionStep: "default",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelResetChannelButtonGroup"
+            } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelSuccess",
                 navigationType: "ephemeral",
-                previewDefaultVars: { code: "success" }
+                previewDefaultVars: { code: "success" },
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
             } )
             .addState( "VoteRequired", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelVoteRequired",
-                navigationType: "silent" // Uses TopGGManager.$.sendVoteEmbed() directly
+                navigationType: "silent", // Uses TopGGManager.$.sendVoteEmbed() directly
+                embedsGroup: "VertixBot/UI-General/TopGGVoteEmbedGroup"
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelError",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
             .addTransition( "ResetSuccess", { from: "Default", to: "Success" } )
             .addTransition( "ResetVoteRequired", { from: "Default", to: "VoteRequired" } )

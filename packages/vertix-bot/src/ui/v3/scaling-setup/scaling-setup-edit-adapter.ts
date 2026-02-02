@@ -235,13 +235,6 @@ const ScalingSetupEditAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextCh
 )
     .setComponent( ScalingSetupEditComponent )
     .setExcludedElements( [ SetupMasterEditSelectMenu ] )
-    .setExecutionSteps( {
-        default: {},
-        "VertixBot/UI-V3/ScalingSetupEdit": {
-            elementsGroup: "VertixBot/UI-V3/ScalingSetupEditElementsGroup",
-            embedsGroup: "VertixBot/UI-V3/ScalingSetupEditEmbedGroup"
-        }
-    } )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
@@ -250,6 +243,8 @@ const ScalingSetupEditAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextCh
             .addState( "Edit", {
                 executionStep: "VertixBot/UI-V3/ScalingSetupEdit",
                 navigationType: "editReply",
+                elementsGroup: "VertixBot/UI-V3/ScalingSetupEditElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/ScalingSetupEditEmbedGroup",
                 previewDefaultVars: { scalingIndex: "1", masterChannelId: "123456789", scalingPrefix: "Scaling Channel", scalingMaxMembers: "10" }
             } )
             // Transitions

@@ -11,21 +11,6 @@ import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
-const CLEAR_CHAT_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V2/DynamicChannelMetaClearChatButtonGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccess": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClear": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelMetaClearChatError": {
-        embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-    }
-} as const;
-
 async function onClearChatButtonClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction
@@ -71,22 +56,27 @@ const DynamicChannelMetaClearChatAdapter = new DynamicExecutionAdapterBuilder<UI
     "VertixBot/UI-V2/DynamicChannelMetaClearChatAdapter"
 )
     .setComponent( DynamicChannelMetaClearChatComponent )
-    .setExecutionSteps( CLEAR_CHAT_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
-            .addState( "Default", { executionStep: "default" } )
+            .addState( "Default", {
+                executionStep: "default",
+                elementsGroup: "VertixBot/UI-V2/DynamicChannelMetaClearChatButtonGroup"
+            } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccess",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { ownerDisplayName: "Owner", totalMessages: "5" }
             } )
             .addState( "NothingToClear", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClear",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup",
                 navigationType: "ephemeral"
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaClearChatError",
+                embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
                 navigationType: "ephemeral"
             } )
             .addTransition( "ClearSuccess", {

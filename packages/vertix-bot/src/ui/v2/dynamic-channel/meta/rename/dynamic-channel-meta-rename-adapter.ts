@@ -20,24 +20,10 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 
 type DefaultInteraction = UIDefaultButtonChannelVoiceInteraction | UIDefaultModalChannelVoiceInteraction;
 
-const RENAME_STEPS = {
-    default: {},
-    "VertixBot/UI-V2/DynamicChannelMetaRenameBadword": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup"
-    },
-    "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited": {
-        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup"
-    }
-} as const;
-
 const DynamicChannelMetaRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter"
 )
     .setComponent( DynamicChannelMetaRenameComponent )
-    .setExecutionSteps( RENAME_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
@@ -47,16 +33,19 @@ const DynamicChannelMetaRenameAdapter = new DynamicExecutionAdapterBuilder<Defau
             } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { channelName: "My Channel" }
             } )
             .addState( "Badword", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaRenameBadword",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { badword: "example" }
             } )
             .addState( "RateLimited", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789" }
             } )

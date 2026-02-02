@@ -13,39 +13,12 @@ import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
 type Interaction = ButtonInteraction<"cached">;
 
-const CLAIM_RESULT_STEPS = {
-    "VertixBot/UI-V3/ClaimResultOwnerStop": {
-        embedsGroup: "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
-    },
-
-    "VertixBot/UI-V3/ClaimResultAddedSuccessfully": {
-        embedsGroup: "VertixBot/UI-V3/ClaimResultStepInEmbedGroup"
-    },
-    "VertixBot/UI-V3/ClaimResultAlreadyAdded": {
-        embedsGroup: "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbedGroup"
-    },
-
-    "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted": {
-        embedsGroup: "VertixBot/UI-V3/ClaimResultVoteSelfEmbedGroup"
-    },
-    "VertixBot/UI-V3/ClaimResultVotedSuccessfully": {
-        embedsGroup: "VertixBot/UI-V3/ClaimResultVotedEmbedGroup"
-    },
-    "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame": {
-        embedsGroup: "VertixBot/UI-V3/ClaimResultVotedSameEmbedGroup"
-    },
-    "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully": {
-        embedsGroup: "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbedGroup"
-    }
-} as const;
-
 const ClaimResultAdapter = new ExecutionAdapterBuilder<
     VoiceChannel,
     Interaction,
     UIArgs
 >( "VertixBot/UI-V3/ClaimResultAdapter" )
     .setComponent( ClaimResultComponent )
-    .setExecutionSteps( CLAIM_RESULT_STEPS )
     .setPermissions( new PermissionsBitField( 0n ) )
     .setChannelTypes( [ ChannelType.GuildVoice ] )
     .defineTransactions( ( tx ) => {
@@ -54,39 +27,47 @@ const ClaimResultAdapter = new ExecutionAdapterBuilder<
             // Result states - these are shown based on claim action outcomes
             .addState( "Default", {
                 executionStep: "VertixBot/UI-V3/ClaimResultOwnerStop",
-                previewDefaultVars: { absentInterval: "300000" }
+                previewDefaultVars: { absentInterval: "300000" },
+                embedsGroup: "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
             } )
             .addState( "OwnerStop", {
                 executionStep: "VertixBot/UI-V3/ClaimResultOwnerStop",
                 navigationType: "ephemeral",
-                previewDefaultVars: { absentInterval: "300000" }
+                previewDefaultVars: { absentInterval: "300000" },
+                embedsGroup: "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
             } )
             .addState( "AddedSuccessfully", {
                 executionStep: "VertixBot/UI-V3/ClaimResultAddedSuccessfully",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-V3/ClaimResultStepInEmbedGroup"
             } )
             .addState( "AlreadyAdded", {
                 executionStep: "VertixBot/UI-V3/ClaimResultAlreadyAdded",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbedGroup"
             } )
             .addState( "VoteAlreadySelfVoted", {
                 executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted",
-                navigationType: "ephemeral"
+                navigationType: "ephemeral",
+                embedsGroup: "VertixBot/UI-V3/ClaimResultVoteSelfEmbedGroup"
             } )
             .addState( "VotedSuccessfully", {
                 executionStep: "VertixBot/UI-V3/ClaimResultVotedSuccessfully",
                 navigationType: "ephemeral",
-                previewDefaultVars: { userDisplayName: "User", userId: "123456789" }
+                previewDefaultVars: { userDisplayName: "User", userId: "123456789" },
+                embedsGroup: "VertixBot/UI-V3/ClaimResultVotedEmbedGroup"
             } )
             .addState( "VoteAlreadyVotedSame", {
                 executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame",
                 navigationType: "ephemeral",
-                previewDefaultVars: { userDisplayName: "User", userId: "123456789" }
+                previewDefaultVars: { userDisplayName: "User", userId: "123456789" },
+                embedsGroup: "VertixBot/UI-V3/ClaimResultVotedSameEmbedGroup"
             } )
             .addState( "VoteUpdatedSuccessfully", {
                 executionStep: "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully",
                 navigationType: "ephemeral",
-                previewDefaultVars: { prevUserId: "123456789", currentUserId: "987654321" }
+                previewDefaultVars: { prevUserId: "123456789", currentUserId: "987654321" },
+                embedsGroup: "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbedGroup"
             } )
             // Transitions - triggered by external claim manager
             .addTransition( "ShowOwnerStop", { from: "Default", to: "OwnerStop" } )

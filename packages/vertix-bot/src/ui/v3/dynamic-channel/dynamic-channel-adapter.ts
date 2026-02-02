@@ -15,26 +15,20 @@ import type {
 import type { BaseMessageOptions, Message } from "discord.js";
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
-const DYNAMIC_CHANNEL_STEPS = {
-    default: {
-        elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
-        embedsGroup: "VertixBot/UI-V3/DynamicChannel/EmbedsGroup"
-    }
-} as const;
-
 const logger = new Logger( "VertixBot/UI-V3/DynamicChannelAdapter" );
 
 const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(
     "VertixBot/UI-V3/DynamicChannelAdapter"
 )
     .setComponent( DynamicChannelComponent )
-    .setExecutionSteps( DYNAMIC_CHANNEL_STEPS )
     .setArgsDataSource( [ "all" ], DynamicChannelUIData.getName() )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "default",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannel/EmbedsGroup",
                 previewDefaultVars: { channelName: "My Channel", ownerId: "123456789" }
             } )
             // All button clicks stay in Default state but open other adapters

@@ -31,7 +31,6 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
     .setComponent( ClaimStartComponent )
     .setPermissions( new PermissionsBitField( 0n ) )
     .setChannelTypes( [ ChannelType.GuildVoice ] )
-    .setExecutionSteps( { default: {} } )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )

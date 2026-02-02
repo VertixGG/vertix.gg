@@ -11,75 +11,56 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
 
-const CLAIM_RESULT_STEPS = {
-    "VertixBot/UI-V2/ClaimResultOwnerStop": {
-        embedsGroup: "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup"
-    },
-
-    "VertixBot/UI-V2/ClaimResultAddedSuccessfully": {
-        embedsGroup: "VertixBot/UI-V2/ClaimResultStepInEmbedGroup"
-    },
-    "VertixBot/UI-V2/ClaimResultAlreadyAdded": {
-        embedsGroup: "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbedGroup"
-    },
-
-    "VertixBot/UI-V2/ClaimResultVoteAlreadySelfVoted": {
-        embedsGroup: "VertixBot/UI-V2/ClaimResultVoteSelfEmbedGroup"
-    },
-    "VertixBot/UI-V2/ClaimResultVotedSuccessfully": {
-        embedsGroup: "VertixBot/UI-V2/ClaimResultVotedEmbedGroup"
-    },
-    "VertixBot/UI-V2/ClaimResultVoteAlreadyVotedSame": {
-        embedsGroup: "VertixBot/UI-V2/ClaimResultVotedSameEmbedGroup"
-    },
-    "VertixBot/UI-V2/ClaimResultVoteUpdatedSuccessfully": {
-        embedsGroup: "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbedGroup"
-    }
-} as const;
-
 const ClaimResultAdapter = new ExecutionAdapterBuilder<VoiceChannel, ButtonInteraction<"cached">>(
     "VertixBot/UI-V2/ClaimResultAdapter"
 )
     .setComponent( ClaimResultComponent )
     .setPermissions( new PermissionsBitField( 0n ) )
     .setChannelTypes( [ ChannelType.GuildVoice ] )
-    .setExecutionSteps( CLAIM_RESULT_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "VertixBot/UI-V2/ClaimResultOwnerStop",
+                embedsGroup: "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup",
                 previewDefaultVars: { absentInterval: "300000" }
             } )
             .addState( "OwnerStop", {
                 executionStep: "VertixBot/UI-V2/ClaimResultOwnerStop",
+                embedsGroup: "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { absentInterval: "300000" }
             } )
             .addState( "AddedSuccessfully", {
                 executionStep: "VertixBot/UI-V2/ClaimResultAddedSuccessfully",
+                embedsGroup: "VertixBot/UI-V2/ClaimResultStepInEmbedGroup",
                 navigationType: "ephemeral"
             } )
             .addState( "AlreadyAdded", {
                 executionStep: "VertixBot/UI-V2/ClaimResultAlreadyAdded",
+                embedsGroup: "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbedGroup",
                 navigationType: "ephemeral"
             } )
             .addState( "VoteAlreadySelfVoted", {
                 executionStep: "VertixBot/UI-V2/ClaimResultVoteAlreadySelfVoted",
+                embedsGroup: "VertixBot/UI-V2/ClaimResultVoteSelfEmbedGroup",
                 navigationType: "ephemeral"
             } )
             .addState( "VotedSuccessfully", {
                 executionStep: "VertixBot/UI-V2/ClaimResultVotedSuccessfully",
+                embedsGroup: "VertixBot/UI-V2/ClaimResultVotedEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { userDisplayName: "User", userId: "123456789" }
             } )
             .addState( "VoteAlreadyVotedSame", {
                 executionStep: "VertixBot/UI-V2/ClaimResultVoteAlreadyVotedSame",
+                embedsGroup: "VertixBot/UI-V2/ClaimResultVotedSameEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { userDisplayName: "User", userId: "123456789" }
             } )
             .addState( "VoteUpdatedSuccessfully", {
                 executionStep: "VertixBot/UI-V2/ClaimResultVoteUpdatedSuccessfully",
+                embedsGroup: "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbedGroup",
                 navigationType: "ephemeral",
                 previewDefaultVars: { prevUserId: "123456789", currentUserId: "987654321" }
             } )

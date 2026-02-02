@@ -26,33 +26,35 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
 )
     .setComponent( DynamicChannelPrivacyComponent )
     .setInitiatorElement( DynamicChannelPrivacyButton )
-    .setExecutionSteps( {
-        default: {
-            elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
-            embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
-        }
-    } )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "default",
-                previewDefaultVars: { state: "Public", stateMessage: "Everyone can join" }
+                previewDefaultVars: { state: "Public", stateMessage: "Everyone can join" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
             } )
             .addState( "Public", {
                 executionStep: "default",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "Public", stateMessage: "Everyone can join" }
+                previewDefaultVars: { state: "Public", stateMessage: "Everyone can join" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
             } )
             .addState( "Private", {
                 executionStep: "default",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "Private", stateMessage: "Only allowed users can join" }
+                previewDefaultVars: { state: "Private", stateMessage: "Only allowed users can join" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
             } )
             .addState( "Hidden", {
                 executionStep: "default",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "Hidden", stateMessage: "Channel is hidden from others" }
+                previewDefaultVars: { state: "Hidden", stateMessage: "Channel is hidden from others" },
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
             } )
             .addTransition( "SetPublic", {
                 from: [ "Default", "Private", "Hidden" ],

@@ -13,7 +13,7 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type { UIArgs, UIExecutionConditionArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { UIDefaultButtonChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
@@ -22,33 +22,6 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 interface DefaultInteraction extends ButtonInteraction<"cached"> {
     channel: VoiceChannel;
 }
-
-const CLAIM_VOTE_STEPS = {
-    "VertixBot/UI-V3/ClaimStepIn": {
-        embedsGroup: "VertixBot/UI-V3/ClaimVoteStepInEmbedGroup",
-        elementsGroup: "VertixBot/UI-V3/ClaimVoteStepInButtonGroup",
-        getConditions: ( { context }: UIExecutionConditionArgs ) =>
-            [ "starting", "active" ].includes(
-                DynamicChannelVoteManager.$.getState( context.channelId as string )
-            ) && DynamicChannelVoteManager.$.getCandidatesCount( context.channelId as string ) < 2
-    },
-    "VertixBot/UI-V3/ClaimVoteProcess": {
-        embedsGroup: "VertixBot/UI-V3/ClaimVoteEmbedGroup",
-        elementsGroup: "VertixBot/UI-V3/ClaimVoteElementsGroup",
-        getConditions: ( { context }: UIExecutionConditionArgs ) =>
-            DynamicChannelVoteManager.$.getState( context.channelId as string ) === "active" &&
-            DynamicChannelVoteManager.$.getCandidatesCount( context.channelId as string ) > 1
-    },
-    "VertixBot/UI-V3/ClaimVoteWon": {
-        embedsGroup: "VertixBot/UI-V3/ClaimVoteWonEmbedGroup",
-        getConditions: ( { context }: UIExecutionConditionArgs ) =>
-            DynamicChannelVoteManager.$.isTimeExpired( context.channelId as string )
-    },
-
-    bypass: {
-        markdownGroup: "VertixBot/UI-V3/ClaimVoteResultsMarkdownGroup"
-    }
-} as const;
 
 async function setBasicArgs(
     context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,
@@ -139,7 +112,6 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
     UIArgs
 >( "VertixBot/UI-V3/ClaimVoteAdapter" )
     .setComponent( ClaimVoteComponent )
-    .setExecutionSteps( CLAIM_VOTE_STEPS )
     .setPermissions( new PermissionsBitField( 0n ) )
     .setChannelTypes( [ ChannelType.GuildVoice ] )
     .defineTransactions( ( tx ) => {
@@ -148,15 +120,21 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
             // Vote process states
             .addState( "StepIn", {
                 executionStep: "VertixBot/UI-V3/ClaimStepIn",
-                previewDefaultVars: { userInitiatorDisplayName: "Initiator", timeEnd: "1700000000000" }
+                previewDefaultVars: { userInitiatorDisplayName: "Initiator", timeEnd: "1700000000000" },
+                embedsGroup: "VertixBot/UI-V3/ClaimVoteStepInEmbedGroup",
+                elementsGroup: "VertixBot/UI-V3/ClaimVoteStepInButtonGroup"
             } )
             .addState( "VoteProcess", {
                 executionStep: "VertixBot/UI-V3/ClaimVoteProcess",
-                previewDefaultVars: { userInitiatorDisplayName: "Initiator", timeEnd: "1700000000000" }
+                previewDefaultVars: { userInitiatorDisplayName: "Initiator", timeEnd: "1700000000000" },
+                embedsGroup: "VertixBot/UI-V3/ClaimVoteEmbedGroup",
+                elementsGroup: "VertixBot/UI-V3/ClaimVoteElementsGroup"
             } )
             .addState( "VoteWon", {
                 executionStep: "VertixBot/UI-V3/ClaimVoteWon",
-                previewDefaultVars: { userWonDisplayName: "Winner", previousOwnerDisplayName: "Previous Owner" }
+                previewDefaultVars: { userWonDisplayName: "Winner", previousOwnerDisplayName: "Previous Owner" },
+                embedsGroup: "VertixBot/UI-V3/ClaimVoteWonEmbedGroup",
+                markdownGroup: "VertixBot/UI-V3/ClaimVoteResultsMarkdownGroup"
             } )
             // Transitions - triggered by vote manager based on vote state
             .addTransition( "StartVoting", { from: "StepIn", to: "VoteProcess" } )

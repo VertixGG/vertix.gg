@@ -17,10 +17,6 @@ interface DefaultInteraction extends ButtonInteraction<"cached"> {
     channel: VoiceChannel;
 }
 
-const CLAIM_START_STEPS = {
-    default: {}
-} as const;
-
 async function onClaimStartButtonClicked(
     context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,
     interaction: DefaultInteraction
@@ -34,7 +30,6 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
     .setComponent( ClaimStartComponent )
     .setPermissions( new PermissionsBitField( 0n ) )
     .setChannelTypes( [ ChannelType.GuildVoice ] )
-    .setExecutionSteps( CLAIM_START_STEPS )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )

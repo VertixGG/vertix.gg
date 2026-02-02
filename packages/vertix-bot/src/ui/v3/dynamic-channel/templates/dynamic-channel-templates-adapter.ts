@@ -125,15 +125,259 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
             .addTransition( "ConfirmDelete", { from: "DeleteConfirm", to: "TemplateDeleted" } )
             .addTransition( "SaveTemplate", { from: "Default", to: "TemplateSaved" } )
             .addTransition( "BackToDefault", { from: [ "ApplyMenu", "ManageMenu", "TemplateSaved", "TemplateApplied", "TemplateDeleted" ], to: "Default" } )
-            // Element bindings
-            .bindElement( "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton", "OpenApplyMenu" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelTemplatesManageButton", "OpenManageMenu" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelTemplatesBackButton", "BackToDefault" )
+            // Handler bindings (combines element-to-transition binding with handler)
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton",
+                "OpenApplyMenu",
+                async( context, interaction ) => {
+                    await context.triggerTransition( "OpenApplyMenu", interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTemplatesManageButton",
+                "OpenManageMenu",
+                async( context, interaction ) => {
+                    await context.triggerTransition( "OpenManageMenu", interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTemplatesBackButton",
+                "BackToDefault",
+                async( context, interaction ) => {
+                    await context.triggerTransition( "BackToDefault", interaction );
+                }
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
+                "SelectTemplateToApply",
+                async( context, interaction ) => {
+                    if ( !interaction.deferred && !interaction.replied ) {
+                        try {
+                            await interaction.deferUpdate();
+                        } catch {
+                            return;
+                        }
+                    }
+
+                    const templateId = interaction.values[ 0 ];
+
+                    const args = context.getArgs( interaction ) ?? {};
+
+                    context.setArgs(
+                        interaction,
+                        Object.assign( {}, args, {
+                            selectedTemplateId: templateId
+                        } )
+                    );
+
+                    await context.triggerTransition( "SelectTemplateToApply", interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
+                "ConfirmApply",
+                async( context, interaction ) => {
+                    if ( !interaction.deferred && !interaction.replied ) {
+                        try {
+                            await interaction.deferUpdate();
+                        } catch {
+                            return;
+                        }
+                    }
+
+                    const args = context.getArgs( interaction ) ?? {};
+                    const selectedTemplateId = typeof args.selectedTemplateId === "string"
+                        ? args.selectedTemplateId
+                        : "";
+
+                    if ( !selectedTemplateId ) {
+                        await context.triggerTransition( "OpenApplyMenu", interaction );
+                        return;
+                    }
+
+                    const template = await ChannelTemplateModel.$.getTemplateById(
+                        interaction.user.id,
+                        interaction.guildId,
+                        selectedTemplateId
+                    );
+
+                    if ( !template ) {
+                        await context.triggerTransition( "OpenApplyMenu", interaction );
+                        return;
+                    }
+
+                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>(
+                        "VertixBot/Services/DynamicChannel"
+                    );
+
+                    const config = template.config;
+
+                    try {
+                        if ( config.userLimit !== undefined ) {
+                            await interaction.channel.setUserLimit( config.userLimit );
+                        }
+
+                        if ( config.state && config.state !== "unknown" ) {
+                            await dynamicChannelService.editChannelState( interaction, interaction.channel, config.state );
+                        }
+
+                        if ( config.visibilityState && config.visibilityState !== "unknown" ) {
+                            await dynamicChannelService.editChannelVisibilityState(
+                                interaction,
+                                interaction.channel,
+                                config.visibilityState
+                            );
+                        }
+
+                        if ( typeof config.region === "string" ) {
+                            const region = config.region.trim();
+
+                            if ( region.length ) {
+                                await interaction.channel.setRTCRegion( region === "auto" ? null : region );
+                            }
+                        }
+
+                        if ( config.nameTemplate ) {
+                            await interaction.channel.setName( config.nameTemplate ).catch( () => {} );
+                        }
+                    } catch {
+                    }
+
+                    context.setArgs(
+                        interaction,
+                        Object.assign( {}, args, {
+                            appliedTemplate: template,
+                            selectedTemplateId: ""
+                        } )
+                    );
+
+                    await context.triggerTransition( "ConfirmApply", interaction );
+                }
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
+                "SelectTemplateToDelete",
+                async( context, interaction ) => {
+                    if ( !interaction.deferred && !interaction.replied ) {
+                        try {
+                            await interaction.deferUpdate();
+                        } catch {
+                            return;
+                        }
+                    }
+
+                    const templateId = interaction.values[ 0 ];
+
+                    const args = context.getArgs( interaction ) ?? {};
+
+                    context.setArgs(
+                        interaction,
+                        Object.assign( {}, args, {
+                            selectedTemplateId: templateId
+                        } )
+                    );
+
+                    await context.triggerTransition( "SelectTemplateToDelete", interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
+                "ConfirmDelete",
+                async( context, interaction ) => {
+                    if ( !interaction.deferred && !interaction.replied ) {
+                        try {
+                            await interaction.deferUpdate();
+                        } catch {
+                            return;
+                        }
+                    }
+
+                    const args = context.getArgs( interaction ) ?? {};
+                    const selectedTemplateId = typeof args.selectedTemplateId === "string"
+                        ? args.selectedTemplateId
+                        : "";
+
+                    if ( !selectedTemplateId ) {
+                        await context.triggerTransition( "OpenManageMenu", interaction );
+                        return;
+                    }
+
+                    const template = await ChannelTemplateModel.$.getTemplateById(
+                        interaction.user.id,
+                        interaction.guildId,
+                        selectedTemplateId
+                    );
+
+                    const templateName = template?.name ?? "Unknown";
+
+                    await ChannelTemplateModel.$.deleteTemplate(
+                        interaction.user.id,
+                        interaction.guildId,
+                        selectedTemplateId
+                    );
+
+                    const templates = await ChannelTemplateModel.$.getTemplates(
+                        interaction.user.id,
+                        interaction.guildId
+                    );
+
+                    context.setArgs(
+                        interaction,
+                        Object.assign( {}, args, {
+                            deletedTemplateName: templateName,
+                            selectedTemplateId: "",
+                            templates
+                        } )
+                    );
+
+                    await context.triggerTransition( "ConfirmDelete", interaction );
+                }
+            )
             // Modal-button bindings (for visualization - shows which button opens which modal)
-            .bindModalWithButton(
+            .bindModalWithButton<UIDefaultModalChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
                 "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
-                "SaveTemplate"
+                "SaveTemplate",
+                async( context, interaction ) => {
+                    const inputId =
+                        "VertixBot/UI-V3/DynamicChannelTemplatesAdapter" +
+                        UI_CUSTOM_ID_SEPARATOR +
+                        "VertixBot/UI-V3/DynamicChannelTemplatesSaveInput";
+
+                    const templateName = interaction.fields.getTextInputValue(
+                        context.customIdStrategy.generateId( inputId )
+                    );
+
+                    const config = await getCurrentChannelConfig( interaction.channel );
+
+                    const result = await ChannelTemplateModel.$.saveTemplate(
+                        interaction.user.id,
+                        interaction.guildId,
+                        templateName,
+                        config
+                    );
+
+                    if ( !result.success ) {
+                        await context.editReply( interaction, {
+                            templateName,
+                            error: result.error
+                        } );
+                        return;
+                    }
+
+                    const templates = await ChannelTemplateModel.$.getTemplates(
+                        interaction.user.id,
+                        interaction.guildId
+                    );
+
+                    context.setArgs( interaction, {
+                        templates,
+                        maxTemplates: MAX_TEMPLATES,
+                        templateName
+                    } );
+
+                    await context.triggerTransition( "SaveTemplate", interaction );
+                }
             );
     } )
     .getStartArgs( async() => ( {
@@ -161,260 +405,6 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
             maxTemplates
         } );
     } )
-    .onEntityMap( async( { bindButton, bindModalWithButton, bindSelectMenu } ) => {
-        bindModalWithButton<UIDefaultModalChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
-            "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
-            async( context, interaction ) => {
-                const inputId =
-                    "VertixBot/UI-V3/DynamicChannelTemplatesAdapter" +
-                    UI_CUSTOM_ID_SEPARATOR +
-                    "VertixBot/UI-V3/DynamicChannelTemplatesSaveInput";
-
-                const templateName = interaction.fields.getTextInputValue(
-                    context.customIdStrategy.generateId( inputId )
-                );
-
-                const config = await getCurrentChannelConfig( interaction.channel );
-
-                const result = await ChannelTemplateModel.$.saveTemplate(
-                    interaction.user.id,
-                    interaction.guildId,
-                    templateName,
-                    config
-                );
-
-                if ( !result.success ) {
-                    await context.editReply( interaction, {
-                        templateName,
-                        error: result.error
-                    } );
-                    return;
-                }
-
-                const templates = await ChannelTemplateModel.$.getTemplates(
-                    interaction.user.id,
-                    interaction.guildId
-                );
-
-                context.setArgs( interaction, {
-                    templates,
-                    maxTemplates: MAX_TEMPLATES,
-                    templateName
-                } );
-
-                await context.triggerTransition( "SaveTemplate", interaction );
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton",
-            async( context, interaction ) => {
-                await context.triggerTransition( "OpenApplyMenu", interaction );
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTemplatesManageButton",
-            async( context, interaction ) => {
-                await context.triggerTransition( "OpenManageMenu", interaction );
-            }
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
-            async( context, interaction ) => {
-                if ( !interaction.deferred && !interaction.replied ) {
-                    try {
-                        await interaction.deferUpdate();
-                    } catch {
-                        return;
-                    }
-                }
-
-                const templateId = interaction.values[ 0 ];
-
-                const args = context.getArgs( interaction ) ?? {};
-
-                context.setArgs(
-                    interaction,
-                    Object.assign( {}, args, {
-                        selectedTemplateId: templateId
-                    } )
-                );
-
-                await context.triggerTransition( "SelectTemplateToApply", interaction );
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
-            async( context, interaction ) => {
-                if ( !interaction.deferred && !interaction.replied ) {
-                    try {
-                        await interaction.deferUpdate();
-                    } catch {
-                        return;
-                    }
-                }
-
-                const args = context.getArgs( interaction ) ?? {};
-                const selectedTemplateId = typeof args.selectedTemplateId === "string"
-                    ? args.selectedTemplateId
-                    : "";
-
-                if ( !selectedTemplateId ) {
-                    await context.triggerTransition( "OpenApplyMenu", interaction );
-                    return;
-                }
-
-                const template = await ChannelTemplateModel.$.getTemplateById(
-                    interaction.user.id,
-                    interaction.guildId,
-                    selectedTemplateId
-                );
-
-                if ( !template ) {
-                    await context.triggerTransition( "OpenApplyMenu", interaction );
-                    return;
-                }
-
-                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>(
-                    "VertixBot/Services/DynamicChannel"
-                );
-
-                const config = template.config;
-
-                try {
-                    if ( config.userLimit !== undefined ) {
-                        await interaction.channel.setUserLimit( config.userLimit );
-                    }
-
-                    if ( config.state && config.state !== "unknown" ) {
-                        await dynamicChannelService.editChannelState( interaction, interaction.channel, config.state );
-                    }
-
-                    if ( config.visibilityState && config.visibilityState !== "unknown" ) {
-                        await dynamicChannelService.editChannelVisibilityState(
-                            interaction,
-                            interaction.channel,
-                            config.visibilityState
-                        );
-                    }
-
-                    if ( typeof config.region === "string" ) {
-                        const region = config.region.trim();
-
-                        if ( region.length ) {
-                            await interaction.channel.setRTCRegion( region === "auto" ? null : region );
-                        }
-                    }
-
-                    if ( config.nameTemplate ) {
-                        await interaction.channel.setName( config.nameTemplate ).catch( () => {} );
-                    }
-                } catch {
-                }
-
-                context.setArgs(
-                    interaction,
-                    Object.assign( {}, args, {
-                        appliedTemplate: template,
-                        selectedTemplateId: ""
-                    } )
-                );
-
-                await context.triggerTransition( "ConfirmApply", interaction );
-            }
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
-            async( context, interaction ) => {
-                if ( !interaction.deferred && !interaction.replied ) {
-                    try {
-                        await interaction.deferUpdate();
-                    } catch {
-                        return;
-                    }
-                }
-
-                const templateId = interaction.values[ 0 ];
-
-                const args = context.getArgs( interaction ) ?? {};
-
-                context.setArgs(
-                    interaction,
-                    Object.assign( {}, args, {
-                        selectedTemplateId: templateId
-                    } )
-                );
-
-                await context.triggerTransition( "SelectTemplateToDelete", interaction );
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
-            async( context, interaction ) => {
-                if ( !interaction.deferred && !interaction.replied ) {
-                    try {
-                        await interaction.deferUpdate();
-                    } catch {
-                        return;
-                    }
-                }
-
-                const args = context.getArgs( interaction ) ?? {};
-                const selectedTemplateId = typeof args.selectedTemplateId === "string"
-                    ? args.selectedTemplateId
-                    : "";
-
-                if ( !selectedTemplateId ) {
-                    await context.triggerTransition( "OpenManageMenu", interaction );
-                    return;
-                }
-
-                const template = await ChannelTemplateModel.$.getTemplateById(
-                    interaction.user.id,
-                    interaction.guildId,
-                    selectedTemplateId
-                );
-
-                const templateName = template?.name ?? "Unknown";
-
-                await ChannelTemplateModel.$.deleteTemplate(
-                    interaction.user.id,
-                    interaction.guildId,
-                    selectedTemplateId
-                );
-
-                const templates = await ChannelTemplateModel.$.getTemplates(
-                    interaction.user.id,
-                    interaction.guildId
-                );
-
-                context.setArgs(
-                    interaction,
-                    Object.assign( {}, args, {
-                        deletedTemplateName: templateName,
-                        selectedTemplateId: "",
-                        templates
-                    } )
-                );
-
-                await context.triggerTransition( "ConfirmDelete", interaction );
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTemplatesBackButton",
-            async( context, interaction ) => {
-                await context.triggerTransition( "BackToDefault", interaction );
-            }
-        );
-    } )
     .build();
 
 export { DynamicChannelTemplatesAdapter };
-

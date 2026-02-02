@@ -398,19 +398,43 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             // Error transitions
             .addTransition( "ShowMaxChannels", { from: "Step3", to: "MaxMasterChannels" } )
             .addTransition( "ShowError", { from: "Step3", to: "Error" } )
-            // Element bindings
-            .bindElement( "VertixBot/UI-General/SetupMasterCreateV3Button", "StartWizard" )
-            .bindElement( "VertixBot/UI-General/SetupMasterCreateSelectMenu", "StartWizard" )
-            .bindElement( "VertixBot/UI-General/ChannelNameTemplateEditButton", "EditTemplateName" )
-            .bindElement( "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu", "SelectButtons" )
-            .bindElement( "VertixBot/UI-General/ConfigExtrasSelectMenu", "SelectConfigExtras" )
-            .bindElement( "VertixBot/UI-General/VerifiedRolesMenu", "SelectVerifiedRoles" )
-            .bindElement( "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu", "SelectEveryoneRole" )
-            // Modal-button bindings (for visualization)
-            .bindModalWithButton(
+            // Element bindings with handlers
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/SetupMasterCreateV3Button",
+                "StartWizard",
+                onCreateMasterChannelClicked
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                "StartWizard",
+                onCreateMasterChannelClicked
+            )
+            // Modal-button binding
+            .bindModalWithButton<UIDefaultModalChannelTextInteraction>(
                 "VertixBot/UI-General/ChannelNameTemplateEditButton",
                 "VertixBot/UI-General/ChannelNameTemplateModal",
-                "EditTemplateName"
+                "EditTemplateName",
+                onTemplateNameModalSubmit
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
+                "SelectButtons",
+                onButtonsSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/ConfigExtrasSelectMenu",
+                "SelectConfigExtras",
+                onConfigExtrasSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/VerifiedRolesMenu",
+                "SelectVerifiedRoles",
+                onVerifiedRolesSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
+                "SelectEveryoneRole",
+                onVerifiedRolesEveryoneSelected
             );
     } )
     .setExecutionSteps( {
@@ -431,47 +455,6 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         }
 
         return result;
-    } )
-    .onEntityMap( async( {
-        bindButton,
-        bindModalWithButton,
-        bindSelectMenu
-    } ) => {
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterCreateV3Button",
-            onCreateMasterChannelClicked
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
-            onCreateMasterChannelClicked
-        );
-
-        bindModalWithButton<UIDefaultModalChannelTextInteraction>(
-            "VertixBot/UI-General/ChannelNameTemplateEditButton",
-            "VertixBot/UI-General/ChannelNameTemplateModal",
-            onTemplateNameModalSubmit
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
-            onButtonsSelected
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/ConfigExtrasSelectMenu",
-            onConfigExtrasSelected
-        );
-
-        bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
-            "VertixBot/UI-General/VerifiedRolesMenu",
-            onVerifiedRolesSelected
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-            onVerifiedRolesEveryoneSelected
-        );
     } )
     .onBeforeBuildPrototype( async( context, args, _from, interaction ) => {
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {
@@ -557,4 +540,3 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     .build();
 
 export { SetupNewWizardAdapter, SetupStep1Component, SetupStep2Component, SetupStep3Component };
-

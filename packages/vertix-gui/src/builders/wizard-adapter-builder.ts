@@ -56,7 +56,7 @@ export class WizardAdapterBuilder<
     private onBeforeNextHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
     private onBeforeBackHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
     private onAfterFinishHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
-    private transactions: TransactionBuilder | undefined;
+    private transactions: TransactionBuilder<IWizardAdapterContext<TInteraction, TArgs>> | undefined;
 
     public constructor( name: string, adapterBase?: TBase ) {
         super( name, ( adapterBase || UIWizardAdapterBase ) as TBase );
@@ -65,9 +65,9 @@ export class WizardAdapterBuilder<
     /**
      * Define transactions (state machine) for this adapter.
      */
-    public defineTransactions( configurator: ( tx: TransactionBuilder ) => void ): this {
+    public defineTransactions( configurator: ( tx: TransactionBuilder<IWizardAdapterContext<TInteraction, TArgs>> ) => void ): this {
         const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
-        this.transactions = new TransactionBuilder( flowName );
+        this.transactions = new TransactionBuilder<IWizardAdapterContext<TInteraction, TArgs>>( flowName );
         configurator( this.transactions );
         return this;
     }
@@ -75,7 +75,7 @@ export class WizardAdapterBuilder<
     /**
      * Get the transactions builder if defined.
      */
-    public getTransactions(): TransactionBuilder | undefined {
+    public getTransactions(): TransactionBuilder<IWizardAdapterContext<TInteraction, TArgs>> | undefined {
         return this.transactions;
     }
 
@@ -313,6 +313,46 @@ export class WizardAdapterBuilder<
                         );
                         break;
                 }
+            }
+
+            /**
+             * Override onEntityMap to register handlers from transaction builder when transactions are defined.
+             */
+            protected async onEntityMap() {
+                // If transactions are defined, register handlers from the transaction builder
+                if ( builder.transactions ) {
+                    const binder = this.createBinder();
+                    const handlerBindings = builder.transactions.getHandlerBindings();
+
+                    for ( const binding of handlerBindings ) {
+                        switch ( binding.handlerKind ) {
+                            case "button":
+                                binder.bindButton( binding.elementId, binding.handler as any );
+                                break;
+                            case "modal":
+                                binder.bindModal( binding.elementId, binding.handler as any );
+                                break;
+                            case "modalWithButton":
+                                binder.bindModalWithButton(
+                                    binding.elementId,
+                                    binding.modalName!,
+                                    binding.handler as any
+                                );
+                                break;
+                            case "selectMenu":
+                                binder.bindSelectMenu( binding.elementId, binding.handler as any );
+                                break;
+                            case "userSelectMenu":
+                                binder.bindUserSelectMenu( binding.elementId, binding.handler as any );
+                                break;
+                        }
+                    }
+                    return;
+                }
+
+                // Otherwise call base implementation
+                // @ts-expect-error - base may not implement
+                return super.onEntityMap?.();
             }
 
             /**

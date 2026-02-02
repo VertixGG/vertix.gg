@@ -236,13 +236,6 @@ async function onDoneButtonClicked(
     context.deleteArgs( interaction );
 }
 
-async function onDeleteButtonClicked(
-    context: IExecutionAdapterContext<Interactions>,
-    interaction: UIDefaultButtonChannelTextInteraction
-) {
-    await context.showModal( interaction, "VertixBot/UI-General/DeleteConfirmModal" );
-}
-
 async function onDeleteConfirmModalSubmitted(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultModalChannelTextInteraction
@@ -503,7 +496,6 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "NameTemplateSubmitted", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "ConfigExtrasUpdated", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "LogChannelUpdated", { from: "MasterOverview", to: "MasterOverview" } )
-            .addTransition( "OpenDeleteModal", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "DeleteConfirmed", { from: "MasterOverview", to: "SelectMaster" } )
             .addTransition( "Done", { from: "MasterOverview", to: "SelectMaster" } )
             .addTransition( "ShowButtonsEffect", { from: "Buttons", to: "ButtonsEffect" } )
@@ -514,30 +506,78 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "VerifiedRolesEveryoneToggled", { from: "VerifiedRoles", to: "VerifiedRoles" } )
             .addTransition( "BackFromVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
             .addTransition( "FinishVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
-            // Element bindings
-            .bindElement( "VertixBot/UI-General/SetupMasterEditSelectMenu", "SelectMaster" )
-            .bindElement( "VertixBot/UI-V2/SetupEditSelectEditOptionMenu", "OpenButtons" )
-            .bindElement( "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu", "ShowButtonsEffect" )
-            .bindElement( "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton", "ButtonsImmediateApplied" )
-            .bindElement( "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton", "ButtonsNewApplied" )
-            .bindElement( "VertixBot/UI-General/ConfigExtrasSelectMenu", "ConfigExtrasUpdated" )
-            .bindElement( "VertixBot/UI-V2/LogChannelSelectMenu", "LogChannelUpdated" )
-            .bindElement( "VertixBot/UI-General/VerifiedRolesMenu", "VerifiedRolesUpdated" )
-            .bindElement( "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu", "VerifiedRolesEveryoneToggled" )
-            .bindElement( "VertixBot/UI-General/DoneButton", "Done" )
-            .bindElement( "VertixBot/UI-General/DeleteButton", "OpenDeleteModal" )
-            .bindElement( "VertixBot/UI-General/WizardBackButton", "BackFromVerifiedRoles" )
-            .bindElement( "VertixBot/UI-General/WizardFinishButton", "FinishVerifiedRoles" )
-            // Modal bindings
-            .bindModalWithButton(
+            // Handler bindings
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                "SelectMaster",
+                onSetupMasterEditButtonClicked
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                "OpenButtons",
+                onSelectEditOptionSelected
+            )
+            .bindModalWithButton<UIDefaultModalChannelTextInteraction>(
                 "VertixBot/UI-General/ChannelNameTemplateEditButton",
                 "VertixBot/UI-General/ChannelNameTemplateModal",
-                "NameTemplateSubmitted"
+                "NameTemplateSubmitted",
+                onTemplateEditModalSubmitted
             )
-            .bindModalWithButton(
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
+                "ShowButtonsEffect",
+                onButtonsSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
+                "ButtonsImmediateApplied",
+                onButtonsEffectImmediatelyButtonsClicked
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+                "ButtonsNewApplied",
+                onButtonsEffectNewlyButtonClicked
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/ConfigExtrasSelectMenu",
+                "ConfigExtrasUpdated",
+                onConfigExtrasSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-V2/LogChannelSelectMenu",
+                "LogChannelUpdated",
+                onLogChannelSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/VerifiedRolesMenu",
+                "VerifiedRolesUpdated",
+                onVerifiedRolesSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
+                "VerifiedRolesEveryoneToggled",
+                onVerifiedRolesEveryoneSelected
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/DoneButton",
+                "Done",
+                onDoneButtonClicked
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/WizardBackButton",
+                "BackFromVerifiedRoles",
+                onBackButtonClicked
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/WizardFinishButton",
+                "FinishVerifiedRoles",
+                onFinishButtonClicked
+            )
+            .bindModalWithButton<UIDefaultModalChannelTextInteraction>(
                 "VertixBot/UI-General/DeleteButton",
                 "VertixBot/UI-General/DeleteConfirmModal",
-                "DeleteConfirmed"
+                "DeleteConfirmed",
+                onDeleteConfirmModalSubmitted
             );
     } )
     .setExecutionSteps( {
@@ -611,82 +651,6 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         }
 
         return args;
-    } )
-    .onEntityMap( async( { bindButton, bindModal, bindSelectMenu } ) => {
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterEditSelectMenu",
-            onSetupMasterEditButtonClicked
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
-            onSelectEditOptionSelected
-        );
-
-        bindModal<UIDefaultModalChannelTextInteraction>(
-            "VertixBot/UI-General/ChannelNameTemplateModal",
-            onTemplateEditModalSubmitted
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-            onButtonsSelected
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
-            onButtonsEffectImmediatelyButtonsClicked
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
-            onButtonsEffectNewlyButtonClicked
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/ConfigExtrasSelectMenu",
-            onConfigExtrasSelected
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-V2/LogChannelSelectMenu",
-            onLogChannelSelected
-        );
-
-        bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
-            "VertixBot/UI-General/VerifiedRolesMenu",
-            onVerifiedRolesSelected
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-            onVerifiedRolesEveryoneSelected
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/DoneButton",
-            onDoneButtonClicked
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/DeleteButton",
-            onDeleteButtonClicked
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/WizardBackButton",
-            onBackButtonClicked
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/WizardFinishButton",
-            onFinishButtonClicked
-        );
-
-        bindModal<UIDefaultModalChannelTextInteraction>(
-            "VertixBot/UI-General/DeleteConfirmModal",
-            onDeleteConfirmModalSubmitted
-        );
     } )
     .build();
 

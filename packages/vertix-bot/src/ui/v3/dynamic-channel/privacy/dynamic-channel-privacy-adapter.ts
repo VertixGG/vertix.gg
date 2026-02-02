@@ -69,43 +69,42 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
                 to: "Hidden",
                 mutations: [ { type: "set", path: [ "state" ] } ]
             } )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelPrivacyMenu", "SetPublic" );
+            // Handler bindings (combines element-to-transition binding with handler)
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
+                "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
+                "SetPublic",
+                async( context, interaction ) => {
+                    const state = interaction.values[ 0 ];
+
+                    context.setArgs( interaction, { state } );
+
+                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+                    await dynamicChannelService.editChannelPrivacyState(
+                        interaction,
+                        interaction.channel,
+                        state as "public" | "private" | "hidden"
+                    );
+
+                    // Use triggerTransition based on selected state
+                    switch ( state ) {
+                        case "public":
+                            await context.triggerTransition( "SetPublic", interaction );
+                            break;
+                        case "private":
+                            await context.triggerTransition( "SetPrivate", interaction );
+                            break;
+                        case "hidden":
+                            await context.triggerTransition( "SetHidden", interaction );
+                            break;
+                    }
+                }
+            );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction ) => getArgsWithPermissions( interaction.channel ) )
     .getEditMessageArgs( async( _context, message?: Message<true> ) =>
         message ? getArgsWithPermissions( message.channel as VoiceChannel ) : {}
     )
-    .onEntityMap( async( { bindSelectMenu } ) => {
-        bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
-            "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
-            async( context, interaction ) => {
-                const state = interaction.values[ 0 ];
-
-                context.setArgs( interaction, { state } );
-
-                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-                await dynamicChannelService.editChannelPrivacyState(
-                    interaction,
-                    interaction.channel,
-                    state as "public" | "private" | "hidden"
-                );
-
-                // Use triggerTransition based on selected state
-                switch ( state ) {
-                    case "public":
-                        await context.triggerTransition( "SetPublic", interaction );
-                        break;
-                    case "private":
-                        await context.triggerTransition( "SetPrivate", interaction );
-                        break;
-                    case "hidden":
-                        await context.triggerTransition( "SetHidden", interaction );
-                        break;
-                }
-            }
-        );
-    } )
     .build();
 
 async function getArgsWithPermissions( channel: VoiceChannel ) {

@@ -30,7 +30,7 @@ export class AdminExecutionAdapterBuilder<
         IExecutionAdapterContext<TInteraction, TArgs>
     > {
     private executionSteps: UIExecutionSteps | undefined;
-    private transactions: TransactionBuilder | undefined;
+    private transactions: TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>> | undefined;
 
     public constructor( name: string ) {
         super( name, AdminAdapterExuBase );
@@ -44,9 +44,9 @@ export class AdminExecutionAdapterBuilder<
     /**
      * Define transactions (state machine) for this adapter.
      */
-    public defineTransactions( configurator: ( tx: TransactionBuilder ) => void ): this {
+    public defineTransactions( configurator: ( tx: TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>> ) => void ): this {
         const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
-        this.transactions = new TransactionBuilder( flowName );
+        this.transactions = new TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>>( flowName );
         configurator( this.transactions );
         return this;
     }
@@ -54,7 +54,7 @@ export class AdminExecutionAdapterBuilder<
     /**
      * Get the transactions builder if defined.
      */
-    public getTransactions(): TransactionBuilder | undefined {
+    public getTransactions(): TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>> | undefined {
         return this.transactions;
     }
 
@@ -155,6 +155,46 @@ export class AdminExecutionAdapterBuilder<
                         );
                         break;
                 }
+            }
+
+            /**
+             * Override onEntityMap to register handlers from transaction builder when transactions are defined.
+             */
+            protected async onEntityMap() {
+                // If transactions are defined, register handlers from the transaction builder
+                if ( builder.transactions ) {
+                    const binder = this.createBinder();
+                    const handlerBindings = builder.transactions.getHandlerBindings();
+
+                    for ( const binding of handlerBindings ) {
+                        switch ( binding.handlerKind ) {
+                            case "button":
+                                binder.bindButton( binding.elementId, binding.handler as any );
+                                break;
+                            case "modal":
+                                binder.bindModal( binding.elementId, binding.handler as any );
+                                break;
+                            case "modalWithButton":
+                                binder.bindModalWithButton(
+                                    binding.elementId,
+                                    binding.modalName!,
+                                    binding.handler as any
+                                );
+                                break;
+                            case "selectMenu":
+                                binder.bindSelectMenu( binding.elementId, binding.handler as any );
+                                break;
+                            case "userSelectMenu":
+                                binder.bindUserSelectMenu( binding.elementId, binding.handler as any );
+                                break;
+                        }
+                    }
+                    return;
+                }
+
+                // Otherwise call base implementation
+                // @ts-expect-error - base may not implement
+                return super.onEntityMap?.();
             }
 
             /**

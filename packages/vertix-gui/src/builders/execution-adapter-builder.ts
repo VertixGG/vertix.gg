@@ -96,6 +96,14 @@ export class ExecutionAdapterBuilder<
      * Define transactions (state machine) for this adapter.
      * Transactions automatically generate flow triggers that are injected into bindings.
      *
+     * IMPORTANT: When using defineTransactions, you cannot use onEntityMap.
+     * All element-to-handler bindings must be done via transaction methods:
+     * - tx.bindButton(elementId, handler)
+     * - tx.bindModal(elementId, handler)
+     * - tx.bindModalWithButtonHandler(buttonElement, modalName, handler)
+     * - tx.bindSelectMenu(elementId, handler)
+     * - tx.bindUserSelectMenu(elementId, handler)
+     *
      * @example
      * .defineTransactions((tx) => {
      *   tx
@@ -103,12 +111,15 @@ export class ExecutionAdapterBuilder<
      *     .addState("Default", { executionStep: "default" })
      *     .addState("Public", { executionStep: "statePublic" })
      *     .addTransition("SetPublic", { from: "Default", to: "Public" })
-     *     .bindElement("VertixBot/UI-V3/StateButton", "SetPublic");
+     *     .bindElement("VertixBot/UI-V3/StateButton", "SetPublic")
+     *     .bindButton("VertixBot/UI-V3/StateButton", async (context, interaction) => {
+     *       // handle button click
+     *     });
      * })
      */
-    public defineTransactions( configurator: ( tx: TransactionBuilder ) => void ): this {
+    public defineTransactions( configurator: ( tx: TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>> ) => void ): this {
         const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
-        this.transactions = new TransactionBuilder( flowName );
+        this.transactions = new TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>>( flowName );
         configurator( this.transactions );
         return this;
     }
@@ -122,6 +133,14 @@ export class ExecutionAdapterBuilder<
 
     public build() {
         const builder = this;
+
+        // Validate: defineTransactions and onEntityMap are mutually exclusive
+        if ( builder.transactions && builder.entityMapHandler ) {
+            throw new Error(
+                `Adapter "${ builder.name }": Cannot use both defineTransactions() and onEntityMap(). ` +
+                `When using defineTransactions(), bind handlers via tx.bindButton(), tx.bindModal(), etc.`
+            );
+        }
 
         const BaseBuild = super.build();
 
@@ -260,6 +279,45 @@ export class ExecutionAdapterBuilder<
                 }
                 // @ts-expect-error - base may not implement
                 return super.onStep?.( stepName, interaction );
+            }
+
+            /**
+             * Override onEntityMap to register handlers from transaction builder when transactions are defined.
+             */
+            protected async onEntityMap() {
+                // If transactions are defined, register handlers from the transaction builder
+                if ( builder.transactions ) {
+                    const binder = this.createBinder();
+                    const handlerBindings = builder.transactions.getHandlerBindings();
+
+                    for ( const binding of handlerBindings ) {
+                        switch ( binding.handlerKind ) {
+                            case "button":
+                                binder.bindButton( binding.elementId, binding.handler as any );
+                                break;
+                            case "modal":
+                                binder.bindModal( binding.elementId, binding.handler as any );
+                                break;
+                            case "modalWithButton":
+                                binder.bindModalWithButton(
+                                    binding.elementId,
+                                    binding.modalName!,
+                                    binding.handler as any
+                                );
+                                break;
+                            case "selectMenu":
+                                binder.bindSelectMenu( binding.elementId, binding.handler as any );
+                                break;
+                            case "userSelectMenu":
+                                binder.bindUserSelectMenu( binding.elementId, binding.handler as any );
+                                break;
+                        }
+                    }
+                    return;
+                }
+
+                // Otherwise call base implementation
+                return super.onEntityMap?.();
             }
 
             /**

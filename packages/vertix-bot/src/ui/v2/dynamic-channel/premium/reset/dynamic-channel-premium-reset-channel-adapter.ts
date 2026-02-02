@@ -67,7 +67,11 @@ const DynamicChannelPremiumResetChannelAdapter = new DynamicExecutionAdapterBuil
             } )
             .addTransition( "ResetSuccess", { from: "Default", to: "Success" } )
             .addTransition( "ResetError", { from: "Default", to: "Error" } )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", "ResetSuccess" );
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
+                "ResetSuccess",
+                onResetChannelButtonClicked
+            );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
@@ -76,12 +80,6 @@ const DynamicChannelPremiumResetChannelAdapter = new DynamicExecutionAdapterBuil
         }
 
         return {};
-    } )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
-            onResetChannelButtonClicked
-        );
     } )
     .build();
 

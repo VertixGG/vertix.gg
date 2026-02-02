@@ -264,21 +264,40 @@ const ScalingSetupEditAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextCh
             } )
             .addTransition( "Done", { from: "Edit", to: "Default" } )
             .addTransition( "Delete", { from: "Edit", to: "Default" } )
-            // Element bindings
-            .bindElement( "VertixBot/UI-General/SetupMasterEditSelectMenu", "OpenEdit" )
-            .bindElement( "VertixBot/UI-V3/ScalingSetupEditConfigButton", "ConfigUpdated" )
-            .bindElement( "VertixBot/UI-General/DoneButton", "Done" )
-            .bindElement( "VertixBot/UI-General/DeleteButton", "Delete" )
-            // Modal-button bindings (for visualization)
-            .bindModalWithButton(
-                "VertixBot/UI-V3/ScalingSetupEditConfigButton",
-                "VertixBot/UI-General/SetupScalingConfigModal",
-                "ConfigUpdated"
+            // Element bindings with handlers
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                "OpenEdit",
+                async( context, interaction ) => {
+                    await hydrateScalingArgs( context, interaction );
+                    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/ScalingSetupEdit" );
+                }
             )
-            .bindModalWithButton(
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+                "ConfigUpdated",
+                onEditConfigButtonClicked
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/DoneButton",
+                "Done",
+                onDoneButtonClicked
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
                 "VertixBot/UI-General/DeleteButton",
+                "Delete",
+                onDeleteButtonClicked
+            )
+            // Modal bindings
+            .bindModal<UIDefaultModalChannelTextInteraction>(
+                "VertixBot/UI-General/SetupScalingConfigModal",
+                "ConfigUpdated",
+                onScalingConfigModalSubmitted
+            )
+            .bindModal<UIDefaultModalChannelTextInteraction>(
                 "VertixBot/UI-General/DeleteConfirmModal",
-                "Delete"
+                "Delete",
+                onDeleteConfirmModalSubmitted
             );
     } )
     .getStartArgs( async() => ( {} ) )
@@ -305,41 +324,6 @@ const ScalingSetupEditAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextCh
         }
 
         return args;
-    } )
-    .onEntityMap( async( { bindButton, bindModal, bindSelectMenu } ) => {
-        bindButton(
-            "VertixBot/UI-V3/ScalingSetupEditConfigButton",
-            onEditConfigButtonClicked
-        );
-
-        bindModal(
-            "VertixBot/UI-General/SetupScalingConfigModal",
-            onScalingConfigModalSubmitted
-        );
-
-        bindButton(
-            "VertixBot/UI-General/DoneButton",
-            onDoneButtonClicked
-        );
-
-        bindButton(
-            "VertixBot/UI-General/DeleteButton",
-            onDeleteButtonClicked
-        );
-
-        bindModal(
-            "VertixBot/UI-General/DeleteConfirmModal",
-            onDeleteConfirmModalSubmitted
-        );
-
-        bindSelectMenu(
-            "VertixBot/UI-General/SetupMasterEditSelectMenu",
-            async( context, interaction ) => {
-                await hydrateScalingArgs( context, interaction );
-                await context.editReplyWithStep( interaction, "VertixBot/UI-V3/ScalingSetupEdit" );
-            }
-        );
-
     } )
     .build();
 

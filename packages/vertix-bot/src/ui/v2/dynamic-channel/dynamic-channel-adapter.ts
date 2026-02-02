@@ -209,15 +209,15 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             .addTransition( "ResetChannel", { from: "Default", to: "Default" } )
             .addTransition( "ClaimChannel", { from: "Default", to: "Default" } )
             .addTransition( "TransferOwner", { from: "Default", to: "Default" } )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelMetaRenameButton", "OpenRename" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelMetaLimitButton", "OpenLimit" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton", "OpenPermissions" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsStateButton", "ToggleState" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton", "ToggleVisibility" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", "ClearChat" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", "ResetChannel" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton", "ClaimChannel" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", "TransferOwner" );
+            .bindButton( "VertixBot/UI-V2/DynamicChannelMetaRenameButton", "OpenRename", onRenameButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelMetaLimitButton", "OpenLimit", onLimitButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton", "OpenPermissions", onAccessButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsStateButton", "ToggleState", onToggleStateButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton", "ToggleVisibility", onToggleVisibilityStateButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", "ClearChat", onClearChatButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", "ResetChannel", onResetChannelButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton", "ClaimChannel", onClaimButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", "TransferOwner", onTransferOwnerButtonClicked );
     } )
     .getStartArgs( async( context, channel, argsFromManager ) => {
         const resolvedChannel = await resolveChannelFromContext( channel, argsFromManager );
@@ -255,19 +255,6 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
         }
 
         return getAllArgs( resolvedChannel );
-    } )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton( "VertixBot/UI-V2/DynamicChannelMetaRenameButton", onRenameButtonClicked );
-        bindButton( "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", onClearChatButtonClicked );
-        bindButton( "VertixBot/UI-V2/DynamicChannelMetaLimitButton", onLimitButtonClicked );
-
-        bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsStateButton", onToggleStateButtonClicked );
-        bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton", onToggleVisibilityStateButtonClicked );
-        bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton", onAccessButtonClicked );
-
-        bindButton( "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", onResetChannelButtonClicked );
-        bindButton( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton", onClaimButtonClicked );
-        bindButton( "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", onTransferOwnerButtonClicked );
     } )
     .build();
 

@@ -7,7 +7,7 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
 import type { APIEmbed } from "discord.js";
-import type { UIDefaultButtonChannelVoiceInteraction, UIDefaultButtonChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
+import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 const CLEAR_CHAT_STEPS = {
@@ -57,70 +57,67 @@ const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefa
             } )
             .addTransition( "ClearNothing", { from: "Default", to: "NothingToClear" } )
             .addTransition( "ClearError", { from: "Default", to: "Error" } )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelClearChatButton", "ClearSuccess" );
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelClearChatButton",
+                "ClearSuccess",
+                async( context, interaction ) => {
+                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+                    const result = await dynamicChannelService.clearChat( interaction, interaction.channel );
+
+                    switch ( result?.code ) {
+                        case "success":
+                            // Custom success handling - sends message to channel
+                            const messages = await interaction.channel.messages.fetch();
+                            for ( const message of messages.values() ) {
+                                if ( message.embeds.length === 0 ) continue;
+                                const embed = message.embeds[ 0 ];
+                                if ( embed?.title?.includes( "🧹" ) ) {
+                                    await message.delete();
+                                }
+                            }
+
+                            context.getComponent().switchEmbedsGroup(
+                                "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup"
+                            );
+                            const component = context.getComponent();
+                            await component.build( {
+                                ownerDisplayName: await guildGetMemberDisplayName( interaction.channel.guild, interaction.user.id ),
+                                totalMessages: result.deletedCount
+                            } );
+                            const schema = await component.toSchema();
+                            if ( schema.entities?.embeds ) {
+                                await interaction.channel.send( {
+                                    embeds: schema.entities.embeds as unknown as APIEmbed[]
+                                } );
+                            }
+                            // Silent transition - just for tracking
+                            await context.triggerTransition( "ClearSuccess", interaction, {
+                                ownerDisplayName: await guildGetMemberDisplayName( interaction.channel.guild, interaction.user.id ),
+                                totalMessages: result.deletedCount
+                            } );
+                            return;
+
+                        case "nothing-to-delete":
+                            context.getComponent().switchEmbedsGroup(
+                                "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup"
+                            );
+                            await context.triggerTransition( "ClearNothing", interaction );
+                            break;
+
+                        default:
+                            context.getComponent().switchEmbedsGroup(
+                                "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
+                            );
+                            await context.triggerTransition( "ClearError", interaction );
+                    }
+                }
+            );
     } )
     .getStartArgs( async( _context, _channel, argsFromManager ) => ( {
         ownerDisplayName: argsFromManager?.ownerDisplayName ?? "",
         totalMessages: argsFromManager?.totalMessages ?? 0
     } ) )
     .getReplyArgs( async() => ( {} ) )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-V3/DynamicChannelClearChatButton",
-            async( context, interaction ) => {
-                const voiceInteraction = interaction as unknown as UIDefaultButtonChannelVoiceInteraction;
-                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-                const result = await dynamicChannelService.clearChat( voiceInteraction, voiceInteraction.channel );
-
-                switch ( result?.code ) {
-                    case "success":
-                        // Custom success handling - sends message to channel
-                        const messages = await voiceInteraction.channel.messages.fetch();
-                        for ( const message of messages.values() ) {
-                            if ( message.embeds.length === 0 ) continue;
-                            const embed = message.embeds[ 0 ];
-                            if ( embed?.title?.includes( "🧹" ) ) {
-                                await message.delete();
-                            }
-                        }
-
-                        context.getComponent().switchEmbedsGroup(
-                            "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup"
-                        );
-                        const component = context.getComponent();
-                        await component.build( {
-                            ownerDisplayName: await guildGetMemberDisplayName( voiceInteraction.channel.guild, voiceInteraction.user.id ),
-                            totalMessages: result.deletedCount
-                        } );
-                        const schema = await component.toSchema();
-                        if ( schema.entities?.embeds ) {
-                            await voiceInteraction.channel.send( {
-                                embeds: schema.entities.embeds as unknown as APIEmbed[]
-                            } );
-                        }
-                        // Silent transition - just for tracking
-                        await context.triggerTransition( "ClearSuccess", voiceInteraction, {
-                            ownerDisplayName: await guildGetMemberDisplayName( voiceInteraction.channel.guild, voiceInteraction.user.id ),
-                            totalMessages: result.deletedCount
-                        } );
-                        return;
-
-                    case "nothing-to-delete":
-                        context.getComponent().switchEmbedsGroup(
-                            "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup"
-                        );
-                        await context.triggerTransition( "ClearNothing", voiceInteraction );
-                        break;
-
-                    default:
-                        context.getComponent().switchEmbedsGroup(
-                            "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
-                        );
-                        await context.triggerTransition( "ClearError", voiceInteraction );
-                }
-            }
-        );
-    } )
     .build();
 
 export { DynamicChannelClearChatAdapter };

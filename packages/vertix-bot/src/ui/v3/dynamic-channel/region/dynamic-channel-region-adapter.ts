@@ -48,7 +48,19 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                 to: "Default",
                 mutations: [ { type: "set", path: [ "region" ] } ]
             } )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelRegionSelectMenu", "SelectRegion" );
+            // Handler bindings (combines element-to-transition binding with handler)
+            .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
+                "SelectRegion",
+                async( context, interaction ) => {
+                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+                    const newRegion = interaction.values[ 0 ];
+
+                    await dynamicChannelService.editChannelRegion( interaction, interaction.channel, newRegion );
+
+                    await context.triggerTransition( "SelectRegion", interaction );
+                }
+            );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( _context, interaction ) => {
@@ -59,19 +71,6 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
     } )
     .getEditMessageArgs( async( _context, message ) => {
         return message?.channel && message.channel instanceof VoiceChannel ? await getArgs( message.channel ) : {};
-    } )
-    .onEntityMap( async( { bindUserSelectMenu } ) => {
-        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
-            async( context, interaction ) => {
-                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-                const newRegion = interaction.values[ 0 ];
-
-                await dynamicChannelService.editChannelRegion( interaction, interaction.channel, newRegion );
-
-                await context.triggerTransition( "SelectRegion", interaction );
-            }
-        );
     } )
     .build();
 

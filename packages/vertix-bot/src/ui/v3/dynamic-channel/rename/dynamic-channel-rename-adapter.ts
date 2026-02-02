@@ -15,8 +15,7 @@ import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
     UIDefaultButtonChannelVoiceInteraction,
-    UIDefaultModalChannelVoiceInteraction,
-    UIDefaultModalChannelTextInteraction
+    UIDefaultModalChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
@@ -81,8 +80,54 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                     { type: "set", path: [ "masterChannelId" ] }
                 ]
             } )
-            // Bind modal to transitions (for export/visualization)
-            .bindElement( "VertixBot/UI-V3/DynamicChannelRenameModal", "SubmitSuccess" );
+            // Handler bindings (combines element-to-transition binding with handler)
+            .bindModal<UIDefaultModalChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelRenameModal",
+                "SubmitSuccess",
+                async( context, interaction ) => {
+                    const voiceInteraction = interaction as unknown as UIDefaultModalChannelVoiceInteraction;
+                    const renameButtonId = context.customIdStrategy.generateId(
+                        "VertixBot/UI-V3/DynamicChannelRenameAdapter:VertixBot/UI-V3/DynamicChannelRenameInput"
+                    );
+
+                    let newChannelName = voiceInteraction.fields.getTextInputValue( renameButtonId );
+                    const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( voiceInteraction.channel.id );
+
+                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+
+                    newChannelName = await dynamicChannelService.getAssembledChannelNameTemplate(
+                        voiceInteraction.channel,
+                        voiceInteraction.user.id,
+                        newChannelName
+                    );
+
+                    const result = await dynamicChannelService.editChannelName(
+                        voiceInteraction,
+                        voiceInteraction.channel,
+                        newChannelName
+                    );
+
+                    // Use triggerTransition instead of manual ephemeralWithStep
+                    switch ( result.code ) {
+                        case "success":
+                            await context.triggerTransition( "SubmitSuccess", voiceInteraction, {} );
+                            break;
+
+                        case "badword":
+                            await context.triggerTransition( "SubmitBadword", voiceInteraction, {
+                                badword: result.badword
+                            } );
+                            break;
+
+                        case "rate-limit":
+                            await context.triggerTransition( "SubmitRateLimited", voiceInteraction, {
+                                retryAfter: result.retryAfter,
+                                masterChannelId: masterChannelDB?.channelId
+                            } );
+                            break;
+                    }
+                }
+            );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
@@ -116,54 +161,6 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
         }
 
         return args;
-    } )
-    .onEntityMap( async( { bindModal } ) => {
-        bindModal<UIDefaultModalChannelTextInteraction>(
-            "VertixBot/UI-V3/DynamicChannelRenameModal",
-            async( context, interaction ) => {
-                const voiceInteraction = interaction as unknown as UIDefaultModalChannelVoiceInteraction;
-                const renameButtonId = context.customIdStrategy.generateId(
-                    "VertixBot/UI-V3/DynamicChannelRenameAdapter:VertixBot/UI-V3/DynamicChannelRenameInput"
-                );
-
-                let newChannelName = voiceInteraction.fields.getTextInputValue( renameButtonId );
-                const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( voiceInteraction.channel.id );
-
-                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-
-                newChannelName = await dynamicChannelService.getAssembledChannelNameTemplate(
-                    voiceInteraction.channel,
-                    voiceInteraction.user.id,
-                    newChannelName
-                );
-
-                const result = await dynamicChannelService.editChannelName(
-                    voiceInteraction,
-                    voiceInteraction.channel,
-                    newChannelName
-                );
-
-                // Use triggerTransition instead of manual ephemeralWithStep
-                switch ( result.code ) {
-                    case "success":
-                        await context.triggerTransition( "SubmitSuccess", voiceInteraction, {} );
-                        break;
-
-                    case "badword":
-                        await context.triggerTransition( "SubmitBadword", voiceInteraction, {
-                            badword: result.badword
-                        } );
-                        break;
-
-                    case "rate-limit":
-                        await context.triggerTransition( "SubmitRateLimited", voiceInteraction, {
-                            retryAfter: result.retryAfter,
-                            masterChannelId: masterChannelDB?.channelId
-                        } );
-                        break;
-                }
-            }
-        );
     } )
     .build();
 

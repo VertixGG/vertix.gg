@@ -162,30 +162,21 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
             .addTransition( "StartVoting", { from: "StepIn", to: "VoteProcess" } )
             .addTransition( "UpdateVotes", { from: "VoteProcess", to: "VoteProcess" } )
             .addTransition( "AnnounceWinner", { from: "VoteProcess", to: "VoteWon" } )
-            // Element bindings
-            .bindElement( "VertixBot/UI-V3/ClaimVoteStepInButton", "StartVoting" )
-            .bindElement( "VertixBot/UI-V3/ClaimVoteAddButton", "StartVoting" );
+            // Handler bindings (combines element-to-transition binding with handler)
+            .bindButton<DefaultInteraction>(
+                "VertixBot/UI-V3/ClaimVoteStepInButton",
+                "StartVoting",
+                async( _context, interaction ) => handleVoteRequest( interaction )
+            )
+            .bindButton<DefaultInteraction>(
+                "VertixBot/UI-V3/ClaimVoteAddButton",
+                "StartVoting",
+                async( _context, interaction ) => handleVoteRequest( interaction )
+            );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction ) => getAllArgs( context, interaction ) )
     .getEditMessageArgs( async( context, message ) => getAllArgs( context, message as Message<true> ) )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-V3/ClaimVoteStepInButton",
-            async( _context, interaction ) => {
-                const voiceInteraction = interaction as unknown as DefaultInteraction;
-                handleVoteRequest( voiceInteraction );
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-V3/ClaimVoteAddButton",
-            async( _context, interaction ) => {
-                const voiceInteraction = interaction as unknown as DefaultInteraction;
-                handleVoteRequest( voiceInteraction );
-            }
-        );
-    } )
     .onStep( async( context, stepName, interaction ) => {
         switch ( stepName ) {
             case "VertixBot/UI-V3/ClaimVoteWon":

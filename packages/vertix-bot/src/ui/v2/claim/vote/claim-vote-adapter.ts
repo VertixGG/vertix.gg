@@ -162,8 +162,8 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultIntera
             .addTransition( "StartVoting", { from: "StepIn", to: "VoteProcess" } )
             .addTransition( "UpdateVotes", { from: "VoteProcess", to: "VoteProcess" } )
             .addTransition( "AnnounceWinner", { from: "VoteProcess", to: "VoteWon" } )
-            .bindElement( "VertixBot/UI-V2/ClaimVoteStepInButton", "StartVoting" )
-            .bindElement( "VertixBot/UI-V2/ClaimVoteAddButton", "StartVoting" );
+            .bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimVoteStepInButton", "StartVoting", handleVoteRequest )
+            .bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimVoteAddButton", "StartVoting", handleVoteRequest );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction ) => {
@@ -206,16 +206,6 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultIntera
 
                 break;
         }
-    } )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton<DefaultInteraction>(
-            "VertixBot/UI-V2/ClaimVoteStepInButton",
-            handleVoteRequest
-        );
-        bindButton<DefaultInteraction>(
-            "VertixBot/UI-V2/ClaimVoteAddButton",
-            handleVoteRequest
-        );
     } )
     .build();
 

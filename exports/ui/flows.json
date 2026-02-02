@@ -825,7 +825,18 @@
         "transitions": [
             {
                 "from": "VertixBot/UI-V2/ClaimStartFlow/States/Default",
-                "to": "VertixBot/UI-V2/ClaimStartFlow/States/Default"
+                "to": "VertixBot/UI-V2/ClaimStartFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/ClaimStartFlow/Handlers/VertixBot/UI-V2/ClaimStartButton",
+                        "sourceEntity": "VertixBot/UI-V2/ClaimStartButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/ClaimStartFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
             }
         ],
         "requiredData": [],
@@ -1858,7 +1869,6 @@
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/NameTemplateSubmitted",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/ConfigExtrasUpdated",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/LogChannelUpdated",
-                    "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenDeleteModal",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/DeleteConfirmed",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/Done"
                 ],
@@ -1985,21 +1995,6 @@
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/LogChannelSelectMenu",
                         "sourceEntity": "VertixBot/UI-V2/LogChannelSelectMenu",
                         "handlerKind": "string-select",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
-                        }
-                    }
-                ]
-            },
-            {
-                "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/DeleteButton",
-                        "sourceEntity": "VertixBot/UI-General/DeleteButton",
-                        "handlerKind": "button",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
                             "executionStep": "VertixBot/UI-V2/SetupEditMaster"
@@ -2277,18 +2272,7 @@
             },
             {
                 "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1",
-                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/VertixBot/UI-General/ChannelNameTemplateEditButton",
-                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateEditButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1",
-                            "executionStep": "VertixBot/UI-V2/SetupStep1Component"
-                        }
-                    }
-                ]
+                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1"
             },
             {
                 "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1",
@@ -2793,6 +2777,55 @@
             {
                 "from": "VertixBot/UI-V3/ClaimResultFlow/States/Default",
                 "to": "VertixBot/UI-V3/ClaimResultFlow/States/VoteUpdatedSuccessfully"
+            }
+        ],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/ClaimStartFlow",
+        "module": "VertixBot/UI-V3/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                "transitions": [
+                    "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-V3/ClaimStartComponent",
+                    "previewDefaultVars": {
+                        "ownerId": "123456789",
+                        "ownerDisplayName": "Owner",
+                        "absentInterval": "300000"
+                    }
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "from": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                "to": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/ClaimStartFlow/Handlers/VertixBot/UI-V3/ClaimStartButton",
+                        "sourceEntity": "VertixBot/UI-V3/ClaimStartButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
             }
         ],
         "requiredData": [],
@@ -3577,26 +3610,7 @@
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
-                "to": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Handlers/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
-                        },
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "title"
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                "to": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle"
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
@@ -3608,26 +3622,7 @@
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
-                "to": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Handlers/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent"
-                        },
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "description"
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                "to": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription"
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditDescription",
@@ -4232,19 +4227,63 @@
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/ApplyMenu",
-                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/ApplyConfirm"
+                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/ApplyConfirm",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/ApplyConfirm",
+                            "executionStep": "apply-confirm"
+                        }
+                    }
+                ]
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/ApplyConfirm",
-                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/TemplateApplied"
+                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/TemplateApplied",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/TemplateApplied",
+                            "executionStep": "template-applied"
+                        }
+                    }
+                ]
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/ManageMenu",
-                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/DeleteConfirm"
+                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/DeleteConfirm",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/DeleteConfirm",
+                            "executionStep": "delete-confirm"
+                        }
+                    }
+                ]
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/DeleteConfirm",
-                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/TemplateDeleted"
+                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/TemplateDeleted",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/TemplateDeleted",
+                            "executionStep": "template-deleted"
+                        }
+                    }
+                ]
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/Default",
@@ -4608,6 +4647,29 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/ScalingSetupEditFlow/Handlers/VertixBot/UI-General/SetupScalingConfigModal",
+                        "sourceEntity": "VertixBot/UI-General/SetupScalingConfigModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ScalingSetupEditFlow/States/Edit",
+                            "executionStep": "VertixBot/UI-V3/ScalingSetupEdit"
+                        },
+                        "mutations": [
+                            {
+                                "type": "set",
+                                "path": [
+                                    "scalingPrefix"
+                                ]
+                            },
+                            {
+                                "type": "set",
+                                "path": [
+                                    "scalingMaxMembers"
+                                ]
+                            }
+                        ]
                     }
                 ]
             },
@@ -4638,27 +4700,17 @@
                             "targetState": "VertixBot/UI-V3/ScalingSetupEditFlow/States/Default",
                             "executionStep": "default"
                         }
-                    }
-                ]
-            },
-            {
-                "from": "VertixBot/UI-V3/ScalingSetupEditFlow/States/Default",
-                "to": "VertixBot/UI-V3/ScalingSetupEditFlow/States/Default",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/ScalingSetupEditFlow/Handlers/ModalButton/VertixBot/UI-V3/ScalingSetupEditConfigButton",
-                        "sourceEntity": "VertixBot/UI-V3/ScalingSetupEditConfigButton::VertixBot/UI-General/SetupScalingConfigModal",
-                        "handlerKind": "modal-button"
                     },
                     {
-                        "handlerId": "VertixBot/UI-V3/ScalingSetupEditFlow/Handlers/ModalButton/VertixBot/UI-General/DeleteButton",
-                        "sourceEntity": "VertixBot/UI-General/DeleteButton::VertixBot/UI-General/DeleteConfirmModal",
-                        "handlerKind": "modal-button"
+                        "handlerId": "VertixBot/UI-V3/ScalingSetupEditFlow/Handlers/VertixBot/UI-General/DeleteConfirmModal",
+                        "sourceEntity": "VertixBot/UI-General/DeleteConfirmModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/ScalingSetupEditFlow/States/Default",
+                            "executionStep": "default"
+                        }
                     }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
+                ]
             }
         ],
         "requiredData": [],
@@ -4796,7 +4848,18 @@
             },
             {
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/ChannelNameTemplateModal",
+                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                            "executionStep": "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
@@ -4851,6 +4914,15 @@
                         "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/DeleteButton",
                         "sourceEntity": "VertixBot/UI-General/DeleteButton",
                         "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/DeleteConfirmModal",
+                        "sourceEntity": "VertixBot/UI-General/DeleteConfirmModal",
+                        "handlerKind": "modal",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupEditFlow/States/Default",
                             "executionStep": "default"
@@ -5005,20 +5077,6 @@
                         }
                     }
                 ]
-            },
-            {
-                "from": "VertixBot/UI-V3/SetupEditFlow/States/Default",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/Default",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-General/DeleteButton",
-                        "sourceEntity": "VertixBot/UI-General/DeleteButton::VertixBot/UI-General/DeleteConfirmModal",
-                        "handlerKind": "modal-button"
-                    }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
             }
         ],
         "requiredData": [],
@@ -5143,18 +5201,7 @@
             },
             {
                 "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1",
-                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/VertixBot/UI-General/ChannelNameTemplateEditButton",
-                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateEditButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1",
-                            "executionStep": "VertixBot/UI-V3/SetupStep1Component"
-                        }
-                    }
-                ]
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1"
             },
             {
                 "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1",

@@ -1,9 +1,26 @@
 import type {
+    ButtonInteraction,
+    ModalSubmitInteraction,
+    StringSelectMenuInteraction,
+    UserSelectMenuInteraction
+} from "discord.js";
+
+import type {
     BindingFlowTriggerConfig
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type {
     FlowContextMutationDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+
+export type HandlerKind = "button" | "modal" | "modalWithButton" | "selectMenu" | "userSelectMenu";
+
+export interface ElementHandlerBinding<TContext = unknown> {
+    elementId: string;
+    handlerKind: HandlerKind;
+    handler: ( context: TContext, interaction: unknown ) => Promise<void>;
+    /** For modalWithButton bindings */
+    modalName?: string;
+}
 
 export type NavigationType = "editReply" | "ephemeral" | "silent";
 
@@ -66,19 +83,24 @@ export interface VirtualFlowDefinition {
     elementBindings: Map<string, string>;
     modalButtonBindings: ModalButtonBinding[];
     /**
+     * Handler bindings for elements - used at runtime for element-to-function mappings.
+     */
+    handlerBindings: ElementHandlerBinding[];
+    /**
      * If true, this flow is hidden from visualization export.
      * Use when a system flow already provides visualization for this adapter.
      */
     hidden?: boolean;
 }
 
-export class TransactionBuilder {
+export class TransactionBuilder<TContext = unknown> {
     private flowName: string;
     private initialState: string = "";
     private states = new Map<string, StateConfig>();
     private transitions = new Map<string, TransitionConfig>();
     private elementBindings = new Map<string, string>(); // elementId -> transitionName
     private modalButtonBindings: ModalButtonBinding[] = [];
+    private handlerBindings: ElementHandlerBinding<TContext>[] = [];
     private isHidden: boolean = false;
 
     public constructor( flowName: string ) {
@@ -124,31 +146,120 @@ export class TransactionBuilder {
     }
 
     /**
-     * Bind element to transition - generates flowTrigger for runtime.
+     * Get modal-button bindings.
      */
-    public bindElement( elementId: string, transitionName: string ): this {
-        this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
-        return this;
+    public getModalButtonBindings(): ModalButtonBinding[] {
+        return [ ...this.modalButtonBindings ];
     }
 
     /**
-     * Bind a button that triggers a modal. This captures the button-to-modal relationship
-     * for visualization purposes (edge from button to modal in the flow diagram).
+     * Bind a button element to a transition and handler function.
+     * Combines element-to-transition binding with handler registration.
      */
-    public bindModalWithButton( buttonElement: string, modalName: string, transitionName?: string ): this {
-        this.modalButtonBindings.push( {
-            buttonElement,
-            modalName,
-            transitionName: transitionName ? this.fullTransitionName( transitionName ) : undefined
+    public bindButton<T extends ButtonInteraction<"cached">>(
+        elementId: string,
+        transitionName: string,
+        handler: ( context: TContext, interaction: T ) => Promise<void>
+    ): this {
+        // Bind element to transition
+        this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
+        // Add handler binding
+        this.handlerBindings.push( {
+            elementId,
+            handlerKind: "button",
+            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
         } );
         return this;
     }
 
     /**
-     * Get modal-button bindings.
+     * Bind a modal element to a transition and handler function.
      */
-    public getModalButtonBindings(): ModalButtonBinding[] {
-        return [ ...this.modalButtonBindings ];
+    public bindModal<T extends ModalSubmitInteraction<"cached">>(
+        elementId: string,
+        transitionName: string,
+        handler: ( context: TContext, interaction: T ) => Promise<void>
+    ): this {
+        // Bind element to transition
+        this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
+        // Add handler binding
+        this.handlerBindings.push( {
+            elementId,
+            handlerKind: "modal",
+            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+        } );
+        return this;
+    }
+
+    /**
+     * Bind a button that opens a modal and handle the modal submission.
+     * Combines modal-button visualization binding with handler registration.
+     */
+    public bindModalWithButton<T extends ModalSubmitInteraction<"cached">>(
+        buttonElement: string,
+        modalName: string,
+        transitionName: string,
+        handler: ( context: TContext, interaction: T ) => Promise<void>
+    ): this {
+        // Add to modalButtonBindings for visualization
+        this.modalButtonBindings.push( {
+            buttonElement,
+            modalName,
+            transitionName: this.fullTransitionName( transitionName )
+        } );
+        // Add handler binding
+        this.handlerBindings.push( {
+            elementId: buttonElement,
+            handlerKind: "modalWithButton",
+            modalName,
+            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+        } );
+        return this;
+    }
+
+    /**
+     * Bind a select menu element to a transition and handler function.
+     */
+    public bindSelectMenu<T extends StringSelectMenuInteraction<"cached">>(
+        elementId: string,
+        transitionName: string,
+        handler: ( context: TContext, interaction: T ) => Promise<void>
+    ): this {
+        // Bind element to transition
+        this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
+        // Add handler binding
+        this.handlerBindings.push( {
+            elementId,
+            handlerKind: "selectMenu",
+            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+        } );
+        return this;
+    }
+
+    /**
+     * Bind a user select menu element to a transition and handler function.
+     */
+    public bindUserSelectMenu<T extends UserSelectMenuInteraction<"cached">>(
+        elementId: string,
+        transitionName: string,
+        handler: ( context: TContext, interaction: T ) => Promise<void>
+    ): this {
+        // Bind element to transition
+        this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
+        // Add handler binding
+        this.handlerBindings.push( {
+            elementId,
+            handlerKind: "userSelectMenu",
+            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+        } );
+        return this;
+    }
+
+    /**
+     * Get all handler bindings.
+     */
+    public getHandlerBindings(): ElementHandlerBinding<TContext>[] {
+        return [ ...this.handlerBindings ];
     }
 
     /**
@@ -281,6 +392,7 @@ export class TransactionBuilder {
             transitions: new Map( this.transitions ),
             elementBindings: new Map( this.elementBindings ),
             modalButtonBindings: [ ...this.modalButtonBindings ],
+            handlerBindings: [ ...this.handlerBindings ],
             hidden: this.isHidden
         };
     }

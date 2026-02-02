@@ -48,9 +48,9 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
             } )
             .addTransition( "RequestClaim", {
                 from: "Default",
-                to: "Default",
-                triggeredBy: [ { sourceEntity: "VertixBot/UI-V2/ClaimStartButton", handlerKind: "button" } ]
-            } );
+                to: "Default"
+            } )
+            .bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimStartButton", "RequestClaim", onClaimStartButtonClicked );
     } )
     .getStartArgs( async( context, channel ) => {
         const channelDB = await ChannelModel.$.getByChannelId( channel.id );
@@ -67,9 +67,6 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
                 "VertixBot/UI-V2/DynamicChannelClaimManager"
             ).getChannelOwnershipTimeout()
         };
-    } )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimStartButton", onClaimStartButtonClicked );
     } )
     .build();
 

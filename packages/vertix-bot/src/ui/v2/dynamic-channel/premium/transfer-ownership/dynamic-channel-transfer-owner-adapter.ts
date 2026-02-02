@@ -216,10 +216,26 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
             .addTransition( "DisabledByClaim", { from: "UserSelected", to: "DisabledByClaim" } )
             .addTransition( "Error", { from: [ "SelectUser", "UserSelected" ], to: "Error" } )
             .addTransition( "Cancel", { from: "UserSelected", to: "Cancelled" } )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", "Open" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu", "UserSelected" )
-            .bindElement( "VertixBot/UI-General/YesButton", "Confirm" )
-            .bindElement( "VertixBot/UI-General/NoButton", "Cancel" );
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
+                "Open",
+                onTransferOwnerButtonClicked
+            )
+            .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
+                "UserSelected",
+                onTransferOwnerUserSelected
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-General/YesButton",
+                "Confirm",
+                onYesButtonClicked
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-General/NoButton",
+                "Cancel",
+                onNoButtonClicked
+            );
     } )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {
@@ -230,27 +246,6 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
         }
 
         return {};
-    } )
-    .onEntityMap( async( { bindButton, bindUserSelectMenu } ) => {
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
-            onTransferOwnerButtonClicked
-        );
-
-        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
-            onTransferOwnerUserSelected
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-General/YesButton",
-            onYesButtonClicked
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-General/NoButton",
-            onNoButtonClicked
-        );
     } )
     .build();
 

@@ -49,149 +49,147 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             .addTransition( "ClaimChannel", { from: "Default", to: "Default" } )
             .addTransition( "TransferOwner", { from: "Default", to: "Default" } )
             .addTransition( "OpenTemplates", { from: "Default", to: "Default" } )
-            // Element bindings
-            .bindElement( "VertixBot/UI-V3/DynamicChannelRenameButton", "OpenRename" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelLimitMetaButton", "OpenLimit" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton", "OpenPermissions" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelPrivacyButton", "OpenPrivacy" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelRegionButton", "OpenRegion" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton", "OpenPrimaryMessageEdit" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelClearChatButton", "ClearChat" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelResetChannelButton", "ResetChannel" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelClaimChannelButton", "ClaimChannel" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelTransferOwnerButton", "TransferOwner" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelTemplatesButton", "OpenTemplates" );
-    } )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelRenameButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                await uiService
-                    .get( "VertixBot/UI-V3/DynamicChannelRenameAdapter" )
-                    ?.showModal( "VertixBot/UI-V3/DynamicChannelRenameModal", interaction );
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                await uiService
-                    .get( "VertixBot/UI-V3/DynamicChannelLimitAdapter" )
-                    ?.showModal( "VertixBot/UI-V3/DynamicChannelLimitModal", interaction );
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelPermissionsAdapter" );
-                if ( adapter ) {
-                    await adapter.ephemeral( interaction );
+            // Handler bindings (combines element-to-transition binding with handler)
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelRenameButton",
+                "OpenRename",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService
+                        .get( "VertixBot/UI-V3/DynamicChannelRenameAdapter" )
+                        ?.showModal( "VertixBot/UI-V3/DynamicChannelRenameModal", interaction );
                 }
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelPrivacyButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelPrivacyAdapter" );
-                if ( adapter ) {
-                    await adapter.ephemeral( interaction );
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
+                "OpenLimit",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService
+                        .get( "VertixBot/UI-V3/DynamicChannelLimitAdapter" )
+                        ?.showModal( "VertixBot/UI-V3/DynamicChannelLimitModal", interaction );
                 }
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelRegionButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelRegionAdapter" );
-                if ( adapter ) {
-                    await adapter.ephemeral( interaction );
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
+                "OpenPermissions",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelPermissionsAdapter" );
+                    if ( adapter ) {
+                        await adapter.ephemeral( interaction );
+                    }
                 }
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                await uiService.get( "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter" )?.runInitial( interaction );
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelClearChatButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                await uiService.get( "VertixBot/UI-V3/DynamicChannelClearChatAdapter" )?.runInitial( interaction );
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelResetChannelButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                await uiService.get( "VertixBot/UI-V3/DynamicChannelResetChannelAdapter" )?.runInitial( interaction );
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                const messages = uiService.get( "VertixBot/UI-V3/ClaimStartAdapter" )?.getStartedMessages( interaction.channel ),
-                    message = Object.values( messages || {} )[ 0 ];
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelPrivacyButton",
+                "OpenPrivacy",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelPrivacyAdapter" );
+                    if ( adapter ) {
+                        await adapter.ephemeral( interaction );
+                    }
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelRegionButton",
+                "OpenRegion",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelRegionAdapter" );
+                    if ( adapter ) {
+                        await adapter.ephemeral( interaction );
+                    }
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+                "OpenPrimaryMessageEdit",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService.get( "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter" )?.runInitial( interaction );
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelClearChatButton",
+                "ClearChat",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService.get( "VertixBot/UI-V3/DynamicChannelClearChatAdapter" )?.runInitial( interaction );
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+                "ResetChannel",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService.get( "VertixBot/UI-V3/DynamicChannelResetChannelAdapter" )?.runInitial( interaction );
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                "ClaimChannel",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    const messages = uiService.get( "VertixBot/UI-V3/ClaimStartAdapter" )?.getStartedMessages( interaction.channel! ),
+                        message = Object.values( messages || {} )[ 0 ];
 
-                if ( !message ) {
-                    return logger.error(
+                    if ( !message ) {
+                        return logger.error(
+                            "onClaimButtonClicked",
+                            `Guild id: ${ interaction.guildId }, Channel id: ${ interaction.channelId } - No message found`
+                        );
+                    }
+
+                    const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
+
+                    switch ( state ) {
+                        case "idle":
+                        case "active":
+                            await DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" ).handleVoteRequest(
+                                interaction,
+                                message
+                            );
+                            return;
+                    }
+
+                    logger.error(
                         "onClaimButtonClicked",
-                        `Guild id: ${ interaction.guildId }, Channel id: ${ interaction.channelId } - No message found`
+                        `Guild id: ${ interaction.guildId }, Channel id: ${ interaction.channelId } - Invalid state: ${ DynamicChannelVoteManager.$.getState( interaction.channelId ) }`
                     );
                 }
-
-                const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
-
-                switch ( state ) {
-                    case "idle":
-                    case "active":
-                        await DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" ).handleVoteRequest(
-                            interaction,
-                            message
-                        );
-                        return;
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+                "TransferOwner",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService.get( "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter" )?.runInitial( interaction );
                 }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+                "OpenTemplates",
+                async( _context, interaction ) => {
+                    const { ChannelTemplateModel } = await import( "@vertix.gg/base/src/models/data/channel-template-model" );
 
-                logger.error(
-                    "onClaimButtonClicked",
-                    `Guild id: ${ interaction.guildId }, Channel id: ${ interaction.channelId } - Invalid state: ${ DynamicChannelVoteManager.$.getState( interaction.channelId ) }`
-                );
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-            async( _context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                await uiService.get( "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter" )?.runInitial( interaction );
-            }
-        );
-        bindButton(
-            "VertixBot/UI-V3/DynamicChannelTemplatesButton",
-            async( _context, interaction ) => {
-                const { ChannelTemplateModel } = await import( "@vertix.gg/base/src/models/data/channel-template-model" );
+                    const templates = await ChannelTemplateModel.$.getTemplates(
+                        interaction.user.id,
+                        interaction.guildId
+                    );
 
-                const templates = await ChannelTemplateModel.$.getTemplates(
-                    interaction.user.id,
-                    interaction.guildId
-                );
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelTemplatesAdapter" );
 
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelTemplatesAdapter" );
-
-                if ( adapter ) {
-                    await adapter.ephemeral( interaction, {
-                        templates,
-                        maxTemplates: 5
-                    } );
+                    if ( adapter ) {
+                        await adapter.ephemeral( interaction, {
+                            templates,
+                            maxTemplates: 5
+                        } );
+                    }
                 }
-            }
-        );
+            );
     } )
     .build();
 

@@ -505,14 +505,46 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             } )
             .addTransition( "Error", { from: "Default", to: "Error" } )
             .addTransition( "NothingChanged", { from: "Default", to: "NothingChanged" } )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsStateButton", "SetPrivate" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton", "SetHidden" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton", "GrantAccess" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu", "GrantAccess" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu", "DenyAccess" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu", "BlockUser" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu", "UnblockUser" )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu", "KickUser" );
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
+                "SetPrivate",
+                onStateButtonClicked
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
+                "SetHidden",
+                onStateVisibilityClicked
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
+                "GrantAccess",
+                onAccessButtonClicked
+            )
+            .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
+                "GrantAccess",
+                onGrantSelected
+            )
+            .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
+                "DenyAccess",
+                onDenySelected
+            )
+            .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
+                "BlockUser",
+                onBlockSelected
+            )
+            .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
+                "UnblockUser",
+                onUnBlockSelected
+            )
+            .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
+                "KickUser",
+                onKickSelected
+            );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
@@ -574,56 +606,6 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
         );
 
         return args;
-    } )
-    .onEntityMap( async( { bindButton, bindUserSelectMenu, bindSelectMenu } ) => {
-        // TODO: Check if state buttons needed to move out from component, since they are non-visible.
-        // Private/Public.
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
-            onStateButtonClicked
-        );
-
-        // Hidden/Shown.
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
-            onStateVisibilityClicked
-        );
-
-        // Access Button.
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
-            onAccessButtonClicked
-        );
-
-        // Grant user access.
-        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
-            onGrantSelected
-        );
-
-        // Deny user access.
-        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
-            onDenySelected
-        );
-
-        // Block user.
-        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
-            onBlockSelected
-        );
-
-        // Unblock user.
-        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
-            onUnBlockSelected
-        );
-
-        // Kick user.
-        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
-            onKickSelected
-        );
     } )
     .build();
 

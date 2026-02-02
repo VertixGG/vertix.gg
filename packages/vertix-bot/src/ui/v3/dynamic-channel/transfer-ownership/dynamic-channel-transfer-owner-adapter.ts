@@ -99,10 +99,99 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
             .addTransition( "DisabledByClaim", { from: "UserSelected", to: "DisabledByClaim" } )
             .addTransition( "Error", { from: [ "SelectUser", "UserSelected" ], to: "Error" } )
             .addTransition( "Cancel", { from: "UserSelected", to: "Cancelled" } )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelTransferOwnerButton", "Open" )
-            .bindElement( "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu", "UserSelected" )
-            .bindElement( "VertixBot/UI-General/YesButton", "Confirm" )
-            .bindElement( "VertixBot/UI-General/NoButton", "Cancel" );
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+                "Open",
+                async( context, interaction ) => {
+                    await context.triggerTransition( "Open", interaction );
+                }
+            )
+            .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
+                "UserSelected",
+                async( context, interaction ) => {
+                    const targetId = interaction.values.at( 0 ) as string,
+                        target = interaction.guild.members.cache.get( targetId );
+
+                    if ( !target ) {
+                        await context.updateInteractionDefer( interaction );
+                        return;
+                    }
+
+                    context.setArgs( interaction, { userDisplayName: target.displayName } );
+
+                    await context.triggerTransition( "UserSelected", interaction, {
+                        userDisplayName: target.displayName
+                    } );
+
+                    const accepted = acceptedInteraction.get( interaction.channel.id + interaction.user.id );
+
+                    if ( accepted ) {
+                        clearTimeout( accepted.timeout );
+                        acceptedInteraction.delete( interaction.channel.id + interaction.user.id );
+                    }
+
+                    const timeoutId = setTimeout( () => {
+                        interaction.deleteReply().catch( () => {} );
+                        acceptedInteraction.delete( interaction.channel.id + interaction.user.id );
+                    }, ACCEPTED_INTERACTION_TIMEOUT );
+
+                    acceptedInteraction.set( interaction.channel.id + interaction.user.id, {
+                        selectedUserId: targetId,
+                        timeout: timeoutId
+                    } );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-General/YesButton",
+                "Confirm",
+                async( context, interaction ) => {
+                    const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
+
+                    if ( "active" === state ) {
+                        await context.triggerTransition( "DisabledByClaim", interaction );
+                        return;
+                    }
+
+                    const accepted = acceptedInteraction.get( interaction.channel.id + interaction.user.id );
+
+                    clearAcceptedInteraction( interaction );
+
+                    if ( !accepted ) {
+                        await context.triggerTransition( "Error", interaction );
+                        return;
+                    }
+
+                    const target = interaction.guild.members.cache.get( accepted.selectedUserId );
+
+                    if ( !target ) {
+                        await context.triggerTransition( "Error", interaction );
+                        return;
+                    }
+
+                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+
+                    await dynamicChannelService.editChannelOwner( target.id, interaction.user.id, interaction.channel, "transfer" );
+
+                    await context.triggerTransition( "Confirm", interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-General/NoButton",
+                "Cancel",
+                async( context, interaction ) => {
+                    clearAcceptedInteraction( interaction );
+
+                    await context.deleteRelatedEphemeralInteractionsInternal(
+                        interaction,
+                        "VertixBot/UI-V3/DynamicChannelAdapter:VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+                        1
+                    );
+
+                    // Silent transition - just for tracking
+                    await context.triggerTransition( "Cancel", interaction );
+                }
+            );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
@@ -116,100 +205,6 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
         }
 
         return storedArgs;
-    } )
-    .onEntityMap( async( { bindButton, bindUserSelectMenu } ) => {
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-            async( context, interaction ) => {
-                await context.triggerTransition( "Open", interaction );
-            }
-        );
-
-        bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
-            "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
-            async( context, interaction ) => {
-                const targetId = interaction.values.at( 0 ) as string,
-                    target = interaction.guild.members.cache.get( targetId );
-
-                if ( !target ) {
-                    await context.updateInteractionDefer( interaction );
-                    return;
-                }
-
-                context.setArgs( interaction, { userDisplayName: target.displayName } );
-
-                await context.triggerTransition( "UserSelected", interaction, {
-                    userDisplayName: target.displayName
-                } );
-
-                const accepted = acceptedInteraction.get( interaction.channel.id + interaction.user.id );
-
-                if ( accepted ) {
-                    clearTimeout( accepted.timeout );
-                    acceptedInteraction.delete( interaction.channel.id + interaction.user.id );
-                }
-
-                const timeoutId = setTimeout( () => {
-                    interaction.deleteReply().catch( () => {} );
-                    acceptedInteraction.delete( interaction.channel.id + interaction.user.id );
-                }, ACCEPTED_INTERACTION_TIMEOUT );
-
-                acceptedInteraction.set( interaction.channel.id + interaction.user.id, {
-                    selectedUserId: targetId,
-                    timeout: timeoutId
-                } );
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-General/YesButton",
-            async( context, interaction ) => {
-                const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
-
-                if ( "active" === state ) {
-                    await context.triggerTransition( "DisabledByClaim", interaction );
-                    return;
-                }
-
-                const accepted = acceptedInteraction.get( interaction.channel.id + interaction.user.id );
-
-                clearAcceptedInteraction( interaction );
-
-                if ( !accepted ) {
-                    await context.triggerTransition( "Error", interaction );
-                    return;
-                }
-
-                const target = interaction.guild.members.cache.get( accepted.selectedUserId );
-
-                if ( !target ) {
-                    await context.triggerTransition( "Error", interaction );
-                    return;
-                }
-
-                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-
-                await dynamicChannelService.editChannelOwner( target.id, interaction.user.id, interaction.channel, "transfer" );
-
-                await context.triggerTransition( "Confirm", interaction );
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelVoiceInteraction>(
-            "VertixBot/UI-General/NoButton",
-            async( context, interaction ) => {
-                clearAcceptedInteraction( interaction );
-
-                await context.deleteRelatedEphemeralInteractionsInternal(
-                    interaction,
-                    "VertixBot/UI-V3/DynamicChannelAdapter:VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-                    1
-                );
-
-                // Silent transition - just for tracking
-                await context.triggerTransition( "Cancel", interaction );
-            }
-        );
     } )
     .build();
 

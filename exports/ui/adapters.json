@@ -536,13 +536,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/ClaimStartButton",
-                "handler": "VertixBot/UI-V2/ClaimStartAdapter/Bindings/Button/VertixBot/UI-V2/ClaimStartButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -590,18 +584,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/ClaimVoteStepInButton",
-                "handler": "VertixBot/UI-V2/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V2/ClaimVoteStepInButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/ClaimVoteAddButton",
-                "handler": "VertixBot/UI-V2/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V2/ClaimVoteAddButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -637,53 +620,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaRenameButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelMetaRenameButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaLimitButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelMetaLimitButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -736,13 +673,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelMetaClearChatAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -795,13 +726,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
-                "handler": "VertixBot/UI-V2/DynamicChannelMetaLimitAdapter/Bindings/Modal/VertixBot/UI-V2/DynamicChannelMetaLimitModal",
-                "kind": "modal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -854,13 +779,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaRenameModal",
-                "handler": "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter/Bindings/Modal/VertixBot/UI-V2/DynamicChannelMetaRenameModal",
-                "kind": "modal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -892,53 +811,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaRenameButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelMetaRenameButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelMetaLimitButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelMetaLimitButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1054,48 +927,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
-                "handler": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter/Bindings/UserSelect/VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
-                "kind": "user-select"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
-                "handler": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter/Bindings/UserSelect/VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
-                "kind": "user-select"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
-                "handler": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter/Bindings/UserSelect/VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
-                "kind": "user-select"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
-                "handler": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter/Bindings/UserSelect/VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
-                "kind": "user-select"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
-                "handler": "VertixBot/UI-V2/DynamicChannelPermissionsAdapter/Bindings/UserSelect/VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
-                "kind": "user-select"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1141,13 +973,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1214,28 +1040,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
-                "handler": "VertixBot/UI-V2/DynamicChannelTransferOwnerAdapter/Bindings/UserSelect/VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
-                "kind": "user-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/YesButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-General/YesButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/NoButton",
-                "handler": "VertixBot/UI-V2/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-General/NoButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getReplyArgs",
@@ -1291,83 +1096,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-General/SetupMasterEditSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/SetupMasterEditSelectMenu",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/ChannelNameTemplateModal",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/Modal/VertixBot/UI-General/ChannelNameTemplateModal",
-                "kind": "modal"
-            },
-            {
-                "entity": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/ConfigExtrasSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-General/ConfigExtrasSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V2/LogChannelSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V2/LogChannelSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/VerifiedRolesMenu",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/DoneButton",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/DoneButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/DeleteButton",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/DeleteButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/WizardBackButton",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/WizardBackButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/WizardFinishButton",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/WizardFinishButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/DeleteConfirmModal",
-                "handler": "VertixBot/UI-V2/SetupEditAdapter/Bindings/Modal/VertixBot/UI-General/DeleteConfirmModal",
-                "kind": "modal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1434,53 +1163,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-General/SetupMasterCreateButton",
-                "handler": "VertixBot/UI-V2/SetupNewWizardAdapter/Bindings/Button/VertixBot/UI-General/SetupMasterCreateButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterCreateSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/ChannelNameTemplateEditButton::VertixBot/UI-General/ChannelNameTemplateModal",
-                "handler": "VertixBot/UI-V2/SetupNewWizardAdapter/Bindings/ModalWithButton/VertixBot/UI-General/ChannelNameTemplateEditButton",
-                "kind": "modal-button",
-                "options": {
-                    "button": "VertixBot/UI-General/ChannelNameTemplateEditButton",
-                    "modal": "VertixBot/UI-General/ChannelNameTemplateModal"
-                }
-            },
-            {
-                "entity": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/ConfigExtrasSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/ConfigExtrasSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/VerifiedRolesMenu",
-                "handler": "VertixBot/UI-V2/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-                "handler": "VertixBot/UI-V2/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-                "kind": "string-select"
-            }
-        ],
-        "modalTriggers": [
-            {
-                "buttonElement": "VertixBot/UI-General/ChannelNameTemplateEditButton",
-                "modalName": "VertixBot/UI-General/ChannelNameTemplateModal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1575,7 +1258,7 @@
     },
     {
         "name": "VertixBot/UI-V3/ClaimStartAdapter",
-        "adapterKind": "base",
+        "adapterKind": "execution",
         "component": "VertixBot/UI-V3/ClaimStartComponent",
         "module": "VertixBot/UI-V3/Module",
         "instanceType": "Static",
@@ -1583,14 +1266,16 @@
             "GuildVoice"
         ],
         "permissions": "0",
-        "executionSteps": [],
-        "bindings": [
+        "executionSteps": [
             {
-                "entity": "VertixBot/UI-V3/ClaimStartButton",
-                "handler": "VertixBot/UI-V3/ClaimStartAdapter/Bindings/Button/VertixBot/UI-V3/ClaimStartButton",
-                "kind": "button"
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
             }
         ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1638,18 +1323,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/ClaimVoteStepInButton",
-                "handler": "VertixBot/UI-V3/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V3/ClaimVoteStepInButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/ClaimVoteAddButton",
-                "handler": "VertixBot/UI-V3/ClaimVoteAdapter/Bindings/Button/VertixBot/UI-V3/ClaimVoteAddButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1685,63 +1359,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelRenameButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelRenameButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelLimitMetaButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPrivacyButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelRegionButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelRegionButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelClearChatButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClearChatButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelResetChannelButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTemplatesButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": []
     },
     {
@@ -1785,13 +1403,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelClearChatButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelClearChatAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClearChatButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1844,13 +1456,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelLimitModal",
-                "handler": "VertixBot/UI-V3/DynamicChannelLimitAdapter/Bindings/Modal/VertixBot/UI-V3/DynamicChannelLimitModal",
-                "kind": "modal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -1882,63 +1488,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelRenameButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelRenameButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelLimitMetaButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPrivacyButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelRegionButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelRegionButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelClearChatButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClearChatButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelResetChannelButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPanelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTemplatesButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": []
     },
     {
@@ -2045,43 +1595,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelPermissionsAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-                "kind": "string-select"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2127,46 +1641,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-General/NoButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter/Bindings/Button/VertixBot/UI-General/NoButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/YesButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter/Bindings/Button/VertixBot/UI-General/YesButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
-                "handler": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter/Bindings/ModalWithButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
-                "kind": "modal-button",
-                "options": {
-                    "button": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
-                    "modal": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal"
-                }
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
-                "handler": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter/Bindings/ModalWithButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
-                "kind": "modal-button",
-                "options": {
-                    "button": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
-                    "modal": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal"
-                }
-            }
-        ],
-        "modalTriggers": [
-            {
-                "buttonElement": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
-                "modalName": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal"
-            },
-            {
-                "buttonElement": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
-                "modalName": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2198,13 +1673,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelPrivacyAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelPrivacyMenu",
-                "kind": "string-select"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2236,13 +1705,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelRegionAdapter/Bindings/UserSelect/VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
-                "kind": "user-select"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2295,13 +1758,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelRenameModal",
-                "handler": "VertixBot/UI-V3/DynamicChannelRenameAdapter/Bindings/Modal/VertixBot/UI-V3/DynamicChannelRenameModal",
-                "kind": "modal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2354,13 +1811,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelResetChannelAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelResetChannelButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2441,58 +1892,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
-                "handler": "VertixBot/UI-V3/DynamicChannelTemplatesAdapter/Bindings/ModalWithButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
-                "kind": "modal-button",
-                "options": {
-                    "button": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
-                    "modal": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal"
-                }
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelTemplatesAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTemplatesApplyButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesManageButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelTemplatesAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTemplatesManageButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelTemplatesAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelTemplatesAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelTemplatesAdapter/Bindings/StringSelect/VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelTemplatesAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTemplatesBackButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelTemplatesAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTemplatesBackButton",
-                "kind": "button"
-            }
-        ],
-        "modalTriggers": [
-            {
-                "buttonElement": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
-                "modalName": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2559,28 +1959,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
-                "handler": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/UserSelect/VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
-                "kind": "user-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/YesButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-General/YesButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/NoButton",
-                "handler": "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter/Bindings/Button/VertixBot/UI-General/NoButton",
-                "kind": "button"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2619,38 +1998,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
-                "handler": "VertixBot/UI-V3/ScalingSetupEditAdapter/Bindings/Button/VertixBot/UI-V3/ScalingSetupEditConfigButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/SetupScalingConfigModal",
-                "handler": "VertixBot/UI-V3/ScalingSetupEditAdapter/Bindings/Modal/VertixBot/UI-General/SetupScalingConfigModal",
-                "kind": "modal"
-            },
-            {
-                "entity": "VertixBot/UI-General/DoneButton",
-                "handler": "VertixBot/UI-V3/ScalingSetupEditAdapter/Bindings/Button/VertixBot/UI-General/DoneButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/DeleteButton",
-                "handler": "VertixBot/UI-V3/ScalingSetupEditAdapter/Bindings/Button/VertixBot/UI-General/DeleteButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/DeleteConfirmModal",
-                "handler": "VertixBot/UI-V3/ScalingSetupEditAdapter/Bindings/Modal/VertixBot/UI-General/DeleteConfirmModal",
-                "kind": "modal"
-            },
-            {
-                "entity": "VertixBot/UI-General/SetupMasterEditSelectMenu",
-                "handler": "VertixBot/UI-V3/ScalingSetupEditAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterEditSelectMenu",
-                "kind": "string-select"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2710,98 +2058,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-General/SetupMasterEditSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterEditSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/ChannelNameTemplateModal",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Modal/VertixBot/UI-General/ChannelNameTemplateModal",
-                "kind": "modal"
-            },
-            {
-                "entity": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/ConfigExtrasSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-General/ConfigExtrasSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-V3/LogChannelSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-V3/LogChannelSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/VerifiedRolesMenu",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/DoneButton",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/DoneButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/DeleteButton",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/DeleteButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/WizardBackButton",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/WizardBackButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/WizardFinishButton",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Button/VertixBot/UI-General/WizardFinishButton",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/DeleteConfirmModal",
-                "handler": "VertixBot/UI-V3/SetupEditAdapter/Bindings/Modal/VertixBot/UI-General/DeleteConfirmModal",
-                "kind": "modal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",
@@ -2868,53 +2125,7 @@
                 "hooks": []
             }
         ],
-        "bindings": [
-            {
-                "entity": "VertixBot/UI-General/SetupMasterCreateV3Button",
-                "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/Button/VertixBot/UI-General/SetupMasterCreateV3Button",
-                "kind": "button"
-            },
-            {
-                "entity": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterCreateSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/ChannelNameTemplateEditButton::VertixBot/UI-General/ChannelNameTemplateModal",
-                "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/ModalWithButton/VertixBot/UI-General/ChannelNameTemplateEditButton",
-                "kind": "modal-button",
-                "options": {
-                    "button": "VertixBot/UI-General/ChannelNameTemplateEditButton",
-                    "modal": "VertixBot/UI-General/ChannelNameTemplateModal"
-                }
-            },
-            {
-                "entity": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/ConfigExtrasSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/ConfigExtrasSelectMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/VerifiedRolesMenu",
-                "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesMenu",
-                "kind": "string-select"
-            },
-            {
-                "entity": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-                "handler": "VertixBot/UI-V3/SetupNewWizardAdapter/Bindings/StringSelect/VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
-                "kind": "string-select"
-            }
-        ],
-        "modalTriggers": [
-            {
-                "buttonElement": "VertixBot/UI-General/ChannelNameTemplateEditButton",
-                "modalName": "VertixBot/UI-General/ChannelNameTemplateModal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getReplyArgs",

@@ -99,7 +99,7 @@ const DynamicChannelMetaClearChatAdapter = new DynamicExecutionAdapterBuilder<UI
             } )
             .addTransition( "ClearNothing", { from: "Default", to: "NothingToClear" } )
             .addTransition( "ClearError", { from: "Default", to: "Error" } )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", "ClearSuccess" );
+            .bindButton( "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", "ClearSuccess", onClearChatButtonClicked );
     } )
     .getStartArgs( async( context, channel, argsFromManager ) => {
         return {
@@ -108,9 +108,6 @@ const DynamicChannelMetaClearChatAdapter = new DynamicExecutionAdapterBuilder<UI
         };
     } )
     .getReplyArgs( async() => ( {} ) )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton( "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", onClearChatButtonClicked );
-    } )
     .build();
 
 export { DynamicChannelMetaClearChatAdapter };

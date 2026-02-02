@@ -71,7 +71,56 @@ const DynamicChannelMetaLimitAdapter = new DynamicExecutionAdapterBuilder<
                 mutations: [ { type: "set", path: [ "userLimit" ] } ]
             } )
             .addTransition( "SubmitError", { from: "Default", to: "Error" } )
-            .bindElement( "VertixBot/UI-V2/DynamicChannelMetaLimitModal", "SubmitSuccess" );
+            .bindModal<UIDefaultModalChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
+                "SubmitSuccess",
+                async( context, interaction ) => {
+                    const voiceInteraction = interaction as unknown as ModalSubmitInteractionDefault;
+                    const limitButtonId = context.customIdStrategy.generateId(
+                        "VertixBot/UI-V2/DynamicChannelMetaLimitAdapter:VertixBot/UI-V2/DynamicChannelMetaLimitInput"
+                    );
+
+                    const input = voiceInteraction.fields.getTextInputValue( limitButtonId ),
+                        parsedInput = parseInt( input );
+
+                    if (
+                        Number.isNaN( parsedInput ) ||
+                        parsedInput < DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH ||
+                        parsedInput > DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
+                    ) {
+                        context.setArgs( voiceInteraction, {
+                            minValue: DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH,
+                            maxValue: DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
+                        } );
+
+                        return await context.ephemeralWithStep(
+                            voiceInteraction,
+                            "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInput",
+                            {}
+                        );
+                    }
+
+                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+
+                    if ( !( await dynamicChannelService.editUserLimit( voiceInteraction, voiceInteraction.channel, parsedInput ) ) ) {
+                        return await context.ephemeralWithStep(
+                            voiceInteraction,
+                            "VertixBot/UI-V2/DynamicChannelMetaLimitError",
+                            {}
+                        );
+                    }
+
+                    context.setArgs( voiceInteraction, {
+                        userLimit: parsedInput
+                    } );
+
+                    return await context.ephemeralWithStep(
+                        voiceInteraction,
+                        "VertixBot/UI-V2/DynamicChannelMetaLimitSuccess",
+                        {}
+                    );
+                }
+            );
     } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction ) => {
@@ -88,57 +137,6 @@ const DynamicChannelMetaLimitAdapter = new DynamicExecutionAdapterBuilder<
         }
 
         return args;
-    } )
-    .onEntityMap( async( { bindModal } ) => {
-        bindModal<UIDefaultModalChannelVoiceInteraction>(
-            "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
-            async( context, interaction ) => {
-                const voiceInteraction = interaction as unknown as ModalSubmitInteractionDefault;
-                const limitButtonId = context.customIdStrategy.generateId(
-                    "VertixBot/UI-V2/DynamicChannelMetaLimitAdapter:VertixBot/UI-V2/DynamicChannelMetaLimitInput"
-                );
-
-                const input = voiceInteraction.fields.getTextInputValue( limitButtonId ),
-                    parsedInput = parseInt( input );
-
-                if (
-                    Number.isNaN( parsedInput ) ||
-                    parsedInput < DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH ||
-                    parsedInput > DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
-                ) {
-                    context.setArgs( voiceInteraction, {
-                        minValue: DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH,
-                        maxValue: DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
-                    } );
-
-                    return await context.ephemeralWithStep(
-                        voiceInteraction,
-                        "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInput",
-                        {}
-                    );
-                }
-
-                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-
-                if ( !( await dynamicChannelService.editUserLimit( voiceInteraction, voiceInteraction.channel, parsedInput ) ) ) {
-                    return await context.ephemeralWithStep(
-                        voiceInteraction,
-                        "VertixBot/UI-V2/DynamicChannelMetaLimitError",
-                        {}
-                    );
-                }
-
-                context.setArgs( voiceInteraction, {
-                    userLimit: parsedInput
-                } );
-
-                return await context.ephemeralWithStep(
-                    voiceInteraction,
-                    "VertixBot/UI-V2/DynamicChannelMetaLimitSuccess",
-                    {}
-                );
-            }
-        );
     } )
     .build();
 

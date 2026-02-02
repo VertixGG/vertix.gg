@@ -16,7 +16,6 @@ import { WelcomeFlow } from "@vertix.gg/bot/src/ui/general/welcome/welcome-flow"
 import { CommandsFlow } from "@vertix.gg/bot/src/ui/general/flows/commands-flow";
 import { GuildFlow } from "@vertix.gg/bot/src/ui/general/flows/guild-flow";
 import { SetupFlow } from "@vertix.gg/bot/src/ui/general/setup/setup-flow";
-import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
 import { FeedbackFlow } from "@vertix.gg/bot/src/ui/general/feedback/feedback-flow";
 
 export class UIModuleGeneral extends UIModuleBase {
@@ -33,7 +32,7 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getFlows() {
-        return [ WelcomeFlow, SetupFlow, SetupNewWizardFlow, LanguageFlow, FeedbackFlow ];
+        return [ WelcomeFlow, SetupFlow, LanguageFlow, FeedbackFlow ];
     }
 
     public static getSystemFlows() {

@@ -3,6 +3,10 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { AdminAdapterExuBase } from "@vertix.gg/bot/src/ui/general/admin/admin-adapter-exu-base";
 
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
+import { TransactionBuilder } from "@vertix.gg/gui/src/builders/transaction-builder";
+import { TransactionAwareBinder } from "@vertix.gg/gui/src/builders/transaction-aware-binder";
+
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import type { UIArgs, UIExecutionSteps } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -11,7 +15,8 @@ import type {
     UIAdapterStartContext,
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-import type { IAdapterContext, IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { IAdapterContext, IExecutionAdapterContext, IBinder } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 export class AdminExecutionAdapterBuilder<
     TChannel extends UIAdapterStartContext,
@@ -25,6 +30,7 @@ export class AdminExecutionAdapterBuilder<
         IExecutionAdapterContext<TInteraction, TArgs>
     > {
     private executionSteps: UIExecutionSteps | undefined;
+    private transactions: TransactionBuilder | undefined;
 
     public constructor( name: string ) {
         super( name, AdminAdapterExuBase );
@@ -33,6 +39,23 @@ export class AdminExecutionAdapterBuilder<
     public setExecutionSteps( executionSteps: UIExecutionSteps ): this {
         this.executionSteps = executionSteps;
         return this;
+    }
+
+    /**
+     * Define transactions (state machine) for this adapter.
+     */
+    public defineTransactions( configurator: ( tx: TransactionBuilder ) => void ): this {
+        const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
+        this.transactions = new TransactionBuilder( flowName );
+        configurator( this.transactions );
+        return this;
+    }
+
+    /**
+     * Get the transactions builder if defined.
+     */
+    public getTransactions(): TransactionBuilder | undefined {
+        return this.transactions;
     }
 
     public build() {
@@ -47,6 +70,13 @@ export class AdminExecutionAdapterBuilder<
                 return builder.executionSteps || {};
             }
 
+            /**
+             * Get the transactions builder for this adapter.
+             */
+            public static getTransactions(): TransactionBuilder | undefined {
+                return builder.transactions;
+            }
+
             protected getContext(): IExecutionAdapterContext<TInteraction, TArgs> {
                 const baseContext = super.getContext() as IAdapterContext<TInteraction, TArgs>;
                 return {
@@ -54,7 +84,8 @@ export class AdminExecutionAdapterBuilder<
                     editReplyWithStep: this.editReplyWithStepWrapper.bind( this ),
                     ephemeralWithStep: this.ephemeralWithStepWrapper.bind( this ),
                     getCurrentExecutionStep: this.getCurrentExecutionStepWrapper.bind( this ),
-                    getName: () => this.getName()
+                    getName: () => this.getName(),
+                    triggerTransition: this.triggerTransitionWrapper.bind( this )
                 } satisfies IExecutionAdapterContext<TInteraction, TArgs>;
             }
 
@@ -63,19 +94,102 @@ export class AdminExecutionAdapterBuilder<
                 return method.call( this, interaction, stepName, sendArgs );
             }
 
-            private ephemeralWithStepWrapper( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) {
+            private ephemeralWithStepWrapper(
+                interaction: TInteraction,
+                stepName: string,
+                sendArgs?: TArgs,
+                deletePrevious?: boolean
+            ) {
                 const method = Reflect.get( this, "ephemeralWithStep" ) as Function;
-                return method.call( this, interaction, stepName, sendArgs );
+                return method.call( this, interaction, stepName, sendArgs, deletePrevious );
             }
 
             private getCurrentExecutionStepWrapper( context?: TInteraction ) {
                 const method = Reflect.get( this, "getCurrentExecutionStep" ) as Function;
                 return method.call( this, context );
             }
+
+            /**
+             * Trigger a transaction transition - resolves the transition and handles navigation automatically.
+             */
+            private async triggerTransitionWrapper(
+                transitionName: string,
+                interaction: TInteraction,
+                args?: TArgs
+            ): Promise<void> {
+                if ( !builder.transactions ) {
+                    AdminExecutionAdapterBuilderGenerated.dedicatedLogger.warn(
+                        this.triggerTransitionWrapper,
+                        `triggerTransition called but no transactions defined for adapter '${ builder.name }'`
+                    );
+                    return;
+                }
+
+                const resolved = builder.transactions.resolveTransition( transitionName );
+                if ( !resolved ) {
+                    AdminExecutionAdapterBuilderGenerated.dedicatedLogger.warn(
+                        this.triggerTransitionWrapper,
+                        `Transition '${ transitionName }' not found in adapter '${ builder.name }'`
+                    );
+                    return;
+                }
+
+                switch ( resolved.navigationType ) {
+                    case "editReply":
+                        await this.editReplyWithStepWrapper( interaction, resolved.executionStep, args );
+                        break;
+
+                    case "ephemeral":
+                        await this.ephemeralWithStepWrapper(
+                            interaction,
+                            resolved.executionStep,
+                            args,
+                            resolved.deletePreviousReply
+                        );
+                        break;
+
+                    case "silent":
+                        AdminExecutionAdapterBuilderGenerated.dedicatedLogger.debug(
+                            this.triggerTransitionWrapper,
+                            `Silent transition '${ transitionName }' executed (no UI update)`
+                        );
+                        break;
+                }
+            }
+
+            /**
+             * Override createBinder to wrap with TransactionAwareBinder when transactions are defined.
+             */
+            protected createBinder(): IBinder<TInteraction, TArgs, IExecutionAdapterContext<TInteraction, TArgs>> {
+                const baseBinder = super.createBinder() as IBinder<TInteraction, TArgs, IExecutionAdapterContext<TInteraction, TArgs>>;
+
+                if ( builder.transactions ) {
+                    return new TransactionAwareBinder<TInteraction, TArgs, IExecutionAdapterContext<TInteraction, TArgs>>(
+                        baseBinder,
+                        builder.transactions
+                    );
+                }
+
+                return baseBinder;
+            }
         };
 
         try { Object.defineProperty( AdapterClass, "displayName", { value: builder.name } ); } catch {}
         try { Object.defineProperty( AdapterClass.prototype, Symbol.toStringTag, { value: builder.name } ); } catch {}
+
+        // Extend metadata to include transactions
+        if ( builder.transactions ) {
+            const existingMetadata = Reflect.get( AdapterClass, BUILDER_METADATA_SYMBOL ) as AdapterBuilderMetadata | undefined;
+            if ( existingMetadata ) {
+                Reflect.defineProperty( AdapterClass, BUILDER_METADATA_SYMBOL, {
+                    value: {
+                        ...existingMetadata,
+                        transactions: builder.transactions
+                    },
+                    configurable: true
+                } );
+            }
+        }
 
         return AdapterClass;
     }

@@ -13,6 +13,7 @@ import type { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { TransactionBuilder } from "@vertix.gg/gui/src/builders/transaction-builder";
 
 import type {
     StringHandler,
@@ -58,6 +59,7 @@ export interface AdapterBuilderMetadata {
     contextFactory?: unknown;
     rawBuilder?: unknown;
     wizard?: WizardAdapterMetadata;
+    transactions?: TransactionBuilder;
 }
 
 export interface EmbedBuilderMetadata<

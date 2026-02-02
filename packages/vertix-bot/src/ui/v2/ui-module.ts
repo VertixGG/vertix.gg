@@ -7,19 +7,6 @@ import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategi
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
-import { ClaimResultFlow } from "@vertix.gg/bot/src/ui/v2/claim/claim-result-flow";
-import { ClaimStartFlow } from "@vertix.gg/bot/src/ui/v2/claim/claim-start-flow";
-import { ClaimVoteFlow } from "@vertix.gg/bot/src/ui/v2/claim/claim-vote-flow";
-
-import { DynamicChannelMetaClearChatFlow } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/clear-chat/dynamic-channel-meta-clear-chat-flow";
-import { DynamicChannelMetaLimitFlow } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/limit/dynamic-channel-meta-limit-flow";
-import { DynamicChannelMetaRenameFlow } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-flow";
-import { DynamicChannelPermissionsFlow } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/dynamic-channel-permissions-flow";
-import { DynamicChannelPremiumResetFlow } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-flow";
-import { DynamicChannelTransferOwnerFlow } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-flow";
-
-import { SetupEditFlow } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit-flow";
-
 import { DynamicChannelFlow } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/dynamic-channel-flow";
 
 import * as adapters from "@vertix.gg/bot/src/ui/v2/ui-adapters-index";
@@ -42,18 +29,7 @@ export class UIModuleV2 extends UIModuleBase {
     }
 
     public static getFlows() {
-        return [
-            ClaimStartFlow,
-            ClaimVoteFlow,
-            ClaimResultFlow,
-            DynamicChannelMetaRenameFlow,
-            DynamicChannelMetaLimitFlow,
-            DynamicChannelMetaClearChatFlow,
-            DynamicChannelPermissionsFlow,
-            DynamicChannelTransferOwnerFlow,
-            DynamicChannelPremiumResetFlow,
-            SetupEditFlow
-        ];
+        return [];
     }
 
     public static override getSystemFlows() {

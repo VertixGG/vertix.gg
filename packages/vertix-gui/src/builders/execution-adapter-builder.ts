@@ -3,6 +3,10 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
+import { TransactionBuilder } from "@vertix.gg/gui/src/builders/transaction-builder";
+import { TransactionAwareBinder } from "@vertix.gg/gui/src/builders/transaction-aware-binder";
+
+import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import type { UIArgs, UIExecutionSteps } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
@@ -15,8 +19,10 @@ import type { Message } from "discord.js";
 
 import type {
     IAdapterContext,
-    IExecutionAdapterContext
+    IExecutionAdapterContext,
+    IBinder
 } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 export class ExecutionAdapterBuilder<
     TChannel extends UIAdapterStartContext,
@@ -39,6 +45,7 @@ export class ExecutionAdapterBuilder<
     private onStepHandler:
         | ( ( context: IExecutionAdapterContext<TInteraction, TArgs>, stepName: string, interaction: TInteraction ) => Promise<void> )
         | undefined;
+    private transactions: TransactionBuilder | undefined;
 
     public constructor( name: string, adapterBase?: TBase ) {
         super( name, ( adapterBase || UIAdapterExecutionStepsBase ) as TBase );
@@ -85,6 +92,34 @@ export class ExecutionAdapterBuilder<
         return this;
     }
 
+    /**
+     * Define transactions (state machine) for this adapter.
+     * Transactions automatically generate flow triggers that are injected into bindings.
+     *
+     * @example
+     * .defineTransactions((tx) => {
+     *   tx
+     *     .setInitialState("Default")
+     *     .addState("Default", { executionStep: "default" })
+     *     .addState("Public", { executionStep: "statePublic" })
+     *     .addTransition("SetPublic", { from: "Default", to: "Public" })
+     *     .bindElement("VertixBot/UI-V3/StateButton", "SetPublic");
+     * })
+     */
+    public defineTransactions( configurator: ( tx: TransactionBuilder ) => void ): this {
+        const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
+        this.transactions = new TransactionBuilder( flowName );
+        configurator( this.transactions );
+        return this;
+    }
+
+    /**
+     * Get the transactions builder if defined.
+     */
+    public getTransactions(): TransactionBuilder | undefined {
+        return this.transactions;
+    }
+
     public build() {
         const builder = this;
 
@@ -103,6 +138,13 @@ export class ExecutionAdapterBuilder<
                 }
                 // @ts-expect-error base may not implement
                 return super.getInitiatorElement?.();
+            }
+
+            /**
+             * Get the transactions builder for this adapter.
+             */
+            public static getTransactions(): TransactionBuilder | undefined {
+                return builder.transactions;
             }
 
             protected shouldDeletePreviousReply() {
@@ -137,7 +179,8 @@ export class ExecutionAdapterBuilder<
                     editReplyWithStep: this.editReplyWithStepWrapper.bind( this ),
                     ephemeralWithStep: this.ephemeralWithStepWrapper.bind( this ),
                     getCurrentExecutionStep: this.getCurrentExecutionStepWrapper.bind( this ),
-                    getName: () => this.getName()
+                    getName: () => this.getName(),
+                    triggerTransition: this.triggerTransitionWrapper.bind( this )
                 };
             }
 
@@ -161,6 +204,55 @@ export class ExecutionAdapterBuilder<
                 return method.call( this, interaction );
             }
 
+            /**
+             * Trigger a transaction transition - resolves the transition and handles navigation automatically.
+             */
+            private async triggerTransitionWrapper(
+                transitionName: string,
+                interaction: TInteraction,
+                args?: TArgs
+            ): Promise<void> {
+                if ( !builder.transactions ) {
+                    ExecutionAdapterBuilderGenerated.dedicatedLogger.warn(
+                        this.triggerTransitionWrapper,
+                        `triggerTransition called but no transactions defined for adapter '${ builder.name }'`
+                    );
+                    return;
+                }
+
+                const resolved = builder.transactions.resolveTransition( transitionName );
+                if ( !resolved ) {
+                    ExecutionAdapterBuilderGenerated.dedicatedLogger.warn(
+                        this.triggerTransitionWrapper,
+                        `Transition '${ transitionName }' not found in adapter '${ builder.name }'`
+                    );
+                    return;
+                }
+
+                switch ( resolved.navigationType ) {
+                    case "editReply":
+                        await this.editReplyWithStepWrapper( interaction, resolved.executionStep, args );
+                        break;
+
+                    case "ephemeral":
+                        await this.ephemeralWithStepWrapper(
+                            interaction,
+                            resolved.executionStep,
+                            args,
+                            resolved.deletePreviousReply
+                        );
+                        break;
+
+                    case "silent":
+                        // No UI update - just log for debugging
+                        ExecutionAdapterBuilderGenerated.dedicatedLogger.debug(
+                            this.triggerTransitionWrapper,
+                            `Silent transition '${ transitionName }' executed (no UI update)`
+                        );
+                        break;
+                }
+            }
+
             protected async onStep( stepName: string, interaction: TInteraction ) {
                 if ( builder.onStepHandler ) {
                     await builder.onStepHandler( this.getContext(), stepName, interaction );
@@ -169,10 +261,42 @@ export class ExecutionAdapterBuilder<
                 // @ts-expect-error - base may not implement
                 return super.onStep?.( stepName, interaction );
             }
+
+            /**
+             * Override createBinder to wrap with TransactionAwareBinder when transactions are defined.
+             */
+            protected createBinder(): IBinder<TInteraction, TArgs, IExecutionAdapterContext<TInteraction, TArgs>> {
+                const baseBinder = super.createBinder() as IBinder<TInteraction, TArgs, IExecutionAdapterContext<TInteraction, TArgs>>;
+
+                // If transactions are defined, wrap with TransactionAwareBinder
+                if ( builder.transactions ) {
+                    return new TransactionAwareBinder<TInteraction, TArgs, IExecutionAdapterContext<TInteraction, TArgs>>(
+                        baseBinder,
+                        builder.transactions
+                    );
+                }
+
+                return baseBinder;
+            }
         };
 
         try { Object.defineProperty( AdapterClass, "displayName", { value: builder.name } ); } catch {}
         try { Object.defineProperty( AdapterClass.prototype, Symbol.toStringTag, { value: builder.name } ); } catch {}
+
+        // Extend metadata to include transactions and executionSteps
+        if ( builder.transactions || builder.executionSteps ) {
+            const existingMetadata = Reflect.get( AdapterClass, BUILDER_METADATA_SYMBOL ) as AdapterBuilderMetadata | undefined;
+            if ( existingMetadata ) {
+                Reflect.defineProperty( AdapterClass, BUILDER_METADATA_SYMBOL, {
+                    value: {
+                        ...existingMetadata,
+                        ...( builder.transactions && { transactions: builder.transactions } ),
+                        ...( builder.executionSteps && { executionSteps: builder.executionSteps } )
+                    },
+                    configurable: true
+                } );
+            }
+        }
 
         return AdapterClass;
     }

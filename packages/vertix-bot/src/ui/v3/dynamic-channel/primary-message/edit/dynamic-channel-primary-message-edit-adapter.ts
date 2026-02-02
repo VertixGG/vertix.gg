@@ -125,6 +125,50 @@ const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<
         ],
         baseComponent: DynamicChannelPrimaryMessageEditComponent
     } )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Confirm" )
+            // States
+            .addState( "Confirm", {
+                executionStep: "default",
+                navigationType: "ephemeral"
+            } )
+            .addState( "EditTitle", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent",
+                previewDefaultVars: { title: "My Channel Title" }
+            } )
+            .addState( "EditDescription", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent",
+                previewDefaultVars: { description: "My channel description" }
+            } )
+            // Transitions from Confirm
+            .addTransition( "Cancel", { from: "Confirm", to: "Confirm" } )
+            .addTransition( "Proceed", { from: "Confirm", to: "EditTitle" } )
+            // Transitions from EditTitle
+            .addTransition( "TitleEdited", { from: "EditTitle", to: "EditTitle", mutations: [ { type: "set", path: [ "title" ] } ] } )
+            .addTransition( "TitleToDescription", { from: "EditTitle", to: "EditDescription" } )
+            .addTransition( "TitleBack", { from: "EditTitle", to: "Confirm" } )
+            // Transitions from EditDescription
+            .addTransition( "DescriptionEdited", { from: "EditDescription", to: "EditDescription", mutations: [ { type: "set", path: [ "description" ] } ] } )
+            .addTransition( "DescriptionBack", { from: "EditDescription", to: "EditTitle" } )
+            .addTransition( "Finish", { from: "EditDescription", to: "Confirm" } )
+            // Element bindings
+            .bindElement( "VertixBot/UI-General/NoButton", "Cancel" )
+            .bindElement( "VertixBot/UI-General/YesButton", "Proceed" )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton", "TitleEdited" )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton", "DescriptionEdited" )
+            // Modal-button bindings (for visualization)
+            .bindModalWithButton(
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
+                "TitleEdited"
+            )
+            .bindModalWithButton(
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
+                "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
+                "DescriptionEdited"
+            );
+    } )
     .setExecutionSteps( {
         default: {
             elementsGroup: DynamicChannelPrimaryMessageEditComponent.getDefaultElementsGroup(),
@@ -166,47 +210,19 @@ const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-General/YesButton",
-            onYesButtonClicked,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/BeginEditing",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/EditTitle",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent"
-                        }
-                    }
-                ]
-            }
+            onYesButtonClicked
         );
 
         bindModalWithButton(
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
-            onEditTitleModalSubmit,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitTitle"
-                    }
-                ]
-            }
+            onEditTitleModalSubmit
         );
 
         bindModalWithButton(
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
             "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
-            onEditDescriptionModalSubmit,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Transitions/SubmitDescription"
-                    }
-                ]
-            }
+            onEditDescriptionModalSubmit
         );
     } )
     .build();

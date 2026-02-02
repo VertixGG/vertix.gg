@@ -144,6 +144,69 @@ function findEmbedGroupByExecutionStep( component: UIExportedComponent, executio
     return undefined;
 }
 
+function buildElementsGroupCandidates( executionStep: string ): string[] {
+    const trimmed = executionStep.trim();
+    const candidates = new Set<string>();
+
+    const addCandidate = ( value: string ) => {
+        if ( value ) {
+            candidates.add( value );
+        }
+    };
+
+    const addWithElementsGroupVariants = ( value: string ) => {
+        addCandidate( value );
+
+        if ( !value.endsWith( "ElementsGroup" ) ) {
+            addCandidate( `${ value }ElementsGroup` );
+        }
+    };
+
+    addWithElementsGroupVariants( trimmed );
+
+    // Handle short names like "manage-menu" -> "Manage", "ManageMenu"
+    const parts = trimmed.split( "-" );
+    if ( parts.length > 1 ) {
+        const camelCase = parts.map( part => part.charAt( 0 ).toUpperCase() + part.slice( 1 ).toLowerCase() ).join( "" );
+        addWithElementsGroupVariants( camelCase );
+        // Also try just the first part
+        addWithElementsGroupVariants( parts[ 0 ].charAt( 0 ).toUpperCase() + parts[ 0 ].slice( 1 ).toLowerCase() );
+    }
+
+    return [ ...candidates ];
+}
+
+function findElementsGroupByExecutionStep(
+    component: UIExportedComponent,
+    executionStep: string | undefined
+): UIExportedComponent[ "elementsGroups" ][ number ] | undefined {
+    if ( !executionStep || executionStep === "default" ) {
+        return undefined;
+    }
+
+    const candidates = buildElementsGroupCandidates( executionStep );
+
+    return component.elementsGroups.find( group => {
+        const normalizedGroupName = normalizeElementsGroupName( group.name );
+        const groupLastSegment = normalizedGroupName.split( "/" ).pop()?.toLowerCase() ?? "";
+
+        return candidates.some( candidate => {
+            const normalizedCandidate = normalizeElementsGroupName( candidate ).toLowerCase();
+
+            if ( groupLastSegment === normalizedCandidate ) {
+                return true;
+            }
+
+            // Check if group name contains the candidate
+            if ( groupLastSegment.includes( normalizedCandidate ) ) {
+                return true;
+            }
+
+            return false;
+        } );
+    } );
+}
+
 export function extractComponentPreview(
     component: UIExportedComponent,
     executionStep?: string,
@@ -165,9 +228,12 @@ export function extractComponentPreview(
 
     const elementRows: ElementData[][] = [];
 
-    const selectedElementsGroup = component.defaultElementsGroup
-        ? component.elementsGroups.find( group => isDefaultElementsGroup( group.name, component.defaultElementsGroup ?? "" ) )
-        : component.elementsGroups[ 0 ];
+    // First try to find elements group by execution step, then fall back to default
+    const elementsGroupByStep = findElementsGroupByExecutionStep( component, executionStep );
+    const selectedElementsGroup = elementsGroupByStep
+        ?? ( component.defaultElementsGroup
+            ? component.elementsGroups.find( group => isDefaultElementsGroup( group.name, component.defaultElementsGroup ?? "" ) )
+            : component.elementsGroups[ 0 ] );
 
     selectedElementsGroup?.items.forEach( row => {
         const rowElements = row.map( item => ( {

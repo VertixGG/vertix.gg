@@ -474,6 +474,72 @@ async function onFinishButtonClicked(
 const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interactions>( "VertixBot/UI-V2/SetupEditAdapter" )
     .setComponent( SetupEditComponent )
     .setExcludedElements( [ SetupMasterEditButton, SetupMasterEditSelectMenu ] )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "SelectMaster" )
+            // States
+            .addState( "SelectMaster", { executionStep: "default" } )
+            .addState( "MasterOverview", {
+                executionStep: "VertixBot/UI-V2/SetupEditMaster",
+                previewDefaultVars: { view: "Master channel settings" }
+            } )
+            .addState( "Buttons", {
+                executionStep: "VertixBot/UI-V2/SetupEditButtons",
+                previewDefaultVars: { view: "Button configuration" }
+            } )
+            .addState( "ButtonsEffect", {
+                executionStep: "VertixBot/UI-V2/SetupEditButtonsEffect",
+                previewDefaultVars: { view: "Apply button changes" }
+            } )
+            .addState( "VerifiedRoles", {
+                executionStep: "VertixBot/UI-V2/SetupEditVerifiedRoles",
+                previewDefaultVars: { view: "Verified roles configuration" }
+            } )
+            // Transitions
+            .addTransition( "SelectMaster", { from: "SelectMaster", to: "MasterOverview" } )
+            .addTransition( "OpenButtons", { from: "MasterOverview", to: "Buttons" } )
+            .addTransition( "OpenVerifiedRoles", { from: "MasterOverview", to: "VerifiedRoles" } )
+            .addTransition( "OpenNameModal", { from: "MasterOverview", to: "MasterOverview" } )
+            .addTransition( "NameTemplateSubmitted", { from: "MasterOverview", to: "MasterOverview" } )
+            .addTransition( "ConfigExtrasUpdated", { from: "MasterOverview", to: "MasterOverview" } )
+            .addTransition( "LogChannelUpdated", { from: "MasterOverview", to: "MasterOverview" } )
+            .addTransition( "OpenDeleteModal", { from: "MasterOverview", to: "MasterOverview" } )
+            .addTransition( "DeleteConfirmed", { from: "MasterOverview", to: "SelectMaster" } )
+            .addTransition( "Done", { from: "MasterOverview", to: "SelectMaster" } )
+            .addTransition( "ShowButtonsEffect", { from: "Buttons", to: "ButtonsEffect" } )
+            .addTransition( "ButtonsImmediateApplied", { from: "ButtonsEffect", to: "MasterOverview" } )
+            .addTransition( "ButtonsNewApplied", { from: "ButtonsEffect", to: "MasterOverview" } )
+            .addTransition( "BackFromButtons", { from: "Buttons", to: "MasterOverview" } )
+            .addTransition( "VerifiedRolesUpdated", { from: "VerifiedRoles", to: "VerifiedRoles" } )
+            .addTransition( "VerifiedRolesEveryoneToggled", { from: "VerifiedRoles", to: "VerifiedRoles" } )
+            .addTransition( "BackFromVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
+            .addTransition( "FinishVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
+            // Element bindings
+            .bindElement( "VertixBot/UI-General/SetupMasterEditSelectMenu", "SelectMaster" )
+            .bindElement( "VertixBot/UI-V2/SetupEditSelectEditOptionMenu", "OpenButtons" )
+            .bindElement( "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu", "ShowButtonsEffect" )
+            .bindElement( "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton", "ButtonsImmediateApplied" )
+            .bindElement( "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton", "ButtonsNewApplied" )
+            .bindElement( "VertixBot/UI-General/ConfigExtrasSelectMenu", "ConfigExtrasUpdated" )
+            .bindElement( "VertixBot/UI-V2/LogChannelSelectMenu", "LogChannelUpdated" )
+            .bindElement( "VertixBot/UI-General/VerifiedRolesMenu", "VerifiedRolesUpdated" )
+            .bindElement( "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu", "VerifiedRolesEveryoneToggled" )
+            .bindElement( "VertixBot/UI-General/DoneButton", "Done" )
+            .bindElement( "VertixBot/UI-General/DeleteButton", "OpenDeleteModal" )
+            .bindElement( "VertixBot/UI-General/WizardBackButton", "BackFromVerifiedRoles" )
+            .bindElement( "VertixBot/UI-General/WizardFinishButton", "FinishVerifiedRoles" )
+            // Modal bindings
+            .bindModalWithButton(
+                "VertixBot/UI-General/ChannelNameTemplateEditButton",
+                "VertixBot/UI-General/ChannelNameTemplateModal",
+                "NameTemplateSubmitted"
+            )
+            .bindModalWithButton(
+                "VertixBot/UI-General/DeleteButton",
+                "VertixBot/UI-General/DeleteConfirmModal",
+                "DeleteConfirmed"
+            );
+    } )
     .setExecutionSteps( {
         default: {},
 

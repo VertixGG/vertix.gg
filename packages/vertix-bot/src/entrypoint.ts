@@ -549,6 +549,64 @@ async function registerIPCService() {
     }
 }
 
+async function registerDummyIPCService() {
+    GlobalLogger.$.info( registerDummyIPCService, "Registering dummy IPC service for export commands..." );
+
+    const { ServiceBase } = await import( "@vertix.gg/base/src/modules/service/service-base" );
+
+    // Check if already registered
+    const existing = ServiceLocator.$.get( "VertixBase/Modules/IPCService", { silent: true } );
+    if ( existing ) {
+        GlobalLogger.$.info( registerDummyIPCService, "IPC service already registered" );
+        return;
+    }
+
+    // Create a dummy IPC service that does nothing
+    class DummyIPCService extends ServiceBase {
+        public static getName(): string {
+            return "VertixBase/Modules/IPCService";
+        }
+
+        protected async initialize(): Promise<void> {
+            this.logger.info( this.initialize, "Dummy IPC Service initialized (no Redis connection)" );
+        }
+
+        public async shutdown(): Promise<void> {
+            // No-op
+        }
+
+        public async publish(): Promise<void> {
+            // No-op
+        }
+
+        public async subscribe(): Promise<void> {
+            // No-op
+        }
+
+        public unsubscribe(): void {
+            // No-op
+        }
+
+        public isReady(): boolean {
+            return false;
+        }
+
+        public async request(): Promise<never> {
+            throw new Error( "Dummy IPC service does not support requests" );
+        }
+
+        public async onRequest(): Promise<void> {
+            // No-op
+        }
+    }
+
+    ServiceLocator.$.register( DummyIPCService );
+
+    await ServiceLocator.$.waitFor( "VertixBase/Modules/IPCService", { timeout: 5000 } );
+
+    GlobalLogger.$.info( registerDummyIPCService, "Dummy IPC service registered" );
+}
+
 async function registerMCPService() {
     GlobalLogger.$.info( registerMCPService, "Registering MCP service (Logger Client) ..." );
 
@@ -630,6 +688,10 @@ async function bootstrapUIRuntime(): Promise<UIService> {
     const client = await botInitialize( { enableListeners: false } );
     await registerUIServices( client );
     await registerConfigs();
+
+    // Register dummy IPC service for export commands (doesn't need real Redis connection)
+    await registerDummyIPCService();
+
     await registerServices();
     await EmojiManager.$.promise();
     await registerUIAdapters();

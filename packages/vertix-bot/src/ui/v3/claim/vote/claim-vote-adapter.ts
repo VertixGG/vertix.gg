@@ -142,6 +142,30 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
     .setExecutionSteps( CLAIM_VOTE_STEPS )
     .setPermissions( new PermissionsBitField( 0n ) )
     .setChannelTypes( [ ChannelType.GuildVoice ] )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "StepIn" )
+            // Vote process states
+            .addState( "StepIn", {
+                executionStep: "VertixBot/UI-V3/ClaimStepIn",
+                previewDefaultVars: { userInitiatorDisplayName: "Initiator", timeEnd: "1700000000000" }
+            } )
+            .addState( "VoteProcess", {
+                executionStep: "VertixBot/UI-V3/ClaimVoteProcess",
+                previewDefaultVars: { userInitiatorDisplayName: "Initiator", timeEnd: "1700000000000" }
+            } )
+            .addState( "VoteWon", {
+                executionStep: "VertixBot/UI-V3/ClaimVoteWon",
+                previewDefaultVars: { userWonDisplayName: "Winner", previousOwnerDisplayName: "Previous Owner" }
+            } )
+            // Transitions - triggered by vote manager based on vote state
+            .addTransition( "StartVoting", { from: "StepIn", to: "VoteProcess" } )
+            .addTransition( "UpdateVotes", { from: "VoteProcess", to: "VoteProcess" } )
+            .addTransition( "AnnounceWinner", { from: "VoteProcess", to: "VoteWon" } )
+            // Element bindings
+            .bindElement( "VertixBot/UI-V3/ClaimVoteStepInButton", "StartVoting" )
+            .bindElement( "VertixBot/UI-V3/ClaimVoteAddButton", "StartVoting" );
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction ) => getAllArgs( context, interaction ) )
     .getEditMessageArgs( async( context, message ) => getAllArgs( context, message as Message<true> ) )
@@ -151,26 +175,6 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
             async( _context, interaction ) => {
                 const voiceInteraction = interaction as unknown as DefaultInteraction;
                 handleVoteRequest( voiceInteraction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/ClaimVoteFlow",
-                        transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVote",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteProcess",
-                            executionStep: "VertixBot/UI-V3/ClaimResultAddedSuccessfully"
-                        }
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/ClaimVoteFlow",
-                        transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/AddCandidate",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn",
-                            executionStep: "VertixBot/UI-V3/ClaimResultAlreadyAdded"
-                        }
-                    }
-                ]
             }
         );
 
@@ -179,42 +183,6 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
             async( _context, interaction ) => {
                 const voiceInteraction = interaction as unknown as DefaultInteraction;
                 handleVoteRequest( voiceInteraction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/ClaimVoteFlow",
-                        transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSelf",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteAlreadySelf",
-                            executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted"
-                        }
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/ClaimVoteFlow",
-                        transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSuccess",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSuccess",
-                            executionStep: "VertixBot/UI-V3/ClaimResultVotedSuccessfully"
-                        }
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/ClaimVoteFlow",
-                        transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteSame",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteSameChoice",
-                            executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame"
-                        }
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/ClaimVoteFlow",
-                        transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/VoteUpdated",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteUpdated",
-                            executionStep: "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully"
-                        }
-                    }
-                ]
             }
         );
     } )

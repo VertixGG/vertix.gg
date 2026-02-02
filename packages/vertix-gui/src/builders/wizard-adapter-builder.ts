@@ -5,6 +5,8 @@ import { ComponentType } from "discord.js";
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { UIWizardComponentBase } from "@vertix.gg/gui/src/bases/ui-wizard-component-base";
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
+import { TransactionBuilder } from "@vertix.gg/gui/src/builders/transaction-builder";
+import { TransactionAwareBinder } from "@vertix.gg/gui/src/builders/transaction-aware-binder";
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import type { UIArgs, UIExecutionSteps , UIComponentTypeConstructor, UIEntitySchemaBase, UIEntityTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -22,6 +24,7 @@ import type {
     IWizardAdapterContext,
     BeforeFinishHandler,
     IAdapterContext,
+    IBinder,
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 
 export interface IWizardComponentConfig {
@@ -53,9 +56,27 @@ export class WizardAdapterBuilder<
     private onBeforeNextHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
     private onBeforeBackHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
     private onAfterFinishHandler: ( ( interaction: TInteraction ) => Promise<void> ) | undefined;
+    private transactions: TransactionBuilder | undefined;
 
     public constructor( name: string, adapterBase?: TBase ) {
         super( name, ( adapterBase || UIWizardAdapterBase ) as TBase );
+    }
+
+    /**
+     * Define transactions (state machine) for this adapter.
+     */
+    public defineTransactions( configurator: ( tx: TransactionBuilder ) => void ): this {
+        const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
+        this.transactions = new TransactionBuilder( flowName );
+        configurator( this.transactions );
+        return this;
+    }
+
+    /**
+     * Get the transactions builder if defined.
+     */
+    public getTransactions(): TransactionBuilder | undefined {
+        return this.transactions;
     }
 
     public setComponents( config: IWizardComponentConfig ): this {
@@ -133,6 +154,13 @@ export class WizardAdapterBuilder<
 
             protected static getExecutionSteps() {
                 return builder.executionSteps || {};
+            }
+
+            /**
+             * Get the transactions builder for this adapter.
+             */
+            public static getTransactions(): TransactionBuilder | undefined {
+                return builder.transactions;
             }
 
             protected static getInitiatorElement() {
@@ -215,7 +243,8 @@ export class WizardAdapterBuilder<
                     getCurrentExecutionStep: this.getCurrentExecutionStepWrapper.bind( this ),
                     getCurrentStepIndex: this.getCurrentStepIndexWrapper.bind( this ),
                     generateCustomIdForEntity: this.generateCustomIdForEntityWrapper.bind( this ),
-                    getName: () => this.getName()
+                    getName: () => this.getName(),
+                    triggerTransition: this.triggerTransitionWrapper.bind( this )
                 };
             }
 
@@ -242,6 +271,65 @@ export class WizardAdapterBuilder<
             private generateCustomIdForEntityWrapper( entity: UIEntitySchemaBase | UIModalSchema ) {
                 return builder.buildCustomId( this.getName(), entity, this.customIdStrategy );
             }
+
+            /**
+             * Trigger a transaction transition - resolves the transition and handles navigation automatically.
+             */
+            private async triggerTransitionWrapper(
+                transitionName: string,
+                interaction: TInteraction,
+                args?: TArgs
+            ): Promise<void> {
+                if ( !builder.transactions ) {
+                    WizardAdapterBuilderGenerated.dedicatedLogger.warn(
+                        this.triggerTransitionWrapper,
+                        `triggerTransition called but no transactions defined for adapter '${ builder.name }'`
+                    );
+                    return;
+                }
+
+                const resolved = builder.transactions.resolveTransition( transitionName );
+                if ( !resolved ) {
+                    WizardAdapterBuilderGenerated.dedicatedLogger.warn(
+                        this.triggerTransitionWrapper,
+                        `Transition '${ transitionName }' not found in adapter '${ builder.name }'`
+                    );
+                    return;
+                }
+
+                switch ( resolved.navigationType ) {
+                    case "editReply":
+                        await this.editReplyWithStepWrapper( interaction, resolved.executionStep, args );
+                        break;
+
+                    case "ephemeral":
+                        await this.ephemeralWithStepWrapper( interaction, resolved.executionStep, args );
+                        break;
+
+                    case "silent":
+                        WizardAdapterBuilderGenerated.dedicatedLogger.debug(
+                            this.triggerTransitionWrapper,
+                            `Silent transition '${ transitionName }' executed (no UI update)`
+                        );
+                        break;
+                }
+            }
+
+            /**
+             * Override createBinder to wrap with TransactionAwareBinder when transactions are defined.
+             */
+            protected createBinder(): IBinder<TInteraction, TArgs, IWizardAdapterContext<TInteraction, TArgs>> {
+                const baseBinder = super.createBinder() as IBinder<TInteraction, TArgs, IWizardAdapterContext<TInteraction, TArgs>>;
+
+                if ( builder.transactions ) {
+                    return new TransactionAwareBinder<TInteraction, TArgs, IWizardAdapterContext<TInteraction, TArgs>>(
+                        baseBinder,
+                        builder.transactions
+                    );
+                }
+
+                return baseBinder;
+            }
         };
 
         try {
@@ -257,6 +345,7 @@ export class WizardAdapterBuilder<
         if ( metadata ) {
             metadata.executionSteps = builder.executionSteps;
             metadata.initiatorElement = metadata.initiatorElement ?? builder.initiatorElement;
+            metadata.transactions = builder.transactions;
             metadata.wizard = {
                 componentConfig: builder.componentConfig
                     ? {

@@ -1,10 +1,10 @@
 {
     "schemaVersion": "1.0.0",
-    "exportedAt": "2026-01-17T10:54:10.192Z",
+    "exportedAt": "2026-02-02T09:02:31.675Z",
     "counts": {
-        "components": 42,
-        "adapters": 37,
-        "flows": 22
+        "components": 46,
+        "adapters": 38,
+        "flows": 34
     },
     "modules": [
         "VertixBot/UI-General/Module",
@@ -16,7 +16,7 @@
             "module": "VertixBot/UI-General/Module",
             "components": 7,
             "adapters": 7,
-            "flows": 5,
+            "flows": 4,
             "embeds": {
                 "total": 8,
                 "withDefinition": 8,
@@ -27,34 +27,34 @@
         },
         {
             "module": "VertixBot/UI-V2/Module",
-            "components": 13,
+            "components": 16,
             "adapters": 13,
-            "flows": 0,
+            "flows": 11,
             "embeds": {
-                "total": 50,
-                "withDefinition": 47,
-                "missingDefinition": 3
+                "total": 53,
+                "withDefinition": 48,
+                "missingDefinition": 5
             },
-            "componentsWithEmbeds": 13,
-            "componentsWithMissingEmbeds": 2
+            "componentsWithEmbeds": 16,
+            "componentsWithMissingEmbeds": 4
         },
         {
             "module": "VertixBot/UI-V3/Module",
-            "components": 22,
-            "adapters": 17,
-            "flows": 14,
+            "components": 23,
+            "adapters": 18,
+            "flows": 15,
             "embeds": {
-                "total": 62,
-                "withDefinition": 62,
+                "total": 63,
+                "withDefinition": 63,
                 "missingDefinition": 0
             },
-            "componentsWithEmbeds": 22,
+            "componentsWithEmbeds": 23,
             "componentsWithMissingEmbeds": 0
         }
     ],
     "embedCoverage": {
-        "total": 120,
-        "withDefinition": 117,
-        "missingDefinition": 3
+        "total": 124,
+        "withDefinition": 119,
+        "missingDefinition": 5
     }
 }

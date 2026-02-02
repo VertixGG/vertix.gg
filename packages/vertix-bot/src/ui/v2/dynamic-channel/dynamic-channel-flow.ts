@@ -136,7 +136,7 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 targetFlowName: "VertixBot/UI-V2/ClaimStartFlow"
             },
             {
-                triggeringElementId: "VertixBot/UI-V2/DynamicChannelPremiumTransferOwnerButton",
+                triggeringElementId: "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
                 transitionName: "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
                 targetFlowName: "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow"
             }

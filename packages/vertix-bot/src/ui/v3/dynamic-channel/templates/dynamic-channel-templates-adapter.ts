@@ -79,6 +79,63 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
             embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbedGroup"
         }
     } )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            .addState( "Default", {
+                executionStep: "default",
+                navigationType: "editReply"
+            } )
+            .addState( "ApplyMenu", {
+                executionStep: "apply-menu",
+                navigationType: "editReply"
+            } )
+            .addState( "ApplyConfirm", {
+                executionStep: "apply-confirm",
+                navigationType: "editReply"
+            } )
+            .addState( "ManageMenu", {
+                executionStep: "manage-menu",
+                navigationType: "editReply"
+            } )
+            .addState( "DeleteConfirm", {
+                executionStep: "delete-confirm",
+                navigationType: "editReply"
+            } )
+            .addState( "TemplateSaved", {
+                executionStep: "template-saved",
+                navigationType: "editReply",
+                previewDefaultVars: { templateName: "My Template" }
+            } )
+            .addState( "TemplateApplied", {
+                executionStep: "template-applied",
+                navigationType: "editReply"
+            } )
+            .addState( "TemplateDeleted", {
+                executionStep: "template-deleted",
+                navigationType: "editReply",
+                previewDefaultVars: { deletedTemplateName: "My Template" }
+            } )
+            // Transitions
+            .addTransition( "OpenApplyMenu", { from: "Default", to: "ApplyMenu" } )
+            .addTransition( "OpenManageMenu", { from: "Default", to: "ManageMenu" } )
+            .addTransition( "SelectTemplateToApply", { from: "ApplyMenu", to: "ApplyConfirm" } )
+            .addTransition( "ConfirmApply", { from: "ApplyConfirm", to: "TemplateApplied" } )
+            .addTransition( "SelectTemplateToDelete", { from: "ManageMenu", to: "DeleteConfirm" } )
+            .addTransition( "ConfirmDelete", { from: "DeleteConfirm", to: "TemplateDeleted" } )
+            .addTransition( "SaveTemplate", { from: "Default", to: "TemplateSaved" } )
+            .addTransition( "BackToDefault", { from: [ "ApplyMenu", "ManageMenu", "TemplateSaved", "TemplateApplied", "TemplateDeleted" ], to: "Default" } )
+            // Element bindings
+            .bindElement( "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton", "OpenApplyMenu" )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelTemplatesManageButton", "OpenManageMenu" )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelTemplatesBackButton", "BackToDefault" )
+            // Modal-button bindings (for visualization - shows which button opens which modal)
+            .bindModalWithButton(
+                "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                "SaveTemplate"
+            );
+    } )
     .getStartArgs( async() => ( {
         templates: [],
         maxTemplates: MAX_TEMPLATES
@@ -146,21 +203,21 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                     templateName
                 } );
 
-                await context.editReplyWithStep( interaction, "template-saved" );
+                await context.triggerTransition( "SaveTemplate", interaction );
             }
         );
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton",
             async( context, interaction ) => {
-                await context.editReplyWithStep( interaction, "apply-menu" );
+                await context.triggerTransition( "OpenApplyMenu", interaction );
             }
         );
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelTemplatesManageButton",
             async( context, interaction ) => {
-                await context.editReplyWithStep( interaction, "manage-menu" );
+                await context.triggerTransition( "OpenManageMenu", interaction );
             }
         );
 
@@ -186,7 +243,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                     } )
                 );
 
-                await context.editReplyWithStep( interaction, "apply-confirm" );
+                await context.triggerTransition( "SelectTemplateToApply", interaction );
             }
         );
 
@@ -207,7 +264,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                     : "";
 
                 if ( !selectedTemplateId ) {
-                    await context.editReplyWithStep( interaction, "apply-menu" );
+                    await context.triggerTransition( "OpenApplyMenu", interaction );
                     return;
                 }
 
@@ -218,7 +275,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                 );
 
                 if ( !template ) {
-                    await context.editReplyWithStep( interaction, "apply-menu" );
+                    await context.triggerTransition( "OpenApplyMenu", interaction );
                     return;
                 }
 
@@ -267,7 +324,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                     } )
                 );
 
-                await context.editReplyWithStep( interaction, "template-applied" );
+                await context.triggerTransition( "ConfirmApply", interaction );
             }
         );
 
@@ -293,7 +350,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                     } )
                 );
 
-                await context.editReplyWithStep( interaction, "delete-confirm" );
+                await context.triggerTransition( "SelectTemplateToDelete", interaction );
             }
         );
 
@@ -314,7 +371,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                     : "";
 
                 if ( !selectedTemplateId ) {
-                    await context.editReplyWithStep( interaction, "manage-menu" );
+                    await context.triggerTransition( "OpenManageMenu", interaction );
                     return;
                 }
 
@@ -346,14 +403,14 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                     } )
                 );
 
-                await context.editReplyWithStep( interaction, "template-deleted" );
+                await context.triggerTransition( "ConfirmDelete", interaction );
             }
         );
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelTemplatesBackButton",
             async( context, interaction ) => {
-                await context.editReplyWithStep( interaction, "default" );
+                await context.triggerTransition( "BackToDefault", interaction );
             }
         );
     } )

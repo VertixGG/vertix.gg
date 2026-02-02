@@ -1,7 +1,7 @@
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
-import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
+import { ExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/execution-adapter-builder";
 
 import { ClaimStartComponent } from "@vertix.gg/bot/src/ui/v2/claim/start/claim-start-component";
 
@@ -11,30 +11,48 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ButtonInteraction, VoiceChannel } from "discord.js";
+import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
 interface DefaultInteraction extends ButtonInteraction<"cached"> {
     channel: VoiceChannel;
 }
 
-export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultInteraction> {
-    public static getName() {
-        return "VertixBot/UI-V2/ClaimStartAdapter";
-    }
+const CLAIM_START_STEPS = {
+    default: {}
+} as const;
 
-    public static getComponent() {
-        return ClaimStartComponent;
-    }
+async function onClaimStartButtonClicked(
+    context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,
+    interaction: DefaultInteraction
+) {
+    await DynamicChannelClaimManager.get( "VertixBot/UI-V2/DynamicChannelClaimManager" ).handleVoteRequest( interaction );
+}
 
-    public getPermissions(): PermissionsBitField {
-        return new PermissionsBitField( 0n );
-    }
-
-    public getChannelTypes() {
-        return [ ChannelType.GuildVoice ];
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getStartArgs( channel: VoiceChannel, argsFromManager: UIArgs ) {
+const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInteraction>(
+    "VertixBot/UI-V2/ClaimStartAdapter"
+)
+    .setComponent( ClaimStartComponent )
+    .setPermissions( new PermissionsBitField( 0n ) )
+    .setChannelTypes( [ ChannelType.GuildVoice ] )
+    .setExecutionSteps( CLAIM_START_STEPS )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            .addState( "Default", {
+                executionStep: "default",
+                previewDefaultVars: {
+                    ownerId: "123456789",
+                    ownerDisplayName: "Owner",
+                    absentInterval: "300000"
+                }
+            } )
+            .addTransition( "RequestClaim", {
+                from: "Default",
+                to: "Default",
+                triggeredBy: [ { sourceEntity: "VertixBot/UI-V2/ClaimStartButton", handlerKind: "button" } ]
+            } );
+    } )
+    .getStartArgs( async( context, channel ) => {
         const channelDB = await ChannelModel.$.getByChannelId( channel.id );
 
         if ( !channelDB || !channelDB.userOwnerId ) {
@@ -49,13 +67,10 @@ export class ClaimStartAdapter extends UIAdapterBase<VoiceChannel, DefaultIntera
                 "VertixBot/UI-V2/DynamicChannelClaimManager"
             ).getChannelOwnershipTimeout()
         };
-    }
+    } )
+    .onEntityMap( async( { bindButton } ) => {
+        bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimStartButton", onClaimStartButtonClicked );
+    } )
+    .build();
 
-    protected onEntityMap() {
-        this.bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimStartButton", this.onClaimStartButtonClicked );
-    }
-
-    private async onClaimStartButtonClicked( interaction: DefaultInteraction ) {
-        await DynamicChannelClaimManager.get( "VertixBot/UI-V2/DynamicChannelClaimManager" ).handleVoteRequest( interaction );
-    }
-}
+export { ClaimStartAdapter };

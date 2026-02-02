@@ -11,8 +11,6 @@ import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultUserSelectMenuChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 type DefaultInteraction = UIDefaultUserSelectMenuChannelVoiceInteraction | UIDefaultButtonChannelVoiceInteraction;
@@ -56,102 +54,56 @@ function clearAcceptedInteraction( interaction: UIDefaultButtonChannelVoiceInter
     }
 }
 
-async function onTransferOwnerButtonClicked(
-    context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,
-    interaction: UIDefaultButtonChannelVoiceInteraction
-) {
-    await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelTransferOwnerSelectUser" );
-}
-
-async function onTransferOwnerUserSelected(
-    context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,
-    interaction: UIDefaultUserSelectMenuChannelVoiceInteraction
-) {
-    const targetId = interaction.values.at( 0 ) as string,
-        target = interaction.guild.members.cache.get( targetId );
-
-    if ( !target ) {
-        await context.updateInteractionDefer( interaction );
-        return;
-    }
-
-    context.setArgs( interaction, { userDisplayName: target.displayName } );
-
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected", {
-        userDisplayName: target.displayName
-    } );
-
-    const accepted = acceptedInteraction.get( interaction.channel.id + interaction.user.id );
-
-    if ( accepted ) {
-        clearTimeout( accepted.timeout );
-        acceptedInteraction.delete( interaction.channel.id + interaction.user.id );
-    }
-
-    const timeoutId = setTimeout( () => {
-        interaction.deleteReply().catch( () => {} );
-        acceptedInteraction.delete( interaction.channel.id + interaction.user.id );
-    }, ACCEPTED_INTERACTION_TIMEOUT );
-
-    acceptedInteraction.set( interaction.channel.id + interaction.user.id, {
-        selectedUserId: targetId,
-        timeout: timeoutId
-    } );
-}
-
-async function onYesButtonClicked(
-    context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,
-    interaction: UIDefaultButtonChannelVoiceInteraction
-) {
-    const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
-
-    if ( "active" === state ) {
-        await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelTransferDisabledByClaim" );
-        return;
-    }
-
-    const accepted = acceptedInteraction.get( interaction.channel.id + interaction.user.id );
-
-    clearAcceptedInteraction( interaction );
-
-    if ( !accepted ) {
-        await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelTransferError" );
-        return;
-    }
-
-    const target = interaction.guild.members.cache.get( accepted.selectedUserId );
-
-    if ( !target ) {
-        await context.ephemeralWithStep( interaction, "VertixBot/UI-V3/DynamicChannelTransferError" );
-        return;
-    }
-
-    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-
-    await dynamicChannelService.editChannelOwner( target.id, interaction.user.id, interaction.channel, "transfer" );
-
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelTransferOwnerSuccess" );
-}
-
-async function onNoButtonClicked(
-    context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,
-    interaction: UIDefaultButtonChannelVoiceInteraction
-) {
-    clearAcceptedInteraction( interaction );
-
-    await context.deleteRelatedEphemeralInteractionsInternal(
-        interaction,
-        "VertixBot/UI-V3/DynamicChannelAdapter:VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-        1
-    );
-}
-
 const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V3/DynamicChannelTransferOwnerAdapter"
 )
     .setComponent( DynamicChannelTransferOwnerComponent )
     .setExecutionSteps( TRANSFER_OWNER_STEPS )
     .setExcludedElements( [ DynamicChannelTransferOwnerButton ] )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            .addState( "Default", { executionStep: "default" } )
+            .addState( "SelectUser", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerSelectUser",
+                navigationType: "ephemeral"
+            } )
+            .addState( "UserSelected", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected",
+                navigationType: "editReply",
+                previewDefaultVars: { userDisplayName: "User" }
+            } )
+            .addState( "Success", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerSuccess",
+                navigationType: "editReply"
+            } )
+            .addState( "DisabledByClaim", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelTransferDisabledByClaim",
+                navigationType: "ephemeral"
+            } )
+            .addState( "Error", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelTransferError",
+                navigationType: "ephemeral"
+            } )
+            .addState( "Cancelled", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelTransferError",
+                navigationType: "silent"
+            } )
+            .addTransition( "Open", { from: "Default", to: "SelectUser" } )
+            .addTransition( "UserSelected", {
+                from: "SelectUser",
+                to: "UserSelected",
+                mutations: [ { type: "set", path: [ "userDisplayName" ] } ]
+            } )
+            .addTransition( "Confirm", { from: "UserSelected", to: "Success" } )
+            .addTransition( "DisabledByClaim", { from: "UserSelected", to: "DisabledByClaim" } )
+            .addTransition( "Error", { from: [ "SelectUser", "UserSelected" ], to: "Error" } )
+            .addTransition( "Cancel", { from: "UserSelected", to: "Cancelled" } )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelTransferOwnerButton", "Open" )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu", "UserSelected" )
+            .bindElement( "VertixBot/UI-General/YesButton", "Confirm" )
+            .bindElement( "VertixBot/UI-General/NoButton", "Cancel" );
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const currentStep = context.getCurrentExecutionStep( interaction )?.name;
@@ -168,72 +120,94 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
     .onEntityMap( async( { bindButton, bindUserSelectMenu } ) => {
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
-            onTransferOwnerButtonClicked,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Open",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerSelectUser"
-                        }
-                    }
-                ]
+            async( context, interaction ) => {
+                await context.triggerTransition( "Open", interaction );
             }
         );
 
         bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
-            onTransferOwnerUserSelected,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/UserSelected",
-                        mutations: [
-                            { type: "set", path: [ "userDisplayName" ] }
-                        ],
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Confirm",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelected"
-                        }
-                    }
-                ]
+            async( context, interaction ) => {
+                const targetId = interaction.values.at( 0 ) as string,
+                    target = interaction.guild.members.cache.get( targetId );
+
+                if ( !target ) {
+                    await context.updateInteractionDefer( interaction );
+                    return;
+                }
+
+                context.setArgs( interaction, { userDisplayName: target.displayName } );
+
+                await context.triggerTransition( "UserSelected", interaction, {
+                    userDisplayName: target.displayName
+                } );
+
+                const accepted = acceptedInteraction.get( interaction.channel.id + interaction.user.id );
+
+                if ( accepted ) {
+                    clearTimeout( accepted.timeout );
+                    acceptedInteraction.delete( interaction.channel.id + interaction.user.id );
+                }
+
+                const timeoutId = setTimeout( () => {
+                    interaction.deleteReply().catch( () => {} );
+                    acceptedInteraction.delete( interaction.channel.id + interaction.user.id );
+                }, ACCEPTED_INTERACTION_TIMEOUT );
+
+                acceptedInteraction.set( interaction.channel.id + interaction.user.id, {
+                    selectedUserId: targetId,
+                    timeout: timeoutId
+                } );
             }
         );
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-General/YesButton",
-            onYesButtonClicked,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Confirm",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Success",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferred"
-                        }
-                    }
-                ]
+            async( context, interaction ) => {
+                const state = DynamicChannelVoteManager.$.getState( interaction.channelId );
+
+                if ( "active" === state ) {
+                    await context.triggerTransition( "DisabledByClaim", interaction );
+                    return;
+                }
+
+                const accepted = acceptedInteraction.get( interaction.channel.id + interaction.user.id );
+
+                clearAcceptedInteraction( interaction );
+
+                if ( !accepted ) {
+                    await context.triggerTransition( "Error", interaction );
+                    return;
+                }
+
+                const target = interaction.guild.members.cache.get( accepted.selectedUserId );
+
+                if ( !target ) {
+                    await context.triggerTransition( "Error", interaction );
+                    return;
+                }
+
+                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+
+                await dynamicChannelService.editChannelOwner( target.id, interaction.user.id, interaction.channel, "transfer" );
+
+                await context.triggerTransition( "Confirm", interaction );
             }
         );
 
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-General/NoButton",
-            onNoButtonClicked,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Cancelled",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelTransferError"
-                        }
-                    }
-                ]
+            async( context, interaction ) => {
+                clearAcceptedInteraction( interaction );
+
+                await context.deleteRelatedEphemeralInteractionsInternal(
+                    interaction,
+                    "VertixBot/UI-V3/DynamicChannelAdapter:VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+                    1
+                );
+
+                // Silent transition - just for tracking
+                await context.triggerTransition( "Cancel", interaction );
             }
         );
     } )

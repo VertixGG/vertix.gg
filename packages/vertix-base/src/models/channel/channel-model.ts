@@ -213,12 +213,16 @@ export class ChannelModel extends ModelWithDataBase<
             this.deleteCache( this.generateCacheKey( deleteArgs ) );
         }
 
-        const result = await this.model.delete( { where: deleteArgs } );
+        // Use deleteMany to avoid P2025 error when record doesn't exist
+        // This makes the operation idempotent - multiple delete attempts won't fail
+        const result = await this.model.deleteMany( { where: deleteArgs } );
 
         this.debugger.dumpDown( this.delete, {
             deleteArgs,
-            result
+            deletedCount: result.count
         } );
+
+        return result.count > 0;
     }
 
     public async deleteMany( where: PrismaBot.Prisma.ChannelDeleteManyArgs[ "where" ], cache = true ) {

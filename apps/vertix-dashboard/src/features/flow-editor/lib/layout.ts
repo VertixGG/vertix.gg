@@ -296,6 +296,15 @@ export function getLayoutedElements(
         const spacing = targetDimensions.width + Math.floor( opts.nodeSep * 0.5 );
         const middle = ( targetIds.length - 1 ) / 2;
 
+        // For fan-out, all targets should be at the same Y level (one rank below source)
+        // Find the minimum Y among targets to align them all at the same level
+        const targetY = targetIds.reduce( ( minY, id ) => {
+            const node = compactedNodeById.get( id );
+            return node ? Math.min( minY, node.position.y ) : minY;
+        }, Number.POSITIVE_INFINITY );
+
+        const finalTargetY = Number.isFinite( targetY ) ? targetY : sourceNode.position.y + sourceDimensions.height + opts.rankSep;
+
         targetIds.forEach( ( targetId, index ) => {
             const targetNode = compactedNodeById.get( targetId );
             if ( !targetNode ) {
@@ -305,11 +314,10 @@ export function getLayoutedElements(
             const centerX = sourceCenterX + ( index - middle ) * spacing;
             targetNode.position = {
                 x: centerX - targetDimensions.width / 2,
-                y: targetNode.position.y
+                y: finalTargetY
             };
         } );
     } );
 
     return { nodes: nodesWithCompactedFanouts, edges };
 }
-

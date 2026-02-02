@@ -160,6 +160,11 @@ export interface BindingDefinition {
     flowTriggers?: BindingFlowTriggerDefinition[];
 }
 
+export interface ModalTriggerDefinition {
+    buttonElement: string;
+    modalName: string;
+}
+
 export interface AdapterDefinition {
     name: string;
     adapterKind: string;
@@ -171,6 +176,7 @@ export interface AdapterDefinition {
     middlewares?: string[];
     executionSteps: ExecutionStepDefinition[];
     bindings: BindingDefinition[];
+    modalTriggers?: ModalTriggerDefinition[];
     hooks: HookReference[];
     options?: JsonObject;
 }

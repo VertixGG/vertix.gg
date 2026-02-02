@@ -51,6 +51,11 @@ export interface IWizardAdapterContext<TInteraction extends UIAdapterReplyContex
     getCurrentExecutionStep: ( interaction?: TInteraction ) => UIExecutionStepItem | undefined;
     getCurrentStepIndex: ( interaction?: TInteraction ) => number;
     generateCustomIdForEntity: ( entity: UIEntitySchemaBase | UIModalSchema ) => string;
+
+    /**
+     * Trigger a transaction transition - handles navigation automatically based on state config.
+     */
+    triggerTransition: ( transitionName: string, interaction: TInteraction, args?: TArgs ) => Promise<void>;
 }
 
 export interface IExecutionAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs>
@@ -58,6 +63,16 @@ export interface IExecutionAdapterContext<TInteraction extends UIAdapterReplyCon
     editReplyWithStep: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) => Promise<void | {}>;
     ephemeralWithStep: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs, deletePrevious?: boolean ) => Promise<void>;
     getCurrentExecutionStep: ( interaction?: TInteraction ) => UIExecutionStepItem | undefined;
+
+    /**
+     * Trigger a transaction transition - handles navigation automatically based on state config.
+     * Use this instead of manually calling editReplyWithStep/ephemeralWithStep.
+     *
+     * @param transitionName - Short name ("SetPublic") or full name ("FlowName/Transitions/SetPublic")
+     * @param interaction - The interaction that triggered this transition
+     * @param args - Optional args to pass to the step
+     */
+    triggerTransition: ( transitionName: string, interaction: TInteraction, args?: TArgs ) => Promise<void>;
 }
 
 export type GetStartArgsHandler<

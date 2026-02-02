@@ -72,6 +72,7 @@ export default defineConfig( ( { mode } ) => {
         define: {
             "VITE_API_PORT": JSON.stringify( apiPort ),
             "VITE_API_HOST": JSON.stringify( apiHost ),
+            "__ZENFLUX_DEBUG__": JSON.stringify( true ),
         },
         server: {
             host: frontendHost,

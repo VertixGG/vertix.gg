@@ -242,6 +242,45 @@ const ScalingSetupEditAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextCh
             embedsGroup: "VertixBot/UI-V3/ScalingSetupEditEmbedGroup"
         }
     } )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            // States
+            .addState( "Default", { executionStep: "default" } )
+            .addState( "Edit", {
+                executionStep: "VertixBot/UI-V3/ScalingSetupEdit",
+                navigationType: "editReply",
+                previewDefaultVars: { scalingIndex: "1", masterChannelId: "123456789", scalingPrefix: "Scaling Channel", scalingMaxMembers: "10" }
+            } )
+            // Transitions
+            .addTransition( "OpenEdit", { from: "Default", to: "Edit" } )
+            .addTransition( "ConfigUpdated", {
+                from: "Edit",
+                to: "Edit",
+                mutations: [
+                    { type: "set", path: [ "scalingPrefix" ] },
+                    { type: "set", path: [ "scalingMaxMembers" ] }
+                ]
+            } )
+            .addTransition( "Done", { from: "Edit", to: "Default" } )
+            .addTransition( "Delete", { from: "Edit", to: "Default" } )
+            // Element bindings
+            .bindElement( "VertixBot/UI-General/SetupMasterEditSelectMenu", "OpenEdit" )
+            .bindElement( "VertixBot/UI-V3/ScalingSetupEditConfigButton", "ConfigUpdated" )
+            .bindElement( "VertixBot/UI-General/DoneButton", "Done" )
+            .bindElement( "VertixBot/UI-General/DeleteButton", "Delete" )
+            // Modal-button bindings (for visualization)
+            .bindModalWithButton(
+                "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+                "VertixBot/UI-General/SetupScalingConfigModal",
+                "ConfigUpdated"
+            )
+            .bindModalWithButton(
+                "VertixBot/UI-General/DeleteButton",
+                "VertixBot/UI-General/DeleteConfirmModal",
+                "Delete"
+            );
+    } )
     .getStartArgs( async() => ( {} ) )
     .setShouldRequireArgs( () => true )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {

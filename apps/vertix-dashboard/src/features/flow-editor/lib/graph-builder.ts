@@ -6,6 +6,7 @@ import {
     createComponentToFlowEdge,
     createComponentToComponentEdge,
     createComponentToStateFallbackEdge,
+    createModalToComponentEdge,
     createStepTransitionEdge,
     createSystemFlowTransitionEdge
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/edge-builders";
@@ -175,6 +176,19 @@ export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes:
     // - Edges between nodes (module→flow, flow→component, component→modal, etc.)
     const allNodes: Node[] = [];
     const allEdges: Edge[] = [];
+    const edgeIds = new Set<string>();
+
+    const addEdge = ( edge: Edge ) => {
+        if ( edgeIds.has( edge.id ) ) {
+            return;
+        }
+        // Skip self-edges (edge from node to itself)
+        if ( edge.source === edge.target ) {
+            return;
+        }
+        edgeIds.add( edge.id );
+        allEdges.push( edge );
+    };
     const flowIdMap = new Map<string, string>();
     const systemFlowCompIds = new Map<string, string>();
 
@@ -187,7 +201,7 @@ export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes:
         const flowId = flowNode.id;
         flowIdMap.set( flow.name, flowId );
         allNodes.push( flowNode );
-        allEdges.push( createModuleToFlowEdge( moduleNodeId, flowId, flow.name ) );
+        addEdge( createModuleToFlowEdge( moduleNodeId, flowId, flow.name ) );
     } );
 
     moduleFlowsData.flows.forEach( ( flow ) => {
@@ -216,10 +230,10 @@ export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes:
             );
 
             allNodes.push( createComponentNode( compId, compPreview, buttonModalTriggers, buttonFlowTriggers, [] ) );
-            allEdges.push( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
+            addEdge( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
 
-            addButtonFlowEdges( allEdges, compId, buttonFlowTriggers, flowIdMap, flow.name );
-            addModalNodesAndEdges( allEdges, allNodes, compId, compPreview, buttonModalConnections, undefined );
+            addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
+            addModalNodesAndEdges( addEdge, allNodes, compId, compPreview, buttonModalConnections, undefined );
         }
     } );
 
@@ -228,7 +242,7 @@ export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes:
         const stateComponents = getFlowStateComponents( flow, moduleFlowsData.components );
 
         if ( stateComponents.length > 1 ) {
-            buildMultiStateFlow( allNodes, allEdges, flow, flowId, stateComponents, moduleFlowsData.components, flowIdMap );
+            buildMultiStateFlow( allNodes, addEdge, flow, flowId, stateComponents, moduleFlowsData.components, flowIdMap );
             return;
         }
 
@@ -241,7 +255,7 @@ export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes:
         if ( initialComp ) {
             buildSingleComponentFlow(
                 allNodes,
-                allEdges,
+                addEdge,
                 flow,
                 flowId,
                 initialComp,
@@ -277,7 +291,7 @@ export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes:
                 return;
             }
             const label = transition.from?.split( "/" ).pop() ?? transition.from ?? "";
-            allEdges.push( createSystemFlowTransitionEdge( systemFlowId, targetId, systemFlow.name, targetFlowName, label, isCommandsFlow ) );
+            addEdge( createSystemFlowTransitionEdge( systemFlowId, targetId, systemFlow.name, targetFlowName, label, isCommandsFlow ) );
         } );
     } );
 
@@ -288,6 +302,63 @@ function isSelectMenuTriggeredTransition(
     transition: UIExportedFlow[ "transitions" ][ number ]
 ): transition is SelectMenuTriggeredTransition {
     return ( transition.triggeredBy ?? [] ).some( trigger => [ "string-select", "button", "user-select" ].includes( trigger.handlerKind ) );
+}
+
+function detectFanOutFromInitialState(
+    flow: UIExportedFlow,
+    stateKeys: Set<string>,
+    initialStateKey: string
+): { isFanOut: boolean; targetStateKeys: string[] } {
+    // Detect fan-out pattern: all transitions originate from the initial state
+    // and go to different target states (no UI triggers, programmatic transitions)
+    if ( !flow.transitions?.length || !initialStateKey ) {
+        return { isFanOut: false, targetStateKeys: [] };
+    }
+
+    const transitionsFromInitial = flow.transitions.filter( transition => {
+        // The 'from' field is the source state key for programmatic transitions
+        const isFromInitial = transition.from === initialStateKey;
+
+        // Only include transitions to known states within this flow (excluding self-transitions)
+        const isToKnownState = stateKeys.has( transition.to ) && transition.to !== initialStateKey;
+
+        // Exclude transitions with UI triggers (those are handled separately)
+        const hasNoUITrigger = !transition.triggeredBy?.length;
+
+        return isFromInitial && isToKnownState && hasNoUITrigger;
+    } );
+
+    // It's a fan-out if we have multiple transitions from initial state
+    const targetStateKeys = transitionsFromInitial.map( t => t.to );
+    const isFanOut = targetStateKeys.length > 1;
+
+    return { isFanOut, targetStateKeys };
+}
+
+function detectModalFirstFlow(
+    flow: UIExportedFlow,
+    initialStateOptions: Record<string, unknown> | undefined
+): { isModalFirst: boolean; modalName: string | null } {
+    // Detect "modal-first" pattern:
+    // 1. Initial state has executionStep: "default" (shows modal immediately)
+    // 2. At least one transition is triggered by a modal
+    const executionStep = initialStateOptions?.[ "executionStep" ];
+    const isDefaultStep = executionStep === "default";
+
+    if ( !isDefaultStep ) {
+        return { isModalFirst: false, modalName: null };
+    }
+
+    // Find modal trigger in transitions
+    const modalTrigger = flow.transitions.find( transition =>
+        transition.triggeredBy?.some( t => t.handlerKind === "modal" )
+    )?.triggeredBy?.find( t => t.handlerKind === "modal" );
+
+    if ( !modalTrigger ) {
+        return { isModalFirst: false, modalName: null };
+    }
+
+    return { isModalFirst: true, modalName: modalTrigger.sourceEntity };
 }
 
 function getSelectMenuTriggeredTransitionsToKnownStates(
@@ -435,7 +506,7 @@ function buildButtonTriggers(
 }
 
 function addButtonFlowEdges(
-    allEdges: Edge[],
+    addEdge: ( edge: Edge ) => void,
     compId: string,
     buttonFlowTriggers: ButtonFlowTrigger[],
     flowIdMap: Map<string, string>,
@@ -451,12 +522,12 @@ function addButtonFlowEdges(
             return;
         }
 
-        allEdges.push( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
+        addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
     } );
 }
 
 function addModalNodesAndEdges(
-    allEdges: Edge[],
+    addEdge: ( edge: Edge ) => void,
     allNodes: Node[],
     compId: string,
     compPreview: ComponentPreview,
@@ -485,13 +556,13 @@ function addModalNodesAndEdges(
         const connection = buttonModalConnections.find( c => c.modalName === modal );
         const sourceHandle = connection ? `btn-${ connection.buttonName }` : "bottom";
 
-        allEdges.push( createComponentToModalEdge( compId, modalId, sourceHandle ) );
+        addEdge( createComponentToModalEdge( compId, modalId, sourceHandle ) );
     } );
 }
 
 function buildMultiStateFlow(
     allNodes: Node[],
-    allEdges: Edge[],
+    addEdge: ( edge: Edge ) => void,
     flow: UIExportedFlow,
     flowId: string,
     stateComponents: FlowStateComponent[],
@@ -500,13 +571,26 @@ function buildMultiStateFlow(
 ): void {
     // Multi-state flows are rendered as multiple component nodes (one per state).
     //
-    // Default behavior (fallback): draw "Step X" edges between state components in order.
-    // Special case: when state changes are driven by a select menu, draw edges from the
-    // select menu handle on the initial component to each target state component instead.
+    // Edge drawing strategies (in priority order):
+    // 1. Modal-first: when flow starts with a modal, connect flow→modal→components
+    // 2. Select menu edges: when state changes are driven by a select menu
+    // 3. Fan-out edges: when all transitions originate from initial state (programmatic branching)
+    // 4. Step edges (fallback): draw "Step X" edges between state components in order
     const stateKeys = new Set( stateComponents.map( stateComponent => stateComponent.stateKey ) );
+
+    // Detect modal-first pattern
+    const initialStateOptions = stateComponents[ 0 ]?.options as Record<string, unknown> | undefined;
+    const modalFirstInfo = detectModalFirstFlow( flow, initialStateOptions );
 
     const selectMenuTransitions = getSelectMenuTriggeredTransitionsToKnownStates( flow, stateKeys );
     const shouldUseSelectMenuStateEdges = selectMenuTransitions.length > 0 || hasEdgeSourceMappingTransitions( flow, stateKeys );
+
+    // Detect fan-out pattern: all transitions from initial state to different targets
+    const initialStateKey = stateComponents[ 0 ]?.stateKey;
+    const fanOutInfo = initialStateKey
+        ? detectFanOutFromInitialState( flow, stateKeys, initialStateKey )
+        : { isFanOut: false, targetStateKeys: [] };
+    const shouldUseFanOutEdges = !shouldUseSelectMenuStateEdges && !modalFirstInfo.isModalFirst && fanOutInfo.isFanOut;
 
     const stateKeyToCompId = new Map<string, string>();
     let prevCompId: string | null = null;
@@ -514,7 +598,24 @@ function buildMultiStateFlow(
     let initialElementRows: ElementData[][] | undefined;
     const initialStateTransitionTriggers: StateTransitionTrigger[] = [];
 
+    // For modal-first flows, create modal node connected to flow
+    let modalFirstNodeId: string | undefined;
+    if ( modalFirstInfo.isModalFirst && modalFirstInfo.modalName ) {
+        const modalId = `modal-${ flow.name }-entry`;
+        const initialComp = stateComponents[ 0 ]?.component;
+        const modalDef = initialComp?.modals?.find( m => m.name === modalFirstInfo.modalName );
+
+        allNodes.push( createModalNode( modalId, modalFirstInfo.modalName, modalDef ) );
+        addEdge( createFlowToComponentEdge( flowId, modalId, flow.name, modalFirstInfo.modalName ) );
+        modalFirstNodeId = modalId;
+    }
+
     stateComponents.forEach( ( stateComp, stepIndex ) => {
+        // For modal-first flows, skip the initial state (it just shows the modal)
+        if ( modalFirstInfo.isModalFirst && stepIndex === 0 ) {
+            return;
+        }
+
         const executionStep = typeof stateComp.options?.[ "executionStep" ] === "string"
             ? stateComp.options[ "executionStep" ]
             : undefined;
@@ -565,11 +666,16 @@ function buildMultiStateFlow(
             )
         );
 
-        if ( stepIndex === 0 ) {
-            allEdges.push( createFlowToComponentEdge( flowId, compId, flow.name, stateComp.component.name ) );
+        if ( modalFirstInfo.isModalFirst && modalFirstNodeId ) {
+            // For modal-first flows, connect modal to result components
+            const label = stateComp.stateName;
+            addEdge( createModalToComponentEdge( modalFirstNodeId, compId, flow.name, label ) );
+        } else if ( stepIndex === 0 ) {
+            addEdge( createFlowToComponentEdge( flowId, compId, flow.name, stateComp.component.name ) );
             initialCompId = compId;
             initialElementRows = compPreviewWithStateDefaults.elementRows;
-        } else if ( !shouldUseSelectMenuStateEdges && prevCompId ) {
+        } else if ( !shouldUseSelectMenuStateEdges && !shouldUseFanOutEdges && prevCompId ) {
+            // Linear step edges (fallback when no special edge strategy applies)
             const sourceHandle = findStateTransitionHandle(
                 flow,
                 stateComponents[ stepIndex - 1 ].options as Record<string, unknown> | undefined,
@@ -577,13 +683,16 @@ function buildMultiStateFlow(
                 stateComp.stateKey
             ) ?? "bottom";
 
-            allEdges.push( createStepTransitionEdge( prevCompId, compId, flow.name, stepIndex, sourceHandle ) );
+            addEdge( createStepTransitionEdge( prevCompId, compId, flow.name, stepIndex, sourceHandle ) );
         }
 
         prevCompId = compId;
 
-        addModalNodesAndEdges( allEdges, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateComp.transitions );
-        addButtonFlowEdges( allEdges, compId, buttonFlowTriggers, flowIdMap, flow.name );
+        // Skip adding modals for modal-first flows (modal already created at flow level)
+        if ( !modalFirstInfo.isModalFirst ) {
+            addModalNodesAndEdges( addEdge, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateComp.transitions );
+        }
+        addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
     } );
 
     if ( shouldUseSelectMenuStateEdges && initialCompId && initialElementRows ) {
@@ -616,11 +725,11 @@ function buildMultiStateFlow(
 
             if ( elementNames.has( trigger.sourceEntity ) ) {
                 uniqueTriggerElements.add( trigger.sourceEntity );
-                allEdges.push( createComponentToComponentEdge( sourceCompId, targetCompId, flow.name, trigger.sourceEntity, label ) );
+                addEdge( createComponentToComponentEdge( sourceCompId, targetCompId, flow.name, trigger.sourceEntity, label ) );
                 return;
             }
 
-            allEdges.push( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
+            addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
         } );
 
         uniqueTriggerElements.forEach( elementName => {
@@ -641,14 +750,27 @@ function buildMultiStateFlow(
             }
 
             const label = stateComponent.stateName;
-            allEdges.push( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
+            addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
+        } );
+    }
+
+    // Fan-out edges: programmatic transitions from initial state to multiple targets
+    if ( shouldUseFanOutEdges && initialCompId ) {
+        stateComponents.slice( 1 ).forEach( ( stateComponent ) => {
+            const targetCompId = stateKeyToCompId.get( stateComponent.stateKey );
+            if ( !targetCompId ) {
+                return;
+            }
+
+            const label = stateComponent.stateName;
+            addEdge( createComponentToStateFallbackEdge( initialCompId, targetCompId, flow.name, label ) );
         } );
     }
 }
 
 function buildSingleComponentFlow(
     allNodes: Node[],
-    allEdges: Edge[],
+    addEdge: ( edge: Edge ) => void,
     flow: UIExportedFlow,
     flowId: string,
     initialComp: UIExportedComponent,
@@ -702,8 +824,8 @@ function buildSingleComponentFlow(
             stateKey
         )
     );
-    allEdges.push( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
+    addEdge( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
 
-    addButtonFlowEdges( allEdges, compId, buttonFlowTriggers, flowIdMap, flow.name );
-    addModalNodesAndEdges( allEdges, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateTransitions );
+    addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
+    addModalNodesAndEdges( addEdge, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateTransitions );
 }

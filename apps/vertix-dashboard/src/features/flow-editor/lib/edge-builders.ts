@@ -66,7 +66,7 @@ export function createComponentToComponentEdge(
     label: string
 ): Edge {
     return {
-        id: `edge-comp-comp-${ flowName }-${ sourceElementName }-${ label }`,
+        id: `edge-comp-comp-${ flowName }-${ sourceElementName }-${ targetCompId }-${ label }`,
         source: sourceCompId,
         target: targetCompId,
         sourceHandle: `btn-${ sourceElementName }`,
@@ -86,7 +86,7 @@ export function createComponentToStateFallbackEdge(
     label: string
 ): Edge {
     return {
-        id: `edge-comp-state-${ flowName }-${ targetCompId }-${ label }`,
+        id: `edge-comp-state-${ flowName }-${ sourceCompId }-${ targetCompId }-${ label }`,
         source: sourceCompId,
         target: targetCompId,
         sourceHandle: "bottom",
@@ -95,6 +95,25 @@ export function createComponentToStateFallbackEdge(
         style: { stroke: EDGE_COLORS.STEP_TRANSITION, ...EDGE_STYLES.DASHED_TRANSITION },
         markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.STEP_TRANSITION, ...MARKER_SIZES.MEDIUM },
         labelStyle: { fill: EDGE_COLORS.STEP_TRANSITION, fontSize: 10, fontWeight: 600 },
+        labelBgPadding: [ 6, 2 ]
+    };
+}
+
+export function createModalToComponentEdge(
+    modalId: string,
+    targetCompId: string,
+    flowName: string,
+    label: string
+): Edge {
+    return {
+        id: `edge-modal-comp-${ flowName }-${ modalId }-${ targetCompId }-${ label }`,
+        source: modalId,
+        target: targetCompId,
+        zIndex: Z_INDEX.EDGE_OVERLAY,
+        label,
+        style: { stroke: EDGE_COLORS.COMPONENT_TO_MODAL, ...EDGE_STYLES.DEFAULT },
+        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.COMPONENT_TO_MODAL, ...MARKER_SIZES.MEDIUM },
+        labelStyle: { fill: EDGE_COLORS.COMPONENT_TO_MODAL, fontSize: 10, fontWeight: 600 },
         labelBgPadding: [ 6, 2 ]
     };
 }

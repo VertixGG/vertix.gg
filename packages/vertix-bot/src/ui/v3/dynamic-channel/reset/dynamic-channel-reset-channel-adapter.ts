@@ -6,8 +6,6 @@ import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
@@ -26,45 +24,33 @@ const RESET_CHANNEL_STEPS = {
     }
 } as const;
 
-async function onResetChannelButtonClicked(
-    context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
-    interaction: UIDefaultButtonChannelVoiceInteraction
-) {
-    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-    const result = await dynamicChannelService.resetChannel( interaction, interaction.channel, {
-        includeRegion: true,
-        includePrimaryMessage: true
-    } );
-
-    switch ( result?.code ) {
-        case "success-rename-rate-limit":
-        case "success":
-            context.setArgs( interaction, { result } );
-            await context.ephemeralWithStep(
-                interaction,
-                "VertixBot/UI-V3/DynamicChannelResetChannelSuccess",
-                { result }
-            );
-            break;
-
-        case "vote-required":
-            await TopGGManager.$.sendVoteEmbed( interaction );
-            break;
-
-        default:
-            await context.ephemeralWithStep(
-                interaction,
-                "VertixBot/UI-V3/DynamicChannelResetChannelError",
-                {}
-            );
-    }
-}
-
 const DynamicChannelResetChannelAdapter = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(
     "VertixBot/UI-V3/DynamicChannelResetChannelAdapter"
 )
     .setComponent( DynamicChannelResetChannelComponent )
     .setExecutionSteps( RESET_CHANNEL_STEPS )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            .addState( "Default", { executionStep: "default" } )
+            .addState( "Success", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelSuccess",
+                navigationType: "ephemeral",
+                previewDefaultVars: { code: "success" }
+            } )
+            .addState( "VoteRequired", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelVoteRequired",
+                navigationType: "silent" // Uses TopGGManager.$.sendVoteEmbed() directly
+            } )
+            .addState( "Error", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelResetChannelError",
+                navigationType: "ephemeral"
+            } )
+            .addTransition( "ResetSuccess", { from: "Default", to: "Success" } )
+            .addTransition( "ResetVoteRequired", { from: "Default", to: "VoteRequired" } )
+            .addTransition( "ResetError", { from: "Default", to: "Error" } )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelResetChannelButton", "ResetSuccess" );
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( _context, _interaction, argsFromManager ) => {
         if ( argsFromManager?.result ) {
@@ -76,7 +62,30 @@ const DynamicChannelResetChannelAdapter = new DynamicExecutionAdapterBuilder<UID
     .onEntityMap( async( { bindButton } ) => {
         bindButton<UIDefaultButtonChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelResetChannelButton",
-            onResetChannelButtonClicked
+            async( context, interaction ) => {
+                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+                const result = await dynamicChannelService.resetChannel( interaction, interaction.channel, {
+                    includeRegion: true,
+                    includePrimaryMessage: true
+                } );
+
+                switch ( result?.code ) {
+                    case "success-rename-rate-limit":
+                    case "success":
+                        context.setArgs( interaction, { result } );
+                        await context.triggerTransition( "ResetSuccess", interaction, { result } );
+                        break;
+
+                    case "vote-required":
+                        await TopGGManager.$.sendVoteEmbed( interaction );
+                        // Silent transition - just for tracking
+                        await context.triggerTransition( "ResetVoteRequired", interaction );
+                        break;
+
+                    default:
+                        await context.triggerTransition( "ResetError", interaction, {} );
+                }
+            }
         );
     } )
     .build();

@@ -32,6 +32,45 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
             embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
         }
     } )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            .addState( "Default", {
+                executionStep: "default",
+                previewDefaultVars: { state: "Public", stateMessage: "Everyone can join" }
+            } )
+            .addState( "Public", {
+                executionStep: "default",
+                navigationType: "editReply",
+                previewDefaultVars: { state: "Public", stateMessage: "Everyone can join" }
+            } )
+            .addState( "Private", {
+                executionStep: "default",
+                navigationType: "editReply",
+                previewDefaultVars: { state: "Private", stateMessage: "Only allowed users can join" }
+            } )
+            .addState( "Hidden", {
+                executionStep: "default",
+                navigationType: "editReply",
+                previewDefaultVars: { state: "Hidden", stateMessage: "Channel is hidden from others" }
+            } )
+            .addTransition( "SetPublic", {
+                from: [ "Default", "Private", "Hidden" ],
+                to: "Public",
+                mutations: [ { type: "set", path: [ "state" ] } ]
+            } )
+            .addTransition( "SetPrivate", {
+                from: [ "Default", "Public", "Hidden" ],
+                to: "Private",
+                mutations: [ { type: "set", path: [ "state" ] } ]
+            } )
+            .addTransition( "SetHidden", {
+                from: [ "Default", "Public", "Private" ],
+                to: "Hidden",
+                mutations: [ { type: "set", path: [ "state" ] } ]
+            } )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelPrivacyMenu", "SetPublic" );
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction ) => getArgsWithPermissions( interaction.channel ) )
     .getEditMessageArgs( async( _context, message?: Message<true> ) =>
@@ -52,44 +91,18 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
                     state as "public" | "private" | "hidden"
                 );
 
-                await context.editReply( interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelPrivacyFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState/Public",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Public",
-                            executionStep: "default"
-                        },
-                        mutations: [
-                            { type: "set", path: [ "state" ] }
-                        ]
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelPrivacyFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState/Private",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Private",
-                            executionStep: "default"
-                        },
-                        mutations: [
-                            { type: "set", path: [ "state" ] }
-                        ]
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelPrivacyFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/Transitions/UpdatePrivacyState/Hidden",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Hidden",
-                            executionStep: "default"
-                        },
-                        mutations: [
-                            { type: "set", path: [ "state" ] }
-                        ]
-                    }
-                ]
+                // Use triggerTransition based on selected state
+                switch ( state ) {
+                    case "public":
+                        await context.triggerTransition( "SetPublic", interaction );
+                        break;
+                    case "private":
+                        await context.triggerTransition( "SetPrivate", interaction );
+                        break;
+                    case "hidden":
+                        await context.triggerTransition( "SetHidden", interaction );
+                        break;
+                }
             }
         );
     } )

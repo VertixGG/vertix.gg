@@ -4,9 +4,6 @@ import {
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
-import { SetupNewWizardFlow } from "@vertix.gg/bot/src/ui/v3/setup-new/setup-new-wizard-flow";
-import { LanguageFlow } from "@vertix.gg/bot/src/ui/general/language/language-flow";
-
 import { SetupComponent } from "@vertix.gg/bot/src/ui/general/setup/setup-adapter";
 
 import type {
@@ -38,8 +35,9 @@ export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
 
     public static override getHandoffPoints(): UIFlowIntegrationPointBase[] {
         return [
+            // V3 handoffs
             new FlowIntegrationPointGeneric( {
-                flowName: SetupNewWizardFlow.getName(),
+                flowName: "VertixBot/UI-General/SetupNewWizardFlow",
                 description: "Handoff to V3 Setup Wizard when Create V3 button is clicked",
                 sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
                 transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
@@ -47,18 +45,36 @@ export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
                 requiredData: []
             } ),
             new FlowIntegrationPointGeneric( {
-                flowName: LanguageFlow.getName(),
-                description: "Handoff to Language selection flow",
-                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
-                transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
-                requiredData: []
-            } ),
-            new FlowIntegrationPointGeneric( {
                 flowName: "VertixBot/UI-V3/SetupEditFlow",
-                description: "Handoff to Setup Edit flow when editing an existing master channel",
+                description: "Handoff to V3 Setup Edit flow when editing an existing master channel",
                 sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
                 transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
                 targetState: "VertixBot/UI-V3/SetupEditFlow/States/SelectMaster",
+                requiredData: []
+            } ),
+            // V2 handoffs
+            new FlowIntegrationPointGeneric( {
+                flowName: "VertixBot/UI-General/SetupNewWizardFlowV2",
+                description: "Handoff to V2 Setup Wizard when Create V2 button is clicked",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2",
+                targetState: "VertixGUI/UIWizardFlowBase/States/Initial",
+                requiredData: []
+            } ),
+            new FlowIntegrationPointGeneric( {
+                flowName: "VertixBot/UI-General/SetupEditFlowV2",
+                description: "Handoff to V2 Setup Edit flow when editing an existing master channel",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                targetState: "VertixBot/UI-General/SetupEditFlowV2/States/SelectMaster",
+                requiredData: []
+            } ),
+            // Other handoffs
+            new FlowIntegrationPointGeneric( {
+                flowName: "VertixBot/UI-General/LanguageFlow",
+                description: "Handoff to Language selection flow",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
                 requiredData: []
             } )
         ];
@@ -66,25 +82,33 @@ export class SetupFlow extends UIFlowBase<string, string, SetupFlowData> {
 
     public static override getEdgeSourceMappings(): UIFlowVisualConnection[] {
         return [
+            // V2 edges
             {
                 triggeringElementId: "VertixBot/UI-General/SetupMasterCreateButton",
                 transitionName: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV2",
-                targetFlowName: "VertixBot/UI-General/SetupFlow"
+                targetFlowName: "VertixBot/UI-General/SetupNewWizardFlowV2"
             },
+            {
+                triggeringElementId: "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
+                targetFlowName: "VertixBot/UI-General/SetupEditFlowV2"
+            },
+            // V3 edges
             {
                 triggeringElementId: "VertixBot/UI-General/SetupMasterCreateV3Button",
                 transitionName: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
-                targetFlowName: SetupNewWizardFlow.getName()
-            },
-            {
-                triggeringElementId: "VertixBot/UI-General/LanguageChooseButton",
-                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
-                targetFlowName: LanguageFlow.getName()
+                targetFlowName: "VertixBot/UI-General/SetupNewWizardFlow"
             },
             {
                 triggeringElementId: "VertixBot/UI-General/SetupMasterEditSelectMenu",
                 transitionName: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
                 targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
+            },
+            // Other edges
+            {
+                triggeringElementId: "VertixBot/UI-General/LanguageChooseButton",
+                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                targetFlowName: "VertixBot/UI-General/LanguageFlow"
             }
         ];
     }

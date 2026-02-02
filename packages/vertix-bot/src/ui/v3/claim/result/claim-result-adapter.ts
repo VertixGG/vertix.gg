@@ -48,6 +48,70 @@ const ClaimResultAdapter = new ExecutionAdapterBuilder<
     .setExecutionSteps( CLAIM_RESULT_STEPS )
     .setPermissions( new PermissionsBitField( 0n ) )
     .setChannelTypes( [ ChannelType.GuildVoice ] )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            // Result states - these are shown based on claim action outcomes
+            .addState( "Default", {
+                executionStep: "VertixBot/UI-V3/ClaimResultOwnerStop",
+                previewDefaultVars: { absentInterval: "300000" }
+            } )
+            .addState( "OwnerStop", {
+                executionStep: "VertixBot/UI-V3/ClaimResultOwnerStop",
+                navigationType: "ephemeral",
+                previewDefaultVars: { absentInterval: "300000" }
+            } )
+            .addState( "AddedSuccessfully", {
+                executionStep: "VertixBot/UI-V3/ClaimResultAddedSuccessfully",
+                navigationType: "ephemeral"
+            } )
+            .addState( "AlreadyAdded", {
+                executionStep: "VertixBot/UI-V3/ClaimResultAlreadyAdded",
+                navigationType: "ephemeral"
+            } )
+            .addState( "VoteAlreadySelfVoted", {
+                executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted",
+                navigationType: "ephemeral"
+            } )
+            .addState( "VotedSuccessfully", {
+                executionStep: "VertixBot/UI-V3/ClaimResultVotedSuccessfully",
+                navigationType: "ephemeral",
+                previewDefaultVars: { userDisplayName: "User", userId: "123456789" }
+            } )
+            .addState( "VoteAlreadyVotedSame", {
+                executionStep: "VertixBot/UI-V3/ClaimResultVoteAlreadyVotedSame",
+                navigationType: "ephemeral",
+                previewDefaultVars: { userDisplayName: "User", userId: "123456789" }
+            } )
+            .addState( "VoteUpdatedSuccessfully", {
+                executionStep: "VertixBot/UI-V3/ClaimResultVoteUpdatedSuccessfully",
+                navigationType: "ephemeral",
+                previewDefaultVars: { prevUserId: "123456789", currentUserId: "987654321" }
+            } )
+            // Transitions - triggered by external claim manager
+            .addTransition( "ShowOwnerStop", { from: "Default", to: "OwnerStop" } )
+            .addTransition( "ShowAddedSuccessfully", { from: "Default", to: "AddedSuccessfully" } )
+            .addTransition( "ShowAlreadyAdded", { from: "Default", to: "AlreadyAdded" } )
+            .addTransition( "ShowVoteAlreadySelfVoted", { from: "Default", to: "VoteAlreadySelfVoted" } )
+            .addTransition( "ShowVotedSuccessfully", {
+                from: "Default",
+                to: "VotedSuccessfully",
+                mutations: [ { type: "set", path: [ "targetId" ] } ]
+            } )
+            .addTransition( "ShowVoteAlreadyVotedSame", {
+                from: "Default",
+                to: "VoteAlreadyVotedSame",
+                mutations: [ { type: "set", path: [ "targetId" ] } ]
+            } )
+            .addTransition( "ShowVoteUpdatedSuccessfully", {
+                from: "Default",
+                to: "VoteUpdatedSuccessfully",
+                mutations: [
+                    { type: "set", path: [ "prevUserId" ] },
+                    { type: "set", path: [ "currentUserId" ] }
+                ]
+            } );
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const args: UIArgs = {};

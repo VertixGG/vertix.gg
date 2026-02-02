@@ -36,6 +36,43 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
 >( "VertixBot/UI-V3/DynamicChannelLimitAdapter" )
     .setComponent( DynamicChannelLimitComponent )
     .setExecutionSteps( LIMIT_STEPS )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            .addState( "Default", {
+                executionStep: "default",
+                previewDefaultVars: { userLimit: "10" }
+            } )
+            .addState( "InvalidInput", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelLimitInvalidInput",
+                navigationType: "ephemeral",
+                previewDefaultVars: { minValue: "0", maxValue: "99" }
+            } )
+            .addState( "Success", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelLimitSuccess",
+                navigationType: "ephemeral",
+                previewDefaultVars: { userLimit: "10" }
+            } )
+            .addState( "Error", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelLimitError",
+                navigationType: "ephemeral"
+            } )
+            .addTransition( "SubmitInvalid", {
+                from: "Default",
+                to: "InvalidInput",
+                mutations: [
+                    { type: "set", path: [ "minValue" ] },
+                    { type: "set", path: [ "maxValue" ] }
+                ]
+            } )
+            .addTransition( "SubmitSuccess", {
+                from: "Default",
+                to: "Success",
+                mutations: [ { type: "set", path: [ "userLimit" ] } ]
+            } )
+            .addTransition( "SubmitError", { from: "Default", to: "Error" } )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelLimitModal", "SubmitSuccess" );
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction ) => {
         const args: UIArgs = {};
@@ -74,67 +111,20 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
                         maxValue: DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
                     } );
 
-                    return await context.ephemeralWithStep(
-                        voiceInteraction,
-                        "VertixBot/UI-V3/DynamicChannelLimitInvalidInput",
-                        {}
-                    );
+                    return await context.triggerTransition( "SubmitInvalid", voiceInteraction, {} );
                 }
 
                 const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
                 if ( !( await dynamicChannelService.editUserLimit( voiceInteraction, voiceInteraction.channel, parsedInput ) ) ) {
-                    return await context.ephemeralWithStep(
-                        voiceInteraction,
-                        "VertixBot/UI-V3/DynamicChannelLimitError",
-                        {}
-                    );
+                    return await context.triggerTransition( "SubmitError", voiceInteraction, {} );
                 }
 
                 context.setArgs( voiceInteraction, {
                     userLimit: parsedInput
                 } );
 
-                return await context.ephemeralWithStep(
-                    voiceInteraction,
-                    "VertixBot/UI-V3/DynamicChannelLimitSuccess",
-                    {}
-                );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelLimitFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitInvalid",
-                        mutations: [
-                            { type: "set", path: [ "minValue" ] },
-                            { type: "set", path: [ "maxValue" ] }
-                        ],
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelLimitFlow/States/InvalidInput",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelLimitInvalidInput"
-                        }
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelLimitFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitSuccess",
-                        mutations: [
-                            { type: "set", path: [ "userLimit" ] }
-                        ],
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Success",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelLimitSuccess"
-                        }
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelLimitFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelLimitFlow/Transitions/SubmitError",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Error",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelLimitError"
-                        }
-                    }
-                ]
+                return await context.triggerTransition( "SubmitSuccess", voiceInteraction, {} );
             }
         );
     } )

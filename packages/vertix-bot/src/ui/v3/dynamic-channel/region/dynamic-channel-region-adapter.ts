@@ -8,8 +8,6 @@ import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 
 import { DynamicChannelRegionComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-component";
 
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultUserSelectMenuChannelVoiceInteraction
@@ -31,24 +29,27 @@ async function getArgs( channel: VoiceChannel ) {
     };
 }
 
-async function onRegionSelected(
-    context: IExecutionAdapterContext<DefaultInteraction, UIArgs>,
-    interaction: UIDefaultUserSelectMenuChannelVoiceInteraction
-) {
-    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-    const newRegion = interaction.values[ 0 ];
-
-    await dynamicChannelService.editChannelRegion( interaction, interaction.channel, newRegion );
-
-    await context.editReply( interaction );
-}
-
 const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
     "VertixBot/UI-V3/DynamicChannelRegionAdapter"
 )
     .setComponent( DynamicChannelRegionComponent )
     .setExecutionSteps( REGION_STEPS )
     .setInitiatorElement( DynamicChannelRegionButton )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            .addState( "Default", {
+                executionStep: "default",
+                navigationType: "editReply",
+                previewDefaultVars: { region: "us-west" }
+            } )
+            .addTransition( "SelectRegion", {
+                from: "Default",
+                to: "Default",
+                mutations: [ { type: "set", path: [ "region" ] } ]
+            } )
+            .bindElement( "VertixBot/UI-V3/DynamicChannelRegionSelectMenu", "SelectRegion" );
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( _context, interaction ) => {
         if ( interaction.channel instanceof VoiceChannel ) {
@@ -62,21 +63,13 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
     .onEntityMap( async( { bindUserSelectMenu } ) => {
         bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(
             "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
-            onRegionSelected,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelRegionFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion",
-                        mutations: [
-                            { type: "set", path: [ "region" ] }
-                        ],
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default",
-                            executionStep: "default"
-                        }
-                    }
-                ]
+            async( context, interaction ) => {
+                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+                const newRegion = interaction.values[ 0 ];
+
+                await dynamicChannelService.editChannelRegion( interaction, interaction.channel, newRegion );
+
+                await context.triggerTransition( "SelectRegion", interaction );
             }
         );
     } )

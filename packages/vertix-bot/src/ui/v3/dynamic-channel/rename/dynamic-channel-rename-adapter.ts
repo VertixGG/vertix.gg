@@ -42,6 +42,48 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
 )
     .setComponent( DynamicChannelRenameComponent )
     .setExecutionSteps( RENAME_STEPS )
+    // Define transactions - states and transitions with automatic navigation
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            // States with their execution steps and navigation type
+            .addState( "Default", {
+                executionStep: "default",
+                previewDefaultVars: { defaultChannelName: "{username}'s Channel" }
+            } )
+            .addState( "Success", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelRenameSuccess",
+                navigationType: "ephemeral",
+                previewDefaultVars: { channelName: "My Channel" }
+            } )
+            .addState( "Badword", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelRenameBadword",
+                navigationType: "ephemeral",
+                previewDefaultVars: { badword: "example" }
+            } )
+            .addState( "RateLimited", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelRenameRateLimited",
+                navigationType: "ephemeral",
+                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789" }
+            } )
+            // Transitions
+            .addTransition( "SubmitSuccess", { from: "Default", to: "Success" } )
+            .addTransition( "SubmitBadword", {
+                from: "Default",
+                to: "Badword",
+                mutations: [ { type: "set", path: [ "badword" ] } ]
+            } )
+            .addTransition( "SubmitRateLimited", {
+                from: "Default",
+                to: "RateLimited",
+                mutations: [
+                    { type: "set", path: [ "retryAfter" ] },
+                    { type: "set", path: [ "masterChannelId" ] }
+                ]
+            } )
+            // Bind modal to transitions (for export/visualization)
+            .bindElement( "VertixBot/UI-V3/DynamicChannelRenameModal", "SubmitSuccess" );
+    } )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const args: UIArgs = {};
@@ -101,60 +143,25 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                     newChannelName
                 );
 
+                // Use triggerTransition instead of manual ephemeralWithStep
                 switch ( result.code ) {
                     case "success":
-                        await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelRenameSuccess", {} );
+                        await context.triggerTransition( "SubmitSuccess", voiceInteraction, {} );
                         break;
 
                     case "badword":
-                        await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelRenameBadword", {
+                        await context.triggerTransition( "SubmitBadword", voiceInteraction, {
                             badword: result.badword
                         } );
                         break;
 
                     case "rate-limit":
-                        await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelRenameRateLimited", {
+                        await context.triggerTransition( "SubmitRateLimited", voiceInteraction, {
                             retryAfter: result.retryAfter,
                             masterChannelId: masterChannelDB?.channelId
                         } );
                         break;
                 }
-            }
-            ,
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelRenameFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameSuccess",
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Success",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelRenameSuccess"
-                        }
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelRenameFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameBadword",
-                        mutations: [
-                            { type: "set", path: [ "badword" ] }
-                        ],
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Badword",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelRenameBadword"
-                        }
-                    },
-                    {
-                        flowName: "VertixBot/UI-V3/DynamicChannelRenameFlow",
-                        transition: "VertixBot/UI-V3/DynamicChannelRenameFlow/Transitions/SubmitRenameRateLimited",
-                        mutations: [
-                            { type: "set", path: [ "retryAfter" ] },
-                            { type: "set", path: [ "masterChannelId" ] }
-                        ],
-                        navigation: {
-                            targetState: "VertixBot/UI-V3/DynamicChannelRenameFlow/States/RateLimited",
-                            executionStep: "VertixBot/UI-V3/DynamicChannelRenameRateLimited"
-                        }
-                    }
-                ]
             }
         );
     } )

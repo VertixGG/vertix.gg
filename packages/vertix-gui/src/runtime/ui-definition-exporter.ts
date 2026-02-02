@@ -10,6 +10,7 @@ import { UIBase } from "@vertix.gg/gui/src/bases/ui-base";
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
+import { VirtualFlowGenerator } from "@vertix.gg/gui/src/runtime/virtual-flow-generator";
 
 import type { UIWizardFlowBase } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 
@@ -254,6 +255,20 @@ export class UIDefinitionExporter extends UIBase {
 
         const modules = uiService.getUIModules();
 
+        // First pass: collect all system flow names to avoid generating duplicate virtual flows
+        const systemFlowNames = new Set<string>();
+        if ( includeFlows ) {
+            for ( const [ , ModuleCtor ] of modules ) {
+                const moduleSystemFlows = ModuleCtor.getSystemFlows?.() ?? [];
+                for ( const flowClass of moduleSystemFlows ) {
+                    const flowName = flowClass.getName?.();
+                    if ( flowName ) {
+                        systemFlowNames.add( flowName );
+                    }
+                }
+            }
+        }
+
         for ( const [ moduleName, ModuleCtor ] of modules ) {
             this.logger.info( "exportUIDefinitions", `Exporting module ${ moduleName }` );
             const moduleInstance = uiService.getUIModule<UIModuleBase>( moduleName, true ) ?? new ModuleCtor();
@@ -279,6 +294,34 @@ export class UIDefinitionExporter extends UIBase {
                         moduleSummary.adapters += 1;
 
                         const adapterMetadata = this.getAdapterMetadata( adapterClass );
+
+                        // Generate virtual flow from adapter transactions if defined (skip hidden flows and duplicates of system flows)
+                        if ( includeFlows && adapterMetadata?.transactions && !adapterMetadata.transactions.getHidden() ) {
+                            const virtualFlow = VirtualFlowGenerator.generate(
+                                adapterMetadata.transactions,
+                                {
+                                    moduleName,
+                                    componentName: definition.component,
+                                    executionSteps: adapterMetadata.executionSteps
+                                }
+                            );
+
+                            // Skip if a system flow with the same name already exists
+                            if ( systemFlowNames.has( virtualFlow.name ) ) {
+                                this.logger.info(
+                                    "exportUIDefinitions",
+                                    `Skipping virtual flow '${ virtualFlow.name }' - system flow with same name exists`
+                                );
+                            } else {
+                                flows.push( virtualFlow );
+                                moduleSummary.flows += 1;
+                                this.logger.info(
+                                    "exportUIDefinitions",
+                                    `Generated virtual flow '${ virtualFlow.name }' from adapter '${ adapterClass.getName() }' transactions`
+                                );
+                            }
+                        }
+
                         const wizardComponents = this.extractWizardComponentNames( adapterMetadata );
 
                         if ( wizardComponents?.length ) {
@@ -374,6 +417,35 @@ export class UIDefinitionExporter extends UIBase {
                         );
                         throw error;
                     }
+                }
+            }
+        }
+
+        // Generate virtual flows from binding flowTriggers (for adapters that don't use defineTransactions)
+        if ( includeFlows ) {
+            const virtualFlowsFromBindings = this.generateVirtualFlowsFromBindingTriggers(
+                flowTriggersByAdapter,
+                flows.map( f => f.name )
+            );
+
+            for ( const virtualFlow of virtualFlowsFromBindings ) {
+                const existingIndex = flows.findIndex( f => f.name === virtualFlow.name );
+                if ( existingIndex === -1 ) {
+                    flows.push( virtualFlow );
+                    // Find module for this flow based on adapter
+                    const adapterName = virtualFlow.options?.sourceAdapter as string | undefined;
+                    if ( adapterName ) {
+                        for ( const [ modName, summary ] of moduleSummaries ) {
+                            if ( virtualFlow.module === modName ) {
+                                summary.flows += 1;
+                                break;
+                            }
+                        }
+                    }
+                    this.logger.info(
+                        "exportUIDefinitions",
+                        `Generated virtual flow '${ virtualFlow.name }' from adapter binding flowTriggers`
+                    );
                 }
             }
         }
@@ -1070,6 +1142,15 @@ export class UIDefinitionExporter extends UIBase {
         const channelTypes = this.safeCall( () => adapterInstance.getChannelTypes() ) ?? [];
         const instanceType = String( this.safeCall( () => adapterClass.getInstanceType?.() ) ?? "dynamic" );
 
+        // Extract modal triggers from bindings with kind "modal-button"
+        const modalTriggers = bindings
+            .filter( ( binding ) => binding.kind === "modal-button" && binding.options )
+            .map( ( binding ) => ( {
+                buttonElement: binding.options!.button as string,
+                modalName: binding.options!.modal as string
+            } ) )
+            .filter( ( trigger ) => trigger.buttonElement && trigger.modalName );
+
         return {
             name: adapterName,
             adapterKind: this.determineAdapterKind( adapterClass as AdapterClass ),
@@ -1081,6 +1162,7 @@ export class UIDefinitionExporter extends UIBase {
             middlewares: undefined,
             executionSteps,
             bindings,
+            modalTriggers: modalTriggers.length ? modalTriggers : undefined,
             hooks,
             options: undefined
         };
@@ -1970,6 +2052,189 @@ export class UIDefinitionExporter extends UIBase {
         }
 
         return flowName.replace( /Flow$/, "Adapter" );
+    }
+
+    /**
+     * Generate virtual flows from binding flowTriggers for adapters that don't use defineTransactions().
+     * This extracts flow structure from the inline flowTriggers defined in adapter bindings.
+     */
+    private generateVirtualFlowsFromBindingTriggers(
+        flowTriggersByAdapter: Map<string, Map<string, FlowTriggerDefinition[]>>,
+        existingFlowNames: string[]
+    ): FlowDefinition[] {
+        // Group all triggers by flow name
+        const triggersByFlow = new Map<string, {
+            triggers: FlowTriggerDefinition[];
+            transitions: Map<string, FlowTriggerDefinition[]>;
+            adapterName: string;
+            moduleName?: string;
+        }>();
+
+        for ( const [ adapterName, transitionMap ] of flowTriggersByAdapter ) {
+            for ( const [ transition, triggers ] of transitionMap ) {
+                for ( const trigger of triggers ) {
+                    const flowName = ( trigger as { flowName?: string } ).flowName;
+                    if ( !flowName ) {
+                        continue;
+                    }
+
+                    // Skip if this flow already exists (from manual flow class or defineTransactions)
+                    if ( existingFlowNames.includes( flowName ) ) {
+                        continue;
+                    }
+
+                    let flowData = triggersByFlow.get( flowName );
+                    if ( !flowData ) {
+                        // Derive module from flow name
+                        const moduleName = this.deriveModuleFromFlowName( flowName );
+                        flowData = {
+                            triggers: [],
+                            transitions: new Map(),
+                            adapterName,
+                            moduleName
+                        };
+                        triggersByFlow.set( flowName, flowData );
+                    }
+
+                    flowData.triggers.push( trigger );
+
+                    const transitionKey = transition || ( trigger as { transition?: string } ).transition || "unknown";
+                    const existingTransitions = flowData.transitions.get( transitionKey ) || [];
+                    existingTransitions.push( trigger );
+                    flowData.transitions.set( transitionKey, existingTransitions );
+                }
+            }
+        }
+
+        // Generate FlowDefinition for each unique flow
+        const virtualFlows: FlowDefinition[] = [];
+
+        for ( const [ flowName, flowData ] of triggersByFlow ) {
+            const states = this.extractStatesFromTriggers( flowName, flowData.triggers );
+            const transitions = this.extractTransitionsFromTriggers( flowName, flowData.transitions );
+            const initialState = states.length > 0 ? states[ 0 ].key : `${ flowName }/States/Default`;
+
+            const flowDefinition: FlowDefinition = {
+                name: flowName,
+                module: flowData.moduleName,
+                flowKind: "virtual",
+                initialState,
+                states,
+                transitions,
+                requiredData: [],
+                entryPoints: [],
+                handoffPoints: [],
+                hooks: [],
+                options: {
+                    generatedFrom: "BindingFlowTriggers",
+                    isVirtual: true,
+                    sourceAdapter: flowData.adapterName
+                }
+            };
+
+            virtualFlows.push( flowDefinition );
+        }
+
+        return virtualFlows;
+    }
+
+    /**
+     * Extract unique states from trigger navigation targets.
+     */
+    private extractStatesFromTriggers(
+        flowName: string,
+        triggers: FlowTriggerDefinition[]
+    ): FlowStateDefinition[] {
+        const statesMap = new Map<string, FlowStateDefinition>();
+
+        // Add a default state
+        const defaultStateKey = `${ flowName }/States/Default`;
+        statesMap.set( defaultStateKey, {
+            key: defaultStateKey,
+            component: undefined,
+            transitions: [],
+            hooks: [],
+            options: { executionStep: "default" }
+        } );
+
+        for ( const trigger of triggers ) {
+            const navigation = trigger.navigation;
+            if ( !navigation?.targetState ) {
+                continue;
+            }
+
+            const stateKey = navigation.targetState;
+            if ( statesMap.has( stateKey ) ) {
+                continue;
+            }
+
+            statesMap.set( stateKey, {
+                key: stateKey,
+                component: undefined,
+                transitions: [],
+                hooks: [],
+                options: navigation.executionStep
+                    ? { executionStep: navigation.executionStep }
+                    : undefined
+            } );
+        }
+
+        return Array.from( statesMap.values() );
+    }
+
+    /**
+     * Extract transitions from trigger definitions.
+     */
+    private extractTransitionsFromTriggers(
+        flowName: string,
+        transitionsMap: Map<string, FlowTriggerDefinition[]>
+    ): FlowDefinition[ "transitions" ] {
+        const transitions: FlowDefinition[ "transitions" ] = [];
+        const defaultState = `${ flowName }/States/Default`;
+
+        for ( const [ transitionKey, triggers ] of transitionsMap ) {
+            const trigger = triggers[ 0 ]; // Use first trigger for navigation info
+            const targetState = trigger?.navigation?.targetState || defaultState;
+
+            transitions.push( {
+                from: defaultState, // Most adapter flows start from default
+                to: targetState,
+                triggeredBy: triggers.map( t => ( {
+                    handlerId: t.handlerId,
+                    sourceEntity: t.sourceEntity,
+                    handlerKind: t.handlerKind,
+                    navigation: t.navigation
+                        ? {
+                            targetState: t.navigation.targetState,
+                            executionStep: t.navigation.executionStep
+                        }
+                        : undefined,
+                    mutations: t.mutations?.map( m => ( {
+                        type: m.type,
+                        path: [ ...m.path ]
+                    } ) )
+                } ) ),
+                options: undefined
+            } );
+        }
+
+        return transitions;
+    }
+
+    /**
+     * Derive module name from flow name pattern.
+     */
+    private deriveModuleFromFlowName( flowName: string ): string | undefined {
+        if ( flowName.includes( "UI-V3" ) ) {
+            return "VertixBot/UI-V3/Module";
+        }
+        if ( flowName.includes( "UI-V2" ) ) {
+            return "VertixBot/UI-V2/Module";
+        }
+        if ( flowName.includes( "UI-General" ) ) {
+            return "VertixBot/UI-General/Module";
+        }
+        return undefined;
     }
 
     private extractWizardComponentNames(

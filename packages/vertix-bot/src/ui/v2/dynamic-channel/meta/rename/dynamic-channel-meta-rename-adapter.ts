@@ -1,14 +1,13 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
-
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-
 import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
 
 import { DynamicChannelMetaRenameComponent } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-component";
 
-import { DynamicChannelAdapterExuBase } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/dynamic-channel-adapter-exu-base";
+import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/dynamic-execution-adapter-builder";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
@@ -16,53 +15,80 @@ import type {
     UIDefaultModalChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-import type { VoiceChannel } from "discord.js";
-
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 type DefaultInteraction = UIDefaultButtonChannelVoiceInteraction | UIDefaultModalChannelVoiceInteraction;
 
-export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBase<DefaultInteraction> {
-    public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter";
+const RENAME_STEPS = {
+    default: {},
+    "VertixBot/UI-V2/DynamicChannelMetaRenameBadword": {
+        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup"
+    },
+    "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess": {
+        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup"
+    },
+    "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited": {
+        embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup"
     }
+} as const;
 
-    public static getComponent() {
-        return DynamicChannelMetaRenameComponent;
-    }
-
-    protected static getExecutionSteps() {
-        return {
-            default: {},
-            "VertixBot/UI-V2/DynamicChannelMetaRenameBadword": {
-                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup"
-            },
-            "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess": {
-                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup"
-            },
-            "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited": {
-                embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup"
-            }
-        };
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async getStartArgs( channel: VoiceChannel ) {
-        return {};
-    }
-
-    protected async getReplyArgs( interaction: DefaultInteraction, argsFromManager: UIArgs ) {
+const DynamicChannelMetaRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
+    "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter"
+)
+    .setComponent( DynamicChannelMetaRenameComponent )
+    .setExecutionSteps( RENAME_STEPS )
+    .defineTransactions( ( tx ) => {
+        tx
+            .setInitialState( "Default" )
+            .addState( "Default", {
+                executionStep: "default",
+                previewDefaultVars: { defaultChannelName: "{username}'s Channel" }
+            } )
+            .addState( "Success", {
+                executionStep: "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess",
+                navigationType: "ephemeral",
+                previewDefaultVars: { channelName: "My Channel" }
+            } )
+            .addState( "Badword", {
+                executionStep: "VertixBot/UI-V2/DynamicChannelMetaRenameBadword",
+                navigationType: "ephemeral",
+                previewDefaultVars: { badword: "example" }
+            } )
+            .addState( "RateLimited", {
+                executionStep: "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited",
+                navigationType: "ephemeral",
+                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789" }
+            } )
+            .addTransition( "SubmitSuccess", { from: "Default", to: "Success" } )
+            .addTransition( "SubmitBadword", {
+                from: "Default",
+                to: "Badword",
+                mutations: [ { type: "set", path: [ "badword" ] } ]
+            } )
+            .addTransition( "SubmitRateLimited", {
+                from: "Default",
+                to: "RateLimited",
+                mutations: [
+                    { type: "set", path: [ "retryAfter" ] },
+                    { type: "set", path: [ "masterChannelId" ] }
+                ]
+            } )
+            .bindElement( "VertixBot/UI-V2/DynamicChannelMetaRenameModal", "SubmitSuccess" );
+    } )
+    .getStartArgs( async() => ( {} ) )
+    .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const args: UIArgs = {};
 
         // noinspection FallThroughInSwitchStatementJS
-        switch ( this.getCurrentExecutionStep()?.name ) {
+        switch ( context.getCurrentExecutionStep( interaction )?.name ) {
             case "VertixBot/UI-V2/DynamicChannelMetaRenameBadword":
-                args.badword = argsFromManager.badword;
+                args.badword = argsFromManager?.badword;
                 break;
 
             case "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited":
-                args.masterChannelId = argsFromManager.masterChannelId;
-                args.retryAfter = argsFromManager.retryAfter;
+                args.masterChannelId = argsFromManager?.masterChannelId;
+                args.retryAfter = argsFromManager?.retryAfter;
                 break;
 
             default:
@@ -71,10 +97,9 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
                 if ( masterChannelDB ) {
                     args.defaultChannelName = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB, true );
                 } else {
-                    args.defaultChannelName =  ConfigManager.$
+                    args.defaultChannelName = ConfigManager.$
                         .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 )
                         .get( "settings" ).dynamicChannelNameTemplate;
-
                 }
 
             case "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess":
@@ -83,57 +108,53 @@ export class DynamicChannelMetaRenameAdapter extends DynamicChannelAdapterExuBas
         }
 
         return args;
-    }
-
-    protected onEntityMap() {
-        this.bindModal<UIDefaultModalChannelVoiceInteraction>(
+    } )
+    .onEntityMap( async( { bindModal } ) => {
+        bindModal<UIDefaultModalChannelVoiceInteraction>(
             "VertixBot/UI-V2/DynamicChannelMetaRenameModal",
-            this.onModalSubmit
+            async( context, interaction ) => {
+                const renameButtonId = context.customIdStrategy.generateId(
+                    "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter:VertixBot/UI-V2/DynamicChannelMetaRenameInput"
+                );
+
+                const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+
+                let newChannelName = interaction.fields.getTextInputValue( renameButtonId ),
+                    masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
+
+                newChannelName = await dynamicChannelService.getAssembledChannelNameTemplate(
+                    interaction.channel,
+                    interaction.user.id,
+                    newChannelName
+                );
+
+                const result = await dynamicChannelService.editChannelName(
+                    interaction,
+                    interaction.channel,
+                    newChannelName
+                );
+
+                switch ( result.code ) {
+                    case "success":
+                        await context.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess", {} );
+                        break;
+
+                    case "badword":
+                        await context.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaRenameBadword", {
+                            badword: result.badword
+                        } );
+                        break;
+
+                    case "rate-limit":
+                        await context.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited", {
+                            retryAfter: result.retryAfter,
+                            masterChannelId: masterChannelDB?.channelId // No worries embed handles this situation.
+                        } );
+                        break;
+                }
+            }
         );
-    }
+    } )
+    .build();
 
-    protected shouldDeletePreviousReply() {
-        return true;
-    }
-
-    private async onModalSubmit( interaction: UIDefaultModalChannelVoiceInteraction ) {
-        const renameButtonId = this.customIdStrategy.generateId(
-            "VertixBot/UI-V2/DynamicChannelMetaRenameAdapter:VertixBot/UI-V2/DynamicChannelMetaRenameInput"
-        );
-
-        let newChannelName = interaction.fields.getTextInputValue( renameButtonId ),
-            masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( interaction.channel.id );
-
-        newChannelName =
-            ( await this.dynamicChannelService.getAssembledChannelNameTemplate(
-                interaction.channel,
-                interaction.user.id,
-                newChannelName
-            ) );
-
-        const result = await this.dynamicChannelService.editChannelName(
-            interaction,
-            interaction.channel,
-            newChannelName
-        );
-
-        switch ( result.code ) {
-            case "success":
-                await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess", {} );
-                break;
-
-            case "badword":
-                await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaRenameBadword", {
-                    badword: result.badword
-                } );
-                break;
-
-            case "rate-limit":
-                await this.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited", {
-                    retryAfter: result.retryAfter,
-                    masterChannelId: masterChannelDB?.channelId // No worries embed handles this situation.
-                } );
-                break;
-        }
-    }
-}
+export { DynamicChannelMetaRenameAdapter };

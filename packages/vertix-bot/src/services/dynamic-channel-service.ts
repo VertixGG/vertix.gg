@@ -1454,8 +1454,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
-                     * @since 0.0.8
-                     */
+    * @since 0.0.8
+    */
     public async editChannelPrivacyState(
         initiator: MessageComponentInteraction<"cached">,
         channel: VoiceChannel,

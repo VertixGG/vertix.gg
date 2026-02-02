@@ -372,6 +372,12 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 elementsGroup: "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
                 previewDefaultVars: { state: "public" }
             } )
+            .addState( "Access", {
+                executionStep: "VertixBot/UI-V2/DynamicChannelPermissionsAccess",
+                elementsGroup: "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbedGroup",
+                navigationType: "ephemeral"
+            } )
             .addState( "Private", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelPermissionsStatePrivate",
                 embedsGroup: "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbedGroup",
@@ -441,6 +447,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             .addTransition( "SetPublic", { from: "Default", to: "Public" } )
             .addTransition( "SetHidden", { from: "Default", to: "Hidden" } )
             .addTransition( "SetShown", { from: "Default", to: "Shown" } )
+            .addTransition( "ShowAccess", { from: "Default", to: "Access" } )
             .addTransition( "GrantAccess", {
                 from: "Default",
                 to: "Granted",
@@ -480,7 +487,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             )
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(
                 "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
-                "GrantAccess",
+                "ShowAccess",
                 onAccessButtonClicked
             )
             .bindUserSelectMenu<UIDefaultUserSelectMenuChannelVoiceInteraction>(

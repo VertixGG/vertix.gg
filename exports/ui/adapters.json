@@ -573,13 +573,6 @@
                 "key": "VertixBot/UI-V2/ClaimVoteWon",
                 "elementsGroup": null,
                 "embedsGroup": "VertixBot/UI-V2/ClaimVoteWonEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
-                "key": "bypass",
-                "elementsGroup": null,
-                "embedsGroup": null,
                 "markdownGroup": "VertixBot/UI-V2/ClaimVoteResultsMarkdownGroup",
                 "hooks": []
             }
@@ -758,16 +751,16 @@
                 "hooks": []
             },
             {
-                "key": "VertixBot/UI-V2/DynamicChannelMetaRenameBadword",
+                "key": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess",
                 "elementsGroup": null,
-                "embedsGroup": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup",
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },
             {
-                "key": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess",
+                "key": "VertixBot/UI-V2/DynamicChannelMetaRenameBadword",
                 "elementsGroup": null,
-                "embedsGroup": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup",
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },
@@ -843,9 +836,9 @@
                 "hooks": []
             },
             {
-                "key": "VertixBot/UI-V2/DynamicChannelPermissionsStatePublic",
-                "elementsGroup": null,
-                "embedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbedGroup",
+                "key": "VertixBot/UI-V2/DynamicChannelPermissionsAccess",
+                "elementsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },
@@ -853,6 +846,13 @@
                 "key": "VertixBot/UI-V2/DynamicChannelPermissionsStatePrivate",
                 "elementsGroup": null,
                 "embedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelPermissionsStatePublic",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },
@@ -902,13 +902,6 @@
                 "key": "VertixBot/UI-V2/DynamicChannelPermissionsKick",
                 "elementsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
                 "embedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
-                "key": "VertixBot/UI-V2/DynamicChannelPermissionsAccess",
-                "elementsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
-                "embedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },
@@ -1312,13 +1305,6 @@
                 "key": "VertixBot/UI-V3/ClaimVoteWon",
                 "elementsGroup": null,
                 "embedsGroup": "VertixBot/UI-V3/ClaimVoteWonEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
-                "key": "bypass",
-                "elementsGroup": null,
-                "embedsGroup": null,
                 "markdownGroup": "VertixBot/UI-V3/ClaimVoteResultsMarkdownGroup",
                 "hooks": []
             }
@@ -1505,13 +1491,6 @@
         "executionSteps": [
             {
                 "key": "default",
-                "elementsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                "embedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsAccess",
                 "elementsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
                 "embedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
                 "markdownGroup": null,
@@ -1737,16 +1716,16 @@
                 "hooks": []
             },
             {
-                "key": "VertixBot/UI-V3/DynamicChannelRenameBadword",
+                "key": "VertixBot/UI-V3/DynamicChannelRenameSuccess",
                 "elementsGroup": null,
-                "embedsGroup": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbedGroup",
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },
             {
-                "key": "VertixBot/UI-V3/DynamicChannelRenameSuccess",
+                "key": "VertixBot/UI-V3/DynamicChannelRenameBadword",
                 "elementsGroup": null,
-                "embedsGroup": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbedGroup",
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },

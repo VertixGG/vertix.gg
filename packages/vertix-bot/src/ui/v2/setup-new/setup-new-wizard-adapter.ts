@@ -207,13 +207,19 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             .addState( "Default", { executionStep: "default" } )
             .addState( "Step1", {
                 executionStep: "VertixBot/UI-V2/SetupStep1Component",
+                elementsGroup: "VertixBot/UI-V2/SetupStep1Component/ElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupStep1Component/EmbedsGroup",
                 previewDefaultVars: { dynamicChannelNameTemplate: "{username}'s Channel" }
             } )
             .addState( "Step2", {
-                executionStep: "VertixBot/UI-V2/SetupStep2Component"
+                executionStep: "VertixBot/UI-V2/SetupStep2Component",
+                elementsGroup: "VertixBot/UI-V2/SetupStep2Component/ElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupStep2Component/EmbedsGroup"
             } )
             .addState( "Step3", {
-                executionStep: "VertixBot/UI-V2/SetupStep3Component"
+                executionStep: "VertixBot/UI-V2/SetupStep3Component",
+                elementsGroup: "VertixBot/UI-V2/SetupStep3Component/ElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupStep3Component/EmbedsGroup"
             } )
             .addState( "MaxMasterChannels", {
                 executionStep: "VertixBot/UI-V2/SetupNewWizardMaxMasterChannels",

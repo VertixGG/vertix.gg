@@ -137,10 +137,14 @@ const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<
             } )
             .addState( "EditTitle", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/ElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/EmbedsGroup",
                 previewDefaultVars: { title: "My Channel Title" }
             } )
             .addState( "EditDescription", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent",
+                elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent/ElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent/EmbedsGroup",
                 previewDefaultVars: { description: "My channel description" }
             } )
             // Transitions from Confirm

@@ -46,7 +46,8 @@ export function createFlowNode( flow: UIExportedFlow, isSystemFlow: boolean ): N
         data: {
             label: flowShortName,
             type: "flow",
-            isSystemFlow
+            isSystemFlow,
+            flowName: flow.name
         }
     };
 }
@@ -58,7 +59,8 @@ export function createComponentNode(
     buttonFlowTriggers: ButtonFlowTrigger[],
     stateTransitionTriggers: StateTransitionTrigger[] = [],
     label?: string,
-    stateKey?: string
+    stateKey?: string,
+    flowName?: string
 ): Node {
     return {
         id: compId,
@@ -72,7 +74,8 @@ export function createComponentNode(
             buttonModalTriggers,
             buttonFlowTriggers,
             stateTransitionTriggers,
-            stateKey
+            stateKey,
+            flowName
         }
     };
 }
@@ -80,7 +83,8 @@ export function createComponentNode(
 export function createModalNode(
     modalId: string,
     modalName: string,
-    modalDef?: { title?: string; inputs?: Array<{ name: string; label?: string; placeholder?: string; style?: "short" | "paragraph" }> }
+    modalDef?: { title?: string; inputs?: Array<{ name: string; label?: string; placeholder?: string; style?: "short" | "paragraph" }> },
+    flowName?: string
 ): Node {
     const modalShortName = modalName.split( "/" ).pop()?.replace( /Modal$/, "" ) ?? modalName;
 
@@ -92,7 +96,8 @@ export function createModalNode(
             label: modalShortName,
             type: "modal",
             title: modalDef?.title,
-            inputs: modalDef?.inputs
+            inputs: modalDef?.inputs,
+            flowName
         }
     };
 }

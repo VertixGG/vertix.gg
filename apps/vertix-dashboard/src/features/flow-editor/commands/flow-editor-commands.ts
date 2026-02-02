@@ -12,6 +12,8 @@ export interface FlowEditorState {
     selectedModule: string | null;
     moduleFlowsData: ModuleFlowsResponse | null;
     selectedNode: Node | null;
+    originalNodeData: Record<string, unknown> | null;
+    hasUnsavedChanges: boolean;
     centerOnSelect: boolean;
     isLoading: boolean;
     error: string | null;
@@ -22,6 +24,8 @@ export const FLOW_EDITOR_INITIAL_STATE: FlowEditorState = {
     selectedModule: null,
     moduleFlowsData: null,
     selectedNode: null,
+    originalNodeData: null,
+    hasUnsavedChanges: false,
     centerOnSelect: false,
     isLoading: false,
     error: null
@@ -72,8 +76,15 @@ export class SelectNodeCommand extends CommandBase<FlowEditorState, { node: Node
     }
 
     public async apply( args: { node: Node | null; centerOnSelect?: boolean } ) {
+        // Store original node data when selecting a new node
+        const originalNodeData = args.node
+            ? JSON.parse( JSON.stringify( args.node.data ) ) as Record<string, unknown>
+            : null;
+
         return this.setState( {
             selectedNode: args.node,
+            originalNodeData,
+            hasUnsavedChanges: false,
             centerOnSelect: args.centerOnSelect ?? false
         } );
     }
@@ -125,5 +136,92 @@ export class ClearErrorCommand extends CommandBase<FlowEditorState> {
 
     public apply() {
         return this.setState( { error: null } );
+    }
+}
+
+export class UpdateNodeDataCommand extends CommandBase<FlowEditorState, { path: string; value: unknown }> {
+    public static getName(): string {
+        return "Dashboard/FlowEditor/UpdateNodeData";
+    }
+
+    public apply( args: { path: string; value: unknown } ) {
+        const { path, value } = args;
+        const selectedNode = this.state.selectedNode;
+
+        if ( !selectedNode ) {
+            return;
+        }
+
+        // Deep clone the node to avoid mutating state directly
+        const updatedNode = JSON.parse( JSON.stringify( selectedNode ) ) as Node;
+
+        // Parse path and set value (e.g., "embed.title", "embed.color")
+        const pathParts = path.split( "." );
+        let current: Record<string, unknown> = updatedNode.data as Record<string, unknown>;
+
+        for ( let i = 0; i < pathParts.length - 1; i++ ) {
+            const part = pathParts[ i ];
+            if ( current[ part ] === undefined ) {
+                current[ part ] = {};
+            }
+            current = current[ part ] as Record<string, unknown>;
+        }
+
+        current[ pathParts[ pathParts.length - 1 ] ] = value;
+
+        return this.setState( {
+            selectedNode: updatedNode,
+            hasUnsavedChanges: true
+        } );
+    }
+}
+
+export class RestoreNodeDataCommand extends CommandBase<FlowEditorState> {
+    public static getName(): string {
+        return "Dashboard/FlowEditor/RestoreNodeData";
+    }
+
+    public apply() {
+        const { selectedNode, originalNodeData } = this.state;
+
+        if ( !selectedNode || !originalNodeData ) {
+            return;
+        }
+
+        // Restore the node data to its original state
+        const restoredNode = {
+            ...selectedNode,
+            data: JSON.parse( JSON.stringify( originalNodeData ) )
+        } as Node;
+
+        return this.setState( {
+            selectedNode: restoredNode,
+            hasUnsavedChanges: false
+        } );
+    }
+}
+
+export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
+    public static getName(): string {
+        return "Dashboard/FlowEditor/SaveNodeChanges";
+    }
+
+    public apply() {
+        const { selectedNode } = this.state;
+
+        if ( !selectedNode ) {
+            return;
+        }
+
+        // Update original data to current state (marking it as "saved")
+        const newOriginalData = JSON.parse( JSON.stringify( selectedNode.data ) ) as Record<string, unknown>;
+
+        // TODO: In the future, this could persist to an API
+        // await apiClient.post("/save-node", { nodeId: selectedNode.id, data: selectedNode.data });
+
+        return this.setState( {
+            originalNodeData: newOriginalData,
+            hasUnsavedChanges: false
+        } );
     }
 }

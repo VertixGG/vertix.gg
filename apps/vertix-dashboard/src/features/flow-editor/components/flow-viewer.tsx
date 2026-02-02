@@ -5,6 +5,8 @@ import "@xyflow/react/dist/style.css";
 
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 
+import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
+
 import { nodeTypes } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes";
 import { getLayoutedElements } from "@vertix.gg/dashboard/src/features/flow-editor/lib/layout";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
@@ -32,6 +34,7 @@ export function FlowViewer() {
     );
 
     const selectNode = useCommand( "Dashboard/FlowEditor/SelectNode" );
+    const { isEditMode, editingFlowName, enterEditMode, exitEditMode } = useEditMode();
 
     const handleNodeSelect = ( node: Node | null ) => {
         selectNode.run( { node, centerOnSelect: false } );
@@ -53,11 +56,33 @@ export function FlowViewer() {
             return { initialNodes: [], initialEdges: [] };
         }
 
-        const { nodes, edges } = buildFlowGraph( moduleFlowsData );
+        const { nodes: allNodes, edges: allEdges } = buildFlowGraph( moduleFlowsData );
+
+        // Filter nodes and edges when in edit mode
+        let nodesToLayout = allNodes;
+        let edgesToLayout = allEdges;
+
+        if ( isEditMode && editingFlowName ) {
+            // Filter nodes that belong to the editing flow
+            const filteredNodes = allNodes.filter( ( node ) => {
+                const nodeFlowName = node.data?.flowName as string | undefined;
+                return nodeFlowName === editingFlowName;
+            } );
+
+            const filteredNodeIds = new Set( filteredNodes.map( n => n.id ) );
+
+            // Filter edges where both source and target are in the filtered nodes
+            const filteredEdges = allEdges.filter( ( edge ) => {
+                return filteredNodeIds.has( edge.source ) && filteredNodeIds.has( edge.target );
+            } );
+
+            nodesToLayout = filteredNodes;
+            edgesToLayout = filteredEdges;
+        }
 
         const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-            nodes,
-            edges,
+            nodesToLayout,
+            edgesToLayout,
             {
                 direction: LAYOUT_OPTIONS.DIRECTION,
                 rankSep: LAYOUT_OPTIONS.RANK_SEPARATION,
@@ -68,6 +93,8 @@ export function FlowViewer() {
         return { initialNodes: layoutedNodes, initialEdges: layoutedEdges };
     }, [
         moduleFlowsData,
+        isEditMode,
+        editingFlowName,
         LAYOUT_OPTIONS.DIRECTION,
         LAYOUT_OPTIONS.RANK_SEPARATION,
         LAYOUT_OPTIONS.NODE_SEPARATION
@@ -79,6 +106,14 @@ export function FlowViewer() {
     useEffect( () => {
         setNodes( initialNodes );
         setEdges( initialEdges );
+
+        // Fit view when nodes change (e.g., entering/exiting edit mode)
+        const reactFlowInstance = reactFlowInstanceRef.current;
+        if ( reactFlowInstance && initialNodes.length > 0 ) {
+            setTimeout( () => {
+                reactFlowInstance.fitView( { padding: 0.2, duration: 300 } );
+            }, 50 );
+        }
     }, [ initialNodes, initialEdges, setNodes, setEdges ] );
 
     useEffect( () => {
@@ -89,6 +124,25 @@ export function FlowViewer() {
             } ) )
         );
     }, [ selectedNodeId, setNodes ] );
+
+    // Sync selectedNode data changes back to the nodes array
+    useEffect( () => {
+        if ( !selectedNode ) {
+            return;
+        }
+
+        setNodes( ( currentNodes ) =>
+            currentNodes.map( ( node ) => {
+                if ( node.id === selectedNode.id ) {
+                    return {
+                        ...node,
+                        data: selectedNode.data
+                    };
+                }
+                return node;
+            } )
+        );
+    }, [ selectedNode, setNodes ] );
 
     useEffect( () => {
         if ( !selectedNodeId || !centerOnSelect ) {
@@ -149,9 +203,18 @@ export function FlowViewer() {
         handleNodeSelect( node );
     }, [ handleNodeSelect ] );
 
+    const onNodeDoubleClick = useCallback( ( _event: React.MouseEvent, node: Node ) => {
+        handleNodeSelect( node );
+        const flowName = node.data?.flowName as string | undefined;
+        if ( flowName ) {
+            enterEditMode( flowName );
+        }
+    }, [ handleNodeSelect, enterEditMode ] );
+
     const onPaneClick = useCallback( () => {
         handleNodeSelect( null );
-    }, [ handleNodeSelect ] );
+        exitEditMode();
+    }, [ handleNodeSelect, exitEditMode ] );
 
     if ( isLoading ) {
         return (
@@ -177,6 +240,7 @@ export function FlowViewer() {
                 onNodesChange={ onNodesChange }
                 onEdgesChange={ onEdgesChange }
                 onNodeClick={ onNodeClick }
+                onNodeDoubleClick={ onNodeDoubleClick }
                 onPaneClick={ onPaneClick }
                 onMove={ handleMove }
                 nodeTypes={ nodeTypes }
@@ -211,6 +275,33 @@ export function FlowViewer() {
             </div>
 
             <div className="absolute top-4 right-4 flex gap-2">
+                { isEditMode && editingFlowName && (
+                    <div className="px-3 py-2 bg-blue-900/50 text-blue-200 text-sm rounded border border-blue-700">
+                        Editing: { editingFlowName.split( "/" ).pop() }
+                    </div>
+                ) }
+                <button
+                    onClick={ () => {
+                        if ( isEditMode ) {
+                            exitEditMode();
+                        } else if ( selectedNode ) {
+                            const flowName = selectedNode.data?.flowName as string | undefined;
+                            if ( flowName ) {
+                                enterEditMode( flowName );
+                            }
+                        }
+                    } }
+                    disabled={ !isEditMode && !selectedNode }
+                    className={ `px-3 py-2 text-white text-sm rounded border transition-colors ${
+                        isEditMode
+                            ? "bg-blue-600 hover:bg-blue-700 border-blue-500"
+                            : selectedNode
+                                ? "bg-zinc-800 hover:bg-zinc-700 border-zinc-600"
+                                : "bg-zinc-800/50 border-zinc-700 cursor-not-allowed opacity-50"
+                    }` }
+                >
+                    { isEditMode ? "Exit Edit Mode" : "Edit Mode" }
+                </button>
                 <button
                     onClick={ onLayout }
                     className="px-3 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-sm rounded border border-zinc-600 transition-colors"

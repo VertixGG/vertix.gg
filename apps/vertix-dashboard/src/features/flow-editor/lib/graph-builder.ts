@@ -229,11 +229,11 @@ export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes:
                 compPreview.elementRows
             );
 
-            allNodes.push( createComponentNode( compId, compPreview, buttonModalTriggers, buttonFlowTriggers, [] ) );
+            allNodes.push( createComponentNode( compId, compPreview, buttonModalTriggers, buttonFlowTriggers, [], undefined, undefined, flow.name ) );
             addEdge( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
 
             addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
-            addModalNodesAndEdges( addEdge, allNodes, compId, compPreview, buttonModalConnections, undefined );
+            addModalNodesAndEdges( addEdge, allNodes, compId, compPreview, buttonModalConnections, undefined, flow.name );
         }
     } );
 
@@ -532,7 +532,8 @@ function addModalNodesAndEdges(
     compId: string,
     compPreview: ComponentPreview,
     buttonModalConnections: Array<{ buttonName: string; modalName: string }>,
-    stateTransitions: string[] | undefined
+    stateTransitions: string[] | undefined,
+    flowName?: string
 ): void {
     const hasExplicitTransitions = !!stateTransitions?.length;
     const modalNames = buttonModalConnections.length > 0
@@ -551,7 +552,7 @@ function addModalNodesAndEdges(
         const modalId = `modal-${ compId }-${ modalIndex }`;
         const modalDef = compPreview.modalDefinitions.find( m => m.name === modal );
 
-        allNodes.push( createModalNode( modalId, modal, modalDef ) );
+        allNodes.push( createModalNode( modalId, modal, modalDef, flowName ) );
 
         const connection = buttonModalConnections.find( c => c.modalName === modal );
         const sourceHandle = connection ? `btn-${ connection.buttonName }` : "bottom";
@@ -605,7 +606,7 @@ function buildMultiStateFlow(
         const initialComp = stateComponents[ 0 ]?.component;
         const modalDef = initialComp?.modals?.find( m => m.name === modalFirstInfo.modalName );
 
-        allNodes.push( createModalNode( modalId, modalFirstInfo.modalName, modalDef ) );
+        allNodes.push( createModalNode( modalId, modalFirstInfo.modalName, modalDef, flow.name ) );
         addEdge( createFlowToComponentEdge( flowId, modalId, flow.name, modalFirstInfo.modalName ) );
         modalFirstNodeId = modalId;
     }
@@ -662,7 +663,8 @@ function buildMultiStateFlow(
                 buttonFlowTriggers,
                 stepIndex === 0 ? initialStateTransitionTriggers : [],
                 `${ stateComp.stateName } - ${ compPreview.name }`,
-                stateComp.stateKey
+                stateComp.stateKey,
+                flow.name
             )
         );
 
@@ -690,7 +692,7 @@ function buildMultiStateFlow(
 
         // Skip adding modals for modal-first flows (modal already created at flow level)
         if ( !modalFirstInfo.isModalFirst ) {
-            addModalNodesAndEdges( addEdge, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateComp.transitions );
+            addModalNodesAndEdges( addEdge, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateComp.transitions, flow.name );
         }
         addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
     } );
@@ -821,11 +823,12 @@ function buildSingleComponentFlow(
             buttonFlowTriggers,
             [],
             undefined,
-            stateKey
+            stateKey,
+            flow.name
         )
     );
     addEdge( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
 
     addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
-    addModalNodesAndEdges( addEdge, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateTransitions );
+    addModalNodesAndEdges( addEdge, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateTransitions, flow.name );
 }

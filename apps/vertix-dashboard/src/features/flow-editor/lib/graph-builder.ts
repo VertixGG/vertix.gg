@@ -361,6 +361,28 @@ class EdgeBuilder {
         const elementNames = new Set( initialElementRows.flat().map( el => el.name ) );
         const transitions = this.getSelectMenuTransitions( initialElementRows );
         const connectedTargets = new Set<string>();
+        const greenConnectedTargets = new Set<string>();
+
+        transitions.forEach( transition => {
+            const trigger = ( transition.triggeredBy ?? [] ).find( t =>
+                [ "string-select", "button", "user-select" ].includes( t.handlerKind )
+            );
+
+            if ( !trigger ) {
+                return;
+            }
+
+            const targetCompId = this.context.stateKeyToCompId.get( transition.to );
+            if ( !targetCompId ) {
+                return;
+            }
+
+            connectedTargets.add( transition.to );
+
+            if ( elementNames.has( trigger.sourceEntity ) ) {
+                greenConnectedTargets.add( transition.to );
+            }
+        } );
 
         transitions.forEach( transition => {
             const trigger = ( transition.triggeredBy ?? [] ).find( t =>
@@ -377,11 +399,10 @@ class EdgeBuilder {
             }
 
             const label = transition.to.split( "/" ).pop() ?? transition.to;
-            connectedTargets.add( transition.to );
 
             if ( elementNames.has( trigger.sourceEntity ) ) {
                 this.addEdge( createComponentToComponentEdge( initialCompId, targetCompId, this.context.flow.name, trigger.sourceEntity, label ) );
-            } else if ( !this.context.wizardConnectedTargets.has( transition.to ) ) {
+            } else if ( !greenConnectedTargets.has( transition.to ) && !this.context.wizardConnectedTargets.has( transition.to ) ) {
                 this.addEdge( createComponentToStateFallbackEdge( initialCompId, targetCompId, this.context.flow.name, label ) );
             }
         } );
@@ -652,8 +673,12 @@ class MultiStateFlowBuilder {
                     handlePosition: getButtonHandlePosition( wt.buttonName, compPreview.elementRows, compPreview.elementRows.length )
                 } ) );
 
+            const selectMenuTriggers = stepIndex === 0
+                ? this.getSelectMenuTriggers( compPreview.elementRows )
+                : [];
+
             const stateTransitionTriggers = stepIndex === 0
-                ? [ ...this.initialStateTransitionTriggers, ...wizardTriggers ]
+                ? [ ...this.initialStateTransitionTriggers, ...wizardTriggers, ...selectMenuTriggers ]
                 : wizardTriggers;
 
             this.allNodes.push( createComponentNode(
@@ -722,6 +747,38 @@ class MultiStateFlowBuilder {
         } );
 
         return connections;
+    }
+
+    private getSelectMenuTriggers( elementRows: ElementData[][] ): StateTransitionTrigger[] {
+        const elementNames = new Set( elementRows.flat().map( el => el.name ) );
+        const triggers: StateTransitionTrigger[] = [];
+
+        this.context.flow.transitions?.forEach( t => {
+            if ( t.from !== this.context.initialStateKey || !t.triggeredBy ) {
+                return;
+            }
+
+            t.triggeredBy.forEach( trigger => {
+                if ( ![ "string-select", "user-select" ].includes( trigger.handlerKind ) ) {
+                    return;
+                }
+
+                if ( !trigger.sourceEntity || !elementNames.has( trigger.sourceEntity ) ) {
+                    return;
+                }
+
+                if ( triggers.some( existing => existing.elementName === trigger.sourceEntity ) ) {
+                    return;
+                }
+
+                triggers.push( {
+                    elementName: trigger.sourceEntity,
+                    handlePosition: getButtonHandlePosition( trigger.sourceEntity, elementRows, elementRows.length )
+                } );
+            } );
+        } );
+
+        return triggers;
     }
 
     private addEdgesForState(

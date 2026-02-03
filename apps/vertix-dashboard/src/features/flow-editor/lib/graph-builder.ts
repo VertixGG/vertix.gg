@@ -22,7 +22,6 @@ import {
     getButtonHandlePosition,
     sortModalsByButtonOrder
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
-
 import { WIZARD_BUTTON_NAMES } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
 
 import type { FlowStateComponent } from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
@@ -32,1050 +31,875 @@ import type { UIExportedFlow, UIExportedComponent, UIExportEmbedDefinition } fro
 import type { Node, Edge } from "@xyflow/react";
 import type { ButtonModalTrigger, ButtonFlowTrigger, StateTransitionTrigger } from "@vertix.gg/dashboard/src/features/flow-editor/lib/node-builders";
 
-type SelectMenuTriggeredTransition = UIExportedFlow[ "transitions" ][ number ] & {
-    triggeredBy: NonNullable<UIExportedFlow[ "transitions" ][ number ][ "triggeredBy" ]>;
-};
-
-type FlowEdgeMappingTrigger = {
-    handlerId: string;
-    sourceEntity: string;
-    handlerKind: "button" | "string-select" | "user-select" | "modal" | "modal-button" | "command" | "unknown";
-    navigation?: {
-        targetState?: string;
-        executionStep?: string;
-    };
-};
-
-function inferHandlerKindFromElement( element: ElementData | undefined, elementName: string ): FlowEdgeMappingTrigger[ "handlerKind" ] {
-    const elementType = element?.definition?.elementType;
-
-    if ( elementType ) {
-        if ( elementType === "user-select" ) {
-            return "user-select";
-        }
-        if ( elementType.includes( "select" ) ) {
-            return "string-select";
-        }
-        if ( elementType === "modal" ) {
-            return "modal";
-        }
-        if ( elementType === "modal-button" ) {
-            return "modal-button";
-        }
-        return "button";
-    }
-
-    const lower = elementName.toLowerCase();
-    if ( lower.includes( "select" ) ) {
-        return "string-select";
-    }
-
-    return "button";
-}
-
-function hasEdgeSourceMappingTransitions( flow: UIExportedFlow, stateKeys: Set<string> ): boolean {
-    if ( !flow.edgeSourceMappings?.length ) {
-        return false;
-    }
-
-    const transitionByName = new Map( flow.transitions.map( transition => [ transition.from, transition ] ) );
-
-    return flow.edgeSourceMappings.some( mapping => {
-        if ( mapping.targetFlowName !== flow.name ) {
-            return false;
-        }
-
-        const transition = transitionByName.get( mapping.transitionName );
-        if ( !transition ) {
-            return false;
-        }
-
-        return stateKeys.has( transition.to );
-    } );
-}
-
-function getEdgeSourceMappingTransitions(
-    flow: UIExportedFlow,
-    stateKeys: Set<string>,
-    elementRows: ElementData[][]
-): SelectMenuTriggeredTransition[] {
-    if ( !flow.edgeSourceMappings?.length ) {
-        return [];
-    }
-
-    const transitionByName = new Map( flow.transitions.map( transition => [ transition.from, transition ] ) );
-    const elementByName = new Map( elementRows.flat().map( element => [ element.name, element ] ) );
-
-    return flow.edgeSourceMappings.flatMap( mapping => {
-        if ( mapping.targetFlowName !== flow.name ) {
-            return [];
-        }
-
-        const transition = transitionByName.get( mapping.transitionName );
-        if ( !transition || !stateKeys.has( transition.to ) ) {
-            return [];
-        }
-
-        const element = elementByName.get( mapping.triggeringElementId );
-        const handlerKind = inferHandlerKindFromElement( element, mapping.triggeringElementId );
-
-        const trigger: FlowEdgeMappingTrigger = {
-            handlerId: `flow-edge-${ flow.name }-${ mapping.transitionName }`,
-            sourceEntity: mapping.triggeringElementId,
-            handlerKind,
-            navigation: {
-                targetState: transition.to
-            }
-        };
-
-        return [
-            {
-                ...transition,
-                triggeredBy: [ trigger ]
-            }
-        ];
-    } );
-}
-
-function findStateTransitionHandle(
-    flow: UIExportedFlow,
-    prevStateOptions: Record<string, unknown> | undefined,
-    prevStateTransitions: string[] | undefined,
-    _toStateKey: string
-): string | null {
-    if ( !prevStateTransitions?.length ) {
-        return null;
-    }
-
-    const handles = prevStateOptions?.transitionHandles;
-
-    if ( typeof handles === "object" && handles !== null ) {
-        for ( const name of prevStateTransitions ) {
-            const handle = ( handles as Record<string, string> )[ name ];
-            if ( handle ) {
-                return `btn-${ handle }`;
-            }
-        }
-    }
-
-    const mappingHandle = flow.edgeSourceMappings?.find( ( mapping ) => {
-        return prevStateTransitions.includes( mapping.transitionName ) && mapping.targetFlowName === flow.name;
-    } );
-
-    if ( mappingHandle ) {
-        return `btn-${ mappingHandle.triggeringElementId }`;
-    }
-
-    return null;
-}
-
-export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes: Node[]; edges: Edge[] } {
-    // Build a unified graph for the dashboard viewer:
-    // - Module node
-    // - System flow nodes (+ their initial components)
-    // - UI flow nodes (+ state components)
-    // - Edges between nodes (module→flow, flow→component, component→modal, etc.)
-    const allNodes: Node[] = [];
-    const allEdges: Edge[] = [];
-    const edgeIds = new Set<string>();
-
-    const addEdge = ( edge: Edge ) => {
-        if ( edgeIds.has( edge.id ) ) {
-            return;
-        }
-        // Skip self-edges (edge from node to itself)
-        if ( edge.source === edge.target ) {
-            return;
-        }
-        edgeIds.add( edge.id );
-        allEdges.push( edge );
-    };
-    const flowIdMap = new Map<string, string>();
-    const systemFlowCompIds = new Map<string, string>();
-
-    const moduleNode = createModuleNode( moduleFlowsData.module, moduleFlowsData.module );
-    allNodes.push( moduleNode );
-    const moduleNodeId = moduleNode.id;
-
-    moduleFlowsData.systemFlows.forEach( ( flow ) => {
-        const flowNode = createFlowNode( flow, true );
-        const flowId = flowNode.id;
-        flowIdMap.set( flow.name, flowId );
-        allNodes.push( flowNode );
-        addEdge( createModuleToFlowEdge( moduleNodeId, flowId, flow.name ) );
-    } );
-
-    moduleFlowsData.flows.forEach( ( flow ) => {
-        const flowNode = createFlowNode( flow, false );
-        const flowId = flowNode.id;
-        flowIdMap.set( flow.name, flowId );
-        allNodes.push( flowNode );
-    } );
-
-    moduleFlowsData.systemFlows.forEach( ( flow ) => {
-        const flowId = flowIdMap.get( flow.name )!;
-        const initialComp = getInitialComponent( flow, moduleFlowsData.components );
-
-        if ( initialComp ) {
-            const compPreview = extractComponentPreview( initialComp );
-            const compId = `comp-sys-${ flow.name }-${ initialComp.name }`;
-            systemFlowCompIds.set( flow.name, compId );
-
-            const buttonModalConnections = findButtonModalConnections( flow, compPreview.modals );
-            const buttonFlowConnections = findButtonFlowConnections( flow );
-
-            const { buttonModalTriggers, buttonFlowTriggers } = buildButtonTriggers(
-                buttonModalConnections,
-                buttonFlowConnections,
-                compPreview.elementRows
-            );
-
-            allNodes.push( createComponentNode( compId, compPreview, buttonModalTriggers, buttonFlowTriggers, [], undefined, undefined, flow.name ) );
-            addEdge( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
-
-            addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
-            addModalNodesAndEdges( addEdge, allNodes, compId, compPreview, buttonModalConnections, undefined, flow.name );
-        }
-    } );
-
-    moduleFlowsData.flows.forEach( ( flow ) => {
-        const flowId = flowIdMap.get( flow.name )!;
-        const stateComponents = getFlowStateComponents( flow, moduleFlowsData.components );
-
-        if ( stateComponents.length > 1 ) {
-            buildMultiStateFlow( allNodes, addEdge, flow, flowId, stateComponents, moduleFlowsData.components, flowIdMap );
-            return;
-        }
-
-        const initialComp = getInitialComponent( flow, moduleFlowsData.components );
-        const stateKey = stateComponents[ 0 ]?.stateKey;
-        const stateTransitions = stateComponents[ 0 ]?.transitions;
-        const stateOptions = stateComponents[ 0 ]?.options;
-        const previewEmbedsGroup = getStatePreviewEmbedsGroup( stateOptions );
-
-        if ( initialComp ) {
-            buildSingleComponentFlow(
-                allNodes,
-                addEdge,
-                flow,
-                flowId,
-                initialComp,
-                stateKey,
-                stateTransitions,
-                previewEmbedsGroup,
-                stateOptions,
-                moduleFlowsData.components,
-                flowIdMap
-            );
-        }
-    } );
-
-    moduleFlowsData.systemFlows.forEach( ( systemFlow ) => {
-        const systemFlowId = flowIdMap.get( systemFlow.name );
-        if ( !systemFlowId ) {
-            return;
-        }
-
-        if ( systemFlow.edgeSourceMappings?.length ) {
-            return;
-        }
-
-        const isCommandsFlow = systemFlow.name.includes( "CommandsFlow" );
-
-        systemFlow.transitions?.forEach( ( transition ) => {
-            const targetFlowName = transition.to?.split( "/States/" )[ 0 ];
-            if ( !targetFlowName ) {
-                return;
-            }
-            const targetId = flowIdMap.get( targetFlowName );
-            if ( !targetId ) {
-                return;
-            }
-            const label = transition.from?.split( "/" ).pop() ?? transition.from ?? "";
-            addEdge( createSystemFlowTransitionEdge( systemFlowId, targetId, systemFlow.name, targetFlowName, label, isCommandsFlow ) );
-        } );
-    } );
-
-    return { nodes: allNodes, edges: allEdges };
-}
-
-function isSelectMenuTriggeredTransition(
-    transition: UIExportedFlow[ "transitions" ][ number ]
-): transition is SelectMenuTriggeredTransition {
-    return ( transition.triggeredBy ?? [] ).some( trigger => [ "string-select", "button", "user-select" ].includes( trigger.handlerKind ) );
-}
-
-function detectFanOutFromInitialState(
-    flow: UIExportedFlow,
-    stateKeys: Set<string>,
-    initialStateKey: string
-): { isFanOut: boolean; targetStateKeys: string[] } {
-    // Detect fan-out pattern: all transitions originate from the initial state
-    // and go to different target states (no UI triggers, programmatic transitions)
-    if ( !flow.transitions?.length || !initialStateKey ) {
-        return { isFanOut: false, targetStateKeys: [] };
-    }
-
-    const transitionsFromInitial = flow.transitions.filter( transition => {
-        // The 'from' field is the source state key for programmatic transitions
-        const isFromInitial = transition.from === initialStateKey;
-
-        // Only include transitions to known states within this flow (excluding self-transitions)
-        const isToKnownState = stateKeys.has( transition.to ) && transition.to !== initialStateKey;
-
-        // Exclude transitions with UI triggers (those are handled separately)
-        const hasNoUITrigger = !transition.triggeredBy?.length;
-
-        return isFromInitial && isToKnownState && hasNoUITrigger;
-    } );
-
-    // It's a fan-out if we have multiple transitions from initial state
-    const targetStateKeys = transitionsFromInitial.map( t => t.to );
-    const isFanOut = targetStateKeys.length > 1;
-
-    return { isFanOut, targetStateKeys };
-}
-
-function detectModalFirstFlow(
-    flow: UIExportedFlow,
-    initialStateOptions: Record<string, unknown> | undefined
-): { isModalFirst: boolean; modalName: string | null } {
-    // Detect "modal-first" pattern:
-    // 1. Initial state has executionStep: "default" (shows modal immediately)
-    // 2. At least one transition is triggered by a modal
-    const executionStep = initialStateOptions?.[ "executionStep" ];
-    const isDefaultStep = executionStep === "default";
-
-    if ( !isDefaultStep ) {
-        return { isModalFirst: false, modalName: null };
-    }
-
-    // Find modal trigger in transitions
-    const modalTrigger = flow.transitions.find( transition =>
-        transition.triggeredBy?.some( t => t.handlerKind === "modal" )
-    )?.triggeredBy?.find( t => t.handlerKind === "modal" );
-
-    if ( !modalTrigger ) {
-        return { isModalFirst: false, modalName: null };
-    }
-
-    return { isModalFirst: true, modalName: modalTrigger.sourceEntity };
-}
-
-function findWizardButtonInElements(
-    elementRows: ElementData[][],
-    wizardButtonName: string
-): string | null {
-    for ( const row of elementRows ) {
-        for ( const element of row ) {
-            if ( element.name === wizardButtonName ) {
-                return element.name;
-            }
-        }
-    }
-
-    return null;
-}
-
-type WizardTransition = {
+interface WizardTransition {
     buttonName: string;
     targetStateKey: string;
     targetStateName: string;
     isBackTransition: boolean;
     isFinishTransition: boolean;
-};
+}
 
-function getWizardTransitionsForState(
-    flow: UIExportedFlow,
-    currentStateKey: string,
-    stateKeyToIndex: Map<string, number>,
-    initialStateKey: string,
-    elementRows: ElementData[][]
-): WizardTransition[] {
-    const { BACK, NEXT, FINISH } = WIZARD_BUTTON_NAMES;
+interface FlowContext {
+    flow: UIExportedFlow;
+    flowId: string;
+    stateComponents: FlowStateComponent[];
+    stateKeys: Set<string>;
+    stateKeyToIndex: Map<string, number>;
+    stateKeyToCompId: Map<string, string>;
+    stateKeyToElementRows: Map<string, ElementData[][]>;
+    initialStateKey: string;
+    wizardConnectedTargets: Set<string>;
+    flowIdMap: Map<string, string>;
+}
 
-    const hasBackButton = findWizardButtonInElements( elementRows, BACK ) !== null;
-    const hasNextButton = findWizardButtonInElements( elementRows, NEXT ) !== null;
-    const hasFinishButton = findWizardButtonInElements( elementRows, FINISH ) !== null;
+type ModalConnection = { buttonName: string; modalName: string };
+type FlowConnection = { buttonName: string; targetFlowName: string };
+type TransitionWithTrigger = { triggeredBy: NonNullable<UIExportedFlow[ "transitions" ][ number ][ "triggeredBy" ]>; to: string };
 
-    if ( !hasBackButton && !hasNextButton && !hasFinishButton ) {
-        return [];
+class WizardAnalyzer {
+    private readonly context: FlowContext;
+
+    public constructor( context: FlowContext ) {
+        this.context = context;
     }
 
-    const currentIndex = stateKeyToIndex.get( currentStateKey );
-    if ( currentIndex === undefined ) {
-        return [];
-    }
+    public getTransitionsForState( stateKey: string, elementRows: ElementData[][] ): WizardTransition[] {
+        const { BACK, NEXT, FINISH } = WIZARD_BUTTON_NAMES;
+        const hasBack = this.hasButton( elementRows, BACK );
+        const hasNext = this.hasButton( elementRows, NEXT );
+        const hasFinish = this.hasButton( elementRows, FINISH );
 
-    const wizardTransitions: WizardTransition[] = [];
-
-    const transitionsFromCurrentState = flow.transitions.filter( t =>
-        t.from === currentStateKey && !t.triggeredBy?.length
-    );
-
-    for ( const transition of transitionsFromCurrentState ) {
-        const targetIndex = stateKeyToIndex.get( transition.to );
-        if ( targetIndex === undefined ) {
-            continue;
+        if ( !hasBack && !hasNext && !hasFinish ) {
+            return [];
         }
 
-        const targetStateName = transition.to.split( "/" ).pop() ?? transition.to;
-        let buttonName: string | null = null;
-
-        if ( targetIndex === currentIndex + 1 && hasNextButton ) {
-            buttonName = NEXT;
-        } else if ( targetIndex === currentIndex - 1 && hasBackButton ) {
-            buttonName = BACK;
-        } else if ( transition.to === initialStateKey && hasFinishButton ) {
-            buttonName = FINISH;
-        } else if ( transition.to === initialStateKey && hasBackButton && currentIndex === 1 ) {
-            buttonName = BACK;
+        const currentIndex = this.context.stateKeyToIndex.get( stateKey );
+        if ( currentIndex === undefined ) {
+            return [];
         }
 
-        if ( buttonName ) {
-            const isBackwardNavigation = buttonName === BACK || buttonName === FINISH;
+        const transitions = this.context.flow.transitions.filter( t =>
+            t.from === stateKey && !t.triggeredBy?.length
+        );
 
-            wizardTransitions.push( {
+        return transitions.flatMap( transition => {
+            const targetIndex = this.context.stateKeyToIndex.get( transition.to );
+            if ( targetIndex === undefined ) {
+                return [];
+            }
+
+            const targetStateName = transition.to.split( "/" ).pop() ?? transition.to;
+            let buttonName: string | null = null;
+
+            if ( targetIndex === currentIndex + 1 && hasNext ) {
+                buttonName = NEXT;
+            } else if ( targetIndex === currentIndex - 1 && hasBack ) {
+                buttonName = BACK;
+            } else if ( transition.to === this.context.initialStateKey && hasFinish ) {
+                buttonName = FINISH;
+            } else if ( transition.to === this.context.initialStateKey && hasBack && currentIndex === 1 ) {
+                buttonName = BACK;
+            }
+
+            if ( !buttonName ) {
+                return [];
+            }
+
+            const isBackward = buttonName === BACK || buttonName === FINISH;
+
+            return [ {
                 buttonName,
                 targetStateKey: transition.to,
                 targetStateName,
-                isBackTransition: isBackwardNavigation,
+                isBackTransition: isBackward,
                 isFinishTransition: buttonName === FINISH
-            } );
-        }
-    }
-
-    return wizardTransitions;
-}
-
-function getSelectMenuTriggeredTransitionsToKnownStates(
-    flow: UIExportedFlow,
-    stateKeys: Set<string>
-): SelectMenuTriggeredTransition[] {
-    return flow.transitions.filter( transition => {
-        if ( !stateKeys.has( transition.to ) ) {
-            return false;
-        }
-
-        return isSelectMenuTriggeredTransition( transition );
-    } );
-}
-
-function getStatePreviewDefaultVars(
-    options: FlowStateComponent[ "options" ],
-    embedDefinition?: UIExportEmbedDefinition
-): Record<string, string> {
-    if ( !options ) {
-        return {};
-    }
-
-    const preview = options[ "previewDefaultVars" ];
-    const previewVars = options[ "previewVars" ];
-
-    if ( ( !preview || typeof preview !== "object" || Array.isArray( preview ) ) && !previewVars ) {
-        return {};
-    }
-
-    const previewRecord = preview && typeof preview === "object" && !Array.isArray( preview )
-        ? preview as Record<string, unknown>
-        : {};
-    const entries = Object.entries( previewRecord ).filter( ( entry ): entry is [ string, string ] => typeof entry[ 1 ] === "string" );
-    const explicitDefaults = Object.fromEntries( entries );
-
-    const derivedDefaults = derivePreviewVarsFromEmbedDefinition( previewVars, embedDefinition );
-
-    return {
-        ...derivedDefaults,
-        ...explicitDefaults
-    };
-}
-
-function getStatePreviewEmbedsGroup( options: FlowStateComponent[ "options" ] ): string | undefined {
-    if ( !options ) {
-        return undefined;
-    }
-
-    const previewEmbedsGroup = options[ "previewEmbedsGroup" ];
-
-    if ( typeof previewEmbedsGroup !== "string" ) {
-        return undefined;
-    }
-
-    const trimmed = previewEmbedsGroup.trim();
-    return trimmed.length ? trimmed : undefined;
-}
-
-function derivePreviewVarsFromEmbedDefinition(
-    previewVars: unknown,
-    embedDefinition?: UIExportEmbedDefinition
-): Record<string, string> {
-    if ( !embedDefinition || !Array.isArray( previewVars ) ) {
-        return {};
-    }
-
-    const defaults = embedDefinition.defaultVars ?? {};
-    const options = embedDefinition.options ?? {};
-    const vars = embedDefinition.vars ?? {};
-    const result: Record<string, string> = {};
-
-    previewVars.forEach( ( key ) => {
-        if ( typeof key !== "string" || !key.length ) {
-            return;
-        }
-
-        const directDefault = defaults[ key ];
-        if ( typeof directDefault === "string" ) {
-            result[ key ] = directDefault;
-            return;
-        }
-
-        const optionValue = pickDefaultOptionValue( options[ key ] );
-        if ( optionValue ) {
-            result[ key ] = optionValue;
-            return;
-        }
-
-        const varToken = vars[ key ];
-        if ( typeof varToken === "string" ) {
-            result[ key ] = varToken;
-        }
-    } );
-
-    return result;
-}
-
-function pickDefaultOptionValue( option: UIExportEmbedDefinition[ "options" ][ string ] | undefined ): string | undefined {
-    if ( !option || typeof option !== "object" || Array.isArray( option ) ) {
-        return undefined;
-    }
-
-    const entries = Object.entries( option )
-        .filter( ( entry ): entry is [ string, string ] => typeof entry[ 1 ] === "string" );
-
-    if ( entries.length === 0 ) {
-        return undefined;
-    }
-
-    const defaultEntry = entries.find( ( [ key ] ) => key.toLowerCase().includes( "default" ) );
-    if ( defaultEntry ) {
-        return defaultEntry[ 1 ];
-    }
-
-    const tokenPattern = /\{[a-zA-Z0-9_]+\}/;
-    const literalEntry = entries.find( ( [ , value ] ) => !tokenPattern.test( value ) );
-    if ( literalEntry ) {
-        return literalEntry[ 1 ];
-    }
-
-    return entries[ 0 ][ 1 ];
-}
-
-function buildButtonTriggers(
-    buttonModalConnections: Array<{ buttonName: string; modalName: string }>,
-    buttonFlowConnections: Array<{ buttonName: string; targetFlowName: string }>,
-    elementRows: ElementData[][]
-): { buttonModalTriggers: ButtonModalTrigger[]; buttonFlowTriggers: ButtonFlowTrigger[] } {
-    const totalRows = elementRows.length;
-
-    const buttonModalTriggers: ButtonModalTrigger[] = buttonModalConnections.map( ( c ) => ( {
-        buttonName: c.buttonName,
-        modalName: c.modalName,
-        handlePosition: getButtonHandlePosition( c.buttonName, elementRows, totalRows )
-    } ) );
-
-    const buttonFlowTriggers: ButtonFlowTrigger[] = buttonFlowConnections.map( ( c ) => ( {
-        buttonName: c.buttonName,
-        targetFlowName: c.targetFlowName,
-        handlePosition: getButtonHandlePosition( c.buttonName, elementRows, totalRows )
-    } ) );
-
-    return { buttonModalTriggers, buttonFlowTriggers };
-}
-
-function addButtonFlowEdges(
-    addEdge: ( edge: Edge ) => void,
-    compId: string,
-    buttonFlowTriggers: ButtonFlowTrigger[],
-    flowIdMap: Map<string, string>,
-    currentFlowName: string
-): void {
-    buttonFlowTriggers.forEach( ( trigger ) => {
-        if ( trigger.targetFlowName === currentFlowName ) {
-            return;
-        }
-
-        const targetFlowId = flowIdMap.get( trigger.targetFlowName );
-        if ( !targetFlowId ) {
-            return;
-        }
-
-        addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
-    } );
-}
-
-function addModalNodesAndEdges(
-    addEdge: ( edge: Edge ) => void,
-    allNodes: Node[],
-    compId: string,
-    compPreview: ComponentPreview,
-    buttonModalConnections: Array<{ buttonName: string; modalName: string }>,
-    stateTransitions: string[] | undefined,
-    flowName?: string
-): void {
-    const hasExplicitTransitions = !!stateTransitions?.length;
-    const modalNames = buttonModalConnections.length > 0
-        ? buttonModalConnections.map( c => c.modalName )
-        : hasExplicitTransitions
-            ? []
-            : compPreview.modals;
-
-    if ( modalNames.length === 0 ) {
-        return;
-    }
-
-    const sortedModals = sortModalsByButtonOrder( modalNames, buttonModalConnections, compPreview.elementRows );
-
-    sortedModals.forEach( ( modal, modalIndex ) => {
-        const modalId = `modal-${ compId }-${ modalIndex }`;
-        const modalDef = compPreview.modalDefinitions.find( m => m.name === modal );
-
-        allNodes.push( createModalNode( modalId, modal, modalDef, flowName ) );
-
-        const connection = buttonModalConnections.find( c => c.modalName === modal );
-        const sourceHandle = connection ? `btn-${ connection.buttonName }` : "bottom";
-
-        addEdge( createComponentToModalEdge( compId, modalId, sourceHandle ) );
-    } );
-}
-
-function buildMultiStateFlow(
-    allNodes: Node[],
-    addEdge: ( edge: Edge ) => void,
-    flow: UIExportedFlow,
-    flowId: string,
-    stateComponents: FlowStateComponent[],
-    _allComponents: UIExportedComponent[],
-    flowIdMap: Map<string, string>
-): void {
-    // Multi-state flows are rendered as multiple component nodes (one per state).
-    //
-    // Edge drawing strategies (in priority order):
-    // 1. Modal-first: when flow starts with a modal, connect flow→modal→components
-    // 2. Select menu edges: when state changes are driven by a select menu
-    // 3. Fan-out edges: when all transitions originate from initial state (programmatic branching)
-    // 4. Step edges (fallback): draw "Step X" edges between state components in order
-    const stateKeys = new Set( stateComponents.map( stateComponent => stateComponent.stateKey ) );
-
-    const stateKeyToIndex = new Map<string, number>();
-    stateComponents.forEach( ( stateComponent, index ) => {
-        stateKeyToIndex.set( stateComponent.stateKey, index );
-    } );
-
-    // Detect modal-first pattern
-    const initialStateOptions = stateComponents[ 0 ]?.options as Record<string, unknown> | undefined;
-    const modalFirstInfo = detectModalFirstFlow( flow, initialStateOptions );
-
-    const selectMenuTransitions = getSelectMenuTriggeredTransitionsToKnownStates( flow, stateKeys );
-    const shouldUseSelectMenuStateEdges = selectMenuTransitions.length > 0 || hasEdgeSourceMappingTransitions( flow, stateKeys );
-
-    // Detect fan-out pattern: all transitions from initial state to different targets
-    const initialStateKey = stateComponents[ 0 ]?.stateKey;
-    const fanOutInfo = initialStateKey
-        ? detectFanOutFromInitialState( flow, stateKeys, initialStateKey )
-        : { isFanOut: false, targetStateKeys: [] };
-    const shouldUseFanOutEdges = !shouldUseSelectMenuStateEdges && !modalFirstInfo.isModalFirst && fanOutInfo.isFanOut;
-
-    const stateKeyToCompId = new Map<string, string>();
-    const stateKeyToElementRows = new Map<string, ElementData[][]>();
-    let prevCompId: string | null = null;
-    let initialCompId: string | undefined;
-    let initialElementRows: ElementData[][] | undefined;
-    const initialStateTransitionTriggers: StateTransitionTrigger[] = [];
-
-    const wizardEdgePairs = new Set<string>();
-    const wizardConnectedTargets = new Set<string>();
-    stateComponents.forEach( ( stateComp ) => {
-        const executionStep = typeof stateComp.options?.[ "executionStep" ] === "string"
-            ? stateComp.options[ "executionStep" ]
-            : undefined;
-
-        const previewEmbedsGroup = getStatePreviewEmbedsGroup( stateComp.options );
-        const compPreview = extractComponentPreview( stateComp.component, executionStep, previewEmbedsGroup );
-        const elemRows = compPreview.elementRows;
-
-        stateKeyToElementRows.set( stateComp.stateKey, elemRows );
-
-        const wizardTrans = getWizardTransitionsForState(
-            flow,
-            stateComp.stateKey,
-            stateKeyToIndex,
-            initialStateKey ?? "",
-            elemRows
-        );
-
-        wizardTrans.forEach( wt => {
-            wizardEdgePairs.add( `${ stateComp.stateKey }->${ wt.targetStateKey }` );
-            wizardConnectedTargets.add( wt.targetStateKey );
+            } ];
         } );
-    } );
-
-    // For modal-first flows, create modal node connected to flow
-    let modalFirstNodeId: string | undefined;
-    if ( modalFirstInfo.isModalFirst && modalFirstInfo.modalName ) {
-        const modalId = `modal-${ flow.name }-entry`;
-        const initialComp = stateComponents[ 0 ]?.component;
-        const modalDef = initialComp?.modals?.find( m => m.name === modalFirstInfo.modalName );
-
-        allNodes.push( createModalNode( modalId, modalFirstInfo.modalName, modalDef, flow.name ) );
-        addEdge( createFlowToComponentEdge( flowId, modalId, flow.name, modalFirstInfo.modalName ) );
-        modalFirstNodeId = modalId;
     }
 
-    stateComponents.forEach( ( stateComp, stepIndex ) => {
-        // For modal-first flows, skip the initial state (it just shows the modal)
-        if ( modalFirstInfo.isModalFirst && stepIndex === 0 ) {
+    private hasButton( elementRows: ElementData[][], buttonName: string ): boolean {
+        return elementRows.flat().some( el => el.name === buttonName );
+    }
+}
+
+class PreviewResolver {
+    public static resolve( component: UIExportedComponent, options?: FlowStateComponent[ "options" ], previewEmbedsGroup?: string ): ComponentPreview {
+        const executionStep = typeof options?.[ "executionStep" ] === "string" ? options[ "executionStep" ] : undefined;
+        const compPreview = extractComponentPreview( component, executionStep, previewEmbedsGroup );
+        const defaultVars = this.getDefaultVars( options, compPreview.embedDefinition );
+
+        if ( !compPreview.embed ) {
+            return compPreview;
+        }
+
+        return {
+            ...compPreview,
+            embed: {
+                ...compPreview.embed,
+                defaultVars: { ...( compPreview.embed.defaultVars ?? {} ), ...defaultVars }
+            }
+        };
+    }
+
+    public static getPreviewEmbedsGroup( options?: FlowStateComponent[ "options" ] ): string | undefined {
+        const group = options?.[ "previewEmbedsGroup" ];
+        return typeof group === "string" && group.trim().length ? group.trim() : undefined;
+    }
+
+    private static getDefaultVars( options?: FlowStateComponent[ "options" ], embedDef?: UIExportEmbedDefinition ): Record<string, string> {
+        if ( !options ) {
+            return {};
+        }
+
+        const preview = options[ "previewDefaultVars" ];
+        const previewVars = options[ "previewVars" ];
+
+        const explicit = preview && typeof preview === "object" && !Array.isArray( preview )
+            ? Object.fromEntries( Object.entries( preview ).filter( ( entry ): entry is [ string, string ] => typeof entry[ 1 ] === "string" ) )
+            : {};
+
+        const derived = this.deriveFromDefinition( previewVars, embedDef );
+
+        return { ...derived, ...explicit };
+    }
+
+    private static deriveFromDefinition( previewVars: unknown, embedDef?: UIExportEmbedDefinition ): Record<string, string> {
+        if ( !embedDef || !Array.isArray( previewVars ) ) {
+            return {};
+        }
+
+        const { defaultVars = {}, options = {}, vars = {} } = embedDef;
+        const result: Record<string, string> = {};
+
+        previewVars.forEach( key => {
+            if ( typeof key !== "string" || !key.length ) {
+                return;
+            }
+
+            if ( typeof defaultVars[ key ] === "string" ) {
+                result[ key ] = defaultVars[ key ];
+                return;
+            }
+
+            const optionValue = this.pickOptionValue( options[ key ] );
+            if ( optionValue ) {
+                result[ key ] = optionValue;
+                return;
+            }
+
+            if ( typeof vars[ key ] === "string" ) {
+                result[ key ] = vars[ key ];
+            }
+        } );
+
+        return result;
+    }
+
+    private static pickOptionValue( option: UIExportEmbedDefinition[ "options" ][ string ] | undefined ): string | undefined {
+        if ( !option || typeof option !== "object" || Array.isArray( option ) ) {
+            return undefined;
+        }
+
+        const entries = Object.entries( option ).filter( ( entry ): entry is [ string, string ] => typeof entry[ 1 ] === "string" );
+        if ( !entries.length ) {
+            return undefined;
+        }
+
+        const defaultEntry = entries.find( ( [ k ] ) => k.toLowerCase().includes( "default" ) );
+        if ( defaultEntry ) {
+            return defaultEntry[ 1 ];
+        }
+
+        const literalEntry = entries.find( ( [ , v ] ) => !/\{[a-zA-Z0-9_]+\}/.test( v ) );
+        return literalEntry?.[ 1 ] ?? entries[ 0 ][ 1 ];
+    }
+}
+
+class TriggerBuilder {
+    public static build(
+        buttonModalConnections: ModalConnection[],
+        buttonFlowConnections: FlowConnection[],
+        elementRows: ElementData[][]
+    ): { buttonModalTriggers: ButtonModalTrigger[]; buttonFlowTriggers: ButtonFlowTrigger[] } {
+        const totalRows = elementRows.length;
+
+        return {
+            buttonModalTriggers: buttonModalConnections.map( c => ( {
+                buttonName: c.buttonName,
+                modalName: c.modalName,
+                handlePosition: getButtonHandlePosition( c.buttonName, elementRows, totalRows )
+            } ) ),
+            buttonFlowTriggers: buttonFlowConnections.map( c => ( {
+                buttonName: c.buttonName,
+                targetFlowName: c.targetFlowName,
+                handlePosition: getButtonHandlePosition( c.buttonName, elementRows, totalRows )
+            } ) )
+        };
+    }
+}
+
+class EdgeBuilder {
+    private readonly addEdge: ( edge: Edge ) => void;
+    private readonly context: FlowContext;
+    private readonly wizardAnalyzer: WizardAnalyzer;
+
+    public constructor( addEdge: ( edge: Edge ) => void, context: FlowContext ) {
+        this.addEdge = addEdge;
+        this.context = context;
+        this.wizardAnalyzer = new WizardAnalyzer( context );
+    }
+
+    public addButtonFlowEdges( compId: string, triggers: ButtonFlowTrigger[] ): void {
+        triggers.forEach( trigger => {
+            if ( trigger.targetFlowName === this.context.flow.name ) {
+                return;
+            }
+
+            const targetFlowId = this.context.flowIdMap.get( trigger.targetFlowName );
+            if ( targetFlowId ) {
+                this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
+            }
+        } );
+    }
+
+    public addModalEdges( allNodes: Node[], compId: string, compPreview: ComponentPreview, buttonModalConnections: ModalConnection[], stateTransitions?: string[] ): void {
+        const hasExplicitTransitions = !!stateTransitions?.length;
+        const modalNames = buttonModalConnections.length > 0
+            ? buttonModalConnections.map( c => c.modalName )
+            : hasExplicitTransitions ? [] : compPreview.modals;
+
+        if ( !modalNames.length ) {
             return;
         }
 
-        const executionStep = typeof stateComp.options?.[ "executionStep" ] === "string"
-            ? stateComp.options[ "executionStep" ]
-            : undefined;
+        const sortedModals = sortModalsByButtonOrder( modalNames, buttonModalConnections, compPreview.elementRows );
 
-        const previewEmbedsGroup = getStatePreviewEmbedsGroup( stateComp.options );
-        const compPreview = extractComponentPreview( stateComp.component, executionStep, previewEmbedsGroup );
-        const statePreviewDefaultVars = getStatePreviewDefaultVars( stateComp.options, compPreview.embedDefinition );
-        const resolvedEmbed = compPreview.embed
-            ? {
-                ...compPreview.embed,
-                defaultVars: {
-                    ...( compPreview.embed.defaultVars ?? {} ),
-                    ...statePreviewDefaultVars
-                }
+        sortedModals.forEach( ( modal, idx ) => {
+            const modalId = `modal-${ compId }-${ idx }`;
+            const modalDef = compPreview.modalDefinitions.find( m => m.name === modal );
+
+            allNodes.push( createModalNode( modalId, modal, modalDef, this.context.flow.name ) );
+
+            const connection = buttonModalConnections.find( c => c.modalName === modal );
+            const sourceHandle = connection ? `btn-${ connection.buttonName }` : "bottom";
+
+            this.addEdge( createComponentToModalEdge( compId, modalId, sourceHandle ) );
+        } );
+    }
+
+    public addWizardEdges(): void {
+        this.context.stateComponents.forEach( stateComp => {
+            const sourceCompId = this.context.stateKeyToCompId.get( stateComp.stateKey );
+            const elementRows = this.context.stateKeyToElementRows.get( stateComp.stateKey );
+
+            if ( !sourceCompId || !elementRows ) {
+                return;
             }
-            : undefined;
-        const compPreviewWithStateDefaults: ComponentPreview = {
-            ...compPreview,
-            embed: resolvedEmbed
-        };
-        const compId = `comp-${ flow.name }-${ stateComp.component.name }-${ stepIndex }`;
-        stateKeyToCompId.set( stateComp.stateKey, compId );
-        stateKeyToElementRows.set( stateComp.stateKey, compPreviewWithStateDefaults.elementRows );
 
-        const componentButtons = compPreviewWithStateDefaults.elementRows.flat().map( el => el.name );
-        let buttonModalConnections = findButtonModalConnections( flow, compPreviewWithStateDefaults.modals, stateComp.transitions );
+            const transitions = this.wizardAnalyzer.getTransitionsForState( stateComp.stateKey, elementRows );
 
-        if ( buttonModalConnections.length === 0 && compPreviewWithStateDefaults.modals.length > 0 && !stateComp.transitions?.length ) {
-            buttonModalConnections = inferButtonModalConnections( componentButtons, compPreviewWithStateDefaults.modals );
-        }
+            transitions.forEach( wt => {
+                const targetCompId = this.context.stateKeyToCompId.get( wt.targetStateKey );
+                if ( !targetCompId ) {
+                    return;
+                }
 
-        const buttonFlowConnections = findButtonFlowConnections( flow );
+                const isForward = !wt.isBackTransition && !wt.isFinishTransition;
+                const targetHandle = wt.isFinishTransition ? "right" : wt.isBackTransition ? "left" : undefined;
 
-        const { buttonModalTriggers, buttonFlowTriggers } = buildButtonTriggers(
-            buttonModalConnections,
-            buttonFlowConnections,
-            compPreviewWithStateDefaults.elementRows
-        );
+                this.addEdge( createComponentToComponentEdge(
+                    sourceCompId,
+                    targetCompId,
+                    this.context.flow.name,
+                    wt.buttonName,
+                    wt.targetStateName,
+                    targetHandle,
+                    wt.isBackTransition || wt.isFinishTransition,
+                    isForward ? 10 : 1
+                ) );
+            } );
+        } );
+    }
 
-        const wizardTransitionsForNode = getWizardTransitionsForState(
-            flow,
-            stateComp.stateKey,
-            stateKeyToIndex,
-            initialStateKey ?? "",
-            compPreviewWithStateDefaults.elementRows
-        );
+    public addSelectMenuEdges( initialCompId: string, initialElementRows: ElementData[][] ): void {
+        const elementNames = new Set( initialElementRows.flat().map( el => el.name ) );
+        const transitions = this.getSelectMenuTransitions( initialElementRows );
+        const connectedTargets = new Set<string>();
 
-        const wizardStateTransitionTriggers: StateTransitionTrigger[] = wizardTransitionsForNode.map( wt => ( {
-            elementName: wt.buttonName,
-            handlePosition: getButtonHandlePosition( wt.buttonName, compPreviewWithStateDefaults.elementRows, compPreviewWithStateDefaults.elementRows.length )
-        } ) );
+        transitions.forEach( transition => {
+            const trigger = ( transition.triggeredBy ?? [] ).find( t =>
+                [ "string-select", "button", "user-select" ].includes( t.handlerKind )
+            );
 
-        const stateTransitionTriggersForNode = stepIndex === 0
-            ? [ ...initialStateTransitionTriggers, ...wizardStateTransitionTriggers ]
-            : wizardStateTransitionTriggers;
-
-        allNodes.push(
-            createComponentNode(
-                compId,
-                compPreviewWithStateDefaults,
-                buttonModalTriggers,
-                buttonFlowTriggers,
-                stateTransitionTriggersForNode,
-                `${ stateComp.stateName } - ${ compPreview.name }`,
-                stateComp.stateKey,
-                flow.name
-            )
-        );
-
-        if ( modalFirstInfo.isModalFirst && modalFirstNodeId ) {
-            // For modal-first flows, connect modal to result components
-            const label = stateComp.stateName;
-            addEdge( createModalToComponentEdge( modalFirstNodeId, compId, flow.name, label ) );
-        } else if ( stepIndex === 0 ) {
-            addEdge( createFlowToComponentEdge( flowId, compId, flow.name, stateComp.component.name ) );
-            initialCompId = compId;
-            initialElementRows = compPreviewWithStateDefaults.elementRows;
-        } else if ( !shouldUseSelectMenuStateEdges && !shouldUseFanOutEdges && prevCompId ) {
-            // Linear step edges (fallback when no special edge strategy applies)
-            const sourceHandle = findStateTransitionHandle(
-                flow,
-                stateComponents[ stepIndex - 1 ].options as Record<string, unknown> | undefined,
-                stateComponents[ stepIndex - 1 ].transitions,
-                stateComp.stateKey
-            ) ?? "bottom";
-
-            addEdge( createStepTransitionEdge( prevCompId, compId, flow.name, stepIndex, sourceHandle ) );
-        }
-
-        prevCompId = compId;
-
-        // Skip adding modals for modal-first flows (modal already created at flow level)
-        if ( !modalFirstInfo.isModalFirst ) {
-            addModalNodesAndEdges( addEdge, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateComp.transitions, flow.name );
-        }
-        addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
-    } );
-
-    if ( shouldUseSelectMenuStateEdges && initialCompId && initialElementRows ) {
-        const sourceCompId = initialCompId;
-        const sourceElementRows = initialElementRows;
-
-        const elementNames = new Set( sourceElementRows.flat().map( element => element.name ) );
-        const totalRows = sourceElementRows.length;
-
-        const transitionsToRender = selectMenuTransitions.length > 0
-            ? selectMenuTransitions
-            : getEdgeSourceMappingTransitions( flow, stateKeys, sourceElementRows );
-
-        const uniqueTriggerElements = new Set<string>();
-        const connectedTargetStates = new Set<string>();
-
-        transitionsToRender.forEach( transition => {
-            const trigger = ( transition.triggeredBy ?? [] ).find( t => [ "string-select", "button", "user-select" ].includes( t.handlerKind ) );
             if ( !trigger ) {
                 return;
             }
 
-            const targetCompId = stateKeyToCompId.get( transition.to );
+            const targetCompId = this.context.stateKeyToCompId.get( transition.to );
             if ( !targetCompId ) {
                 return;
             }
 
             const label = transition.to.split( "/" ).pop() ?? transition.to;
-            connectedTargetStates.add( transition.to );
+            connectedTargets.add( transition.to );
 
             if ( elementNames.has( trigger.sourceEntity ) ) {
-                uniqueTriggerElements.add( trigger.sourceEntity );
-                addEdge( createComponentToComponentEdge( sourceCompId, targetCompId, flow.name, trigger.sourceEntity, label ) );
-                return;
+                this.addEdge( createComponentToComponentEdge( initialCompId, targetCompId, this.context.flow.name, trigger.sourceEntity, label ) );
+            } else if ( !this.context.wizardConnectedTargets.has( transition.to ) ) {
+                this.addEdge( createComponentToStateFallbackEdge( initialCompId, targetCompId, this.context.flow.name, label ) );
             }
-
-            if ( wizardConnectedTargets.has( transition.to ) ) {
-                return;
-            }
-
-            addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
         } );
 
-        uniqueTriggerElements.forEach( elementName => {
-            initialStateTransitionTriggers.push( {
-                elementName,
-                handlePosition: getButtonHandlePosition( elementName, sourceElementRows, totalRows )
-            } );
-        } );
+        this.addFallbackEdgesForUnconnected( initialCompId, connectedTargets );
+    }
 
-        const wizardConnectedFromOtherStates = new Set<string>();
-
-        stateComponents.forEach( stateComp => {
-            const elemRows = stateKeyToElementRows.get( stateComp.stateKey );
-            if ( !elemRows ) {
+    public addFanOutEdges( initialCompId: string ): void {
+        this.context.stateComponents.slice( 1 ).forEach( stateComp => {
+            if ( this.context.wizardConnectedTargets.has( stateComp.stateKey ) ) {
                 return;
             }
 
-            const wizardTrans = getWizardTransitionsForState(
-                flow,
-                stateComp.stateKey,
-                stateKeyToIndex,
-                initialStateKey ?? "",
-                elemRows
-            );
-
-            wizardTrans.forEach( wt => {
-                wizardConnectedFromOtherStates.add( wt.targetStateKey );
-            } );
-        } );
-
-        stateComponents.slice( 1 ).forEach( ( stateComponent ) => {
-            if ( connectedTargetStates.has( stateComponent.stateKey ) ) {
-                return;
+            const targetCompId = this.context.stateKeyToCompId.get( stateComp.stateKey );
+            if ( targetCompId ) {
+                this.addEdge( createComponentToStateFallbackEdge( initialCompId, targetCompId, this.context.flow.name, stateComp.stateName ) );
             }
-
-            if ( wizardConnectedFromOtherStates.has( stateComponent.stateKey ) ) {
-                return;
-            }
-
-            if ( wizardConnectedTargets.has( stateComponent.stateKey ) ) {
-                return;
-            }
-
-            const targetCompId = stateKeyToCompId.get( stateComponent.stateKey );
-            if ( !targetCompId ) {
-                return;
-            }
-
-            const label = stateComponent.stateName;
-            addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
         } );
     }
 
-    // Fan-out edges: programmatic transitions from initial state to multiple targets
-    if ( shouldUseFanOutEdges && initialCompId ) {
-        const fanOutSourceCompId = initialCompId;
-        const wizardConnectedInFanOut = new Set<string>();
+    private getSelectMenuTransitions( elementRows: ElementData[][] ): TransitionWithTrigger[] {
+        const { flow, stateKeys } = this.context;
+        const selectMenuTransitions = flow.transitions.filter( t =>
+            stateKeys.has( t.to ) && t.triggeredBy?.some( tr => [ "string-select", "button", "user-select" ].includes( tr.handlerKind ) )
+        );
 
-        stateComponents.forEach( stateComp => {
-            const elemRows = stateKeyToElementRows.get( stateComp.stateKey );
-            if ( !elemRows ) {
-                return;
+        if ( selectMenuTransitions.length > 0 ) {
+            return selectMenuTransitions as TransitionWithTrigger[];
+        }
+
+        return this.getEdgeSourceMappingTransitions( elementRows );
+    }
+
+    private getEdgeSourceMappingTransitions( elementRows: ElementData[][] ): TransitionWithTrigger[] {
+        const { flow, stateKeys } = this.context;
+        if ( !flow.edgeSourceMappings?.length ) {
+            return [];
+        }
+
+        const transitionByName = new Map( flow.transitions.map( t => [ t.from, t ] ) );
+        const elementByName = new Map( elementRows.flat().map( el => [ el.name, el ] ) );
+
+        return flow.edgeSourceMappings.flatMap( mapping => {
+            if ( mapping.targetFlowName !== flow.name ) {
+                return [];
             }
 
-            const wizardTrans = getWizardTransitionsForState(
-                flow,
-                stateComp.stateKey,
-                stateKeyToIndex,
-                initialStateKey ?? "",
-                elemRows
-            );
-
-            wizardTrans.forEach( wt => {
-                wizardConnectedInFanOut.add( wt.targetStateKey );
-            } );
-        } );
-
-        stateComponents.slice( 1 ).forEach( ( stateComponent ) => {
-            if ( wizardConnectedInFanOut.has( stateComponent.stateKey ) ) {
-                return;
+            const transition = transitionByName.get( mapping.transitionName );
+            if ( !transition || !stateKeys.has( transition.to ) ) {
+                return [];
             }
 
-            if ( wizardConnectedTargets.has( stateComponent.stateKey ) ) {
-                return;
-            }
+            const element = elementByName.get( mapping.triggeringElementId );
+            const handlerKind = this.inferHandlerKind( element, mapping.triggeringElementId );
 
-            const targetCompId = stateKeyToCompId.get( stateComponent.stateKey );
-            if ( !targetCompId ) {
-                return;
-            }
-
-            const label = stateComponent.stateName;
-            addEdge( createComponentToStateFallbackEdge( fanOutSourceCompId, targetCompId, flow.name, label ) );
+            return [ {
+                to: transition.to,
+                triggeredBy: [ {
+                    handlerId: `flow-edge-${ flow.name }-${ mapping.transitionName }`,
+                    sourceEntity: mapping.triggeringElementId,
+                    handlerKind
+                } ]
+            } ];
         } );
     }
 
-    stateComponents.forEach( ( stateComponent ) => {
-        const sourceCompId = stateKeyToCompId.get( stateComponent.stateKey );
-        const elementRows = stateKeyToElementRows.get( stateComponent.stateKey );
+    private inferHandlerKind( element: ElementData | undefined, elementName: string ): "button" | "string-select" | "user-select" {
+        const elementType = element?.definition?.elementType;
 
-        if ( !sourceCompId || !elementRows ) {
+        if ( elementType === "user-select" ) {
+            return "user-select";
+        }
+        if ( elementType?.includes( "select" ) ) {
+            return "string-select";
+        }
+        if ( elementName.toLowerCase().includes( "select" ) ) {
+            return "string-select";
+        }
+        return "button";
+    }
+
+    private addFallbackEdgesForUnconnected( sourceCompId: string, connectedTargets: Set<string> ): void {
+        this.context.stateComponents.slice( 1 ).forEach( stateComp => {
+            if ( connectedTargets.has( stateComp.stateKey ) || this.context.wizardConnectedTargets.has( stateComp.stateKey ) ) {
+                return;
+            }
+
+            const targetCompId = this.context.stateKeyToCompId.get( stateComp.stateKey );
+            if ( targetCompId ) {
+                this.addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, this.context.flow.name, stateComp.stateName ) );
+            }
+        } );
+    }
+}
+
+class FlowPatternDetector {
+    public static detectModalFirst( flow: UIExportedFlow, initialStateOptions?: Record<string, unknown> ): { isModalFirst: boolean; modalName: string | null } {
+        const executionStep = initialStateOptions?.[ "executionStep" ];
+        if ( executionStep !== "default" ) {
+            return { isModalFirst: false, modalName: null };
+        }
+
+        const modalTrigger = flow.transitions.find( t =>
+            t.triggeredBy?.some( tr => tr.handlerKind === "modal" )
+        )?.triggeredBy?.find( tr => tr.handlerKind === "modal" );
+
+        return modalTrigger
+            ? { isModalFirst: true, modalName: modalTrigger.sourceEntity }
+            : { isModalFirst: false, modalName: null };
+    }
+
+    public static detectFanOut( flow: UIExportedFlow, stateKeys: Set<string>, initialStateKey: string ): { isFanOut: boolean; targetStateKeys: string[] } {
+        if ( !flow.transitions?.length || !initialStateKey ) {
+            return { isFanOut: false, targetStateKeys: [] };
+        }
+
+        const targets = flow.transitions
+            .filter( t => t.from === initialStateKey && stateKeys.has( t.to ) && t.to !== initialStateKey && !t.triggeredBy?.length )
+            .map( t => t.to );
+
+        return { isFanOut: targets.length > 1, targetStateKeys: targets };
+    }
+
+    public static hasSelectMenuEdges( flow: UIExportedFlow, stateKeys: Set<string> ): boolean {
+        const hasSelectMenuTransitions = flow.transitions.some( t =>
+            stateKeys.has( t.to ) && t.triggeredBy?.some( tr => [ "string-select", "button", "user-select" ].includes( tr.handlerKind ) )
+        );
+
+        if ( hasSelectMenuTransitions ) {
+            return true;
+        }
+
+        if ( !flow.edgeSourceMappings?.length ) {
+            return false;
+        }
+
+        const transitionByName = new Map( flow.transitions.map( t => [ t.from, t ] ) );
+        return flow.edgeSourceMappings.some( mapping => {
+            if ( mapping.targetFlowName !== flow.name ) {
+                return false;
+            }
+            const transition = transitionByName.get( mapping.transitionName );
+            return transition && stateKeys.has( transition.to );
+        } );
+    }
+}
+
+class MultiStateFlowBuilder {
+    private readonly allNodes: Node[];
+    private readonly addEdge: ( edge: Edge ) => void;
+    private readonly context: FlowContext;
+    private readonly edgeBuilder: EdgeBuilder;
+    private readonly wizardAnalyzer: WizardAnalyzer;
+
+    private initialCompId?: string;
+    private initialElementRows?: ElementData[][];
+    private readonly initialStateTransitionTriggers: StateTransitionTrigger[] = [];
+
+    public constructor( allNodes: Node[], addEdge: ( edge: Edge ) => void, context: FlowContext ) {
+        this.allNodes = allNodes;
+        this.addEdge = addEdge;
+        this.context = context;
+        this.edgeBuilder = new EdgeBuilder( addEdge, context );
+        this.wizardAnalyzer = new WizardAnalyzer( context );
+    }
+
+    public build(): void {
+        const initialStateOptions = this.context.stateComponents[ 0 ]?.options as Record<string, unknown> | undefined;
+        const modalFirst = FlowPatternDetector.detectModalFirst( this.context.flow, initialStateOptions );
+        const useSelectMenu = FlowPatternDetector.hasSelectMenuEdges( this.context.flow, this.context.stateKeys );
+        const fanOut = FlowPatternDetector.detectFanOut( this.context.flow, this.context.stateKeys, this.context.initialStateKey );
+        const useFanOut = !useSelectMenu && !modalFirst.isModalFirst && fanOut.isFanOut;
+
+        this.precomputeWizardConnections();
+
+        let modalFirstNodeId: string | undefined;
+        if ( modalFirst.isModalFirst && modalFirst.modalName ) {
+            modalFirstNodeId = this.createModalFirstEntry( modalFirst.modalName );
+        }
+
+        this.buildStateNodes( modalFirst.isModalFirst, modalFirstNodeId, useSelectMenu, useFanOut );
+
+        if ( useSelectMenu && this.initialCompId && this.initialElementRows ) {
+            this.edgeBuilder.addSelectMenuEdges( this.initialCompId, this.initialElementRows );
+        } else if ( useFanOut && this.initialCompId ) {
+            this.edgeBuilder.addFanOutEdges( this.initialCompId );
+        }
+
+        this.edgeBuilder.addWizardEdges();
+    }
+
+    private precomputeWizardConnections(): void {
+        this.context.stateComponents.forEach( stateComp => {
+            const previewEmbedsGroup = PreviewResolver.getPreviewEmbedsGroup( stateComp.options );
+            const compPreview = PreviewResolver.resolve( stateComp.component, stateComp.options, previewEmbedsGroup );
+
+            this.context.stateKeyToElementRows.set( stateComp.stateKey, compPreview.elementRows );
+
+            const transitions = this.wizardAnalyzer.getTransitionsForState( stateComp.stateKey, compPreview.elementRows );
+            transitions.forEach( wt => this.context.wizardConnectedTargets.add( wt.targetStateKey ) );
+        } );
+    }
+
+    private createModalFirstEntry( modalName: string ): string {
+        const modalId = `modal-${ this.context.flow.name }-entry`;
+        const initialComp = this.context.stateComponents[ 0 ]?.component;
+        const modalDef = initialComp?.modals?.find( m => m.name === modalName );
+
+        this.allNodes.push( createModalNode( modalId, modalName, modalDef, this.context.flow.name ) );
+        this.addEdge( createFlowToComponentEdge( this.context.flowId, modalId, this.context.flow.name, modalName ) );
+
+        return modalId;
+    }
+
+    private buildStateNodes( isModalFirst: boolean, modalFirstNodeId: string | undefined, useSelectMenu: boolean, useFanOut: boolean ): void {
+        let prevCompId: string | null = null;
+
+        this.context.stateComponents.forEach( ( stateComp, stepIndex ) => {
+            if ( isModalFirst && stepIndex === 0 ) {
+                return;
+            }
+
+            const previewEmbedsGroup = PreviewResolver.getPreviewEmbedsGroup( stateComp.options );
+            const compPreview = PreviewResolver.resolve( stateComp.component, stateComp.options, previewEmbedsGroup );
+            const compId = `comp-${ this.context.flow.name }-${ stateComp.component.name }-${ stepIndex }`;
+
+            this.context.stateKeyToCompId.set( stateComp.stateKey, compId );
+            this.context.stateKeyToElementRows.set( stateComp.stateKey, compPreview.elementRows );
+
+            const buttonModalConnections = this.getModalConnections( stateComp, compPreview );
+            const buttonFlowConnections = findButtonFlowConnections( this.context.flow );
+            const { buttonModalTriggers, buttonFlowTriggers } = TriggerBuilder.build( buttonModalConnections, buttonFlowConnections, compPreview.elementRows );
+
+            const wizardTriggers = this.wizardAnalyzer.getTransitionsForState( stateComp.stateKey, compPreview.elementRows )
+                .map( wt => ( {
+                    elementName: wt.buttonName,
+                    handlePosition: getButtonHandlePosition( wt.buttonName, compPreview.elementRows, compPreview.elementRows.length )
+                } ) );
+
+            const stateTransitionTriggers = stepIndex === 0
+                ? [ ...this.initialStateTransitionTriggers, ...wizardTriggers ]
+                : wizardTriggers;
+
+            this.allNodes.push( createComponentNode(
+                compId,
+                compPreview,
+                buttonModalTriggers,
+                buttonFlowTriggers,
+                stateTransitionTriggers,
+                `${ stateComp.stateName } - ${ compPreview.name }`,
+                stateComp.stateKey,
+                this.context.flow.name
+            ) );
+
+            this.addEdgesForState( stepIndex, compId, prevCompId, isModalFirst, modalFirstNodeId, useSelectMenu, useFanOut, stateComp );
+
+            if ( !isModalFirst ) {
+                this.edgeBuilder.addModalEdges( this.allNodes, compId, compPreview, buttonModalConnections, stateComp.transitions );
+            }
+            this.edgeBuilder.addButtonFlowEdges( compId, buttonFlowTriggers );
+
+            prevCompId = compId;
+        } );
+    }
+
+    private getModalConnections( stateComp: FlowStateComponent, compPreview: ComponentPreview ): ModalConnection[] {
+        const componentButtons = compPreview.elementRows.flat().map( el => el.name );
+        let connections = findButtonModalConnections( this.context.flow, compPreview.modals, stateComp.transitions );
+
+        if ( !connections.length && compPreview.modals.length > 0 && !stateComp.transitions?.length ) {
+            connections = inferButtonModalConnections( componentButtons, compPreview.modals );
+        }
+
+        return connections;
+    }
+
+    private addEdgesForState(
+        stepIndex: number,
+        compId: string,
+        prevCompId: string | null,
+        isModalFirst: boolean,
+        modalFirstNodeId: string | undefined,
+        useSelectMenu: boolean,
+        useFanOut: boolean,
+        stateComp: FlowStateComponent
+    ): void {
+        if ( isModalFirst && modalFirstNodeId ) {
+            this.addEdge( createModalToComponentEdge( modalFirstNodeId, compId, this.context.flow.name, stateComp.stateName ) );
+        } else if ( stepIndex === 0 ) {
+            this.addEdge( createFlowToComponentEdge( this.context.flowId, compId, this.context.flow.name, stateComp.component.name ) );
+            this.initialCompId = compId;
+            this.initialElementRows = this.context.stateKeyToElementRows.get( stateComp.stateKey );
+        } else if ( !useSelectMenu && !useFanOut && prevCompId ) {
+            const sourceHandle = this.findTransitionHandle( stepIndex, stateComp.stateKey ) ?? "bottom";
+            this.addEdge( createStepTransitionEdge( prevCompId, compId, this.context.flow.name, stepIndex, sourceHandle ) );
+        }
+    }
+
+    private findTransitionHandle( stepIndex: number, _toStateKey: string ): string | null {
+        const prevState = this.context.stateComponents[ stepIndex - 1 ];
+        const prevOptions = prevState?.options as Record<string, unknown> | undefined;
+        const prevTransitions = prevState?.transitions;
+
+        if ( !prevTransitions?.length ) {
+            return null;
+        }
+
+        const handles = prevOptions?.transitionHandles;
+        if ( typeof handles === "object" && handles !== null ) {
+            for ( const name of prevTransitions ) {
+                const handle = ( handles as Record<string, string> )[ name ];
+                if ( handle ) {
+                    return `btn-${ handle }`;
+                }
+            }
+        }
+
+        const mapping = this.context.flow.edgeSourceMappings?.find( m =>
+            prevTransitions.includes( m.transitionName ) && m.targetFlowName === this.context.flow.name
+        );
+
+        return mapping ? `btn-${ mapping.triggeringElementId }` : null;
+    }
+}
+
+class SingleComponentFlowBuilder {
+    private readonly allNodes: Node[];
+    private readonly addEdge: ( edge: Edge ) => void;
+    private readonly flow: UIExportedFlow;
+    private readonly flowId: string;
+    private readonly flowIdMap: Map<string, string>;
+
+    public constructor( allNodes: Node[], addEdge: ( edge: Edge ) => void, flow: UIExportedFlow, flowId: string, flowIdMap: Map<string, string> ) {
+        this.allNodes = allNodes;
+        this.addEdge = addEdge;
+        this.flow = flow;
+        this.flowId = flowId;
+        this.flowIdMap = flowIdMap;
+    }
+
+    public build( initialComp: UIExportedComponent, stateKey?: string, stateTransitions?: string[], stateOptions?: FlowStateComponent[ "options" ] ): void {
+        const previewEmbedsGroup = PreviewResolver.getPreviewEmbedsGroup( stateOptions );
+        const compPreview = PreviewResolver.resolve( initialComp, stateOptions, previewEmbedsGroup );
+        const compId = `comp-${ this.flow.name }-${ initialComp.name }`;
+
+        const componentButtons = compPreview.elementRows.flat().map( el => el.name );
+        let buttonModalConnections = findButtonModalConnections( this.flow, compPreview.modals, stateTransitions );
+
+        if ( !buttonModalConnections.length && compPreview.modals.length > 0 && !stateTransitions?.length ) {
+            buttonModalConnections = inferButtonModalConnections( componentButtons, compPreview.modals );
+        }
+
+        const buttonFlowConnections = findButtonFlowConnections( this.flow );
+        const { buttonModalTriggers, buttonFlowTriggers } = TriggerBuilder.build( buttonModalConnections, buttonFlowConnections, compPreview.elementRows );
+
+        this.allNodes.push( createComponentNode( compId, compPreview, buttonModalTriggers, buttonFlowTriggers, [], undefined, stateKey, this.flow.name ) );
+        this.addEdge( createFlowToComponentEdge( this.flowId, compId, this.flow.name, initialComp.name ) );
+
+        buttonFlowTriggers.forEach( trigger => {
+            if ( trigger.targetFlowName === this.flow.name ) {
+                return;
+            }
+            const targetFlowId = this.flowIdMap.get( trigger.targetFlowName );
+            if ( targetFlowId ) {
+                this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
+            }
+        } );
+
+        const sortedModals = sortModalsByButtonOrder( compPreview.modals, buttonModalConnections, compPreview.elementRows );
+        sortedModals.forEach( ( modal, idx ) => {
+            const modalId = `modal-${ compId }-${ idx }`;
+            const modalDef = compPreview.modalDefinitions.find( m => m.name === modal );
+
+            this.allNodes.push( createModalNode( modalId, modal, modalDef, this.flow.name ) );
+
+            const connection = buttonModalConnections.find( c => c.modalName === modal );
+            const sourceHandle = connection ? `btn-${ connection.buttonName }` : "bottom";
+
+            this.addEdge( createComponentToModalEdge( compId, modalId, sourceHandle ) );
+        } );
+    }
+}
+
+class FlowGraphBuilder {
+    private readonly data: ModuleFlowsResponse;
+    private readonly allNodes: Node[] = [];
+    private readonly allEdges: Edge[] = [];
+    private readonly edgeIds = new Set<string>();
+    private readonly flowIdMap = new Map<string, string>();
+    private readonly systemFlowCompIds = new Map<string, string>();
+
+    public constructor( data: ModuleFlowsResponse ) {
+        this.data = data;
+    }
+
+    public build(): { nodes: Node[]; edges: Edge[] } {
+        this.buildModuleNode();
+        this.buildSystemFlowNodes();
+        this.buildFlowNodes();
+        this.buildSystemFlowComponents();
+        this.buildFlowComponents();
+        this.buildSystemFlowTransitions();
+
+        return { nodes: this.allNodes, edges: this.allEdges };
+    }
+
+    private addEdge( edge: Edge ): void {
+        if ( this.edgeIds.has( edge.id ) || edge.source === edge.target ) {
+            return;
+        }
+        this.edgeIds.add( edge.id );
+        this.allEdges.push( edge );
+    }
+
+    private buildModuleNode(): void {
+        const moduleNode = createModuleNode( this.data.module, this.data.module );
+        this.allNodes.push( moduleNode );
+    }
+
+    private buildSystemFlowNodes(): void {
+        const moduleNodeId = this.allNodes[ 0 ].id;
+
+        this.data.systemFlows.forEach( flow => {
+            const flowNode = createFlowNode( flow, true );
+            this.flowIdMap.set( flow.name, flowNode.id );
+            this.allNodes.push( flowNode );
+            this.addEdge( createModuleToFlowEdge( moduleNodeId, flowNode.id, flow.name ) );
+        } );
+    }
+
+    private buildFlowNodes(): void {
+        this.data.flows.forEach( flow => {
+            const flowNode = createFlowNode( flow, false );
+            this.flowIdMap.set( flow.name, flowNode.id );
+            this.allNodes.push( flowNode );
+        } );
+    }
+
+    private buildSystemFlowComponents(): void {
+        this.data.systemFlows.forEach( flow => {
+            const flowId = this.flowIdMap.get( flow.name )!;
+            const initialComp = getInitialComponent( flow, this.data.components );
+
+            if ( !initialComp ) {
+                return;
+            }
+
+            const compPreview = extractComponentPreview( initialComp );
+            const compId = `comp-sys-${ flow.name }-${ initialComp.name }`;
+            this.systemFlowCompIds.set( flow.name, compId );
+
+            const buttonModalConnections = findButtonModalConnections( flow, compPreview.modals );
+            const buttonFlowConnections = findButtonFlowConnections( flow );
+            const { buttonModalTriggers, buttonFlowTriggers } = TriggerBuilder.build( buttonModalConnections, buttonFlowConnections, compPreview.elementRows );
+
+            this.allNodes.push( createComponentNode( compId, compPreview, buttonModalTriggers, buttonFlowTriggers, [], undefined, undefined, flow.name ) );
+            this.addEdge( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
+
+            buttonFlowTriggers.forEach( trigger => {
+                if ( trigger.targetFlowName === flow.name ) {
+                    return;
+                }
+                const targetFlowId = this.flowIdMap.get( trigger.targetFlowName );
+                if ( targetFlowId ) {
+                    this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
+                }
+            } );
+
+            const sortedModals = sortModalsByButtonOrder( compPreview.modals, buttonModalConnections, compPreview.elementRows );
+            sortedModals.forEach( ( modal, idx ) => {
+                const modalId = `modal-${ compId }-${ idx }`;
+                const modalDef = compPreview.modalDefinitions.find( m => m.name === modal );
+
+                this.allNodes.push( createModalNode( modalId, modal, modalDef, flow.name ) );
+
+                const connection = buttonModalConnections.find( c => c.modalName === modal );
+                const sourceHandle = connection ? `btn-${ connection.buttonName }` : "bottom";
+
+                this.addEdge( createComponentToModalEdge( compId, modalId, sourceHandle ) );
+            } );
+        } );
+    }
+
+    private buildFlowComponents(): void {
+        this.data.flows.forEach( flow => {
+            const flowId = this.flowIdMap.get( flow.name )!;
+            const stateComponents = getFlowStateComponents( flow, this.data.components );
+
+            if ( stateComponents.length > 1 ) {
+                this.buildMultiStateFlow( flow, flowId, stateComponents );
+            } else {
+                this.buildSingleComponentFlow( flow, flowId, stateComponents );
+            }
+        } );
+    }
+
+    private buildMultiStateFlow( flow: UIExportedFlow, flowId: string, stateComponents: FlowStateComponent[] ): void {
+        const context: FlowContext = {
+            flow,
+            flowId,
+            stateComponents,
+            stateKeys: new Set( stateComponents.map( sc => sc.stateKey ) ),
+            stateKeyToIndex: new Map( stateComponents.map( ( sc, i ) => [ sc.stateKey, i ] ) ),
+            stateKeyToCompId: new Map(),
+            stateKeyToElementRows: new Map(),
+            initialStateKey: stateComponents[ 0 ]?.stateKey ?? "",
+            wizardConnectedTargets: new Set(),
+            flowIdMap: this.flowIdMap
+        };
+
+        new MultiStateFlowBuilder( this.allNodes, e => this.addEdge( e ), context ).build();
+    }
+
+    private buildSingleComponentFlow( flow: UIExportedFlow, flowId: string, stateComponents: FlowStateComponent[] ): void {
+        const initialComp = getInitialComponent( flow, this.data.components );
+        if ( !initialComp ) {
             return;
         }
 
-        const wizardTransitions = getWizardTransitionsForState(
-            flow,
-            stateComponent.stateKey,
-            stateKeyToIndex,
-            initialStateKey ?? "",
-            elementRows
-        );
+        const stateKey = stateComponents[ 0 ]?.stateKey;
+        const stateTransitions = stateComponents[ 0 ]?.transitions;
+        const stateOptions = stateComponents[ 0 ]?.options;
 
-        wizardTransitions.forEach( wizardTransition => {
-            const targetCompId = stateKeyToCompId.get( wizardTransition.targetStateKey );
-            if ( !targetCompId ) {
+        new SingleComponentFlowBuilder( this.allNodes, e => this.addEdge( e ), flow, flowId, this.flowIdMap )
+            .build( initialComp, stateKey, stateTransitions, stateOptions );
+    }
+
+    private buildSystemFlowTransitions(): void {
+        this.data.systemFlows.forEach( systemFlow => {
+            const systemFlowId = this.flowIdMap.get( systemFlow.name );
+            if ( !systemFlowId || systemFlow.edgeSourceMappings?.length ) {
                 return;
             }
 
-            let targetHandle: string | undefined;
+            const isCommandsFlow = systemFlow.name.includes( "CommandsFlow" );
 
-            if ( wizardTransition.isFinishTransition ) {
-                targetHandle = "right";
-            } else if ( wizardTransition.isBackTransition ) {
-                targetHandle = "left";
-            }
+            systemFlow.transitions?.forEach( transition => {
+                const targetFlowName = transition.to?.split( "/States/" )[ 0 ];
+                if ( !targetFlowName ) {
+                    return;
+                }
 
-            const isForwardWizardEdge = !wizardTransition.isBackTransition && !wizardTransition.isFinishTransition;
-            const edgeWeight = isForwardWizardEdge ? 10 : 1;
+                const targetId = this.flowIdMap.get( targetFlowName );
+                if ( !targetId ) {
+                    return;
+                }
 
-            addEdge( createComponentToComponentEdge(
-                sourceCompId,
-                targetCompId,
-                flow.name,
-                wizardTransition.buttonName,
-                wizardTransition.targetStateName,
-                targetHandle,
-                wizardTransition.isBackTransition || wizardTransition.isFinishTransition,
-                edgeWeight
-            ) );
+                const label = transition.from?.split( "/" ).pop() ?? transition.from ?? "";
+                this.addEdge( createSystemFlowTransitionEdge( systemFlowId, targetId, systemFlow.name, targetFlowName, label, isCommandsFlow ) );
+            } );
         } );
-    } );
+    }
 }
 
-function buildSingleComponentFlow(
-    allNodes: Node[],
-    addEdge: ( edge: Edge ) => void,
-    flow: UIExportedFlow,
-    flowId: string,
-    initialComp: UIExportedComponent,
-    stateKey: string | undefined,
-    stateTransitions: string[] | undefined,
-    previewEmbedsGroup: string | undefined,
-    stateOptions: FlowStateComponent[ "options" ] | undefined,
-    _allComponents: UIExportedComponent[],
-    flowIdMap: Map<string, string>
-): void {
-    const compPreview = extractComponentPreview( initialComp, undefined, previewEmbedsGroup );
-    const statePreviewDefaultVars = getStatePreviewDefaultVars( stateOptions, compPreview.embedDefinition );
-    const resolvedEmbed = compPreview.embed
-        ? {
-            ...compPreview.embed,
-            defaultVars: {
-                ...( compPreview.embed.defaultVars ?? {} ),
-                ...statePreviewDefaultVars
-            }
-        }
-        : undefined;
-    const compPreviewWithStateDefaults: ComponentPreview = {
-        ...compPreview,
-        embed: resolvedEmbed
-    };
-    const compId = `comp-${ flow.name }-${ initialComp.name }`;
-
-    const componentButtons = compPreviewWithStateDefaults.elementRows.flat().map( el => el.name );
-    let buttonModalConnections = findButtonModalConnections( flow, compPreviewWithStateDefaults.modals, stateTransitions );
-
-    if ( buttonModalConnections.length === 0 && compPreviewWithStateDefaults.modals.length > 0 && !stateTransitions?.length ) {
-        buttonModalConnections = inferButtonModalConnections( componentButtons, compPreviewWithStateDefaults.modals );
-    }
-
-    const buttonFlowConnections = findButtonFlowConnections( flow );
-
-    const { buttonModalTriggers, buttonFlowTriggers } = buildButtonTriggers(
-        buttonModalConnections,
-        buttonFlowConnections,
-        compPreviewWithStateDefaults.elementRows
-    );
-
-    allNodes.push(
-        createComponentNode(
-            compId,
-            compPreviewWithStateDefaults,
-            buttonModalTriggers,
-            buttonFlowTriggers,
-            [],
-            undefined,
-            stateKey,
-            flow.name
-        )
-    );
-    addEdge( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
-
-    addButtonFlowEdges( addEdge, compId, buttonFlowTriggers, flowIdMap, flow.name );
-    addModalNodesAndEdges( addEdge, allNodes, compId, compPreviewWithStateDefaults, buttonModalConnections, stateTransitions, flow.name );
+export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes: Node[]; edges: Edge[] } {
+    return new FlowGraphBuilder( moduleFlowsData ).build();
 }

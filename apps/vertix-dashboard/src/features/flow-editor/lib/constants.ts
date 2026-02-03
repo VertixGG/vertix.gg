@@ -60,3 +60,9 @@ export const BACKGROUND_CONFIG = {
     COLOR: "#333",
     GAP: 20
 } as const;
+
+export const WIZARD_BUTTON_NAMES = {
+    BACK: "VertixBot/UI-General/WizardBackButton",
+    NEXT: "VertixBot/UI-General/WizardNextButton",
+    FINISH: "VertixBot/UI-General/WizardFinishButton"
+} as const;

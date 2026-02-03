@@ -276,6 +276,8 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
     return (
         <div className="min-w-[380px] max-w-[520px]">
             <Handle type="target" position={ Position.Top } className="bg-purple-400! w-2! h-2!" />
+            <Handle type="target" position={ Position.Left } id="left" className="bg-emerald-400! w-2! h-2!" />
+            <Handle type="target" position={ Position.Right } id="right" className="bg-emerald-400! w-2! h-2!" />
 
             <div className={ `bg-zinc-900 rounded-lg border border-purple-500/50 shadow-lg shadow-purple-500/20 overflow-hidden transition-all ${ selectedClass }` }>
                 <div className="px-3 py-2 bg-purple-600/20 border-b border-purple-500/30">

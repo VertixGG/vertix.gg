@@ -63,19 +63,23 @@ export function createComponentToComponentEdge(
     targetCompId: string,
     flowName: string,
     sourceElementName: string,
-    label: string
+    label: string,
+    targetHandle?: string,
+    isBackEdge?: boolean
 ): Edge {
     return {
         id: `edge-comp-comp-${ flowName }-${ sourceElementName }-${ targetCompId }-${ label }`,
         source: sourceCompId,
         target: targetCompId,
         sourceHandle: `btn-${ sourceElementName }`,
+        targetHandle,
         zIndex: Z_INDEX.EDGE_OVERLAY,
         label,
         style: { stroke: EDGE_COLORS.STEP_TRANSITION, ...EDGE_STYLES.DEFAULT },
         markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.STEP_TRANSITION, ...MARKER_SIZES.MEDIUM },
         labelStyle: { fill: EDGE_COLORS.STEP_TRANSITION, fontSize: 10, fontWeight: 600 },
-        labelBgPadding: [ 6, 2 ]
+        labelBgPadding: [ 6, 2 ],
+        data: { isBackEdge: isBackEdge ?? false }
     };
 }
 

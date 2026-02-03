@@ -21,8 +21,9 @@ import {
     extractComponentPreview,
     getButtonHandlePosition,
     sortModalsByButtonOrder
-
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
+
+import { WIZARD_BUTTON_NAMES } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
 
 import type { FlowStateComponent } from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
 import type { ElementData, ComponentPreview } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
@@ -361,6 +362,92 @@ function detectModalFirstFlow(
     return { isModalFirst: true, modalName: modalTrigger.sourceEntity };
 }
 
+function findWizardButtonInElements(
+    elementRows: ElementData[][],
+    wizardButtonName: string
+): string | null {
+    for ( const row of elementRows ) {
+        for ( const element of row ) {
+            if ( element.name === wizardButtonName ) {
+                return element.name;
+            }
+        }
+    }
+
+    return null;
+}
+
+type WizardTransition = {
+    buttonName: string;
+    targetStateKey: string;
+    targetStateName: string;
+    isBackTransition: boolean;
+    isFinishTransition: boolean;
+};
+
+function getWizardTransitionsForState(
+    flow: UIExportedFlow,
+    currentStateKey: string,
+    stateKeyToIndex: Map<string, number>,
+    initialStateKey: string,
+    elementRows: ElementData[][]
+): WizardTransition[] {
+    const { BACK, NEXT, FINISH } = WIZARD_BUTTON_NAMES;
+
+    const hasBackButton = findWizardButtonInElements( elementRows, BACK ) !== null;
+    const hasNextButton = findWizardButtonInElements( elementRows, NEXT ) !== null;
+    const hasFinishButton = findWizardButtonInElements( elementRows, FINISH ) !== null;
+
+    if ( !hasBackButton && !hasNextButton && !hasFinishButton ) {
+        return [];
+    }
+
+    const currentIndex = stateKeyToIndex.get( currentStateKey );
+    if ( currentIndex === undefined ) {
+        return [];
+    }
+
+    const wizardTransitions: WizardTransition[] = [];
+
+    const transitionsFromCurrentState = flow.transitions.filter( t =>
+        t.from === currentStateKey && !t.triggeredBy?.length
+    );
+
+    for ( const transition of transitionsFromCurrentState ) {
+        const targetIndex = stateKeyToIndex.get( transition.to );
+        if ( targetIndex === undefined ) {
+            continue;
+        }
+
+        const targetStateName = transition.to.split( "/" ).pop() ?? transition.to;
+        let buttonName: string | null = null;
+
+        if ( targetIndex === currentIndex + 1 && hasNextButton ) {
+            buttonName = NEXT;
+        } else if ( targetIndex === currentIndex - 1 && hasBackButton ) {
+            buttonName = BACK;
+        } else if ( transition.to === initialStateKey && hasFinishButton ) {
+            buttonName = FINISH;
+        } else if ( transition.to === initialStateKey && hasBackButton && currentIndex === 1 ) {
+            buttonName = BACK;
+        }
+
+        if ( buttonName ) {
+            const isBackwardNavigation = buttonName === BACK || buttonName === FINISH;
+
+            wizardTransitions.push( {
+                buttonName,
+                targetStateKey: transition.to,
+                targetStateName,
+                isBackTransition: isBackwardNavigation,
+                isFinishTransition: buttonName === FINISH
+            } );
+        }
+    }
+
+    return wizardTransitions;
+}
+
 function getSelectMenuTriggeredTransitionsToKnownStates(
     flow: UIExportedFlow,
     stateKeys: Set<string>
@@ -579,6 +666,11 @@ function buildMultiStateFlow(
     // 4. Step edges (fallback): draw "Step X" edges between state components in order
     const stateKeys = new Set( stateComponents.map( stateComponent => stateComponent.stateKey ) );
 
+    const stateKeyToIndex = new Map<string, number>();
+    stateComponents.forEach( ( stateComponent, index ) => {
+        stateKeyToIndex.set( stateComponent.stateKey, index );
+    } );
+
     // Detect modal-first pattern
     const initialStateOptions = stateComponents[ 0 ]?.options as Record<string, unknown> | undefined;
     const modalFirstInfo = detectModalFirstFlow( flow, initialStateOptions );
@@ -594,6 +686,7 @@ function buildMultiStateFlow(
     const shouldUseFanOutEdges = !shouldUseSelectMenuStateEdges && !modalFirstInfo.isModalFirst && fanOutInfo.isFanOut;
 
     const stateKeyToCompId = new Map<string, string>();
+    const stateKeyToElementRows = new Map<string, ElementData[][]>();
     let prevCompId: string | null = null;
     let initialCompId: string | undefined;
     let initialElementRows: ElementData[][] | undefined;
@@ -639,6 +732,7 @@ function buildMultiStateFlow(
         };
         const compId = `comp-${ flow.name }-${ stateComp.component.name }-${ stepIndex }`;
         stateKeyToCompId.set( stateComp.stateKey, compId );
+        stateKeyToElementRows.set( stateComp.stateKey, compPreviewWithStateDefaults.elementRows );
 
         const componentButtons = compPreviewWithStateDefaults.elementRows.flat().map( el => el.name );
         let buttonModalConnections = findButtonModalConnections( flow, compPreviewWithStateDefaults.modals, stateComp.transitions );
@@ -655,13 +749,30 @@ function buildMultiStateFlow(
             compPreviewWithStateDefaults.elementRows
         );
 
+        const wizardTransitionsForNode = getWizardTransitionsForState(
+            flow,
+            stateComp.stateKey,
+            stateKeyToIndex,
+            initialStateKey ?? "",
+            compPreviewWithStateDefaults.elementRows
+        );
+
+        const wizardStateTransitionTriggers: StateTransitionTrigger[] = wizardTransitionsForNode.map( wt => ( {
+            elementName: wt.buttonName,
+            handlePosition: getButtonHandlePosition( wt.buttonName, compPreviewWithStateDefaults.elementRows, compPreviewWithStateDefaults.elementRows.length )
+        } ) );
+
+        const stateTransitionTriggersForNode = stepIndex === 0
+            ? initialStateTransitionTriggers
+            : wizardStateTransitionTriggers;
+
         allNodes.push(
             createComponentNode(
                 compId,
                 compPreviewWithStateDefaults,
                 buttonModalTriggers,
                 buttonFlowTriggers,
-                stepIndex === 0 ? initialStateTransitionTriggers : [],
+                stateTransitionTriggersForNode,
                 `${ stateComp.stateName } - ${ compPreview.name }`,
                 stateComp.stateKey,
                 flow.name
@@ -741,8 +852,33 @@ function buildMultiStateFlow(
             } );
         } );
 
+        const wizardConnectedFromOtherStates = new Set<string>();
+
+        stateComponents.forEach( stateComp => {
+            const elemRows = stateKeyToElementRows.get( stateComp.stateKey );
+            if ( !elemRows ) {
+                return;
+            }
+
+            const wizardTrans = getWizardTransitionsForState(
+                flow,
+                stateComp.stateKey,
+                stateKeyToIndex,
+                initialStateKey ?? "",
+                elemRows
+            );
+
+            wizardTrans.forEach( wt => {
+                wizardConnectedFromOtherStates.add( wt.targetStateKey );
+            } );
+        } );
+
         stateComponents.slice( 1 ).forEach( ( stateComponent ) => {
             if ( connectedTargetStates.has( stateComponent.stateKey ) ) {
+                return;
+            }
+
+            if ( wizardConnectedFromOtherStates.has( stateComponent.stateKey ) ) {
                 return;
             }
 
@@ -758,16 +894,84 @@ function buildMultiStateFlow(
 
     // Fan-out edges: programmatic transitions from initial state to multiple targets
     if ( shouldUseFanOutEdges && initialCompId ) {
+        const fanOutSourceCompId = initialCompId;
+        const wizardConnectedInFanOut = new Set<string>();
+
+        stateComponents.forEach( stateComp => {
+            const elemRows = stateKeyToElementRows.get( stateComp.stateKey );
+            if ( !elemRows ) {
+                return;
+            }
+
+            const wizardTrans = getWizardTransitionsForState(
+                flow,
+                stateComp.stateKey,
+                stateKeyToIndex,
+                initialStateKey ?? "",
+                elemRows
+            );
+
+            wizardTrans.forEach( wt => {
+                wizardConnectedInFanOut.add( wt.targetStateKey );
+            } );
+        } );
+
         stateComponents.slice( 1 ).forEach( ( stateComponent ) => {
+            if ( wizardConnectedInFanOut.has( stateComponent.stateKey ) ) {
+                return;
+            }
+
             const targetCompId = stateKeyToCompId.get( stateComponent.stateKey );
             if ( !targetCompId ) {
                 return;
             }
 
             const label = stateComponent.stateName;
-            addEdge( createComponentToStateFallbackEdge( initialCompId, targetCompId, flow.name, label ) );
+            addEdge( createComponentToStateFallbackEdge( fanOutSourceCompId, targetCompId, flow.name, label ) );
         } );
     }
+
+    stateComponents.forEach( ( stateComponent ) => {
+        const sourceCompId = stateKeyToCompId.get( stateComponent.stateKey );
+        const elementRows = stateKeyToElementRows.get( stateComponent.stateKey );
+
+        if ( !sourceCompId || !elementRows ) {
+            return;
+        }
+
+        const wizardTransitions = getWizardTransitionsForState(
+            flow,
+            stateComponent.stateKey,
+            stateKeyToIndex,
+            initialStateKey ?? "",
+            elementRows
+        );
+
+        wizardTransitions.forEach( wizardTransition => {
+            const targetCompId = stateKeyToCompId.get( wizardTransition.targetStateKey );
+            if ( !targetCompId ) {
+                return;
+            }
+
+            let targetHandle: string | undefined;
+
+            if ( wizardTransition.isFinishTransition ) {
+                targetHandle = "right";
+            } else if ( wizardTransition.isBackTransition ) {
+                targetHandle = "left";
+            }
+
+            addEdge( createComponentToComponentEdge(
+                sourceCompId,
+                targetCompId,
+                flow.name,
+                wizardTransition.buttonName,
+                wizardTransition.targetStateName,
+                targetHandle,
+                wizardTransition.isBackTransition
+            ) );
+        } );
+    } );
 }
 
 function buildSingleComponentFlow(

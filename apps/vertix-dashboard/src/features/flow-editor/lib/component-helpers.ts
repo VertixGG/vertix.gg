@@ -188,18 +188,22 @@ function findElementsGroupByExecutionStep(
     const candidates = buildElementsGroupCandidates( executionStep );
 
     return component.elementsGroups.find( group => {
-        const normalizedGroupName = normalizeElementsGroupName( group.name );
-        const groupLastSegment = normalizedGroupName.split( "/" ).pop()?.toLowerCase() ?? "";
+        const normalizedGroupName = normalizeElementsGroupName( group.name ).toLowerCase();
+        const groupLastSegment = normalizedGroupName.split( "/" ).pop() ?? "";
 
         return candidates.some( candidate => {
             const normalizedCandidate = normalizeElementsGroupName( candidate ).toLowerCase();
+            const candidateLastSegment = normalizedCandidate.split( "/" ).pop() ?? "";
 
-            if ( groupLastSegment === normalizedCandidate ) {
+            if ( normalizedGroupName === normalizedCandidate ) {
                 return true;
             }
 
-            // Check if group name contains the candidate
-            if ( groupLastSegment.includes( normalizedCandidate ) ) {
+            if ( groupLastSegment === candidateLastSegment ) {
+                return true;
+            }
+
+            if ( groupLastSegment.includes( candidateLastSegment ) ) {
                 return true;
             }
 

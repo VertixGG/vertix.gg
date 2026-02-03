@@ -132,6 +132,11 @@ export function getLayoutedElements(
                 return;
             }
 
+            const edgeData = edge.data as { isBackEdge?: boolean } | undefined;
+            if ( edgeData?.isBackEdge ) {
+                return;
+            }
+
             graph.setEdge( edge.source, edge.target );
         } );
 
@@ -241,6 +246,15 @@ export function getLayoutedElements(
         const target = edge.target;
 
         if ( !source || !target ) {
+            return;
+        }
+
+        if ( source === target ) {
+            return;
+        }
+
+        const edgeData = edge.data as { isBackEdge?: boolean } | undefined;
+        if ( edgeData?.isBackEdge ) {
             return;
         }
 

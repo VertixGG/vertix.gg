@@ -30,3 +30,6 @@
 ## Configuration & Security Notes
 - The bot loads secrets via `dotenv`; keep `.env*` files local, exclude tokens or Prisma URLs from commits, and prefer `scripts/backup-bot-prisma.js` for encrypted backups.
 - Test Discord flows in isolated guilds and avoid posting invite links or member IDs in public trackers.
+
+## Cursor rules
+please read @.cursor/rules and apply those rules

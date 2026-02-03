@@ -22,7 +22,11 @@
       "mcp__jetbrains__get_file_problems",
       "mcp__jetbrains__get_file_text_by_path",
       "mcp__jetbrains__search_in_files_by_text",
-      "mcp__jetbrains__replace_text_in_file"
+      "mcp__jetbrains__replace_text_in_file",
+      "Bash(npx prisma generate:*)",
+      "Bash(python3:*)",
+      "Bash(node:*)",
+      "Bash(pnpm --filter vertix-dashboard tsc:*)"
     ]
   }
 }

@@ -7,6 +7,8 @@ import {
     logout as logoutApi
 } from "@vertix.gg/dashboard/src/features/auth/api";
 
+import { useSelectedGuildStore } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
+
 import type { AuthUser, Guild, SelectedGuild } from "@vertix.gg/dashboard/src/features/auth/types";
 
 export interface AuthState {
@@ -40,6 +42,9 @@ export class CheckAuthCommand extends CommandBase<AuthState> {
         try {
             const data = await fetchCurrentUser();
 
+            // Sync selected guild to zustand store for cross-context access
+            useSelectedGuildStore.getState().setSelectedGuild( data?.selectedGuild || null );
+
             return this.setState( {
                 user: data?.user || null,
                 selectedGuild: data?.selectedGuild || null,
@@ -47,6 +52,8 @@ export class CheckAuthCommand extends CommandBase<AuthState> {
                 isLoading: false
             } );
         } catch {
+            useSelectedGuildStore.getState().setSelectedGuild( null );
+
             return this.setState( {
                 user: null,
                 selectedGuild: null,
@@ -92,6 +99,9 @@ export class SelectGuildCommand extends CommandBase<AuthState, { guild: Guild }>
         try {
             const selectedGuild = await selectGuildApi( args.guild );
 
+            // Sync to zustand store
+            useSelectedGuildStore.getState().setSelectedGuild( selectedGuild );
+
             return this.setState( { selectedGuild } );
         } catch {
             return this.setState( { error: "Failed to select guild" } );
@@ -107,6 +117,9 @@ export class LogoutCommand extends CommandBase<AuthState> {
     public async apply() {
         try {
             await logoutApi();
+
+            // Clear zustand store
+            useSelectedGuildStore.getState().setSelectedGuild( null );
 
             return this.setState( {
                 user: null,
@@ -126,6 +139,9 @@ export class ClearSelectedGuildCommand extends CommandBase<AuthState> {
     }
 
     public apply() {
+        // Clear zustand store
+        useSelectedGuildStore.getState().setSelectedGuild( null );
+
         return this.setState( { selectedGuild: null } );
     }
 }

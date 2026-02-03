@@ -47,6 +47,9 @@ import type { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-ada
 import type { TModuleConstructor } from "@vertix.gg/gui/src/definitions/ui-module-declration";
 
 import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
+import type { ICustomizationProvider } from "@vertix.gg/gui/src/customization/customization-provider";
+
+import { NoOpCustomizationProvider } from "@vertix.gg/gui/src/customization/customization-provider";
 
 import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 import type { Client } from "discord.js";
@@ -105,6 +108,7 @@ export class UIService extends ServiceWithDependenciesBase<{
     private uiAdaptersRegisterOptions = new Map<string, TAdapterRegisterOptions>();
 
     private uiLanguageManager: UILanguageManagerInterface | null = null;
+    private customizationProvider: ICustomizationProvider = new NoOpCustomizationProvider();
 
     private static emitter = new EventEmitter();
 
@@ -487,6 +491,22 @@ export class UIService extends ServiceWithDependenciesBase<{
                 }
             } )()
         );
+    }
+
+    /**
+     * Register a customization provider for guild-specific embed customizations.
+     * Should be called by vertix-bot during initialization.
+     */
+    public registerCustomizationProvider( provider: ICustomizationProvider ) {
+        this.customizationProvider = provider;
+    }
+
+    /**
+     * Get the current customization provider.
+     * Returns the registered provider or a no-op provider if none registered.
+     */
+    public getCustomizationProvider(): ICustomizationProvider {
+        return this.customizationProvider;
     }
 
     /**

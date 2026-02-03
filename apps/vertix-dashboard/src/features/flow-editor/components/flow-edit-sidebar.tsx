@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Type, FileText, Palette, Image, Grid3X3, MessageSquare, X, Smile, Link, Save, RotateCcw } from "lucide-react";
 
+import zCore from "@zenflux/core";
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
 import { getEmojiFromPreviewCache } from "@vertix.gg/utils/src/emoji-preview-cache";
@@ -9,6 +10,8 @@ import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 import type { ElementData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
+
+const logger = zCore.modules.createLogger( "flow-edit-sidebar" );
 
 interface FlowEditSidebarSelectedState {
     selectedNode: FlowEditorState[ "selectedNode" ];
@@ -267,9 +270,10 @@ function ElementEditPanel( {
 }
 
 export function FlowEditSidebar() {
-    const { editingFlowName, exitEditMode } = useEditMode();
+    const { editingFlowName, exitEditMode, customization, isLoadingCustomization } = useEditMode();
     const [ selectedElementIndex, setSelectedElementIndex ] = useState<{ row: number; col: number } | null>( null );
     const [ lastNodeId, setLastNodeId ] = useState<string | null>( null );
+    const [ appliedCustomization, setAppliedCustomization ] = useState<string | null>( null );
 
     const [ state ] = useCommandState<FlowEditorState, FlowEditSidebarSelectedState>(
         "Dashboard/FlowEditor",
@@ -291,8 +295,68 @@ export function FlowEditSidebar() {
         if ( selectedNode?.id !== lastNodeId ) {
             setSelectedElementIndex( null );
             setLastNodeId( selectedNode?.id ?? null );
+            // Reset applied customization tracking when node changes
+            setAppliedCustomization( null );
         }
     }, [ selectedNode?.id, lastNodeId ] );
+
+    // Apply saved customizations to node data when customization is loaded
+    useEffect( () => {
+        const customizationKey = selectedNode?.data?.customizationKey as string | undefined;
+
+        logger.debug( FlowEditSidebar, "Customization effect running", {
+            isLoadingCustomization,
+            hasCustomization: !!customization,
+            hasSelectedNode: !!selectedNode,
+            customizationKey
+        } );
+
+        if ( isLoadingCustomization ) {
+            return;
+        }
+
+        if ( !customization ) {
+            return;
+        }
+
+        if ( !selectedNode ) {
+            return;
+        }
+
+        if ( !customizationKey ) {
+            return;
+        }
+
+        // Only apply once per node to avoid infinite loops
+        const appliedKey = `${ selectedNode.id }-${ JSON.stringify( customization.components[ customizationKey ] ) }`;
+        if ( appliedCustomization === appliedKey ) {
+            return;
+        }
+
+        const componentCustomization = customization.components[ customizationKey ];
+
+        if ( !componentCustomization?.embedOverrides ) {
+            setAppliedCustomization( appliedKey );
+            return;
+        }
+
+        logger.debug( FlowEditSidebar, "Applying saved customization to node", { customizationKey, embedOverrides: componentCustomization.embedOverrides } );
+
+        // Apply embed overrides with isInitialLoad flag to prevent marking as unsaved
+        const { color, title, description } = componentCustomization.embedOverrides;
+
+        if ( color !== undefined ) {
+            updateNodeData.run( { path: "embed.color", value: color, isInitialLoad: true } );
+        }
+        if ( title !== undefined ) {
+            updateNodeData.run( { path: "embed.title", value: title, isInitialLoad: true } );
+        }
+        if ( description !== undefined ) {
+            updateNodeData.run( { path: "embed.description", value: description, isInitialLoad: true } );
+        }
+
+        setAppliedCustomization( appliedKey );
+    }, [ customization, selectedNode, isLoadingCustomization, appliedCustomization, updateNodeData ] );
 
     const nodeType = selectedNode?.data?.type as string | undefined;
 

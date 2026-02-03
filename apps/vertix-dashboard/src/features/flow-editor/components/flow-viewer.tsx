@@ -3,17 +3,25 @@ import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState 
 
 import "@xyflow/react/dist/style.css";
 
+import zCore from "@zenflux/core";
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
+import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
+import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
 
 import { nodeTypes } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes";
 import { getLayoutedElements } from "@vertix.gg/dashboard/src/features/flow-editor/lib/layout";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 import { LAYOUT_OPTIONS, VIEWPORT_CONFIG, MINIMAP_COLORS, BACKGROUND_CONFIG, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
+import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
+
+import type { GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 import type { Viewport, Node, ReactFlowInstance } from "@xyflow/react";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
+
+const logger = zCore.modules.createLogger( "flow-viewer" );
 
 interface FlowViewerSelectedState {
     moduleFlowsData: FlowEditorState[ "moduleFlowsData" ];
@@ -35,6 +43,41 @@ export function FlowViewer() {
 
     const selectNode = useCommand( "Dashboard/FlowEditor/SelectNode" );
     const { isEditMode, editingFlowName, enterEditMode, exitEditMode } = useEditMode();
+    const guildId = useSelectedGuildId();
+
+    // Load customizations for the guild
+    const [ customization, setCustomization ] = useState<GuildCustomizationData | null>( null );
+    const [ customizationRefreshKey, setCustomizationRefreshKey ] = useState( 0 );
+
+    // Expose a refresh function globally for the save command to call
+    useEffect( () => {
+        ( window as unknown as Record<string, unknown> ).__refreshFlowCustomization = () => {
+            setCustomizationRefreshKey( k => k + 1 );
+        };
+
+        return () => {
+            delete ( window as unknown as Record<string, unknown> ).__refreshFlowCustomization;
+        };
+    }, [] );
+
+    useEffect( () => {
+        if ( !guildId ) {
+            setCustomization( null );
+            return;
+        }
+
+        // Fetch customizations when guild changes or when refresh is triggered
+        const queryModule = getQueryModule( CustomizationQuery );
+        queryModule.request<GuildCustomizationData>( "Dashboard/Customization/GetGuild", { guildId } )
+            .then( ( data ) => {
+                logger.debug( FlowViewer, "Loaded customizations for guild", data );
+                setCustomization( data );
+            } )
+            .catch( ( error ) => {
+                logger.error( FlowViewer, "Failed to load customizations", error );
+                setCustomization( null );
+            } );
+    }, [ guildId, customizationRefreshKey ] );
 
     const handleNodeSelect = ( node: Node | null ) => {
         selectNode.run( { node, centerOnSelect: false } );
@@ -58,13 +101,53 @@ export function FlowViewer() {
 
         const { nodes: allNodes, edges: allEdges } = buildFlowGraph( moduleFlowsData );
 
+        // Apply customizations to nodes
+        const customizedNodes = allNodes.map( ( node ) => {
+            const customizationKey = node.data?.customizationKey as string | undefined;
+            if ( !customizationKey || !customization?.components?.[ customizationKey ] ) {
+                return node;
+            }
+
+            const componentCustomization = customization.components[ customizationKey ];
+            if ( !componentCustomization?.embedOverrides ) {
+                return node;
+            }
+
+            // Apply embed overrides
+            const embed = node.data?.embed as Record<string, unknown> | undefined;
+            if ( !embed ) {
+                return node;
+            }
+
+            const updatedEmbed = { ...embed };
+            const { color, title, description } = componentCustomization.embedOverrides;
+
+            if ( color !== undefined ) {
+                updatedEmbed.color = color;
+            }
+            if ( title !== undefined ) {
+                updatedEmbed.title = title;
+            }
+            if ( description !== undefined ) {
+                updatedEmbed.description = description;
+            }
+
+            return {
+                ...node,
+                data: {
+                    ...node.data,
+                    embed: updatedEmbed
+                }
+            };
+        } );
+
         // Filter nodes and edges when in edit mode
-        let nodesToLayout = allNodes;
+        let nodesToLayout = customizedNodes;
         let edgesToLayout = allEdges;
 
         if ( isEditMode && editingFlowName ) {
             // Filter nodes that belong to the editing flow
-            const filteredNodes = allNodes.filter( ( node ) => {
+            const filteredNodes = customizedNodes.filter( ( node ) => {
                 const nodeFlowName = node.data?.flowName as string | undefined;
                 return nodeFlowName === editingFlowName;
             } );
@@ -93,6 +176,7 @@ export function FlowViewer() {
         return { initialNodes: layoutedNodes, initialEdges: layoutedEdges };
     }, [
         moduleFlowsData,
+        customization,
         isEditMode,
         editingFlowName,
         LAYOUT_OPTIONS.DIRECTION,
@@ -228,7 +312,7 @@ export function FlowViewer() {
     }
 
     return (
-        <div className="h-full w-full relative">
+        <div className="h-full w-full relative flow-viewer">
             <ReactFlow
                 nodes={ nodes }
                 edges={ edges }
@@ -279,14 +363,14 @@ export function FlowViewer() {
                     onClick={ () => {
                         if ( isEditMode ) {
                             exitEditMode();
-                        } else if ( selectedNode ) {
+                        } else if ( selectedNode && guildId ) {
                             const flowName = selectedNode.data?.flowName as string | undefined;
                             if ( flowName ) {
-                                enterEditMode( flowName );
+                                enterEditMode( flowName, guildId );
                             }
                         }
                     } }
-                    disabled={ !isEditMode && !selectedNode }
+                    disabled={ !isEditMode && ( !selectedNode || !guildId ) }
                     className={ `px-3 py-2 text-white text-sm rounded border transition-colors ${
                         isEditMode
                             ? "bg-blue-600 hover:bg-blue-700 border-blue-500"

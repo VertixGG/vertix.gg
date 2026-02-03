@@ -43,6 +43,7 @@ import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+import { BotCustomizationProvider } from "@vertix.gg/bot/src/providers/bot-customization-provider";
 
 import type { InteractionHandler } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
 
@@ -908,6 +909,12 @@ export async function entryPoint( options: {
     } );
 
     await registerUIServices( client );
+
+    // Register customization provider for guild-specific UI customizations
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+    uiService.registerCustomizationProvider( new BotCustomizationProvider() );
+    GlobalLogger.$.info( entryPoint, "Customization provider is registered" );
+
     await registerConfigs();
     await registerServices();
     await registerDataServicesAndComponents();

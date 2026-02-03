@@ -1,3 +1,6 @@
+import { useState } from "react";
+
+import zCore from "@zenflux/core";
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
@@ -6,6 +9,8 @@ import type { Node } from "@xyflow/react";
 import type { ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { UIExportedFlow, UIExportedComponent, UIExportEmbedDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
+
+const logger = zCore.modules.createLogger( "flow-details-panel" );
 
 interface FlowDetailsPanelSelectedState {
     moduleFlowsData: FlowEditorState[ "moduleFlowsData" ];
@@ -281,6 +286,19 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
     const nodeData = node.data;
     const nodeType = nodeData?.type as string | undefined;
 
+    const {
+        isLoadingCustomization,
+        customizationError,
+        pendingChanges,
+        getComponentCustomization,
+        setComponentChange,
+        saveComponentCustomization,
+        discardChanges
+    } = useEditMode();
+
+    const [ isSaving, setIsSaving ] = useState( false );
+    const [ saveError, setSaveError ] = useState<string | null>( null );
+
     if ( nodeType !== "component" ) {
         return (
             <div className="p-4">
@@ -290,12 +308,18 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
     }
 
     const componentLabel = nodeData?.label as string;
+    const customizationKey = nodeData?.customizationKey as string;
+
+    logger.debug( EditModeDetailsView, "Rendering", { componentLabel, customizationKey } );
 
     // Get the embed definition for the current state (stored when node was created)
     const embedDefinition = nodeData?.embedDefinition as UIExportEmbedDefinition | undefined;
 
-    // Debug: check what embedDefinition we have for this node
-    console.log( "EditModeDetailsView:", { componentLabel, hasEmbedDefinition: !!embedDefinition, embedDefinition } );
+    // Get current customization for this component/state
+    const currentCustomization = getComponentCustomization( customizationKey );
+    const customizedVars = currentCustomization?.variables ?? {};
+
+    logger.debug( EditModeDetailsView, "Current customization", { customizationKey, hasCustomization: !!currentCustomization } );
 
     // Collect variables from the current state's embed definition
     const allVars = new Map<string, { defaultValue?: string; options?: Record<string, string> }>();
@@ -339,6 +363,45 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
 
     const varEntries = Array.from( allVars.entries() ).sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) );
 
+    const hasPendingChanges = !!pendingChanges[ customizationKey ];
+    logger.debug( EditModeDetailsView, "Pending changes check", { customizationKey, hasPendingChanges } );
+
+    const handleVariableChange = ( varName: string, value: string ) => {
+        const existingVars = currentCustomization?.variables ?? {};
+        const newCustomization = {
+            ...currentCustomization,
+            variables: { ...existingVars, [ varName ]: value }
+        };
+        logger.debug( EditModeDetailsView, "Variable changed", { customizationKey, varName, value } );
+        setComponentChange( customizationKey, newCustomization );
+    };
+
+    const handleSave = async() => {
+        setIsSaving( true );
+        setSaveError( null );
+
+        try {
+            await saveComponentCustomization( customizationKey );
+        } catch( error ) {
+            setSaveError( error instanceof Error ? error.message : "Failed to save" );
+        } finally {
+            setIsSaving( false );
+        }
+    };
+
+    const handleDiscard = () => {
+        discardChanges();
+        setSaveError( null );
+    };
+
+    if ( isLoadingCustomization ) {
+        return (
+            <div className="p-4">
+                <p className="text-zinc-500 text-sm">Loading customizations...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="p-4 space-y-4">
             <div className="flex items-center gap-2">
@@ -351,49 +414,98 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
                 <p className="text-white text-sm mt-1 font-medium">{ componentLabel }</p>
             </div>
 
+            { customizationError && (
+                <div className="bg-red-900/30 border border-red-700/50 rounded p-2">
+                    <p className="text-red-400 text-xs">{ customizationError }</p>
+                </div>
+            ) }
+
+            { saveError && (
+                <div className="bg-red-900/30 border border-red-700/50 rounded p-2">
+                    <p className="text-red-400 text-xs">{ saveError }</p>
+                </div>
+            ) }
+
             { varEntries.length > 0 ? (
                 <div>
                     <label className="text-xs text-zinc-400 uppercase font-medium mb-2 block">
                         Variables ({ varEntries.length })
                     </label>
-                    <div className="space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto">
-                        { varEntries.map( ( [ varName, varInfo ] ) => (
-                            <div key={ varName } className="bg-zinc-700/50 rounded-lg p-3">
-                                <div className="flex items-center justify-between">
-                                    <code className="text-blue-400 text-xs font-mono bg-zinc-800 px-1.5 py-0.5 rounded">
-                                        { `{${ varName }}` }
-                                    </code>
-                                </div>
+                    <div className="space-y-3 max-h-[calc(100vh-400px)] overflow-y-auto">
+                        { varEntries.map( ( [ varName, varInfo ] ) => {
+                            const currentValue = customizedVars[ varName ] ?? varInfo.defaultValue ?? "";
+                            const isModified = customizedVars[ varName ] !== undefined &&
+                                customizedVars[ varName ] !== varInfo.defaultValue;
 
-                                { varInfo.defaultValue && (
-                                    <div className="mt-2">
-                                        <span className="text-[10px] text-zinc-500 uppercase">Default:</span>
-                                        <p className="text-zinc-300 text-xs mt-0.5 break-words">
-                                            { varInfo.defaultValue }
-                                        </p>
+                            return (
+                                <div key={ varName } className="bg-zinc-700/50 rounded-lg p-3">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <code className="text-blue-400 text-xs font-mono bg-zinc-800 px-1.5 py-0.5 rounded">
+                                            { `{${ varName }}` }
+                                        </code>
+                                        { isModified && (
+                                            <span className="text-[10px] text-yellow-400 bg-yellow-900/30 px-1.5 py-0.5 rounded">
+                                                Modified
+                                            </span>
+                                        ) }
                                     </div>
-                                ) }
 
-                                { varInfo.options && Object.keys( varInfo.options ).length > 0 && (
-                                    <div className="mt-2">
-                                        <span className="text-[10px] text-zinc-500 uppercase">Options:</span>
-                                        <ul className="mt-1 space-y-0.5">
+                                    { varInfo.options && Object.keys( varInfo.options ).length > 0 ? (
+                                        <select
+                                            value={ currentValue }
+                                            onChange={ ( e ) => handleVariableChange( varName, e.target.value ) }
+                                            className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                                        >
                                             { Object.entries( varInfo.options ).map( ( [ optKey, optValue ] ) => (
-                                                <li key={ optKey } className="text-xs">
-                                                    <span className="text-zinc-400">{ optKey }:</span>
-                                                    <span className="text-zinc-300 ml-1">{ optValue }</span>
-                                                </li>
+                                                <option key={ optKey } value={ optValue }>
+                                                    { optKey }: { optValue }
+                                                </option>
                                             ) ) }
-                                        </ul>
-                                    </div>
-                                ) }
-                            </div>
-                        ) ) }
+                                        </select>
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            value={ currentValue }
+                                            onChange={ ( e ) => handleVariableChange( varName, e.target.value ) }
+                                            placeholder={ varInfo.defaultValue ?? "Enter value..." }
+                                            className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
+                                        />
+                                    ) }
+
+                                    { varInfo.defaultValue && (
+                                        <div className="mt-2">
+                                            <span className="text-[10px] text-zinc-500">
+                                                Default: { varInfo.defaultValue }
+                                            </span>
+                                        </div>
+                                    ) }
+                                </div>
+                            );
+                        } ) }
                     </div>
                 </div>
             ) : (
                 <div className="text-zinc-500 text-sm">
                     No variables defined for this component
+                </div>
+            ) }
+
+            { hasPendingChanges && (
+                <div className="flex gap-2 pt-2 border-t border-zinc-700">
+                    <button
+                        onClick={ handleSave }
+                        disabled={ isSaving }
+                        className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white text-xs rounded transition-colors"
+                    >
+                        { isSaving ? "Saving..." : "Save Changes" }
+                    </button>
+                    <button
+                        onClick={ handleDiscard }
+                        disabled={ isSaving }
+                        className="px-3 py-2 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-700/50 text-white text-xs rounded transition-colors"
+                    >
+                        Discard
+                    </button>
                 </div>
             ) }
         </div>

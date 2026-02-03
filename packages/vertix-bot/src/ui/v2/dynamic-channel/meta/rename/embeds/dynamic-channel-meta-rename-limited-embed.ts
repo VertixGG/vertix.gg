@@ -1,69 +1,49 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
-
-import { UIEmbedElapsedTimeBase } from "@vertix.gg/gui/src/bases/ui-embed-time-elapsed-base";
-
+import { ElapsedEmbedBuilder } from "@vertix.gg/gui/src/builders/elapsed-embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/app";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class DynamicChannelMetaRenameLimitedEmbed extends UIEmbedElapsedTimeBase {
-    private static vars = {
-        masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
-        masterChannelMessage: uiUtilsWrapAsTemplate( "masterChannelMessage" ),
-        masterChannelMessageDefault: uiUtilsWrapAsTemplate( "masterChannelMessageDefault" )
-    };
+const vars = {
+    masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
+    masterChannelMessage: uiUtilsWrapAsTemplate( "masterChannelMessage" ),
+    masterChannelMessageDefault: uiUtilsWrapAsTemplate( "masterChannelMessageDefault" ),
+    elapsedTimeFormatFraction: uiUtilsWrapAsTemplate( "elapsedTimeFormatFraction" )
+};
 
-    public static getName() {
-        return "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed";
-    }
+const DynamicChannelMetaRenameLimitedEmbed = new ElapsedEmbedBuilder<UIArgs, typeof vars>(
+    "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
+    vars
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setEndTime( ( args ) => new Date( Date.now() + args.retryAfter * 1000 ) )
+    .setColor( VERTIX_DEFAULT_COLOR_ORANGE_RED )
+    .setTitle( "🙅 You renamed your channel too fast!" )
+    .setDescription( () => (
+        `Please wait \`${ vars.elapsedTimeFormatFraction }\` until the next rename` +
+        vars.masterChannelMessage
+    ) )
+    .setOptions( () => ( {
+        masterChannelMessage: {
+            [ vars.masterChannelId ]: ` or open a new channel: <#${ vars.masterChannelId }>`,
+            [ vars.masterChannelMessageDefault ]: ""
+        }
+    } ) )
+    .setLogic( ( args: UIArgs ) => {
+        const result: Record<string, string> = {};
+        const masterChannelId = typeof args.masterChannelId === "string" ? args.masterChannelId : "";
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
-
-    protected getEndTime( args: UIArgs ): Date {
-        return new Date( Date.now() + args.retryAfter * 1000 );
-    }
-
-    protected getColor(): number {
-        return VERTIX_DEFAULT_COLOR_ORANGE_RED;
-    }
-
-    protected getTitle(): string {
-        return "🙅 You renamed your channel too fast!";
-    }
-
-    protected getDescription(): string {
-        return (
-            `Please wait \`${ this.getElapsedTimeFormatFractionVariable() }\` until the next rename` +
-            DynamicChannelMetaRenameLimitedEmbed.vars.masterChannelMessage
-        );
-    }
-
-    protected getOptions() {
-        const { masterChannelId, masterChannelMessageDefault } = DynamicChannelMetaRenameLimitedEmbed.vars;
-
-        return {
-            masterChannelMessage: {
-                [ masterChannelId ]: ` or open a new channel: <#${ masterChannelId }>`,
-
-                [ masterChannelMessageDefault ]: ""
-            }
-        };
-    }
-
-    protected getLogic( args: UIArgs ) {
-        const result: any = {};
-
-        if ( args.masterChannelId ) {
-            result.masterChannelId = args.masterChannelId;
-            result.masterChannelMessage = DynamicChannelMetaRenameLimitedEmbed.vars.masterChannelId;
+        if ( masterChannelId ) {
+            result.masterChannelId = masterChannelId;
+            result.masterChannelMessage = vars.masterChannelId;
         } else {
-            result.masterChannelMessage = DynamicChannelMetaRenameLimitedEmbed.vars.masterChannelMessageDefault;
+            result.masterChannelMessage = vars.masterChannelMessageDefault;
         }
 
         return result;
-    }
-}
+    } )
+    .build();
+
+export { DynamicChannelMetaRenameLimitedEmbed };

@@ -30,3 +30,15 @@ body {
     padding: 0;
     background: var(--color-background);
 }
+
+.flow-viewer .react-flow__edges {
+    z-index: 30;
+}
+
+.flow-viewer .react-flow__edge {
+    z-index: 30;
+}
+
+.flow-viewer .react-flow__nodes {
+    z-index: 10;
+}

@@ -24,7 +24,6 @@ interface ModeStore {
 
 const onAfterSet = ( _modes : number ) => {
 };
-
 // Helper function to log mode changes when in debug mode
 function logModeChange( oldModes : number, newModes : number ) {
     if ( import.meta.env.MODE === "development" ) {

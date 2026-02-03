@@ -1,11 +1,18 @@
+import zCore from "@zenflux/core";
 import { CommandBase } from "@zenflux/react-commander/command-base";
+import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
+import { useSelectedGuildStore } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
+import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
 
 import type { ModuleInfo, ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { EntityType } from "@vertix.gg/dashboard/src/features/flow-editor/components/entity-list";
 import type { Node } from "@xyflow/react";
+import type { GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
+const logger = zCore.modules.createLogger( "flow-editor-commands" );
 
 export interface FlowEditorState {
     modules: ModuleInfo[];
@@ -139,13 +146,13 @@ export class ClearErrorCommand extends CommandBase<FlowEditorState> {
     }
 }
 
-export class UpdateNodeDataCommand extends CommandBase<FlowEditorState, { path: string; value: unknown }> {
+export class UpdateNodeDataCommand extends CommandBase<FlowEditorState, { path: string; value: unknown; isInitialLoad?: boolean }> {
     public static getName(): string {
         return "Dashboard/FlowEditor/UpdateNodeData";
     }
 
-    public apply( args: { path: string; value: unknown } ) {
-        const { path, value } = args;
+    public apply( args: { path: string; value: unknown; isInitialLoad?: boolean } ) {
+        const { path, value, isInitialLoad } = args;
         const selectedNode = this.state.selectedNode;
 
         if ( !selectedNode ) {
@@ -168,6 +175,17 @@ export class UpdateNodeDataCommand extends CommandBase<FlowEditorState, { path: 
         }
 
         current[ pathParts[ pathParts.length - 1 ] ] = value;
+
+        // If this is an initial load (applying saved customizations), also update originalNodeData
+        // to prevent showing as "unsaved"
+        if ( isInitialLoad ) {
+            const newOriginalData = JSON.parse( JSON.stringify( updatedNode.data ) ) as Record<string, unknown>;
+            return this.setState( {
+                selectedNode: updatedNode,
+                originalNodeData: newOriginalData,
+                hasUnsavedChanges: false
+            } );
+        }
 
         return this.setState( {
             selectedNode: updatedNode,
@@ -206,22 +224,80 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
         return "Dashboard/FlowEditor/SaveNodeChanges";
     }
 
-    public apply() {
-        const { selectedNode } = this.state;
+    public async apply() {
+        const { selectedNode, originalNodeData } = this.state;
 
         if ( !selectedNode ) {
             return;
         }
 
-        // Update original data to current state (marking it as "saved")
-        const newOriginalData = JSON.parse( JSON.stringify( selectedNode.data ) ) as Record<string, unknown>;
+        const guildId = useSelectedGuildStore.getState().selectedGuild?.id;
+        if ( !guildId ) {
+            logger.error( this.apply, "No guild selected" );
+            return;
+        }
 
-        // TODO: In the future, this could persist to an API
-        // await apiClient.post("/save-node", { nodeId: selectedNode.id, data: selectedNode.data });
+        const customizationKey = selectedNode.data?.customizationKey as string | undefined;
+        if ( !customizationKey ) {
+            logger.error( this.apply, "No customizationKey in node data" );
+            return;
+        }
 
-        return this.setState( {
-            originalNodeData: newOriginalData,
-            hasUnsavedChanges: false
-        } );
+        // Extract customization data from node
+        const embed = selectedNode.data?.embed as Record<string, unknown> | undefined;
+        const originalEmbed = originalNodeData?.embed as Record<string, unknown> | undefined;
+
+        // Build the customization object with changed values
+        const embedOverrides: Record<string, unknown> = {};
+
+        if ( embed ) {
+            // Check for color changes
+            if ( embed.color !== undefined && embed.color !== originalEmbed?.color ) {
+                embedOverrides.color = embed.color;
+            }
+            // Check for title changes
+            if ( embed.title !== undefined && embed.title !== originalEmbed?.title ) {
+                embedOverrides.title = embed.title;
+            }
+            // Check for description changes
+            if ( embed.description !== undefined && embed.description !== originalEmbed?.description ) {
+                embedOverrides.description = embed.description;
+            }
+        }
+
+        logger.debug( this.apply, "Saving customization", { guildId, customizationKey, embedOverrides } );
+
+        try {
+            // Save to database using query module
+            const queryModule = getQueryModule( CustomizationQuery );
+            await queryModule.request<GuildCustomizationData>( "Dashboard/Customization/UpdateComponent", {
+                guildId,
+                customizationKey,
+                customization: {
+                    embedOverrides: embedOverrides as { title?: string; description?: string; color?: number }
+                }
+            } );
+
+            logger.debug( this.apply, "Save successful" );
+
+            // Trigger refresh of customizat`ions in FlowViewer
+            const refreshFn = ( window as unknown as Record<string, () => void> ).__refreshFlowCustomization;
+            if ( refreshFn ) {
+                refreshFn();
+            }
+
+            // Update local state
+            const newOriginalData = JSON.parse( JSON.stringify( selectedNode.data ) ) as Record<string, unknown>;
+
+            return this.setState( {
+                originalNodeData: newOriginalData,
+                hasUnsavedChanges: false
+            } );
+        } catch( error ) {
+            logger.error( this.apply, "Failed to save", error );
+            return this.setState( {
+                error: error instanceof Error ? error.message : "Failed to save changes"
+            } );
+        }
     }
 }

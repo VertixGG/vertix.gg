@@ -1544,7 +1544,25 @@
                 "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed"
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🙅 You renamed your channel too fast!",
+                            "description": "Please wait `{elapsedTimeFormatFraction}` until the next rename{masterChannelMessage}",
+                            "color": 16738560,
+                            "options": {
+                                "masterChannelMessage": {
+                                    "{masterChannelId}": " or open a new channel: <#{masterChannelId}>",
+                                    "{masterChannelMessageDefault}": ""
+                                }
+                            },
+                            "vars": {
+                                "masterChannelId": "{masterChannelId}",
+                                "masterChannelMessage": "{masterChannelMessage}",
+                                "masterChannelMessageDefault": "{masterChannelMessageDefault}",
+                                "elapsedTimeFormatFraction": "{elapsedTimeFormatFraction}"
+                            }
+                        }
                     }
                 ]
             },
@@ -1594,8 +1612,8 @@
         "options": {
             "embedAudit": {
                 "total": 3,
-                "withDefinition": 2,
-                "missingDefinition": 1
+                "withDefinition": 3,
+                "missingDefinition": 0
             }
         }
     },
@@ -3382,7 +3400,16 @@
                 "name": "VertixBot/UI-V2/SetupStep1Component/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupStep1Embed"
+                        "embed": "VertixBot/UI-V2/SetupStep1Embed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Step 1 - Set Dynamic Channels Template Name",
+                            "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1).",
+                            "color": 3369963,
+                            "vars": {
+                                "dynamicChannelNameTemplate": "{dynamicChannelNameTemplate}"
+                            }
+                        }
                     }
                 ]
             },
@@ -3426,7 +3453,33 @@
                 "name": "VertixBot/UI-V2/SetupStep3Component/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupStep3Embed"
+                        "embed": "VertixBot/UI-V2/SetupStep3Embed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Step 3 - Select Verified Roles",
+                            "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "verifiedRolesDisplay": {
+                                    "{verifiedRoles}": "{verifiedRoles}",
+                                    "{verifiedRolesDefault}": "**None**"
+                                }
+                            },
+                            "arrayOptions": {
+                                "verifiedRoles": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "verifiedRoles": "{verifiedRoles}",
+                                "verifiedRolesDisplay": "{verifiedRolesDisplay}",
+                                "verifiedRolesEmpty": "{verifiedRolesDefault}"
+                            }
+                        }
                     }
                 ]
             },
@@ -3486,8 +3539,8 @@
         "options": {
             "embedAudit": {
                 "total": 5,
-                "withDefinition": 3,
-                "missingDefinition": 2
+                "withDefinition": 5,
+                "missingDefinition": 0
             }
         }
     },
@@ -3523,7 +3576,16 @@
                 "name": "VertixBot/UI-V2/SetupStep1Component/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupStep1Embed"
+                        "embed": "VertixBot/UI-V2/SetupStep1Embed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Step 1 - Set Dynamic Channels Template Name",
+                            "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1).",
+                            "color": 3369963,
+                            "vars": {
+                                "dynamicChannelNameTemplate": "{dynamicChannelNameTemplate}"
+                            }
+                        }
                     }
                 ]
             }
@@ -3553,8 +3615,8 @@
         "options": {
             "embedAudit": {
                 "total": 1,
-                "withDefinition": 0,
-                "missingDefinition": 1
+                "withDefinition": 1,
+                "missingDefinition": 0
             }
         }
     },
@@ -3757,7 +3819,33 @@
                 "name": "VertixBot/UI-V2/SetupStep3Component/EmbedsGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V2/SetupStep3Embed"
+                        "embed": "VertixBot/UI-V2/SetupStep3Embed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Step 3 - Select Verified Roles",
+                            "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "verifiedRolesDisplay": {
+                                    "{verifiedRoles}": "{verifiedRoles}",
+                                    "{verifiedRolesDefault}": "**None**"
+                                }
+                            },
+                            "arrayOptions": {
+                                "verifiedRoles": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "verifiedRoles": "{verifiedRoles}",
+                                "verifiedRolesDisplay": "{verifiedRolesDisplay}",
+                                "verifiedRolesEmpty": "{verifiedRolesDefault}"
+                            }
+                        }
                     }
                 ]
             }
@@ -3771,8 +3859,8 @@
         "options": {
             "embedAudit": {
                 "total": 1,
-                "withDefinition": 0,
-                "missingDefinition": 1
+                "withDefinition": 1,
+                "missingDefinition": 0
             }
         }
     },

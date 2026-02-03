@@ -252,6 +252,20 @@ export abstract class UIAdapterBase<
 
         const ownerId = "string" === typeof context ? context : context.guildId;
 
+        // Set _guildId for customization support (null for direct messages)
+        if ( ownerId && ownerId !== "direct-message" ) {
+            args._guildId = ownerId;
+
+            // Set _customizationKey if not already provided
+            // Format: "ComponentName" (short name, last segment only to match dashboard format)
+            if ( !args._customizationKey ) {
+                // Extract just the last segment of the component name to match dashboard format
+                // e.g., "VertixBot/UI/SetupAdapter" -> "SetupAdapter"
+                const fullName = this.getComponent().getName();
+                args._customizationKey = fullName.split( "/" ).pop() ?? fullName;
+            }
+        }
+
         if ( ownerId === "direct-message" ) {
             args._language = UI_LANGUAGES_INITIAL_CODE;
         } else if ( ownerId && args && !args._language ) {

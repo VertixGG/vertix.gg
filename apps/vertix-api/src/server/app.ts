@@ -9,6 +9,7 @@ import flowsRoutePlugin from "@vertix.gg/api/src/server/routes/flows-route";
 import authRoutePlugin from "@vertix.gg/api/src/server/routes/auth-route";
 import dashboardRoutePlugin from "@vertix.gg/api/src/server/routes/dashboard-route";
 import managementRoutePlugin from "@vertix.gg/api/src/server/routes/management-route";
+import customizationRoutePlugin from "@vertix.gg/api/src/server/routes/customization-route";
 import { requireAuth } from "@vertix.gg/api/src/server/middleware/auth-middleware";
 import { discordConfig } from "@vertix.gg/api/src/server/config/discord";
 import { API_PREFIX } from "@vertix.gg/api/src/server/constants";
@@ -63,6 +64,7 @@ export async function createApp(): Promise<FastifyInstance> {
         await protectedRoutes.register( flowsRoutePlugin );
         await protectedRoutes.register( dashboardRoutePlugin );
         await protectedRoutes.register( managementRoutePlugin );
+        await protectedRoutes.register( customizationRoutePlugin );
     }, { prefix: API_PREFIX } );
 
     return fastify;

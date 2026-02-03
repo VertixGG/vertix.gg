@@ -1,40 +1,64 @@
+import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
+import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-
-import { VerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-embed";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
-export class SetupStep3Embed extends VerifiedRolesEmbed {
-    public static getName() {
-        return "VertixBot/UI-V2/SetupStep3Embed";
-    }
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-    public static getInstanceType() {
-        return UIInstancesTypes.Dynamic;
-    }
+const SETUP_STEP_3_VARS = {
+    separator: uiUtilsWrapAsTemplate( "separator" ),
+    value: uiUtilsWrapAsTemplate( "value" ),
+    verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+    verifiedRolesDisplay: uiUtilsWrapAsTemplate( "verifiedRolesDisplay" ),
+    verifiedRolesEmpty: uiUtilsWrapAsTemplate( "verifiedRolesDefault" )
+};
 
-    protected getColor(): number {
-        return VERTIX_DEFAULT_COLOR_BRAND;
-    }
+const SetupStep3Embed = new EmbedBuilder<UIArgs, typeof SETUP_STEP_3_VARS>(
+    "VertixBot/UI-V2/SetupStep3Embed",
+    SETUP_STEP_3_VARS
+)
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setImage( UI_IMAGE_EMPTY_LINE_URL )
+    .setTitle( "Step 3 - Select Verified Roles" )
+    .setDescription( () => (
+        "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
+        "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
+        "Not sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n" +
+        "**_🛡️ Verified Roles_**\n\n" +
+        "> " +
+        SETUP_STEP_3_VARS.verifiedRolesDisplay +
+        "\n\n" +
+        "You can keep the default settings by pressing **( `✓ Finish` )** button."
+    ) )
+    .setOptions( () => ( {
+        verifiedRolesDisplay: {
+            [ SETUP_STEP_3_VARS.verifiedRoles ]: SETUP_STEP_3_VARS.verifiedRoles,
+            [ SETUP_STEP_3_VARS.verifiedRolesEmpty ]: "**None**"
+        }
+    } ) )
+    .setArrayOptions( () => ( {
+        verifiedRoles: {
+            format: `<@&${ SETUP_STEP_3_VARS.value }>${ SETUP_STEP_3_VARS.separator }`,
+            separator: ", "
+        }
+    } ) )
+    .setLogic( ( args: UIArgs ) => {
+        const result: Record<string, string | string[]> = {};
+        const verifiedRoles = Array.isArray( args.dynamicChannelVerifiedRoles )
+            ? args.dynamicChannelVerifiedRoles
+            : [];
 
-    protected getImage(): string {
-        return UI_IMAGE_EMPTY_LINE_URL;
-    }
+        if ( verifiedRoles.length ) {
+            result.verifiedRoles = verifiedRoles;
+            result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRoles;
+        } else {
+            result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRolesEmpty;
+        }
 
-    protected getTitle(): string {
-        return "Step 3 - Select Verified Roles";
-    }
+        return result;
+    } )
+    .build();
 
-    protected getDescription() {
-        return (
-            "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
-            "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
-            "Not sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n" +
-            "**_🛡️ Verified Roles_**\n\n" +
-            "> " +
-            super.getDescription() +
-            "\n\n" +
-            "You can keep the default settings by pressing **( `✓ Finish` )** button."
-        );
-    }
-}
+export { SetupStep3Embed };

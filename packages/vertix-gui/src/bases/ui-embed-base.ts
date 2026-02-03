@@ -1,3 +1,5 @@
+import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
+
 import { UITemplateBase } from "@vertix.gg/gui/src/bases/ui-template-base";
 
 import type {
@@ -13,6 +15,8 @@ import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 import type { APIEmbedField, APIEmbedImage, APIEmbedThumbnail } from "discord.js";
 
 export abstract class UIEmbedBase extends UITemplateBase {
+    private static $debugger = createDebugger( "UIEmbedBase", "UI" );
+
     private content: UIEmbedLanguageContent | undefined;
 
     public static getName() {
@@ -106,6 +110,25 @@ export abstract class UIEmbedBase extends UITemplateBase {
 
         const template = await this.generateTemplate( content, attributes );
 
+        // Apply guild-specific customizations if available
+        const customization = await this.fetchCustomization();
+
+        if ( customization?.embedOverrides ) {
+            const overrides = customization.embedOverrides;
+
+            if ( overrides.color !== undefined ) {
+                template.color = overrides.color;
+            }
+
+            if ( overrides.title !== undefined && overrides.title.length > 0 ) {
+                template.title = overrides.title;
+            }
+
+            if ( overrides.description !== undefined && overrides.description.length > 0 ) {
+                template.description = overrides.description;
+            }
+        }
+
         if ( template.footer?.length ) {
             template.footer = {
                 text: template.footer
@@ -113,6 +136,35 @@ export abstract class UIEmbedBase extends UITemplateBase {
         }
 
         return template;
+    }
+
+    /**
+     * Fetches guild-specific customization for this embed.
+     * Uses _guildId and _customizationKey from uiArgs.
+     */
+    private async fetchCustomization() {
+        const guildId = this.uiArgs?._guildId as string | undefined;
+        const customizationKey = this.uiArgs?._customizationKey as string | undefined;
+
+        UIEmbedBase.$debugger.log( this.fetchCustomization, "Fetching customization", { guildId, customizationKey } );
+
+        if ( !guildId || !customizationKey ) {
+            UIEmbedBase.$debugger.log( this.fetchCustomization, "Missing guildId or customizationKey, skipping" );
+            return null;
+        }
+
+        try {
+            const provider = this.uiService.getCustomizationProvider();
+            const result = await provider.getComponentCustomization( guildId, customizationKey );
+
+            UIEmbedBase.$debugger.log( this.fetchCustomization, "Customization result", { hasResult: !!result, result } );
+
+            return result;
+        } catch( error ) {
+            UIEmbedBase.$debugger.log( this.fetchCustomization, "Failed to fetch customization", { error } );
+            // Silently fail - customization is optional
+            return null;
+        }
     }
 
     protected getColor() {

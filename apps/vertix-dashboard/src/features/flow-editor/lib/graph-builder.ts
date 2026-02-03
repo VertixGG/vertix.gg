@@ -692,6 +692,33 @@ function buildMultiStateFlow(
     let initialElementRows: ElementData[][] | undefined;
     const initialStateTransitionTriggers: StateTransitionTrigger[] = [];
 
+    const wizardEdgePairs = new Set<string>();
+    const wizardConnectedTargets = new Set<string>();
+    stateComponents.forEach( ( stateComp ) => {
+        const executionStep = typeof stateComp.options?.[ "executionStep" ] === "string"
+            ? stateComp.options[ "executionStep" ]
+            : undefined;
+
+        const previewEmbedsGroup = getStatePreviewEmbedsGroup( stateComp.options );
+        const compPreview = extractComponentPreview( stateComp.component, executionStep, previewEmbedsGroup );
+        const elemRows = compPreview.elementRows;
+
+        stateKeyToElementRows.set( stateComp.stateKey, elemRows );
+
+        const wizardTrans = getWizardTransitionsForState(
+            flow,
+            stateComp.stateKey,
+            stateKeyToIndex,
+            initialStateKey ?? "",
+            elemRows
+        );
+
+        wizardTrans.forEach( wt => {
+            wizardEdgePairs.add( `${ stateComp.stateKey }->${ wt.targetStateKey }` );
+            wizardConnectedTargets.add( wt.targetStateKey );
+        } );
+    } );
+
     // For modal-first flows, create modal node connected to flow
     let modalFirstNodeId: string | undefined;
     if ( modalFirstInfo.isModalFirst && modalFirstInfo.modalName ) {
@@ -763,7 +790,7 @@ function buildMultiStateFlow(
         } ) );
 
         const stateTransitionTriggersForNode = stepIndex === 0
-            ? initialStateTransitionTriggers
+            ? [ ...initialStateTransitionTriggers, ...wizardStateTransitionTriggers ]
             : wizardStateTransitionTriggers;
 
         allNodes.push(
@@ -842,6 +869,10 @@ function buildMultiStateFlow(
                 return;
             }
 
+            if ( wizardConnectedTargets.has( transition.to ) ) {
+                return;
+            }
+
             addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
         } );
 
@@ -882,6 +913,10 @@ function buildMultiStateFlow(
                 return;
             }
 
+            if ( wizardConnectedTargets.has( stateComponent.stateKey ) ) {
+                return;
+            }
+
             const targetCompId = stateKeyToCompId.get( stateComponent.stateKey );
             if ( !targetCompId ) {
                 return;
@@ -918,6 +953,10 @@ function buildMultiStateFlow(
 
         stateComponents.slice( 1 ).forEach( ( stateComponent ) => {
             if ( wizardConnectedInFanOut.has( stateComponent.stateKey ) ) {
+                return;
+            }
+
+            if ( wizardConnectedTargets.has( stateComponent.stateKey ) ) {
                 return;
             }
 
@@ -961,6 +1000,9 @@ function buildMultiStateFlow(
                 targetHandle = "left";
             }
 
+            const isForwardWizardEdge = !wizardTransition.isBackTransition && !wizardTransition.isFinishTransition;
+            const edgeWeight = isForwardWizardEdge ? 10 : 1;
+
             addEdge( createComponentToComponentEdge(
                 sourceCompId,
                 targetCompId,
@@ -968,7 +1010,8 @@ function buildMultiStateFlow(
                 wizardTransition.buttonName,
                 wizardTransition.targetStateName,
                 targetHandle,
-                wizardTransition.isBackTransition
+                wizardTransition.isBackTransition || wizardTransition.isFinishTransition,
+                edgeWeight
             ) );
         } );
     } );

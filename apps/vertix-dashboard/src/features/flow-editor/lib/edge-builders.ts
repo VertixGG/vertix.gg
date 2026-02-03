@@ -20,7 +20,8 @@ export function createFlowToComponentEdge( flowId: string, compId: string, flowN
         source: flowId,
         target: compId,
         style: { stroke: EDGE_COLORS.FLOW_TO_COMPONENT, ...EDGE_STYLES.DEFAULT },
-        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.FLOW_TO_COMPONENT, ...MARKER_SIZES.MEDIUM }
+        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.FLOW_TO_COMPONENT, ...MARKER_SIZES.MEDIUM },
+        data: { weight: 10 }
     };
 }
 
@@ -65,7 +66,8 @@ export function createComponentToComponentEdge(
     sourceElementName: string,
     label: string,
     targetHandle?: string,
-    isBackEdge?: boolean
+    isBackEdge?: boolean,
+    weight?: number
 ): Edge {
     return {
         id: `edge-comp-comp-${ flowName }-${ sourceElementName }-${ targetCompId }-${ label }`,
@@ -79,7 +81,7 @@ export function createComponentToComponentEdge(
         markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.STEP_TRANSITION, ...MARKER_SIZES.MEDIUM },
         labelStyle: { fill: EDGE_COLORS.STEP_TRANSITION, fontSize: 10, fontWeight: 600 },
         labelBgPadding: [ 6, 2 ],
-        data: { isBackEdge: isBackEdge ?? false }
+        data: { isBackEdge: isBackEdge ?? false, weight: weight ?? 1 }
     };
 }
 

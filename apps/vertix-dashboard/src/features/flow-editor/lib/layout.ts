@@ -132,12 +132,13 @@ export function getLayoutedElements(
                 return;
             }
 
-            const edgeData = edge.data as { isBackEdge?: boolean } | undefined;
+            const edgeData = edge.data as { isBackEdge?: boolean; weight?: number } | undefined;
             if ( edgeData?.isBackEdge ) {
                 return;
             }
 
-            graph.setEdge( edge.source, edge.target );
+            const weight = edgeData?.weight ?? 1;
+            graph.setEdge( edge.source, edge.target, { weight } );
         } );
 
         Dagre.layout( graph );
@@ -274,8 +275,27 @@ export function getLayoutedElements(
         fanouts.set( source, existing );
     } );
 
+    const forwardEdgeSet = new Set<string>();
+    edges.forEach( edge => {
+        const edgeData = edge.data as { isBackEdge?: boolean } | undefined;
+        if ( !edgeData?.isBackEdge && edge.source !== edge.target ) {
+            forwardEdgeSet.add( `${ edge.source }->${ edge.target }` );
+        }
+    } );
+
     fanouts.forEach( ( targets, sourceId ) => {
         if ( targets.size < 2 ) {
+            return;
+        }
+
+        const targetArray = [ ...targets ];
+        const hasChainBetweenTargets = targetArray.some( ( t1, i ) =>
+            targetArray.slice( i + 1 ).some( t2 =>
+                forwardEdgeSet.has( `${ t1 }->${ t2 }` ) || forwardEdgeSet.has( `${ t2 }->${ t1 }` )
+            )
+        );
+
+        if ( hasChainBetweenTargets ) {
             return;
         }
 

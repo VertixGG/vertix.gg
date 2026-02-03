@@ -160,6 +160,14 @@ exports.Prisma.GuildDataScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.GuildCustomizationScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  components: 'components',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ChannelScalarFieldEnum = {
   id: 'id',
   channelId: 'channelId',
@@ -294,6 +302,7 @@ exports.Prisma.ModelName = {
   Category: 'Category',
   Guild: 'Guild',
   GuildData: 'GuildData',
+  GuildCustomization: 'GuildCustomization',
   Channel: 'Channel',
   ChannelData: 'ChannelData',
   User: 'User',

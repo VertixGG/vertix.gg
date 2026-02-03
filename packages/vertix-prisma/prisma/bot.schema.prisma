@@ -100,6 +100,17 @@ model GuildData {
   @@unique([ownerId, key, version])
 }
 
+model GuildCustomization {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId    String   @unique
+  // ---
+  components Json     // All component customizations: { [componentName]: { variables: {...} } }
+  // ---
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
 model Channel {
   id               String                   @id @default(auto()) @map("_id") @db.ObjectId
   channelId        String                   @unique

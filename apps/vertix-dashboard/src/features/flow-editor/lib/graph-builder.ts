@@ -24,7 +24,7 @@ import {
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
 import { WIZARD_BUTTON_NAMES } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
 
-import type { FlowStateComponent } from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
+import type { FlowStateComponent, ButtonModalConnection } from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
 import type { ElementData, ComponentPreview } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
 import type { ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { UIExportedFlow, UIExportedComponent, UIExportEmbedDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
@@ -53,6 +53,7 @@ interface FlowContext {
 }
 
 type ModalConnection = { buttonName: string; modalName: string };
+type ModalWithOptionalButton = { buttonName?: string; modalName: string };
 type FlowConnection = { buttonName: string; targetFlowName: string };
 type TransitionWithTrigger = { triggeredBy: NonNullable<UIExportedFlow[ "transitions" ][ number ][ "triggeredBy" ]>; to: string };
 
@@ -262,17 +263,24 @@ class EdgeBuilder {
         } );
     }
 
-    public addModalEdges( allNodes: Node[], compId: string, compPreview: ComponentPreview, buttonModalConnections: ModalConnection[], stateTransitions?: string[] ): void {
-        const hasExplicitTransitions = !!stateTransitions?.length;
-        const modalNames = buttonModalConnections.length > 0
-            ? buttonModalConnections.map( c => c.modalName )
-            : hasExplicitTransitions ? [] : compPreview.modals;
+    public addModalEdges( allNodes: Node[], compId: string, compPreview: ComponentPreview, buttonModalConnections: ModalConnection[], stateKey?: string ): void {
+        let connections: ModalWithOptionalButton[] = [ ...buttonModalConnections ];
 
-        if ( !modalNames.length ) {
+        if ( connections.length === 0 && stateKey ) {
+            connections = this.findModalConnectionsFromStateKey( stateKey, compPreview.modals );
+        }
+
+        if ( connections.length === 0 && !stateKey ) {
+            connections = compPreview.modals.map( modal => ( { modalName: modal } ) );
+        }
+
+        if ( connections.length === 0 ) {
             return;
         }
 
-        const sortedModals = sortModalsByButtonOrder( modalNames, buttonModalConnections, compPreview.elementRows );
+        const modalNames = connections.map( c => c.modalName );
+        const connectionsForSort = connections.filter( ( c ): c is ModalConnection => !!c.buttonName );
+        const sortedModals = sortModalsByButtonOrder( modalNames, connectionsForSort, compPreview.elementRows );
 
         sortedModals.forEach( ( modal, idx ) => {
             const modalId = `modal-${ compId }-${ idx }`;
@@ -280,11 +288,39 @@ class EdgeBuilder {
 
             allNodes.push( createModalNode( modalId, modal, modalDef, this.context.flow.name ) );
 
-            const connection = buttonModalConnections.find( c => c.modalName === modal );
-            const sourceHandle = connection ? `btn-${ connection.buttonName }` : "bottom";
+            const connection = connections.find( c => c.modalName === modal );
+            const sourceHandle = connection?.buttonName ? `btn-${ connection.buttonName }` : "bottom";
 
             this.addEdge( createComponentToModalEdge( compId, modalId, sourceHandle ) );
         } );
+    }
+
+    private findModalConnectionsFromStateKey( stateKey: string, componentModals: string[] ): ModalWithOptionalButton[] {
+        const connections: ModalWithOptionalButton[] = [];
+
+        this.context.flow.transitions?.forEach( t => {
+            if ( t.from !== stateKey || !t.triggeredBy ) {
+                return;
+            }
+
+            const modalTriggers = t.triggeredBy.filter( tr => tr.handlerKind === "modal" && tr.sourceEntity );
+            const buttonTrigger = t.triggeredBy.find( tr => tr.handlerKind === "button" && tr.sourceEntity );
+
+            modalTriggers.forEach( modalTrigger => {
+                const modalName = modalTrigger.sourceEntity!;
+
+                if ( !componentModals.includes( modalName ) ) {
+                    return;
+                }
+
+                connections.push( {
+                    modalName,
+                    buttonName: buttonTrigger?.sourceEntity
+                } );
+            } );
+        } );
+
+        return connections;
     }
 
     public addWizardEdges(): void {
@@ -448,18 +484,18 @@ class EdgeBuilder {
 }
 
 class FlowPatternDetector {
-    public static detectModalFirst( flow: UIExportedFlow, initialStateOptions?: Record<string, unknown> ): { isModalFirst: boolean; modalName: string | null } {
+    public static detectModalFirst( flow: UIExportedFlow, initialStateKey: string, initialStateOptions?: Record<string, unknown> ): { isModalFirst: boolean; modalName: string | null } {
         const executionStep = initialStateOptions?.[ "executionStep" ];
         if ( executionStep !== "default" ) {
             return { isModalFirst: false, modalName: null };
         }
 
-        const modalTrigger = flow.transitions.find( t =>
-            t.triggeredBy?.some( tr => tr.handlerKind === "modal" )
+        const modalTriggerFromInitial = flow.transitions.find( t =>
+            t.from === initialStateKey && t.triggeredBy?.some( tr => tr.handlerKind === "modal" )
         )?.triggeredBy?.find( tr => tr.handlerKind === "modal" );
 
-        return modalTrigger
-            ? { isModalFirst: true, modalName: modalTrigger.sourceEntity }
+        return modalTriggerFromInitial
+            ? { isModalFirst: true, modalName: modalTriggerFromInitial.sourceEntity }
             : { isModalFirst: false, modalName: null };
     }
 
@@ -520,7 +556,7 @@ class MultiStateFlowBuilder {
 
     public build(): void {
         const initialStateOptions = this.context.stateComponents[ 0 ]?.options as Record<string, unknown> | undefined;
-        const modalFirst = FlowPatternDetector.detectModalFirst( this.context.flow, initialStateOptions );
+        const modalFirst = FlowPatternDetector.detectModalFirst( this.context.flow, this.context.initialStateKey, initialStateOptions );
         const useSelectMenu = FlowPatternDetector.hasSelectMenuEdges( this.context.flow, this.context.stateKeys );
         const fanOut = FlowPatternDetector.detectFanOut( this.context.flow, this.context.stateKeys, this.context.initialStateKey );
         const useFanOut = !useSelectMenu && !modalFirst.isModalFirst && fanOut.isFanOut;
@@ -634,7 +670,7 @@ class MultiStateFlowBuilder {
             this.addEdgesForState( stepIndex, compId, prevCompId, isModalFirst, modalFirstNodeId, useSelectMenu, useFanOut, stateComp );
 
             if ( !isModalFirst ) {
-                this.edgeBuilder.addModalEdges( this.allNodes, compId, compPreview, buttonModalConnections, stateComp.transitions );
+                this.edgeBuilder.addModalEdges( this.allNodes, compId, compPreview, buttonModalConnections, stateComp.stateKey );
             }
             this.edgeBuilder.addButtonFlowEdges( compId, buttonFlowTriggers );
 
@@ -642,13 +678,48 @@ class MultiStateFlowBuilder {
         } );
     }
 
-    private getModalConnections( stateComp: FlowStateComponent, compPreview: ComponentPreview ): ModalConnection[] {
+    private getModalConnections( stateComp: FlowStateComponent, compPreview: ComponentPreview ): ButtonModalConnection[] {
         const componentButtons = compPreview.elementRows.flat().map( el => el.name );
         let connections = findButtonModalConnections( this.context.flow, compPreview.modals, stateComp.transitions );
 
-        if ( !connections.length && compPreview.modals.length > 0 && !stateComp.transitions?.length ) {
-            connections = inferButtonModalConnections( componentButtons, compPreview.modals );
+        if ( !connections.length && compPreview.modals.length > 0 ) {
+            const stateConnections = this.findStateModalConnections( stateComp.stateKey, compPreview.modals );
+            if ( stateConnections.length > 0 ) {
+                connections = stateConnections;
+            } else if ( !stateComp.transitions?.length ) {
+                connections = inferButtonModalConnections( componentButtons, compPreview.modals );
+            }
         }
+
+        return connections;
+    }
+
+    private findStateModalConnections( stateKey: string, componentModals: string[] ): ButtonModalConnection[] {
+        const connections: ButtonModalConnection[] = [];
+
+        this.context.flow.transitions?.forEach( t => {
+            if ( t.from !== stateKey || !t.triggeredBy ) {
+                return;
+            }
+
+            const modalTriggers = t.triggeredBy.filter( tr => tr.handlerKind === "modal" && tr.sourceEntity );
+            const buttonTrigger = t.triggeredBy.find( tr => tr.handlerKind === "button" && tr.sourceEntity );
+
+            modalTriggers.forEach( modalTrigger => {
+                const modalName = modalTrigger.sourceEntity!;
+
+                if ( !componentModals.includes( modalName ) || !buttonTrigger?.sourceEntity ) {
+                    return;
+                }
+
+                const buttonShortName = buttonTrigger.sourceEntity.split( "/" ).pop() ?? buttonTrigger.sourceEntity;
+                connections.push( {
+                    buttonName: buttonTrigger.sourceEntity,
+                    buttonLabel: buttonShortName.replace( /Button$/, "" ).replace( /([a-z])([A-Z])/g, "$1 $2" ),
+                    modalName
+                } );
+            } );
+        } );
 
         return connections;
     }

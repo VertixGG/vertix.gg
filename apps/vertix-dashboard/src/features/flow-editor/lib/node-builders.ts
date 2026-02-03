@@ -70,6 +70,8 @@ export function createComponentNode(
             label: label ?? compPreview.name,
             type: "component",
             embed: compPreview.embed,
+            embedDefinition: compPreview.embedDefinition,
+            allEmbedDefinitions: compPreview.allEmbedDefinitions,
             elementRows: compPreview.elementRows,
             buttonModalTriggers,
             buttonFlowTriggers,

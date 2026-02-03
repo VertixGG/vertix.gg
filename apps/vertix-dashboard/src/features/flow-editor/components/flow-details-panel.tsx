@@ -1,13 +1,22 @@
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 
+import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
+
 import type { Node } from "@xyflow/react";
 import type { ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
-import type { UIExportedFlow, UIExportedComponent } from "@vertix.gg/definitions/src/ui-export-definitions";
+import type { UIExportedFlow, UIExportedComponent, UIExportEmbedDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
 interface FlowDetailsPanelSelectedState {
     moduleFlowsData: FlowEditorState[ "moduleFlowsData" ];
     selectedNode: FlowEditorState[ "selectedNode" ];
+}
+
+// Extract variable placeholders from text (e.g., {varName})
+function extractVariables( text: string | undefined ): string[] {
+    if ( !text ) return [];
+    const matches = text.match( /\{([a-zA-Z0-9_]+)\}/g );
+    return matches ? [ ...new Set( matches.map( m => m.slice( 1, -1 ) ) ) ] : [];
 }
 
 function getFlowComponentNames( flow: UIExportedFlow, allComponents: UIExportedComponent[] ): string[] {
@@ -267,6 +276,130 @@ function NodeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsRespo
     );
 }
 
+function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsResponse } ) {
+    const { node } = props;
+    const nodeData = node.data;
+    const nodeType = nodeData?.type as string | undefined;
+
+    if ( nodeType !== "component" ) {
+        return (
+            <div className="p-4">
+                <p className="text-zinc-500 text-sm">Select a component to view its variables</p>
+            </div>
+        );
+    }
+
+    const componentLabel = nodeData?.label as string;
+
+    // Get the embed definition for the current state (stored when node was created)
+    const embedDefinition = nodeData?.embedDefinition as UIExportEmbedDefinition | undefined;
+
+    // Debug: check what embedDefinition we have for this node
+    console.log( "EditModeDetailsView:", { componentLabel, hasEmbedDefinition: !!embedDefinition, embedDefinition } );
+
+    // Collect variables from the current state's embed definition
+    const allVars = new Map<string, { defaultValue?: string; options?: Record<string, string> }>();
+
+    if ( embedDefinition ) {
+        // Extract vars from title and description
+        const titleVars = extractVariables( embedDefinition.title );
+        const descVars = extractVariables( embedDefinition.description );
+        const allVarNames = [ ...new Set( [ ...titleVars, ...descVars ] ) ];
+
+        allVarNames.forEach( varName => {
+            const defaultValue = embedDefinition.defaultVars?.[ varName ] ?? embedDefinition.vars?.[ varName ];
+            const options = embedDefinition.options?.[ varName ];
+            allVars.set( varName, { defaultValue, options } );
+        } );
+
+        // Also add vars from defaultVars that might not be in title/description
+        if ( embedDefinition.defaultVars ) {
+            Object.entries( embedDefinition.defaultVars ).forEach( ( [ varName, value ] ) => {
+                if ( !allVars.has( varName ) ) {
+                    allVars.set( varName, {
+                        defaultValue: value,
+                        options: embedDefinition.options?.[ varName ]
+                    } );
+                }
+            } );
+        }
+
+        // Add vars from vars field
+        if ( embedDefinition.vars ) {
+            Object.entries( embedDefinition.vars ).forEach( ( [ varName, value ] ) => {
+                if ( !allVars.has( varName ) ) {
+                    allVars.set( varName, {
+                        defaultValue: value,
+                        options: embedDefinition.options?.[ varName ]
+                    } );
+                }
+            } );
+        }
+    }
+
+    const varEntries = Array.from( allVars.entries() ).sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) );
+
+    return (
+        <div className="p-4 space-y-4">
+            <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded bg-purple-500"></span>
+                <span className="text-xs text-zinc-400 uppercase font-medium">Component Variables</span>
+            </div>
+
+            <div>
+                <label className="text-xs text-zinc-400 uppercase font-medium">Component</label>
+                <p className="text-white text-sm mt-1 font-medium">{ componentLabel }</p>
+            </div>
+
+            { varEntries.length > 0 ? (
+                <div>
+                    <label className="text-xs text-zinc-400 uppercase font-medium mb-2 block">
+                        Variables ({ varEntries.length })
+                    </label>
+                    <div className="space-y-2 max-h-[calc(100vh-300px)] overflow-y-auto">
+                        { varEntries.map( ( [ varName, varInfo ] ) => (
+                            <div key={ varName } className="bg-zinc-700/50 rounded-lg p-3">
+                                <div className="flex items-center justify-between">
+                                    <code className="text-blue-400 text-xs font-mono bg-zinc-800 px-1.5 py-0.5 rounded">
+                                        { `{${ varName }}` }
+                                    </code>
+                                </div>
+
+                                { varInfo.defaultValue && (
+                                    <div className="mt-2">
+                                        <span className="text-[10px] text-zinc-500 uppercase">Default:</span>
+                                        <p className="text-zinc-300 text-xs mt-0.5 break-words">
+                                            { varInfo.defaultValue }
+                                        </p>
+                                    </div>
+                                ) }
+
+                                { varInfo.options && Object.keys( varInfo.options ).length > 0 && (
+                                    <div className="mt-2">
+                                        <span className="text-[10px] text-zinc-500 uppercase">Options:</span>
+                                        <ul className="mt-1 space-y-0.5">
+                                            { Object.entries( varInfo.options ).map( ( [ optKey, optValue ] ) => (
+                                                <li key={ optKey } className="text-xs">
+                                                    <span className="text-zinc-400">{ optKey }:</span>
+                                                    <span className="text-zinc-300 ml-1">{ optValue }</span>
+                                                </li>
+                                            ) ) }
+                                        </ul>
+                                    </div>
+                                ) }
+                            </div>
+                        ) ) }
+                    </div>
+                </div>
+            ) : (
+                <div className="text-zinc-500 text-sm">
+                    No variables defined for this component
+                </div>
+            ) }
+        </div>
+    );
+}
+
 function ModuleOverview( props: { moduleFlowsData: ModuleFlowsResponse } ) {
     const { moduleFlowsData } = props;
     const moduleName = moduleFlowsData.module.split( "/" ).pop() ?? moduleFlowsData.module;
@@ -371,6 +504,7 @@ export function FlowDetailsPanel() {
     );
 
     const selectNode = useCommand( "Dashboard/FlowEditor/SelectNode" );
+    const { isEditMode } = useEditMode();
 
     const handleClearSelection = () => {
         selectNode.run( { node: null, centerOnSelect: false } );
@@ -383,6 +517,29 @@ export function FlowDetailsPanel() {
     }
 
     const isModuleSelected = selectedNode?.data?.type === "module";
+
+    // In edit mode, show variables panel
+    if ( isEditMode ) {
+        return (
+            <div className="h-full bg-zinc-800 border-l border-zinc-700 overflow-y-auto">
+                <div className="p-4 border-b border-zinc-700">
+                    <h3 className="text-lg font-semibold text-white">Variables</h3>
+                </div>
+
+                { selectedNode ? (
+                    <EditModeDetailsView
+                        node={ selectedNode }
+                        moduleFlowsData={ moduleFlowsData }
+                    />
+                ) : (
+                    <div className="p-4">
+                        <p className="text-zinc-500 text-sm">Select a component to view its variables</p>
+                    </div>
+                ) }
+            </div>
+        );
+    }
+
     const panelTitle = selectedNode && !isModuleSelected ? "Node Details" : "Module Details";
 
     return (

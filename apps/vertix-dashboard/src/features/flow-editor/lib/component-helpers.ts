@@ -21,6 +21,7 @@ export interface ComponentPreview {
         defaultVars?: Record<string, string>;
     };
     embedDefinition?: UIExportEmbedDefinition;
+    allEmbedDefinitions?: Array<{ groupName: string; definition: UIExportEmbedDefinition }>;
     elementRows: ElementData[][];
     modals: string[];
     modalDefinitions: Array<{
@@ -267,6 +268,19 @@ export function extractComponentPreview(
         } );
     }
 
+    // Collect ALL embed definitions from all embed groups for the variables panel
+    const allEmbedDefinitions: Array<{ groupName: string; definition: UIExportEmbedDefinition }> = [];
+    component.embedsGroups.forEach( group => {
+        group.items.forEach( item => {
+            if ( item.definition ) {
+                allEmbedDefinitions.push( {
+                    groupName: group.name.split( "/" ).pop() ?? group.name,
+                    definition: item.definition
+                } );
+            }
+        } );
+    } );
+
     return {
         name: component.name.split( "/" ).pop() ?? component.name,
         embed: definition ? {
@@ -278,6 +292,7 @@ export function extractComponentPreview(
             defaultVars: definition.defaultVars
         } : undefined,
         embedDefinition: definition,
+        allEmbedDefinitions,
         elementRows,
         modals: component.modals ?? [],
         modalDefinitions: component.modalDefinitions ?? []

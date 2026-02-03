@@ -205,16 +205,11 @@ export function FlowViewer() {
 
     const onNodeDoubleClick = useCallback( ( _event: React.MouseEvent, node: Node ) => {
         handleNodeSelect( node );
-        const flowName = node.data?.flowName as string | undefined;
-        if ( flowName ) {
-            enterEditMode( flowName );
-        }
-    }, [ handleNodeSelect, enterEditMode ] );
+    }, [ handleNodeSelect ] );
 
     const onPaneClick = useCallback( () => {
         handleNodeSelect( null );
-        exitEditMode();
-    }, [ handleNodeSelect, exitEditMode ] );
+    }, [ handleNodeSelect ] );
 
     if ( isLoading ) {
         return (

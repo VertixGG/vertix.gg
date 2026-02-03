@@ -19,7 +19,10 @@
       "Bash(grep:*)",
       "mcp__acp__Bash",
       "mcp__acp__Edit",
-      "mcp__jetbrains__get_file_problems"
+      "mcp__jetbrains__get_file_problems",
+      "mcp__jetbrains__get_file_text_by_path",
+      "mcp__jetbrains__search_in_files_by_text",
+      "mcp__jetbrains__replace_text_in_file"
     ]
   }
 }

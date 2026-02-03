@@ -354,15 +354,21 @@ class EdgeBuilder {
     }
 
     public addFanOutEdges( initialCompId: string ): void {
+        this.addFallbackEdgesForAllUnconnected( initialCompId );
+    }
+
+    public addFallbackEdgesForAllUnconnected( sourceCompId: string ): void {
         this.context.stateComponents.slice( 1 ).forEach( stateComp => {
             if ( this.context.wizardConnectedTargets.has( stateComp.stateKey ) ) {
                 return;
             }
 
             const targetCompId = this.context.stateKeyToCompId.get( stateComp.stateKey );
-            if ( targetCompId ) {
-                this.addEdge( createComponentToStateFallbackEdge( initialCompId, targetCompId, this.context.flow.name, stateComp.stateName ) );
+            if ( !targetCompId ) {
+                return;
             }
+
+            this.addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, this.context.flow.name, stateComp.stateName ) );
         } );
     }
 
@@ -519,7 +525,7 @@ class MultiStateFlowBuilder {
         const fanOut = FlowPatternDetector.detectFanOut( this.context.flow, this.context.stateKeys, this.context.initialStateKey );
         const useFanOut = !useSelectMenu && !modalFirst.isModalFirst && fanOut.isFanOut;
 
-        this.precomputeWizardConnections();
+        this.precomputeElementRows();
 
         let modalFirstNodeId: string | undefined;
         if ( modalFirst.isModalFirst && modalFirst.modalName ) {
@@ -528,24 +534,49 @@ class MultiStateFlowBuilder {
 
         this.buildStateNodes( modalFirst.isModalFirst, modalFirstNodeId, useSelectMenu, useFanOut );
 
+        this.computeWizardConnectedTargets();
+
         if ( useSelectMenu && this.initialCompId && this.initialElementRows ) {
             this.edgeBuilder.addSelectMenuEdges( this.initialCompId, this.initialElementRows );
         } else if ( useFanOut && this.initialCompId ) {
             this.edgeBuilder.addFanOutEdges( this.initialCompId );
         }
 
+        if ( !modalFirst.isModalFirst && this.initialCompId ) {
+            this.edgeBuilder.addFallbackEdgesForAllUnconnected( this.initialCompId );
+        }
+
         this.edgeBuilder.addWizardEdges();
     }
 
-    private precomputeWizardConnections(): void {
+    private precomputeElementRows(): void {
         this.context.stateComponents.forEach( stateComp => {
             const previewEmbedsGroup = PreviewResolver.getPreviewEmbedsGroup( stateComp.options );
             const compPreview = PreviewResolver.resolve( stateComp.component, stateComp.options, previewEmbedsGroup );
 
             this.context.stateKeyToElementRows.set( stateComp.stateKey, compPreview.elementRows );
+        } );
+    }
 
-            const transitions = this.wizardAnalyzer.getTransitionsForState( stateComp.stateKey, compPreview.elementRows );
-            transitions.forEach( wt => this.context.wizardConnectedTargets.add( wt.targetStateKey ) );
+    private computeWizardConnectedTargets(): void {
+        this.context.stateComponents.forEach( stateComp => {
+            const sourceCompId = this.context.stateKeyToCompId.get( stateComp.stateKey );
+            if ( !sourceCompId ) {
+                return;
+            }
+
+            const elementRows = this.context.stateKeyToElementRows.get( stateComp.stateKey );
+            if ( !elementRows ) {
+                return;
+            }
+
+            const transitions = this.wizardAnalyzer.getTransitionsForState( stateComp.stateKey, elementRows );
+            transitions.forEach( wt => {
+                const targetCompId = this.context.stateKeyToCompId.get( wt.targetStateKey );
+                if ( targetCompId ) {
+                    this.context.wizardConnectedTargets.add( wt.targetStateKey );
+                }
+            } );
         } );
     }
 

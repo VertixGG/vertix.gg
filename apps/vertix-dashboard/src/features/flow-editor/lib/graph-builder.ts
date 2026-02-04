@@ -457,9 +457,11 @@ class EdgeBuilder {
     }
 
     private getSelectMenuTransitions( elementRows: ElementData[][] ): TransitionWithTrigger[] {
-        const { flow, stateKeys } = this.context;
+        const { flow, stateKeys, initialStateKey } = this.context;
         const selectMenuTransitions = flow.transitions.filter( t =>
-            stateKeys.has( t.to ) && t.triggeredBy?.some( tr => [ "string-select", "button", "user-select" ].includes( tr.handlerKind ) )
+            t.from === initialStateKey &&
+            stateKeys.has( t.to ) &&
+            t.triggeredBy?.some( tr => [ "string-select", "button", "user-select" ].includes( tr.handlerKind ) )
         );
 
         if ( selectMenuTransitions.length > 0 ) {
@@ -819,7 +821,7 @@ class MultiStateFlowBuilder {
             }
 
             t.triggeredBy.forEach( trigger => {
-                if ( ![ "string-select", "user-select" ].includes( trigger.handlerKind ) ) {
+                if ( ![ "string-select", "user-select", "button" ].includes( trigger.handlerKind ) ) {
                     return;
                 }
 

@@ -8,6 +8,7 @@ import {
     createComponentToFlowEdge,
     createComponentToComponentEdge,
     createComponentToStateFallbackEdge,
+    createProgrammaticTransitionEdge,
     createModalToComponentEdge,
     createStepTransitionEdge,
     createSystemFlowTransitionEdge
@@ -433,6 +434,39 @@ class EdgeBuilder {
         return depths;
     }
 
+    public addOrphanedStateEdges( connectedCompIds: Set<string> ): void {
+        const { flow, stateKeys, stateKeyToCompId } = this.context;
+
+        const orphanedStates = [ ...stateKeys ].filter( stateKey => {
+            if ( stateKey === this.context.initialStateKey ) {
+                return false;
+            }
+
+            const compId = stateKeyToCompId.get( stateKey );
+
+            return compId && !connectedCompIds.has( compId );
+        } );
+
+        orphanedStates.forEach( orphanedState => {
+            const transition = flow.transitions.find( t => t.to === orphanedState && stateKeys.has( t.from ) );
+
+            if ( !transition ) {
+                return;
+            }
+
+            const sourceCompId = stateKeyToCompId.get( transition.from );
+            const targetCompId = stateKeyToCompId.get( orphanedState );
+
+            if ( !sourceCompId || !targetCompId ) {
+                return;
+            }
+
+            const label = orphanedState.split( "/" ).pop() ?? orphanedState;
+
+            this.addEdge( createProgrammaticTransitionEdge( sourceCompId, targetCompId, flow.name, label ) );
+        } );
+    }
+
     public addSelectMenuEdges( initialCompId: string, initialElementRows: ElementData[][] ): void {
         const elementNames = new Set( initialElementRows.flat().map( el => el.name ) );
         const transitions = this.getSelectMenuTransitions( initialElementRows );
@@ -693,6 +727,7 @@ class MultiStateFlowBuilder {
     private readonly context: FlowContext;
     private readonly edgeBuilder: EdgeBuilder;
     private readonly wizardAnalyzer: WizardAnalyzer;
+    private readonly connectedCompIds: Set<string> = new Set();
 
     private initialCompId?: string;
     private initialElementRows?: ElementData[][];
@@ -700,10 +735,16 @@ class MultiStateFlowBuilder {
 
     public constructor( allNodes: Node[], addEdge: ( edge: Edge ) => void, context: FlowContext ) {
         this.allNodes = allNodes;
-        this.addEdge = addEdge;
         this.context = context;
-        this.edgeBuilder = new EdgeBuilder( addEdge, context );
         this.wizardAnalyzer = new WizardAnalyzer( context );
+
+        const trackingAddEdge = ( edge: Edge ) => {
+            this.connectedCompIds.add( edge.target );
+            addEdge( edge );
+        };
+
+        this.addEdge = trackingAddEdge;
+        this.edgeBuilder = new EdgeBuilder( trackingAddEdge, context );
     }
 
     public build(): void {
@@ -752,6 +793,7 @@ class MultiStateFlowBuilder {
 
         this.edgeBuilder.addWizardEdges();
         this.edgeBuilder.addIntermediateStateEdges();
+        this.edgeBuilder.addOrphanedStateEdges( this.connectedCompIds );
     }
 
     private precomputeElementRows(): void {
@@ -1041,12 +1083,14 @@ class FlowGraphBuilder {
     private readonly edgeIds = new Set<string>();
     private readonly flowIdMap = new Map<string, string>();
     private readonly systemFlowCompIds = new Map<string, string>();
+    private readonly reachableFlows = new Set<string>();
 
     public constructor( data: ModuleFlowsResponse ) {
         this.data = data;
     }
 
     public build(): { nodes: Node[]; edges: Edge[] } {
+        this.computeReachableFlows();
         this.buildModuleNode();
         this.buildSystemFlowNodes();
         this.buildFlowNodes();
@@ -1055,6 +1099,74 @@ class FlowGraphBuilder {
         this.buildSystemFlowTransitions();
 
         return { nodes: this.allNodes, edges: this.allEdges };
+    }
+
+    private computeReachableFlows(): void {
+        const flowNames = new Set( this.data.flows.map( f => f.name ) );
+
+        this.data.systemFlows.forEach( systemFlow => {
+            systemFlow.transitions?.forEach( t => {
+                const targetFlowName = t.to?.split( "/States/" )[ 0 ];
+                if ( targetFlowName && flowNames.has( targetFlowName ) ) {
+                    this.reachableFlows.add( targetFlowName );
+                }
+            } );
+
+            systemFlow.handoffPoints?.forEach( hp => {
+                if ( hp.flowName && flowNames.has( hp.flowName ) ) {
+                    this.reachableFlows.add( hp.flowName );
+                }
+            } );
+
+            systemFlow.edgeSourceMappings?.forEach( esm => {
+                if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) ) {
+                    this.reachableFlows.add( esm.targetFlowName );
+                }
+            } );
+        } );
+
+        this.data.flows.forEach( flow => {
+            flow.handoffPoints?.forEach( hp => {
+                if ( hp.flowName && flowNames.has( hp.flowName ) ) {
+                    if ( this.reachableFlows.has( flow.name ) ) {
+                        this.reachableFlows.add( hp.flowName );
+                    }
+                }
+            } );
+
+            flow.edgeSourceMappings?.forEach( esm => {
+                if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) ) {
+                    if ( this.reachableFlows.has( flow.name ) ) {
+                        this.reachableFlows.add( esm.targetFlowName );
+                    }
+                }
+            } );
+        } );
+
+        let changed = true;
+        while ( changed ) {
+            changed = false;
+
+            this.data.flows.forEach( flow => {
+                if ( !this.reachableFlows.has( flow.name ) ) {
+                    return;
+                }
+
+                flow.handoffPoints?.forEach( hp => {
+                    if ( hp.flowName && flowNames.has( hp.flowName ) && !this.reachableFlows.has( hp.flowName ) ) {
+                        this.reachableFlows.add( hp.flowName );
+                        changed = true;
+                    }
+                } );
+
+                flow.edgeSourceMappings?.forEach( esm => {
+                    if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) && !this.reachableFlows.has( esm.targetFlowName ) ) {
+                        this.reachableFlows.add( esm.targetFlowName );
+                        changed = true;
+                    }
+                } );
+            } );
+        }
     }
 
     private addEdge( edge: Edge ): void {
@@ -1083,6 +1195,10 @@ class FlowGraphBuilder {
 
     private buildFlowNodes(): void {
         this.data.flows.forEach( flow => {
+            if ( this.reachableFlows.size > 0 && !this.reachableFlows.has( flow.name ) ) {
+                return;
+            }
+
             const flowNode = createFlowNode( flow, false );
             this.flowIdMap.set( flow.name, flowNode.id );
             this.allNodes.push( flowNode );
@@ -1136,7 +1252,15 @@ class FlowGraphBuilder {
 
     private buildFlowComponents(): void {
         this.data.flows.forEach( flow => {
-            const flowId = this.flowIdMap.get( flow.name )!;
+            if ( this.reachableFlows.size > 0 && !this.reachableFlows.has( flow.name ) ) {
+                return;
+            }
+
+            const flowId = this.flowIdMap.get( flow.name );
+            if ( !flowId ) {
+                return;
+            }
+
             const stateComponents = getFlowStateComponents( flow, this.data.components );
 
             if ( stateComponents.length > 1 ) {

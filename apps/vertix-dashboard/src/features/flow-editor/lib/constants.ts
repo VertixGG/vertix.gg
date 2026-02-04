@@ -5,7 +5,8 @@ export const EDGE_COLORS = {
     COMPONENT_TO_FLOW: "#f59e0b",
     STEP_TRANSITION: "#10b981",
     SYSTEM_FLOW_TRANSITION: "#57f287",
-    COMMAND_TRANSITION: "#ef4444"
+    COMMAND_TRANSITION: "#ef4444",
+    PROGRAMMATIC_TRANSITION: "#3b82f6"
 } as const;
 
 export const EDGE_STYLES = {

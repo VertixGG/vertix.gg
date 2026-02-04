@@ -105,6 +105,26 @@ export function createComponentToStateFallbackEdge(
     };
 }
 
+export function createProgrammaticTransitionEdge(
+    sourceCompId: string,
+    targetCompId: string,
+    flowName: string,
+    label: string
+): Edge {
+    return {
+        id: `edge-programmatic-${ flowName }-${ sourceCompId }-${ targetCompId }-${ label }`,
+        source: sourceCompId,
+        target: targetCompId,
+        sourceHandle: "bottom",
+        zIndex: Z_INDEX.EDGE_OVERLAY,
+        label,
+        style: { stroke: EDGE_COLORS.PROGRAMMATIC_TRANSITION, ...EDGE_STYLES.DASHED_TRANSITION },
+        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.PROGRAMMATIC_TRANSITION, ...MARKER_SIZES.MEDIUM },
+        labelStyle: { fill: EDGE_COLORS.PROGRAMMATIC_TRANSITION, fontSize: 10, fontWeight: 600 },
+        labelBgPadding: [ 6, 2 ]
+    };
+}
+
 export function createModalToComponentEdge(
     modalId: string,
     targetCompId: string,

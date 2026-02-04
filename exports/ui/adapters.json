@@ -1532,34 +1532,6 @@
                 "hooks": []
             },
             {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic",
-                "elementsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                "embedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate",
-                "elementsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                "embedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden",
-                "elementsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                "embedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsStateShown",
-                "elementsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                "embedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
                 "key": "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
                 "elementsGroup": null,
                 "embedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",

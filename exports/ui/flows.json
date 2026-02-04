@@ -3179,62 +3179,6 @@
                 }
             },
             {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public",
-                "transitions": [
-                    "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetPrivate"
-                ],
-                "hooks": [],
-                "options": {
-                    "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic",
-                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
-                    "previewDefaultVars": {
-                        "state": "public"
-                    }
-                }
-            },
-            {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Private",
-                "transitions": [
-                    "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetPublic"
-                ],
-                "hooks": [],
-                "options": {
-                    "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate",
-                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
-                    "previewDefaultVars": {
-                        "state": "private"
-                    }
-                }
-            },
-            {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden",
-                "transitions": [
-                    "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetShown"
-                ],
-                "hooks": [],
-                "options": {
-                    "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden",
-                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
-                    "previewDefaultVars": {
-                        "state": "hidden"
-                    }
-                }
-            },
-            {
-                "key": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Shown",
-                "transitions": [
-                    "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/SetHidden"
-                ],
-                "hooks": [],
-                "options": {
-                    "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateShown",
-                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
-                    "previewDefaultVars": {
-                        "state": "shown"
-                    }
-                }
-            },
-            {
                 "key": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Error",
                 "transitions": [],
                 "hooks": [],
@@ -3256,33 +3200,11 @@
         "transitions": [
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default",
-                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic"
-                        }
-                    }
-                ]
+                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public"
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Private",
-                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic"
-                        }
-                    }
-                ]
+                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Public"
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default",
@@ -3294,33 +3216,11 @@
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default",
-                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden"
-                        }
-                    }
-                ]
+                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden"
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Shown",
-                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden",
-                            "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden"
-                        }
-                    }
-                ]
+                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Hidden"
             },
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default",

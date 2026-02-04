@@ -125,8 +125,8 @@ function findEmbedGroupByExecutionStep( component: UIExportedComponent, executio
     const candidates = buildExecutionStepCandidates( executionStep );
 
     const matched = component.embedsGroups.find( group => candidates.some( candidate => {
-        const groupNameWithoutSuffix = normalizeEmbedsGroupName( group.name );
-        const stepNameWithoutSuffix = normalizeEmbedsGroupName( candidate );
+        const groupNameWithoutSuffix = normalizeEmbedsGroupName( group.name ).toLowerCase();
+        const stepNameWithoutSuffix = normalizeEmbedsGroupName( candidate ).toLowerCase();
 
         if ( groupNameWithoutSuffix === stepNameWithoutSuffix ) {
             return true;

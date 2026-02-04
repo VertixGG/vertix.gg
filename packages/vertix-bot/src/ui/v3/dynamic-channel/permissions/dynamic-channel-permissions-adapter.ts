@@ -7,8 +7,6 @@ import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic
 import { DynamicChannelPermissionsComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-component";
 import {
     DynamicChannelPermissionsAccessButton,
-    DynamicChannelPermissionsStateButton,
-    DynamicChannelPermissionsVisibilityButton
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
@@ -28,10 +26,6 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
     "VertixBot/UI-V3/DynamicChannelPermissionsAdapter"
 )
     .setComponent( DynamicChannelPermissionsComponent )
-    .setExcludedElements( [
-        DynamicChannelPermissionsStateButton,
-        DynamicChannelPermissionsVisibilityButton
-    ] )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
@@ -76,34 +70,6 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 previewDefaultVars: { userKickedDisplayName: "User" },
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
-            } )
-            .addState( "Public", {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePublic",
-                navigationType: "editReply",
-                previewDefaultVars: { state: "public" },
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-            } )
-            .addState( "Private", {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStatePrivate",
-                navigationType: "editReply",
-                previewDefaultVars: { state: "private" },
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-            } )
-            .addState( "Hidden", {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateHidden",
-                navigationType: "editReply",
-                previewDefaultVars: { state: "hidden" },
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
-            } )
-            .addState( "Shown", {
-                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateShown",
-                navigationType: "editReply",
-                previewDefaultVars: { state: "shown" },
-                elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
             } )
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
@@ -150,54 +116,6 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             .addTransition( "Error", { from: "Default", to: "Error" } )
             .addTransition( "NothingChanged", { from: "Default", to: "NothingChanged" } )
             // Handler bindings (combines element-to-transition binding with handler)
-            .bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V3/DynamicChannelPermissionsStateButton",
-                "SetPublic",
-                async( context, interaction ) => {
-                    const voiceInteraction = interaction as unknown as UIDefaultButtonChannelVoiceInteraction;
-                    const state = voiceInteraction.customId.split( ":" )[ 2 ];
-
-                    if ( state !== "public" && state !== "private" ) {
-                        return;
-                    }
-
-                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-                    const result = await dynamicChannelService.editChannelPrivacyState( voiceInteraction, voiceInteraction.channel, state );
-
-                    if ( result ) {
-                        const transitionName = state === "public" ? "SetPublic" : "SetPrivate";
-                        await context.triggerTransition( transitionName, voiceInteraction );
-                    } else {
-                        await context.triggerTransition( "Error", voiceInteraction );
-                    }
-                }
-            )
-            .bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V3/DynamicChannelPermissionsVisibilityButton",
-                "SetHidden",
-                async( context, interaction ) => {
-                    const voiceInteraction = interaction as unknown as UIDefaultButtonChannelVoiceInteraction;
-                    const visibility = voiceInteraction.customId.split( ":" )[ 2 ];
-
-                    if ( visibility !== "hidden" && visibility !== "shown" ) {
-                        return;
-                    }
-
-                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
-                    const result = await dynamicChannelService.editChannelVisibilityState(
-                        voiceInteraction,
-                        voiceInteraction.channel,
-                        visibility
-                    );
-
-                    if ( result ) {
-                        const transitionName = visibility === "hidden" ? "SetHidden" : "SetShown";
-                        await context.triggerTransition( transitionName, voiceInteraction );
-                    } else {
-                        await context.triggerTransition( "Error", voiceInteraction );
-                    }
-                }
-            )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
                 "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
                 "GrantSuccess",

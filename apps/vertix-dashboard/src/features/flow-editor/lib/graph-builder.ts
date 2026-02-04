@@ -597,9 +597,7 @@ class MultiStateFlowBuilder {
             this.edgeBuilder.addSelectMenuEdges( this.initialCompId, this.initialElementRows );
         } else if ( useFanOut && this.initialCompId ) {
             this.edgeBuilder.addFanOutEdges( this.initialCompId );
-        }
-
-        if ( !modalFirst.isModalFirst && this.initialCompId ) {
+        } else if ( !modalFirst.isModalFirst && this.initialCompId ) {
             this.edgeBuilder.addFallbackEdgesForAllUnconnected( this.initialCompId );
         }
 

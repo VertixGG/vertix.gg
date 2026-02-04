@@ -1,3 +1,5 @@
+import zCore from "@zenflux/core";
+
 import { createModuleNode, createFlowNode, createComponentNode, createModalNode } from "@vertix.gg/dashboard/src/features/flow-editor/lib/node-builders";
 import {
     createModuleToFlowEdge,
@@ -240,6 +242,7 @@ class TriggerBuilder {
 }
 
 class EdgeBuilder {
+    private readonly logger = zCore.modules.createLogger( "EdgeBuilder" );
     private readonly addEdge: ( edge: Edge ) => void;
     private readonly context: FlowContext;
     private readonly wizardAnalyzer: WizardAnalyzer;
@@ -363,26 +366,38 @@ class EdgeBuilder {
         const connectedTargets = new Set<string>();
         const greenConnectedTargets = new Set<string>();
 
+        this.logger.debug( this.addSelectMenuEdges, JSON.stringify( {
+            flowName: this.context.flow.name,
+            elementNames: [ ...elementNames ],
+            transitionsCount: transitions.length,
+            transitions: transitions.map( t => ( { to: t.to, triggers: t.triggeredBy?.map( tr => tr.sourceEntity ) } ) )
+        } ) );
+
         transitions.forEach( transition => {
             const trigger = ( transition.triggeredBy ?? [] ).find( t =>
                 [ "string-select", "button", "user-select" ].includes( t.handlerKind )
             );
 
             if ( !trigger ) {
+                this.logger.debug( this.addSelectMenuEdges, `no trigger found: ${ transition.to }` );
                 return;
             }
 
             const targetCompId = this.context.stateKeyToCompId.get( transition.to );
             if ( !targetCompId ) {
+                this.logger.debug( this.addSelectMenuEdges, `no targetCompId: ${ transition.to }` );
                 return;
             }
 
-            connectedTargets.add( transition.to );
-
             if ( elementNames.has( trigger.sourceEntity ) ) {
                 greenConnectedTargets.add( transition.to );
+                this.logger.debug( this.addSelectMenuEdges, `added to greenConnectedTargets: ${ transition.to }, sourceEntity: ${ trigger.sourceEntity }` );
+            } else {
+                this.logger.debug( this.addSelectMenuEdges, `sourceEntity NOT in elementNames: ${ transition.to }, sourceEntity: ${ trigger.sourceEntity }` );
             }
         } );
+
+        this.logger.debug( this.addSelectMenuEdges, `first pass complete, greenConnectedTargets: ${ JSON.stringify( [ ...greenConnectedTargets ] ) }` );
 
         transitions.forEach( transition => {
             const trigger = ( transition.triggeredBy ?? [] ).find( t =>
@@ -399,13 +414,25 @@ class EdgeBuilder {
             }
 
             const label = transition.to.split( "/" ).pop() ?? transition.to;
+            const inGreenConnected = greenConnectedTargets.has( transition.to );
+            const inWizardConnected = this.context.wizardConnectedTargets.has( transition.to );
+
+            this.logger.debug( this.addSelectMenuEdges, `processing: ${ transition.to }, elementInNames: ${ elementNames.has( trigger.sourceEntity ) }, inGreenConnected: ${ inGreenConnected }, inWizardConnected: ${ inWizardConnected }` );
 
             if ( elementNames.has( trigger.sourceEntity ) ) {
+                this.logger.debug( this.addSelectMenuEdges, `creating GREEN edge: ${ transition.to }` );
                 this.addEdge( createComponentToComponentEdge( initialCompId, targetCompId, this.context.flow.name, trigger.sourceEntity, label ) );
-            } else if ( !greenConnectedTargets.has( transition.to ) && !this.context.wizardConnectedTargets.has( transition.to ) ) {
+                connectedTargets.add( transition.to );
+            } else if ( !inGreenConnected && !inWizardConnected ) {
+                this.logger.debug( this.addSelectMenuEdges, `creating FALLBACK edge: ${ transition.to }` );
                 this.addEdge( createComponentToStateFallbackEdge( initialCompId, targetCompId, this.context.flow.name, label ) );
+                connectedTargets.add( transition.to );
+            } else {
+                this.logger.debug( this.addSelectMenuEdges, `SKIPPED edge: ${ transition.to }, reason: ${ inGreenConnected ? "in greenConnectedTargets" : "in wizardConnectedTargets" }` );
             }
         } );
+
+        this.logger.debug( this.addSelectMenuEdges, `second pass complete, connectedTargets: ${ JSON.stringify( [ ...connectedTargets ] ) }` );
 
         this.addFallbackEdgesForUnconnected( initialCompId, connectedTargets );
     }
@@ -491,14 +518,27 @@ class EdgeBuilder {
     }
 
     private addFallbackEdgesForUnconnected( sourceCompId: string, connectedTargets: Set<string> ): void {
+        this.logger.debug( this.addFallbackEdgesForUnconnected, JSON.stringify( {
+            sourceCompId,
+            connectedTargets: [ ...connectedTargets ],
+            stateComponents: this.context.stateComponents.map( sc => sc.stateKey )
+        } ) );
+
         this.context.stateComponents.slice( 1 ).forEach( stateComp => {
-            if ( connectedTargets.has( stateComp.stateKey ) || this.context.wizardConnectedTargets.has( stateComp.stateKey ) ) {
+            const inConnected = connectedTargets.has( stateComp.stateKey );
+            const inWizard = this.context.wizardConnectedTargets.has( stateComp.stateKey );
+
+            if ( inConnected || inWizard ) {
+                this.logger.debug( this.addFallbackEdgesForUnconnected, `SKIPPING: ${ stateComp.stateKey }, inConnected: ${ inConnected }, inWizard: ${ inWizard }` );
                 return;
             }
 
             const targetCompId = this.context.stateKeyToCompId.get( stateComp.stateKey );
             if ( targetCompId ) {
+                this.logger.debug( this.addFallbackEdgesForUnconnected, `creating edge: ${ stateComp.stateKey }` );
                 this.addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, this.context.flow.name, stateComp.stateName ) );
+            } else {
+                this.logger.debug( this.addFallbackEdgesForUnconnected, `no targetCompId: ${ stateComp.stateKey }` );
             }
         } );
     }
@@ -557,6 +597,7 @@ class FlowPatternDetector {
 }
 
 class MultiStateFlowBuilder {
+    private readonly logger = zCore.modules.createLogger( "MultiStateFlowBuilder" );
     private readonly allNodes: Node[];
     private readonly addEdge: ( edge: Edge ) => void;
     private readonly context: FlowContext;
@@ -582,6 +623,14 @@ class MultiStateFlowBuilder {
         const fanOut = FlowPatternDetector.detectFanOut( this.context.flow, this.context.stateKeys, this.context.initialStateKey );
         const useFanOut = !useSelectMenu && !modalFirst.isModalFirst && fanOut.isFanOut;
 
+        this.logger.debug( this.build, JSON.stringify( {
+            flowName: this.context.flow.name,
+            modalFirst,
+            useSelectMenu,
+            useFanOut,
+            stateKeys: [ ...this.context.stateKeys ]
+        } ) );
+
         this.precomputeElementRows();
 
         let modalFirstNodeId: string | undefined;
@@ -593,12 +642,25 @@ class MultiStateFlowBuilder {
 
         this.computeWizardConnectedTargets();
 
+        this.logger.debug( this.build, JSON.stringify( {
+            phase: "after buildStateNodes",
+            initialCompId: this.initialCompId,
+            initialElementRowsLength: this.initialElementRows?.length,
+            initialElementNames: this.initialElementRows?.flat().map( el => el.name ),
+            wizardConnectedTargets: [ ...this.context.wizardConnectedTargets ]
+        } ) );
+
         if ( useSelectMenu && this.initialCompId && this.initialElementRows ) {
+            this.logger.debug( this.build, "calling addSelectMenuEdges" );
             this.edgeBuilder.addSelectMenuEdges( this.initialCompId, this.initialElementRows );
         } else if ( useFanOut && this.initialCompId ) {
+            this.logger.debug( this.build, "calling addFanOutEdges" );
             this.edgeBuilder.addFanOutEdges( this.initialCompId );
         } else if ( !modalFirst.isModalFirst && this.initialCompId ) {
+            this.logger.debug( this.build, "calling addFallbackEdgesForAllUnconnected" );
             this.edgeBuilder.addFallbackEdgesForAllUnconnected( this.initialCompId );
+        } else {
+            this.logger.debug( this.build, `no edge method called: useSelectMenu=${ useSelectMenu }, useFanOut=${ useFanOut }, modalFirst=${ modalFirst.isModalFirst }, initialCompId=${ this.initialCompId }` );
         }
 
         this.edgeBuilder.addWizardEdges();

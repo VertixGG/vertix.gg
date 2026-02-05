@@ -5,6 +5,7 @@ import zCore from "@zenflux/core";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
 import { AppMode, useModeStore } from "./use-mode-store";
+import { useLanguageStore } from "./use-language-store";
 
 import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
 
@@ -147,20 +148,29 @@ export function useEditMode(): UseEditModeReturn {
         }
     }, [ isEditMode, addMode, removeMode, setEditingFlowName, setGuildId, setCustomization, clearPendingChanges, loadCustomization ] );
 
+    const selectedLanguage = useLanguageStore( ( state ) => state.selectedLanguage );
+
     const getComponentCustomization = useCallback( ( componentName: string ): ComponentCustomization | undefined => {
-        // First check pending changes, then saved customization
+        // Language-qualified key: "componentName::languageCode"
+        const langKey = `${ componentName }::${ selectedLanguage }`;
+
+        // First check pending changes (language-qualified, then plain), then saved customization
+        if ( pendingChanges[ langKey ] ) {
+            return pendingChanges[ langKey ];
+        }
         if ( pendingChanges[ componentName ] ) {
             return pendingChanges[ componentName ];
         }
-        return customization?.components?.[ componentName ];
-    }, [ customization, pendingChanges ] );
+        return customization?.components?.[ langKey ] ?? customization?.components?.[ componentName ];
+    }, [ customization, pendingChanges, selectedLanguage ] );
 
     const setComponentChange = useCallback( ( componentName: string, componentCustomization: ComponentCustomization ) => {
         setPendingChange( componentName, componentCustomization );
     }, [ setPendingChange ] );
 
     const saveComponentCustomization = useCallback( async function saveComponentCustomization( componentName: string ) {
-        logger.debug( saveComponentCustomization, "Called", { componentName, guildId } );
+        const currentLanguage = useLanguageStore.getState().selectedLanguage;
+        logger.debug( saveComponentCustomization, "Called", { componentName, guildId, languageCode: currentLanguage } );
 
         if ( !guildId ) {
             throw new Error( "No guild selected" );
@@ -174,14 +184,14 @@ export function useEditMode(): UseEditModeReturn {
         }
 
         try {
-            logger.debug( saveComponentCustomization, "Saving via query module", { guildId, componentName } );
+            logger.debug( saveComponentCustomization, "Saving via query module", { guildId, componentName, languageCode: currentLanguage } );
             const queryModule = getQueryModule( CustomizationQuery );
             const isDefault = guildId === "__default__";
             const updated = await queryModule.request<GuildCustomizationData>(
                 isDefault ? "Dashboard/Customization/UpdateDefaultComponent" : "Dashboard/Customization/UpdateComponent",
                 isDefault
-                    ? { customizationKey: componentName, customization: componentCustomization }
-                    : { guildId, customizationKey: componentName, customization: componentCustomization }
+                    ? { customizationKey: componentName, customization: componentCustomization, languageCode: currentLanguage }
+                    : { guildId, customizationKey: componentName, customization: componentCustomization, languageCode: currentLanguage }
             );
             logger.debug( saveComponentCustomization, "Save successful" );
             setCustomization( updated );

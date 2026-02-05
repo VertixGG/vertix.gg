@@ -29,3 +29,9 @@ export interface ModuleFlowsResponse {
     systemFlows: UIExportedFlow[];
     components: UIExportedComponent[];
 }
+
+export interface LanguageInfo {
+    code: string;
+    name: string;
+    flag: string;
+}

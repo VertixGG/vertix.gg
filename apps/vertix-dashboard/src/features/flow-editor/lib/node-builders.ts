@@ -77,6 +77,7 @@ export function createComponentNode(
             label: label ?? compPreview.name,
             type: "component",
             customizationKey: compPreview.name,
+            embedName: compPreview.embedName,
             embed: compPreview.embed,
             embedDefinition: compPreview.embedDefinition,
             allEmbedDefinitions: compPreview.allEmbedDefinitions,

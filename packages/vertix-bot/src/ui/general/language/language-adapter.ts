@@ -43,7 +43,7 @@ const LanguageAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, L
 
                     await GuildDataManager.$.setLanguage( interaction.guild, language );
 
-                    await context.editReply( interaction, {
+                    await context.triggerTransition( "SelectLanguage", interaction, {
                         _language: language
                     } );
                 }

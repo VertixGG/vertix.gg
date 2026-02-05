@@ -15,7 +15,8 @@ export interface ICustomizationProvider {
      */
     getComponentCustomization(
         guildId: string,
-        customizationKey: string
+        customizationKey: string,
+        languageCode?: string
     ): Promise<ComponentCustomization | null>;
 
     /**

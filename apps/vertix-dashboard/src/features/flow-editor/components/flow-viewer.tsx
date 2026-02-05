@@ -9,6 +9,7 @@ import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
+import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 
 import { nodeTypes } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes";
 import { getLayoutedElements } from "@vertix.gg/dashboard/src/features/flow-editor/lib/layout";
@@ -18,7 +19,7 @@ import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-edito
 
 import type { GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
-import type { Viewport, Node, ReactFlowInstance } from "@xyflow/react";
+import type { Viewport, Node, Edge, ReactFlowInstance } from "@xyflow/react";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
 const logger = zCore.modules.createLogger( "flow-viewer" );
@@ -44,6 +45,8 @@ export function FlowViewer() {
     const selectNode = useCommand( "Dashboard/FlowEditor/SelectNode" );
     const { isEditMode, editingFlowName, enterEditMode, exitEditMode } = useEditMode();
     const guildId = useSelectedGuildId();
+    const selectedLanguage = useLanguageStore( ( state ) => state.selectedLanguage );
+    const translations = useLanguageStore( ( state ) => state.translations );
 
     // Load customizations for the guild
     const [ customization, setCustomization ] = useState<GuildCustomizationData | null>( null );
@@ -98,67 +101,26 @@ export function FlowViewer() {
         setZoom( viewport.zoom );
     }, [] );
 
-    const { initialNodes, initialEdges } = useMemo( () => {
+    // Step 1: Layout — only recompute when structure changes (module, edit mode)
+    const { layoutedNodes, layoutedEdges } = useMemo( () => {
         if ( !moduleFlowsData ) {
-            return { initialNodes: [], initialEdges: [] };
+            return { layoutedNodes: [] as Node[], layoutedEdges: [] as Edge[] };
         }
 
         const { nodes: allNodes, edges: allEdges } = buildFlowGraph( moduleFlowsData );
 
-        // Apply customizations to nodes
-        const customizedNodes = allNodes.map( ( node ) => {
-            const customizationKey = node.data?.customizationKey as string | undefined;
-            if ( !customizationKey || !customization?.components?.[ customizationKey ] ) {
-                return node;
-            }
-
-            const componentCustomization = customization.components[ customizationKey ];
-            if ( !componentCustomization?.embedOverrides ) {
-                return node;
-            }
-
-            // Apply embed overrides
-            const embed = node.data?.embed as Record<string, unknown> | undefined;
-            if ( !embed ) {
-                return node;
-            }
-
-            const updatedEmbed = { ...embed };
-            const { color, title, description } = componentCustomization.embedOverrides;
-
-            if ( color !== undefined ) {
-                updatedEmbed.color = color;
-            }
-            if ( title !== undefined ) {
-                updatedEmbed.title = title;
-            }
-            if ( description !== undefined ) {
-                updatedEmbed.description = description;
-            }
-
-            return {
-                ...node,
-                data: {
-                    ...node.data,
-                    embed: updatedEmbed
-                }
-            };
-        } );
-
         // Filter nodes and edges when in edit mode
-        let nodesToLayout = customizedNodes;
+        let nodesToLayout = allNodes;
         let edgesToLayout = allEdges;
 
         if ( isEditMode && editingFlowName ) {
-            // Filter nodes that belong to the editing flow
-            const filteredNodes = customizedNodes.filter( ( node ) => {
+            const filteredNodes = allNodes.filter( ( node ) => {
                 const nodeFlowName = node.data?.flowName as string | undefined;
                 return nodeFlowName === editingFlowName;
             } );
 
             const filteredNodeIds = new Set( filteredNodes.map( n => n.id ) );
 
-            // Filter edges where both source and target are in the filtered nodes
             const filteredEdges = allEdges.filter( ( edge ) => {
                 return filteredNodeIds.has( edge.source ) && filteredNodeIds.has( edge.target );
             } );
@@ -167,7 +129,7 @@ export function FlowViewer() {
             edgesToLayout = filteredEdges;
         }
 
-        const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        const { nodes: laid, edges: laidEdges } = getLayoutedElements(
             nodesToLayout,
             edgesToLayout,
             {
@@ -177,10 +139,9 @@ export function FlowViewer() {
             }
         );
 
-        return { initialNodes: layoutedNodes, initialEdges: layoutedEdges };
+        return { layoutedNodes: laid, layoutedEdges: laidEdges };
     }, [
         moduleFlowsData,
-        customization,
         isEditMode,
         editingFlowName,
         LAYOUT_OPTIONS.DIRECTION,
@@ -188,21 +149,110 @@ export function FlowViewer() {
         LAYOUT_OPTIONS.NODE_SEPARATION
     ] );
 
+    // Step 2: Content — apply translations + customizations without re-layout
+    const { initialNodes, initialEdges } = useMemo( () => {
+        const contentNodes = layoutedNodes.map( ( node ) => {
+            if ( node.data?.type !== "component" ) {
+                return node;
+            }
+
+            let updatedData = { ...node.data };
+
+            // Apply language translations
+            if ( translations ) {
+                const embedName = node.data?.embedName as string | undefined;
+                const embed = node.data?.embed as Record<string, unknown> | undefined;
+
+                if ( embed && embedName ) {
+                    const embedTranslation = translations.embeds[ embedName ];
+
+                    if ( embedTranslation ) {
+                        const updatedEmbed = { ...embed };
+                        if ( embedTranslation.title !== undefined ) {
+                            updatedEmbed.title = embedTranslation.title;
+                        }
+                        if ( embedTranslation.description !== undefined ) {
+                            updatedEmbed.description = embedTranslation.description;
+                        }
+                        updatedData = { ...updatedData, embed: updatedEmbed };
+                    }
+                }
+
+                // Translate element labels
+                const elementRows = node.data?.elementRows as Array<Array<{ name: string; definition?: { label?: string; elementType?: string } }>> | undefined;
+                if ( elementRows && translations.elements ) {
+                    const updatedElementRows = elementRows.map( ( row ) =>
+                        row.map( ( el ) => {
+                            const elTranslation = translations.elements[ el.name ];
+                            if ( elTranslation?.label && el.definition ) {
+                                return { ...el, definition: { ...el.definition, label: elTranslation.label } };
+                            }
+                            return el;
+                        } )
+                    );
+                    updatedData = { ...updatedData, elementRows: updatedElementRows };
+                }
+            }
+
+            // Apply customization overrides on top
+            const customizationKey = node.data?.customizationKey as string | undefined;
+            if ( customizationKey && customization?.components ) {
+                const langKey = `${ customizationKey }::${ selectedLanguage }`;
+                const componentCustomization = customization.components[ langKey ] ?? customization.components[ customizationKey ];
+
+                if ( componentCustomization?.embedOverrides ) {
+                    const currentEmbed = ( updatedData.embed ?? node.data?.embed ) as Record<string, unknown> | undefined;
+                    if ( currentEmbed ) {
+                        const updatedEmbed = { ...currentEmbed };
+                        const { color, title, description } = componentCustomization.embedOverrides;
+                        if ( color !== undefined ) updatedEmbed.color = color;
+                        if ( title !== undefined ) updatedEmbed.title = title;
+                        if ( description !== undefined ) updatedEmbed.description = description;
+                        updatedData = { ...updatedData, embed: updatedEmbed };
+                    }
+                }
+            }
+
+            return updatedData !== node.data ? { ...node, data: updatedData } : node;
+        } );
+
+        return { initialNodes: contentNodes, initialEdges: layoutedEdges };
+    }, [ layoutedNodes, layoutedEdges, translations, customization, selectedLanguage ] );
+
     const [ nodes, setNodes, onNodesChange ] = useNodesState( initialNodes );
     const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );
 
-    useEffect( () => {
-        setNodes( initialNodes );
-        setEdges( initialEdges );
+    // Track the last layout reference to distinguish structural vs content-only changes
+    const prevLayoutRef = useRef( layoutedNodes );
 
-        // Fit view when nodes change (e.g., entering/exiting edit mode)
-        const reactFlowInstance = reactFlowInstanceRef.current;
-        if ( reactFlowInstance && initialNodes.length > 0 ) {
-            setTimeout( () => {
-                reactFlowInstance.fitView( { padding: 0.2, duration: 300 } );
-            }, 50 );
+    useEffect( () => {
+        const isStructuralChange = prevLayoutRef.current !== layoutedNodes;
+        prevLayoutRef.current = layoutedNodes;
+
+        if ( isStructuralChange ) {
+            // Layout changed — replace all nodes + edges and fit the view
+            setNodes( initialNodes );
+            setEdges( initialEdges );
+
+            const reactFlowInstance = reactFlowInstanceRef.current;
+            if ( reactFlowInstance && initialNodes.length > 0 ) {
+                setTimeout( () => {
+                    reactFlowInstance.fitView( { padding: 0.2, duration: 300 } );
+                }, 50 );
+            }
+        } else {
+            // Content-only change (language / customization) — update data in-place, keep positions
+            setNodes( ( currentNodes ) =>
+                currentNodes.map( ( currentNode ) => {
+                    const updated = initialNodes.find( n => n.id === currentNode.id );
+                    if ( updated && updated.data !== currentNode.data ) {
+                        return { ...currentNode, data: updated.data };
+                    }
+                    return currentNode;
+                } )
+            );
         }
-    }, [ initialNodes, initialEdges, setNodes, setEdges ] );
+    }, [ initialNodes, initialEdges, layoutedNodes, setNodes, setEdges ] );
 
     useEffect( () => {
         setNodes( ( currentNodes ) =>

@@ -12,6 +12,7 @@ export interface ElementData {
 
 export interface ComponentPreview {
     name: string;
+    embedName?: string;
     embed?: {
         title?: string;
         description?: string;
@@ -292,6 +293,7 @@ export function extractComponentPreview(
 
     return {
         name: component.name.split( "/" ).pop() ?? component.name,
+        embedName: firstEmbed?.embed,
         embed: definition ? {
             title: definition.title,
             description: definition.description,

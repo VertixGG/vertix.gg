@@ -17,6 +17,7 @@ interface GuildParams {
 interface ComponentBody {
     customizationKey: string;
     customization: ComponentCustomization;
+    languageCode?: string;
 }
 
 interface UpdateCustomizationBody {
@@ -25,6 +26,7 @@ interface UpdateCustomizationBody {
 
 interface DeleteComponentBody {
     customizationKey: string;
+    languageCode?: string;
 }
 
 /**
@@ -107,7 +109,7 @@ async function handleUpdateComponentCustomization(
 ) {
     try {
         const { guildId } = request.params;
-        const { customizationKey, customization } = request.body;
+        const { customizationKey, customization, languageCode } = request.body;
 
         if ( !customizationKey || typeof customizationKey !== "string" ) {
             return reply.status( 400 ).send( { error: "Invalid request", message: "customizationKey is required" } );
@@ -117,7 +119,7 @@ async function handleUpdateComponentCustomization(
             return reply.status( 400 ).send( { error: "Invalid request", message: "customization object is required" } );
         }
 
-        const result = await updateComponentCustomization( guildId, customizationKey, customization );
+        const result = await updateComponentCustomization( guildId, customizationKey, customization, languageCode );
         return result;
     } catch ( error ) {
         handleError( handleUpdateComponentCustomization, error, reply, "Failed to update component customization" );
@@ -135,13 +137,13 @@ async function handleDeleteComponentCustomization(
 ) {
     try {
         const { guildId } = request.params;
-        const { customizationKey } = request.body;
+        const { customizationKey, languageCode } = request.body;
 
         if ( !customizationKey || typeof customizationKey !== "string" ) {
             return reply.status( 400 ).send( { error: "Invalid request", message: "customizationKey is required" } );
         }
 
-        const result = await deleteComponentCustomization( guildId, customizationKey );
+        const result = await deleteComponentCustomization( guildId, customizationKey, languageCode );
 
         if ( !result ) {
             return reply.status( 404 ).send( { error: "Not found", message: "No customization found for this guild" } );
@@ -180,7 +182,7 @@ async function handleUpdateDefaultComponentCustomization(
     reply: FastifyReply
 ) {
     try {
-        const { customizationKey, customization } = request.body;
+        const { customizationKey, customization, languageCode } = request.body;
 
         if ( !customizationKey || typeof customizationKey !== "string" ) {
             return reply.status( 400 ).send( { error: "Invalid request", message: "customizationKey is required" } );
@@ -190,7 +192,7 @@ async function handleUpdateDefaultComponentCustomization(
             return reply.status( 400 ).send( { error: "Invalid request", message: "customization object is required" } );
         }
 
-        const result = await updateComponentCustomization( DEFAULT_GUILD_ID, customizationKey, customization );
+        const result = await updateComponentCustomization( DEFAULT_GUILD_ID, customizationKey, customization, languageCode );
         return result;
     } catch ( error ) {
         handleError( handleUpdateDefaultComponentCustomization, error, reply, "Failed to update default component customization" );
@@ -206,13 +208,13 @@ async function handleDeleteDefaultComponentCustomization(
     reply: FastifyReply
 ) {
     try {
-        const { customizationKey } = request.body;
+        const { customizationKey, languageCode } = request.body;
 
         if ( !customizationKey || typeof customizationKey !== "string" ) {
             return reply.status( 400 ).send( { error: "Invalid request", message: "customizationKey is required" } );
         }
 
-        const result = await deleteComponentCustomization( DEFAULT_GUILD_ID, customizationKey );
+        const result = await deleteComponentCustomization( DEFAULT_GUILD_ID, customizationKey, languageCode );
 
         if ( !result ) {
             return reply.status( 404 ).send( { error: "Not found", message: "No default customization found" } );

@@ -6,6 +6,7 @@ import { FlowViewer } from "@vertix.gg/dashboard/src/features/flow-editor/compon
 import { ModuleSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/module-selector";
 import { EntityList } from "@vertix.gg/dashboard/src/features/flow-editor/components/entity-list";
 import { FlowEditSidebar } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-edit-sidebar";
+import { LanguageSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/language-selector";
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 
 import {
@@ -82,6 +83,9 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
                     { state.isLoading && (
                         <span className="ml-4 text-zinc-500 text-xs">Loading...</span>
                     ) }
+                    <div className="ml-auto">
+                        <LanguageSelector />
+                    </div>
                 </header>
                 <div className="flex-1">
                     <FlowViewer />

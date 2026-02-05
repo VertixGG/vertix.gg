@@ -82,22 +82,35 @@ export async function updateGuildCustomization(
 }
 
 /**
+ * Compose a storage key for component customization.
+ * When languageCode is provided, produces "componentName::languageCode" (e.g., "SetupNewEmbed::en").
+ * Without languageCode, returns the plain componentName (backward-compatible).
+ */
+function composeComponentKey( componentName: string, languageCode?: string ): string {
+    return languageCode ? `${ componentName }::${ languageCode }` : componentName;
+}
+
+/**
  * Update a single component's customization.
  * Merges with existing customizations.
  * Uses raw fetch to avoid merge with defaults when updating a specific guild.
+ * When languageCode is provided, stores under "componentName::languageCode" key.
  */
 export async function updateComponentCustomization(
     guildId: string,
     componentName: string,
-    customization: ComponentCustomization
+    customization: ComponentCustomization,
+    languageCode?: string
 ): Promise<GuildCustomizationData> {
     // Get existing raw customizations (not merged) so we don't persist defaults into guild record
     const existing = await fetchRawCustomization( guildId );
     const components = existing?.components ?? {};
 
+    const storageKey = composeComponentKey( componentName, languageCode );
+
     // Merge the new customization
-    components[ componentName ] = {
-        ...components[ componentName ],
+    components[ storageKey ] = {
+        ...components[ storageKey ],
         ...customization
     };
 
@@ -106,10 +119,12 @@ export async function updateComponentCustomization(
 
 /**
  * Delete a component's customization.
+ * When languageCode is provided, deletes the "componentName::languageCode" key.
  */
 export async function deleteComponentCustomization(
     guildId: string,
-    componentName: string
+    componentName: string,
+    languageCode?: string
 ): Promise<GuildCustomizationData | null> {
     const existing = await fetchRawCustomization( guildId );
 
@@ -117,8 +132,9 @@ export async function deleteComponentCustomization(
         return null;
     }
 
+    const storageKey = composeComponentKey( componentName, languageCode );
     const components = { ...existing.components };
-    delete components[ componentName ];
+    delete components[ storageKey ];
 
     return updateGuildCustomization( guildId, components );
 }

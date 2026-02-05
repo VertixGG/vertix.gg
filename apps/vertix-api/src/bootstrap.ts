@@ -195,6 +195,70 @@ export class UIRuntimeLoader extends InitializeBase {
     public getAdapterForComponent( componentName: string ): UIExportedAdapter | undefined {
         return this.exportData?.adapters.find( a => a.component === componentName );
     }
+
+    public async getLanguageTranslations( languageCode: string ): Promise<{
+        embeds: Record<string, { title?: string; description?: string }>;
+        elements: Record<string, { label?: string }>;
+        modals: Record<string, { title?: string }>;
+    }> {
+        await this.loadExports();
+
+        const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
+        const languages = UILanguageManager.$.getAvailableLanguages();
+        const lang = languages.get( languageCode );
+
+        if ( !lang ) {
+            return { embeds: {}, elements: {}, modals: {} };
+        }
+
+        const embeds: Record<string, { title?: string; description?: string }> = {};
+        const elements: Record<string, { label?: string }> = {};
+        const modals: Record<string, { title?: string }> = {};
+
+        lang.embeds.forEach( ( embed ) => {
+            embeds[ embed.name ] = {
+                title: embed.content.title || undefined,
+                description: embed.content.description || undefined
+            };
+        } );
+
+        lang.elements.buttons.forEach( ( button ) => {
+            elements[ button.name ] = {
+                label: button.content.label || undefined
+            };
+        } );
+
+        lang.modals.forEach( ( modal ) => {
+            modals[ modal.name ] = {
+                title: modal.content.title || undefined
+            };
+        } );
+
+        return { embeds, elements, modals };
+    }
+
+    public async getAvailableLanguages(): Promise<Array<{ code: string; name: string; flag: string }>> {
+        // Ensure exports are loaded (which triggers headless bootstrap + UILanguageManager registration)
+        await this.loadExports();
+
+        const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
+        const languages = UILanguageManager.$.getAvailableLanguages();
+        const initial = UILanguageManager.$.getInitialLanguage();
+
+        const result: Array<{ code: string; name: string; flag: string }> = [];
+
+        // Add initial language first
+        result.push( { code: initial.code, name: initial.name, flag: initial.flag } );
+
+        // Add remaining languages
+        languages.forEach( ( lang ) => {
+            if ( lang.code !== initial.code ) {
+                result.push( { code: lang.code, name: lang.name, flag: lang.flag } );
+            }
+        } );
+
+        return result;
+    }
 }
 
 export const uiRuntimeLoader = UIRuntimeLoader.getInstance();

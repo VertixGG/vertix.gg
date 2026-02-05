@@ -7,6 +7,7 @@ import { AuthenticatedQueryClient } from "@vertix.gg/dashboard/src/lib/query-cli
 
 import { ModulesQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/modules-query";
 import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
+import { LanguageQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/language-query";
 import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/global-stats-query";
 import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-stats-query";
 import { GuildManagementQuery } from "@vertix.gg/dashboard/src/features/management/query/guild-management-query";
@@ -27,6 +28,7 @@ const client = new AuthenticatedQueryClient( API_CONFIG.BASE_URL );
 
 client.registerModule( ModulesQuery );
 client.registerModule( CustomizationQuery );
+client.registerModule( LanguageQuery );
 client.registerModule( GlobalStatsQuery );
 client.registerModule( GuildStatsQuery );
 client.registerModule( GuildManagementQuery );

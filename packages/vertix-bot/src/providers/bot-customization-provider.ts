@@ -9,9 +9,10 @@ import type { ICustomizationProvider, ComponentCustomization } from "@vertix.gg/
 export class BotCustomizationProvider implements ICustomizationProvider {
     public async getComponentCustomization(
         guildId: string,
-        customizationKey: string
+        customizationKey: string,
+        languageCode?: string
     ): Promise<ComponentCustomization | null> {
-        return GuildCustomizationManager.$.getComponentCustomization( guildId, customizationKey );
+        return GuildCustomizationManager.$.getComponentCustomization( guildId, customizationKey, languageCode );
     }
 
     public async getGuildCustomizations(

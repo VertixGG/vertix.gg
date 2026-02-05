@@ -5,6 +5,7 @@ import { getQueryModule } from "@zenflux/react-commander/query/provider";
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 import { useSelectedGuildStore } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
+import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
 
 import type { ModuleInfo, ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
@@ -265,18 +266,33 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
             }
         }
 
-        logger.debug( this.apply, "Saving customization", { guildId, customizationKey, embedOverrides } );
+        const selectedLanguage = useLanguageStore.getState().selectedLanguage;
+
+        logger.debug( this.apply, "Saving customization", { guildId, customizationKey, embedOverrides, languageCode: selectedLanguage } );
 
         try {
             // Save to database using query module
             const queryModule = getQueryModule( CustomizationQuery );
-            await queryModule.request<GuildCustomizationData>( "Dashboard/Customization/UpdateComponent", {
-                guildId,
-                customizationKey,
-                customization: {
-                    embedOverrides: embedOverrides as { title?: string; description?: string; color?: number }
-                }
-            } );
+            const isDefault = guildId === "__default__";
+            await queryModule.request<GuildCustomizationData>(
+                isDefault ? "Dashboard/Customization/UpdateDefaultComponent" : "Dashboard/Customization/UpdateComponent",
+                isDefault
+                    ? {
+                        customizationKey,
+                        customization: {
+                            embedOverrides: embedOverrides as { title?: string; description?: string; color?: number }
+                        },
+                        languageCode: selectedLanguage
+                    }
+                    : {
+                        guildId,
+                        customizationKey,
+                        customization: {
+                            embedOverrides: embedOverrides as { title?: string; description?: string; color?: number }
+                        },
+                        languageCode: selectedLanguage
+                    }
+            );
 
             logger.debug( this.apply, "Save successful" );
 

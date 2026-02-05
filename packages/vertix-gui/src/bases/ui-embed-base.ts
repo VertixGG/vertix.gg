@@ -145,8 +145,9 @@ export abstract class UIEmbedBase extends UITemplateBase {
     private async fetchCustomization() {
         const guildId = this.uiArgs?._guildId as string | undefined;
         const customizationKey = this.uiArgs?._customizationKey as string | undefined;
+        const languageCode = this.uiArgs?._language as string | undefined;
 
-        UIEmbedBase.$debugger.log( this.fetchCustomization, "Fetching customization", { guildId, customizationKey } );
+        UIEmbedBase.$debugger.log( this.fetchCustomization, "Fetching customization", { guildId, customizationKey, languageCode } );
 
         if ( !guildId || !customizationKey ) {
             UIEmbedBase.$debugger.log( this.fetchCustomization, "Missing guildId or customizationKey, skipping" );
@@ -155,7 +156,7 @@ export abstract class UIEmbedBase extends UITemplateBase {
 
         try {
             const provider = this.uiService.getCustomizationProvider();
-            const result = await provider.getComponentCustomization( guildId, customizationKey );
+            const result = await provider.getComponentCustomization( guildId, customizationKey, languageCode );
 
             UIEmbedBase.$debugger.log( this.fetchCustomization, "Customization result", { hasResult: !!result, result } );
 

@@ -7,6 +7,7 @@ import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 import { getEmojiFromPreviewCache } from "@vertix.gg/utils/src/emoji-preview-cache";
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
+import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 import type { ElementData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
@@ -271,6 +272,8 @@ function ElementEditPanel( {
 
 export function FlowEditSidebar() {
     const { editingFlowName, exitEditMode, customization, isLoadingCustomization } = useEditMode();
+    const selectedLanguage = useLanguageStore( ( state ) => state.selectedLanguage );
+    const translations = useLanguageStore( ( state ) => state.translations );
     const [ selectedElementIndex, setSelectedElementIndex ] = useState<{ row: number; col: number } | null>( null );
     const [ lastNodeId, setLastNodeId ] = useState<string | null>( null );
     const [ appliedCustomization, setAppliedCustomization ] = useState<string | null>( null );
@@ -300,22 +303,20 @@ export function FlowEditSidebar() {
         }
     }, [ selectedNode?.id, lastNodeId ] );
 
-    // Apply saved customizations to node data when customization is loaded
+    // Apply language translations + saved customizations to node data when customization/translations are loaded
     useEffect( () => {
         const customizationKey = selectedNode?.data?.customizationKey as string | undefined;
+        const embedName = selectedNode?.data?.embedName as string | undefined;
 
         logger.debug( FlowEditSidebar, "Customization effect running", {
             isLoadingCustomization,
             hasCustomization: !!customization,
             hasSelectedNode: !!selectedNode,
-            customizationKey
+            customizationKey,
+            selectedLanguage
         } );
 
         if ( isLoadingCustomization ) {
-            return;
-        }
-
-        if ( !customization ) {
             return;
         }
 
@@ -323,40 +324,50 @@ export function FlowEditSidebar() {
             return;
         }
 
-        if ( !customizationKey ) {
-            return;
-        }
+        // Only apply once per node+language+translation combination to avoid infinite loops
+        const translationKey = translations ? JSON.stringify( translations.embeds[ embedName ?? "" ] ?? null ) : "null";
+        const langKey = customizationKey ? `${ customizationKey }::${ selectedLanguage }` : undefined;
+        const componentCustomization = ( customization && customizationKey && langKey )
+            ? ( customization.components[ langKey ] ?? customization.components[ customizationKey ] )
+            : undefined;
 
-        // Only apply once per node to avoid infinite loops
-        const appliedKey = `${ selectedNode.id }-${ JSON.stringify( customization.components[ customizationKey ] ) }`;
+        const appliedKey = `${ selectedNode.id }-${ selectedLanguage }-${ translationKey }-${ JSON.stringify( componentCustomization ) }`;
         if ( appliedCustomization === appliedKey ) {
             return;
         }
 
-        const componentCustomization = customization.components[ customizationKey ];
-
-        if ( !componentCustomization?.embedOverrides ) {
-            setAppliedCustomization( appliedKey );
-            return;
+        // Apply base language translations first
+        if ( translations && embedName ) {
+            const embedTranslation = translations.embeds[ embedName ];
+            if ( embedTranslation ) {
+                if ( embedTranslation.title !== undefined ) {
+                    updateNodeData.run( { path: "embed.title", value: embedTranslation.title, isInitialLoad: true } );
+                }
+                if ( embedTranslation.description !== undefined ) {
+                    updateNodeData.run( { path: "embed.description", value: embedTranslation.description, isInitialLoad: true } );
+                }
+            }
         }
 
-        logger.debug( FlowEditSidebar, "Applying saved customization to node", { customizationKey, embedOverrides: componentCustomization.embedOverrides } );
+        // Then apply customization overrides on top
+        if ( componentCustomization?.embedOverrides ) {
+            logger.debug( FlowEditSidebar, "Applying saved customization to node", { customizationKey, langKey, embedOverrides: componentCustomization.embedOverrides } );
 
-        // Apply embed overrides with isInitialLoad flag to prevent marking as unsaved
-        const { color, title, description } = componentCustomization.embedOverrides;
+            const { color, title, description } = componentCustomization.embedOverrides;
 
-        if ( color !== undefined ) {
-            updateNodeData.run( { path: "embed.color", value: color, isInitialLoad: true } );
-        }
-        if ( title !== undefined ) {
-            updateNodeData.run( { path: "embed.title", value: title, isInitialLoad: true } );
-        }
-        if ( description !== undefined ) {
-            updateNodeData.run( { path: "embed.description", value: description, isInitialLoad: true } );
+            if ( color !== undefined ) {
+                updateNodeData.run( { path: "embed.color", value: color, isInitialLoad: true } );
+            }
+            if ( title !== undefined ) {
+                updateNodeData.run( { path: "embed.title", value: title, isInitialLoad: true } );
+            }
+            if ( description !== undefined ) {
+                updateNodeData.run( { path: "embed.description", value: description, isInitialLoad: true } );
+            }
         }
 
         setAppliedCustomization( appliedKey );
-    }, [ customization, selectedNode, isLoadingCustomization, appliedCustomization, updateNodeData ] );
+    }, [ customization, translations, selectedNode, isLoadingCustomization, appliedCustomization, selectedLanguage, updateNodeData ] );
 
     const nodeType = selectedNode?.data?.type as string | undefined;
 

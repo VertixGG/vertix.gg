@@ -342,24 +342,28 @@ export abstract class UIAdapterExecutionStepsBase<
 
     private setStepInternal( context: Message<true> | TInteraction | TChannel, step: UIExecutionStepItem ) {
         const stepData = this.getStepDataWithEntities( step ),
-            component = this.getComponent();
+            component = this.getComponent(),
+            staticComponent = this.staticAdapterExecution.getComponent(),
+            hasEmbedsGroups = staticComponent.getEmbedsGroups().length > 0,
+            hasMarkdownsGroups = staticComponent.getMarkdownsGroups().length > 0,
+            hasElementsGroups = staticComponent.getElementsGroups().length > 0;
 
         this.staticAdapterExecution.adapterExecutionDebugger.dumpDown( this.setStepInternal, step );
 
-        if ( !stepData.embedsGroup ) {
+        if ( !stepData.embedsGroup && hasEmbedsGroups ) {
             component.clearEmbeds();
         }
         if ( stepData.entities.embedsGroupType ) {
             component.switchEmbedsGroup( stepData.entities.embedsGroupType );
         }
 
-        if ( !stepData.markdownGroup ) {
+        if ( !stepData.markdownGroup && hasMarkdownsGroups ) {
             component.clearMarkdowns();
         } else if ( stepData.entities.markdownsGroupType ) {
             component.switchMarkdownsGroup( stepData.entities.markdownsGroupType );
         }
 
-        if ( !stepData.elementsGroup ) {
+        if ( !stepData.elementsGroup && hasElementsGroups ) {
             component.clearElements();
         } else if ( stepData.entities.elementsGroupType ) {
             component.switchElementsGroup( stepData.entities.elementsGroupType );

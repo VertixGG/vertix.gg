@@ -935,8 +935,10 @@ export async function entryPoint( options: {
 
     await registerUIAdapters();
 
+    const importLanguageArg = !!process.argv.find( arg => arg.startsWith( "--import-languages" ) );
+
     await registerUILanguageManager( {
-        shouldImport: false,
+        shouldImport: importLanguageArg,
         shouldValidate: false
     } );
 

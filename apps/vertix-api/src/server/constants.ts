@@ -1,7 +1,9 @@
 export const API_ROUTES = {
     HEALTH: "/health",
     MODULES: "/modules",
-    FLOWS: "/flows"
+    FLOWS: "/flows",
+    LANGUAGES: "/languages",
+    LANGUAGE_TRANSLATIONS: "/languages/translations/:code"
 } as const;
 
 export const API_PREFIX = "/api";

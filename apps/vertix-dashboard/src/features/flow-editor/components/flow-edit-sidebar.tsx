@@ -690,10 +690,21 @@ export function FlowEditSidebar() {
                                                         ) }
                                                     </div>
                                                 </div>
-                                                { displayDefault && (
+                                                { displayDefault !== undefined && (
                                                     <div className="mt-1">
-                                                        <span className="text-[10px] text-zinc-500">Default: </span>
-                                                        <span className="text-[10px] text-zinc-400">{ displayDefault }</span>
+                                                        <label className="text-[10px] text-zinc-500 block mb-0.5">Default</label>
+                                                        <input
+                                                            type="text"
+                                                            value={ displayDefault ?? "" }
+                                                            onChange={ ( e ) => {
+                                                                if ( varInfo.optionString !== undefined ) {
+                                                                    updateNodeData.run( { path: `embedDefinition.options.${ varName }`, value: e.target.value } );
+                                                                } else {
+                                                                    updateNodeData.run( { path: `embedDefinition.defaultVars.${ varName }`, value: e.target.value } );
+                                                                }
+                                                            } }
+                                                            className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-0.5 text-[11px] text-white focus:border-blue-500 focus:outline-none"
+                                                        />
                                                     </div>
                                                 ) }
                                                 { displayPreview && (
@@ -703,10 +714,19 @@ export function FlowEditSidebar() {
                                                     </div>
                                                 ) }
                                                 { hasOptionRecord && (
-                                                    <div className="mt-1 space-y-0.5">
+                                                    <div className="mt-1 space-y-1">
                                                         { Object.entries( varInfo.optionRecord! ).map( ( [ optKey, optValue ] ) => (
-                                                            <div key={ optKey } className="text-[10px] text-zinc-500">
-                                                                <span className="text-zinc-400">{ stripTemplateBraces( optKey ) }</span>: { optValue }
+                                                            <div key={ optKey } className="flex items-center gap-1">
+                                                                <span className="text-[10px] text-zinc-400 shrink-0">{ stripTemplateBraces( optKey ) }:</span>
+                                                                <input
+                                                                    type="text"
+                                                                    value={ optValue }
+                                                                    onChange={ ( e ) => {
+                                                                        const updatedRecord = { ...varInfo.optionRecord!, [ optKey ]: e.target.value };
+                                                                        updateNodeData.run( { path: `embedDefinition.options.${ varName }`, value: updatedRecord } );
+                                                                    } }
+                                                                    className="flex-1 min-w-0 bg-zinc-900 border border-zinc-600 rounded px-1.5 py-0.5 text-[11px] text-white focus:border-blue-500 focus:outline-none"
+                                                                />
                                                             </div>
                                                         ) ) }
                                                     </div>
@@ -750,9 +770,8 @@ export function FlowEditSidebar() {
                     </button>
                     <button
                         onClick={ () => restoreNodeData.run( {} ) }
-                        disabled={ !state.hasUnsavedChanges }
                         className={ `flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors ${
-                            state.hasUnsavedChanges
+                            selectedNode
                                 ? "bg-zinc-600 hover:bg-zinc-500 text-white"
                                 : "bg-zinc-700 text-zinc-500 cursor-not-allowed"
                         }` }

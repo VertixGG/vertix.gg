@@ -266,30 +266,64 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
             }
         }
 
-        const selectedLanguage = useLanguageStore.getState().selectedLanguage;
+        // Check for variable overrides (defaultVars + options changes in embedDefinition)
+        const embedDefinition = selectedNode.data?.embedDefinition as Record<string, unknown> | undefined;
+        const originalEmbedDefinition = originalNodeData?.embedDefinition as Record<string, unknown> | undefined;
+        const variables: Record<string, unknown> = {};
 
-        logger.debug( this.apply, "Saving customization", { guildId, customizationKey, embedOverrides, languageCode: selectedLanguage } );
+        if ( embedDefinition ) {
+            const currentDefaultVars = embedDefinition.defaultVars as Record<string, string> | undefined;
+            const originalDefaultVars = originalEmbedDefinition?.defaultVars as Record<string, string> | undefined;
+
+            if ( currentDefaultVars ) {
+                for ( const [ key, value ] of Object.entries( currentDefaultVars ) ) {
+                    if ( value !== originalDefaultVars?.[ key ] ) {
+                        variables[ key ] = value;
+                    }
+                }
+            }
+
+            const currentOptions = embedDefinition.options as Record<string, unknown> | undefined;
+            const originalOptions = originalEmbedDefinition?.options as Record<string, unknown> | undefined;
+
+            if ( currentOptions ) {
+                for ( const [ key, value ] of Object.entries( currentOptions ) ) {
+                    if ( JSON.stringify( value ) !== JSON.stringify( originalOptions?.[ key ] ) ) {
+                        variables[ `__option__${ key }` ] = value;
+                    }
+                }
+            }
+        }
+
+        const selectedLanguage = useLanguageStore.getState().selectedLanguage;
+        const hasVariables = Object.keys( variables ).length > 0;
+
+        logger.debug( this.apply, "Saving customization", { guildId, customizationKey, embedOverrides, variables: hasVariables ? variables : undefined, languageCode: selectedLanguage } );
 
         try {
             // Save to database using query module
             const queryModule = getQueryModule( CustomizationQuery );
             const isDefault = guildId === "__default__";
+            const customization: Record<string, unknown> = {
+                embedOverrides: embedOverrides as { title?: string; description?: string; color?: number }
+            };
+
+            if ( hasVariables ) {
+                customization.variables = variables;
+            }
+
             await queryModule.request<GuildCustomizationData>(
                 isDefault ? "Dashboard/Customization/UpdateDefaultComponent" : "Dashboard/Customization/UpdateComponent",
                 isDefault
                     ? {
                         customizationKey,
-                        customization: {
-                            embedOverrides: embedOverrides as { title?: string; description?: string; color?: number }
-                        },
+                        customization,
                         languageCode: selectedLanguage
                     }
                     : {
                         guildId,
                         customizationKey,
-                        customization: {
-                            embedOverrides: embedOverrides as { title?: string; description?: string; color?: number }
-                        },
+                        customization,
                         languageCode: selectedLanguage
                     }
             );

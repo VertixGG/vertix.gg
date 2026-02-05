@@ -1,5 +1,14 @@
 # Changelog
 
+**Version: 0.0.16 ~ 05/02/2026**
+- New Languages:
+    - 🇪🇸 Spanish
+    - 🇫🇷 French
+    - 🇩🇪 German
+    - 🇯🇵 Japanese
+
+---
+
 **Version: 0.0.15 ~ 25/01/2026**
 - New Features:
     - **Auto-Scaling Channels**: Automatically create and manage voice channels based on demand. When users join the master channel, they're moved to an available room (or a new one is created).

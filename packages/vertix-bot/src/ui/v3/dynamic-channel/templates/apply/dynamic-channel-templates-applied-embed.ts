@@ -9,7 +9,18 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 const vars = {
     templatesEmoji: uiUtilsWrapAsTemplate( "templatesEmoji" ),
     templateName: uiUtilsWrapAsTemplate( "templateName" ),
-    appliedSettings: uiUtilsWrapAsTemplate( "appliedSettings" )
+    appliedSettings: uiUtilsWrapAsTemplate( "appliedSettings" ),
+
+    // Label vars for dashboard editability
+    labelName: uiUtilsWrapAsTemplate( "labelName" ),
+    labelLimit: uiUtilsWrapAsTemplate( "labelLimit" ),
+    labelPrivacy: uiUtilsWrapAsTemplate( "labelPrivacy" ),
+    labelVisibility: uiUtilsWrapAsTemplate( "labelVisibility" ),
+    labelRegion: uiUtilsWrapAsTemplate( "labelRegion" ),
+    labelUnlimited: uiUtilsWrapAsTemplate( "labelUnlimited" ),
+    labelAutomatic: uiUtilsWrapAsTemplate( "labelAutomatic" ),
+    labelUnknown: uiUtilsWrapAsTemplate( "labelUnknown" ),
+    labelNoSettings: uiUtilsWrapAsTemplate( "labelNoSettings" )
 };
 
 const DynamicChannelTemplatesAppliedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
@@ -25,27 +36,36 @@ const DynamicChannelTemplatesAppliedEmbed = new EmbedBuilder<UIArgs, typeof vars
         `**Applied Settings:**\n${ vars.appliedSettings }\n\n` +
         "-# Note: Channel name changes may take a moment due to rate limits."
     ) )
-    .setLogic( ( args: UIArgs ) => {
+    .setLogic( ( args: UIArgs, v: typeof vars ) => {
         const config = args.appliedTemplate?.config;
         const settings = [];
 
         if ( config ) {
-            if ( config.nameTemplate ) settings.push( `- **Name**: ${ config.nameTemplate }` );
-            if ( config.userLimit !== undefined ) settings.push( `- **Limit**: ${ config.userLimit === 0 ? "Unlimited" : config.userLimit }` );
-            if ( config.state ) settings.push( `- **Privacy**: ${ config.state }` );
-            if ( config.visibilityState ) settings.push( `- **Visibility**: ${ config.visibilityState }` );
+            if ( config.nameTemplate ) settings.push( `${ v.labelName } ${ config.nameTemplate }` );
+            if ( config.userLimit !== undefined ) settings.push( `${ v.labelLimit } ${ config.userLimit === 0 ? v.labelUnlimited : config.userLimit }` );
+            if ( config.state ) settings.push( `${ v.labelPrivacy } ${ config.state }` );
+            if ( config.visibilityState ) settings.push( `${ v.labelVisibility } ${ config.visibilityState }` );
             if ( typeof config.region === "string" && config.region.length ) {
-                settings.push( `- **Region**: ${ config.region === "auto" ? "Automatic" : config.region }` );
+                settings.push( `${ v.labelRegion } ${ config.region === "auto" ? v.labelAutomatic : config.region }` );
             }
         }
 
         return {
-            templateName: args.appliedTemplate?.name ?? "Unknown",
-            appliedSettings: settings.length > 0 ? settings.join( "\n" ) : "No settings applied"
+            templateName: args.appliedTemplate?.name ?? v.labelUnknown,
+            appliedSettings: settings.length > 0 ? settings.join( "\n" ) : v.labelNoSettings
         };
     } )
     .setDefaultVars( () => ( {
-        templatesEmoji: EmojiManager.$.getMarkdown( "Templates" )
+        templatesEmoji: EmojiManager.$.getMarkdown( "Templates" ),
+        labelName: "- **Name**:",
+        labelLimit: "- **Limit**:",
+        labelPrivacy: "- **Privacy**:",
+        labelVisibility: "- **Visibility**:",
+        labelRegion: "- **Region**:",
+        labelUnlimited: "Unlimited",
+        labelAutomatic: "Automatic",
+        labelUnknown: "Unknown",
+        labelNoSettings: "No settings applied"
     } ) )
     .build();
 

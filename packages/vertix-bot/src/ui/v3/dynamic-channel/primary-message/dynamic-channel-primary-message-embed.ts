@@ -41,6 +41,7 @@ const vars = {
 
     region: DYNAMIC_CHANNEL_REGION_VARS.region,
     regionEmoji: DYNAMIC_CHANNEL_REGION_VARS.regionEmoji,
+    regionAutomatic: uiUtilsWrapAsTemplate( "regionAutomatic" ),
 
     title: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_TITLE_VARS.title,
     description: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.description
@@ -89,7 +90,7 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
             title: args.title || configV3.data.constants.dynamicChannelPrimaryMessageTitle,
             description: args.description || configV3.data.constants.dynamicChannelPrimaryMessageDescription,
-            region: args.region || "Automatic",
+            region: args.region || vars.regionAutomatic,
             regionEmoji: DynamicChannelRegionButton.getEmoji()
         };
 
@@ -119,6 +120,13 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             limitEmoji: DynamicChannelLimitMetaButton.getEmoji(),
             privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
             regionEmoji: DynamicChannelRegionButton.getEmoji(),
+            regionAutomatic: "Automatic",
+            limitDisplayValue: "value",
+            limitDisplayUnlimited: "unlimited",
+            statePublic: "public",
+            statePrivate: "private",
+            stateShown: "shown",
+            stateHidden: "hidden",
             title: configV3.data.constants.dynamicChannelPrimaryMessageTitle,
             description: configV3.data.constants.dynamicChannelPrimaryMessageDescription,
         };

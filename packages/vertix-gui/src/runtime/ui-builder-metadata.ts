@@ -22,7 +22,7 @@ import type {
     LogicHandler
 } from "@vertix.gg/gui/src/builders/embed-builder";
 
-export const BUILDER_METADATA_SYMBOL = Symbol( "VertixGUI/BuilderMetadata" );
+export const BUILDER_METADATA_SYMBOL = Symbol.for( "VertixGUI/BuilderMetadata" );
 
 export interface ComponentBuilderMetadata {
     name: string;

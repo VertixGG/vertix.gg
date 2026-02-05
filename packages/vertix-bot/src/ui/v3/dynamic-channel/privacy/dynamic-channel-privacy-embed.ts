@@ -124,7 +124,17 @@ const DynamicChannelPrivacyEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         return result;
     } )
     .setDefaultVars( () => ( {
-        privacyEmoji: DynamicChannelPrivacyButton.getEmoji()
+        privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
+        statePublic: "public",
+        statePrivate: "private",
+        stateShown: "shown",
+        stateHidden: "hidden",
+        stateMessagePublic: "public",
+        stateMessagePrivate: "private",
+        stateMessageShown: "shown",
+        stateMessageHidden: "hidden",
+        allowedUsersDefault: "none",
+        blockedUsersDefault: "none"
     } ) )
     .build();
 

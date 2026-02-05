@@ -88,6 +88,10 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
             .addState( "TemplateApplied", {
                 executionStep: "template-applied",
                 navigationType: "editReply",
+                previewDefaultVars: {
+                    templateName: "My Template",
+                    appliedSettings: "- **Name**: Gaming Room\n- **Limit**: 10\n- **Privacy**: public\n- **Region**: Automatic"
+                },
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbedGroup"
             } )

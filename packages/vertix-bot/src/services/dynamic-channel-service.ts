@@ -36,6 +36,8 @@ import {
     VAR_DYNAMIC_CHANNEL_USER
 } from "@vertix.gg/base/src/definitions/vars";
 
+import { GuildCustomizationManager } from "@vertix.gg/bot/src/managers/guild-customization-manager";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import {
@@ -2713,6 +2715,50 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             this.logger.info(
                 this.refreshControlPanelsForGuild,
                 `Guild '${ guild.name }' (${ guild.id }) - Refreshed ${ refreshedCount } control panel(s).`
+            );
+        }
+    }
+
+    /**
+     * Handle refresh customization IPC action (called by ManagementIPCService).
+     * Invalidates the customization cache and refreshes control panel messages
+     * so dashboard-saved embed changes appear immediately on Discord.
+     *
+     * When guildId is "__default__", invalidates all caches and refreshes all guilds
+     * because default customizations serve as the base layer for every guild.
+     */
+    public async handleRefreshCustomization( data: { guildId: string } ) {
+        const { guildId } = data;
+
+        this.logger.log(
+            this.handleRefreshCustomization,
+            `Refreshing customization for guild ${ guildId }`
+        );
+
+        if ( guildId === "__default__" ) {
+            // Default customizations affect all guilds — invalidate everything
+            GuildCustomizationManager.$.invalidateAllCache();
+
+            // Refresh all control panels across all guilds
+            const client = this.services.appService.getClient();
+            await this.refreshControlPanels( client );
+            return;
+        }
+
+        // Invalidate customization cache so next build() reads fresh data from DB
+        GuildCustomizationManager.$.invalidateCache( guildId );
+        // Also invalidate __default__ since it's merged as a base layer
+        GuildCustomizationManager.$.invalidateCache( "__default__" );
+
+        // Refresh control panel messages with updated customization
+        const guild = this.services.appService.getClient().guilds.cache.get( guildId );
+
+        if ( guild ) {
+            await this.refreshControlPanelsForGuild( guild );
+        } else {
+            this.logger.warn(
+                this.handleRefreshCustomization,
+                `Guild ${ guildId } not found in cache, skipping panel refresh`
             );
         }
     }

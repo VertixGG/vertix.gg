@@ -430,11 +430,11 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
                 return [
                     `**#${ index + 1 }**`,
-                    `▹ Name: <#${ channel.channelId }>`,
-                    `▹ Channel ID: \`${ channel.channelId }\``,
-                    `▹ Scaling Prefix: \`${ prefix }\``,
-                    `▹ Max Members: \`${ maxMembers }\``,
-                    `▹ UI Version: \`${ version }\``
+                    `${ vars.labelName } <#${ channel.channelId }>`,
+                    `${ vars.labelChannelId } \`${ channel.channelId }\``,
+                    `${ vars.labelScalingPrefix } \`${ prefix }\``,
+                    `${ vars.labelMaxMembers } \`${ maxMembers }\``,
+                    `${ vars.labelVersion } \`${ version }\``
                 ];
             }
 
@@ -466,14 +466,14 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
             return [
                 `**#${ index + 1 }**`,
-                `▹ Name: <#${ channel.channelId }>`,
-                `▹ Channel ID: \`${ channel.channelId }\``,
-                `▹ Dynamic Channels Name: \`${ nameTemplate }\``,
-                `▹ Buttons: **${ buttonsDisplay }**`,
-                `▹ Verified Roles: ${ rolesDisplay }`,
-                `▹ Logs Channel: ${ logsDisplay }`,
-                `▹ Auto Save: \`${ autoSaveDisplay }\``,
-                `▹ UI Version: \`${ version }\``
+                `${ vars.labelName } <#${ channel.channelId }>`,
+                `${ vars.labelChannelId } \`${ channel.channelId }\``,
+                `${ vars.labelDynamicChannelsName } \`${ nameTemplate }\``,
+                `${ vars.labelButtons } **${ buttonsDisplay }**`,
+                `${ vars.labelVerifiedRoles } ${ rolesDisplay }`,
+                `${ vars.labelLogsChannel } ${ logsDisplay }`,
+                `${ vars.labelAutoSave } \`${ autoSaveDisplay }\``,
+                `${ vars.labelVersion } \`${ version }\``
             ];
         } ) );
 
@@ -495,6 +495,19 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
         return result;
     } )
+    .setDefaultVars( () => ( {
+        none: "**None**",
+        labelName: "▹ Name:",
+        labelChannelId: "▹ Channel ID:",
+        labelDynamicChannelsName: "▹ Dynamic Channels Name:",
+        labelButtons: "▹ Buttons:",
+        labelVerifiedRoles: "▹ Verified Roles:",
+        labelLogsChannel: "▹ Logs Channel:",
+        labelAutoSave: "▹ Auto Save:",
+        labelVersion: "▹ UI Version:",
+        labelScalingPrefix: "▹ Scaling Prefix:",
+        labelMaxMembers: "▹ Max Members:",
+    } ) )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
@@ -552,7 +565,11 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             .addState( "Initial", {
                 executionStep: "default",
                 embedsGroup: "VertixBot/UI-General/SetupEmbedGroup",
-                elementsGroup: "VertixBot/UI-General/SetupElementsGroup"
+                elementsGroup: "VertixBot/UI-General/SetupElementsGroup",
+                previewDefaultVars: {
+                    masterChannelMessage: "**None**",
+                    badwordsMessage: "**None**",
+                }
             } )
             .addState( "MaxMasterChannelsReached", {
                 executionStep: "maxMasterChannelsReached",

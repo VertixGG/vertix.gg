@@ -207,18 +207,18 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             return buttonIds.map( ( id ) => {
                 const item = DynamicChannelPrimaryMessageElementsGroup.getById( id );
                 const label = item ? item.getLabelForEmbed() : id;
-                return `> - ${ label }`;
+                return `${ v.labelButtonPrefix } ${ label }`;
             } ).join( "\n" );
         };
 
         const defaultButtons = args.dynamicChannelButtonsTemplateDefault as string[] || args.dynamicChannelButtonsTemplate as string[] || [];
         const roleOverrides = args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> || {};
 
-        let buttonsDisplay = `**Default Settings**\n${ formatButtons( defaultButtons ) || "> - *None*" }`;
+        let buttonsDisplay = `${ v.labelDefaultSettings }\n${ formatButtons( defaultButtons ) || v.labelButtonNone }`;
 
         Object.entries( roleOverrides ).forEach( ( [ roleId, buttons ] ) => {
             if ( buttons.length > 0 ) {
-                buttonsDisplay += `\n\n**Role Override: <@&${ roleId }>**\n${ formatButtons( buttons ) }`;
+                buttonsDisplay += `\n\n${ v.labelRoleOverride } <@&${ roleId }>**\n${ formatButtons( buttons ) }`;
             }
         } );
 
@@ -238,6 +238,12 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             dynamicChannelButtonsTemplate: buttonsDisplay
         };
     } )
+    .setDefaultVars( () => ( {
+        labelDefaultSettings: "**Default Settings**",
+        labelRoleOverride: "**Role Override:",
+        labelButtonPrefix: "> -",
+        labelButtonNone: "> - *None*",
+    } ) )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
@@ -826,7 +832,18 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 executionStep: "VertixBot/UI-V3/SetupEditMaster",
                 elementsGroup: "VertixBot/UI-V3/SetupEditElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/SetupEditEmbedGroup",
-                previewDefaultVars: { index: "1", masterChannelId: "123456789", dynamicChannelNameTemplate: "{username}'s Channel" }
+                previewDefaultVars: {
+                    index: "1",
+                    masterChannelId: "123456789",
+                    dynamicChannelNameTemplate: "{username}'s Channel",
+                    dynamicChannelLogsChannelDisplay: "**None**",
+                    dynamicChannelButtonsTemplate: "**Default Settings**\n> - Rename\n> - User Limit\n> - Access",
+                    verifiedRoles: "**None**",
+                    configUserMention: "`🟢∙On`",
+                    configAutoSave: "`🔴∙Off`",
+                    configLogs: "`🔴∙Off`",
+                    configControlChannelAutoCreate: "`🟢∙On`",
+                }
             } )
             .addState( "EditButtons", {
                 executionStep: "VertixBot/UI-V3/SetupEditButtons",

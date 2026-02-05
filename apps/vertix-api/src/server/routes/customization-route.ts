@@ -7,6 +7,11 @@ import {
 } from "@vertix.gg/api/src/server/services/customization-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
+import { IPC_CHANNELS, MANAGEMENT_ACTIONS } from "@vertix.gg/base/src/modules/ipc";
+
+import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import type { ComponentCustomization } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
@@ -27,6 +32,25 @@ interface UpdateCustomizationBody {
 interface DeleteComponentBody {
     customizationKey: string;
     languageCode?: string;
+}
+
+/**
+ * Notify the bot process to refresh customization for a guild via IPC.
+ * Fire-and-forget — IPC failure does not affect the API response.
+ */
+async function notifyBotCustomizationRefresh( guildId: string ) {
+    try {
+        const ipcService = ServiceLocator.$.get<IPCService>( "VertixBase/Modules/IPCService" );
+
+        if ( ipcService?.isReady() ) {
+            await ipcService.publish( IPC_CHANNELS.MANAGEMENT, {
+                action: MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION,
+                data: { guildId }
+            } );
+        }
+    } catch {
+        // Non-critical: customization is already saved to DB
+    }
 }
 
 /**
@@ -92,6 +116,10 @@ async function handleUpdateGuildCustomization(
         }
 
         const customization = await updateGuildCustomization( guildId, components );
+
+        // Notify bot to refresh active sessions with updated customization
+        notifyBotCustomizationRefresh( guildId );
+
         return customization;
     } catch ( error ) {
         handleError( handleUpdateGuildCustomization, error, reply, "Failed to update guild customization" );
@@ -120,6 +148,10 @@ async function handleUpdateComponentCustomization(
         }
 
         const result = await updateComponentCustomization( guildId, customizationKey, customization, languageCode );
+
+        // Notify bot to refresh active sessions with updated customization
+        notifyBotCustomizationRefresh( guildId );
+
         return result;
     } catch ( error ) {
         handleError( handleUpdateComponentCustomization, error, reply, "Failed to update component customization" );
@@ -193,6 +225,10 @@ async function handleUpdateDefaultComponentCustomization(
         }
 
         const result = await updateComponentCustomization( DEFAULT_GUILD_ID, customizationKey, customization, languageCode );
+
+        // Notify bot to refresh — __default__ affects all guilds
+        notifyBotCustomizationRefresh( DEFAULT_GUILD_ID );
+
         return result;
     } catch ( error ) {
         handleError( handleUpdateDefaultComponentCustomization, error, reply, "Failed to update default component customization" );

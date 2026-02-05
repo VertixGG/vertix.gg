@@ -134,11 +134,12 @@ class PreviewResolver {
         const defaultVars = this.getDefaultVars( options, compPreview.embedDefinition );
 
         if ( !compPreview.embed ) {
-            return compPreview;
+            return { ...compPreview, previewVars: Object.keys( defaultVars ).length > 0 ? defaultVars : undefined };
         }
 
         return {
             ...compPreview,
+            previewVars: Object.keys( defaultVars ).length > 0 ? defaultVars : undefined,
             embed: {
                 ...compPreview.embed,
                 defaultVars: { ...( compPreview.embed.defaultVars ?? {} ), ...defaultVars }

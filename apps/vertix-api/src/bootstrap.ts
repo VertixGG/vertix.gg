@@ -98,7 +98,7 @@ export class UIRuntimeLoader extends InitializeBase {
                 this.doCollectDefinitions,
                 `Collected: ${ this.exportData.meta.counts.flows } flows, ${ this.exportData.meta.counts.components } components, ${ this.exportData.adapters.length } adapters`
             );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error(
                 this.doCollectDefinitions,
                 `Failed to collect UI definitions: ${ error }`
@@ -152,7 +152,7 @@ export class UIRuntimeLoader extends InitializeBase {
                     } );
                 }, WATCH_DEBOUNCE_MS );
             } );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.warn( this.startWatching, `Failed to start watching UI source directory: ${ error }` );
         }
     }
@@ -204,6 +204,12 @@ export class UIRuntimeLoader extends InitializeBase {
         await this.loadExports();
 
         const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
+
+        // After HMR, the UILanguageManager singleton may have been reset — re-register if needed
+        if ( !UILanguageManager.$.getInitialLanguage() ) {
+            await UILanguageManager.$.register( { shouldValidate: false } );
+        }
+
         const languages = UILanguageManager.$.getAvailableLanguages();
         const lang = languages.get( languageCode );
 
@@ -242,6 +248,12 @@ export class UIRuntimeLoader extends InitializeBase {
         await this.loadExports();
 
         const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
+
+        // After HMR, the UILanguageManager singleton may have been reset — re-register if needed
+        if ( !UILanguageManager.$.getInitialLanguage() ) {
+            await UILanguageManager.$.register( { shouldValidate: false } );
+        }
+
         const languages = UILanguageManager.$.getAvailableLanguages();
         const initial = UILanguageManager.$.getInitialLanguage();
 

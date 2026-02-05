@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectTreeColorHighlighter">
     <files>
+      <node color="12" path="$PROJECT_DIR$/apps/vertix-dashboard" />
       <node color="99" path="$PROJECT_DIR$/apps/vertix-website" />
       <node color="3" path="$PROJECT_DIR$/package.json" />
       <node color="2" path="$PROJECT_DIR$/packages/vertix-base" />
@@ -30,6 +31,7 @@
       <color id="9" value="#4780be4c" name="Color 9" enabled="true" />
       <color id="10" value="#00ff3a36" name="Color 10" enabled="true" />
       <color id="11" value="#626a36" name="Color 11" enabled="true" />
+      <color id="12" value="#fa82b8" name="Color 12" enabled="true" />
       <color id="16" value="#2a008c1d" name="Color 16" enabled="true" />
       <color id="99" value="#06c1fa" name="sky" enabled="true" />
     </colors>

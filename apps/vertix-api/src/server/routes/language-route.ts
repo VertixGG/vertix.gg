@@ -24,7 +24,7 @@ async function handleGetLanguages( _request: FastifyRequest, reply: FastifyReply
     try {
         return await uiRuntimeLoader.getAvailableLanguages();
     } catch ( error ) {
-        handleError( handleGetLanguages, error, reply, "Failed to fetch available languages" );
+        return handleError( handleGetLanguages, error, reply, "Failed to fetch available languages" );
     }
 }
 
@@ -42,7 +42,7 @@ async function handleGetTranslations(
     try {
         return await uiRuntimeLoader.getLanguageTranslations( code );
     } catch ( error ) {
-        handleError( handleGetTranslations, error, reply, "Failed to fetch language translations" );
+        return handleError( handleGetTranslations, error, reply, "Failed to fetch language translations" );
     }
 }
 

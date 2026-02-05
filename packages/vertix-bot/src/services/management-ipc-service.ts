@@ -129,6 +129,11 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 await this.services.dynamicChannelService.handleDeleteDynamicSetup( payload.data );
                 break;
 
+            // Customization-related actions -> DynamicChannelService
+            case MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION:
+                await this.services.dynamicChannelService.handleRefreshCustomization( payload.data );
+                break;
+
             default:
                 this.logger.warn( this.handleIPCMessage, `Unknown action: ${ ( payload as ManagementPayload ).action }` );
         }

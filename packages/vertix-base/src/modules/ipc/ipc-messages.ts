@@ -14,7 +14,8 @@ export const MANAGEMENT_ACTIONS = {
     DELETE_SCALING_SETUP: "delete_scaling_setup",
     CREATE_DYNAMIC_SETUP: "create_dynamic_setup",
     UPDATE_DYNAMIC_SETTINGS: "update_dynamic_settings",
-    DELETE_DYNAMIC_SETUP: "delete_dynamic_setup"
+    DELETE_DYNAMIC_SETUP: "delete_dynamic_setup",
+    REFRESH_CUSTOMIZATION: "refresh_customization"
 } as const;
 
 export type ManagementAction = typeof MANAGEMENT_ACTIONS[ keyof typeof MANAGEMENT_ACTIONS ];
@@ -76,6 +77,10 @@ export interface DeleteDynamicSetupPayload {
     masterChannelId: string;
 }
 
+export interface RefreshCustomizationPayload {
+    guildId: string;
+}
+
 export type ManagementPayload =
     | { action: typeof MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP; data: CreateScalingSetupPayload }
     | { action: typeof MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS; data: UpdateScalingSettingsPayload }
@@ -84,7 +89,8 @@ export type ManagementPayload =
     | { action: typeof MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP; data: DeleteScalingSetupPayload }
     | { action: typeof MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP; data: CreateDynamicSetupPayload }
     | { action: typeof MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS; data: UpdateDynamicSettingsPayload }
-    | { action: typeof MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP; data: DeleteDynamicSetupPayload };
+    | { action: typeof MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP; data: DeleteDynamicSetupPayload }
+    | { action: typeof MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION; data: RefreshCustomizationPayload };
 
 export interface IPCMessage<T = unknown> {
     id: string;

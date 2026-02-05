@@ -7,7 +7,9 @@ export interface UIExportEmbedDefinition {
     color?: number;
     image?: string;
     thumbnail?: string;
+    footer?: string;
     options?: Record<string, Record<string, string>>;
+    arrayOptions?: Record<string, unknown>;
     vars?: Record<string, string>;
     defaultVars?: Record<string, string>;
 }

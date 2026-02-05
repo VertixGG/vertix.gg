@@ -38,5 +38,17 @@ export const SETUP_EMBED_VARS = {
     badwords: uiUtilsWrapAsTemplate( "badwords" ),
     badwordsMessage: uiUtilsWrapAsTemplate( "badwordsMessage" ),
     badwordsMessageDefault: uiUtilsWrapAsTemplate( "badwordsMessageDefault" ),
-    none: uiUtilsWrapAsTemplate( "none" )
+    none: uiUtilsWrapAsTemplate( "none" ),
+
+    // Master channel display labels
+    labelName: uiUtilsWrapAsTemplate( "labelName" ),
+    labelChannelId: uiUtilsWrapAsTemplate( "labelChannelId" ),
+    labelDynamicChannelsName: uiUtilsWrapAsTemplate( "labelDynamicChannelsName" ),
+    labelButtons: uiUtilsWrapAsTemplate( "labelButtons" ),
+    labelVerifiedRoles: uiUtilsWrapAsTemplate( "labelVerifiedRoles" ),
+    labelLogsChannel: uiUtilsWrapAsTemplate( "labelLogsChannel" ),
+    labelAutoSave: uiUtilsWrapAsTemplate( "labelAutoSave" ),
+    labelVersion: uiUtilsWrapAsTemplate( "labelVersion" ),
+    labelScalingPrefix: uiUtilsWrapAsTemplate( "labelScalingPrefix" ),
+    labelMaxMembers: uiUtilsWrapAsTemplate( "labelMaxMembers" )
 };

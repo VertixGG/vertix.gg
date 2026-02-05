@@ -43,5 +43,11 @@ export const SETUP_EDIT_EMBED_VARS = {
     dynamicChannelLogsChannelSelected: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelSelected" ),
     dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDisplay" ),
     dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" ),
-    verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" )
+    verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+
+    // Button display labels
+    labelDefaultSettings: uiUtilsWrapAsTemplate( "labelDefaultSettings" ),
+    labelRoleOverride: uiUtilsWrapAsTemplate( "labelRoleOverride" ),
+    labelButtonPrefix: uiUtilsWrapAsTemplate( "labelButtonPrefix" ),
+    labelButtonNone: uiUtilsWrapAsTemplate( "labelButtonNone" )
 };

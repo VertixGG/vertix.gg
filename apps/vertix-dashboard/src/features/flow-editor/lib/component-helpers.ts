@@ -21,6 +21,7 @@ export interface ComponentPreview {
         thumbnail?: { url: string };
         defaultVars?: Record<string, string>;
     };
+    previewVars?: Record<string, string>;
     embedDefinition?: UIExportEmbedDefinition;
     allEmbedDefinitions?: Array<{ groupName: string; definition: UIExportEmbedDefinition }>;
     elementRows: ElementData[][];

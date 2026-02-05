@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Type, FileText, Palette, Image, Grid3X3, MessageSquare, X, Smile, Link, Save, RotateCcw } from "lucide-react";
+import { ArrowLeft, Type, FileText, Palette, Image, Grid3X3, MessageSquare, X, Smile, Link, Save, RotateCcw, Braces } from "lucide-react";
 
 import zCore from "@zenflux/core";
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
@@ -11,6 +11,7 @@ import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-st
 
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 import type { ElementData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
+import type { UIExportEmbedDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
 
 const logger = zCore.modules.createLogger( "flow-edit-sidebar" );
 
@@ -110,6 +111,110 @@ const BUTTON_STYLES = [
     { value: "danger", label: "Danger", color: "bg-red-600" },
     { value: "link", label: "Link", color: "bg-zinc-700" },
 ] as const;
+
+// Extract variable placeholders from text (e.g., {varName})
+function extractVariables( text: string | undefined ): string[] {
+    if ( !text ) return [];
+    const matches = text.match( /\{([a-zA-Z0-9_]+)\}/g );
+    return matches ? [ ...new Set( matches.map( m => m.slice( 1, -1 ) ) ) ] : [];
+}
+
+// Strip template braces from a string: "{varName}" → "varName", leaves non-template strings unchanged.
+function stripTemplateBraces( value: string ): string {
+    const match = value.match( /^\{([a-zA-Z0-9_]+)\}$/ );
+    return match ? match[ 1 ] : value;
+}
+
+// Normalize an option value: options can be a plain string or a Record<string, string>.
+// Returns only Record<string, string> or undefined to simplify rendering.
+function normalizeOptionValue( raw: unknown ): { asString?: string; asRecord?: Record<string, string> } | undefined {
+    if ( !raw ) return undefined;
+    if ( typeof raw === "string" ) return { asString: raw };
+    if ( typeof raw === "object" && !Array.isArray( raw ) ) return { asRecord: raw as Record<string, string> };
+    return undefined;
+}
+
+interface VarInfo {
+    defaultValue?: string;
+    previewValue?: string;
+    optionString?: string;
+    optionRecord?: Record<string, string>;
+}
+
+// Collect all variables from an embed definition with their default values and preview data
+function collectEmbedVariables(
+    embedDefinition: UIExportEmbedDefinition | undefined,
+    embedPreviewVars?: Record<string, string>
+): Map<string, VarInfo> {
+    const allVars = new Map<string, VarInfo>();
+
+    if ( !embedDefinition ) return allVars;
+
+    // Extract vars from title and description
+    const titleVars = extractVariables( embedDefinition.title );
+    const descVars = extractVariables( embedDefinition.description );
+    const footerVars = extractVariables( embedDefinition.footer );
+    const allVarNames = [ ...new Set( [ ...titleVars, ...descVars, ...footerVars ] ) ];
+
+    // Note: `vars` field contains template placeholders like "{varName}" — NOT actual values.
+    // Only `defaultVars` contains real resolved default values from setDefaultVars() callback.
+    // `embedPreviewVars` contains merged preview data (defaultVars + previewDefaultVars from state).
+    allVarNames.forEach( varName => {
+
+        const defaultValue = embedDefinition.defaultVars?.[ varName ];
+        const previewValue = embedPreviewVars?.[ varName ];
+        const normalized = normalizeOptionValue( embedDefinition.options?.[ varName ] );
+        allVars.set( varName, { defaultValue, previewValue, optionString: normalized?.asString, optionRecord: normalized?.asRecord } );
+    } );
+
+    // Also add vars from defaultVars that might not be in title/description
+    if ( embedDefinition.defaultVars ) {
+        Object.entries( embedDefinition.defaultVars ).forEach( ( [ varName, value ] ) => {
+            if ( !allVars.has( varName ) ) {
+                const previewValue = embedPreviewVars?.[ varName ];
+                const normalized = normalizeOptionValue( embedDefinition.options?.[ varName ] );
+                allVars.set( varName, {
+                    defaultValue: value,
+                    previewValue,
+                    optionString: normalized?.asString,
+                    optionRecord: normalized?.asRecord
+                } );
+            }
+        } );
+    }
+
+    // Add vars from preview that aren't already collected (preview-only vars from previewDefaultVars)
+    if ( embedPreviewVars ) {
+        Object.entries( embedPreviewVars ).forEach( ( [ varName, value ] ) => {
+            if ( !allVars.has( varName ) ) {
+                const normalized = normalizeOptionValue( embedDefinition.options?.[ varName ] );
+                allVars.set( varName, {
+                    previewValue: value,
+                    optionString: normalized?.asString,
+                    optionRecord: normalized?.asRecord
+                } );
+            }
+        } );
+    }
+
+    // Add vars referenced in the vars field (template placeholders) without defaults
+    if ( embedDefinition.vars ) {
+        Object.keys( embedDefinition.vars ).forEach( varName => {
+            if ( !allVars.has( varName ) ) {
+                const previewValue = embedPreviewVars?.[ varName ];
+                const normalized = normalizeOptionValue( embedDefinition.options?.[ varName ] );
+                allVars.set( varName, {
+                    // No defaultValue — vars field only contains {placeholder} strings
+                    previewValue,
+                    optionString: normalized?.asString,
+                    optionRecord: normalized?.asRecord
+                } );
+            }
+        } );
+    }
+
+    return allVars;
+}
 
 // Extract leading emoji from a string (handles unicode emojis at the start)
 function extractLeadingEmoji( text: string ): { emoji: string; rest: string } | null {
@@ -373,8 +478,12 @@ export function FlowEditSidebar() {
 
     const embed = selectedNode?.data?.embed as EmbedData | undefined;
     const elementRows = selectedNode?.data?.elementRows as ElementData[][] | undefined;
+    const embedDefinition = selectedNode?.data?.embedDefinition as UIExportEmbedDefinition | undefined;
 
     const isComponentNode = nodeType === "component";
+    const previewVars = selectedNode?.data?.previewVars as Record<string, string> | undefined;
+    const embedVariables = collectEmbedVariables( embedDefinition, previewVars );
+    const varEntries = Array.from( embedVariables.entries() ).sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) );
 
     const selectedElement = selectedElementIndex && elementRows
         ? elementRows[ selectedElementIndex.row ]?.[ selectedElementIndex.col ]
@@ -546,6 +655,61 @@ export function FlowEditSidebar() {
                                                         onClose={ () => setSelectedElementIndex( null ) }
                                                         onUpdate={ handleUpdateElement }
                                                     />
+                                                ) }
+                                            </div>
+                                        );
+                                    } ) }
+                                </div>
+                            </div>
+                        ) }
+
+                        { /* Variables Section */ }
+                        { varEntries.length > 0 && (
+                            <div>
+                                <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <Braces className="w-3 h-3" />
+                                    Variables ({ varEntries.length })
+                                </h3>
+                                <div className="space-y-2">
+                                    { varEntries.map( ( [ varName, varInfo ] ) => {
+                                        const hasOptionRecord = varInfo.optionRecord && Object.keys( varInfo.optionRecord ).length > 0;
+                                        const displayDefault = varInfo.defaultValue || varInfo.optionString;
+                                        const displayPreview = varInfo.previewValue;
+
+                                        return (
+                                            <div key={ varName } className="bg-zinc-700/50 rounded-lg p-3">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <code className="text-blue-400 text-xs font-mono bg-zinc-800 px-1.5 py-0.5 rounded truncate">
+                                                        { `{${ varName }}` }
+                                                    </code>
+                                                    <div className="flex items-center gap-1 shrink-0">
+                                                        { hasOptionRecord && (
+                                                            <span className="text-[10px] text-purple-400 bg-purple-900/30 px-1.5 py-0.5 rounded">
+                                                                options
+                                                            </span>
+                                                        ) }
+                                                    </div>
+                                                </div>
+                                                { displayDefault && (
+                                                    <div className="mt-1">
+                                                        <span className="text-[10px] text-zinc-500">Default: </span>
+                                                        <span className="text-[10px] text-zinc-400">{ displayDefault }</span>
+                                                    </div>
+                                                ) }
+                                                { displayPreview && (
+                                                    <div className="mt-1">
+                                                        <span className="text-[10px] text-cyan-500 bg-cyan-900/30 px-1 py-0.5 rounded">preview</span>
+                                                        <span className="text-[10px] text-cyan-400/70 ml-1">{ displayPreview }</span>
+                                                    </div>
+                                                ) }
+                                                { hasOptionRecord && (
+                                                    <div className="mt-1 space-y-0.5">
+                                                        { Object.entries( varInfo.optionRecord! ).map( ( [ optKey, optValue ] ) => (
+                                                            <div key={ optKey } className="text-[10px] text-zinc-500">
+                                                                <span className="text-zinc-400">{ stripTemplateBraces( optKey ) }</span>: { optValue }
+                                                            </div>
+                                                        ) ) }
+                                                    </div>
                                                 ) }
                                             </div>
                                         );

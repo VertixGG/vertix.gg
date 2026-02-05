@@ -174,12 +174,28 @@
                                         "value": "en"
                                     },
                                     {
-                                        "label": "🇷🇺 Russian",
+                                        "label": "🇯🇵 日本語",
+                                        "value": "ja"
+                                    },
+                                    {
+                                        "label": "🇩🇪 Deutsch",
+                                        "value": "de"
+                                    },
+                                    {
+                                        "label": "🇷🇺 Русский",
                                         "value": "ru"
                                     },
                                     {
-                                        "label": "🇬🇷 Greek",
+                                        "label": "🇫🇷 Français",
+                                        "value": "fr"
+                                    },
+                                    {
+                                        "label": "🇬🇷 Ελληνικά",
                                         "value": "el"
+                                    },
+                                    {
+                                        "label": "🇪🇸 Español",
+                                        "value": "es"
                                     }
                                 ]
                             }
@@ -215,8 +231,12 @@
                             "options": {
                                 "currentLanguage": {
                                     "en": "English",
-                                    "ru": "Russian",
-                                    "el": "Greek"
+                                    "ja": "日本語",
+                                    "de": "Deutsch",
+                                    "ru": "Русский",
+                                    "fr": "Français",
+                                    "el": "Ελληνικά",
+                                    "es": "Español"
                                 }
                             },
                             "vars": {
@@ -377,7 +397,30 @@
                                 "badwords": "{badwords}",
                                 "badwordsMessage": "{badwordsMessage}",
                                 "badwordsMessageDefault": "{badwordsMessageDefault}",
-                                "none": "{none}"
+                                "none": "{none}",
+                                "labelName": "{labelName}",
+                                "labelChannelId": "{labelChannelId}",
+                                "labelDynamicChannelsName": "{labelDynamicChannelsName}",
+                                "labelButtons": "{labelButtons}",
+                                "labelVerifiedRoles": "{labelVerifiedRoles}",
+                                "labelLogsChannel": "{labelLogsChannel}",
+                                "labelAutoSave": "{labelAutoSave}",
+                                "labelVersion": "{labelVersion}",
+                                "labelScalingPrefix": "{labelScalingPrefix}",
+                                "labelMaxMembers": "{labelMaxMembers}"
+                            },
+                            "defaultVars": {
+                                "none": "**None**",
+                                "labelName": "▹ Name:",
+                                "labelChannelId": "▹ Channel ID:",
+                                "labelDynamicChannelsName": "▹ Dynamic Channels Name:",
+                                "labelButtons": "▹ Buttons:",
+                                "labelVerifiedRoles": "▹ Verified Roles:",
+                                "labelLogsChannel": "▹ Logs Channel:",
+                                "labelAutoSave": "▹ Auto Save:",
+                                "labelVersion": "▹ UI Version:",
+                                "labelScalingPrefix": "▹ Scaling Prefix:",
+                                "labelMaxMembers": "▹ Max Members:"
                             }
                         }
                     }
@@ -1532,9 +1575,6 @@
                             "color": 16738560,
                             "vars": {
                                 "badword": "{badword}"
-                            },
-                            "defaultVars": {
-                                "badword": "word"
                             }
                         }
                     }
@@ -4404,6 +4444,7 @@
                                 "privacyEmoji": "{privacyEmoji}",
                                 "region": "{region}",
                                 "regionEmoji": "{regionEmoji}",
+                                "regionAutomatic": "{regionAutomatic}",
                                 "title": "{title}",
                                 "description": "{description}"
                             },
@@ -4412,6 +4453,13 @@
                                 "limitEmoji": "<:UserLimit:1269654650206818316>",
                                 "privacyEmoji": "<:ChannelPrivacy:1269655669984985158>",
                                 "regionEmoji": "<:ChannelRegion:1272451511322017804>",
+                                "regionAutomatic": "Automatic",
+                                "limitDisplayValue": "value",
+                                "limitDisplayUnlimited": "unlimited",
+                                "statePublic": "public",
+                                "statePrivate": "private",
+                                "stateShown": "shown",
+                                "stateHidden": "hidden",
                                 "title": "༄ Manage your Dynamic Channel",
                                 "description": "Embrace the responsibility of overseeing your dynamic channel,diligently customizing it according to your discerning preferences.\n\nPlease be advised that the privilege to make alterations is vested solely of the channel owner."
                             }
@@ -5799,7 +5847,17 @@
                                 "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "privacyEmoji": "<:ChannelPrivacy:1269655669984985158>"
+                                "privacyEmoji": "<:ChannelPrivacy:1269655669984985158>",
+                                "statePublic": "public",
+                                "statePrivate": "private",
+                                "stateShown": "shown",
+                                "stateHidden": "hidden",
+                                "stateMessagePublic": "public",
+                                "stateMessagePrivate": "private",
+                                "stateMessageShown": "shown",
+                                "stateMessageHidden": "hidden",
+                                "allowedUsersDefault": "none",
+                                "blockedUsersDefault": "none"
                             }
                         }
                     }
@@ -6525,10 +6583,28 @@
                             "vars": {
                                 "templatesEmoji": "{templatesEmoji}",
                                 "templateName": "{templateName}",
-                                "appliedSettings": "{appliedSettings}"
+                                "appliedSettings": "{appliedSettings}",
+                                "labelName": "{labelName}",
+                                "labelLimit": "{labelLimit}",
+                                "labelPrivacy": "{labelPrivacy}",
+                                "labelVisibility": "{labelVisibility}",
+                                "labelRegion": "{labelRegion}",
+                                "labelUnlimited": "{labelUnlimited}",
+                                "labelAutomatic": "{labelAutomatic}",
+                                "labelUnknown": "{labelUnknown}",
+                                "labelNoSettings": "{labelNoSettings}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:Templates:1455093315862269963>"
+                                "templatesEmoji": "<:Templates:1455093315862269963>",
+                                "labelName": "- **Name**:",
+                                "labelLimit": "- **Limit**:",
+                                "labelPrivacy": "- **Privacy**:",
+                                "labelVisibility": "- **Visibility**:",
+                                "labelRegion": "- **Region**:",
+                                "labelUnlimited": "Unlimited",
+                                "labelAutomatic": "Automatic",
+                                "labelUnknown": "Unknown",
+                                "labelNoSettings": "No settings applied"
                             }
                         }
                     }
@@ -7448,7 +7524,17 @@
                                 "dynamicChannelLogsChannelSelected": "{dynamicChannelLogsChannelSelected}",
                                 "dynamicChannelLogsChannelDisplay": "{dynamicChannelLogsChannelDisplay}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}",
-                                "verifiedRoles": "{verifiedRoles}"
+                                "verifiedRoles": "{verifiedRoles}",
+                                "labelDefaultSettings": "{labelDefaultSettings}",
+                                "labelRoleOverride": "{labelRoleOverride}",
+                                "labelButtonPrefix": "{labelButtonPrefix}",
+                                "labelButtonNone": "{labelButtonNone}"
+                            },
+                            "defaultVars": {
+                                "labelDefaultSettings": "**Default Settings**",
+                                "labelRoleOverride": "**Role Override:",
+                                "labelButtonPrefix": "> -",
+                                "labelButtonNone": "> - *None*"
                             }
                         }
                     }

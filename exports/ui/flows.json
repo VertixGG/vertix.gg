@@ -208,7 +208,12 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "default",
-                    "component": "VertixBot/UI-General/SetupComponent"
+                    "component": "VertixBot/UI-General/SetupComponent",
+                    "previewDefaultVars": {
+                        "masterChannelMessage": "**None**",
+                        "badwordsMessage": "**None**"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup"
                 }
             }
         ],
@@ -666,7 +671,8 @@
                     "component": "VertixBot/UI-V2/ClaimResultComponent",
                     "previewDefaultVars": {
                         "absentInterval": "300000"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup"
                 }
             },
             {
@@ -678,7 +684,8 @@
                     "component": "VertixBot/UI-V2/ClaimResultComponent",
                     "previewDefaultVars": {
                         "absentInterval": "300000"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup"
                 }
             },
             {
@@ -687,7 +694,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/ClaimResultAddedSuccessfully",
-                    "component": "VertixBot/UI-V2/ClaimResultComponent"
+                    "component": "VertixBot/UI-V2/ClaimResultComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultStepInEmbedGroup"
                 }
             },
             {
@@ -696,7 +704,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/ClaimResultAlreadyAdded",
-                    "component": "VertixBot/UI-V2/ClaimResultComponent"
+                    "component": "VertixBot/UI-V2/ClaimResultComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbedGroup"
                 }
             },
             {
@@ -705,7 +714,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/ClaimResultVoteAlreadySelfVoted",
-                    "component": "VertixBot/UI-V2/ClaimResultComponent"
+                    "component": "VertixBot/UI-V2/ClaimResultComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultVoteSelfEmbedGroup"
                 }
             },
             {
@@ -718,7 +728,8 @@
                     "previewDefaultVars": {
                         "userDisplayName": "User",
                         "userId": "123456789"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultVotedEmbedGroup"
                 }
             },
             {
@@ -731,7 +742,8 @@
                     "previewDefaultVars": {
                         "userDisplayName": "User",
                         "userId": "123456789"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultVotedSameEmbedGroup"
                 }
             },
             {
@@ -744,7 +756,8 @@
                     "previewDefaultVars": {
                         "prevUserId": "123456789",
                         "currentUserId": "987654321"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbedGroup"
                 }
             }
         ],
@@ -856,7 +869,8 @@
                     "previewDefaultVars": {
                         "userInitiatorDisplayName": "Initiator",
                         "timeEnd": "1700000000000"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimVoteStepInEmbedGroup"
                 }
             },
             {
@@ -872,7 +886,8 @@
                     "previewDefaultVars": {
                         "userInitiatorDisplayName": "Initiator",
                         "timeEnd": "1700000000000"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimVoteEmbedGroup"
                 }
             },
             {
@@ -885,7 +900,8 @@
                     "previewDefaultVars": {
                         "userWonDisplayName": "Winner",
                         "previousOwnerDisplayName": "Previous Owner"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/ClaimVoteWonEmbedGroup"
                 }
             }
         ],
@@ -962,7 +978,8 @@
                     "previewDefaultVars": {
                         "ownerDisplayName": "Owner",
                         "totalMessages": "5"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbedGroup"
                 }
             },
             {
@@ -971,7 +988,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClear",
-                    "component": "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbedGroup"
                 }
             },
             {
@@ -980,7 +998,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelMetaClearChatError",
-                    "component": "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             }
         ],
@@ -1065,7 +1084,8 @@
                     "previewDefaultVars": {
                         "minValue": "0",
                         "maxValue": "99"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbedGroup"
                 }
             },
             {
@@ -1077,7 +1097,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelMetaLimitComponent",
                     "previewDefaultVars": {
                         "userLimit": "10"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup"
                 }
             },
             {
@@ -1086,7 +1107,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelMetaLimitError",
-                    "component": "VertixBot/UI-V2/DynamicChannelMetaLimitComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelMetaLimitComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             }
         ],
@@ -1164,7 +1186,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelMetaRenameComponent",
                     "previewDefaultVars": {
                         "channelName": "My Channel"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup"
                 }
             },
             {
@@ -1176,7 +1199,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelMetaRenameComponent",
                     "previewDefaultVars": {
                         "badword": "example"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbedGroup"
                 }
             },
             {
@@ -1189,7 +1213,8 @@
                     "previewDefaultVars": {
                         "retryAfter": "300",
                         "masterChannelId": "123456789"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup"
                 }
             }
         ],
@@ -1265,7 +1290,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsAccess",
-                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbedGroup"
                 }
             },
             {
@@ -1274,7 +1300,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsStatePrivate",
-                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbedGroup"
                 }
             },
             {
@@ -1283,7 +1310,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsStatePublic",
-                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbedGroup"
                 }
             },
             {
@@ -1292,7 +1320,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsStateHidden",
-                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbedGroup"
                 }
             },
             {
@@ -1301,7 +1330,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsStateShown",
-                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbedGroup"
                 }
             },
             {
@@ -1313,7 +1343,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userGrantedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbedGroup"
                 }
             },
             {
@@ -1325,7 +1356,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userDeniedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbedGroup"
                 }
             },
             {
@@ -1337,7 +1369,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userBlockedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbedGroup"
                 }
             },
             {
@@ -1349,7 +1382,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userUnBlockedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbedGroup"
                 }
             },
             {
@@ -1361,7 +1395,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userKickedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbedGroup"
                 }
             },
             {
@@ -1370,7 +1405,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsStateError",
-                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             },
             {
@@ -1379,7 +1415,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsStateNothingChanged",
-                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/NothingChangedEmbedGroup"
                 }
             }
         ],
@@ -1598,7 +1635,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelComponent",
                     "previewDefaultVars": {
                         "code": "success"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup"
                 }
             },
             {
@@ -1607,7 +1645,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelError",
-                    "component": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             }
         ],
@@ -1668,7 +1707,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelTransferOwnerSelectUser",
-                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbedGroup"
                 }
             },
             {
@@ -1685,7 +1725,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
                     "previewDefaultVars": {
                         "userDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup"
                 }
             },
             {
@@ -1694,7 +1735,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelTransferOwnerSuccess",
-                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup"
                 }
             },
             {
@@ -1703,7 +1745,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelTransferDisabledByClaim",
-                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/DisabledWhileClaimEmbedGroup"
                 }
             },
             {
@@ -1712,7 +1755,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/DynamicChannelTransferError",
-                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent"
+                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             },
             {
@@ -1852,7 +1896,8 @@
                     "component": "VertixBot/UI-V2/ConfigComponent",
                     "previewDefaultVars": {
                         "view": "Master channel settings"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditEmbedGroup"
                 }
             },
             {
@@ -1867,7 +1912,8 @@
                     "component": "VertixBot/UI-V2/ConfigComponent",
                     "previewDefaultVars": {
                         "view": "Button configuration"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditButtonsEmbedGroup"
                 }
             },
             {
@@ -1882,7 +1928,8 @@
                     "component": "VertixBot/UI-V2/ConfigComponent",
                     "previewDefaultVars": {
                         "view": "Apply button changes"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup"
                 }
             },
             {
@@ -1899,7 +1946,8 @@
                     "component": "VertixBot/UI-V2/ConfigComponent",
                     "previewDefaultVars": {
                         "view": "Verified roles configuration"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup"
                 }
             }
         ],
@@ -1944,7 +1992,18 @@
             },
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/ChannelNameTemplateModal",
+                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
@@ -2109,11 +2168,6 @@
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
                 "triggeredBy": [
                     {
-                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-General/ChannelNameTemplateEditButton",
-                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateEditButton::VertixBot/UI-General/ChannelNameTemplateModal",
-                        "handlerKind": "modal-button"
-                    },
-                    {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-General/DeleteButton",
                         "sourceEntity": "VertixBot/UI-General/DeleteButton::VertixBot/UI-General/DeleteConfirmModal",
                         "handlerKind": "modal-button"
@@ -2163,7 +2217,8 @@
                     "component": "VertixBot/UI-V2/SetupNewWizardComponent",
                     "previewDefaultVars": {
                         "dynamicChannelNameTemplate": "{username}'s Channel"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupStep1Component/EmbedsGroup"
                 }
             },
             {
@@ -2177,7 +2232,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/SetupStep2Component",
-                    "component": "VertixBot/UI-V2/SetupNewWizardComponent"
+                    "component": "VertixBot/UI-V2/SetupNewWizardComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupStep2Component/EmbedsGroup"
                 }
             },
             {
@@ -2193,7 +2249,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/SetupStep3Component",
-                    "component": "VertixBot/UI-V2/SetupNewWizardComponent"
+                    "component": "VertixBot/UI-V2/SetupNewWizardComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupStep3Component/EmbedsGroup"
                 }
             },
             {
@@ -2205,7 +2262,8 @@
                     "component": "VertixBot/UI-V2/SetupNewWizardComponent",
                     "previewDefaultVars": {
                         "maxMasterChannels": "3"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup"
                 }
             },
             {
@@ -2214,7 +2272,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V2/SetupNewWizardError",
-                    "component": "VertixBot/UI-V2/SetupNewWizardComponent"
+                    "component": "VertixBot/UI-V2/SetupNewWizardComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             }
         ],
@@ -2633,7 +2692,8 @@
                     "component": "VertixBot/UI-V3/ClaimResultComponent",
                     "previewDefaultVars": {
                         "absentInterval": "300000"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
                 }
             },
             {
@@ -2645,7 +2705,8 @@
                     "component": "VertixBot/UI-V3/ClaimResultComponent",
                     "previewDefaultVars": {
                         "absentInterval": "300000"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
                 }
             },
             {
@@ -2654,7 +2715,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/ClaimResultAddedSuccessfully",
-                    "component": "VertixBot/UI-V3/ClaimResultComponent"
+                    "component": "VertixBot/UI-V3/ClaimResultComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultStepInEmbedGroup"
                 }
             },
             {
@@ -2663,7 +2725,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/ClaimResultAlreadyAdded",
-                    "component": "VertixBot/UI-V3/ClaimResultComponent"
+                    "component": "VertixBot/UI-V3/ClaimResultComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbedGroup"
                 }
             },
             {
@@ -2672,7 +2735,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/ClaimResultVoteAlreadySelfVoted",
-                    "component": "VertixBot/UI-V3/ClaimResultComponent"
+                    "component": "VertixBot/UI-V3/ClaimResultComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultVoteSelfEmbedGroup"
                 }
             },
             {
@@ -2685,7 +2749,8 @@
                     "previewDefaultVars": {
                         "userDisplayName": "User",
                         "userId": "123456789"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultVotedEmbedGroup"
                 }
             },
             {
@@ -2698,7 +2763,8 @@
                     "previewDefaultVars": {
                         "userDisplayName": "User",
                         "userId": "123456789"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultVotedSameEmbedGroup"
                 }
             },
             {
@@ -2711,7 +2777,8 @@
                     "previewDefaultVars": {
                         "prevUserId": "123456789",
                         "currentUserId": "987654321"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbedGroup"
                 }
             }
         ],
@@ -2823,7 +2890,8 @@
                     "previewDefaultVars": {
                         "userInitiatorDisplayName": "Initiator",
                         "timeEnd": "1700000000000"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimVoteStepInEmbedGroup"
                 }
             },
             {
@@ -2839,7 +2907,8 @@
                     "previewDefaultVars": {
                         "userInitiatorDisplayName": "Initiator",
                         "timeEnd": "1700000000000"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimVoteEmbedGroup"
                 }
             },
             {
@@ -2852,7 +2921,8 @@
                     "previewDefaultVars": {
                         "userWonDisplayName": "Winner",
                         "previousOwnerDisplayName": "Previous Owner"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ClaimVoteWonEmbedGroup"
                 }
             }
         ],
@@ -2929,7 +2999,8 @@
                     "previewDefaultVars": {
                         "ownerDisplayName": "Owner",
                         "totalMessages": "5"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup"
                 }
             },
             {
@@ -2938,7 +3009,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClear",
-                    "component": "VertixBot/UI-V3/DynamicChannelClearChatComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelClearChatComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbedGroup"
                 }
             },
             {
@@ -2947,7 +3019,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelClearChatError",
-                    "component": "VertixBot/UI-V3/DynamicChannelClearChatComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelClearChatComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             }
         ],
@@ -3032,7 +3105,8 @@
                     "previewDefaultVars": {
                         "minValue": "0",
                         "maxValue": "99"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbedGroup"
                 }
             },
             {
@@ -3044,7 +3118,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelLimitComponent",
                     "previewDefaultVars": {
                         "userLimit": "10"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbedGroup"
                 }
             },
             {
@@ -3053,7 +3128,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelLimitError",
-                    "component": "VertixBot/UI-V3/DynamicChannelLimitComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelLimitComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             }
         ],
@@ -3127,7 +3203,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "state": "public"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
                 }
             },
             {
@@ -3139,7 +3216,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userGrantedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"
                 }
             },
             {
@@ -3151,7 +3229,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userDeniedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup"
                 }
             },
             {
@@ -3163,7 +3242,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userBlockedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup"
                 }
             },
             {
@@ -3175,7 +3255,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userUnBlockedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup"
                 }
             },
             {
@@ -3187,7 +3268,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
                     "previewDefaultVars": {
                         "userKickedDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"
                 }
             },
             {
@@ -3196,7 +3278,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
-                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             },
             {
@@ -3205,7 +3288,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
-                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/NothingChangedEmbedGroup"
                 }
             }
         ],
@@ -3391,7 +3475,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "default",
-                    "component": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbedGroup"
                 }
             },
             {
@@ -3407,7 +3492,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
                     "previewDefaultVars": {
                         "title": "My Channel Title"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleComponent/EmbedsGroup"
                 }
             },
             {
@@ -3423,7 +3509,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditComponent",
                     "previewDefaultVars": {
                         "description": "My channel description"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent/EmbedsGroup"
                 }
             }
         ],
@@ -3532,7 +3619,8 @@
                     "previewDefaultVars": {
                         "state": "Public",
                         "stateMessage": "Everyone can join"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
                 }
             },
             {
@@ -3548,7 +3636,8 @@
                     "previewDefaultVars": {
                         "state": "Public",
                         "stateMessage": "Everyone can join"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
                 }
             },
             {
@@ -3564,7 +3653,8 @@
                     "previewDefaultVars": {
                         "state": "Private",
                         "stateMessage": "Only allowed users can join"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
                 }
             },
             {
@@ -3580,7 +3670,8 @@
                     "previewDefaultVars": {
                         "state": "Hidden",
                         "stateMessage": "Channel is hidden from others"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
                 }
             }
         ],
@@ -3706,7 +3797,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelRegionComponent",
                     "previewDefaultVars": {
                         "region": "us-west"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRegionEmbedGroup"
                 }
             }
         ],
@@ -3776,7 +3868,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelRenameComponent",
                     "previewDefaultVars": {
                         "channelName": "My Channel"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbedGroup"
                 }
             },
             {
@@ -3788,7 +3881,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelRenameComponent",
                     "previewDefaultVars": {
                         "badword": "example"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbedGroup"
                 }
             },
             {
@@ -3801,7 +3895,8 @@
                     "previewDefaultVars": {
                         "retryAfter": "300",
                         "masterChannelId": "123456789"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbedGroup"
                 }
             }
         ],
@@ -3868,7 +3963,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
                     "previewDefaultVars": {
                         "code": "success"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelResetChannelEmbedGroup"
                 }
             },
             {
@@ -3877,7 +3973,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelResetChannelVoteRequired",
-                    "component": "VertixBot/UI-V3/DynamicChannelResetChannelComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/TopGGVoteEmbedGroup"
                 }
             },
             {
@@ -3886,7 +3983,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelResetChannelError",
-                    "component": "VertixBot/UI-V3/DynamicChannelResetChannelComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelResetChannelComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             }
         ],
@@ -3941,7 +4039,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "default",
-                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
                 }
             },
             {
@@ -3953,7 +4052,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "apply-menu",
-                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
                 }
             },
             {
@@ -3964,7 +4064,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "apply-confirm",
-                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
                 }
             },
             {
@@ -3976,7 +4077,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "manage-menu",
-                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbedGroup"
                 }
             },
             {
@@ -3987,7 +4089,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "delete-confirm",
-                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbedGroup"
                 }
             },
             {
@@ -4001,7 +4104,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
                     "previewDefaultVars": {
                         "templateName": "My Template"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbedGroup"
                 }
             },
             {
@@ -4012,7 +4116,12 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "template-applied",
-                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
+                    "previewDefaultVars": {
+                        "templateName": "My Template",
+                        "appliedSettings": "- **Name**: Gaming Room\n- **Limit**: 10\n- **Privacy**: public\n- **Region**: Automatic"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbedGroup"
                 }
             },
             {
@@ -4026,7 +4135,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
                     "previewDefaultVars": {
                         "deletedTemplateName": "My Template"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbedGroup"
                 }
             }
         ],
@@ -4251,7 +4361,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelTransferOwnerSelectUser",
-                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTransferOwnerEmbedGroup"
                 }
             },
             {
@@ -4268,7 +4379,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
                     "previewDefaultVars": {
                         "userDisplayName": "User"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelectedEmbedGroup"
                 }
             },
             {
@@ -4277,7 +4389,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelTransferOwnerSuccess",
-                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferredEmbedGroup"
                 }
             },
             {
@@ -4286,7 +4399,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelTransferDisabledByClaim",
-                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/DisabledWhileClaimEmbedGroup"
                 }
             },
             {
@@ -4295,7 +4409,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelTransferError",
-                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent"
+                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             },
             {
@@ -4433,7 +4548,8 @@
                         "masterChannelId": "123456789",
                         "scalingPrefix": "Scaling Channel",
                         "scalingMaxMembers": "10"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/ScalingSetupEditEmbedGroup"
                 }
             }
         ],
@@ -4590,8 +4706,16 @@
                     "previewDefaultVars": {
                         "index": "1",
                         "masterChannelId": "123456789",
-                        "dynamicChannelNameTemplate": "{username}'s Channel"
-                    }
+                        "dynamicChannelNameTemplate": "{username}'s Channel",
+                        "dynamicChannelLogsChannelDisplay": "**None**",
+                        "dynamicChannelButtonsTemplate": "**Default Settings**\n> - Rename\n> - User Limit\n> - Access",
+                        "verifiedRoles": "**None**",
+                        "configUserMention": "`🟢∙On`",
+                        "configAutoSave": "`🔴∙Off`",
+                        "configLogs": "`🔴∙Off`",
+                        "configControlChannelAutoCreate": "`🟢∙On`"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditEmbedGroup"
                 }
             },
             {
@@ -4609,7 +4733,8 @@
                     "component": "VertixBot/UI-V3/ConfigComponent",
                     "previewDefaultVars": {
                         "index": "1"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditButtonsEmbedGroup"
                 }
             },
             {
@@ -4624,7 +4749,8 @@
                     "component": "VertixBot/UI-V3/ConfigComponent",
                     "previewDefaultVars": {
                         "index": "1"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup"
                 }
             },
             {
@@ -4640,7 +4766,8 @@
                     "component": "VertixBot/UI-V3/ConfigComponent",
                     "previewDefaultVars": {
                         "index": "1"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup"
                 }
             }
         ],
@@ -4987,7 +5114,8 @@
                     "component": "VertixBot/UI-V3/SetupNewWizardComponent",
                     "previewDefaultVars": {
                         "dynamicChannelNameTemplate": "{username}'s Channel"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupStep1Component/EmbedsGroup"
                 }
             },
             {
@@ -5001,7 +5129,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/SetupStep2Component",
-                    "component": "VertixBot/UI-V3/SetupNewWizardComponent"
+                    "component": "VertixBot/UI-V3/SetupNewWizardComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupStep2Component/EmbedsGroup"
                 }
             },
             {
@@ -5017,7 +5146,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/SetupStep3Component",
-                    "component": "VertixBot/UI-V3/SetupNewWizardComponent"
+                    "component": "VertixBot/UI-V3/SetupNewWizardComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupStep3Component/EmbedsGroup"
                 }
             },
             {
@@ -5029,7 +5159,8 @@
                     "component": "VertixBot/UI-V3/SetupNewWizardComponent",
                     "previewDefaultVars": {
                         "maxMasterChannels": "3"
-                    }
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup"
                 }
             },
             {
@@ -5038,7 +5169,8 @@
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-General/SetupNewWizardError",
-                    "component": "VertixBot/UI-V3/SetupNewWizardComponent"
+                    "component": "VertixBot/UI-V3/SetupNewWizardComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
                 }
             }
         ],

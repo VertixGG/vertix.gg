@@ -84,6 +84,9 @@ export class VirtualFlowGenerator {
             }
 
             let previewEmbedsGroup = stateConfig.previewEmbedsGroup;
+            if ( !previewEmbedsGroup && stateConfig.embedsGroup ) {
+                previewEmbedsGroup = stateConfig.embedsGroup;
+            }
             if ( !previewEmbedsGroup && options.executionSteps && stateConfig.executionStep ) {
                 const stepDef = options.executionSteps[ stateConfig.executionStep ];
                 if ( stepDef && typeof stepDef === "object" && "embedsGroup" in stepDef ) {

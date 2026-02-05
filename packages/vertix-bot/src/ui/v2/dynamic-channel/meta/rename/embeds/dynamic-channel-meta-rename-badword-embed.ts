@@ -7,8 +7,8 @@ import { VERTIX_DEFAULT_COLOR_ORANGE_RED } from "@vertix.gg/bot/src/definitions/
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
-        badword: uiUtilsWrapAsTemplate( "badword" )
-    };
+    badword: uiUtilsWrapAsTemplate( "badword" )
+};
 
 const DynamicChannelMetaRenameBadwordEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
@@ -19,10 +19,7 @@ const DynamicChannelMetaRenameBadwordEmbed = new EmbedBuilder<UIArgs, typeof var
     .setTitle( () => "🙅  Failed to rename your channel" )
     .setDescription( () => `The word \`${ vars.badword }\` has been classified as inappropriate by the server administrator.` )
     .setLogic( ( args: UIArgs ) => ( {
-            badword: args.badword
-    } ) )
-    .setDefaultVars( () => ( {
-        badword: "word"
+        badword: args.badword
     } ) )
     .build();
 

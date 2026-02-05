@@ -471,6 +471,33 @@ export function FlowEditSidebar() {
             }
         }
 
+        // Apply saved variable overrides (defaultVars + options) to node embedDefinition.
+        // Use isSavedOverride so originalNodeData keeps the true definition defaults —
+        // Restore will reset to definition defaults, not DB-saved values.
+        if ( componentCustomization?.variables ) {
+            const OPTION_PREFIX = "__option__";
+
+            for ( const [ key, value ] of Object.entries( componentCustomization.variables ) ) {
+                if ( key.startsWith( OPTION_PREFIX ) ) {
+                    // Option override: merge into embedDefinition.options
+                    const optionName = key.slice( OPTION_PREFIX.length );
+                    const currentOptions = ( selectedNode.data?.embedDefinition as Record<string, unknown> | undefined )?.options as Record<string, unknown> | undefined;
+                    const currentOptionValue = currentOptions?.[ optionName ];
+
+                    if ( typeof value === "object" && value !== null && typeof currentOptionValue === "object" && currentOptionValue !== null ) {
+                        updateNodeData.run( { path: `embedDefinition.options.${ optionName }`, value: { ...( currentOptionValue as Record<string, unknown> ), ...( value as Record<string, unknown> ) }, isSavedOverride: true } );
+                    } else {
+                        updateNodeData.run( { path: `embedDefinition.options.${ optionName }`, value, isSavedOverride: true } );
+                    }
+                } else {
+                    // DefaultVar override
+                    updateNodeData.run( { path: `embedDefinition.defaultVars.${ key }`, value, isSavedOverride: true } );
+                    // Also update embed.defaultVars so the preview reflects saved variables
+                    updateNodeData.run( { path: `embed.defaultVars.${ key }`, value, isSavedOverride: true } );
+                }
+            }
+        }
+
         setAppliedCustomization( appliedKey );
     }, [ customization, translations, selectedNode, isLoadingCustomization, appliedCustomization, selectedLanguage, updateNodeData ] );
 
@@ -702,6 +729,8 @@ export function FlowEditSidebar() {
                                                                 } else {
                                                                     updateNodeData.run( { path: `embedDefinition.defaultVars.${ varName }`, value: e.target.value } );
                                                                 }
+                                                                // Also update embed.defaultVars so the preview re-renders immediately
+                                                                updateNodeData.run( { path: `embed.defaultVars.${ varName }`, value: e.target.value } );
                                                             } }
                                                             className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-0.5 text-[11px] text-white focus:border-blue-500 focus:outline-none"
                                                         />

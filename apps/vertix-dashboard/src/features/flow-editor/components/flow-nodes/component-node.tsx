@@ -195,6 +195,15 @@ type ComponentNodeType = Node<ComponentNodeData, "componentNode">;
 export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
     const { data, selected } = props;
     const { label, embed, elementRows, buttonModalTriggers, buttonFlowTriggers, stateTransitionTriggers } = data;
+
+    // Merge embedDefinition.defaultVars over embed.defaultVars so sidebar edits
+    // and restore operations are always reflected in the preview.
+    const embedDefVars = ( data as Record<string, unknown> ).embedDefinition
+        ? ( ( data as Record<string, unknown> ).embedDefinition as Record<string, unknown> ).defaultVars as Record<string, string> | undefined
+        : undefined;
+    const mergedDefaultVars = embed?.defaultVars || embedDefVars
+        ? { ...( embed?.defaultVars ?? {} ), ...( embedDefVars ?? {} ) }
+        : undefined;
     const selectedClass = selected ? "ring-4 ring-white ring-opacity-80" : "";
 
     const edges = useStore( state => state.edges );
@@ -288,10 +297,10 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                 <div className="bg-[#313338] p-4">
                     <DiscordMessage author="Vertix" app timestamp="">
                         <DiscordEmbed
-                            title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, embed?.defaultVars ) ) }
+                            title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, mergedDefaultVars ) ) }
                             description={ embed
                                 ? embed.description
-                                    ? replaceInlineDiscordEmojis( applyDefaultVars( embed.description, embed.defaultVars ) )
+                                    ? replaceInlineDiscordEmojis( applyDefaultVars( embed.description, mergedDefaultVars ) )
                                     : undefined
                                 : "Component preview"
                             }

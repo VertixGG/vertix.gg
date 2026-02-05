@@ -15,12 +15,23 @@ import type { GuildCustomizationData } from "@vertix.gg/definitions/src/ui-custo
 
 const logger = zCore.modules.createLogger( "flow-editor-commands" );
 
+/**
+ * Compare current node data against the last saved state to determine if there are unsaved changes.
+ * Uses JSON serialization as a checksum so the Save button automatically
+ * enables/disables as fields are edited or reverted back.
+ */
+function computeHasChanges( nodeData: unknown, lastSavedData: unknown ): boolean {
+    return JSON.stringify( nodeData ) !== JSON.stringify( lastSavedData );
+}
+
 export interface FlowEditorState {
     modules: ModuleInfo[];
     selectedModule: string | null;
     moduleFlowsData: ModuleFlowsResponse | null;
     selectedNode: Node | null;
     originalNodeData: Record<string, unknown> | null;
+    /** Snapshot of node data after the last successful save (or after DB overrides are applied). */
+    lastSavedData: Record<string, unknown> | null;
     hasUnsavedChanges: boolean;
     centerOnSelect: boolean;
     isLoading: boolean;
@@ -33,6 +44,7 @@ export const FLOW_EDITOR_INITIAL_STATE: FlowEditorState = {
     moduleFlowsData: null,
     selectedNode: null,
     originalNodeData: null,
+    lastSavedData: null,
     hasUnsavedChanges: false,
     centerOnSelect: false,
     isLoading: false,
@@ -92,6 +104,7 @@ export class SelectNodeCommand extends CommandBase<FlowEditorState, { node: Node
         return this.setState( {
             selectedNode: args.node,
             originalNodeData,
+            lastSavedData: originalNodeData ? JSON.parse( JSON.stringify( originalNodeData ) ) : null,
             hasUnsavedChanges: false,
             centerOnSelect: args.centerOnSelect ?? false
         } );
@@ -147,13 +160,13 @@ export class ClearErrorCommand extends CommandBase<FlowEditorState> {
     }
 }
 
-export class UpdateNodeDataCommand extends CommandBase<FlowEditorState, { path: string; value: unknown; isInitialLoad?: boolean }> {
+export class UpdateNodeDataCommand extends CommandBase<FlowEditorState, { path: string; value: unknown; isInitialLoad?: boolean; isSavedOverride?: boolean }> {
     public static getName(): string {
         return "Dashboard/FlowEditor/UpdateNodeData";
     }
 
-    public apply( args: { path: string; value: unknown; isInitialLoad?: boolean } ) {
-        const { path, value, isInitialLoad } = args;
+    public apply( args: { path: string; value: unknown; isInitialLoad?: boolean; isSavedOverride?: boolean } ) {
+        const { path, value, isInitialLoad, isSavedOverride } = args;
         const selectedNode = this.state.selectedNode;
 
         if ( !selectedNode ) {
@@ -177,20 +190,32 @@ export class UpdateNodeDataCommand extends CommandBase<FlowEditorState, { path: 
 
         current[ pathParts[ pathParts.length - 1 ] ] = value;
 
-        // If this is an initial load (applying saved customizations), also update originalNodeData
-        // to prevent showing as "unsaved"
+        // If this is an initial load (applying translations/embed overrides), also update originalNodeData
         if ( isInitialLoad ) {
             const newOriginalData = JSON.parse( JSON.stringify( updatedNode.data ) ) as Record<string, unknown>;
             return this.setState( {
                 selectedNode: updatedNode,
                 originalNodeData: newOriginalData,
+                lastSavedData: JSON.parse( JSON.stringify( updatedNode.data ) ) as Record<string, unknown>,
+                hasUnsavedChanges: false
+            } );
+        }
+
+        // Saved override: apply DB values on top of the node without updating originalNodeData,
+        // so Restore goes back to the true definition defaults, not the DB-saved values.
+        // Update lastSavedData since this represents the current DB state.
+        if ( isSavedOverride ) {
+            const newLastSaved = JSON.parse( JSON.stringify( updatedNode.data ) ) as Record<string, unknown>;
+            return this.setState( {
+                selectedNode: updatedNode,
+                lastSavedData: newLastSaved,
                 hasUnsavedChanges: false
             } );
         }
 
         return this.setState( {
             selectedNode: updatedNode,
-            hasUnsavedChanges: true
+            hasUnsavedChanges: computeHasChanges( updatedNode.data, this.state.lastSavedData )
         } );
     }
 }
@@ -207,15 +232,16 @@ export class RestoreNodeDataCommand extends CommandBase<FlowEditorState> {
             return;
         }
 
-        // Restore the node data to its original state
+        // Restore the node data to its original (definition default) state
+        const restoredData = JSON.parse( JSON.stringify( originalNodeData ) );
         const restoredNode = {
             ...selectedNode,
-            data: JSON.parse( JSON.stringify( originalNodeData ) )
+            data: restoredData
         } as Node;
 
         return this.setState( {
             selectedNode: restoredNode,
-            hasUnsavedChanges: false
+            hasUnsavedChanges: computeHasChanges( restoredData, this.state.lastSavedData )
         } );
     }
 }
@@ -336,11 +362,13 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
                 refreshFn();
             }
 
-            // Update local state
-            const newOriginalData = JSON.parse( JSON.stringify( selectedNode.data ) ) as Record<string, unknown>;
+            // Update local state — after save, the current data becomes both the
+            // original (for Restore) and the last-saved baseline (for change detection).
+            const savedSnapshot = JSON.parse( JSON.stringify( selectedNode.data ) ) as Record<string, unknown>;
 
             return this.setState( {
-                originalNodeData: newOriginalData,
+                originalNodeData: savedSnapshot,
+                lastSavedData: JSON.parse( JSON.stringify( savedSnapshot ) ),
                 hasUnsavedChanges: false
             } );
         } catch( error ) {

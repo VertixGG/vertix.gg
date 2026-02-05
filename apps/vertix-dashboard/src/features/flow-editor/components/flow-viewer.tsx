@@ -211,6 +211,23 @@ export function FlowViewer() {
                         updatedData = { ...updatedData, embed: updatedEmbed };
                     }
                 }
+
+                // Apply saved variable overrides to embed.defaultVars so the preview reflects them
+                if ( componentCustomization?.variables ) {
+                    const currentEmbed = ( updatedData.embed ?? node.data?.embed ) as Record<string, unknown> | undefined;
+                    if ( currentEmbed ) {
+                        const currentDefaultVars = ( currentEmbed.defaultVars ?? {} ) as Record<string, unknown>;
+                        const updatedDefaultVars = { ...currentDefaultVars };
+
+                        for ( const [ key, value ] of Object.entries( componentCustomization.variables ) ) {
+                            if ( !key.startsWith( "__option__" ) ) {
+                                updatedDefaultVars[ key ] = value;
+                            }
+                        }
+
+                        updatedData = { ...updatedData, embed: { ...currentEmbed, defaultVars: updatedDefaultVars } };
+                    }
+                }
             }
 
             return updatedData !== node.data ? { ...node, data: updatedData } : node;

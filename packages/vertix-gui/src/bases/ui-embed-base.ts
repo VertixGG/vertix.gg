@@ -11,6 +11,7 @@ import type {
 
 import type { UIEmbedLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { ComponentCustomization } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 import type { APIEmbedField, APIEmbedImage, APIEmbedThumbnail } from "discord.js";
 
@@ -108,11 +109,12 @@ export abstract class UIEmbedBase extends UITemplateBase {
             };
         }
 
-        const template = await this.generateTemplate( content, attributes );
-
-        // Apply guild-specific customizations if available
+        // Fetch customization BEFORE template generation so variables are available during rendering
         const customization = await this.fetchCustomization();
 
+        const template = await this.generateTemplate( content, attributes, customization );
+
+        // Apply guild-specific embed overrides (title, description, color) to the rendered template
         if ( customization?.embedOverrides ) {
             const overrides = customization.embedOverrides;
 
@@ -237,21 +239,49 @@ export abstract class UIEmbedBase extends UITemplateBase {
         return {};
     }
 
-    protected async parseInternalData( content: undefined | UIEmbedLanguageContent ) {
+    protected async parseInternalData( content: undefined | UIEmbedLanguageContent, customization?: ComponentCustomization | null ) {
+        // Separate __option__ prefixed vars from regular defaultVar overrides
+        const customizationVars = customization?.variables || {};
+        const defaultVarOverrides: Record<string, unknown> = {};
+        const optionOverrides: Record<string, unknown> = {};
+        const OPTION_PREFIX = "__option__";
+
+        for ( const [ key, value ] of Object.entries( customizationVars ) ) {
+            if ( key.startsWith( OPTION_PREFIX ) ) {
+                optionOverrides[ key.slice( OPTION_PREFIX.length ) ] = value;
+            } else {
+                defaultVarOverrides[ key ] = value;
+            }
+        }
+
+        // Merge options: base options from content + option overrides from customization
+        const baseOptions = content?.options || {};
+        const mergedOptions: Record<string, unknown> = { ...baseOptions };
+
+        for ( const [ optionName, override ] of Object.entries( optionOverrides ) ) {
+            if ( typeof override === "object" && override !== null && typeof baseOptions[ optionName ] === "object" ) {
+                // Deep merge Record<string,string> option maps
+                mergedOptions[ optionName ] = { ...( baseOptions[ optionName ] as Record<string, unknown> ), ...( override as Record<string, unknown> ) };
+            } else {
+                mergedOptions[ optionName ] = override;
+            }
+        }
+
         return this.parseLogicInternal(
             {
                 ...this.getDefaultVars( this.uiArgs ),
+                ...defaultVarOverrides,
                 ...this.getInternalLogic( this.uiArgs ),
                 ...this.getLogic( this.uiArgs ),
                 ...( await this.getLogicAsync( this.uiArgs ) )
             },
-            content?.options || {},
+            mergedOptions,
             content?.arrayOptions || {}
         );
     }
 
-    private async generateTemplate( content: undefined | UIEmbedLanguageContent, attributes: Record<string, any> ) {
-        const data = await this.parseInternalData( content );
+    private async generateTemplate( content: undefined | UIEmbedLanguageContent, attributes: Record<string, any>, customization?: ComponentCustomization | null ) {
+        const data = await this.parseInternalData( content, customization );
 
         return this.composeTemplate( attributes, data, content?.options || {} );
     }

@@ -3,6 +3,7 @@ import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
 import type { UIEmbedLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
+import type { ComponentCustomization } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 type Constructor<T = {}> = abstract new ( ...args: any[] ) => T;
 
@@ -40,8 +41,8 @@ function UIEmbedWithVarsBase<TVars extends UIEmbedVars, TClass extends Construct
             };
         }
 
-        protected async parseInternalData( content: UIEmbedLanguageContent | undefined ) {
-            const baseResult = await super.parseInternalData( content );
+        protected async parseInternalData( content: UIEmbedLanguageContent | undefined, customization?: ComponentCustomization | null ) {
+            const baseResult = await super.parseInternalData( content, customization );
 
             const extendedResult = {
                 ...this.getConcatenatedProperties( ( embed, args ) => embed.getLogic( args ), this.uiArgs ),

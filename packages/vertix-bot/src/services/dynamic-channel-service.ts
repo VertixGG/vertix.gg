@@ -2647,62 +2647,74 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.logger.info( this.refreshControlPanels, "Starting control panels refresh..." );
 
         const guilds = [ ...client.guilds.cache.values() ];
-        let refreshedCount = 0;
 
         for ( let i = 0; i < guilds.length; i += chunkSize ) {
             const chunk = guilds.slice( i, i + chunkSize );
 
-            await Promise.all( chunk.map( async( guild ) => {
-                const masterChannels = await ChannelModel.$.getMasters( guild.id );
-
-                for ( const masterChannelDB of masterChannels ) {
-                    const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
-                    const controlChannelId = settings.dynamicChannelControlChannelId;
-
-                    if ( !controlChannelId ) {
-                        continue;
-                    }
-
-                    const controlChannel = guild.channels.cache.get( controlChannelId ) ??
-                        await guild.channels.fetch( controlChannelId ).catch( () => null );
-
-                    if ( !controlChannel || controlChannel.type !== ChannelType.GuildText ) {
-                        continue;
-                    }
-
-                    const panelAdapterName = masterChannelDB.version === VERSION_UI_V3
-                        ? "VertixBot/UI-V3/DynamicChannelPanelAdapter"
-                        : "VertixBot/UI-V2/DynamicChannelPanelAdapter";
-
-                    const panelAdapter = this.services.uiService.get( panelAdapterName );
-
-                    if ( !panelAdapter ) {
-                        continue;
-                    }
-
-                    const panelArgs = {
-                        dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,
-                        channelId: ""
-                    };
-
-                    const messages = await controlChannel.messages.fetch( { limit: messageFetchLimit } );
-                    const firstBotMessage = messages
-                        .filter( m => m.author.id === client.user.id )
-                        .sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp )
-                        .first();
-
-                    if ( firstBotMessage ) {
-                        await panelAdapter.editMessage( firstBotMessage, panelArgs );
-                    } else {
-                        await panelAdapter.send( controlChannel, panelArgs );
-                    }
-
-                    refreshedCount++;
-                }
-            } ) );
+            await Promise.all( chunk.map( ( guild ) =>
+                this.refreshControlPanelsForGuild( guild, messageFetchLimit )
+            ) );
         }
 
-        this.logger.info( this.refreshControlPanels, `Control panels refresh completed. Refreshed ${ refreshedCount } panels.` );
+        this.logger.info( this.refreshControlPanels, "Control panels refresh completed." );
+    }
+
+    public async refreshControlPanelsForGuild( guild: Guild, messageFetchLimit = 100 ) {
+        const client = this.services.appService.getClient();
+        const masterChannels = await ChannelModel.$.getMasters( guild.id );
+        let refreshedCount = 0;
+
+        for ( const masterChannelDB of masterChannels ) {
+            const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
+            const controlChannelId = settings.dynamicChannelControlChannelId;
+
+            if ( !controlChannelId ) {
+                continue;
+            }
+
+            const controlChannel = guild.channels.cache.get( controlChannelId ) ??
+                await guild.channels.fetch( controlChannelId ).catch( () => null );
+
+            if ( !controlChannel || controlChannel.type !== ChannelType.GuildText ) {
+                continue;
+            }
+
+            const panelAdapterName = masterChannelDB.version === VERSION_UI_V3
+                ? "VertixBot/UI-V3/DynamicChannelPanelAdapter"
+                : "VertixBot/UI-V2/DynamicChannelPanelAdapter";
+
+            const panelAdapter = this.services.uiService.get( panelAdapterName );
+
+            if ( !panelAdapter ) {
+                continue;
+            }
+
+            const panelArgs = {
+                dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,
+                channelId: ""
+            };
+
+            const messages = await controlChannel.messages.fetch( { limit: messageFetchLimit } );
+            const firstBotMessage = messages
+                .filter( m => m.author.id === client.user.id )
+                .sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp )
+                .first();
+
+            if ( firstBotMessage ) {
+                await panelAdapter.editMessage( firstBotMessage, panelArgs );
+            } else {
+                await panelAdapter.send( controlChannel, panelArgs );
+            }
+
+            refreshedCount++;
+        }
+
+        if ( refreshedCount > 0 ) {
+            this.logger.info(
+                this.refreshControlPanelsForGuild,
+                `Guild '${ guild.name }' (${ guild.id }) - Refreshed ${ refreshedCount } control panel(s).`
+            );
+        }
     }
 
     private async onJoin( args: IChannelEnterGenericArgs ) {

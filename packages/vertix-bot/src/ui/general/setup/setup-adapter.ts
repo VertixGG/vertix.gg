@@ -16,7 +16,7 @@ import {
     UIInstancesTypes
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { AdminAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-adapter-builder";
+import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
 import { ComponentBuilder } from "@vertix.gg/gui/src/builders/component-builder";
 import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group-builder";
@@ -419,8 +419,8 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
         const channels = args?.masterChannels || [];
 
-    const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
-        const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
+        const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
+            const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
 
             if ( version === VERSION_SCALING_CHANNEL_UI_V1 ) {
                 const scalingSettings = await ScalingChannelDataModel.$.getScalingSettings( channel.id );
@@ -515,7 +515,7 @@ const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponen
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
-const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, SetupInteractions, ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
+const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, SetupInteractions, ISetupArgs>( "VertixBot/UI-General/SetupAdapter" )
     .setComponent( SetupComponent )
     .setExcludedElements( [ LanguageSelectMenu ] )
     .generateCustomIdForEntity( ( context, entity ) => {
@@ -547,128 +547,144 @@ const SetupAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, SetupInteract
 
         return args;
     } )
-    .onEntityMap( async( { bindButton, bindModal, bindSelectMenu } ) => {
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterCreateSelectMenu",
-            async( context, interaction ) => {
-                const selectedType = interaction.values.at( 0 );
+    .defineTransactions( tx => {
+        tx.setInitialState( "Initial" )
+            .addState( "Initial", {
+                executionStep: "default",
+                embedsGroup: "VertixBot/UI-General/SetupEmbedGroup",
+                elementsGroup: "VertixBot/UI-General/SetupElementsGroup"
+            } )
+            .addState( "MaxMasterChannelsReached", {
+                executionStep: "maxMasterChannelsReached",
+                embedsGroup: "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",
+                elementsGroup: null,
+                hidden: true
+            } )
+            .addTransition( "CreateMasterChannel", { from: "Initial", to: "Initial" } )
+            .addTransition( "CreateMasterChannelV2", { from: "Initial", to: "Initial" } )
+            .addTransition( "CreateMasterChannelV3", { from: "Initial", to: "Initial" } )
+            .addTransition( "EditMaster", { from: "Initial", to: "Initial" } )
+            .addTransition( "ChooseLanguage", { from: "Initial", to: "Initial" } )
+            .addTransition( "OpenBadwordsModal", { from: "Initial", to: "Initial" } )
+            .addTransition( "SubmitBadwords", { from: "Initial", to: "Initial" } )
+            .addTransition( "SubmitScalingConfig", { from: "Initial", to: "Initial" } )
+            .addEntryPoint( {
+                flowName: "VertixBot/UI-General/CommandsFlow",
+                transition: "VertixBot/Commands/Setup",
+                targetState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                description: "Entry point triggered by CommandsFlow via Setup command"
+            } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-V3/SetupNewWizardFlow",
+                description: "Handoff to V3 Setup Wizard when Create V3 is selected",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannel"
+            } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-V3/SetupEditFlow",
+                description: "Handoff to V3 Setup Edit flow when editing an existing master channel",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster"
+            } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-V2/SetupNewWizardFlow",
+                description: "Handoff to V2 Setup Wizard when Create V2 is selected",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannel"
+            } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-V2/SetupEditFlow",
+                description: "Handoff to V2 Setup Edit flow when editing an existing master channel",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster"
+            } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-General/LanguageFlow",
+                description: "Handoff to Language selection flow",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                transitionName: "CreateMasterChannel",
+                targetFlowName: "VertixBot/UI-V3/SetupNewWizardFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                transitionName: "CreateMasterChannel",
+                targetFlowName: "VertixBot/UI-V2/SetupNewWizardFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                transitionName: "EditMaster",
+                targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                transitionName: "EditMaster",
+                targetFlowName: "VertixBot/UI-V2/SetupEditFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-General/LanguageChooseButton",
+                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                targetFlowName: "VertixBot/UI-General/LanguageFlow"
+            } )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                "CreateMasterChannel",
+                async( context, interaction ) => {
+                    const selectedType = interaction.values.at( 0 );
 
-                switch ( selectedType ) {
-                    case MASTER_CHANNEL_TYPE_V2:
-                        await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V2 );
-                        break;
+                    switch ( selectedType ) {
+                        case MASTER_CHANNEL_TYPE_V2:
+                            await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V2 );
+                            break;
 
-                    case MASTER_CHANNEL_TYPE_V3:
-                        await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V3 );
-                        break;
+                        case MASTER_CHANNEL_TYPE_V3:
+                            await onCreateMasterChannelClicked( context, interaction, VERSION_UI_V3 );
+                            break;
 
-                    case MASTER_CHANNEL_TYPE_SCALING:
-                        await onCreateScalingChannelClicked( context, interaction );
-                        break;
+                        case MASTER_CHANNEL_TYPE_SCALING:
+                            await onCreateScalingChannelClicked( context, interaction );
+                            break;
+                    }
                 }
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/SetupFlow",
-                        transition: "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannel",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/SetupBadwordsEditButton",
-            async( context, interaction ) => {
-                await onEditBadwordsClicked( context, interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/SetupFlow",
-                        transition: "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindButton<UIDefaultButtonChannelTextInteraction>(
-            "VertixBot/UI-General/LanguageChooseButton",
-            async( context, interaction ) => {
-                await onLanguageChooseClicked( context, interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/SetupFlow",
-                        transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindModal<UIDefaultModalChannelTextInteraction>(
-            "VertixBot/UI-General/BadwordsModal",
-            async( context, interaction ) => {
-                await onBadwordsModalSubmitted( context, interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/SetupFlow",
-                        transition: "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindModal<UIDefaultModalChannelTextInteraction>(
-            "VertixBot/UI-General/SetupScalingConfigModal",
-            async( context, interaction ) => {
-                await onScalingConfigModalSubmitted( context, interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/SetupFlow",
-                        transition: "VertixBot/UI-General/SetupFlow/Transitions/SubmitScalingConfig",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-            "VertixBot/UI-General/SetupMasterEditSelectMenu",
-            async( context, interaction ) => {
-                await onSelectEditMasterChannel( context, interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/SetupFlow",
-                        transition: "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            }
-        );
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/SetupBadwordsEditButton",
+                "OpenBadwordsModal",
+                async( context, interaction ) => {
+                    await onEditBadwordsClicked( context, interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/LanguageChooseButton",
+                "ChooseLanguage",
+                async( context, interaction ) => {
+                    await onLanguageChooseClicked( context, interaction );
+                }
+            )
+            .bindModal<UIDefaultModalChannelTextInteraction>(
+                "VertixBot/UI-General/BadwordsModal",
+                "SubmitBadwords",
+                async( context, interaction ) => {
+                    await onBadwordsModalSubmitted( context, interaction );
+                }
+            )
+            .bindModal<UIDefaultModalChannelTextInteraction>(
+                "VertixBot/UI-General/SetupScalingConfigModal",
+                "SubmitScalingConfig",
+                async( context, interaction ) => {
+                    await onScalingConfigModalSubmitted( context, interaction );
+                }
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                "EditMaster",
+                async( context, interaction ) => {
+                    await onSelectEditMasterChannel( context, interaction );
+                }
+            );
     } )
     .build();
 

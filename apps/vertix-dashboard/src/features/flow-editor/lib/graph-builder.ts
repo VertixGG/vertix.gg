@@ -6,6 +6,7 @@ import {
     createFlowToComponentEdge,
     createComponentToModalEdge,
     createComponentToFlowEdge,
+    createComponentToFlowExitEdge,
     createComponentToComponentEdge,
     createComponentToStateFallbackEdge,
     createProgrammaticTransitionEdge,
@@ -242,8 +243,9 @@ class TriggerBuilder {
     }
 }
 
+const logger = zCore.modules.createLogger( "graph-builder" );
+
 class EdgeBuilder {
-    private readonly logger = zCore.modules.createLogger( "EdgeBuilder" );
     private readonly addEdge: ( edge: Edge ) => void;
     private readonly context: FlowContext;
     private readonly wizardAnalyzer: WizardAnalyzer;
@@ -270,8 +272,16 @@ class EdgeBuilder {
     public addModalEdges( allNodes: Node[], compId: string, compPreview: ComponentPreview, buttonModalConnections: ModalConnection[], stateKey?: string ): void {
         let connections: ModalWithOptionalButton[] = [ ...buttonModalConnections ];
 
-        if ( connections.length === 0 && stateKey ) {
-            connections = this.findModalConnectionsFromStateKey( stateKey, compPreview.modals );
+        // Also add modals found through state transitions that aren't already included
+        if ( stateKey ) {
+            const stateConnections = this.findModalConnectionsFromStateKey( stateKey, compPreview.modals );
+            const existingModalNames = new Set( connections.map( c => c.modalName ) );
+
+            stateConnections.forEach( sc => {
+                if ( !existingModalNames.has( sc.modalName ) ) {
+                    connections.push( sc );
+                }
+            } );
         }
 
         if ( connections.length === 0 && !stateKey ) {
@@ -295,12 +305,16 @@ class EdgeBuilder {
             const connection = connections.find( c => c.modalName === modal );
             const sourceHandle = connection?.buttonName ? `btn-${ connection.buttonName }` : "bottom";
 
+            logger.debug( this.addModalEdges, `modal: ${ modal }, id: ${ modalId }, sourceHandle: ${ sourceHandle }` );
             this.addEdge( createComponentToModalEdge( compId, modalId, sourceHandle ) );
         } );
     }
 
     private findModalConnectionsFromStateKey( stateKey: string, componentModals: string[] ): ModalWithOptionalButton[] {
         const connections: ModalWithOptionalButton[] = [];
+
+        // Build a set of transition names that have edge source mappings for self-transitions
+        const selfTransitionEsmModalNames = this.getSelfTransitionEsmModalNames( stateKey );
 
         this.context.flow.transitions?.forEach( t => {
             if ( t.from !== stateKey || !t.triggeredBy ) {
@@ -317,6 +331,12 @@ class EdgeBuilder {
                     return;
                 }
 
+                // Skip modals from self-transitions that have edge source mappings
+                // (they will be handled by addSelfTransitionModalEdges)
+                if ( selfTransitionEsmModalNames.has( modalName ) ) {
+                    return;
+                }
+
                 connections.push( {
                     modalName,
                     buttonName: buttonTrigger?.sourceEntity
@@ -325,6 +345,48 @@ class EdgeBuilder {
         } );
 
         return connections;
+    }
+
+    private getSelfTransitionEsmModalNames( stateKey: string ): Set<string> {
+        const { flow } = this.context;
+        const modalNames = new Set<string>();
+
+        if ( !flow.edgeSourceMappings?.length ) {
+            return modalNames;
+        }
+
+        // Build transition name to transition map
+        const transitionNameToTransition = new Map<string, typeof flow.transitions[ number ]>();
+        flow.states.forEach( state => {
+            if ( !state.transitions?.length ) {
+                return;
+            }
+            const stateTransitions = flow.transitions.filter( t => t.from === state.key );
+            state.transitions.forEach( ( transitionName, index ) => {
+                if ( index < stateTransitions.length ) {
+                    transitionNameToTransition.set( transitionName, stateTransitions[ index ] );
+                }
+            } );
+        } );
+
+        flow.edgeSourceMappings.forEach( mapping => {
+            if ( mapping.targetFlowName !== flow.name ) {
+                return;
+            }
+
+            const transition = transitionNameToTransition.get( mapping.transitionName );
+            if ( !transition || transition.from !== stateKey || transition.from !== transition.to ) {
+                return;
+            }
+
+            ( transition.triggeredBy ?? [] ).forEach( tr => {
+                if ( tr.handlerKind === "modal" && tr.sourceEntity ) {
+                    modalNames.add( tr.sourceEntity );
+                }
+            } );
+        } );
+
+        return modalNames;
     }
 
     public addWizardEdges(): void {
@@ -339,13 +401,23 @@ class EdgeBuilder {
             const transitions = this.wizardAnalyzer.getTransitionsForState( stateComp.stateKey, elementRows );
 
             transitions.forEach( wt => {
+                if ( wt.isFinishTransition ) {
+                    this.addEdge( createComponentToFlowExitEdge(
+                        sourceCompId,
+                        this.context.flowId,
+                        this.context.flow.name,
+                        wt.buttonName
+                    ) );
+                    return;
+                }
+
                 const targetCompId = this.context.stateKeyToCompId.get( wt.targetStateKey );
                 if ( !targetCompId ) {
                     return;
                 }
 
-                const isForward = !wt.isBackTransition && !wt.isFinishTransition;
-                const targetHandle = wt.isFinishTransition ? "right" : wt.isBackTransition ? "left" : undefined;
+                const isForward = !wt.isBackTransition;
+                const targetHandle = wt.isBackTransition ? "left" : undefined;
 
                 this.addEdge( createComponentToComponentEdge(
                     sourceCompId,
@@ -354,7 +426,7 @@ class EdgeBuilder {
                     wt.buttonName,
                     wt.targetStateName,
                     targetHandle,
-                    wt.isBackTransition || wt.isFinishTransition,
+                    wt.isBackTransition,
                     isForward ? 10 : 1
                 ) );
             } );
@@ -366,23 +438,17 @@ class EdgeBuilder {
 
         const stateDepth = this.computeStateDepths();
 
+        const matchesElement = ( elementRows: ElementData[][], sourceEntity: string ): string | null => {
+            const elementFullNames = new Set( elementRows.flat().map( el => el.name ) );
+            return elementFullNames.has( sourceEntity ) ? sourceEntity : null;
+        };
+
         flow.transitions.forEach( transition => {
             if ( transition.from === initialStateKey ) {
                 return;
             }
 
             if ( !stateKeys.has( transition.from ) || !stateKeys.has( transition.to ) ) {
-                return;
-            }
-
-            if ( wizardConnectedTargets.has( transition.to ) ) {
-                return;
-            }
-
-            const fromDepth = stateDepth.get( transition.from ) ?? 0;
-            const toDepth = stateDepth.get( transition.to ) ?? 0;
-
-            if ( toDepth <= fromDepth ) {
                 return;
             }
 
@@ -400,13 +466,37 @@ class EdgeBuilder {
             );
 
             const elementRows = stateKeyToElementRows.get( transition.from );
-            const elementNames = elementRows ? new Set( elementRows.flat().map( el => el.name ) ) : new Set<string>();
-
-            if ( trigger?.sourceEntity && elementNames.has( trigger.sourceEntity ) ) {
-                this.addEdge( createComponentToComponentEdge( sourceCompId, targetCompId, flow.name, trigger.sourceEntity, label ) );
-            } else {
-                this.addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
+            if ( !elementRows ) {
+                return;
             }
+
+            // Skip self-transitions (same state to same state) - these create visual loops
+            if ( transition.from === transition.to ) {
+                return;
+            }
+
+            if ( wizardConnectedTargets.has( transition.to ) ) {
+                return;
+            }
+
+            const fromDepth = stateDepth.get( transition.from ) ?? 0;
+            const toDepth = stateDepth.get( transition.to ) ?? 0;
+
+            if ( toDepth <= fromDepth ) {
+                return;
+            }
+
+            if ( trigger?.sourceEntity ) {
+                const matchedElement = matchesElement( elementRows, trigger.sourceEntity );
+                if ( matchedElement ) {
+                    logger.debug( this.addIntermediateStateEdges, `edge: ${ label }, sourceHandle: btn-${ matchedElement }, source: ${ trigger.sourceEntity }` );
+                    this.addEdge( createComponentToComponentEdge( sourceCompId, targetCompId, flow.name, matchedElement, label ) );
+                    return;
+                }
+            }
+
+            logger.debug( this.addIntermediateStateEdges, `fallback-edge: ${ label }` );
+            this.addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
         } );
     }
 
@@ -468,17 +558,15 @@ class EdgeBuilder {
     }
 
     public addSelectMenuEdges( initialCompId: string, initialElementRows: ElementData[][] ): void {
-        const elementNames = new Set( initialElementRows.flat().map( el => el.name ) );
+        const elementFullNames = new Set( initialElementRows.flat().map( el => el.name ) );
+
         const transitions = this.getSelectMenuTransitions( initialElementRows );
         const connectedTargets = new Set<string>();
         const greenConnectedTargets = new Set<string>();
 
-        this.logger.debug( this.addSelectMenuEdges, JSON.stringify( {
-            flowName: this.context.flow.name,
-            elementNames: [ ...elementNames ],
-            transitionsCount: transitions.length,
-            transitions: transitions.map( t => ( { to: t.to, triggers: t.triggeredBy?.map( tr => tr.sourceEntity ) } ) )
-        } ) );
+        const matchesElement = ( sourceEntity: string ): string | null => {
+            return elementFullNames.has( sourceEntity ) ? sourceEntity : null;
+        };
 
         transitions.forEach( transition => {
             const trigger = ( transition.triggeredBy ?? [] ).find( t =>
@@ -486,25 +574,19 @@ class EdgeBuilder {
             );
 
             if ( !trigger ) {
-                this.logger.debug( this.addSelectMenuEdges, `no trigger found: ${ transition.to }` );
                 return;
             }
 
             const targetCompId = this.context.stateKeyToCompId.get( transition.to );
             if ( !targetCompId ) {
-                this.logger.debug( this.addSelectMenuEdges, `no targetCompId: ${ transition.to }` );
                 return;
             }
 
-            if ( elementNames.has( trigger.sourceEntity ) ) {
+            const matchedElement = matchesElement( trigger.sourceEntity );
+            if ( matchedElement ) {
                 greenConnectedTargets.add( transition.to );
-                this.logger.debug( this.addSelectMenuEdges, `added to greenConnectedTargets: ${ transition.to }, sourceEntity: ${ trigger.sourceEntity }` );
-            } else {
-                this.logger.debug( this.addSelectMenuEdges, `sourceEntity NOT in elementNames: ${ transition.to }, sourceEntity: ${ trigger.sourceEntity }` );
             }
         } );
-
-        this.logger.debug( this.addSelectMenuEdges, `first pass complete, greenConnectedTargets: ${ JSON.stringify( [ ...greenConnectedTargets ] ) }` );
 
         transitions.forEach( transition => {
             const trigger = ( transition.triggeredBy ?? [] ).find( t =>
@@ -521,25 +603,20 @@ class EdgeBuilder {
             }
 
             const label = transition.to.split( "/" ).pop() ?? transition.to;
+            const matchedElement = matchesElement( trigger.sourceEntity );
             const inGreenConnected = greenConnectedTargets.has( transition.to );
             const inWizardConnected = this.context.wizardConnectedTargets.has( transition.to );
 
-            this.logger.debug( this.addSelectMenuEdges, `processing: ${ transition.to }, elementInNames: ${ elementNames.has( trigger.sourceEntity ) }, inGreenConnected: ${ inGreenConnected }, inWizardConnected: ${ inWizardConnected }` );
-
-            if ( elementNames.has( trigger.sourceEntity ) ) {
-                this.logger.debug( this.addSelectMenuEdges, `creating GREEN edge: ${ transition.to }` );
-                this.addEdge( createComponentToComponentEdge( initialCompId, targetCompId, this.context.flow.name, trigger.sourceEntity, label ) );
+            if ( matchedElement ) {
+                logger.debug( this.addSelectMenuEdges, `edge: ${ label }, sourceHandle: btn-${ matchedElement }, source: ${ trigger.sourceEntity }` );
+                this.addEdge( createComponentToComponentEdge( initialCompId, targetCompId, this.context.flow.name, matchedElement, label ) );
                 connectedTargets.add( transition.to );
             } else if ( !inGreenConnected && !inWizardConnected ) {
-                this.logger.debug( this.addSelectMenuEdges, `creating FALLBACK edge: ${ transition.to }` );
+                logger.debug( this.addSelectMenuEdges, `fallback-edge: ${ label }, source: ${ trigger.sourceEntity }` );
                 this.addEdge( createComponentToStateFallbackEdge( initialCompId, targetCompId, this.context.flow.name, label ) );
                 connectedTargets.add( transition.to );
-            } else {
-                this.logger.debug( this.addSelectMenuEdges, `SKIPPED edge: ${ transition.to }, reason: ${ inGreenConnected ? "in greenConnectedTargets" : "in wizardConnectedTargets" }` );
             }
         } );
-
-        this.logger.debug( this.addSelectMenuEdges, `second pass complete, connectedTargets: ${ JSON.stringify( [ ...connectedTargets ] ) }` );
     }
 
     public addFanOutEdges( _initialCompId: string ): void {
@@ -574,15 +651,34 @@ class EdgeBuilder {
         const { flow, stateKeys, initialStateKey } = this.context;
         const selectMenuTransitions = flow.transitions.filter( t =>
             t.from === initialStateKey &&
+            t.to !== initialStateKey && // Skip self-transitions
             stateKeys.has( t.to ) &&
             t.triggeredBy?.some( tr => [ "string-select", "button", "user-select" ].includes( tr.handlerKind ) )
         );
 
-        if ( selectMenuTransitions.length > 0 ) {
-            return selectMenuTransitions as TransitionWithTrigger[];
+        const edgeSourceTransitions = this.getEdgeSourceMappingTransitions( elementRows );
+        const combined = [ ...selectMenuTransitions, ...edgeSourceTransitions ] as TransitionWithTrigger[];
+
+        if ( combined.length === 0 ) {
+            return [];
         }
 
-        return this.getEdgeSourceMappingTransitions( elementRows );
+        const seen = new Set<string>();
+        const deduped: TransitionWithTrigger[] = [];
+
+        combined.forEach( transition => {
+            const trigger = ( transition.triggeredBy ?? [] ).find( tr =>
+                [ "string-select", "button", "user-select" ].includes( tr.handlerKind )
+            );
+            const key = `${ transition.to }::${ trigger?.handlerKind ?? "none" }::${ trigger?.sourceEntity ?? "" }`;
+            if ( seen.has( key ) ) {
+                return;
+            }
+            seen.add( key );
+            deduped.push( transition );
+        } );
+
+        return deduped;
     }
 
     private getEdgeSourceMappingTransitions( elementRows: ElementData[][] ): TransitionWithTrigger[] {
@@ -591,7 +687,25 @@ class EdgeBuilder {
             return [];
         }
 
-        const transitionByName = new Map( flow.transitions.map( t => [ t.from, t ] ) );
+        // Build a map from transition name to the actual transition
+        // A state's transitions array is ordered and matches the order of flow.transitions with the same `from`
+        const transitionNameToTransition = new Map<string, typeof flow.transitions[ number ]>();
+        flow.states.forEach( state => {
+            if ( !state.transitions?.length ) {
+                return;
+            }
+
+            // Get all flow.transitions from this state, in order
+            const stateTransitions = flow.transitions.filter( t => t.from === state.key );
+
+            // Map each transition name to its corresponding transition by index
+            state.transitions.forEach( ( transitionName, index ) => {
+                if ( index < stateTransitions.length ) {
+                    transitionNameToTransition.set( transitionName, stateTransitions[ index ] );
+                }
+            } );
+        } );
+
         const elementByName = new Map( elementRows.flat().map( el => [ el.name, el ] ) );
 
         return flow.edgeSourceMappings.flatMap( mapping => {
@@ -599,8 +713,9 @@ class EdgeBuilder {
                 return [];
             }
 
-            const transition = transitionByName.get( mapping.transitionName );
-            if ( !transition || !stateKeys.has( transition.to ) ) {
+            const transition = transitionNameToTransition.get( mapping.transitionName );
+            // Skip if transition not found, target not in stateKeys, or self-transition
+            if ( !transition || !stateKeys.has( transition.to ) || transition.from === transition.to ) {
                 return [];
             }
 
@@ -615,6 +730,74 @@ class EdgeBuilder {
                     handlerKind
                 } ]
             } ];
+        } );
+    }
+
+    public addSelfTransitionModalEdges( allNodes: Node[], stateKey: string, compId: string, compPreview: ComponentPreview ): void {
+        const { flow, initialStateKey, stateKeyToCompId, stateKeyToElementRows } = this.context;
+
+        if ( !flow.edgeSourceMappings?.length ) {
+            return;
+        }
+
+        // Build transition name to transition map
+        const transitionNameToTransition = new Map<string, typeof flow.transitions[ number ]>();
+        flow.states.forEach( state => {
+            if ( !state.transitions?.length ) {
+                return;
+            }
+            const stateTransitions = flow.transitions.filter( t => t.from === state.key );
+            state.transitions.forEach( ( transitionName, index ) => {
+                if ( index < stateTransitions.length ) {
+                    transitionNameToTransition.set( transitionName, stateTransitions[ index ] );
+                }
+            } );
+        } );
+
+        // Determine the initial component ID and its elements for ESM source resolution
+        const initialCompId = stateKeyToCompId.get( initialStateKey );
+        const initialElementNames = new Set(
+            ( stateKeyToElementRows.get( initialStateKey ) ?? [] ).flat().map( el => el.name )
+        );
+
+        flow.edgeSourceMappings.forEach( mapping => {
+            if ( mapping.targetFlowName !== flow.name ) {
+                return;
+            }
+
+            const transition = transitionNameToTransition.get( mapping.transitionName );
+
+            // Only handle self-transitions from the current state
+            if ( !transition || transition.from !== stateKey || transition.from !== transition.to ) {
+                return;
+            }
+
+            // Find modal triggers on this self-transition
+            const modalTriggers = ( transition.triggeredBy ?? [] ).filter( tr => tr.handlerKind === "modal" && tr.sourceEntity );
+
+            modalTriggers.forEach( ( modalTrigger, idx ) => {
+                const modalName = modalTrigger.sourceEntity!;
+
+                // Check if this modal is in the component's modals
+                if ( !compPreview.modals.includes( modalName ) ) {
+                    return;
+                }
+
+                // Use initial component as edge source when the triggering element exists on it
+                // This ensures ESM modal edges visually originate from the same select menu
+                // that has the green ESM edges (on the initial/Default component)
+                const useInitialComp = initialCompId && initialCompId !== compId && initialElementNames.has( mapping.triggeringElementId );
+                const edgeSourceCompId = useInitialComp ? initialCompId : compId;
+
+                const modalId = `modal-${ edgeSourceCompId }-esm-${ idx }`;
+                const modalDef = compPreview.modalDefinitions.find( m => m.name === modalName );
+
+                allNodes.push( createModalNode( modalId, modalName, modalDef, flow.name ) );
+
+                const sourceHandle = `btn-${ mapping.triggeringElementId }`;
+                const edge = createComponentToModalEdge( edgeSourceCompId, modalId, sourceHandle );
+                this.addEdge( edge );
+            } );
         } );
     }
 
@@ -640,29 +823,14 @@ class EdgeBuilder {
                 .map( t => t.to )
         );
 
-        this.logger.debug( this.addFallbackEdgesForUnconnected, JSON.stringify( {
-            sourceCompId,
-            connectedTargets: [ ...connectedTargets ],
-            directlyReachable: [ ...directlyReachable ],
-            stateComponents: this.context.stateComponents.map( sc => sc.stateKey )
-        } ) );
-
         this.context.stateComponents.slice( 1 ).forEach( stateComp => {
-            const inConnected = connectedTargets.has( stateComp.stateKey );
-            const inWizard = this.context.wizardConnectedTargets.has( stateComp.stateKey );
-            const isDirect = directlyReachable.has( stateComp.stateKey );
-
-            if ( inConnected || inWizard || !isDirect ) {
-                this.logger.debug( this.addFallbackEdgesForUnconnected, `SKIPPING: ${ stateComp.stateKey }, inConnected: ${ inConnected }, inWizard: ${ inWizard }, isDirect: ${ isDirect }` );
+            if ( connectedTargets.has( stateComp.stateKey ) || this.context.wizardConnectedTargets.has( stateComp.stateKey ) || !directlyReachable.has( stateComp.stateKey ) ) {
                 return;
             }
 
             const targetCompId = this.context.stateKeyToCompId.get( stateComp.stateKey );
             if ( targetCompId ) {
-                this.logger.debug( this.addFallbackEdgesForUnconnected, `creating edge: ${ stateComp.stateKey }` );
                 this.addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, this.context.flow.name, stateComp.stateName ) );
-            } else {
-                this.logger.debug( this.addFallbackEdgesForUnconnected, `no targetCompId: ${ stateComp.stateKey }` );
             }
         } );
     }
@@ -709,19 +877,31 @@ class FlowPatternDetector {
             return false;
         }
 
-        const transitionByName = new Map( flow.transitions.map( t => [ t.from, t ] ) );
+        // Build transition name to transition map using state ordering
+        const transitionNameToTransition = new Map<string, typeof flow.transitions[ number ]>();
+        flow.states.forEach( state => {
+            if ( !state.transitions?.length ) {
+                return;
+            }
+            const stateTransitions = flow.transitions.filter( t => t.from === state.key );
+            state.transitions.forEach( ( transitionName, index ) => {
+                if ( index < stateTransitions.length ) {
+                    transitionNameToTransition.set( transitionName, stateTransitions[ index ] );
+                }
+            } );
+        } );
+
         return flow.edgeSourceMappings.some( mapping => {
             if ( mapping.targetFlowName !== flow.name ) {
                 return false;
             }
-            const transition = transitionByName.get( mapping.transitionName );
+            const transition = transitionNameToTransition.get( mapping.transitionName );
             return transition && stateKeys.has( transition.to );
         } );
     }
 }
 
 class MultiStateFlowBuilder {
-    private readonly logger = zCore.modules.createLogger( "MultiStateFlowBuilder" );
     private readonly allNodes: Node[];
     private readonly addEdge: ( edge: Edge ) => void;
     private readonly context: FlowContext;
@@ -754,13 +934,7 @@ class MultiStateFlowBuilder {
         const fanOut = FlowPatternDetector.detectFanOut( this.context.flow, this.context.stateKeys, this.context.initialStateKey );
         const useFanOut = !useSelectMenu && !modalFirst.isModalFirst && fanOut.isFanOut;
 
-        this.logger.debug( this.build, JSON.stringify( {
-            flowName: this.context.flow.name,
-            modalFirst,
-            useSelectMenu,
-            useFanOut,
-            stateKeys: [ ...this.context.stateKeys ]
-        } ) );
+        logger.debug( this.build, `flow: ${ this.context.flow.name }, states: ${ this.context.stateComponents.length }, modalFirst: ${ modalFirst.isModalFirst }, selectMenu: ${ useSelectMenu }, fanOut: ${ useFanOut }` );
 
         this.precomputeElementRows();
 
@@ -773,22 +947,10 @@ class MultiStateFlowBuilder {
 
         this.computeWizardConnectedTargets();
 
-        this.logger.debug( this.build, JSON.stringify( {
-            phase: "after buildStateNodes",
-            initialCompId: this.initialCompId,
-            initialElementRowsLength: this.initialElementRows?.length,
-            initialElementNames: this.initialElementRows?.flat().map( el => el.name ),
-            wizardConnectedTargets: [ ...this.context.wizardConnectedTargets ]
-        } ) );
-
         if ( useSelectMenu && this.initialCompId && this.initialElementRows ) {
-            this.logger.debug( this.build, "calling addSelectMenuEdges" );
             this.edgeBuilder.addSelectMenuEdges( this.initialCompId, this.initialElementRows );
         } else if ( useFanOut && this.initialCompId ) {
-            this.logger.debug( this.build, "calling addFanOutEdges" );
             this.edgeBuilder.addFanOutEdges( this.initialCompId );
-        } else {
-            this.logger.debug( this.build, `no edge method called: useSelectMenu=${ useSelectMenu }, useFanOut=${ useFanOut }, modalFirst=${ modalFirst.isModalFirst }, initialCompId=${ this.initialCompId }` );
         }
 
         this.edgeBuilder.addWizardEdges();
@@ -869,6 +1031,8 @@ class MultiStateFlowBuilder {
                 ? [ ...this.initialStateTransitionTriggers, ...wizardTriggers, ...selectMenuTriggers ]
                 : [ ...wizardTriggers, ...selectMenuTriggers ];
 
+            logger.debug( this.buildStateNodes, `state[${ stepIndex }]: ${ stateComp.stateName }, comp: ${ compId }, elements: ${ compPreview.elementRows.flat().map( el => el.name ).join( ", " ) }, modals: ${ compPreview.modals.join( ", " ) }, triggers: ${ stateTransitionTriggers.map( t => t.elementName ).join( ", " ) }` );
+
             this.allNodes.push( createComponentNode(
                 compId,
                 compPreview,
@@ -885,6 +1049,7 @@ class MultiStateFlowBuilder {
             if ( !isModalFirst ) {
                 this.edgeBuilder.addModalEdges( this.allNodes, compId, compPreview, buttonModalConnections, stateComp.stateKey );
             }
+            this.edgeBuilder.addSelfTransitionModalEdges( this.allNodes, stateComp.stateKey, compId, compPreview );
             this.edgeBuilder.addButtonFlowEdges( compId, buttonFlowTriggers );
 
             prevCompId = compId;
@@ -938,8 +1103,12 @@ class MultiStateFlowBuilder {
     }
 
     private getSelectMenuTriggers( stateKey: string, elementRows: ElementData[][] ): StateTransitionTrigger[] {
-        const elementNames = new Set( elementRows.flat().map( el => el.name ) );
+        const elementFullNames = new Set( elementRows.flat().map( el => el.name ) );
         const triggers: StateTransitionTrigger[] = [];
+
+        const matchesElement = ( sourceEntity: string ): string | null => {
+            return elementFullNames.has( sourceEntity ) ? sourceEntity : null;
+        };
 
         this.context.flow.transitions?.forEach( t => {
             if ( t.from !== stateKey || !t.triggeredBy ) {
@@ -951,17 +1120,22 @@ class MultiStateFlowBuilder {
                     return;
                 }
 
-                if ( !trigger.sourceEntity || !elementNames.has( trigger.sourceEntity ) ) {
+                if ( !trigger.sourceEntity ) {
                     return;
                 }
 
-                if ( triggers.some( existing => existing.elementName === trigger.sourceEntity ) ) {
+                const matchedElement = matchesElement( trigger.sourceEntity );
+                if ( !matchedElement ) {
+                    return;
+                }
+
+                if ( triggers.some( existing => existing.elementName === matchedElement ) ) {
                     return;
                 }
 
                 triggers.push( {
-                    elementName: trigger.sourceEntity,
-                    handlePosition: getButtonHandlePosition( trigger.sourceEntity, elementRows, elementRows.length )
+                    elementName: matchedElement,
+                    handlePosition: getButtonHandlePosition( matchedElement, elementRows, elementRows.length )
                 } );
             } );
         } );
@@ -1170,7 +1344,7 @@ class FlowGraphBuilder {
     }
 
     private addEdge( edge: Edge ): void {
-        if ( this.edgeIds.has( edge.id ) || edge.source === edge.target ) {
+        if ( this.edgeIds.has( edge.id ) ) {
             return;
         }
         this.edgeIds.add( edge.id );
@@ -1194,6 +1368,8 @@ class FlowGraphBuilder {
     }
 
     private buildFlowNodes(): void {
+        const moduleNodeId = this.allNodes[ 0 ].id;
+
         this.data.flows.forEach( flow => {
             if ( this.reachableFlows.size > 0 && !this.reachableFlows.has( flow.name ) ) {
                 return;
@@ -1202,6 +1378,7 @@ class FlowGraphBuilder {
             const flowNode = createFlowNode( flow, false );
             this.flowIdMap.set( flow.name, flowNode.id );
             this.allNodes.push( flowNode );
+            this.addEdge( createModuleToFlowEdge( moduleNodeId, flowNode.id, flow.name ) );
         } );
     }
 

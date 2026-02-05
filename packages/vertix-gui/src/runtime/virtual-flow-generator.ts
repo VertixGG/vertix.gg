@@ -50,8 +50,9 @@ export class VirtualFlowGenerator {
             states,
             transitions,
             requiredData: [],
-            entryPoints: [],
-            handoffPoints: [],
+            entryPoints: definition.entryPoints ?? [],
+            handoffPoints: definition.handoffPoints ?? [],
+            edgeSourceMappings: definition.edgeSourceMappings ?? [],
             hooks: [],
             options: {
                 generatedFrom: "TransactionBuilder",
@@ -67,7 +68,10 @@ export class VirtualFlowGenerator {
         const states: FlowStateDefinition[] = [];
 
         for ( const [ stateKey, stateConfig ] of definition.states ) {
-            // Find transitions that originate from this state
+            if ( stateConfig.hidden ) {
+                continue;
+            }
+
             const outgoingTransitions: string[] = [];
             for ( const [ transitionName, transitionConfig ] of definition.transitions ) {
                 const fromStates = Array.isArray( transitionConfig.from )
@@ -79,7 +83,6 @@ export class VirtualFlowGenerator {
                 }
             }
 
-            // Resolve previewEmbedsGroup from executionSteps if not explicitly set
             let previewEmbedsGroup = stateConfig.previewEmbedsGroup;
             if ( !previewEmbedsGroup && options.executionSteps && stateConfig.executionStep ) {
                 const stepDef = options.executionSteps[ stateConfig.executionStep ];
@@ -95,9 +98,7 @@ export class VirtualFlowGenerator {
                 hooks: [],
                 options: {
                     executionStep: stateConfig.executionStep,
-                    // Include component name so dashboard can build multi-state flows
-                    component: options.componentName,
-                    // Include preview configuration for dashboard visualization
+                    ...( options.componentName && { component: options.componentName } ),
                     ...( stateConfig.previewDefaultVars && { previewDefaultVars: stateConfig.previewDefaultVars } ),
                     ...( previewEmbedsGroup && { previewEmbedsGroup } )
                 }
@@ -110,16 +111,31 @@ export class VirtualFlowGenerator {
     private static generateTransitions( definition: VirtualFlowDefinition ): FlowTransitionDefinition[] {
         const transitions: FlowTransitionDefinition[] = [];
 
-        for ( const [ transitionName, transitionConfig ] of definition.transitions ) {
-            const fromStates = Array.isArray( transitionConfig.from )
-                ? transitionConfig.from
-                : [ transitionConfig.from ];
+        const hiddenStates = new Set(
+            [ ...definition.states.entries() ]
+                .filter( ( [ , config ] ) => config.hidden )
+                .map( ( [ key ] ) => key )
+        );
 
-            // Create a transition entry for each source state
+        for ( const [ transitionName, transitionConfig ] of definition.transitions ) {
+            const toState = transitionConfig.to as string;
+            if ( hiddenStates.has( toState ) ) {
+                continue;
+            }
+
+            const fromStates = ( Array.isArray( transitionConfig.from )
+                ? transitionConfig.from
+                : [ transitionConfig.from ] )
+                .filter( state => !hiddenStates.has( state ) );
+
+            if ( fromStates.length === 0 ) {
+                continue;
+            }
+
             for ( const fromState of fromStates ) {
                 transitions.push( {
                     from: fromState,
-                    to: transitionConfig.to as string,
+                    to: toState,
                     triggeredBy: VirtualFlowGenerator.generateTriggersForTransition(
                         definition,
                         transitionName
@@ -159,7 +175,9 @@ export class VirtualFlowGenerator {
         transitionName: string
     ): FlowTransitionDefinition[ "triggeredBy" ] {
         const triggers: NonNullable<FlowTransitionDefinition[ "triggeredBy" ]> = [];
+        const addedElements = new Set<string>();
 
+        // First, add triggers from direct element bindings
         for ( const [ elementId, boundTransition ] of definition.elementBindings ) {
             if ( boundTransition === transitionName ) {
                 const transition = definition.transitions.get( transitionName );
@@ -178,6 +196,36 @@ export class VirtualFlowGenerator {
                         : undefined,
                     mutations: transition?.mutations
                 } );
+                addedElements.add( elementId );
+            }
+        }
+
+        // Then, add triggers from edgeSourceMappings for this flow's internal transitions
+        for ( const mapping of definition.edgeSourceMappings ) {
+            // Only add if it targets this flow and matches the transition name
+            if ( mapping.targetFlowName === definition.flowName && mapping.transitionName === transitionName ) {
+                // Avoid duplicates if already added from element bindings
+                if ( addedElements.has( mapping.triggeringElementId ) ) {
+                    continue;
+                }
+
+                const transition = definition.transitions.get( transitionName );
+                const targetState = transition?.to as string | undefined;
+                const stateConfig = targetState ? definition.states.get( targetState ) : undefined;
+
+                triggers.push( {
+                    handlerId: `${ definition.flowName }/Handlers/${ mapping.triggeringElementId }`,
+                    sourceEntity: mapping.triggeringElementId,
+                    handlerKind: VirtualFlowGenerator.inferHandlerKind( mapping.triggeringElementId ),
+                    navigation: targetState
+                        ? {
+                            targetState,
+                            executionStep: stateConfig?.executionStep
+                        }
+                        : undefined,
+                    mutations: transition?.mutations
+                } );
+                addedElements.add( mapping.triggeringElementId );
             }
         }
 
@@ -189,19 +237,19 @@ export class VirtualFlowGenerator {
     ): "button" | "modal" | "string-select" | "user-select" | "command" | "unknown" {
         const lowerElementId = elementId.toLowerCase();
 
-        if ( lowerElementId.includes( "button" ) ) {
-            return "button";
+        // Check for user select menus first (most specific patterns)
+        if ( lowerElementId.includes( "usermenu" ) || lowerElementId.includes( "user-menu" ) || lowerElementId.includes( "userselect" ) ) {
+            return "user-select";
+        }
+        // Check for string select menus BEFORE buttons (element names like "ChannelButtonsTemplateSelectMenu" contain both)
+        if ( lowerElementId.includes( "selectmenu" ) || lowerElementId.includes( "select-menu" ) || lowerElementId.endsWith( "menu" ) ) {
+            return "string-select";
         }
         if ( lowerElementId.includes( "modal" ) ) {
             return "modal";
         }
-        // Check for user select menus first (more specific patterns)
-        if ( lowerElementId.includes( "usermenu" ) || lowerElementId.includes( "user-menu" ) || lowerElementId.includes( "userselect" ) ) {
-            return "user-select";
-        }
-        // Check for string select menus (including patterns like "GrantMenu", "DenyMenu", etc.)
-        if ( lowerElementId.includes( "selectmenu" ) || lowerElementId.includes( "select-menu" ) || lowerElementId.endsWith( "menu" ) ) {
-            return "string-select";
+        if ( lowerElementId.includes( "button" ) ) {
+            return "button";
         }
         if ( lowerElementId.includes( "command" ) ) {
             return "command";

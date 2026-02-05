@@ -6,8 +6,6 @@ import {
 
 import { PermissionsBitField } from "discord.js";
 
-import { WelcomeFlow } from "@vertix.gg/bot/src/ui/general/welcome/welcome-flow";
-
 import type { ChannelType } from "discord.js";
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIFlowIntegrationPointBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
@@ -74,7 +72,7 @@ export class GuildFlow extends UIFlowBase<string, string, GuildFlowData> {
     public static override getHandoffPoints(): UIFlowIntegrationPointBase[] {
         return [
             new FlowIntegrationPointEvent( {
-                flowName: WelcomeFlow.getName(), // Use static name of target flow
+                flowName: "VertixBot/UI-General/WelcomeFlow",
                 description: "Handoff to WelcomeFlow after bot joins.",
                 sourceState: "VertixBot/UI-General/GuildFlow/States/Initial",
                 transition: "VertixBot/GuildEvents/VertixOnJoin",

@@ -869,6 +869,21 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "VerifiedRolesSelected", { from: "EditVerifiedRoles", to: "EditVerifiedRoles" } )
             .addTransition( "VerifiedRolesBack", { from: "EditVerifiedRoles", to: "EditMaster" } )
             .addTransition( "VerifiedRolesFinish", { from: "EditVerifiedRoles", to: "EditMaster" } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                transitionName: "OpenEditButtons",
+                targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                transitionName: "OpenEditVerifiedRoles",
+                targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                transitionName: "EditChannelName",
+                targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
+            } )
             // Element bindings with handlers
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
                 "VertixBot/UI-General/SetupMasterEditSelectMenu",

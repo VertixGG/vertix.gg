@@ -7,7 +7,7 @@ const WelcomeEmbed = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
     .setInstanceType( UIInstancesTypes.Static )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( "https://i.imgur.com/x8jMguN.gif" )
-    .setThumbnail( "https://s11.gifyu.com/images/SuW5n.gif" )
+    .setThumbnail( "https://vertix.gg/assets/Robot-Dz6J42ZT.png" )
     .setTitle( "༄ Vertix is here, let's get started!" )
     .setDescription(
         "Welcome to Vertix, an incredible addition to your server!\n" +

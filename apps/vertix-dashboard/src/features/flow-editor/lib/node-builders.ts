@@ -35,9 +35,15 @@ export function createModuleNode( moduleName: string, fullName: string ): Node {
     };
 }
 
+function extractFlowVersion( flowName: string ): string | null {
+    const versionMatch = flowName.match( /UI-(V\d+)/ );
+    return versionMatch ? versionMatch[ 1 ] : null;
+}
+
 export function createFlowNode( flow: UIExportedFlow, isSystemFlow: boolean ): Node {
     const flowShortName = flow.name.split( "/" ).pop() ?? flow.name;
     const flowId = `flow-${ flow.name }`;
+    const version = extractFlowVersion( flow.name );
 
     return {
         id: flowId,
@@ -47,7 +53,8 @@ export function createFlowNode( flow: UIExportedFlow, isSystemFlow: boolean ): N
             label: flowShortName,
             type: "flow",
             isSystemFlow,
-            flowName: flow.name
+            flowName: flow.name,
+            version
         }
     };
 }

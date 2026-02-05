@@ -244,17 +244,17 @@ export class AdminExecutionAdapterBuilder<
         try { Object.defineProperty( AdapterClass.prototype, Symbol.toStringTag, { value: builder.name } ); } catch {}
 
         // Extend metadata to include transactions
-        if ( builder.transactions ) {
-            const existingMetadata = Reflect.get( AdapterClass, BUILDER_METADATA_SYMBOL ) as AdapterBuilderMetadata | undefined;
-            if ( existingMetadata ) {
-                Reflect.defineProperty( AdapterClass, BUILDER_METADATA_SYMBOL, {
-                    value: {
-                        ...existingMetadata,
-                        transactions: builder.transactions
-                    },
-                    configurable: true
-                } );
-            }
+        // Note: metadata is on BaseBuild (parent class), need to get it from there
+        const existingMetadata = Reflect.get( BaseBuild, BUILDER_METADATA_SYMBOL ) as AdapterBuilderMetadata | undefined;
+        if ( existingMetadata ) {
+            Reflect.defineProperty( AdapterClass, BUILDER_METADATA_SYMBOL, {
+                value: {
+                    ...existingMetadata,
+                    ...( builder.transactions && { transactions: builder.transactions } ),
+                    ...( builder.executionSteps && { executionSteps: builder.executionSteps } )
+                },
+                configurable: true
+            } );
         }
 
         return AdapterClass;

@@ -2,7 +2,6 @@ import { withCommands } from "@zenflux/react-commander/with-commands";
 import { useCommandState } from "@zenflux/react-commander/hooks";
 
 import { ResizablePanel } from "@vertix.gg/dashboard/src/components/resizable-panel";
-import { FlowDetailsPanel } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-details-panel";
 import { FlowViewer } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-viewer";
 import { ModuleSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/module-selector";
 import { EntityList } from "@vertix.gg/dashboard/src/features/flow-editor/components/entity-list";
@@ -89,15 +88,15 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
                 </div>
             </div>
 
-            <ResizablePanel
-                defaultWidth={ 320 }
-                minWidth={ 250 }
-                maxWidth={ 1000 }
-                side="right"
-                storageKey="vertix-dashboard-right-panel-width"
-            >
-                <FlowDetailsPanel />
-            </ResizablePanel>
+            { /*<ResizablePanel*/ }
+            { /*    defaultWidth={ 320 }*/ }
+            { /*    minWidth={ 250 }*/ }
+            { /*    maxWidth={ 1000 }*/ }
+            { /*    side="right"*/ }
+            { /*    storageKey="vertix-dashboard-right-panel-width"*/ }
+            { /*>*/ }
+            { /*    <FlowDetailsPanel />*/ }
+            { /*</ResizablePanel>*/ }
         </div>
     );
 };

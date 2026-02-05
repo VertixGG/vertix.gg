@@ -22,8 +22,10 @@ export const MARKER_SIZES = {
 
 export const LAYOUT_OPTIONS = {
     DIRECTION: "TB" as const,
-    RANK_SEPARATION: 250,
-    NODE_SEPARATION: 300
+    RANK_SEPARATION: 300,
+    NODE_SEPARATION: 400,
+    MODAL_GAP: 50,
+    MODAL_STACK_GAP: 40
 } as const;
 
 export const VIEWPORT_CONFIG = {

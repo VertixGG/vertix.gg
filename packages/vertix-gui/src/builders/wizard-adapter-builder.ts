@@ -405,23 +405,30 @@ export class WizardAdapterBuilder<
             Object.defineProperty( AdapterClass.prototype, Symbol.toStringTag, { value: builder.name } );
         } catch {}
 
-        const metadataCarrier = AdapterClass as unknown as { [ BUILDER_METADATA_SYMBOL ]?: AdapterBuilderMetadata };
-        const metadata = metadataCarrier[ BUILDER_METADATA_SYMBOL ];
+        // Note: metadata is on BaseBuild (parent class), need to get it from there
+        const baseMetadata = Reflect.get( BaseBuild, BUILDER_METADATA_SYMBOL ) as AdapterBuilderMetadata | undefined;
 
-        if ( metadata ) {
-            metadata.executionSteps = builder.executionSteps;
-            metadata.initiatorElement = metadata.initiatorElement ?? builder.initiatorElement;
-            metadata.transactions = builder.transactions;
-            metadata.wizard = {
-                componentConfig: builder.componentConfig
-                    ? {
-                        name: builder.componentConfig.name,
-                        components: builder.componentConfig.components,
-                        baseComponent: builder.componentConfig.baseComponent
-                    }
-                    : undefined,
-                componentEmbedsGroups: builder.componentEmbedsGroups
+        if ( baseMetadata ) {
+            const newMetadata = {
+                ...baseMetadata,
+                executionSteps: builder.executionSteps,
+                initiatorElement: baseMetadata.initiatorElement ?? builder.initiatorElement,
+                transactions: builder.transactions,
+                wizard: {
+                    componentConfig: builder.componentConfig
+                        ? {
+                            name: builder.componentConfig.name,
+                            components: builder.componentConfig.components,
+                            baseComponent: builder.componentConfig.baseComponent
+                        }
+                        : undefined,
+                    componentEmbedsGroups: builder.componentEmbedsGroups
+                }
             };
+            Reflect.defineProperty( AdapterClass, BUILDER_METADATA_SYMBOL, {
+                value: newMetadata,
+                configurable: true
+            } );
         }
 
         return AdapterClass;

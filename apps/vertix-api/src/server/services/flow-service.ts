@@ -52,11 +52,47 @@ function getModuleFlowsData( moduleName: string ): ModuleFlowsResponse {
     const flows = allFlows.filter( f => f.flowKind !== "system" );
     const systemFlows = allFlows.filter( f => f.flowKind === "system" );
 
+    const referencedFlowNames = new Set<string>();
+    const collectReferencedFlows = ( flowList: typeof allFlows ) => {
+        flowList.forEach( flow => {
+            flow.handoffPoints?.forEach( hp => {
+                if ( hp.flowName ) {
+                    referencedFlowNames.add( hp.flowName );
+                }
+            } );
+
+            flow.edgeSourceMappings?.forEach( esm => {
+                if ( esm.targetFlowName ) {
+                    referencedFlowNames.add( esm.targetFlowName );
+                }
+            } );
+        } );
+    };
+
+    collectReferencedFlows( flows );
+    collectReferencedFlows( systemFlows );
+
+    const moduleFlowNames = new Set( allFlows.map( f => f.name ) );
+    referencedFlowNames.forEach( flowName => {
+        if ( !moduleFlowNames.has( flowName ) ) {
+            const crossModuleFlow = uiExportLoader.getFlow( flowName );
+            if ( crossModuleFlow && crossModuleFlow.flowKind !== "system" ) {
+                flows.push( crossModuleFlow );
+            }
+        }
+    } );
+
     const referencedComponentNames = new Set<string>();
-    allFlows.forEach( flow => {
+    [ ...flows, ...systemFlows ].forEach( flow => {
         flow.states.forEach( state => {
-            if ( state.component ) {
-                referencedComponentNames.add( state.component );
+            const componentFromOptions = typeof state.options?.[ "component" ] === "string"
+                ? state.options[ "component" ]
+                : null;
+
+            const componentName = componentFromOptions ?? state.component;
+
+            if ( componentName ) {
+                referencedComponentNames.add( componentName );
             }
         } );
     } );

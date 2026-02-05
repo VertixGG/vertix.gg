@@ -307,8 +307,12 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                         { row.map( ( element ) => {
                                             if ( isSelectMenu( element ) ) {
                                                 const stateTrigger = getStateTransitionTrigger( element.name );
+                                                const flowTrigger = getFlowTrigger( element.name );
                                                 const options = selectOptionsByElementName.get( element.name ) ?? [];
                                                 const selectedValue = selectedSelectValues[ element.name ] ?? "";
+
+                                                const hasHandle = stateTrigger || flowTrigger;
+                                                const handlePosition = stateTrigger?.handlePosition ?? flowTrigger?.handlePosition ?? "bottom";
 
                                                 return (
                                                     <div key={ element.name } className="relative flex-1 min-w-[180px]">
@@ -344,12 +348,12 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                                             </div>
                                                         </div>
 
-                                                        { stateTrigger && (
+                                                        { hasHandle && (
                                                             <Handle
                                                                 type="source"
-                                                                position={ positionMap[ stateTrigger.handlePosition ?? "bottom" ] }
+                                                                position={ positionMap[ handlePosition ] }
                                                                 id={ `btn-${ element.name }` }
-                                                                className="bg-emerald-400! w-2! h-2!"
+                                                                className={ flowTrigger ? "bg-blue-400! w-2! h-2!" : "bg-emerald-400! w-2! h-2!" }
                                                             />
                                                         ) }
                                                     </div>

@@ -1,94 +1,25 @@
 [
     {
         "name": "VertixBot/UI-General/FeedbackAdapter",
-        "adapterKind": "base",
+        "adapterKind": "execution",
         "component": "VertixBot/UI-General/FeedbackComponent",
         "module": "VertixBot/UI-General/Module",
         "instanceType": "Static",
-        "permissions": "0",
-        "executionSteps": [],
-        "bindings": [
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "268435504",
+        "executionSteps": [
             {
-                "entity": "VertixBot/UI-General/FeedbackReportButton::VertixBot/UI-General/FeedbackReportModal",
-                "handler": "VertixBot/UI-General/FeedbackAdapter/Bindings/ModalWithButton/VertixBot/UI-General/FeedbackReportButton",
-                "kind": "modal-button",
-                "options": {
-                    "button": "VertixBot/UI-General/FeedbackReportButton",
-                    "modal": "VertixBot/UI-General/FeedbackReportModal"
-                },
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/FeedbackAdapter/Bindings/ModalWithButton/VertixBot/UI-General/FeedbackReportButton",
-                        "sourceEntity": "VertixBot/UI-General/FeedbackReportButton::VertixBot/UI-General/FeedbackReportModal",
-                        "handlerKind": "modal-button",
-                        "flowName": "VertixBot/UI-General/FeedbackFlow",
-                        "transition": "VertixBot/UI-General/FeedbackFlow/Transitions/SubmitIssueReport",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/FeedbackFlow/States/Default",
-                            "executionStep": "default"
-                        }
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/FeedbackSuggestionButton::VertixBot/UI-General/FeedbackModal",
-                "handler": "VertixBot/UI-General/FeedbackAdapter/Bindings/ModalWithButton/VertixBot/UI-General/FeedbackSuggestionButton",
-                "kind": "modal-button",
-                "options": {
-                    "button": "VertixBot/UI-General/FeedbackSuggestionButton",
-                    "modal": "VertixBot/UI-General/FeedbackModal"
-                },
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/FeedbackAdapter/Bindings/ModalWithButton/VertixBot/UI-General/FeedbackSuggestionButton",
-                        "sourceEntity": "VertixBot/UI-General/FeedbackSuggestionButton::VertixBot/UI-General/FeedbackModal",
-                        "handlerKind": "modal-button",
-                        "flowName": "VertixBot/UI-General/FeedbackFlow",
-                        "transition": "VertixBot/UI-General/FeedbackFlow/Transitions/SubmitSuggestion",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/FeedbackFlow/States/Default",
-                            "executionStep": "default"
-                        }
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/FeedbackInviteDeveloperButton::VertixBot/UI-General/FeedbackInviteDeveloperModal",
-                "handler": "VertixBot/UI-General/FeedbackAdapter/Bindings/ModalWithButton/VertixBot/UI-General/FeedbackInviteDeveloperButton",
-                "kind": "modal-button",
-                "options": {
-                    "button": "VertixBot/UI-General/FeedbackInviteDeveloperButton",
-                    "modal": "VertixBot/UI-General/FeedbackInviteDeveloperModal"
-                },
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/FeedbackAdapter/Bindings/ModalWithButton/VertixBot/UI-General/FeedbackInviteDeveloperButton",
-                        "sourceEntity": "VertixBot/UI-General/FeedbackInviteDeveloperButton::VertixBot/UI-General/FeedbackInviteDeveloperModal",
-                        "handlerKind": "modal-button",
-                        "flowName": "VertixBot/UI-General/FeedbackFlow",
-                        "transition": "VertixBot/UI-General/FeedbackFlow/Transitions/SubmitInvite",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/FeedbackFlow/States/Default",
-                            "executionStep": "default"
-                        }
-                    }
-                ]
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
             }
         ],
-        "modalTriggers": [
-            {
-                "buttonElement": "VertixBot/UI-General/FeedbackReportButton",
-                "modalName": "VertixBot/UI-General/FeedbackReportModal"
-            },
-            {
-                "buttonElement": "VertixBot/UI-General/FeedbackSuggestionButton",
-                "modalName": "VertixBot/UI-General/FeedbackModal"
-            },
-            {
-                "buttonElement": "VertixBot/UI-General/FeedbackInviteDeveloperButton",
-                "modalName": "VertixBot/UI-General/FeedbackInviteDeveloperModal"
-            }
-        ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getReplyArgs",
@@ -98,7 +29,7 @@
     },
     {
         "name": "VertixBot/UI-General/LanguageAdapter",
-        "adapterKind": "base",
+        "adapterKind": "execution",
         "component": "VertixBot/UI-General/LanguageComponent",
         "module": "VertixBot/UI-General/Module",
         "instanceType": "Dynamic",
@@ -107,51 +38,16 @@
             "GuildText"
         ],
         "permissions": "268435504",
-        "executionSteps": [],
-        "bindings": [
+        "executionSteps": [
             {
-                "entity": "VertixBot/UI-General/LanguageSelectMenu",
-                "handler": "VertixBot/UI-General/LanguageAdapter/Bindings/StringSelect/VertixBot/UI-General/LanguageSelectMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/LanguageAdapter/Bindings/StringSelect/VertixBot/UI-General/LanguageSelectMenu",
-                        "sourceEntity": "VertixBot/UI-General/LanguageSelectMenu",
-                        "handlerKind": "string-select",
-                        "flowName": "VertixBot/UI-General/LanguageFlow",
-                        "transition": "VertixBot/UI-General/LanguageFlow/Transitions/SelectLanguage",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/LanguageFlow/States/LanguageSelected"
-                        },
-                        "mutations": [
-                            {
-                                "type": "set",
-                                "path": [
-                                    "selectedLanguage"
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/DoneButton",
-                "handler": "VertixBot/UI-General/LanguageAdapter/Bindings/Button/VertixBot/UI-General/DoneButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/LanguageAdapter/Bindings/Button/VertixBot/UI-General/DoneButton",
-                        "sourceEntity": "VertixBot/UI-General/DoneButton",
-                        "handlerKind": "button",
-                        "flowName": "VertixBot/UI-General/LanguageFlow",
-                        "transition": "VertixBot/UI-General/LanguageFlow/Transitions/Done",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/LanguageFlow/States/Completed"
-                        }
-                    }
-                ]
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
             }
         ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getReplyArgs",
@@ -161,7 +57,7 @@
     },
     {
         "name": "VertixBot/UI-General/SetupAdapter",
-        "adapterKind": "base",
+        "adapterKind": "execution",
         "component": "VertixBot/UI-General/SetupComponent",
         "module": "VertixBot/UI-General/Module",
         "instanceType": "Dynamic",
@@ -170,111 +66,23 @@
             "GuildText"
         ],
         "permissions": "268435504",
-        "executionSteps": [],
-        "bindings": [
+        "executionSteps": [
             {
-                "entity": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
-                "handler": "VertixBot/UI-General/SetupAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterCreateSelectMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/SetupAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterCreateSelectMenu",
-                        "sourceEntity": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
-                        "handlerKind": "string-select",
-                        "flowName": "VertixBot/UI-General/SetupFlow",
-                        "transition": "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannel",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
+                "key": "default",
+                "elementsGroup": "VertixBot/UI-General/SetupElementsGroup",
+                "embedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
             },
             {
-                "entity": "VertixBot/UI-General/SetupBadwordsEditButton",
-                "handler": "VertixBot/UI-General/SetupAdapter/Bindings/Button/VertixBot/UI-General/SetupBadwordsEditButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/SetupAdapter/Bindings/Button/VertixBot/UI-General/SetupBadwordsEditButton",
-                        "sourceEntity": "VertixBot/UI-General/SetupBadwordsEditButton",
-                        "handlerKind": "button",
-                        "flowName": "VertixBot/UI-General/SetupFlow",
-                        "transition": "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/LanguageChooseButton",
-                "handler": "VertixBot/UI-General/SetupAdapter/Bindings/Button/VertixBot/UI-General/LanguageChooseButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/SetupAdapter/Bindings/Button/VertixBot/UI-General/LanguageChooseButton",
-                        "sourceEntity": "VertixBot/UI-General/LanguageChooseButton",
-                        "handlerKind": "button",
-                        "flowName": "VertixBot/UI-General/SetupFlow",
-                        "transition": "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/BadwordsModal",
-                "handler": "VertixBot/UI-General/SetupAdapter/Bindings/Modal/VertixBot/UI-General/BadwordsModal",
-                "kind": "modal",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/SetupAdapter/Bindings/Modal/VertixBot/UI-General/BadwordsModal",
-                        "sourceEntity": "VertixBot/UI-General/BadwordsModal",
-                        "handlerKind": "modal",
-                        "flowName": "VertixBot/UI-General/SetupFlow",
-                        "transition": "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/SetupScalingConfigModal",
-                "handler": "VertixBot/UI-General/SetupAdapter/Bindings/Modal/VertixBot/UI-General/SetupScalingConfigModal",
-                "kind": "modal",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/SetupAdapter/Bindings/Modal/VertixBot/UI-General/SetupScalingConfigModal",
-                        "sourceEntity": "VertixBot/UI-General/SetupScalingConfigModal",
-                        "handlerKind": "modal",
-                        "flowName": "VertixBot/UI-General/SetupFlow",
-                        "transition": "VertixBot/UI-General/SetupFlow/Transitions/SubmitScalingConfig",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/SetupMasterEditSelectMenu",
-                "handler": "VertixBot/UI-General/SetupAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterEditSelectMenu",
-                "kind": "string-select",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/SetupAdapter/Bindings/StringSelect/VertixBot/UI-General/SetupMasterEditSelectMenu",
-                        "sourceEntity": "VertixBot/UI-General/SetupMasterEditSelectMenu",
-                        "handlerKind": "string-select",
-                        "flowName": "VertixBot/UI-General/SetupFlow",
-                        "transition": "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/SetupFlow/States/Initial"
-                        }
-                    }
-                ]
+                "key": "maxMasterChannelsReached",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
             }
         ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getReplyArgs",
@@ -284,7 +92,7 @@
     },
     {
         "name": "VertixBot/UI-General/WelcomeAdapter",
-        "adapterKind": "base",
+        "adapterKind": "execution",
         "component": "VertixBot/UI-General/WelcomeComponent",
         "module": "VertixBot/UI-General/Module",
         "instanceType": "Static",
@@ -293,60 +101,16 @@
             "GuildText"
         ],
         "permissions": "1024",
-        "executionSteps": [],
-        "bindings": [
+        "executionSteps": [
             {
-                "entity": "VertixBot/UI-General/WelcomeSetupButton",
-                "handler": "VertixBot/UI-General/WelcomeAdapter/Bindings/Button/VertixBot/UI-General/WelcomeSetupButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/WelcomeAdapter/Bindings/Button/VertixBot/UI-General/WelcomeSetupButton",
-                        "sourceEntity": "VertixBot/UI-General/WelcomeSetupButton",
-                        "handlerKind": "button",
-                        "flowName": "VertixBot/UI-General/WelcomeFlow",
-                        "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/WelcomeFlow/States/SetupClicked"
-                        }
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/WelcomeSupportButton",
-                "handler": "VertixBot/UI-General/WelcomeAdapter/Bindings/Button/VertixBot/UI-General/WelcomeSupportButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/WelcomeAdapter/Bindings/Button/VertixBot/UI-General/WelcomeSupportButton",
-                        "sourceEntity": "VertixBot/UI-General/WelcomeSupportButton",
-                        "handlerKind": "button",
-                        "flowName": "VertixBot/UI-General/WelcomeFlow",
-                        "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/WelcomeFlow/States/SupportClicked"
-                        }
-                    }
-                ]
-            },
-            {
-                "entity": "VertixBot/UI-General/WelcomeInviteButton",
-                "handler": "VertixBot/UI-General/WelcomeAdapter/Bindings/Button/VertixBot/UI-General/WelcomeInviteButton",
-                "kind": "button",
-                "flowTriggers": [
-                    {
-                        "handlerId": "VertixBot/UI-General/WelcomeAdapter/Bindings/Button/VertixBot/UI-General/WelcomeInviteButton",
-                        "sourceEntity": "VertixBot/UI-General/WelcomeInviteButton",
-                        "handlerKind": "button",
-                        "flowName": "VertixBot/UI-General/WelcomeFlow",
-                        "transition": "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-General/WelcomeFlow/States/InviteClicked"
-                        }
-                    }
-                ]
+                "key": "default",
+                "elementsGroup": "VertixBot/UI-General/WelcomeElementsGroup",
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
             }
         ],
+        "bindings": [],
         "hooks": [
             {
                 "hook": "getStartArgs",

@@ -2,8 +2,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { ChannelType, PermissionFlagsBits, PermissionsBitField } from "discord.js";
 
-import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
-import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
+import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
 import { WelcomeComponent } from "@vertix.gg/bot/src/ui/general/welcome/welcome-component";
 
@@ -11,14 +10,12 @@ import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 import type { BaseMessageOptions, InteractionReplyOptions, VoiceChannel } from "discord.js";
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultStringSelectMenuChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 type WelcomeInteraction = UIDefaultButtonChannelVoiceInteraction;
-type WelcomeContext = IAdapterContext<WelcomeInteraction, UIArgs>;
 
 async function replyEphemeral(
     interaction: WelcomeInteraction | UIDefaultStringSelectMenuChannelTextInteraction,
@@ -33,82 +30,64 @@ async function replyEphemeral(
     }
 }
 
-const WelcomeAdapterBase = new AdapterBuilderBase<
+const WelcomeAdapterBase = new AdminExecutionAdapterBuilder<
     VoiceChannel,
     WelcomeInteraction,
-        typeof UIAdapterBase<VoiceChannel, WelcomeInteraction>,
-        UIArgs,
-        WelcomeContext
->( "VertixBot/UI-General/WelcomeAdapter", UIAdapterBase )
+    UIArgs
+>( "VertixBot/UI-General/WelcomeAdapter" )
     .setComponent( WelcomeComponent )
     .setPermissions( new PermissionsBitField( PermissionFlagsBits.ViewChannel ) )
     .setChannelTypes( [ ChannelType.GuildVoice, ChannelType.GuildText ] )
     .getStartArgs( async() => ( {} ) )
     .getReplyArgs( async() => ( {} ) )
-    .onEntityMap( async( { bindButton } ) => {
-        bindButton<WelcomeInteraction>(
-            "VertixBot/UI-General/WelcomeSetupButton",
-            async( context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                await uiService.get( "VertixBot/UI-General/SetupAdapter" )?.ephemeral( interaction );
-                context.deleteArgs( interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/WelcomeFlow",
-                        transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/WelcomeFlow/States/SetupClicked"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindButton<WelcomeInteraction>(
-            "VertixBot/UI-General/WelcomeSupportButton",
-            async( context, interaction ) => {
-                await replyEphemeral( interaction, {
-                    content: "Support link/info coming soon. (Placeholder)",
-                    components: []
-                } );
-                context.deleteArgs( interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/WelcomeFlow",
-                        transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSupport",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/WelcomeFlow/States/SupportClicked"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindButton<WelcomeInteraction>(
-            "VertixBot/UI-General/WelcomeInviteButton",
-            async( context, interaction ) => {
-                await replyEphemeral( interaction, {
-                    content: "Invite link coming soon. (Placeholder)",
-                    components: []
-                } );
-                context.deleteArgs( interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/WelcomeFlow",
-                        transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickInvite",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/WelcomeFlow/States/InviteClicked"
-                        }
-                    }
-                ]
-            }
-        );
+    .defineTransactions( tx => {
+        tx.setInitialState( "Initial" )
+            .addState( "Initial", {
+                executionStep: "default",
+                elementsGroup: "VertixBot/UI-General/WelcomeElementsGroup"
+            } )
+            .addTransition( "ClickSetup", { from: "Initial", to: "Initial" } )
+            .addTransition( "NoOp", { from: "Initial", to: "Initial" } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-General/SetupFlow",
+                description: "Handoff to Setup flow when Setup button is clicked",
+                sourceState: "VertixBot/UI-General/WelcomeFlow/States/Initial",
+                transition: "VertixBot/UI-General/WelcomeFlow/Transitions/ClickSetup"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-General/WelcomeSetupButton",
+                transitionName: "ClickSetup",
+                targetFlowName: "VertixBot/UI-General/SetupFlow"
+            } )
+            .bindButton<WelcomeInteraction>(
+                "VertixBot/UI-General/WelcomeSetupButton",
+                "ClickSetup",
+                async( context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService.get( "VertixBot/UI-General/SetupAdapter" )?.ephemeral( interaction );
+                    context.deleteArgs( interaction );
+                }
+            )
+            .bindButton<WelcomeInteraction>(
+                "VertixBot/UI-General/WelcomeSupportButton",
+                "NoOp",
+                async( _context, interaction ) => {
+                    await replyEphemeral( interaction, {
+                        content: "Support link/info coming soon. (Placeholder)",
+                        components: []
+                    } );
+                }
+            )
+            .bindButton<WelcomeInteraction>(
+                "VertixBot/UI-General/WelcomeInviteButton",
+                "NoOp",
+                async( _context, interaction ) => {
+                    await replyEphemeral( interaction, {
+                        content: "Invite link coming soon. (Placeholder)",
+                        components: []
+                    } );
+                }
+            );
     } )
     .build();
 

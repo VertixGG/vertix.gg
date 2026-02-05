@@ -9,7 +9,9 @@ import type {
     BindingFlowTriggerConfig
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type {
-    FlowContextMutationDefinition
+    FlowContextMutationDefinition,
+    FlowIntegrationPointDefinition,
+    FlowEdgeSourceMappingDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 export type HandlerKind = "button" | "modal" | "modalWithButton" | "selectMenu" | "userSelectMenu";
@@ -67,6 +69,11 @@ export interface StateConfig {
      * Which embeds group to use for preview (if different from default).
      */
     previewEmbedsGroup?: string;
+    /**
+     * If true, this state is hidden from flow visualization.
+     * Use for ephemeral error states or intermediate states that don't represent UI.
+     */
+    hidden?: boolean;
 }
 
 export interface TransitionConfig {
@@ -110,6 +117,18 @@ export interface VirtualFlowDefinition {
      * Use when a system flow already provides visualization for this adapter.
      */
     hidden?: boolean;
+    /**
+     * Entry points - how other flows can enter this flow.
+     */
+    entryPoints: FlowIntegrationPointDefinition[];
+    /**
+     * Handoff points - how this flow can hand off to other flows.
+     */
+    handoffPoints: FlowIntegrationPointDefinition[];
+    /**
+     * Edge source mappings - visual connections from elements to other flows.
+     */
+    edgeSourceMappings: FlowEdgeSourceMappingDefinition[];
 }
 
 export class TransactionBuilder<TContext = unknown> {
@@ -117,10 +136,13 @@ export class TransactionBuilder<TContext = unknown> {
     private initialState: string = "";
     private states = new Map<string, StateConfig>();
     private transitions = new Map<string, TransitionConfig>();
-    private elementBindings = new Map<string, string>(); // elementId -> transitionName
+    private elementBindings = new Map<string, string>();
     private modalButtonBindings: ModalButtonBinding[] = [];
     private handlerBindings: ElementHandlerBinding<TContext>[] = [];
     private isHidden: boolean = false;
+    private entryPointsList: FlowIntegrationPointDefinition[] = [];
+    private handoffPointsList: FlowIntegrationPointDefinition[] = [];
+    private edgeSourceMappingsList: FlowEdgeSourceMappingDefinition[] = [];
 
     public constructor( flowName: string ) {
         this.flowName = flowName;
@@ -437,6 +459,89 @@ export class TransactionBuilder<TContext = unknown> {
     }
 
     /**
+     * Add an entry point - defines how another flow can enter this flow.
+     */
+    public addEntryPoint( options: {
+        flowName: string;
+        transition: string;
+        targetState?: string;
+        description?: string;
+        integrationType?: "GENERIC" | "COMMAND" | "EVENT";
+    } ): this {
+        this.entryPointsList.push( {
+            flowName: options.flowName,
+            description: options.description ?? `Entry from ${ options.flowName }`,
+            targetState: options.targetState ?? this.initialState,
+            transition: options.transition,
+            integrationType: options.integrationType ?? "GENERIC"
+        } );
+        return this;
+    }
+
+    /**
+     * Add a handoff point - defines how this flow can hand off to another flow.
+     */
+    public addHandoffPoint( options: {
+        flowName: string;
+        sourceState?: string;
+        targetState?: string;
+        transition?: string;
+        description?: string;
+        requiredData?: string[];
+        integrationType?: "GENERIC" | "COMMAND" | "EVENT";
+    } ): this {
+        this.handoffPointsList.push( {
+            flowName: options.flowName,
+            description: options.description ?? `Handoff to ${ options.flowName }`,
+            sourceState: options.sourceState,
+            targetState: options.targetState,
+            transition: options.transition,
+            requiredData: options.requiredData,
+            integrationType: options.integrationType ?? "GENERIC"
+        } );
+        return this;
+    }
+
+    /**
+     * Add an edge source mapping - defines visual connection from an element to another flow.
+     */
+    public addEdgeSourceMapping( options: {
+        triggeringElementId: string;
+        transitionName: string;
+        targetFlowName: string;
+    } ): this {
+        this.edgeSourceMappingsList.push( {
+            triggeringElementId: options.triggeringElementId,
+            transitionName: options.transitionName.includes( "/" ) 
+                ? options.transitionName 
+                : this.fullTransitionName( options.transitionName ),
+            targetFlowName: options.targetFlowName
+        } );
+        return this;
+    }
+
+    /**
+     * Get entry points.
+     */
+    public getEntryPoints(): FlowIntegrationPointDefinition[] {
+        return [ ...this.entryPointsList ];
+    }
+
+    /**
+     * Get handoff points.
+     */
+    public getHandoffPoints(): FlowIntegrationPointDefinition[] {
+        return [ ...this.handoffPointsList ];
+    }
+
+    /**
+     * Get edge source mappings.
+     */
+    public getEdgeSourceMappings(): FlowEdgeSourceMappingDefinition[] {
+        return [ ...this.edgeSourceMappingsList ];
+    }
+
+    /**
      * Build definition for export/visualization.
      */
     public build(): VirtualFlowDefinition {
@@ -448,7 +553,10 @@ export class TransactionBuilder<TContext = unknown> {
             elementBindings: new Map( this.elementBindings ),
             modalButtonBindings: [ ...this.modalButtonBindings ],
             handlerBindings: [ ...this.handlerBindings ],
-            hidden: this.isHidden
+            hidden: this.isHidden,
+            entryPoints: [ ...this.entryPointsList ],
+            handoffPoints: [ ...this.handoffPointsList ],
+            edgeSourceMappings: [ ...this.edgeSourceMappingsList ]
         };
     }
 

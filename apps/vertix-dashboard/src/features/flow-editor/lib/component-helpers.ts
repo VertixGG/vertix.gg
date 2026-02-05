@@ -40,7 +40,7 @@ export interface ComponentPreview {
 }
 
 function normalizeElementsGroupName( name: string ): string {
-    return name.replace( /\/ElementsGroup$/, "" );
+    return name.replace( /ElementsGroup$/, "" );
 }
 
 function normalizeEmbedsGroupName( name: string ): string {
@@ -187,29 +187,34 @@ function findElementsGroupByExecutionStep(
 
     const candidates = buildElementsGroupCandidates( executionStep );
 
-    return component.elementsGroups.find( group => {
+    // Find the best matching group (longest prefix match)
+    let bestMatch: UIExportedComponent[ "elementsGroups" ][ number ] | undefined;
+    let bestMatchLength = 0;
+
+    for ( const group of component.elementsGroups ) {
         const normalizedGroupName = normalizeElementsGroupName( group.name ).toLowerCase();
         const groupLastSegment = normalizedGroupName.split( "/" ).pop() ?? "";
 
-        return candidates.some( candidate => {
+        for ( const candidate of candidates ) {
             const normalizedCandidate = normalizeElementsGroupName( candidate ).toLowerCase();
             const candidateLastSegment = normalizedCandidate.split( "/" ).pop() ?? "";
 
-            if ( normalizedGroupName === normalizedCandidate ) {
-                return true;
+            // Exact match is always best
+            if ( normalizedGroupName === normalizedCandidate || groupLastSegment === candidateLastSegment ) {
+                return group;
             }
 
-            if ( groupLastSegment === candidateLastSegment ) {
-                return true;
+            // Check if candidate starts with the group name (prefix match)
+            // e.g., "setupeditmaster" starts with "setupedit"
+            // Prefer longer prefix matches
+            if ( candidateLastSegment.startsWith( groupLastSegment ) && groupLastSegment.length > bestMatchLength ) {
+                bestMatch = group;
+                bestMatchLength = groupLastSegment.length;
             }
+        }
+    }
 
-            if ( groupLastSegment.includes( candidateLastSegment ) ) {
-                return true;
-            }
-
-            return false;
-        } );
-    } );
+    return bestMatch;
 }
 
 export function extractComponentPreview(

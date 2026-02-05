@@ -59,6 +59,30 @@ export function createComponentToFlowEdge(
     };
 }
 
+export const FLOW_EXIT_HANDLE_ID = "exit";
+
+export function createComponentToFlowExitEdge(
+    compId: string,
+    flowId: string,
+    flowName: string,
+    buttonName: string
+): Edge {
+    return {
+        id: `edge-finish-exit-${ flowName }-${ compId }-${ buttonName }`,
+        source: compId,
+        target: flowId,
+        sourceHandle: `btn-${ buttonName }`,
+        targetHandle: FLOW_EXIT_HANDLE_ID,
+        zIndex: Z_INDEX.EDGE_OVERLAY,
+        label: "Finish",
+        style: { stroke: EDGE_COLORS.STEP_TRANSITION, ...EDGE_STYLES.DEFAULT },
+        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.STEP_TRANSITION, ...MARKER_SIZES.MEDIUM },
+        labelStyle: { fill: EDGE_COLORS.STEP_TRANSITION, fontSize: 10, fontWeight: 600 },
+        labelBgPadding: [ 6, 2 ],
+        data: { weight: 1 }
+    };
+}
+
 export function createComponentToComponentEdge(
     sourceCompId: string,
     targetCompId: string,

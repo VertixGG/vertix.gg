@@ -1,7 +1,7 @@
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { AdminAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-adapter-builder";
+import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
 import { LanguageComponent } from "@vertix.gg/bot/src/ui/general/language/language-component";
 
@@ -17,55 +17,45 @@ type LanguageInteractions =
     | ButtonInteraction<"cached">
     | StringSelectMenuInteraction<"cached">;
 
-const LanguageAdapter = new AdminAdapterBuilder<BaseGuildTextChannel, LanguageInteractions, UIArgs>(
+const LanguageAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, LanguageInteractions, UIArgs>(
     "VertixBot/UI-General/LanguageAdapter"
 )
     .setComponent( LanguageComponent )
     .getReplyArgs( async() => ( {} ) )
-    .onEntityMap( async( { bindSelectMenu, bindButton } ) => {
-        bindSelectMenu(
-            "VertixBot/UI-General/LanguageSelectMenu",
-            async( context, interaction ) => {
-                const language = interaction.values[ 0 ];
+    .defineTransactions( tx => {
+        tx.setInitialState( "Initial" )
+            .addState( "Initial", { executionStep: "default" } )
+            .addState( "LanguageSelected", { executionStep: "default" } )
+            .addState( "Completed", { executionStep: "default" } )
+            .addTransition( "SelectLanguage", { from: [ "Initial", "LanguageSelected" ], to: "LanguageSelected" } )
+            .addTransition( "Done", { from: [ "Initial", "LanguageSelected" ], to: "Completed" } )
+            .addEntryPoint( {
+                flowName: "VertixBot/UI-General/SetupFlow",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                targetState: "VertixBot/UI-General/LanguageFlow/States/Initial",
+                description: "Entry point triggered by SetupFlow via Choose Language button"
+            } )
+            .bindSelectMenu<StringSelectMenuInteraction<"cached">>(
+                "VertixBot/UI-General/LanguageSelectMenu",
+                "SelectLanguage",
+                async( context, interaction ) => {
+                    const language = interaction.values[ 0 ];
 
-                await GuildDataManager.$.setLanguage( interaction.guild, language );
+                    await GuildDataManager.$.setLanguage( interaction.guild, language );
 
-                await context.editReply( interaction, {
-                    _language: language
-                } );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/LanguageFlow",
-                        transition: "VertixBot/UI-General/LanguageFlow/Transitions/SelectLanguage",
-                        mutations: [ { type: "set", path: [ "selectedLanguage" ] } ],
-                        navigation: {
-                            targetState: "VertixBot/UI-General/LanguageFlow/States/LanguageSelected"
-                        }
-                    }
-                ]
-            }
-        );
-
-        bindButton(
-            "VertixBot/UI-General/DoneButton",
-            async( context, interaction ) => {
-                const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                await uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
-            },
-            {
-                flowTriggers: [
-                    {
-                        flowName: "VertixBot/UI-General/LanguageFlow",
-                        transition: "VertixBot/UI-General/LanguageFlow/Transitions/Done",
-                        navigation: {
-                            targetState: "VertixBot/UI-General/LanguageFlow/States/Completed"
-                        }
-                    }
-                ]
-            }
-        );
+                    await context.editReply( interaction, {
+                        _language: language
+                    } );
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-General/DoneButton",
+                "Done",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService.get( "VertixBot/UI-General/SetupAdapter" )?.editReply( interaction );
+                }
+            );
     } )
     .build();
 

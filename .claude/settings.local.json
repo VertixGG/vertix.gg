@@ -26,7 +26,12 @@
       "Bash(npx prisma generate:*)",
       "Bash(python3:*)",
       "Bash(node:*)",
-      "Bash(pnpm --filter vertix-dashboard tsc:*)"
+      "Bash(pnpm --filter vertix-dashboard tsc:*)",
+      "Bash(git stash:*)",
+      "mcp__chrome-devtools__list_pages",
+      "Bash(lsof:*)",
+      "Bash(echo:*)",
+      "Bash(bun -e:*)"
     ]
   }
 }

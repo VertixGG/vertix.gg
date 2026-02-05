@@ -1,6 +1,6 @@
 {
   "code": "ru",
-  "name": "Russian",
+  "name": "Русский",
   "flag": "🇷🇺",
   "elements": {
     "buttons": [
@@ -13,13 +13,13 @@
       {
         "name": "VertixBot/UI-General/DoneButton",
         "content": {
-          "label": "✔ Готово"
+          "label": "✓ Готово"
         }
       },
       {
         "name": "VertixBot/UI-General/LanguageChooseButton",
         "content": {
-          "label": "Выбрать язык"
+          "label": "Выберите язык"
         }
       },
       {
@@ -31,7 +31,7 @@
       {
         "name": "VertixBot/UI-General/SetupBadwordsEditButton",
         "content": {
-          "label": "Изменить запрещенные слова"
+          "label": "Редактировать запрещённые слова"
         }
       },
       {
@@ -73,7 +73,7 @@
       {
         "name": "VertixBot/UI-General/WizardFinishButton",
         "content": {
-          "label": "✔ Готово"
+          "label": "✔ Завершить"
         }
       },
       {
@@ -91,19 +91,19 @@
       {
         "name": "VertixBot/UI-V2/ClaimStartButton",
         "content": {
-          "label": "завоевать канал"
+          "label": "Забрать"
         }
       },
       {
         "name": "VertixBot/UI-V2/ClaimVoteAddButton",
         "content": {
-          "label": "голосовать за {displayName}"
+          "label": "Голосовать за {displayName}"
         }
       },
       {
         "name": "VertixBot/UI-V2/ClaimVoteStepInButton",
         "content": {
-          "label": "конкурировать"
+          "label": "Участвовать"
         }
       },
       {
@@ -145,7 +145,7 @@
         "content": {
           "label": "{displayText}",
           "options": {
-            "shownText": "Показан",
+            "shownText": "Видимый",
             "hiddenText": "Скрытый"
           }
         }
@@ -153,7 +153,7 @@
       {
         "name": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
         "content": {
-          "label": "Завоевать"
+          "label": "Забрать"
         }
       },
       {
@@ -177,31 +177,31 @@
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
         "content": {
-          "label": "Только для новых"
+          "label": "Только применить"
         }
       },
       {
         "name": "VertixBot/UI-V3/ClaimStartButton",
         "content": {
-          "label": "завоевать канал"
+          "label": "Забрать"
         }
       },
       {
         "name": "VertixBot/UI-V3/ClaimVoteAddButton",
         "content": {
-          "label": "голосовать за {displayName}"
+          "label": "Голосовать за {displayName}"
         }
       },
       {
         "name": "VertixBot/UI-V3/ClaimVoteStepInButton",
         "content": {
-          "label": "конкурировать"
+          "label": "Участвовать"
         }
       },
       {
         "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
         "content": {
-          "label": "Завоевать"
+          "label": "Забрать"
         }
       },
       {
@@ -225,7 +225,7 @@
       {
         "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
         "content": {
-          "label": "Редактировать основное сообщение"
+          "label": "Редактировать главное сообщение"
         }
       },
       {
@@ -271,6 +271,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+        "content": {
+          "label": "Редактировать настройки"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
         "content": {
           "label": "Немедленно"
@@ -279,13 +285,7 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
         "content": {
-          "label": "Только для новых"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
-        "content": {
-          "label": "Изменить настройки"
+          "label": "Только применить"
         }
       }
     ],
@@ -293,22 +293,15 @@
       {
         "name": "VertixBot/UI-General/BadwordsInput",
         "content": {
-          "label": "РАЗДЕЛИТЕ = (,) НЕТОЧНОГО СОВПАДЕНИЯ = (*)",
+          "label": "РАЗДЕЛЯЙТЕ `,` ДЛЯ НЕТОЧНЫХ СОВПАДЕНИЙ ИСПОЛЬЗУЙТЕ `*`",
           "placeholder": "Нет"
         }
       },
       {
         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
         "content": {
-          "label": "УСТАНОВИТЬ НАЗВАНИЕ ПО УМОЛЧАНИЮ",
-          "placeholder": "{user}'s Канал"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
-        "content": {
-          "label": "ПРЕФИКС ИМЕНИ КАНАЛА",
-          "placeholder": "### Room - {index} ###"
+          "label": "УСТАНОВИТЕ НАЗВАНИЕ ДИНАМИЧЕСКИХ КАНАЛОВ ПО УМОЛЧАНИЮ",
+          "placeholder": "Канал {user}"
         }
       },
       {
@@ -319,22 +312,29 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "ПРЕФИКС НАЗВАНИЯ КАНАЛА",
+          "placeholder": "### Комната - {index} ###"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
         "content": {
-          "label": "ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 - БЕЗ ОГРАНИЧЕНИЙ)",
+          "label": "УСТАНОВИТЕ ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 ДЛЯ БЕЗЛИМИТА)",
           "placeholder": "0 - 99"
         }
       },
       {
         "name": "VertixBot/UI-V2/DynamicChannelMetaRenameInput",
         "content": {
-          "label": "ВЫБЕРИТЕ ИМЯ ДЛЯ КАНАЛА"
+          "label": "ВЫБЕРИТЕ НАЗВАНИЕ ДЛЯ ВАШЕГО КАНАЛА"
         }
       },
       {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
-          "label": "ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 - БЕЗ ОГРАНИЧЕНИЙ)",
+          "label": "УСТАНОВИТЕ ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 ДЛЯ БЕЗЛИМИТА)",
           "placeholder": "0 - 99"
         }
       },
@@ -353,7 +353,7 @@
       {
         "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
         "content": {
-          "label": "ВЫБЕРИТЕ ИМЯ ДЛЯ КАНАЛА"
+          "label": "ВЫБЕРИТЕ НАЗВАНИЕ ДЛЯ ВАШЕГО КАНАЛА"
         }
       }
     ],
@@ -378,9 +378,9 @@
               "{stateOn}": "∙🟢 Вкл",
               "{stateOff}": "∙🔴 Выкл"
             },
-            "dynamicChannelMentionableLabel": "@ ∙ Уведомления в основном сообщении",
-            "dynamicChannelAutoSaveLabel": "⫸ ∙ Авто сохранение динамического канала",
-            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Отправлять логи в конкретный канал"
+            "dynamicChannelMentionableLabel": "@ ∙ Упоминать пользователя в главном сообщении",
+            "dynamicChannelAutoSaveLabel": "⫸ ∙ Автосохранение динамического канала",
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Отправлять логи в другой канал"
           }
         }
       },
@@ -390,13 +390,32 @@
           "placeholder": "🌍 Выберите язык",
           "selectOptions": [
             {
-              "label": "🇺🇸 Английский"
+              "label": "🇺🇸 Английский",
+              "value": "en"
             },
             {
-              "label": "🇬🇷 Греческий"
+              "label": "🇷🇺 Русский",
+              "value": "ru"
             },
             {
-              "label": "🇷🇺 Русский"
+              "label": "🇬🇷 Греческий",
+              "value": "el"
+            },
+            {
+              "label": "🇪🇸 Испанский",
+              "value": "es"
+            },
+            {
+              "label": "🇫🇷 Французский",
+              "value": "fr"
+            },
+            {
+              "label": "🇩🇪 Немецкий",
+              "value": "de"
+            },
+            {
+              "label": "🇯🇵 Японский",
+              "value": "ja"
             }
           ]
         }
@@ -404,13 +423,13 @@
       {
         "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
         "content": {
-          "placeholder": "❖ ∙ Редактировать главный канал(ы)"
+          "placeholder": "❖ ∙ Редактировать мастер-канал(ы)"
         }
       },
       {
         "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
         "content": {
-          "placeholder": "🛡️ ∙ Everyone рол",
+          "placeholder": "🛡️ ∙ Роль Everyone",
           "selectOptions": [
             {
               "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}"
@@ -421,14 +440,14 @@
               "{stateOn}": "∙🟢 Вкл",
               "{stateOff}": "∙🔴 Выкл"
             },
-            "dynamicChannelIncludeEveryoneRoleLabel": "@everyone рол"
+            "dynamicChannelIncludeEveryoneRoleLabel": "Включить роль everyone"
           }
         }
       },
       {
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
-          "placeholder": "Выберите роли"
+          "placeholder": "Выберите проверенные роли"
         }
       },
       {
@@ -440,16 +459,16 @@
               "label": "Переименовать"
             },
             {
-              "label": "Ограничить"
+              "label": "Лимит"
             },
             {
               "label": "Очистить чат"
             },
             {
-              "label": "Изменить состояние"
+              "label": "Публичный/Приватный"
             },
             {
-              "label": "Изменить видимость"
+              "label": "Видимый/Скрытый"
             },
             {
               "label": "Доступ"
@@ -461,7 +480,7 @@
               "label": "Передать"
             },
             {
-              "label": "Завоевать"
+              "label": "Забрать"
             }
           ]
         }
@@ -469,31 +488,31 @@
       {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
         "content": {
-          "placeholder": "🫵 Заблокировать доступ"
+          "placeholder": "🫵 Заблокировать доступ пользователю"
         }
       },
       {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
         "content": {
-          "placeholder": "👎 Снять доступ"
+          "placeholder": "👎 Отозвать доступ"
         }
       },
       {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
         "content": {
-          "placeholder": "👍️ Предоставить доступ"
+          "placeholder": "👍 Предоставить доступ"
         }
       },
       {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
         "content": {
-          "placeholder": "👢 Кикнуть"
+          "placeholder": "👢 Выгнать пользователя"
         }
       },
       {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
         "content": {
-          "placeholder": "🤙 Разблокировать доступ"
+          "placeholder": "🤙 Разблокировать доступ пользователю"
         }
       },
       {
@@ -520,7 +539,7 @@
               "label": "∙ Изменить кнопки канала"
             },
             {
-              "label": "∙ Изменить роли канала"
+              "label": "∙ Изменить проверенные роли канала"
             }
           ]
         }
@@ -546,7 +565,7 @@
               "label": "Регион"
             },
             {
-              "label": "Редактировать основное сообщение"
+              "label": "Редактировать главное сообщение"
             },
             {
               "label": "Очистить чат"
@@ -558,7 +577,7 @@
               "label": "Передать"
             },
             {
-              "label": "Завоевать"
+              "label": "Забрать"
             }
           ]
         }
@@ -566,31 +585,31 @@
       {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
         "content": {
-          "placeholder": "🫵 Заблокировать доступ"
+          "placeholder": "🫵 Заблокировать доступ пользователю"
         }
       },
       {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
         "content": {
-          "placeholder": "👎 Снять доступ"
+          "placeholder": "👎 Отозвать доступ"
         }
       },
       {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
         "content": {
-          "placeholder": "👍️ Предоставить доступ"
+          "placeholder": "👍 Предоставить доступ"
         }
       },
       {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
         "content": {
-          "placeholder": "👢 Кикнуть"
+          "placeholder": "👢 Выгнать пользователя"
         }
       },
       {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
         "content": {
-          "placeholder": "🤙 Разблокировать доступ"
+          "placeholder": "🤙 Разблокировать доступ пользователю"
         }
       },
       {
@@ -684,7 +703,7 @@
               "label": "∙ Изменить кнопки канала"
             },
             {
-              "label": "∙ Изменить роли канала"
+              "label": "∙ Изменить проверенные роли канала"
             }
           ]
         }
@@ -696,14 +715,14 @@
       "name": "VertixBot/UI-General/DisabledWhileClaimEmbed",
       "content": {
         "title": "😈 Действие отключено",
-        "description": "Действие отключено во время процесса запроса.\n\nПожалуйста, подождите, пока запрос завершится."
+        "description": "Действие отключено, пока идёт процесс захвата.\n\nПожалуйста, дождитесь завершения захвата."
       }
     },
     {
       "name": "VertixBot/UI-General/InvalidChannelTypeEmbed",
       "content": {
-        "title": "# Ой! Этот компонент ограничен в данном типе канала.",
-        "description": "Действие ограничено в данном типе канала, но доступны следующие типы каналов:\n\n{allowedTypes}\n\nПожалуйста, повторите действие в другом канале.",
+        "title": "# Упс! Этот компонент ограничен для данного типа канала.",
+        "description": "Действие ограничено для данного типа канала, но доступные типы каналов:\n\n{allowedTypes}\n\nПожалуйста, повторите действие в другом канале.",
         "arrayOptions": {
           "allowedTypes": {
             "format": "- {value}{separator}",
@@ -716,12 +735,16 @@
       "name": "VertixBot/UI-General/LanguageEmbed",
       "content": {
         "title": "🌍  Выберите язык",
-        "description": "__Текущий выбранный язык__: **{currentLanguage}**\n\nНе нашли свой язык?\n\nВы можете стать тем, кто переведет бота на ваш язык!\n Свяжитесь с намив нашем сервере поддержки и станьте одним из нас!\n\nОбнаружили ошибку в переводе? Пожалуйста, дайте нам знать!\n\nМы говорим на русском!",
+        "description": "__Текущий выбранный язык__: **{currentLanguage}**\n\nНе нашли свой язык?\n\nВы можете быть тем, кто переведёт бота на ваш язык!\nСвяжитесь с нами на нашем сервере поддержки и станьте переводчиком!\n\nНашли ошибку в переводе? Пожалуйста, сообщите нам!",
         "options": {
           "currentLanguage": {
             "en": "Английский",
+            "ru": "Русский",
             "el": "Греческий",
-            "ru": "Русский"
+            "es": "Испанский",
+            "fr": "Французский",
+            "de": "Немецкий",
+            "ja": "Японский"
           }
         }
       }
@@ -729,8 +752,8 @@
     {
       "name": "VertixBot/UI-General/MissingPermissionsEmbed",
       "content": {
-        "title": "🔐  Ой! Требуются определенные права доступа",
-        "description": "Для продолжения требуются некоторые права доступа, **{omitterDisplayName}** не имеет следующих разрешений:\n\n{missingPermissions}",
+        "title": "🔐  Упс! Требуются определённые права",
+        "description": "Для продолжения необходимы некоторые права, у **{omitterDisplayName}** отсутствуют следующие права:\n\n{missingPermissions}",
         "arrayOptions": {
           "missingPermissions": {
             "format": "- {value}{separator}",
@@ -742,30 +765,30 @@
     {
       "name": "VertixBot/UI-General/NothingChangedEmbed",
       "content": {
-        "title": "🤷 Ничего не изменилось",
-        "description": "Это может произойти, когда вы пытаетесь изменить что-то, что не может быть изменено, или остается таким же, как раньше."
+        "title": "🤷  Ничего не изменилось",
+        "description": "Это может произойти, когда вы пытаетесь изменить что-то, что нельзя изменить, или значение такое же, как и раньше."
       }
     },
     {
       "name": "VertixBot/UI-General/NotYourChannelEmbed",
       "content": {
         "title": "⛔  Это не ваш канал!",
-        "description": "Но вы можете открыть свой собственный канал :)\n\n Просто нажмите здесь: <#{masterChannelId}>"
+        "description": "Но вы можете открыть свой собственный канал :)\n\nПросто нажмите сюда: <#{masterChannelId}>"
       }
     },
     {
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
-        "title": "🛠  Настроить Vertix",
-        "description": "Откройте для себя безграничные возможности настройте и оптимизируйте свой сервер до совершенства!\n\nЧтобы создать новый мастер каналов, просто нажмите кнопку: \"`(➕ Создать мастер-канал)`\".\n\nмастер каналы - это генераторы динамических голосовых каналов, каждый с собственной уникальной конфигурацией.\n\nВозможность фильтрации неприемлемых слов позволяет настраивать ограничения для названий динамических каналов на уровне гильдии.\n\n_Текущие мастер каналы_:\n{masterChannelMessage}\n\n_Текущие неприемлемые слова_:\n{badwordsMessage}",
+        "title": "🛠  Настройка Vertix",
+        "description": "Откройте для себя безграничные возможности **Vertix**!\nНастройте и оптимизируйте свой сервер до совершенства.\n\nЧтобы создать новый мастер-канал, просто нажмите:\n`(➕ Создать мастер-канал)` кнопку.\n\nМастер-каналы — это генераторы динамических голосовых каналов, каждый со своей уникальной конфигурацией.\n\nНаша функция запрещённых слов позволяет настраивать ограничения на уровне сервера для названий динамических каналов.\n\n_**Текущие мастер-каналы**_:\n{masterChannelMessage}\n\n_Текущие запрещённые слова_:\n{badwordsMessage}\n\n-# 💡 Вы можете установить канал логов, редактируя мастер-канал.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
-            "{masterChannelMessageDefault}": "**Отсутствуют**"
+            "{masterChannelMessageDefault}": "**Нет**"
           },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
-            "{badwordsMessageDefault}": "**Отсутствуют**"
+            "{badwordsMessageDefault}": "**Нет**"
           },
           "none": "**Нет**"
         },
@@ -776,14 +799,14 @@
             "multiSeparator": "\n\n",
             "options": {
               "index": "**#{index}**",
-              "name": "▹ Имя: <#{id}>",
+              "name": "▹ Название: <#{id}>",
               "id": "▹ ID канала: `{id}`",
-              "channelsTemplateName": "▹ Название динамического канала: `{channelsTemplateName}`",
+              "channelsTemplateName": "▹ Название динамических каналов: `{channelsTemplateName}`",
               "channelsTemplateButtons": "▹ Кнопки: **{channelsTemplateButtons}**",
-              "channelsVerifiedRoles": "▹ Роли: {channelsVerifiedRoles}",
+              "channelsVerifiedRoles": "▹ Проверенные роли: {channelsVerifiedRoles}",
               "channelsLogsChannelId": "▹ Канал логов: {channelsLogsChannelId}",
               "channelsAutoSave": "▹ Автосохранение: `{channelsAutoSave}`",
-              "version": "▹ UI Version: {version}"
+              "version": "▹ Версия UI: `{version}`"
             }
           },
           "badwords": {
@@ -796,56 +819,56 @@
     {
       "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed",
       "content": {
-        "title": "🤷  Вы достигли лимита мастер каналов",
-        "description": "Вы можете создать не более **{maxMasterChannels}** мастер каналов в общей сложности."
+        "title": "🤷  Вы достигли лимита мастер-каналов",
+        "description": "Вы можете создать до **{maxMasterChannels}** мастер-каналов."
       }
     },
     {
       "name": "VertixBot/UI-General/SomethingWentWrongEmbed",
       "content": {
-        "title": "🤷 Ой, произошла ошибка",
+        "title": "🤷 Упс, произошла ошибка",
         "description": "Что-то пошло не так"
       }
     },
     {
       "name": "VertixBot/UI-General/WelcomeEmbed",
       "content": {
-        "title": "༄ Vertix здесь!",
-        "description": "Добро пожаловать в Vertix, невероятное дополнение для вашего сервера!\nДавайте сотрудничать и делать ваш сервер ещё лучше.\n\n**Настройка бота**\nНастройка бота - это легко! Просто следуйте этим простым шагам:\n- Введите `/setup`, чтобы создать ваш первый мастер-канал.\n- Нажмите \"`(➕ Создать мастер-канал)`\".\n- Измените названия каналов по умолчанию или нажмите **( `Далее ▶` )**, чтобы продолжить.\n- Выберите кнопки для канала или продолжайте со всеми функциями, затем нажмите **( `✓ Готово` )**.\n\nПоздравляем! Ваш мастер-канал создан. 🎉\n\nВы всегда можете изменить конфигурации, используя команду `/setup`.\n\n**Динамические каналы и мастер-канал**\nДинамические каналы наследуют все настройки от мастер-канала.\nЧтобы изменить настройки динамических каналов, просто настройте настройки мастер-канала `(➕ Новый канал)`.\n\n**Интерфейс кнопок**\nОбратите внимание, что интерфейс кнопок находится **внутри** динамического канала.\nВы можете получить к нему доступ, открыв чат динамического канала.\n\nЕсли вам нужна помощь или у вас есть какие-либо предложения, не стесняйтесь присоединиться к нашему серверу Discord! Мы будем рады помочь вам и услышать ваше мнение.\nПрисоединяйтесь к нам здесь: https://discord.gg/dEwKeQefUU"
+        "title": "༄ Vertix здесь, давайте начнём!",
+        "description": "Добро пожаловать в Vertix, невероятное дополнение к вашему серверу!\nДавайте сотрудничать и сделаем ваш сервер ещё лучше.\n\n**Настройка бота**\n- Введите `/setup` или нажмите кнопку `(🛠 Настройка)`.\n- Нажмите на `(➕ Создать мастер-канал)`\n- Следуйте инструкциям.\n\nВсё ещё не уверены? Ознакомьтесь с нашим [пошаговым руководством](https://vertix.gg/posts/how-to-setup).\n\nВы всегда можете изменить настройки с помощью команды `/setup`.\n\nЕсли вам нужна помощь или у вас есть предложения, присоединяйтесь к нашему серверу сообщества Discord! Мы будем рады помочь вам и услышать ваши отзывы.\n\nПрисоединяйтесь: https://discord.gg/dEwKeQefUU"
       }
     },
     {
       "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed",
       "content": {
-        "title": "👑  Вы снова владеете каналам!",
-        "description": "Пожалуйста, имейте в виду, что если вы не вернетесь в течение **{absentMinutes}** минут, канал снова станет доступным для запроса другими участниками.\n"
+        "title": "👑  Вы снова у руля!",
+        "description": "Обратите внимание, что если вы не вернётесь в течение **{absentMinutes}** минут, канал снова станет доступным для захвата другими участниками.\n"
       }
     },
     {
       "name": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed",
       "content": {
-        "title": "🤷  Вы уже внутри",
-        "description": "Ваши намерения ясны - вы уже номинировали себя в качестве потенциального владельца этого канала."
+        "title": "🤷  Вы уже участвуете",
+        "description": "Ваши намерения ясны — вы уже выдвинули себя кандидатом на владение этим каналом."
       }
     },
     {
       "name": "VertixBot/UI-V2/ClaimResultStepInEmbed",
       "content": {
-        "title": "😈  Канал может быть вашим",
-        "description": "Вы предложили себя в качестве потенциального владельца этого канала.\nУдачи!\n"
+        "title": "😈  Канал может стать вашим",
+        "description": "Вы выдвинули себя кандидатом на владение этим каналом.\nУдачи!\n"
       }
     },
     {
       "name": "VertixBot/UI-V2/ClaimResultVotedEmbed",
       "content": {
         "title": "🗳️  Вы проголосовали за {userDisplayName}",
-        "description": "Ваш голос отдан в пользу <@{userId}>."
+        "description": "Ваш голос отдан в пользу <@{userId}> для получения владения этим каналом."
       }
     },
     {
       "name": "VertixBot/UI-V2/ClaimResultVotedSameEmbed",
       "content": {
-        "title": "🗳️  Вы уже проголосовали за {userDisplayName}",
+        "title": "🗳️  Вы уже голосовали за {userDisplayName}",
         "description": "Ваш голос уже отдан в пользу <@{userId}>, вы можете проголосовать за кого-то другого, если передумали."
       }
     },
@@ -853,35 +876,35 @@
       "name": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed",
       "content": {
         "title": "🤷  Вы не можете голосовать за себя",
-        "description": "Замечательно, что вы верите в себя, но голосование за себя не разрешено в этой выборной кампании."
+        "description": "Здорово, что вы верите в себя, но голосование за себя не допускается в этих выборах."
       }
     },
     {
       "name": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed",
       "content": {
-        "title": "🗳️  Ваш голос был обновлен",
-        "description": "Вы только что изменили свой голос с <@{prevUserId}> на <@{currentUserId}>."
+        "title": "🗳️  Ваш голос обновлён",
+        "description": "Вы только что изменили свой голос с <@{prevUserId}> на <@{currentUserId}> за владение каналом."
       }
     },
     {
       "name": "VertixBot/UI-V2/ClaimStartEmbed",
       "content": {
         "title": "👋  {ownerDisplayName} покинул свой канал!",
-        "description": "<@{ownerId}> отсутствует уже более {absentMinutes} минут.\nБудете ли вы тем, кто возьмет инициативу в свои руки? Заявите его себе!"
+        "description": "<@{ownerId}> отсутствует более {absentMinutes} минут.\nБудете ли вы тем, кто возьмёт на себя ответственность? Заберите его себе!"
       }
     },
     {
       "name": "VertixBot/UI-V2/ClaimVoteEmbed",
       "content": {
-        "title": "👑  {candidatesCount} Кандидатов желают заявить этот канал",
-        "description": "Отсчет начался!\nЧерез всего лишь `{elapsedTimeFormatFraction}` голосование завершится.\nВ случае ничьей, <@{userInitiatorId}> станет новым владельцем.\n\n{candidatesState}",
+        "title": "👑  {candidatesCount} кандидатов хотят забрать этот канал",
+        "description": "Обратный отсчёт начался!\nЧерез `{elapsedTimeFormatFraction}` голосование завершится.\nВ случае ничьей <@{userInitiatorId}> станет новым владельцем.\n\n{candidatesState}",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунд",
-            "units": "секунды"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
+            "unit": "минуту",
             "units": "минут"
           },
           "elapsedTimeFormat": {
@@ -894,7 +917,7 @@
           },
           "candidatesState": {
             "{candidates}": "🏅 {candidates}",
-            "{candidatesDefault}": "Пока нет кандидатов."
+            "{candidatesDefault}": "Кандидатов пока нет."
           }
         },
         "arrayOptions": {
@@ -913,15 +936,15 @@
     {
       "name": "VertixBot/UI-V2/ClaimVoteStepInEmbed",
       "content": {
-        "title": "👑  {userInitiatorDisplayName} хочет заявить этот канал",
-        "description": "Если никто другой не вступит, <@{userInitiatorId}> станет гордым владельцем этого канала всего за `{elapsedTimeFormatFraction}`.",
+        "title": "👑  {userInitiatorDisplayName} хочет забрать этот канал",
+        "description": "Если никто другой не выступит, <@{userInitiatorId}> станет владельцем этого канала через `{elapsedTimeFormatFraction}`.",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунд",
-            "units": "секунды"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
+            "unit": "минуту",
             "units": "минут"
           },
           "elapsedTimeFormat": {
@@ -938,15 +961,15 @@
     {
       "name": "VertixBot/UI-V2/ClaimVoteWonEmbed",
       "content": {
-        "title": "👑  {userWonDisplayName} заявил канал",
+        "title": "👑  {userWonDisplayName} забрал канал",
         "description": "{wonMessage}",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунд",
-            "units": "секунды"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
+            "unit": "минуту",
             "units": "минут"
           },
           "elapsedTimeFormat": {
@@ -958,12 +981,12 @@
             "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
           },
           "wonMessage": {
-            "{wonSomeoneElse}": "<@{userWonId}> заявил владение этим каналом, сместив ~~{previousOwnerDisplayName}~~ с поста!{results}",
-            "{wonSameOwner}": "<@{userWonId}> заявил владение этим каналом, но он уже был его владельцем! 😊{results}"
+            "{wonSomeoneElse}": "<@{userWonId}> получил владение этим каналом, заменив ~~{previousOwnerDisplayName}~~ в качестве нового владельца!{results}",
+            "{wonSameOwner}": "<@{userWonId}> получил владение этим каналом, он уже был владельцем! 😊{results}"
           },
           "results": {
             "{resultsDefault}": "",
-            "{resultsLink}": "\n\nДля получения более подробной информации нажмите [здесь]({resultsLink})"
+            "{resultsLink}": "\n\nДля подробностей нажмите [сюда]({resultsLink})"
           }
         }
       }
@@ -971,24 +994,24 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelEmbed",
       "content": {
-        "title": "༄ Управление вашим динамическим каналом",
-        "description": "Примите на себя ответственность за управление вашим динамическим каналом, тщательно настраивая его в соответствии с вашими предпочтениями.\n\nПожалуйста, имейте в виду, что привилегия вносить изменения предоставляется только владельцу канала.\n\n_Текущие настройки_:\n- Название: **{name}**\n- Ограничение пользователей: ✋ **{limit}**\n- Состояние: {state}\n- Состояние видимости: {visibilityState}\n- Регион: 🌍 **{region}**",
+        "title": "༄ Управляйте своим динамическим каналом",
+        "description": "Возьмите на себя ответственность за управление вашим динамическим каналом, настраивая его по своим предпочтениям.\n\nОбратите внимание, что право вносить изменения принадлежит исключительно владельцу канала.\n\n_Текущие настройки_:\n- Название: **{name}**\n- Лимит пользователей: ✋ **{limit}**\n- Состояние: {state}\n- Видимость: {visibilityState}\n- Регион: 🌍 **{region}**",
         "options": {
           "limit": {
             "{limitDisplayValue}": "{limitValue}",
-            "{limitDisplayUnlimited}": "Неограничено"
+            "{limitDisplayUnlimited}": "Безлимитно"
           },
           "state": {
             "{statePublic}": "🌐 **Публичный**",
             "{statePrivate}": "🚫 **Приватный**"
           },
           "visibilityState": {
-            "{visibilityStateShown}": "🐵 **Показан**",
-            "{visibilityStateHidden}": "🙈 **Скрыт**"
+            "{visibilityStateShown}": "🐵 **Видимый**",
+            "{visibilityStateHidden}": "🙈 **Скрытый**"
           },
           "region": {
             "{regionDisplayValue}": "{regionValue}",
-            "{regionDisplayAuto}": "Авто"
+            "{regionDisplayAuto}": "Автоматически"
           }
         }
       }
@@ -996,31 +1019,31 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
       "content": {
-        "title": "🧹  Нет доступных сообщений для очистки",
-        "description": "Имейте в виду, что могут быть удалены только обычные сообщения без встроенных элементов."
+        "title": "🧹  Нет сообщений для удаления",
+        "description": "Имейте в виду, что удалить можно только обычные сообщения, не embed-сообщения."
       }
     },
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed",
       "content": {
-        "title": "🧹  Чат был очищен пользователем {ownerDisplayName}!",
-        "description": "Всего было удалено {totalMessages} сообщений."
+        "title": "🧹  Чат очищен пользователем {ownerDisplayName}!",
+        "description": "Всего {totalMessages} сообщений."
       }
     },
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
       "content": {
-        "title": "🙅  Лимит пользователей должен быть между {minValue} и {maxValue}"
+        "title": "🙅  Лимит пользователей должен быть от {minValue} до {maxValue}"
       }
     },
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
       "content": {
-        "title": "✋  Лимит пользователей вашего канала изменен на {userLimit}",
+        "title": "✋  Лимит пользователей вашего канала изменён на {userLimit}",
         "options": {
           "userLimit": {
             "{userLimitValue}": "{userLimitValue}",
-            "{userLimitUnlimited}": "Неограничено"
+            "{userLimitUnlimited}": "Безлимитно"
           }
         }
       }
@@ -1028,23 +1051,23 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
       "content": {
-        "title": "🙅  Не удалось переименовать ваш канал",
-        "description": "Слово `{badword}` было классифицировано как неприемлемое администратором сервера."
+        "title": "🙅  Не удалось переименовать канал",
+        "description": "Слово `{badword}` классифицировано как неприемлемое администратором сервера."
       }
     },
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
       "content": {
-        "title": "🙅 Вы переименовали ваш канал слишком быстро!",
-        "description": "Пожалуйста, подождите `{elapsedTimeFormatFraction}` перед следующим переименованием{masterChannelMessage}",
+        "title": "🙅 Вы переименовываете канал слишком быстро!",
+        "description": "Пожалуйста, подождите `{elapsedTimeFormatFraction}` до следующего переименования{masterChannelMessage}",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунда",
-            "units": "секунды"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
-            "units": "минуты"
+            "unit": "минуту",
+            "units": "минут"
           },
           "elapsedTimeFormat": {
             "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
@@ -1070,16 +1093,16 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed",
       "content": {
-        "title": "👥  Управление доступа к вашему каналу",
-        "description": "\n**_Разрешенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления доступа к вашему каналу.",
+        "title": "👥  Управление правами вашего канала",
+        "description": "\n**_Разрешённые пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет разрешенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет пользователей с доступом.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1099,15 +1122,15 @@
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed",
       "content": {
         "title": "🫵  Пользователь заблокирован",
-        "description": "**{userBlockedDisplayName}** успешно заблокирован и больше не имеет доступ к этому каналу!\n\n**_Разрешенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления разрешениями вашего канала.",
+        "description": "**{userBlockedDisplayName}** успешно заблокирован и больше не имеет доступа к этому каналу!\n\n**_Разрешённые пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет разрешенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет пользователей с доступом.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1126,16 +1149,16 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed",
       "content": {
-        "title": "👎  Доступ отменен",
-        "description": "**{userDeniedDisplayName}** успешно отозван и больше не имеет доступа к этому каналу!\n\n**_Разрешенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления правами доступа к вашему каналу.",
+        "title": "👎  Доступ отозван",
+        "description": "У **{userDeniedDisplayName}** успешно отозван доступ к этому каналу!\n\n**_Разрешённые пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет разрешенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет пользователей с доступом.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1155,15 +1178,15 @@
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed",
       "content": {
         "title": "👍  Доступ предоставлен",
-        "description": "**{userGrantedDisplayName}** успешно добавлен и теперь имеет доступ к этому каналу!\n\n**_Разрешенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления правами доступа к вашему каналу.",
+        "description": "**{userGrantedDisplayName}** успешно добавлен и теперь имеет доступ к этому каналу!\n\n**_Разрешённые пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет разрешенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет пользователей с доступом.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1182,16 +1205,16 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbed",
       "content": {
-        "title": "🙈  Канал сейчас скрыт",
-        "description": "Пожалуйста, имейте в виду, что только разрешенные пользователи могут видеть ваш канал.\n\n{allowedUsersDisplay}\n{message}",
+        "title": "🙈  Канал теперь скрыт",
+        "description": "Обратите внимание, что только пользователи с доступом могут видеть ваш канал.\n\n{allowedUsersDisplay}\n{message}",
         "options": {
           "message": {
-            "{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _кнопку_ для управления доступом к вашему каналу.",
-            "{messageAccessNotAvailable}": "Нет способа предоставить доступ к вашему каналу новым участникам.\n\nЭто связано с тем, что **(👥 Доступ)** кнопка была отключена администратором."
+            "{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _Кнопку_ для управления доступом к вашему каналу.",
+            "{messageAccessNotAvailable}": "Нет возможности предоставить доступ к вашему каналу для новых участников.\n\nЭто потому, что кнопка **(👥 Доступ)** была отключена администратором"
           },
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время, кроме вас, никто другой не имеет доступа.\n",
-            "{allowedUsers}": "**_Разрешенные пользователи_**: \n{allowedUsers}\n"
+            "{allowedUsersDefault}": "Пока никто, кроме вас, не имеет доступа.\n",
+            "{allowedUsers}": "**_Разрешённые пользователи_**: \n{allowedUsers}\n"
           }
         },
         "arrayOptions": {
@@ -1205,16 +1228,16 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
       "content": {
-        "title": "👢 Пользователь исключен",
-        "description": "**{userKickedDisplayName}** успешно исключен!\n",
-        "footer": "Используйте меню ниже для управления доступа к вашему каналу.",
+        "title": "👢  Пользователь выгнан",
+        "description": "**{userKickedDisplayName}** успешно выгнан!\n\n**_Разрешённые пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет разрешенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет пользователей с доступом.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1233,16 +1256,16 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbed",
       "content": {
-        "title": "🚫  Канал сейчас закрытый",
-        "description": "Пожалуйста, имейте в виду, что только разрешенные пользователи могут войти в ваш канал.\n\n{allowedUsersDisplay}\n{message}",
+        "title": "🚫  Канал теперь приватный",
+        "description": "Обратите внимание, что только пользователи с доступом могут войти в ваш канал.\n\n{allowedUsersDisplay}\n{message}",
         "options": {
           "message": {
-            "{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _кнопку_ для управления доступом к вашему каналу.",
-            "{messageAccessNotAvailable}": "Нет способа предоставить доступ к вашему каналу новым участникам.\n\nЭто связано с тем, что **(👥 Доступ)** кнопка была отключена администратором."
+            "{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _Кнопку_ для управления доступом к вашему каналу.",
+            "{messageAccessNotAvailable}": "Нет возможности предоставить доступ к вашему каналу для новых участников.\n\nЭто потому, что кнопка **(👥 Доступ)** была отключена администратором"
           },
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время, кроме вас, никто другой не имеет доступа.\n",
-            "{allowedUsers}": "**_Разрешенные пользователи_**: \n{allowedUsers}\n"
+            "{allowedUsersDefault}": "Пока никто, кроме вас, не имеет доступа.\n",
+            "{allowedUsers}": "**_Разрешённые пользователи_**: \n{allowedUsers}\n"
           }
         },
         "arrayOptions": {
@@ -1257,7 +1280,7 @@
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbed",
       "content": {
         "title": "🌐  Канал теперь публичный",
-        "description": "Пожалуйста, обратите внимание, что ваша комната в данный момент доступна для всех.\n\nУчастники **без** доступа смогут войти в комнату, если она не скрыта или установлена как приватная."
+        "description": "Обратите внимание, что ваша комната сейчас доступна для всех.\n\nУчастники **без** доступа смогут войти в комнату, если она не скрыта или не установлена как приватная."
       }
     },
     {
@@ -1270,15 +1293,15 @@
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
       "content": {
         "title": "🤙  Пользователь разблокирован",
-        "description": "**{userUnBlockedDisplayName}** успешно разблокирован!\n\n**_Разрешенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления разрешениями вашего канала.",
+        "description": "**{userUnBlockedDisplayName}** успешно разблокирован!\n\n**_Разрешённые пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет разрешенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет пользователей с доступом.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1297,16 +1320,16 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbed",
       "content": {
-        "title": "🔃  канал был сброшен до настроек по умолчанию!",
-        "description": "Настройки были сброшены до значений по умолчанию:\n\n- Имя: **{name}** {nameChanged}\n- Ограничение пользователей: ✋ **{userLimit}** {userLimitChanged}\n- Состояние: {state} {stateChanged}\n- Состояние видимости: {visibilityState} {visibilityStateChanged}\n- Разрешенные пользователи: {allowedUsers} {allowedUsersChanged}\n- Заблокированные пользователи: {blockedUsers} {blockedUsersChanged}{rateLimited}",
+        "title": "🔃  Динамический канал сброшен к настройкам по умолчанию! ",
+        "description": "Настройки сброшены до стандартных:\n\n- Название: **{name}** {nameChanged}\n- Лимит пользователей: ✋**{userLimit}** {userLimitChanged}\n- Состояние: {state} {stateChanged}\n- Видимость: {visibilityState} {visibilityStateChanged}\n- Разрешённые пользователи: {allowedUsers} {allowedUsersChanged}\n- Заблокированные пользователи: {blockedUsers} {blockedUsersChanged}{rateLimited}",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунда",
-            "units": "секунды,секунд"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
-            "units": "минуты,минут"
+            "unit": "минуту",
+            "units": "минут"
           },
           "elapsedTimeFormat": {
             "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
@@ -1317,22 +1340,22 @@
             "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
           },
           "changedDisplay": "(__восстановлено__)",
-          "unchangedDisplay": "(__не изменено__)",
+          "unchangedDisplay": "(__без изменений__)",
           "userLimit": {
             "{userLimitValue}": "{userLimitValue}",
-            "{userLimitUnlimited}": "Без ограничений"
+            "{userLimitUnlimited}": "Безлимитно"
           },
           "state": {
             "{statePublic}": "🌐 **Публичный**",
             "{statePrivate}": "🚫 **Приватный**"
           },
           "visibilityState": {
-            "{visibilityStateShown}": "🐵 **Отображается**",
-            "{visibilityStateHidden}": "🙈 **Скрыт**"
+            "{visibilityStateShown}": "🐵 **Видимый**",
+            "{visibilityStateHidden}": "🙈 **Скрытый**"
           },
           "rateLimited": {
             "{rateLimitedNone}": "",
-            "{rateLimitedDisplay}": "\n\n⚠️ В данный момент нельзя переименовывать из-за ограничений на частоту.\n\nПожалуйста, подождите {elapsedTimeFormatFraction} секунд или создайте новый канал."
+            "{rateLimitedDisplay}": "\n\n⚠️ Переименование невозможно в данный момент из-за ограничений скорости.\n\nПожалуйста, подождите {elapsedTimeFormatFraction} секунд или создайте новый канал."
           }
         },
         "arrayOptions": {
@@ -1350,46 +1373,46 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed",
       "content": {
-        "title": "🔀 Передача прав владения каналом",
-        "description": "Передайте права владения каналом другому пользователю.\n\nВыберите пользователя, которому вы хотите передать владение каналом."
+        "title": "🔀  Передача владения каналом",
+        "description": "Передайте владение каналом другому пользователю.\n\nВыберите пользователя, которому хотите передать канал."
       }
     },
     {
       "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
       "content": {
-        "title": "🔀 Передача прав владения каналом успешно завершена!",
+        "title": "🔀  Передача владения каналом успешна!",
         "description": "Вы больше не являетесь владельцем этого канала."
       }
     },
     {
       "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
       "content": {
-        "title": "🔀 Передача прав владения каналом",
-        "description": "Передать права владения каналом {userDisplayName}.\n\n⚠️ Передавая права владения каналом другому пользователю, вы потеряете свои привилегии владельца.\n\nВы уверены, что хотите передать права владения каналом пользователю **{userDisplayName}?**"
+        "title": "🔀  Передача владения каналом",
+        "description": "Передать владение каналом пользователю {userDisplayName}.\n\n⚠️ Передавая владение каналом другому пользователю, вы потеряете свои права владельца.\n\nВы уверены, что хотите передать владение каналом **{userDisplayName}?**"
       }
     },
     {
       "name": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed",
       "content": {
-        "title": "🎚  Изменить кнопки мастер-канала #{index}",
-        "description": "Изменение кнопок повлияет на создаваемые динамические каналы\n__Мастер-канала #{index}__.\n\nЕсть два варианта:\n\n- Применить изменения немедленно ко всем каналам\n- Применить изменения только к новым _Динамическим каналам_.\n\n",
-        "footer": "Текущие включенные кнопки в меню ниже"
+        "title": "🎚  Редактирование кнопок мастер-канала #{index}",
+        "description": "Редактирование кнопок повлияет на динамические каналы, созданные __мастер-каналом #{index}__.\n\nЕсть два варианта:\n\n- Применить изменения немедленно ко всем каналам\n- Применить изменения только к новым _динамическим каналам_.",
+        "footer": "Текущие включённые кнопки в меню ниже"
       }
     },
     {
       "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  Изменить кнопки мастер-канала #{index}",
-        "description": "Выберите какие кнопки будут видны\nв основном сообщении динамических каналов.\n\nучастники будут видеть только те кнопки, которые вы выбрали.\n\n",
-        "footer": "Текущие включенные кнопки в меню ниже"
+        "title": "🎚  Редактирование кнопок мастер-канала #{index}",
+        "description": "Выберите, какие кнопки вы хотите сделать видимыми для ваших участников.\n\nТолько выбранные кнопки будут включены/видимы в\n_динамических каналах_, созданных этим мастер-каналом.\n\n",
+        "footer": "Текущие включённые кнопки в меню ниже"
       }
     },
     {
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
-        "title": "🔧  Изменить мастер канал #{index}",
-        "description": "Настройте мастер-канал в соответствии с вашими предпочтениями.\n\n**_🎛️ Общие настройки_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Подтвержденные роли_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Уведомления в основном сообщении: {configUserMention}\n⫸ ∙ Авто сохранение динамического канала: {configAutoSave}\n❯❯ ∙ Отправлять логи в канал: {configLogs}\n\n",
-        "footer": "Заметка: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
+        "title": "🔧  Настройка мастер-канала #{index}",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
           "off": "`🔴∙Выкл`",
@@ -1419,10 +1442,10 @@
               "1": "✋ ∙ **Лимит пользователей**",
               "2": "🧹 ∙ **Очистить чат**",
               "3": "🚫 ∙ **Приватный** / 🌐 ∙ **Публичный**",
-              "4": "🙈 ∙ **Скрытый** / 🐵 ∙ **Показан**",
+              "4": "🙈 ∙ **Скрытый** / 🐵 ∙ **Видимый**",
               "5": "👥 ∙ **Доступ**",
               "6": "🔃 ∙ **Сбросить**",
-              "7": "😈 ∙ **завоевать**",
+              "7": "😈 ∙ **Забрать**",
               "12": "🔀 ∙ **Передать**"
             }
           },
@@ -1436,9 +1459,9 @@
     {
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
-        "title": "🛡️  Редактирование подтвержденных ролей Мастер-канала #{index}",
-        "description": "Редактирование подтвержденных ролей будет влиять на динамические каналы, созданные Мастер-каналом #{index}.\n\n**_Текущие подтвержденные роли_**\n\n> {verifiedRolesDisplay}",
-        "footer": "Заметка: Изменения будут влиять только на динамические каналы, меняющие свое состояние после редактирования.",
+        "title": "🛡️  Редактирование проверенных ролей мастер-канала #{index}",
+        "description": "Редактирование проверенных ролей повлияет на динамические каналы, созданные мастер-каналом #{index}.\n\n**_Текущие проверенные роли_**\n\n> {verifiedRolesDisplay}",
+        "footer": "Примечание: Изменения повлияют только на динамические каналы, которые изменят своё состояние после редактирования, старые роли в канале останутся без изменений.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -1456,22 +1479,22 @@
     {
       "name": "VertixBot/UI-V2/SetupStep1Embed",
       "content": {
-        "title": "Шаг 1 - Установите название шаблона динамических каналов",
-        "description": "Вы можете указать название по умолчанию для динамических каналов, которое будет использоваться при их открытии.\n\n_Текущее название шаблона_:\n`{dynamicChannelNameTemplate}`\n\nВы можете оставить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n"
+        "title": "Шаг 1 - Установка шаблона названия динамических каналов",
+        "description": "Вы можете указать название по умолчанию для динамических каналов, которое будет использоваться при их создании.\n\n_Текущий шаблон названия_:\n`{dynamicChannelNameTemplate}`\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, как это работает? Ознакомьтесь с [объяснением](https://vertix.gg/setup/1)."
       }
     },
     {
       "name": "VertixBot/UI-V2/SetupStep2Embed",
       "content": {
         "title": "Шаг 2 - Настройка динамических каналов",
-        "description": "Настройка интерфейса управления динамическими каналами.\n\n**_🎚 Интерфейс кнопок_**\n\n{message}\n**_⚙️ Конфигурация_**\n\n> @ ∙ Уведомления в основном сообщении: {configUserMention}\n> ⫸ ∙ Авто сохранение динамических каналов: {configAutoSave}\n\nВы можете оставить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\n",
+        "description": "Настройте интерфейс управления динамическими каналами.\n\n**_🎚 Интерфейс кнопок_**\n\n{message}\n**_⚙️ Конфигурация_**\n\n> @ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n> ⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, что делают кнопки? Ознакомьтесь с [объяснением](https://vertix.gg/features/dynamic-channels-showcase).",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙Вкл`",
           "off": "`🔴∙Выкл`",
           "message": {
             "{defaultMessage}": "{dynamicChannelButtonsTemplate}\n",
-            "{noButtonsMessage}": "Не выбраны кнопки!\n"
+            "{noButtonsMessage}": "Кнопки не выбраны!\n"
           },
           "configUserMention": {
             "{configUserMentionEnabled}": "{on}",
@@ -1482,8 +1505,8 @@
             "{configAutoSaveDisabled}": "{off}"
           },
           "footer": {
-            "{defaultFooter}": "Новые созданные динамические каналы через этот мастер-канал будут затронуты выбранной вами конфигурацией.",
-            "{noButtonsFooter}": "Заметка: Без кнопок участники не смогут управлять своими динамическими каналами. Им не будет показано встраивание или интерфейс.\n"
+            "{defaultFooter}": "Новые динамические каналы, созданные через этот мастер-канал, будут использовать выбранную вами конфигурацию.",
+            "{noButtonsFooter}": "Примечание: Без кнопок участники не смогут управлять своими динамическими каналами. Им не будет показан интерфейс.\n"
           }
         },
         "arrayOptions": {
@@ -1495,10 +1518,10 @@
               "1": "✋ ∙ **Лимит пользователей**",
               "2": "🧹 ∙ **Очистить чат**",
               "3": "🚫 ∙ **Приватный** / 🌐 ∙ **Публичный**",
-              "4": "🙈 ∙ **Скрытый** / 🐵 ∙ **Показан**",
+              "4": "🙈 ∙ **Скрытый** / 🐵 ∙ **Видимый**",
               "5": "👥 ∙ **Доступ**",
               "6": "🔃 ∙ **Сбросить**",
-              "7": "😈 ∙ **завоевать**",
+              "7": "😈 ∙ **Забрать**",
               "12": "🔀 ∙ **Передать**"
             }
           }
@@ -1508,8 +1531,8 @@
     {
       "name": "VertixBot/UI-V2/SetupStep3Embed",
       "content": {
-        "title": "Шаг 3 - Выбор Проверенных Ролей",
-        "description": "Выберите роли, права которых будут зависеть от состояния Динамических Каналов.\n\n__Вот пример__:\nПредположим, у вас есть роль `@Проверенный`.\n\nКогда владелец Динамического Канала изменяет его состояние на `Скрытый`, участники с ролью `@Проверенный` потеряют возможность видеть канал.\n\n**_🛡️ Проверенные Роли_**\n\n> {verifiedRolesDisplay}\n\nВы можете оставить настройки по умолчанию, нажав кнопку **( `✓ Готово` )**.",
+        "title": "Шаг 3 - Выбор проверенных ролей",
+        "description": "Выберите роли, чьи права будут зависеть от состояния динамических каналов.\n\nПроверенные роли не используются в большинстве случаев, почти все серверы используют настройки по умолчанию.\n\nНе уверены, как это работает? Ознакомьтесь с [объяснением](https://vertix.gg/setup/3).\n\n**_🛡️ Проверенные роли_**\n\n> {verifiedRolesDisplay}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `✓ Завершить` )**.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -1527,35 +1550,35 @@
     {
       "name": "VertixBot/UI-V3/ClaimResultOwnerStopEmbed",
       "content": {
-        "title": "👑  Вы снова владеете каналам!",
-        "description": "Пожалуйста, имейте в виду, что если вы не вернетесь в течение **{absentMinutes}** минут, канал снова станет доступным для запроса другими участниками.\n"
+        "title": "👑  Вы снова у руля!",
+        "description": "Обратите внимание, что если вы не вернётесь в течение **{absentMinutes}** минут, канал снова станет доступным для захвата другими участниками.\n"
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbed",
       "content": {
-        "title": "🤷  Вы уже внутри",
-        "description": "Ваши намерения ясны - вы уже номинировали себя в качестве потенциального владельца этого канала."
+        "title": "🤷  Вы уже участвуете",
+        "description": "Ваши намерения ясны — вы уже выдвинули себя кандидатом на владение этим каналом."
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimResultStepInEmbed",
       "content": {
-        "title": "😈  Канал может быть вашим",
-        "description": "Вы предложили себя в качестве потенциального владельца этого канала.\nУдачи!\n"
+        "title": "😈  Канал может стать вашим",
+        "description": "Вы выдвинули себя кандидатом на владение этим каналом.\nУдачи!\n"
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimResultVotedEmbed",
       "content": {
         "title": "🗳️  Вы проголосовали за {userDisplayName}",
-        "description": "Ваш голос отдан в пользу <@{userId}>."
+        "description": "Ваш голос отдан в пользу <@{userId}> для получения владения этим каналом."
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimResultVotedSameEmbed",
       "content": {
-        "title": "🗳️  Вы уже проголосовали за {userDisplayName}",
+        "title": "🗳️  Вы уже голосовали за {userDisplayName}",
         "description": "Ваш голос уже отдан в пользу <@{userId}>, вы можете проголосовать за кого-то другого, если передумали."
       }
     },
@@ -1563,35 +1586,35 @@
       "name": "VertixBot/UI-V3/ClaimResultVoteSelfEmbed",
       "content": {
         "title": "🤷  Вы не можете голосовать за себя",
-        "description": "Замечательно, что вы верите в себя, но голосование за себя не разрешено в этой выборной кампании."
+        "description": "Здорово, что вы верите в себя, но голосование за себя не допускается в этих выборах."
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbed",
       "content": {
-        "title": "🗳️  Ваш голос был обновлен",
-        "description": "Вы только что изменили свой голос с <@{prevUserId}> на <@{currentUserId}>."
+        "title": "🗳️  Ваш голос обновлён",
+        "description": "Вы только что изменили свой голос с <@{prevUserId}> на <@{currentUserId}> за владение каналом."
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimStartEmbed",
       "content": {
         "title": "👋  {ownerDisplayName} покинул свой канал!",
-        "description": "<@{ownerId}> отсутствует уже более {absentMinutes} минут.\nБудете ли вы тем, кто возьмет инициативу в свои руки? Заявите его себе!"
+        "description": "<@{ownerId}> отсутствует более {absentMinutes} минут.\nБудете ли вы тем, кто возьмёт на себя ответственность? Заберите его себе!"
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimVoteEmbed",
       "content": {
-        "title": "👑  {candidatesCount} Кандидатов желают заявить этот канал",
-        "description": "Отсчет начался!\nЧерез всего лишь `{elapsedTimeFormatFraction}` голосование завершится.\nВ случае ничьей, <@{userInitiatorId}> станет новым владельцем.\n\n{candidatesState}",
+        "title": "👑  {candidatesCount} кандидатов хотят забрать этот канал",
+        "description": "Обратный отсчёт начался!\nЧерез `{elapsedTimeFormatFraction}` голосование завершится.\nВ случае ничьей <@{userInitiatorId}> станет новым владельцем.\n\n{candidatesState}",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунда",
-            "units": "секунды"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
+            "unit": "минуту",
             "units": "минут"
           },
           "elapsedTimeFormat": {
@@ -1604,7 +1627,7 @@
           },
           "candidatesState": {
             "{candidates}": "🏅 {candidates}",
-            "{candidatesDefault}": "Пока нет кандидатов."
+            "{candidatesDefault}": "Кандидатов пока нет."
           }
         },
         "arrayOptions": {
@@ -1623,15 +1646,15 @@
     {
       "name": "VertixBot/UI-V3/ClaimVoteStepInEmbed",
       "content": {
-        "title": "👑  {userInitiatorDisplayName} хочет заявить этот канал",
-        "description": "Если никто другой не вступит, <@{userInitiatorId}> станет гордым владельцем этого канала всего за `{elapsedTimeFormatFraction}`.",
+        "title": "👑  {userInitiatorDisplayName} хочет забрать этот канал",
+        "description": "Если никто другой не выступит, <@{userInitiatorId}> станет владельцем этого канала через `{elapsedTimeFormatFraction}`.",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунда",
-            "units": "секунды"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
+            "unit": "минуту",
             "units": "минут"
           },
           "elapsedTimeFormat": {
@@ -1648,15 +1671,15 @@
     {
       "name": "VertixBot/UI-V3/ClaimVoteWonEmbed",
       "content": {
-        "title": "👑  {userWonDisplayName} заявил канал",
+        "title": "👑  {userWonDisplayName} забрал канал",
         "description": "{wonMessage}",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунда",
-            "units": "секунды"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
+            "unit": "минуту",
             "units": "минут"
           },
           "elapsedTimeFormat": {
@@ -1668,12 +1691,12 @@
             "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
           },
           "wonMessage": {
-            "{wonSomeoneElse}": "<@{userWonId}> заявил владение этим каналом, сместив ~~{previousOwnerDisplayName}~~ с поста!{results}",
-            "{wonSameOwner}": "<@{userWonId}> заявил владение этим каналом, но он уже был его владельцем! 😊{results}"
+            "{wonSomeoneElse}": "<@{userWonId}> получил владение этим каналом, заменив ~~{previousOwnerDisplayName}~~ в качестве нового владельца!{results}",
+            "{wonSameOwner}": "<@{userWonId}> получил владение этим каналом, он уже был владельцем! 😊{results}"
           },
           "results": {
             "{resultsDefault}": "",
-            "{resultsLink}": "\n\nДля получения более подробной информации нажмите [здесь]({resultsLink})"
+            "{resultsLink}": "\n\nДля подробностей нажмите [сюда]({resultsLink})"
           }
         }
       }
@@ -1681,31 +1704,31 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed",
       "content": {
-        "title": "{clearEmoji}  Нет доступных сообщений для очистки",
-        "description": "Имейте в виду, что могут быть удалены только обычные сообщения без встроенных элементов."
+        "title": "{clearEmoji}  Нет сообщений для удаления",
+        "description": "Имейте в виду, что удалить можно только обычные сообщения, не embed-сообщения."
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbed",
       "content": {
-        "title": "{clearEmoji}  Чат был очищен пользователем {ownerDisplayName}!",
-        "description": "Всего было удалено {totalMessages} сообщений."
+        "title": "{clearEmoji}  Чат очищен пользователем {ownerDisplayName}!",
+        "description": "Всего {totalMessages} сообщений."
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbed",
       "content": {
-        "title": "🙅  Лимит пользователей должен быть между {minValue} и {maxValue}"
+        "title": "🙅  Лимит пользователей должен быть от {minValue} до {maxValue}"
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbed",
       "content": {
-        "title": "✋  Лимит пользователей вашего канала изменен на {userLimit}",
+        "title": "✋  Лимит пользователей вашего канала изменён на {userLimit}",
         "options": {
           "userLimit": {
             "{userLimitValue}": "{userLimitValue}",
-            "{userLimitUnlimited}": "Неограничено"
+            "{userLimitUnlimited}": "Безлимитно"
           }
         }
       }
@@ -1713,16 +1736,16 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbed",
       "content": {
-        "title": "{permissionsEmoji}  Управление доступа к вашему каналу",
+        "title": "{permissionsEmoji}  Управление правами вашего канала",
         "description": "\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления доступа к вашему каналу.",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет доверенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет доверенных пользователей.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1742,15 +1765,15 @@
       "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbed",
       "content": {
         "title": "🫵  Пользователь заблокирован",
-        "description": "**{userBlockedDisplayName}** успешно заблокирован и больше не имеет доступ к этому каналу!\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления разрешениями вашего канала.",
+        "description": "**{userBlockedDisplayName}** успешно заблокирован и больше не имеет доступа к этому каналу!\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет доверенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет доверенных пользователей.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1769,16 +1792,16 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbed",
       "content": {
-        "title": "👎  Доступ отменен",
-        "description": "**{userDeniedDisplayName}** успешно отозван и больше не имеет доступа к этому каналу!\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления правами доступа к вашему каналу.",
+        "title": "👎  Доступ отозван",
+        "description": "У **{userDeniedDisplayName}** успешно отозван доступ к этому каналу!\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет доверенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет доверенных пользователей.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1799,14 +1822,14 @@
       "content": {
         "title": "👍  Доступ предоставлен",
         "description": "**{userGrantedDisplayName}** успешно добавлен и теперь имеет доступ к этому каналу!\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления правами доступа к вашему каналу.",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет доверенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет доверенных пользователей.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1825,16 +1848,16 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbed",
       "content": {
-        "title": "🙈  Канал сейчас скрыт",
-        "description": "Пожалуйста, имейте в виду, что только разрешенные пользователи могут видеть ваш канал.\n\n{allowedUsersDisplay}\n{message}",
+        "title": "🙈  Канал теперь скрыт",
+        "description": "Обратите внимание, что только пользователи с доступом могут видеть ваш канал.\n\n{allowedUsersDisplay}\n{message}",
         "options": {
           "message": {
-            "{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _кнопку_ для управления доступом к вашему каналу.",
-            "{messageAccessNotAvailable}": "Нет способа предоставить доступ к вашему каналу новым участникам.\n\nЭто связано с тем, что **(👥 Доступ)** кнопка была отключена администратором."
+            "{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _Кнопку_ для управления доступом к вашему каналу.",
+            "{messageAccessNotAvailable}": "Нет возможности предоставить доступ к вашему каналу для новых участников.\n\nЭто потому, что кнопка **(👥 Доступ)** была отключена администратором"
           },
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время, кроме вас, никто другой не имеет доступа.\n",
-            "{allowedUsers}": "**_Разрешенные пользователи_**: \n{allowedUsers}\n"
+            "{allowedUsersDefault}": "Пока никто, кроме вас, не имеет доступа.\n",
+            "{allowedUsers}": "**_Разрешённые пользователи_**: \n{allowedUsers}\n"
           }
         },
         "arrayOptions": {
@@ -1848,16 +1871,16 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbed",
       "content": {
-        "title": "👢 Пользователь исключен",
-        "description": "**{userKickedDisplayName}** успешно исключен!\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления доступа к вашему каналу.",
+        "title": "👢  Пользователь выгнан",
+        "description": "**{userKickedDisplayName}** успешно выгнан!\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет доверенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет доверенных пользователей.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1876,16 +1899,16 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbed",
       "content": {
-        "title": "🚫  Канал сейчас закрытый",
-        "description": "Пожалуйста, имейте в виду, что только разрешенные пользователи могут войти в ваш канал.\n\n{allowedUsersDisplay}\n{message}",
+        "title": "🚫  Канал теперь приватный",
+        "description": "Обратите внимание, что только пользователи с доступом могут войти в ваш канал.\n\n{allowedUsersDisplay}\n{message}",
         "options": {
           "message": {
-            "{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _кнопку_ для управления доступом к вашему каналу.",
-            "{messageAccessNotAvailable}": "Нет способа предоставить доступ к вашему каналу новым участникам.\n\nЭто связано с тем, что **(👥 Доступ)** кнопка была отключена администратором."
+            "{messageDefault}": "Вы можете использовать **(`👥 Доступ`)** - _Кнопку_ для управления доступом к вашему каналу.",
+            "{messageAccessNotAvailable}": "Нет возможности предоставить доступ к вашему каналу для новых участников.\n\nЭто потому, что кнопка **(👥 Доступ)** была отключена администратором"
           },
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время, кроме вас, никто другой не имеет доступа.\n",
-            "{allowedUsers}": "**_Разрешенные пользователи_**: \n{allowedUsers}\n"
+            "{allowedUsersDefault}": "Пока никто, кроме вас, не имеет доступа.\n",
+            "{allowedUsers}": "**_Разрешённые пользователи_**: \n{allowedUsers}\n"
           }
         },
         "arrayOptions": {
@@ -1900,7 +1923,7 @@
       "name": "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbed",
       "content": {
         "title": "🌐  Канал теперь публичный",
-        "description": "Пожалуйста, обратите внимание, что ваша комната в данный момент доступна для всех.\n\nУчастники **без** доступа смогут войти в комнату, если она не скрыта или установлена как приватная."
+        "description": "Обратите внимание, что ваша комната сейчас доступна для всех.\n\nУчастники **без** доступа смогут войти в комнату, если она не скрыта или не установлена как приватная."
       }
     },
     {
@@ -1914,14 +1937,14 @@
       "content": {
         "title": "🤙  Пользователь разблокирован",
         "description": "**{userUnBlockedDisplayName}** успешно разблокирован!\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}",
-        "footer": "Используйте меню ниже для управления разрешениями вашего канала.",
+        "footer": "Используйте меню ниже для управления правами вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет доверенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет доверенных пользователей.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           }
         },
@@ -1941,11 +1964,11 @@
       "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed",
       "content": {
         "title": "{editPrimaryMessageEmoji}  •  Редактирование описания вашего канала",
-        "description": "\n _Описание_:\n `{description}`\n\n### Хотите изменить его?",
+        "description": "\n _Описание_:\n `{description}`\n\n### Хотите изменить?",
         "options": {
           "description": {
             "{descriptionDisplayValue}": "{descriptionValue}",
-            "{descriptionDisplayDefault}": "Примите на себя ответственность за управление вашим динамическим каналом, тщательно настраивая его в соответствии с вашими предпочтениями.\n\nПожалуйста, имейте в виду, что привилегия вносить изменения предоставляется только владельцу канала."
+            "{descriptionDisplayDefault}": "Возьмите на себя ответственность за управление вашим динамическим каналом, настраивая его по своим предпочтениям.\n\nОбратите внимание, что право вносить изменения принадлежит исключительно владельцу канала."
           }
         }
       }
@@ -1953,16 +1976,16 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbed",
       "content": {
-        "title": "{editPrimaryMessageEmoji}  •  Редактирование основного сообщения вашего канала",
-        "description": "\n _Текущее_:\n\n• Заголовок: `{title}`\n\n• Описание: `{description}`\n\n### Хотите изменить его?",
+        "title": "{editPrimaryMessageEmoji}  •  Редактирование главного сообщения вашего канала",
+        "description": "\n _Текущее_:\n\n• Заголовок: `{title}`\n\n• Описание: `{description}`\n\n### Хотите изменить?",
         "options": {
           "title": {
             "{titleDisplayValue}": "{titleValue}",
-            "{titleDisplayDefault}": "༄ Управление вашим динамическим каналом"
+            "{titleDisplayDefault}": "༄ Управляйте своим динамическим каналом"
           },
           "description": {
             "{descriptionDisplayValue}": "{descriptionValue}",
-            "{descriptionDisplayDefault}": "Примите на себя ответственность за управление вашим динамическим каналом, тщательно настраивая его в соответствии с вашими предпочтениями.\n\nПожалуйста, имейте в виду, что привилегия вносить изменения предоставляется только владельцу канала."
+            "{descriptionDisplayDefault}": "Возьмите на себя ответственность за управление вашим динамическим каналом, настраивая его по своим предпочтениям.\n\nОбратите внимание, что право вносить изменения принадлежит исключительно владельцу канала."
           }
         }
       }
@@ -1971,11 +1994,11 @@
       "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed",
       "content": {
         "title": "{editPrimaryMessageEmoji}  •  Редактирование заголовка вашего канала",
-        "description": "\n _Заголовок_:\n `{title}`\n\n### Хотите изменить его?",
+        "description": "\n _Заголовок_:\n `{title}`\n\n### Хотите изменить?",
         "options": {
           "title": {
             "{titleDisplayValue}": "{titleValue}",
-            "{titleDisplayDefault}": "༄ Управление вашим динамическим каналом"
+            "{titleDisplayDefault}": "༄ Управляйте своим динамическим каналом"
           }
         }
       }
@@ -1988,11 +2011,11 @@
         "options": {
           "title": {
             "{titleDisplayValue}": "{titleValue}",
-            "{titleDisplayDefault}": "༄ Управление вашим динамическим каналом"
+            "{titleDisplayDefault}": "༄ Управляйте своим динамическим каналом"
           },
           "description": {
             "{descriptionDisplayValue}": "{descriptionValue}",
-            "{descriptionDisplayDefault}": "Примите на себя ответственность за управление вашим динамическим каналом, тщательно настраивая его в соответствии с вашими предпочтениями.\n\nПожалуйста, имейте в виду, что привилегия вносить изменения предоставляется только владельцу канала."
+            "{descriptionDisplayDefault}": "Возьмите на себя ответственность за управление вашим динамическим каналом, настраивая его по своим предпочтениям.\n\nОбратите внимание, что право вносить изменения принадлежит исключительно владельцу канала."
           },
           "region": {
             "{region-auto}": "Автоматически",
@@ -2013,18 +2036,18 @@
           "state": {
             "{statePublic}": "🌐 Публичный",
             "{statePrivate}": "🚫 Приватный",
-            "{stateShown}": "🐵 Показан",
-            "{stateHidden}": "🙈 Скрыт"
+            "{stateShown}": "🐵 Видимый",
+            "{stateHidden}": "🙈 Скрытый"
           },
           "stateMessage": {
-            "{stateMessagePublic}": "Все могут присоединиться к вашему каналу.",
+            "{stateMessagePublic}": "Любой может присоединиться к вашему каналу.",
             "{stateMessagePrivate}": "Только доверенные пользователи могут присоединиться к вашему каналу.",
-            "{stateMessageShown}": "Все могут видеть и присоединиться к вашему каналу.",
+            "{stateMessageShown}": "Любой может видеть и присоединиться к вашему каналу.",
             "{stateMessageHidden}": "Только доверенные пользователи могут видеть и присоединиться к вашему каналу."
           },
           "limit": {
             "{limitDisplayValue}": "{limitValue}",
-            "{limitDisplayUnlimited}": "Неограничено"
+            "{limitDisplayUnlimited}": "Безлимитно"
           }
         }
       }
@@ -2033,27 +2056,27 @@
       "name": "VertixBot/UI-V3/DynamicChannelPrivacyEmbed",
       "content": {
         "title": "{privacyEmoji}  Управление приватностью вашего канала",
-        "description": "**_Состояние_**: `{state}`\n**_Намерения_**: `{stateMessage}`\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}\n-# Заблокированные пользователи не могут присоединиться к вашему каналу в любом состоянии.",
+        "description": "**_Состояние_**: `{state}`\n**_Назначение_**: `{stateMessage}`\n\n**_Доверенные пользователи_**:\n{allowedUsersDisplay}\n**_Заблокированные пользователи_**:\n{blockedUsersDisplay}\n-# Заблокированные пользователи не могут присоединиться к вашему каналу в любом состоянии.",
         "footer": "Используйте меню ниже для управления состоянием приватности вашего канала.",
         "options": {
           "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "В настоящее время нет доверенных пользователей.\n",
+            "{allowedUsersDefault}": "Пока нет доверенных пользователей.\n",
             "{allowedUsers}": "{allowedUsers}\n"
           },
           "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "В настоящее время нет заблокированных пользователей.\n",
+            "{blockedUsersDefault}": "Пока нет заблокированных пользователей.\n",
             "{blockedUsers}": "{blockedUsers}\n"
           },
           "state": {
             "{statePublic}": "🌐 Публичный",
             "{statePrivate}": "🚫 Приватный",
-            "{stateShown}": "🐵 Показан",
-            "{stateHidden}": "🙈 Скрыт"
+            "{stateShown}": "🐵 Видимый",
+            "{stateHidden}": "🙈 Скрытый"
           },
           "stateMessage": {
-            "{stateMessagePublic}": "Все могут присоединиться к вашему каналу.",
+            "{stateMessagePublic}": "Любой может присоединиться к вашему каналу.",
             "{stateMessagePrivate}": "Только доверенные пользователи могут присоединиться к вашему каналу.",
-            "{stateMessageShown}": "Все могут видеть и присоединиться к вашему каналу.",
+            "{stateMessageShown}": "Любой может видеть и присоединиться к вашему каналу.",
             "{stateMessageHidden}": "Только доверенные пользователи могут видеть и присоединиться к вашему каналу."
           }
         }
@@ -2062,8 +2085,8 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelRegionEmbed",
       "content": {
-        "title": "{regionEmoji}  Установить регион голоса для вашего канала",
-        "description": "-# Регион определяет место расположения голосового сервера.\n-# Он должен быть ближе всего ко всем участникам голосового канала.\n-# Рекомендуется `Автоматически`\n\nТекущий регион голоса: `{region}`",
+        "title": "{regionEmoji}  Установите голосовой регион для вашего канала",
+        "description": "-# Регион определяет расположение голосового сервера.\n-# Он должен быть ближайшим ко всем участникам голосового канала.\n-# Рекомендуется `Автоматически`\n\nТекущий голосовой регион: `{region}`",
         "options": {
           "region": {
             "{region-auto}": "Автоматически",
@@ -2087,23 +2110,23 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbed",
       "content": {
-        "title": "🙅  Не удалось переименовать ваш канал",
-        "description": "Слово `{badword}` было классифицировано как неприемлемое администратором сервера."
+        "title": "🙅  Не удалось переименовать канал",
+        "description": "Слово `{badword}` классифицировано как неприемлемое администратором сервера."
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbed",
       "content": {
-        "title": "🙅 Вы переименовали ваш канал слишком быстро!",
-        "description": "Пожалуйста, подождите `{elapsedTimeFormatFraction}` перед следующим переименованием{masterChannelMessage}",
+        "title": "🙅 Вы переименовываете канал слишком быстро!",
+        "description": "Пожалуйста, подождите `{elapsedTimeFormatFraction}` до следующего переименования{masterChannelMessage}",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунда",
-            "units": "секунды"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
-            "units": "минуты"
+            "unit": "минуту",
+            "units": "минут"
           },
           "elapsedTimeFormat": {
             "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
@@ -2129,16 +2152,16 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelResetChannelEmbed",
       "content": {
-        "title": "{resetEmoji} канал был сброшен до настроек по умолчанию!",
-        "description": "Настройки были сброшены до значений по умолчанию:\n\n- Имя: **{name}** {nameChanged}\n- Ограничение пользователей: ✋**{userLimit}** {userLimitChanged}\n- Состояние: {state} {stateChanged}\n- Состояние видимости: {visibilityState} {visibilityStateChanged}\n- Регион: {region} {regionChanged}\n- Основное сообщение: {primaryMessageChanged}\n- Разрешенные пользователи: {allowedUsers} {allowedUsersChanged}\n- Заблокированные пользователи: {blockedUsers} {blockedUsersChanged}{rateLimited}",
+        "title": "{resetEmoji}  Динамический канал сброшен к настройкам по умолчанию! ",
+        "description": "Настройки сброшены до стандартных:\n\n- Название: **{name}** {nameChanged}\n- Лимит пользователей: ✋**{userLimit}** {userLimitChanged}\n- Состояние: {state} {stateChanged}\n- Видимость: {visibilityState} {visibilityStateChanged}\n- Регион: {region} {regionChanged}\n- Главное сообщение: {primaryMessageChanged}\n- Разрешённые пользователи: {allowedUsers} {allowedUsersChanged}\n- Заблокированные пользователи: {blockedUsers} {blockedUsersChanged}{rateLimited}",
         "options": {
           "formatSecondUnits": {
-            "unit": "секунда",
-            "units": "секунды,секунд"
+            "unit": "секунду",
+            "units": "секунд"
           },
           "formatMinuteUnits": {
-            "unit": "минута",
-            "units": "минуты,минут"
+            "unit": "минуту",
+            "units": "минут"
           },
           "elapsedTimeFormat": {
             "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
@@ -2149,22 +2172,22 @@
             "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
           },
           "changedDisplay": "(__восстановлено__)",
-          "unchangedDisplay": "(__не изменено__)",
+          "unchangedDisplay": "(__без изменений__)",
           "userLimit": {
             "{userLimitValue}": "{userLimitValue}",
-            "{userLimitUnlimited}": "Без ограничений"
+            "{userLimitUnlimited}": "Безлимитно"
           },
           "state": {
             "{statePublic}": "🌐 **Публичный**",
             "{statePrivate}": "🚫 **Приватный**"
           },
           "visibilityState": {
-            "{visibilityStateShown}": "🐵 **Показан**",
-            "{visibilityStateHidden}": "🙈 **Скрыт**"
+            "{visibilityStateShown}": "🐵 **Видимый**",
+            "{visibilityStateHidden}": "🙈 **Скрытый**"
           },
           "rateLimited": {
             "{rateLimitedNone}": "",
-            "{rateLimitedDisplay}": "\n\n⚠️ В данный момент нельзя переименовывать из-за ограничений на частоту.\n\nПожалуйста, подождите {elapsedTimeFormatFraction} секунд или создайте новый канал."
+            "{rateLimitedDisplay}": "\n\n⚠️ Переименование невозможно в данный момент из-за ограничений скорости.\n\nПожалуйста, подождите {elapsedTimeFormatFraction} секунд или создайте новый канал."
           }
         },
         "arrayOptions": {
@@ -2182,46 +2205,53 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerEmbed",
       "content": {
-        "title": "🔀 Передача прав владения каналом",
-        "description": "Передайте права владения каналом другому пользователю.\n\nВыберите пользователя, которому вы хотите передать владение каналом."
+        "title": "🔀  Передача владения каналом",
+        "description": "Передайте владение каналом другому пользователю.\n\nВыберите пользователя, которому хотите передать канал."
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferredEmbed",
       "content": {
-        "title": "🔀 Передача прав владения каналом успешно завершена!",
+        "title": "🔀  Передача владения каналом успешна!",
         "description": "Вы больше не являетесь владельцем этого канала."
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelectedEmbed",
       "content": {
-        "title": "🔀 Передача прав владения каналом",
-        "description": "Передать права владения каналом {userDisplayName}.\n\n⚠️ Передавая права владения каналом другому пользователю, вы потеряете свои привилегии владельца.\n\nВы уверены, что хотите передать права владения каналом пользователю **{userDisplayName}?**"
+        "title": "🔀  Передача владения каналом",
+        "description": "Передать владение каналом пользователю {userDisplayName}.\n\n⚠️ Передавая владение каналом другому пользователю, вы потеряете свои права владельца.\n\nВы уверены, что хотите передать владение каналом **{userDisplayName}?**"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
+      "content": {
+        "title": "📈  Авто-масштабируемые каналы #{scalingIndex}",
+        "description": "Настройте ваши авто-масштабируемые голосовые каналы.\n\n➤ ∙ Мастер-канал: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Префикс: `{scalingPrefix}`\n➤ ∙ Макс. участников: `{scalingMaxMembers}`\n\nПлейсхолдеры: `{index}` (алиас: `{auto-scale}`)\n"
       }
     },
     {
       "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed",
       "content": {
-        "title": "🎚  Изменить кнопки мастер-канала #{index}",
-        "description": "Изменение кнопок повлияет на создаваемые динамические каналы\n__Мастер-канала #{index}__.\n\nЕсть два варианта:\n\n- Применить изменения немедленно ко всем каналам\n- Применить изменения только к новым _Динамическим каналам_.\n\n",
-        "footer": "Текущие включенные кнопки в меню ниже"
+        "title": "🎚  Редактирование кнопок мастер-канала #{index}",
+        "description": "Редактирование кнопок повлияет на динамические каналы, созданные __мастер-каналом #{index}__.\n\nЕсть два варианта:\n\n- Применить изменения немедленно ко всем каналам\n- Применить изменения только к новым _динамическим каналам_.",
+        "footer": "Текущие включённые кнопки в меню ниже"
       }
     },
     {
       "name": "VertixBot/UI-V3/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  Изменить кнопки мастер-канала #{index}",
-        "description": "Выберите какие кнопки будут видны\nв основном сообщении динамических каналов.\n\nучастники будут видеть только те кнопки, которые вы выбрали.\n\n",
-        "footer": "Текущие включенные кнопки в меню ниже"
+        "title": "🎚  Редактирование кнопок мастер-канала #{index}",
+        "description": "Выберите, какие кнопки вы хотите сделать видимыми для ваших участников.\n\nТолько выбранные кнопки будут включены/видимы в\n_динамических каналах_, созданных этим мастер-каналом.\n\n",
+        "footer": "Текущие включённые кнопки в меню ниже"
       }
     },
     {
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
-        "title": "🔧  Изменить мастер-канал #{index}",
-        "description": "Настройте мастер-канал в соответствии с вашими предпочтениями.\n\n**_🎛️ Общие настройки_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Подтвержденные роли_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Уведомления в основном сообщении: {configUserMention}\n⫸ ∙ Авто сохранение динамического канала: {configAutoSave}\n❯❯ ∙ Отправлять логи в канал: {configLogs}\n\n",
-        "footer": "Заметка: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
+        "title": "🔧  Настройка мастер-канала #{index}",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
           "off": "`🔴∙Выкл`",
@@ -2252,11 +2282,11 @@
               "access": "<:ChannelPermissions:1269649241207210125> ∙ **Доступ**",
               "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Приватность**",
               "region": "<:ChannelRegion:1272451511322017804> ∙ **Регион**",
-              "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Редактировать основное сообщение**",
+              "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Редактировать главное сообщение**",
               "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Очистить чат**",
               "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Сбросить**",
               "transfer": "<:TransferChannel:1269643178856939581> ∙ **Передать**",
-              "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Завоевать**"
+              "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Забрать**"
             }
           },
           "verifiedRoles": {
@@ -2269,9 +2299,9 @@
     {
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
-        "title": "🛡️  Редактирование подтвержденных ролей Мастер-канала #{index}",
-        "description": "Редактирование подтвержденных ролей будет влиять на динамические каналы, созданные Мастер-каналом #{index}.\n\n**_Текущие подтвержденные роли_**\n\n> {verifiedRolesDisplay}",
-        "footer": "Заметка: Изменения будут влиять только на динамические каналы, меняющие свое состояние после редактирования.",
+        "title": "🛡️  Редактирование проверенных ролей мастер-канала #{index}",
+        "description": "Редактирование проверенных ролей повлияет на динамические каналы, созданные мастер-каналом #{index}.\n\n**_Текущие проверенные роли_**\n\n> {verifiedRolesDisplay}",
+        "footer": "Примечание: Изменения повлияют только на динамические каналы, которые изменят своё состояние после редактирования, старые роли в канале останутся без изменений.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -2289,15 +2319,15 @@
     {
       "name": "VertixBot/UI-V3/SetupNewStep1Embed",
       "content": {
-        "title": "Шаг 1 - Установите шаблон имени для динамических каналов",
-        "description": "Вы можете указать имя по умолчанию для динамических каналов, которое будет использоваться при их открытии.\n\n_Текущий шаблон имени_:\n`{dynamicChannelNameTemplate}`\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, как это работает? Ознакомьтесь с [объяснением](https://vertix.gg/setup/1)."
+        "title": "Шаг 1 - Установка шаблона названия динамических каналов",
+        "description": "Вы можете указать название по умолчанию для динамических каналов, которое будет использоваться при их создании.\n\n_Текущий шаблон названия_:\n`{dynamicChannelNameTemplate}`\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, как это работает? Ознакомьтесь с [объяснением](https://vertix.gg/setup/1)."
       }
     },
     {
       "name": "VertixBot/UI-V3/SetupNewStep2Embed",
       "content": {
         "title": "Шаг 2 - Настройка динамических каналов",
-        "description": "Настройте интерфейс управления динамическими каналами.\n\n**_🎚 Интерфейс кнопок_**\n\n{message}\n**_⚙️ Конфигурация_**\n\n> @ ∙ Упоминать пользователя в основном сообщении: {configUserMention}\n> ⫸ ∙ Автоматическое сохранение динамических каналов: {configAutoSave}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, что делают кнопки? Ознакомьтесь с [объяснением](https://vertix.gg/features/dynamic-channels-showcase).",
+        "description": "Настройте интерфейс управления динамическими каналами.\n\n**_🎚 Интерфейс кнопок_**\n\n{message}\n**_⚙️ Конфигурация_**\n\n> @ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n> ⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, что делают кнопки? Ознакомьтесь с [объяснением](https://vertix.gg/features/dynamic-channels-showcase).",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -2315,8 +2345,8 @@
             "{configAutoSaveDisabled}": "{off}"
           },
           "footer": {
-            "{defaultFooter}": "Новые динамические каналы, созданные через этот мастер-канал, будут зависеть от выбранной вами конфигурации.",
-            "{noButtonsFooter}": "Примечание: Без кнопок участники не смогут управлять своими динамическими каналами. Им не будет показан встроенный интерфейс.\n"
+            "{defaultFooter}": "Новые динамические каналы, созданные через этот мастер-канал, будут использовать выбранную вами конфигурацию.",
+            "{noButtonsFooter}": "Примечание: Без кнопок участники не смогут управлять своими динамическими каналами. Им не будет показан интерфейс.\n"
           }
         },
         "arrayOptions": {
@@ -2329,11 +2359,11 @@
               "access": "<:ChannelPermissions:1269649241207210125> ∙ **Доступ**",
               "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Приватность**",
               "region": "<:ChannelRegion:1272451511322017804> ∙ **Регион**",
-              "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Изменить основное сообщение**",
+              "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Редактировать главное сообщение**",
               "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Очистить чат**",
               "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Сбросить**",
               "transfer": "<:TransferChannel:1269643178856939581> ∙ **Передать**",
-              "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Заявить права**"
+              "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Забрать**"
             }
           }
         }
@@ -2342,8 +2372,8 @@
     {
       "name": "VertixBot/UI-V3/SetupNewStep3Embed",
       "content": {
-        "title": "Шаг 3 - Выберите проверенные роли",
-        "description": "Выберите роли, на чьи разрешения будет влиять состояние динамических каналов.\n\nПроверенные роли не используются в большинстве случаев, почти все серверы используют настройки по умолчанию.\n\nНе уверены, как это работает? Ознакомьтесь с [объяснением](https://vertix.gg/setup/3).\n\n**_🛡️ Проверенные роли_**\n\n> {verifiedRolesDisplay}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `✓ Готово` )**.",
+        "title": "Шаг 3 - Выбор проверенных ролей",
+        "description": "Выберите роли, чьи права будут зависеть от состояния динамических каналов.\n\nПроверенные роли не используются в большинстве случаев, почти все серверы используют настройки по умолчанию.\n\nНе уверены, как это работает? Ознакомьтесь с [объяснением](https://vertix.gg/setup/3).\n\n**_🛡️ Проверенные роли_**\n\n> {verifiedRolesDisplay}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `✓ Завершить` )**.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -2357,26 +2387,19 @@
           }
         }
       }
-    },
-    {
-      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
-      "content": {
-        "title": "📈  Автомасштабируемые каналы #{scalingIndex}",
-        "description": "Настройте ваши голосовые каналы с авто-масштабированием.\n\n➤ ∙ Мастер-канал: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Префикс: `{scalingPrefix}`\n➤ ∙ Макс. участников: `{scalingMaxMembers}`\n\nПлейсхолдеры: `{index}` (алиас: `{auto-scale}`)\n"
-      }
     }
   ],
   "markdowns": [
     {
       "name": "VertixBot/UI-V2/ClaimVoteResultsMarkdown",
       "content": {
-        "content": "![]({userWonDisplayAvatarURL})\n\n## {userWonDisplayName}  заявил права на канал и теперь является новым владельцем!\n\nПредыдущий владелец: ~~{previousOwnerDisplayName}~~\n\nДля завершения голосования понадобилось {elapsedTimeSeconds} секунд и {resultsLength} кандидатов.\n\n## Кандидаты\n\\# | Пользователь | Голоса\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## Голоса\nКто | За\n:----: | :----:\n{votesForMembersResults}\n"
+        "content": "![]({userWonDisplayAvatarURL})\n\n## {userWonDisplayName} забрал канал и теперь является новым владельцем!\n\nПредыдущий владелец: ~~{previousOwnerDisplayName}~~\n\nПотребовалось {elapsedTimeSeconds} секунд и {resultsLength} кандидатов для завершения голосования.\n\n## Кандидаты\n\\# | Пользователь | Голоса\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## Голоса\nКто | За\n:----: | :----:\n{votesForMembersResults}\n"
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimVoteResultsMarkdown",
       "content": {
-        "content": "![]({userWonDisplayAvatarURL})\n\n## {userWonDisplayName}  заявил права на канал и теперь является новым владельцем!\n\nПредыдущий владелец: ~~{previousOwnerDisplayName}~~\n\nДля завершения голосования понадобилось {elapsedTimeSeconds} секунд и {resultsLength} кандидатов.\n\n## Кандидаты\n\\# | Пользователь | Голоса\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## Голоса\nКто | За\n:----: | :----:\n{votesForMembersResults}\n"
+        "content": "![]({userWonDisplayAvatarURL})\n\n## {userWonDisplayName} забрал канал и теперь является новым владельцем!\n\nПредыдущий владелец: ~~{previousOwnerDisplayName}~~\n\nПотребовалось {elapsedTimeSeconds} секунд и {resultsLength} кандидатов для завершения голосования.\n\n## Кандидаты\n\\# | Пользователь | Голоса\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## Голоса\nКто | За\n:----: | :----:\n{votesForMembersResults}\n"
       }
     }
   ],
@@ -2384,13 +2407,13 @@
     {
       "name": "VertixBot/UI-General/BadwordsModal",
       "content": {
-        "title": "Установить запрещенные слова"
+        "title": "Установить запрещённые слова"
       }
     },
     {
       "name": "VertixBot/UI-General/ChannelNameTemplateModal",
       "content": {
-        "title": "Имя для канала"
+        "title": "Установить название динамических каналов"
       }
     },
     {
@@ -2402,37 +2425,37 @@
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
       "content": {
-        "title": "Лимит пользователей"
+        "title": "Установить лимит пользователей"
       }
     },
     {
       "name": "VertixBot/UI-V2/DynamicChannelMetaRenameModal",
       "content": {
-        "title": "Переименовать канал"
+        "title": "Переименовать динамический канал"
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelLimitModal",
       "content": {
-        "title": "Лимит пользователей"
+        "title": "Установить лимит пользователей"
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
       "content": {
-        "title": "Изменить описание"
+        "title": "Редактировать описание"
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
       "content": {
-        "title": "Изменить заголовок"
+        "title": "Редактировать заголовок"
       }
     },
     {
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
-        "title": "Переименовать канал"
+        "title": "Переименовать динамический канал"
       }
     }
   ]

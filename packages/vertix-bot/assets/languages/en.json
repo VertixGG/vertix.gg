@@ -271,6 +271,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+        "content": {
+          "label": "Edit Settings"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
         "content": {
           "label": "Immediately"
@@ -280,12 +286,6 @@
         "name": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
         "content": {
           "label": "Apply Only"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
-        "content": {
-          "label": "Edit Settings"
         }
       }
     ],
@@ -305,17 +305,17 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
-        "content": {
-          "label": "CHANNEL NAME PREFIX",
-          "placeholder": "### Room - {index} ###"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
         "content": {
           "label": "MAX MEMBERS PER CHANNEL",
           "placeholder": "10"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "CHANNEL NAME PREFIX",
+          "placeholder": "### Room - {index} ###"
         }
       },
       {
@@ -390,13 +390,32 @@
           "placeholder": "🌍 Select Language",
           "selectOptions": [
             {
-              "label": "🇺🇸 English"
+              "label": "🇺🇸 English",
+              "value": "en"
             },
             {
-              "label": "🇷🇺 Russian"
+              "label": "🇷🇺 Russian",
+              "value": "ru"
             },
             {
-              "label": "🇬🇷 Greek"
+              "label": "🇬🇷 Greek",
+              "value": "el"
+            },
+            {
+              "label": "🇪🇸 Spanish",
+              "value": "es"
+            },
+            {
+              "label": "🇫🇷 French",
+              "value": "fr"
+            },
+            {
+              "label": "🇩🇪 German",
+              "value": "de"
+            },
+            {
+              "label": "🇯🇵 Japanese",
+              "value": "ja"
             }
           ]
         }
@@ -721,7 +740,11 @@
           "currentLanguage": {
             "en": "English",
             "ru": "Russian",
-            "el": "Greek"
+            "el": "Greek",
+            "es": "Spanish",
+            "fr": "French",
+            "de": "German",
+            "ja": "Japanese"
           }
         }
       }
@@ -2201,6 +2224,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
+      "content": {
+        "title": "📈  Auto-Scaling Channels #{scalingIndex}",
+        "description": "Configure your auto-scaling voice channels.\n\n➤ ∙ Master Channel: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Prefix: `{scalingPrefix}`\n➤ ∙ Max Members: `{scalingMaxMembers}`\n\nPlaceholders: `{index}` (alias: `{auto-scale}`)\n"
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed",
       "content": {
         "title": "🎚  Edit Buttons Of Master Channel #{index}",
@@ -2356,13 +2386,6 @@
             "separator": ", "
           }
         }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
-      "content": {
-        "title": "📈  Auto-Scaling Channels #{scalingIndex}",
-        "description": "Configure your auto-scaling voice channels.\n\n➤ ∙ Master Channel: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Prefix: `{scalingPrefix}`\n➤ ∙ Max Members: `{scalingMaxMembers}`\n\nPlaceholders: `{index}` (alias: `{auto-scale}`)\n"
       }
     }
   ],

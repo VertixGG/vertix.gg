@@ -37,7 +37,9 @@
       "Bash(do echo \"=== Checking: $file ===\" grep -B 5 -A 2 \"ServiceLocator\\\\.$\\\\.get\" \"$file\")",
       "Bash(done)",
       "Bash(find:*)",
-      "mcp__jetbrains__build_project"
+      "mcp__jetbrains__build_project",
+      "Bash(node_modules/.bin/prisma generate:*)",
+      "Bash(bunx prisma generate:*)"
     ]
   }
 }

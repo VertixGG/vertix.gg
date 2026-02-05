@@ -1,0 +1,911 @@
+{
+  "code": "ja",
+  "name": "日本語",
+  "flag": "🇯🇵",
+  "elements": {
+    "buttons": [
+      {
+        "name": "VertixBot/UI-General/ChannelNameTemplateEditButton",
+        "content": {
+          "label": "チャンネル名を編集"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DoneButton",
+        "content": {
+          "label": "✓ 完了"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/LanguageChooseButton",
+        "content": {
+          "label": "言語を選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/NoButton",
+        "content": {
+          "label": "👎 いいえ"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupBadwordsEditButton",
+        "content": {
+          "label": "禁止ワードを編集"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateButton",
+        "content": {
+          "label": "マスターチャンネルを作成"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateV3Button",
+        "content": {
+          "label": "マスターチャンネルを作成 (V3)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeInviteButton",
+        "content": {
+          "label": "Vertixを招待"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeSetupButton",
+        "content": {
+          "label": "セットアップ"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WelcomeSupportButton",
+        "content": {
+          "label": "コミュニティサーバー"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardBackButton",
+        "content": {
+          "label": "◀ 戻る"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardFinishButton",
+        "content": {
+          "label": "✔ 完了"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/WizardNextButton",
+        "content": {
+          "label": "次へ ▶"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/YesButton",
+        "content": {
+          "label": "👍 はい"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/ClaimStartButton",
+        "content": {
+          "label": "取得"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/ClaimVoteAddButton",
+        "content": {
+          "label": "{displayName}に投票"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/ClaimVoteStepInButton",
+        "content": {
+          "label": "参加"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
+        "content": {
+          "label": "チャットをクリア"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaLimitButton",
+        "content": {
+          "label": "制限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaRenameButton",
+        "content": {
+          "label": "名前変更"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
+        "content": {
+          "label": "アクセス"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "publicText": "公開",
+            "privateText": "非公開"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "shownText": "表示",
+            "hiddenText": "非表示"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
+        "content": {
+          "label": "取得"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
+        "content": {
+          "label": "リセット"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
+        "content": {
+          "label": "転送"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
+        "content": {
+          "label": "即時"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+        "content": {
+          "label": "適用のみ"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ClaimStartButton",
+        "content": {
+          "label": "取得"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ClaimVoteAddButton",
+        "content": {
+          "label": "{displayName}に投票"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ClaimVoteStepInButton",
+        "content": {
+          "label": "参加"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+        "content": {
+          "label": "取得"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelClearChatButton",
+        "content": {
+          "label": "チャットをクリア"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLimitMetaButton",
+        "content": {
+          "label": "制限"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessButton",
+        "content": {
+          "label": "アクセス"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditButton",
+        "content": {
+          "label": "メインメッセージを編集"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
+        "content": {
+          "label": "編集 ✏️"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
+        "content": {
+          "label": "編集 ✏️"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
+        "content": {
+          "label": "プライバシー"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelRegionButton",
+        "content": {
+          "label": "リージョン"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelRenameButton",
+        "content": {
+          "label": "名前変更"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
+        "content": {
+          "label": "リセット"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+        "content": {
+          "label": "転送"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+        "content": {
+          "label": "設定を編集"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
+        "content": {
+          "label": "即時"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
+        "content": {
+          "label": "適用のみ"
+        }
+      }
+    ],
+    "textInputs": [
+      {
+        "name": "VertixBot/UI-General/BadwordsInput",
+        "content": {
+          "label": "`,`で区切り、部分一致には`*`を使用",
+          "placeholder": "なし"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ChannelNameTemplateInput",
+        "content": {
+          "label": "ダイナミックチャンネルのデフォルト名を設定",
+          "placeholder": "{user}のチャンネル"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
+        "content": {
+          "label": "チャンネルあたりの最大メンバー数",
+          "placeholder": "10"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupScalingPrefixInput",
+        "content": {
+          "label": "チャンネル名のプレフィックス",
+          "placeholder": "### ルーム - {index} ###"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInput",
+        "content": {
+          "label": "ユーザー制限を設定（0で無制限）",
+          "placeholder": "0 - 99"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaRenameInput",
+        "content": {
+          "label": "チャンネル名を選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
+        "content": {
+          "label": "ユーザー制限を設定（0で無制限）",
+          "placeholder": "0 - 99"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditModalDescription",
+        "content": {
+          "label": "説明"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditModalTitle",
+        "content": {
+          "label": "タイトル"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
+        "content": {
+          "label": "チャンネル名を選択"
+        }
+      }
+    ],
+    "selectMenus": [
+      {
+        "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
+        "content": {
+          "placeholder": "⌘ ∙ 設定",
+          "selectOptions": [
+            {
+              "label": "{dynamicChannelMentionableLabel} {state}"
+            },
+            {
+              "label": "{dynamicChannelAutoSaveLabel} {state}"
+            },
+            {
+              "label": "{dynamicChannelLogsChannelLabel} {state}"
+            }
+          ],
+          "options": {
+            "state": {
+              "{stateOn}": "∙🟢 オン",
+              "{stateOff}": "∙🔴 オフ"
+            },
+            "dynamicChannelMentionableLabel": "@ ∙ メインメッセージでユーザーをメンション",
+            "dynamicChannelAutoSaveLabel": "⫸ ∙ ダイナミックチャンネルを自動保存",
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ カスタムチャンネルにログを送信"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/LanguageSelectMenu",
+        "content": {
+          "placeholder": "🌍 言語を選択",
+          "selectOptions": [
+            {
+              "label": "🇺🇸 英語",
+              "value": "en"
+            },
+            {
+              "label": "🇷🇺 ロシア語",
+              "value": "ru"
+            },
+            {
+              "label": "🇬🇷 ギリシャ語",
+              "value": "el"
+            },
+            {
+              "label": "🇪🇸 スペイン語",
+              "value": "es"
+            },
+            {
+              "label": "🇫🇷 フランス語",
+              "value": "fr"
+            },
+            {
+              "label": "🇩🇪 ドイツ語",
+              "value": "de"
+            },
+            {
+              "label": "🇯🇵 日本語",
+              "value": "ja"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
+        "content": {
+          "placeholder": "❖ ∙ マスターチャンネルを編集"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ Everyoneロール",
+          "selectOptions": [
+            {
+              "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}"
+            }
+          ],
+          "options": {
+            "state": {
+              "{stateOn}": "∙🟢 オン",
+              "{stateOff}": "∙🔴 オフ"
+            },
+            "dynamicChannelIncludeEveryoneRoleLabel": "everyoneロールを含める"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesMenu",
+        "content": {
+          "placeholder": "認証済みロールを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
+        "content": {
+          "placeholder": "🎚 ボタンを選択",
+          "selectOptions": [
+            {
+              "label": "名前変更"
+            },
+            {
+              "label": "制限"
+            },
+            {
+              "label": "チャットをクリア"
+            },
+            {
+              "label": "公開/非公開"
+            },
+            {
+              "label": "表示/非表示"
+            },
+            {
+              "label": "アクセス"
+            },
+            {
+              "label": "リセット"
+            },
+            {
+              "label": "転送"
+            },
+            {
+              "label": "取得"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
+        "content": {
+          "placeholder": "🫵 ユーザーアクセスをブロック"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
+        "content": {
+          "placeholder": "👎 アクセスを削除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
+        "content": {
+          "placeholder": "👍 アクセスを付与"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
+        "content": {
+          "placeholder": "👢 ユーザーをキック"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
+        "content": {
+          "placeholder": "🤙 ユーザーアクセスのブロックを解除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
+        "content": {
+          "placeholder": "🔀 ユーザーを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LogChannelSelectMenu",
+        "content": {
+          "placeholder": "❯❯ ∙ ログチャンネル"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ 編集オプションを選択",
+          "selectOptions": [
+            {
+              "label": "∙ チャンネル名を編集"
+            },
+            {
+              "label": "∙ チャンネルボタンを編集"
+            },
+            {
+              "label": "∙ チャンネルの認証済みロールを編集"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
+        "content": {
+          "placeholder": "🎚 ボタンを選択",
+          "selectOptions": [
+            {
+              "label": "名前変更"
+            },
+            {
+              "label": "制限"
+            },
+            {
+              "label": "アクセス"
+            },
+            {
+              "label": "プライバシー"
+            },
+            {
+              "label": "リージョン"
+            },
+            {
+              "label": "メインメッセージを編集"
+            },
+            {
+              "label": "チャットをクリア"
+            },
+            {
+              "label": "リセット"
+            },
+            {
+              "label": "転送"
+            },
+            {
+              "label": "取得"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
+        "content": {
+          "placeholder": "🫵 ユーザーアクセスをブロック"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
+        "content": {
+          "placeholder": "👎 アクセスを削除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
+        "content": {
+          "placeholder": "👍 アクセスを付与"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
+        "content": {
+          "placeholder": "👢 ユーザーをキック"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
+        "content": {
+          "placeholder": "🤙 ユーザーアクセスのブロックを解除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelPrivacyMenu",
+        "content": {
+          "placeholder": "⛉ ∙ プライバシー状態を選択",
+          "selectOptions": [
+            {
+              "label": "公開"
+            },
+            {
+              "label": "非公開"
+            },
+            {
+              "label": "非表示"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelRegionSelectMenu",
+        "content": {
+          "placeholder": "⌖ ∙ リージョンを選択",
+          "selectOptions": [
+            {
+              "label": "自動"
+            },
+            {
+              "label": "ブラジル"
+            },
+            {
+              "label": "香港"
+            },
+            {
+              "label": "インド"
+            },
+            {
+              "label": "日本"
+            },
+            {
+              "label": "ロッテルダム"
+            },
+            {
+              "label": "ロシア"
+            },
+            {
+              "label": "シンガポール"
+            },
+            {
+              "label": "南アフリカ"
+            },
+            {
+              "label": "シドニー"
+            },
+            {
+              "label": "米国中部"
+            },
+            {
+              "label": "米国東部"
+            },
+            {
+              "label": "米国南部"
+            },
+            {
+              "label": "米国西部"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
+        "content": {
+          "placeholder": "🔀 ユーザーを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/LogChannelSelectMenu",
+        "content": {
+          "placeholder": "❯❯ ∙ ログチャンネル"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ 編集オプションを選択",
+          "selectOptions": [
+            {
+              "label": "∙ チャンネル名を編集"
+            },
+            {
+              "label": "∙ チャンネルボタンを編集"
+            },
+            {
+              "label": "∙ チャンネルの認証済みロールを編集"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "embeds": [
+    {
+      "name": "VertixBot/UI-General/DisabledWhileClaimEmbed",
+      "content": {
+        "title": "😈 アクションは無効です",
+        "description": "取得処理中はアクションが無効です。\n\n取得が完了するまでお待ちください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/InvalidChannelTypeEmbed",
+      "content": {
+        "title": "# おっと！このコンポーネントはこのチャンネルタイプでは制限されています。",
+        "description": "このチャンネルタイプではアクションが制限されていますが、利用可能なチャンネルタイプは：\n\n{allowedTypes}\n\n別のチャンネルでアクションを再試行してください。",
+        "arrayOptions": {
+          "allowedTypes": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/LanguageEmbed",
+      "content": {
+        "title": "🌍  言語を選択",
+        "description": "__現在選択されている言語__：**{currentLanguage}**\n\nお探しの言語が見つかりませんでしたか？\n\nあなたの言語にボットを翻訳する人になれます！\nサポートサーバーでお問い合わせください！\n\n翻訳の間違いを見つけましたか？お知らせください！",
+        "options": {
+          "currentLanguage": {
+            "en": "英語",
+            "ru": "ロシア語",
+            "el": "ギリシャ語",
+            "es": "スペイン語",
+            "fr": "フランス語",
+            "de": "ドイツ語",
+            "ja": "日本語"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/MissingPermissionsEmbed",
+      "content": {
+        "title": "🔐  おっと！特定の権限が必要です",
+        "description": "続行するには権限が必要です。**{omitterDisplayName}**には以下の権限がありません：\n\n{missingPermissions}",
+        "arrayOptions": {
+          "missingPermissions": {
+            "format": "- {value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NothingChangedEmbed",
+      "content": {
+        "title": "🤷  変更なし",
+        "description": "変更できないものを変更しようとした場合、または以前と同じ場合に発生する可能性があります。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NotYourChannelEmbed",
+      "content": {
+        "title": "⛔  これはあなたのチャンネルではありません！",
+        "description": "でも自分のチャンネルを開くことができます :)\n\nここをクリック：<#{masterChannelId}>"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupEmbed",
+      "content": {
+        "title": "🛠  Vertixをセットアップ",
+        "description": "**Vertix**の無限の可能性を発見しましょう！\nサーバーを完璧にカスタマイズして最適化しましょう。\n\n新しいマスターチャンネルを作成するには：\n`(➕ マスターチャンネルを作成)`ボタンをクリックしてください。\n\nマスターチャンネルは、それぞれ独自の設定を持つダイナミックボイスチャンネルジェネレーターです。\n\n禁止ワード機能により、サーバーレベルでダイナミックチャンネル名を制限する設定が可能です。\n\n_**現在のマスターチャンネル**_：\n{masterChannelMessage}\n\n_現在の禁止ワード_：\n{badwordsMessage}\n\n-# 💡 マスターチャンネルを編集することでログチャンネルを設定できます。\n",
+        "options": {
+          "masterChannelMessage": {
+            "{masterChannels}": "\n{masterChannels}",
+            "{masterChannelMessageDefault}": "**なし**"
+          },
+          "badwordsMessage": {
+            "{badwords}": "`{badwords}`",
+            "{badwordsMessageDefault}": "**なし**"
+          },
+          "none": "**なし**"
+        },
+        "arrayOptions": {
+          "masterChannels": {
+            "format": "{value}{separator}",
+            "separator": "\n",
+            "multiSeparator": "\n\n",
+            "options": {
+              "index": "**#{index}**",
+              "name": "▹ 名前：<#{id}>",
+              "id": "▹ チャンネルID：`{id}`",
+              "channelsTemplateName": "▹ ダイナミックチャンネル名：`{channelsTemplateName}`",
+              "channelsTemplateButtons": "▹ ボタン：**{channelsTemplateButtons}**",
+              "channelsVerifiedRoles": "▹ 認証済みロール：{channelsVerifiedRoles}",
+              "channelsLogsChannelId": "▹ ログチャンネル：{channelsLogsChannelId}",
+              "channelsAutoSave": "▹ 自動保存：`{channelsAutoSave}`",
+              "version": "▹ UIバージョン：`{version}`"
+            }
+          },
+          "badwords": {
+            "format": "{value}{separator}",
+            "separator": "、"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed",
+      "content": {
+        "title": "🤷  マスターチャンネルの上限に達しました",
+        "description": "合計**{maxMasterChannels}**個のマスターチャンネルまで作成できます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SomethingWentWrongEmbed",
+      "content": {
+        "title": "🤷 おっと、問題が発生しました",
+        "description": "エラーが発生しました"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/WelcomeEmbed",
+      "content": {
+        "title": "༄ Vertixへようこそ、始めましょう！",
+        "description": "Vertixへようこそ、あなたのサーバーへの素晴らしい追加機能です！\n協力してサーバーをさらに良くしましょう。\n\n**ボットのセットアップ**\n- `/setup`と入力するか、`(🛠 セットアップ)`ボタンを押してください。\n- `(➕ マスターチャンネルを作成)`をクリック\n- 手順に従ってください。\n\nまだ不安ですか？[ステップバイステップガイド](https://vertix.gg/posts/how-to-setup)をご覧ください。\n\n`/setup`コマンドでいつでも設定を編集できます。\n\nヘルプが必要な場合や提案がある場合は、Discordコミュニティサーバーに参加してください！喜んでお手伝いし、フィードバックをお聞きします。\n\n参加はこちら：https://discord.gg/dEwKeQefUU"
+      }
+    }
+  ],
+  "markdowns": [
+    {
+      "name": "VertixBot/UI-V2/ClaimVoteResultsMarkdown",
+      "content": {
+        "content": "![]({userWonDisplayAvatarURL})\n\n## {userWonDisplayName}がチャンネルを取得し、新しいオーナーになりました！\n\n前のオーナー：~~{previousOwnerDisplayName}~~\n\n投票完了まで{elapsedTimeSeconds}秒、{resultsLength}人の候補者がいました。\n\n## 候補者\n\\# | ユーザー | 票数\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## 投票\n誰が | 誰に\n:----: | :----:\n{votesForMembersResults}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimVoteResultsMarkdown",
+      "content": {
+        "content": "![]({userWonDisplayAvatarURL})\n\n## {userWonDisplayName}がチャンネルを取得し、新しいオーナーになりました！\n\n前のオーナー：~~{previousOwnerDisplayName}~~\n\n投票完了まで{elapsedTimeSeconds}秒、{resultsLength}人の候補者がいました。\n\n## 候補者\n\\# | ユーザー | 票数\n:----: | :----: | :----:\n{displayNameAndResults}\n\n## 投票\n誰が | 誰に\n:----: | :----:\n{votesForMembersResults}\n"
+      }
+    }
+  ],
+  "modals": [
+    {
+      "name": "VertixBot/UI-General/BadwordsModal",
+      "content": {
+        "title": "禁止ワードを設定"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ChannelNameTemplateModal",
+      "content": {
+        "title": "ダイナミックチャンネル名を設定"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupScalingConfigModal",
+      "content": {
+        "title": "📈 スケーリングチャンネルを設定"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaLimitModal",
+      "content": {
+        "title": "ユーザー制限を設定"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameModal",
+      "content": {
+        "title": "ダイナミックチャンネル名を変更"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLimitModal",
+      "content": {
+        "title": "ユーザー制限を設定"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
+      "content": {
+        "title": "説明を編集"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
+      "content": {
+        "title": "タイトルを編集"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
+      "content": {
+        "title": "ダイナミックチャンネル名を変更"
+      }
+    }
+  ]
+}

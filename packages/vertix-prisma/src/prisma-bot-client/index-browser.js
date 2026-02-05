@@ -230,48 +230,6 @@ exports.Prisma.UserChannelDataScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ElementButtonLanguageScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ElementTextInputLanguageScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ElementSelectMenuLanguageScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.EmbedLanguageScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MarkdownLanguageScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ModalLanguageScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -307,13 +265,7 @@ exports.Prisma.ModelName = {
   ChannelData: 'ChannelData',
   User: 'User',
   UserData: 'UserData',
-  UserChannelData: 'UserChannelData',
-  ElementButtonLanguage: 'ElementButtonLanguage',
-  ElementTextInputLanguage: 'ElementTextInputLanguage',
-  ElementSelectMenuLanguage: 'ElementSelectMenuLanguage',
-  EmbedLanguage: 'EmbedLanguage',
-  MarkdownLanguage: 'MarkdownLanguage',
-  ModalLanguage: 'ModalLanguage'
+  UserChannelData: 'UserChannelData'
 };
 
 /**

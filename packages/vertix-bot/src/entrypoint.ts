@@ -389,11 +389,9 @@ async function registerUIAdapters() {
 }
 
 async function registerUILanguageManager( options: {
-    shouldImport?: boolean;
     shouldValidate?: boolean;
 } = {} ) {
     options = Object.assign( {
-        shouldImport: true,
         shouldValidate: true
     }, options );
 
@@ -594,12 +592,16 @@ async function exportLanguages( languageCodes: string[] ) {
     await registerUIServices( client );
 
     await registerConfigs();
+
+    // Register dummy IPC service for export commands (doesn't need real Redis connection)
+    await registerDummyIPCService();
+
     await registerServices();
 
     await EmojiManager.$.promise();
 
     await registerUIAdapters();
-    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
+    await registerUILanguageManager( { shouldValidate: false } );
     await registerUIVersionStrategies();
 
     const initialLanguage = UILanguageManager.$.getInitialLanguage();
@@ -648,7 +650,7 @@ export async function bootstrapUIRuntime(): Promise<UIService> {
     await registerServices();
     await EmojiManager.$.promise();
     await registerUIAdapters();
-    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
+    await registerUILanguageManager( { shouldValidate: false } );
     await registerUIVersionStrategies();
     await registerDataServicesAndComponents();
     return ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
@@ -700,7 +702,7 @@ export async function bootstrapUIRuntimeHeadless(): Promise<UIService> {
     // skip runtime-only initialization (e.g., DynamicChannelClaimManager) in headless mode
     await registerUIAdapters();
 
-    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
+    await registerUILanguageManager( { shouldValidate: false } );
     await registerUIVersionStrategies();
 
     GlobalLogger.$.info( bootstrapUIRuntimeHeadless, "Headless UI runtime bootstrapped" );
@@ -935,10 +937,7 @@ export async function entryPoint( options: {
 
     await registerUIAdapters();
 
-    const importLanguageArg = !!process.argv.find( arg => arg.startsWith( "--import-languages" ) );
-
     await registerUILanguageManager( {
-        shouldImport: importLanguageArg,
         shouldValidate: false
     } );
 

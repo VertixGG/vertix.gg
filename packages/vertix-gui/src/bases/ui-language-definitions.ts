@@ -51,7 +51,6 @@ export interface UIEmbedLanguage {
     content: UIEmbedLanguageContent;
 }
 
-// TODO: Currently used by `ElementSelectMenuLanguageModel` and `ElementSelectUserMenuLanguageModel`.
 export interface UIElementSelectMenuLanguageContent {
     placeholder?: string;
     options?: {
@@ -60,6 +59,7 @@ export interface UIElementSelectMenuLanguageContent {
 
     selectOptions?: {
         label: string;
+        value?: string;
     }[];
 }
 

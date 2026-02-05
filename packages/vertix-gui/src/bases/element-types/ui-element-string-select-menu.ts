@@ -30,7 +30,8 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         const translateAbleSelectEntries = await Promise.all(
             ( await this.getSelectOptions() ).map( async( option ) => {
                 return {
-                    label: option.label
+                    label: option.label,
+                    value: option.value
                 };
             } )
         );
@@ -122,14 +123,16 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
     private async getOptionsInternal() {
         const options = this.content?.options || this.getOptions(),
             hardCodedSelectOptions = await this.getSelectOptions(),
-            translatedSelectOptions = ( this.content?.selectOptions || [] ) as APISelectMenuOption[];
+            translatedSelectOptions = ( this.content?.selectOptions || [] ) as ( APISelectMenuOption & { value?: string } )[];
 
         let mergedOptions: APISelectMenuOption[] = [];
 
         // If using translation then, merge the hard coded options with the translated options.
+        // Match by value when available, otherwise fall back to index for static menus.
         if ( hardCodedSelectOptions.length && translatedSelectOptions.length ) {
             mergedOptions = hardCodedSelectOptions.map( ( option, index ) => {
-                const translatedOption = translatedSelectOptions[ index ];
+                const translatedOption = translatedSelectOptions.find( ( opt ) => opt.value === option.value )
+                    || translatedSelectOptions[ index ];
 
                 if ( translatedOption ) {
                     option.label = translatedOption.label;

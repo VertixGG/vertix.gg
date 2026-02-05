@@ -127,7 +127,13 @@ export abstract class UITemplateBase extends UIEntityBase {
                  * }
                  */
                 // eg: appliedVariables[ "limit" ] = "{limitValue}";
-                appliedVariables[ variableName ] = variableContext[ templateLogic[ variableName ] ];
+                const resolved = variableContext[ templateLogic[ variableName ] ];
+
+                // Only override if the lookup found a match; when the data value is not a key
+                // in the options map (e.g. pre-formatted strings), preserve the original value.
+                if ( resolved !== undefined ) {
+                    appliedVariables[ variableName ] = resolved;
+                }
             } else if ( "string" === typeof variableContext ) {
                 appliedVariables[ variableName ] = variables[ variableName ];
             } else {

@@ -25,18 +25,6 @@ import {
     UI_LANGUAGES_PATH
 } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-import { ElementButtonLanguageModel } from "@vertix.gg/bot/src/models/element-button-language-model";
-
-import { ElementSelectMenuLanguageModel } from "@vertix.gg/bot/src/models/element-select-menu-language-model";
-
-import { ElementTextInputLanguageModel } from "@vertix.gg/bot/src/models/element-text-input-language-model";
-
-import { EmbedLanguageModel } from "@vertix.gg/bot/src/models/embed-language-model";
-
-import { MarkdownLanguageModel } from "@vertix.gg/bot/src/models/markdown-language-model";
-
-import { ModalLanguageModel } from "@vertix.gg/bot/src/models/modal-language-model";
-
 import { LanguageUtils } from "@vertix.gg/bot/src/utils/language";
 
 import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
@@ -97,6 +85,14 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
 
     private uiInitialLanguage!: UILanguageJSON;
 
+    // In-memory lookup maps: lang code -> entity name -> content
+    private buttonsByLang = new Map<string, Map<string, UIElementButtonLanguageContent>>();
+    private selectMenusByLang = new Map<string, Map<string, UIElementSelectMenuLanguageContent>>();
+    private textInputsByLang = new Map<string, Map<string, UIElementTextInputLanguageContent>>();
+    private embedsByLang = new Map<string, Map<string, UIEmbedLanguageContent>>();
+    private markdownsByLang = new Map<string, Map<string, UIMarkdownLanguageContent>>();
+    private modalsByLang = new Map<string, Map<string, UIModalLanguageContent>>();
+
     public static getName() {
         return "VertixBot/UI-V2/LanguageManager";
     }
@@ -135,9 +131,10 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             return button.getTranslatableContent();
         }
 
-        const buttonLanguage = await ElementButtonLanguageModel.$.get( button.getName(), languageCode );
+        const langMap = this.buttonsByLang.get( languageCode );
+        const content = langMap?.get( button.getName() );
 
-        if ( !buttonLanguage ) {
+        if ( !content ) {
             this.logger.error(
                 this.getButtonTranslatedContent,
                 `Button language not found: '${ button.getName() }' - Language: '${ languageCode }'`
@@ -146,8 +143,8 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         }
 
         return {
-            label: buttonLanguage.content.label,
-            options: buttonLanguage.content.options as any // TODO: Not well.
+            label: content.label,
+            options: content.options as any
         };
     }
 
@@ -163,9 +160,10 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             return selectMenu.getTranslatableContent();
         }
 
-        const selectMenuLanguage = await ElementSelectMenuLanguageModel.$.get( selectMenu.getName(), languageCode );
+        const langMap = this.selectMenusByLang.get( languageCode );
+        const content = langMap?.get( selectMenu.getName() );
 
-        if ( !selectMenuLanguage ) {
+        if ( !content ) {
             this.logger.error(
                 this.getSelectMenuTranslatedContent,
                 `Select menu language not found: '${ selectMenu.getName() }' - Language: '${ languageCode }'`
@@ -174,9 +172,9 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         }
 
         return {
-            placeholder: selectMenuLanguage.content.placeholder || undefined,
-            selectOptions: selectMenuLanguage.content.selectOptions as any,
-            options: selectMenuLanguage.content.options as any
+            placeholder: content.placeholder || undefined,
+            selectOptions: content.selectOptions as any,
+            options: content.options as any
         };
     }
 
@@ -188,9 +186,10 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             return textInput.getTranslatableContent();
         }
 
-        const textInputLanguage = await ElementTextInputLanguageModel.$.get( textInput.getName(), languageCode );
+        const langMap = this.textInputsByLang.get( languageCode );
+        const content = langMap?.get( textInput.getName() );
 
-        if ( !textInputLanguage ) {
+        if ( !content ) {
             this.logger.error(
                 this.getTextInputTranslatedContent,
                 `Text input language not found: '${ textInput.getName() }' - Language: '${ languageCode }'`
@@ -199,8 +198,8 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         }
 
         return {
-            label: textInputLanguage.content.label,
-            placeholder: textInputLanguage.content.placeholder || undefined
+            label: content.label,
+            placeholder: content.placeholder || undefined
         };
     }
 
@@ -212,9 +211,10 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             return embed.getTranslatableContent();
         }
 
-        const embedLanguage = await EmbedLanguageModel.$.get( embed.getName(), languageCode );
+        const langMap = this.embedsByLang.get( languageCode );
+        const content = langMap?.get( embed.getName() );
 
-        if ( !embedLanguage ) {
+        if ( !content ) {
             this.logger.error(
                 this.getEmbedTranslatedContent,
                 `Embed language not found: '${ embed.getName() }' - Language: '${ languageCode }'`
@@ -223,11 +223,11 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         }
 
         return {
-            title: embedLanguage.content.title || undefined,
-            description: embedLanguage.content.description || undefined,
-            footer: embedLanguage.content.footer || undefined,
-            options: embedLanguage.content.options as any,
-            arrayOptions: embedLanguage.content.arrayOptions as any
+            title: content.title || undefined,
+            description: content.description || undefined,
+            footer: content.footer || undefined,
+            options: content.options as any,
+            arrayOptions: content.arrayOptions as any
         };
     }
 
@@ -239,9 +239,10 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             return markdown.getTranslatableContent();
         }
 
-        const markdownLanguage = await MarkdownLanguageModel.$.get( markdown.getName(), languageCode );
+        const langMap = this.markdownsByLang.get( languageCode );
+        const content = langMap?.get( markdown.getName() );
 
-        if ( !markdownLanguage ) {
+        if ( !content ) {
             this.logger.error(
                 this.getMarkdownTranslatedContent,
                 `Markdown language not found: '${ markdown.getName() }' - Language: '${ languageCode }'`
@@ -250,8 +251,8 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         }
 
         return {
-            content: markdownLanguage.content.content,
-            options: markdownLanguage.content.options as any
+            content: content.content,
+            options: content.options as any
         };
     }
 
@@ -263,9 +264,10 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             return modal.getTranslatableContent();
         }
 
-        const modalLanguage = await ModalLanguageModel.$.get( modal.getName(), languageCode );
+        const langMap = this.modalsByLang.get( languageCode );
+        const content = langMap?.get( modal.getName() );
 
-        if ( !modalLanguage ) {
+        if ( !content ) {
             this.logger.error(
                 this.getModalTranslatedContent,
                 `Modal language not found: '${ modal.getName() }' - Language: '${ languageCode }'`
@@ -274,31 +276,18 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         }
 
         return {
-            title: modalLanguage.content.title
+            title: content.title
         };
     }
 
     public async register( options: {
-        shouldImport?: boolean;
         shouldValidate?: boolean;
     } = {} ) {
         options = Object.assign( {
-            shouldImport: true,
             shouldValidate: true
         }, options );
 
-        const { shouldImport, shouldValidate } = options;
-
-        const tryImportAvailableLanguages = async() => {
-            // Import
-            let promises: Promise<void>[] = [];
-
-            this.uiAvailableLanguages.forEach( ( language ) => {
-                promises.push( LanguageUtils.$.import( language ) );
-            } );
-
-            await Promise.all( promises );
-        };
+        const { shouldValidate } = options;
 
         this.getLanguageFilesPaths().forEach( ( filePath ) => {
             // Validate the file content.
@@ -308,8 +297,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
             this.uiAvailableLanguages.set( currentLanguage.code, currentLanguage );
         } );
 
-        // TODO: Use checksum + db checksum to avoid extra validations.
-        // TODO: If checksums are the same, load all in initial loading, from disk.
+        // TODO: Use checksum to avoid extra validations.
         if ( fs.existsSync( UI_LANGUAGES_INITIAL_FILE_PATH ) ) {
             this.logger.info(
                 this.register,
@@ -332,7 +320,8 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                 skipSameValues: true
             } );
 
-            shouldImport && ( await tryImportAvailableLanguages() );
+            // Build in-memory lookup maps from loaded JSON files.
+            this.buildInMemoryLookupMaps();
 
             return;
         }
@@ -343,7 +332,8 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         // Load language files.
         await this.loadAvailableLanguages( { shouldValidate } );
 
-        await tryImportAvailableLanguages();
+        // Build in-memory lookup maps from loaded JSON files.
+        this.buildInMemoryLookupMaps();
     }
 
     private async ensureInitialLanguage() {
@@ -805,6 +795,61 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         const initialLanguage = fs.readFileSync( UI_LANGUAGES_INITIAL_FILE_PATH, "utf-8" );
 
         this.uiInitialLanguage = JSON.parse( initialLanguage );
+    }
+
+    /**
+     * Builds in-memory lookup maps from all loaded language JSON files.
+     * After this, all translation lookups are served from memory (no DB).
+     */
+    private buildInMemoryLookupMaps() {
+        for ( const [ langCode, language ] of this.uiAvailableLanguages ) {
+            // Buttons
+            const buttonsMap = new Map<string, UIElementButtonLanguageContent>();
+            for ( const button of language.elements.buttons ) {
+                buttonsMap.set( button.name, button.content );
+            }
+            this.buttonsByLang.set( langCode, buttonsMap );
+
+            // Select menus
+            const selectMenusMap = new Map<string, UIElementSelectMenuLanguageContent>();
+            for ( const selectMenu of language.elements.selectMenus ) {
+                selectMenusMap.set( selectMenu.name, selectMenu.content );
+            }
+            this.selectMenusByLang.set( langCode, selectMenusMap );
+
+            // Text inputs
+            const textInputsMap = new Map<string, UIElementTextInputLanguageContent>();
+            for ( const textInput of language.elements.textInputs ) {
+                textInputsMap.set( textInput.name, textInput.content );
+            }
+            this.textInputsByLang.set( langCode, textInputsMap );
+
+            // Embeds
+            const embedsMap = new Map<string, UIEmbedLanguageContent>();
+            for ( const embed of language.embeds ) {
+                embedsMap.set( embed.name, embed.content );
+            }
+            this.embedsByLang.set( langCode, embedsMap );
+
+            // Markdowns
+            const markdownsMap = new Map<string, UIMarkdownLanguageContent>();
+            for ( const markdown of language.markdowns ) {
+                markdownsMap.set( markdown.name, markdown.content );
+            }
+            this.markdownsByLang.set( langCode, markdownsMap );
+
+            // Modals
+            const modalsMap = new Map<string, UIModalLanguageContent>();
+            for ( const modal of language.modals ) {
+                modalsMap.set( modal.name, modal.content );
+            }
+            this.modalsByLang.set( langCode, modalsMap );
+        }
+
+        this.logger.info(
+            this.buildInMemoryLookupMaps,
+            `Built in-memory lookup maps for ${ this.uiAvailableLanguages.size } languages`
+        );
     }
 
     private getLanguageFilesPaths( skipInitial = true ): string[] {

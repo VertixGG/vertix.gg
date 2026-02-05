@@ -282,7 +282,7 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
             <div className={ `bg-zinc-900 rounded-lg border border-purple-500/50 shadow-lg shadow-purple-500/20 overflow-hidden transition-all ${ selectedClass }` }>
                 <div className="px-3 py-2 bg-purple-600/20 border-b border-purple-500/30">
                     <span className="text-[9px] text-purple-300 uppercase tracking-wider">Component</span>
-                    <div className="text-white font-semibold text-sm">{ label }</div>
+                    <div className="text-white font-semibold text-sm whitespace-pre-line">{ label }</div>
                 </div>
 
                 <div className="bg-[#313338] p-4">

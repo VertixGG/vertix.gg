@@ -1039,7 +1039,7 @@ class MultiStateFlowBuilder {
                 buttonModalTriggers,
                 buttonFlowTriggers,
                 stateTransitionTriggers,
-                `${ stateComp.stateName } - ${ compPreview.name }`,
+                `${ stateComp.stateName }\n${ stateComp.component.name }`,
                 stateComp.stateKey,
                 this.context.flow.name
             ) );

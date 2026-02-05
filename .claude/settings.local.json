@@ -31,7 +31,11 @@
       "mcp__chrome-devtools__list_pages",
       "Bash(lsof:*)",
       "Bash(echo:*)",
-      "Bash(bun -e:*)"
+      "Bash(bun -e:*)",
+      "Bash(wc:*)",
+      "Bash(for file in /Users/inewlegend/Desktop/dev/vertix.gg/packages/vertix-bot/src/ui/general/setup/setup-adapter.ts /Users/inewlegend/Desktop/dev/vertix.gg/packages/vertix-bot/src/ui/general/welcome/welcome-adapter.ts /Users/inewlegend/Desktop/dev/vertix.gg/packages/vertix-bot/src/ui/general/ai-agent/ai-agent-adapter.ts)",
+      "Bash(do echo \"=== Checking: $file ===\" grep -B 5 -A 2 \"ServiceLocator\\\\.$\\\\.get\" \"$file\")",
+      "Bash(done)"
     ]
   }
 }

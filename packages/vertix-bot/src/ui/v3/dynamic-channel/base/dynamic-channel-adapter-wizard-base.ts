@@ -19,7 +19,7 @@ import type { Message, MessageComponentInteraction, ModalSubmitInteraction, Voic
 export abstract class DynamicChannelAdapterWizardBase<
     TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction
 > extends UIWizardAdapterBase<UIAdapterStartContext, TInteraction> {
-    protected dynamicChannelService: DynamicChannelService;
+    protected dynamicChannelService: DynamicChannelService | null;
 
     public static getName() {
         return "VertixBot/UI-V3/DynamicChannelAdapterWizardBase";
@@ -28,7 +28,7 @@ export abstract class DynamicChannelAdapterWizardBase<
     public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel", { silent: true } ) ?? null;
     }
 
     public getChannelTypes() {

@@ -21,7 +21,7 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 export abstract class DynamicChannelAdapterExuBase<
     TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction
 > extends UIAdapterExecutionStepsBase<UIAdapterStartContext, TInteraction> {
-    protected dynamicChannelService: DynamicChannelService;
+    protected dynamicChannelService: DynamicChannelService | null;
 
     public static getName() {
         return "VertixBot/UI-V2/DynamicChannelAdapterExuBase";
@@ -30,7 +30,7 @@ export abstract class DynamicChannelAdapterExuBase<
     public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel", { silent: true } ) ?? null;
     }
 
     public getChannelTypes() {

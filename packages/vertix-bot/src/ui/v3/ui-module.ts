@@ -12,8 +12,6 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 
 import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
 
-import type UIDefinitionLoaderService from "@vertix.gg/bot/src/services/ui-definition-loader-service";
-
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 export class UIModuleV3 extends UIModuleBase {
@@ -53,28 +51,13 @@ export class UIModuleV3 extends UIModuleBase {
     }
 
     protected async initialize() {
-        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-        const definitionLoaderService = ServiceLocator.$.get<UIDefinitionLoaderService>(
-            "VertixBot/Services/UIDefinitionLoaderService"
-        );
-
-        let definitionLoader: ReturnType<UIDefinitionLoaderService[ "getLoader" ]> | undefined;
-
-        // If exported definitions exist, register them to override the defaults for this module.
-        const names = definitionLoaderService.getExportsNames();
-        const hasExports =
-            names.adapters.length > 0 || names.flows.length > 0 || names.components.length > 0;
-
-        if ( hasExports ) {
-            definitionLoader = definitionLoaderService.getLoader();
-
-            await uiService.registerFromDefinitions( definitionLoader, {
-                adapterNames: names.adapters,
-                flowNames: names.flows,
-                componentNames: names.components,
-                moduleName: UIModuleV3.getName()
-            } );
+        // Skip DynamicChannelClaimManager registration in headless mode (no bot services available)
+        const dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel", { silent: true } );
+        if ( !dynamicChannelService ) {
+            return;
         }
+
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
         DynamicChannelClaimManager.register( "VertixBot/UI-V3/DynamicChannelClaimManager", {
             adapters: {
@@ -85,9 +68,7 @@ export class UIModuleV3 extends UIModuleBase {
 
             dynamicChannelClaimButtonId: DynamicChannelPrimaryMessageElementsGroup.getByName(
                 "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
-            )!.getId(),
-
-            definitionLoader
+            )!.getId()
         } );
     }
 }

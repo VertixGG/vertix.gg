@@ -42,7 +42,6 @@ import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
 import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 import { BotCustomizationProvider } from "@vertix.gg/bot/src/providers/bot-customization-provider";
 
 import type { InteractionHandler } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
@@ -287,59 +286,6 @@ function registerFlowDataProvidersFromModules(
     } );
 }
 
-async function _registerDynamicChannelClaimManagerFromExports(
-    uiService: UIService,
-    loaderService: { getLoader: () => unknown }
-) {
-    const { DynamicChannelPrimaryMessageElementsGroup } = await import(
-        "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group"
-    );
-    const { DynamicChannelElementsGroup } = await import(
-        "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group"
-    );
-
-    const claimButtonV3 = DynamicChannelPrimaryMessageElementsGroup.getByName?.(
-        "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
-    );
-
-    const claimButtonV2 = DynamicChannelElementsGroup.getByName?.(
-        "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton"
-    );
-
-    const v3ButtonId = String( claimButtonV3?.getId?.() ?? "claim-button-v3" );
-    const v2ButtonId = String( claimButtonV2?.getId?.() ?? "claim-button-v2" );
-
-    // V3
-    try {
-        DynamicChannelClaimManager.register( "VertixBot/UI-V3/DynamicChannelClaimManager", {
-            adapters: {
-                claimStartAdapter: () => uiService.get( "VertixBot/UI-V3/ClaimStartAdapter" )!,
-                claimVoteAdapter: () => uiService.get<"execution">( "VertixBot/UI-V3/ClaimVoteAdapter" )!,
-                claimResultAdapter: () => uiService.get<"execution">( "VertixBot/UI-V3/ClaimResultAdapter" )!
-            },
-            dynamicChannelClaimButtonId: v3ButtonId,
-            definitionLoader: loaderService.getLoader() as never
-        } );
-    } catch {
-        // Instance already exists, ignore
-    }
-
-    // V2
-    try {
-        DynamicChannelClaimManager.register( "VertixBot/UI-V2/DynamicChannelClaimManager", {
-            adapters: {
-                claimStartAdapter: () => uiService.get( "VertixBot/UI-V2/ClaimStartAdapter" )!,
-                claimVoteAdapter: () => uiService.get<"execution">( "VertixBot/UI-V2/ClaimVoteAdapter" )!,
-                claimResultAdapter: () => uiService.get<"execution">( "VertixBot/UI-V2/ClaimResultAdapter" )!
-            },
-            dynamicChannelClaimButtonId: v2ButtonId,
-            definitionLoader: loaderService.getLoader() as never
-        } );
-    } catch {
-        // Instance already exists, ignore
-    }
-}
-
 async function registerUIServices( client: Client<true> ) {
     const uiServices = await Promise.all( [
         import( "@vertix.gg/gui/src/ui-service" ),
@@ -369,16 +315,22 @@ export async function registerServices() {
         import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),
         import( "@vertix.gg/bot/src/services/master-channel-service" ),
         import( "@vertix.gg/bot/src/services/scaling-channel-service" ),
-        import( "@vertix.gg/bot/src/services/management-ipc-service" ),
-        import( "@vertix.gg/bot/src/services/ui-definition-loader-service" )
+        import( "@vertix.gg/bot/src/services/management-ipc-service" )
     ] );
 
     services.forEach( ( service ) => {
-        GlobalLogger.$.debug( registerServices, `Registering service: '${ service.default.getName() }'` );
+        const serviceName = service.default.getName();
+
+        if ( ServiceLocator.$.get( serviceName, { silent: true } ) ) {
+            GlobalLogger.$.debug( registerServices, `Service already registered, skipping: '${ serviceName }'` );
+            return;
+        }
+
+        GlobalLogger.$.debug( registerServices, `Registering service: '${ serviceName }'` );
 
         ServiceLocator.$.register<ServiceBase>( service.default );
 
-        GlobalLogger.$.debug( registerServices, `Service registered: '${ service.default.getName() }'` );
+        GlobalLogger.$.debug( registerServices, `Service registered: '${ serviceName }'` );
     } );
 
     await ServiceLocator.$.waitForAll();
@@ -684,7 +636,7 @@ async function exportLanguages( languageCodes: string[] ) {
     return languages.size;
 }
 
-async function bootstrapUIRuntime(): Promise<UIService> {
+export async function bootstrapUIRuntime(): Promise<UIService> {
     const { default: botInitialize } = await import( "./vertix" );
     const client = await botInitialize( { enableListeners: false } );
     await registerUIServices( client );
@@ -699,6 +651,60 @@ async function bootstrapUIRuntime(): Promise<UIService> {
     await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
     await registerUIVersionStrategies();
     await registerDataServicesAndComponents();
+    return ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+}
+
+/**
+ * Headless UI runtime bootstrap — registers only what's needed for UI definition collection.
+ * Does NOT connect to Discord, does NOT start bot services.
+ * Used by the API to generate UI definitions at runtime.
+ */
+export async function bootstrapUIRuntimeHeadless(): Promise<UIService> {
+    // If UIService is already registered (e.g., HMR hot-reload), just return it
+    const existingUIService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService", { silent: true } );
+    if ( existingUIService ) {
+        GlobalLogger.$.info( bootstrapUIRuntimeHeadless, "UIService already registered, reusing existing instance" );
+        return existingUIService;
+    }
+
+    GlobalLogger.$.info( bootstrapUIRuntimeHeadless, "Bootstrapping headless UI runtime (no Discord)..." );
+
+    // Register UI services without a Discord client
+    const uiServices = await Promise.all( [
+        import( "@vertix.gg/gui/src/ui-service" ),
+        import( "@vertix.gg/gui/src/ui-hash-service" ),
+        import( "@vertix.gg/gui/src/ui-adapter-versioning-service" )
+    ] );
+
+    uiServices.forEach( ( service ) => {
+        const serviceName = service.default.getName();
+        if ( ServiceLocator.$.get( serviceName, { silent: true } ) ) {
+            GlobalLogger.$.debug( bootstrapUIRuntimeHeadless, `Service already registered, skipping: '${ serviceName }'` );
+            return;
+        }
+        GlobalLogger.$.debug( bootstrapUIRuntimeHeadless, `Registering service: '${ serviceName }'` );
+        ServiceLocator.$.register<ServiceBase>( service.default );
+    } );
+
+    await ServiceLocator.$.waitForAll();
+
+    await registerConfigs();
+
+    // Initialize EmojiManager before registering UI adapters — many adapters call
+    // EmojiManager.$.getMarkdown() during registration. In headless mode, EmojiManager
+    // fetches emojis directly via Discord REST API (no AppService/Client needed).
+    await EmojiManager.$.promise();
+
+    // Register UI adapters/modules (this triggers definition registration)
+    // Bot services (DynamicChannel, etc.) are NOT registered — UI modules
+    // skip runtime-only initialization (e.g., DynamicChannelClaimManager) in headless mode
+    await registerUIAdapters();
+
+    await registerUILanguageManager( { shouldImport: false, shouldValidate: false } );
+    await registerUIVersionStrategies();
+
+    GlobalLogger.$.info( bootstrapUIRuntimeHeadless, "Headless UI runtime bootstrapped" );
+
     return ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 }
 
@@ -753,13 +759,17 @@ async function registerDataServicesAndComponents() {
         import( "@vertix.gg/bot/src/data/dynamic-channel/setup-edit-requirements-data" ),
     ] );
 
-    ServiceLocator.$.register( GuildUIData as unknown as new ( ...args: unknown[] ) => ServiceBase );
-    GlobalLogger.$.debug( registerDataServicesAndComponents, "Registered service: 'VertixBot/Data/Guild/GuildUIData'" );
+    if ( !ServiceLocator.$.get( "VertixBot/Data/Guild/GuildUIData", { silent: true } ) ) {
+        ServiceLocator.$.register( GuildUIData as unknown as new ( ...args: unknown[] ) => ServiceBase );
+        GlobalLogger.$.debug( registerDataServicesAndComponents, "Registered service: 'VertixBot/Data/Guild/GuildUIData'" );
+    }
 
     // Register the UIDataService itself
-    GlobalLogger.$.debug( registerDataServicesAndComponents, "Registering service: 'VertixGUI/UIDataService'" );
-    ServiceLocator.$.register<UIDataService>( UIDataService );
-    GlobalLogger.$.debug( registerDataServicesAndComponents, "Service registered: 'VertixGUI/UIDataService'" );
+    if ( !ServiceLocator.$.get( UIDataService.getName(), { silent: true } ) ) {
+        GlobalLogger.$.debug( registerDataServicesAndComponents, "Registering service: 'VertixGUI/UIDataService'" );
+        ServiceLocator.$.register<UIDataService>( UIDataService );
+        GlobalLogger.$.debug( registerDataServicesAndComponents, "Service registered: 'VertixGUI/UIDataService'" );
+    }
 
     // Wait for UIDataService to be ready (if it has async initialization)
     await ServiceLocator.$.waitFor( "VertixGUI/UIDataService" );

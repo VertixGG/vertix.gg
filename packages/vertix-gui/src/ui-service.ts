@@ -150,12 +150,8 @@ export class UIService extends ServiceWithDependenciesBase<{
         }
     }
 
-    public constructor( protected client: Client<true> ) {
+    public constructor( protected client?: Client<true> ) {
         super( arguments );
-
-        if ( !client ) {
-            throw new Error( "Client is required" );
-        }
 
         this.$$.setupCleanupTimerInterval();
     }
@@ -175,7 +171,11 @@ export class UIService extends ServiceWithDependenciesBase<{
         };
     }
 
-    public getClient() {
+    public getClient(): Client<true> {
+        if ( !this.client ) {
+            throw new Error( "UIService: Discord client is not available in headless mode" );
+        }
+
         return this.client;
     }
 

@@ -7,6 +7,7 @@ const AUTH_BASE_URL = `${ API_CONFIG.BASE_URL }/auth`;
 interface AuthMeResponse {
     user: AuthUser;
     selectedGuild: SelectedGuild | null;
+    isOwner: boolean;
 }
 
 export async function fetchCurrentUser(): Promise<AuthMeResponse | null> {

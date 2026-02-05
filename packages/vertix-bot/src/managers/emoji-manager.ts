@@ -45,6 +45,14 @@ export class EmojiManager extends InitializeBase {
     }
 
     protected async initialize() {
+        // In headless mode (no bot services), fetch emojis directly via REST API.
+        const appService = ServiceLocator.$.get( "VertixBot/Services/App", { silent: true } );
+        if ( !appService ) {
+            this.logger.info( this.initialize, "AppService not available (headless mode), fetching emojis via REST" );
+            this.initPromise = this.fetchEmojisHeadless();
+            return;
+        }
+
         this.appService = await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
             silent: true,
             timeout: 5000
@@ -64,6 +72,30 @@ export class EmojiManager extends InitializeBase {
                 resolve();
             } );
         } );
+    }
+
+    private async fetchEmojisHeadless() {
+        const token = process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_TEST_TOKEN || process.env.DISCORD_TOKEN;
+        if ( !token ) {
+            this.logger.warn( this.fetchEmojisHeadless, "No Discord token available, emoji markdown will use placeholders" );
+            return;
+        }
+
+        try {
+            const rest = new REST( { version: GatewayVersion } ).setToken( token );
+
+            // Fetch application info to get the application ID
+            const appInfo = await rest.get( Routes.currentApplication() ) as { id: string };
+
+            this.emojis = ( await rest.get(
+                Routes.applicationEmojis( appInfo.id )
+            ) ) as RESTGetAPIApplicationEmojisResult;
+
+            this.logger.info( this.fetchEmojisHeadless, `Fetched ${ this.emojis.items?.length ?? 0 } emojis in headless mode` );
+            this.debugger.dumpDown( this.fetchEmojisHeadless, this.emojis, "emojis (headless)" );
+        } catch ( error ) {
+            this.logger.warn( this.fetchEmojisHeadless, `Failed to fetch emojis in headless mode: ${ error }` );
+        }
     }
 
     public async promise() {

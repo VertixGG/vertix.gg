@@ -47,6 +47,12 @@ export class UIModuleV2 extends UIModuleBase {
     }
 
     protected async initialize() {
+        // Skip DynamicChannelClaimManager registration in headless mode (no bot services available)
+        const dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel", { silent: true } );
+        if ( !dynamicChannelService ) {
+            return;
+        }
+
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 
         DynamicChannelClaimManager.register( "VertixBot/UI-V2/DynamicChannelClaimManager", {

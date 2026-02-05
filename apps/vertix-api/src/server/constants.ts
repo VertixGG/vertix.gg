@@ -6,20 +6,6 @@ export const API_ROUTES = {
 
 export const API_PREFIX = "/api";
 
-export const FILE_WATCH_CONFIG = {
-    DEBOUNCE_MS: 300,
-    INTERVAL_MS: 1000
-} as const;
-
-export const EXPORT_FILES = {
-    META: "meta.json",
-    COMPONENTS: "components.json",
-    FLOWS: "flows.json",
-    ADAPTERS: "adapters.json"
-} as const;
-
-export const EXPORT_DIRECTORY = "exports/ui";
-
 export const ERROR_MESSAGES = {
     MISSING_MODULE_NAME: "moduleName is required",
     FLOW_NOT_FOUND: ( flowName: string ) => `Flow "${ flowName }" not found`,

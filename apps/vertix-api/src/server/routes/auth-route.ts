@@ -100,7 +100,8 @@ async function handleGetMe( request: FastifyRequest, reply: FastifyReply ) {
 
     return {
         user,
-        selectedGuild: request.session.selectedGuild || null
+        selectedGuild: request.session.selectedGuild || null,
+        isOwner: request.session.userId === process.env.OWNERD_ID
     };
 }
 

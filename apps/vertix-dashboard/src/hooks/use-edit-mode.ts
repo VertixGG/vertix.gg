@@ -103,9 +103,11 @@ export function useEditMode(): UseEditModeReturn {
 
         try {
             const queryModule = getQueryModule( CustomizationQuery );
-            const data = await queryModule.request<GuildCustomizationData>( "Dashboard/Customization/GetGuild", {
-                guildId: guildIdToLoad
-            } );
+            const isDefault = guildIdToLoad === "__default__";
+            const data = await queryModule.request<GuildCustomizationData>(
+                isDefault ? "Dashboard/Customization/GetDefault" : "Dashboard/Customization/GetGuild",
+                isDefault ? {} : { guildId: guildIdToLoad }
+            );
             setCustomization( data );
         } catch ( error ) {
             setCustomizationError( error instanceof Error ? error.message : "Failed to load customization" );
@@ -174,11 +176,13 @@ export function useEditMode(): UseEditModeReturn {
         try {
             logger.debug( saveComponentCustomization, "Saving via query module", { guildId, componentName } );
             const queryModule = getQueryModule( CustomizationQuery );
-            const updated = await queryModule.request<GuildCustomizationData>( "Dashboard/Customization/UpdateComponent", {
-                guildId,
-                customizationKey: componentName,
-                customization: componentCustomization
-            } );
+            const isDefault = guildId === "__default__";
+            const updated = await queryModule.request<GuildCustomizationData>(
+                isDefault ? "Dashboard/Customization/UpdateDefaultComponent" : "Dashboard/Customization/UpdateComponent",
+                isDefault
+                    ? { customizationKey: componentName, customization: componentCustomization }
+                    : { guildId, customizationKey: componentName, customization: componentCustomization }
+            );
             logger.debug( saveComponentCustomization, "Save successful" );
             setCustomization( updated );
             // Clear pending change for this component

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { Navigate } from "react-router-dom";
+
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 import { withCommands } from "@zenflux/react-commander/with-commands";
 
@@ -305,6 +307,10 @@ export function ManagementPage() {
                 No guild selected
             </div>
         );
+    }
+
+    if ( authState.selectedGuild.id === "__default__" ) {
+        return <Navigate to="/interface-editor" replace />;
     }
 
     return (

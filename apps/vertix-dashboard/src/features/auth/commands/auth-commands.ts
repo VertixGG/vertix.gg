@@ -18,6 +18,7 @@ export interface AuthState {
     isLoading: boolean;
     isLoadingGuilds: boolean;
     isAuthenticated: boolean;
+    isOwner: boolean;
     error: string | null;
 }
 
@@ -28,6 +29,7 @@ export const AUTH_INITIAL_STATE: AuthState = {
     isLoading: true,
     isLoadingGuilds: false,
     isAuthenticated: false,
+    isOwner: false,
     error: null
 };
 
@@ -49,6 +51,7 @@ export class CheckAuthCommand extends CommandBase<AuthState> {
                 user: data?.user || null,
                 selectedGuild: data?.selectedGuild || null,
                 isAuthenticated: !!data?.user,
+                isOwner: data?.isOwner ?? false,
                 isLoading: false
             } );
         } catch {
@@ -58,6 +61,7 @@ export class CheckAuthCommand extends CommandBase<AuthState> {
                 user: null,
                 selectedGuild: null,
                 isAuthenticated: false,
+                isOwner: false,
                 isLoading: false,
                 error: "Failed to check authentication"
             } );
@@ -125,7 +129,8 @@ export class LogoutCommand extends CommandBase<AuthState> {
                 user: null,
                 guilds: [],
                 selectedGuild: null,
-                isAuthenticated: false
+                isAuthenticated: false,
+                isOwner: false
             } );
         } catch {
             return this.setState( { error: "Failed to logout" } );

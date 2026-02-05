@@ -68,7 +68,11 @@ export function FlowViewer() {
 
         // Fetch customizations when guild changes or when refresh is triggered
         const queryModule = getQueryModule( CustomizationQuery );
-        queryModule.request<GuildCustomizationData>( "Dashboard/Customization/GetGuild", { guildId } )
+        const isDefault = guildId === "__default__";
+        queryModule.request<GuildCustomizationData>(
+            isDefault ? "Dashboard/Customization/GetDefault" : "Dashboard/Customization/GetGuild",
+            isDefault ? {} : { guildId }
+        )
             .then( ( data ) => {
                 logger.debug( FlowViewer, "Loaded customizations for guild", data );
                 setCustomization( data );

@@ -10,6 +10,7 @@ interface NavItem {
     label: string;
     path: string;
     icon: React.ReactNode;
+    hideForDefault?: boolean;
 }
 
 interface SidebarSelectedState {
@@ -21,7 +22,8 @@ const navItems: NavItem[] = [
     {
         label: "Dashboard",
         path: "/",
-        icon: <LayoutDashboard className="w-5 h-5" />
+        icon: <LayoutDashboard className="w-5 h-5" />,
+        hideForDefault: true
     },
     {
         label: "Interface Editor",
@@ -31,7 +33,8 @@ const navItems: NavItem[] = [
     {
         label: "Management",
         path: "/management",
-        icon: <Settings className="w-5 h-5" />
+        icon: <Settings className="w-5 h-5" />,
+        hideForDefault: true
     }
 ];
 
@@ -61,6 +64,11 @@ export function Sidebar() {
 
     const user = state.user;
     const selectedGuild = state.selectedGuild;
+    const isDefaultGuild = selectedGuild?.id === "__default__";
+
+    const visibleNavItems = isDefaultGuild
+        ? navItems.filter( ( item ) => !item.hideForDefault )
+        : navItems;
 
     return (
         <aside className="w-55 h-full bg-surface border-r border-border flex flex-col">
@@ -70,7 +78,7 @@ export function Sidebar() {
             </div>
 
             <nav className="flex-1 p-2">
-                { navItems.map( ( item ) => (
+                { visibleNavItems.map( ( item ) => (
                     <NavLink
                         key={ item.path }
                         to={ item.path }

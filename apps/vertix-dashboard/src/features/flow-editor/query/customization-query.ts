@@ -48,6 +48,21 @@ export class CustomizationQuery extends QueryModuleBase<GuildCustomizationData> 
 
         // DELETE component customization
         this.register( "DELETE", "Dashboard/Customization/DeleteComponent", "customization/guild/:guildId/component" );
+
+        // --- Default customization endpoints (owner only) ---
+
+        // GET default customization
+        this.defineEndpoint<GuildCustomizationData, GuildCustomizationData>( "Dashboard/Customization/GetDefault", {
+            method: "GET",
+            path: "customization/default",
+            prepareData: ( response ) => response
+        } );
+
+        // PUT update single default component customization
+        this.register( "PUT", "Dashboard/Customization/UpdateDefaultComponent", "customization/default/component" );
+
+        // DELETE default component customization
+        this.register( "DELETE", "Dashboard/Customization/DeleteDefaultComponent", "customization/default/component" );
     }
 
     protected async requestHandler( _element: DCommandFunctionComponent, request: Record<string, unknown> ): Promise<Record<string, unknown>> {

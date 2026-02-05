@@ -1,6 +1,7 @@
 import { useCommandState } from "@zenflux/react-commander/hooks";
 import { withCommands } from "@zenflux/react-commander/with-commands";
 import { QueryComponent } from "@zenflux/react-commander/query/component";
+import { Navigate } from "react-router-dom";
 
 import { Server, Users, Radio, Layers, Activity, Hash } from "lucide-react";
 
@@ -168,6 +169,10 @@ export function DashboardPage() {
             selectedGuild: state.selectedGuild
         } )
     );
+
+    if ( authState.selectedGuild?.id === "__default__" ) {
+        return <Navigate to="/interface-editor" replace />;
+    }
 
     return (
         <div className="flex-1 p-6 overflow-auto">

@@ -5,6 +5,7 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { PrismaAPIClient } from "@vertix.gg/prisma/api-client";
 
 import { Server } from "@vertix.gg/api/src/server/server";
+import { uiRuntimeLoader } from "@vertix.gg/api/src/bootstrap";
 
 const logger = new Logger( "VertixAPI/Entrypoint", { skipEventBusHook: true } );
 
@@ -67,6 +68,12 @@ export async function entryPoint() {
 
     // Initialize services
     await registerServices();
+
+    // Bootstrap headless UI runtime and load exports eagerly
+    // Reloads automatically when UI source files change (file watcher)
+    logger.info( entryPoint, "Loading UI runtime exports..." );
+    await uiRuntimeLoader.loadExports();
+    logger.info( entryPoint, "UI runtime exports loaded" );
 
     const server = new Server();
     await server.start();

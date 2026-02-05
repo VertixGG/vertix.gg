@@ -1,44 +1,50 @@
 import path from "path";
-import fs from "fs/promises";
-import { watchFile, unwatchFile } from "fs";
+import { watch } from "fs";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 import { zFindRootPackageJsonPath } from "@zenflux/utils/workspace";
 
-import { EXPORT_DIRECTORY, EXPORT_FILES, FILE_WATCH_CONFIG } from "@vertix.gg/api/src/server/constants";
+import { collectUIDefinitions } from "@vertix.gg/gui/src/runtime/ui-definition-exporter";
+
+import type { FSWatcher } from "fs";
 
 import type {
     UIExportedComponent,
     UIExportedFlow,
-    UIExportedMeta,
     UIExportedAdapter,
     UIExportData
 } from "@vertix.gg/definitions/src/ui-export-definitions";
 
-export class UIExportLoader extends InitializeBase {
-    private static instance: UIExportLoader | null = null;
+import type { UIService } from "@vertix.gg/gui/src/ui-service";
+
+const WATCH_DEBOUNCE_MS = 300;
+
+export class UIRuntimeLoader extends InitializeBase {
+    private static instance: UIRuntimeLoader | null = null;
 
     private exportData: UIExportData | null = null;
 
-    private exportsPath: string | null = null;
+    private uiService: UIService | null = null;
 
-    private watchedFiles: string[] = [];
+    private watcher: FSWatcher | null = null;
 
     private reloadDebounce: ReturnType<typeof setTimeout> | null = null;
 
+    private loadingPromise: Promise<UIExportData> | null = null;
+
     public static getName(): string {
-        return "VertixAPI/Bootstrap/UIExportLoader";
+        return "VertixAPI/Bootstrap/UIRuntimeLoader";
     }
 
-    public static getInstance(): UIExportLoader {
-        if ( !UIExportLoader.instance ) {
-            UIExportLoader.instance = new UIExportLoader();
+    public static getInstance(): UIRuntimeLoader {
+        if ( !UIRuntimeLoader.instance ) {
+            UIRuntimeLoader.instance = new UIRuntimeLoader();
         }
-        return UIExportLoader.instance;
+        return UIRuntimeLoader.instance;
     }
 
     protected initialize(): void {
-        this.logger.log( this.initialize, "UI Export Loader initialized" );
+        this.logger.log( this.initialize, "UI Runtime Loader initialized" );
     }
 
     public async loadExports(): Promise<UIExportData> {
@@ -46,46 +52,56 @@ export class UIExportLoader extends InitializeBase {
             return this.exportData;
         }
 
-        const rootPath = path.resolve( zFindRootPackageJsonPath(), ".." );
-        this.exportsPath = path.join( rootPath, EXPORT_DIRECTORY );
+        // Guard against concurrent calls — second caller waits for the first to finish
+        if ( this.loadingPromise ) {
+            return this.loadingPromise;
+        }
 
-        this.logger.info( this.loadExports, `Loading UI exports from: ${ this.exportsPath }` );
+        this.loadingPromise = this.doLoadExports();
 
-        await this.doLoadExports();
+        return this.loadingPromise;
+    }
+
+    private async doLoadExports(): Promise<UIExportData> {
+        this.logger.info( this.doLoadExports, "Bootstrapping headless UI runtime (no Discord)..." );
+
+        const { bootstrapUIRuntimeHeadless } = await import( "@vertix.gg/bot/src/entrypoint" );
+        this.uiService = await bootstrapUIRuntimeHeadless();
+
+        this.logger.info( this.doLoadExports, "Headless UI runtime bootstrapped, collecting definitions..." );
+
+        await this.doCollectDefinitions();
 
         this.startWatching();
 
         return this.exportData!;
     }
 
-    private async doLoadExports(): Promise<void> {
-        if ( !this.exportsPath ) {
+    private async doCollectDefinitions(): Promise<void> {
+        if ( !this.uiService ) {
             return;
         }
 
         try {
-            const [ metaContent, componentsContent, flowsContent, adaptersContent ] = await Promise.all( [
-                fs.readFile( path.join( this.exportsPath, EXPORT_FILES.META ), "utf-8" ),
-                fs.readFile( path.join( this.exportsPath, EXPORT_FILES.COMPONENTS ), "utf-8" ),
-                fs.readFile( path.join( this.exportsPath, EXPORT_FILES.FLOWS ), "utf-8" ),
-                fs.readFile( path.join( this.exportsPath, EXPORT_FILES.ADAPTERS ), "utf-8" )
-            ] );
+            const collections = await collectUIDefinitions( this.uiService, {
+                outputDir: "",
+                includeAdapters: true,
+                includeComponents: true,
+                includeFlows: true
+            } );
 
-            this.exportData = {
-                meta: JSON.parse( metaContent ) as UIExportedMeta,
-                components: JSON.parse( componentsContent ) as UIExportedComponent[],
-                flows: JSON.parse( flowsContent ) as UIExportedFlow[],
-                adapters: JSON.parse( adaptersContent ) as UIExportedAdapter[]
-            };
+            // The collected definitions have the same runtime shape as UIExportData
+            // (the JSON export→parse round-trip produces identical objects)
+            this.exportData = collections as unknown as UIExportData;
 
             this.logger.info(
-                this.doLoadExports,
-                `Loaded: ${ this.exportData.meta.counts.flows } flows, ${ this.exportData.meta.counts.components } components, ${ this.exportData.adapters.length } adapters`
+                this.doCollectDefinitions,
+                `Collected: ${ this.exportData.meta.counts.flows } flows, ${ this.exportData.meta.counts.components } components, ${ this.exportData.adapters.length } adapters`
             );
-        } catch {
-            this.logger.warn(
-                this.doLoadExports,
-                `Failed to load exports from ${ this.exportsPath }. Files may not exist yet. Export will create them.`
+        } catch ( error ) {
+            this.logger.error(
+                this.doCollectDefinitions,
+                `Failed to collect UI definitions: ${ error }`
             );
 
             this.exportData = {
@@ -105,44 +121,47 @@ export class UIExportLoader extends InitializeBase {
     }
 
     private startWatching(): void {
-        if ( !this.exportsPath || this.watchedFiles.length > 0 ) {
+        if ( this.watcher ) {
             return;
         }
 
-        const filesToWatch = [
-            path.join( this.exportsPath, EXPORT_FILES.META ),
-            path.join( this.exportsPath, EXPORT_FILES.COMPONENTS ),
-            path.join( this.exportsPath, EXPORT_FILES.FLOWS )
-        ];
+        const rootPath = path.resolve( zFindRootPackageJsonPath(), ".." );
+        const uiSourcePath = path.join( rootPath, "packages", "vertix-bot", "src", "ui" );
 
-        this.logger.info( this.startWatching, `Watching for changes in: ${ this.exportsPath }` );
+        this.logger.info( this.startWatching, `Watching for UI source changes in: ${ uiSourcePath }` );
 
-        const handleChange = ( filename: string ) => {
-            if ( this.reloadDebounce ) {
-                clearTimeout( this.reloadDebounce );
-            }
+        try {
+            this.watcher = watch( uiSourcePath, { recursive: true }, ( _eventType, filename ) => {
+                if ( !filename ) {
+                    return;
+                }
 
-            this.reloadDebounce = setTimeout( () => {
-                this.logger.info( this.startWatching, `Detected change in ${ path.basename( filename ) }, reloading exports...` );
-                this.doLoadExports().catch( err => {
-                    this.logger.error( this.startWatching, `Failed to reload exports: ${ err }` );
-                } );
-            }, FILE_WATCH_CONFIG.DEBOUNCE_MS );
-        };
+                // Only react to TypeScript source files
+                if ( !filename.endsWith( ".ts" ) && !filename.endsWith( ".tsx" ) ) {
+                    return;
+                }
 
-        for ( const file of filesToWatch ) {
-            watchFile( file, { interval: FILE_WATCH_CONFIG.INTERVAL_MS }, () => {
-                handleChange( file );
+                if ( this.reloadDebounce ) {
+                    clearTimeout( this.reloadDebounce );
+                }
+
+                this.reloadDebounce = setTimeout( () => {
+                    this.logger.info( this.startWatching, `Detected change in ${ filename }, re-collecting definitions...` );
+                    this.doCollectDefinitions().catch( err => {
+                        this.logger.error( this.startWatching, `Failed to re-collect definitions: ${ err }` );
+                    } );
+                }, WATCH_DEBOUNCE_MS );
             } );
-            this.watchedFiles.push( file );
+        } catch ( error ) {
+            this.logger.warn( this.startWatching, `Failed to start watching UI source directory: ${ error }` );
         }
     }
 
     public stopWatching(): void {
-        for ( const file of this.watchedFiles ) {
-            unwatchFile( file );
+        if ( this.watcher ) {
+            this.watcher.close();
+            this.watcher = null;
         }
-        this.watchedFiles = [];
     }
 
     public getModules(): string[] {
@@ -178,4 +197,7 @@ export class UIExportLoader extends InitializeBase {
     }
 }
 
-export const uiExportLoader = UIExportLoader.getInstance();
+export const uiRuntimeLoader = UIRuntimeLoader.getInstance();
+
+// Backward-compatible alias — existing imports of uiExportLoader continue to work
+export const uiExportLoader = uiRuntimeLoader;

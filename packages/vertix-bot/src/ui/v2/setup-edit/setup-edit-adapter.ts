@@ -525,8 +525,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "OpenButtons",
                 onSelectEditOptionSelected
             )
-            .bindModalWithButton<UIDefaultModalChannelTextInteraction>(
-                "VertixBot/UI-General/ChannelNameTemplateEditButton",
+            .bindModal<UIDefaultModalChannelTextInteraction>(
                 "VertixBot/UI-General/ChannelNameTemplateModal",
                 "NameTemplateSubmitted",
                 onTemplateEditModalSubmitted

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
-import { Server, Loader2 } from "lucide-react";
+import { Server, Loader2, Settings } from "lucide-react";
 
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 import type { Guild } from "@vertix.gg/dashboard/src/features/auth/types";
@@ -12,6 +12,7 @@ interface ServerSelectionSelectedState {
     guilds: AuthState[ "guilds" ];
     isLoadingGuilds: AuthState[ "isLoadingGuilds" ];
     selectedGuild: AuthState[ "selectedGuild" ];
+    isOwner: AuthState[ "isOwner" ];
     error: AuthState[ "error" ];
 }
 
@@ -24,6 +25,7 @@ export function ServerSelectionPage() {
             guilds: state.guilds,
             isLoadingGuilds: state.isLoadingGuilds,
             selectedGuild: state.selectedGuild,
+            isOwner: state.isOwner,
             error: state.error
         } )
     );
@@ -75,7 +77,32 @@ export function ServerSelectionPage() {
                 ) }
 
                 <div className="grid gap-3">
-                    { state.guilds.length === 0 ? (
+                    { state.isOwner && (
+                        <button
+                            onClick={ () => handleSelectGuild( {
+                                id: "__default__",
+                                name: "Default Settings",
+                                icon: null,
+                                owner: true,
+                                permissions: "0"
+                            } ) }
+                            className="flex items-center gap-4 p-4 bg-amber-900/30 hover:bg-amber-900/50 border border-amber-700/50 hover:border-amber-600 rounded-lg transition-colors text-left"
+                        >
+                            <div className="w-12 h-12 rounded-full bg-amber-800/50 flex items-center justify-center ring-2 ring-amber-700/50">
+                                <Settings className="w-6 h-6 text-amber-400" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="text-amber-200 font-medium truncate">
+                                    Edit Default Settings
+                                </div>
+                                <div className="text-amber-400/60 text-sm">
+                                    Configure default customizations for all servers
+                                </div>
+                            </div>
+                        </button>
+                    ) }
+
+                    { state.guilds.length === 0 && !state.isOwner ? (
                         <div className="text-center py-8 text-text-muted">
                             No servers found. You must be the owner of at least one Discord server.
                         </div>

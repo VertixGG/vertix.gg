@@ -94,6 +94,7 @@ export class GuildCustomizationManager extends InitializeBase {
 
     /**
      * Get customization for a specific component/state.
+     * Always fetches __default__ customization as base, then merges guild-specific on top.
      * @param guildId - The guild ID
      * @param customizationKey - The component/state key (e.g., "ComponentName/StateKey")
      */
@@ -103,24 +104,52 @@ export class GuildCustomizationManager extends InitializeBase {
     ): Promise<ComponentCustomization | null> {
         this.logger.debug( this.getComponentCustomization, `Looking up component`, { guildId, customizationKey } );
 
-        const guildData = await this.getGuildCustomization( guildId );
+        // For __default__ guildId, just return the default directly
+        if ( guildId === "__default__" ) {
+            const defaultData = await this.getGuildCustomization( "__default__" );
+            return defaultData?.components?.[ customizationKey ] || null;
+        }
 
-        if ( !guildData || !guildData.components ) {
-            this.logger.debug( this.getComponentCustomization, `No guild data found` );
+        // Fetch both default and guild-specific in parallel
+        const [ defaultData, guildData ] = await Promise.all( [
+            this.getGuildCustomization( "__default__" ),
+            this.getGuildCustomization( guildId )
+        ] );
+
+        const defaultResult = defaultData?.components?.[ customizationKey ] || null;
+        const guildResult = guildData?.components?.[ customizationKey ] || null;
+
+        // No customization at all
+        if ( !defaultResult && !guildResult ) {
+            this.logger.debug( this.getComponentCustomization, `No customization found`, { guildId, customizationKey } );
             return null;
         }
 
-        const availableKeys = Object.keys( guildData.components );
-        const result = guildData.components[ customizationKey ] || null;
+        // Only default exists
+        if ( !guildResult ) {
+            this.logger.debug( this.getComponentCustomization, `Using default customization`, { customizationKey } );
+            return defaultResult;
+        }
 
-        this.logger.debug( this.getComponentCustomization, `Lookup result`, {
-            customizationKey,
-            availableKeys,
-            found: !!result,
-            result
-        } );
+        // Only guild-specific exists
+        if ( !defaultResult ) {
+            this.logger.debug( this.getComponentCustomization, `Using guild-specific customization`, { customizationKey, guildId } );
+            return guildResult;
+        }
 
-        return result;
+        // Merge: default as base, guild-specific on top
+        this.logger.debug( this.getComponentCustomization, `Merging default + guild customization`, { customizationKey, guildId } );
+
+        return {
+            embedOverrides: {
+                ...defaultResult.embedOverrides,
+                ...guildResult.embedOverrides
+            },
+            variables: {
+                ...defaultResult.variables,
+                ...guildResult.variables
+            }
+        };
     }
 
     /**

@@ -24,7 +24,7 @@ export abstract class DynamicChannelAdapterBase extends UIAdapterBase<
 > {
     protected static logger = new Logger( this.getName() );
 
-    protected dynamicChannelService: DynamicChannelService;
+    protected dynamicChannelService: DynamicChannelService | null;
 
     public static getName() {
         return "VertixBot/UI-V2/DynamicChannelAdapterBase";
@@ -33,7 +33,7 @@ export abstract class DynamicChannelAdapterBase extends UIAdapterBase<
     public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel", { silent: true } ) ?? null;
     }
 
     public getChannelTypes() {

@@ -24,7 +24,7 @@ export class AdminAdapterExuBase<
 > extends UIAdapterExecutionStepsBase<TChannel, TInteraction> {
     private static dedicatedLogger = new Logger( this.getName() );
 
-    protected dynamicChannelService: DynamicChannelService;
+    protected dynamicChannelService: DynamicChannelService | null;
 
     public static getName() {
         return "VertixBot/UI-General/AdminAdapterExuBase";
@@ -33,7 +33,7 @@ export class AdminAdapterExuBase<
     public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel" );
+        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel", { silent: true } ) ?? null;
     }
 
     public getPermissions(): PermissionsBitField {

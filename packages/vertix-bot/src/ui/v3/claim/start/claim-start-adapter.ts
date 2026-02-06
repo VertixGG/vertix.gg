@@ -39,7 +39,8 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
                 previewDefaultVars: {
                     ownerId: "123456789",
                     ownerDisplayName: "Owner",
-                    absentInterval: "300000"
+                    absentInterval: "300000",
+                    absentMinutes: "5.0"
                 }
             } )
             .addTransition( "RequestClaim", {

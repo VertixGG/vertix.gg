@@ -27,13 +27,13 @@ const ClaimResultAdapter = new ExecutionAdapterBuilder<
             // Result states - these are shown based on claim action outcomes
             .addState( "Default", {
                 executionStep: "VertixBot/UI-V3/ClaimResultOwnerStop",
-                previewDefaultVars: { absentInterval: "300000" },
+                previewDefaultVars: { absentInterval: "300000", absentMinutes: "5.0" },
                 embedsGroup: "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
             } )
             .addState( "OwnerStop", {
                 executionStep: "VertixBot/UI-V3/ClaimResultOwnerStop",
                 navigationType: "ephemeral",
-                previewDefaultVars: { absentInterval: "300000" },
+                previewDefaultVars: { absentInterval: "300000", absentMinutes: "5.0" },
                 embedsGroup: "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
             } )
             .addState( "AddedSuccessfully", {

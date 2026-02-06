@@ -23,13 +23,13 @@ const ClaimResultAdapter = new ExecutionAdapterBuilder<VoiceChannel, ButtonInter
             .addState( "Default", {
                 executionStep: "VertixBot/UI-V2/ClaimResultOwnerStop",
                 embedsGroup: "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup",
-                previewDefaultVars: { absentInterval: "300000" }
+                previewDefaultVars: { absentInterval: "300000", absentMinutes: "5.0" }
             } )
             .addState( "OwnerStop", {
                 executionStep: "VertixBot/UI-V2/ClaimResultOwnerStop",
                 embedsGroup: "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup",
                 navigationType: "ephemeral",
-                previewDefaultVars: { absentInterval: "300000" }
+                previewDefaultVars: { absentInterval: "300000", absentMinutes: "5.0" }
             } )
             .addState( "AddedSuccessfully", {
                 executionStep: "VertixBot/UI-V2/ClaimResultAddedSuccessfully",

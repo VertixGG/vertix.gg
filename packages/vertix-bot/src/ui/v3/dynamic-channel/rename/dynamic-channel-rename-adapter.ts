@@ -51,7 +51,7 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             .addState( "RateLimited", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelRenameRateLimited",
                 navigationType: "ephemeral",
-                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789" },
+                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789", elapsedTimeFormatFraction: "5.0 minutes" },
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbedGroup"
             } )
             // Transitions

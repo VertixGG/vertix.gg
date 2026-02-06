@@ -1,17 +1,26 @@
+import { UIEmbedWithVarsExtend } from "@vertix.gg/gui/src/ui-embed/ui-embed-with-vars";
+import { UIEmbedVars } from "@vertix.gg/gui/src/ui-embed/ui-embed-vars";
 import { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
-
-import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-const VALUE_VARIABLE_NAME = "elapsedTimeValue",
-    VALUE_FRACTION_VARIABLE_NAME = "elapsedTimeValueFraction",
-    FORMAT_VARIABLE_NAME = "elapsedTimeFormat",
-    FORMAT_FRACTION_VARIABLE_NAME = "elapsedTimeFormatFraction",
-    FORMAT_MINUTE_UNITS = "formatMinuteUnits",
-    FORMAT_SECOND_UNITS = "formatSecondUnits";
+/**
+ * Elapsed-time UIEmbedVars instance.
+ *
+ * Provides type-safe wrapped template variable placeholders for elapsed time display.
+ * Used by `UIEmbedWithVarsExtend` to give `UIEmbedElapsedTimeBase` proper vars support,
+ * making these variables visible through the metadata/export pipeline and the dashboard flow editor.
+ */
+export const vars = new UIEmbedVars(
+    "elapsedTimeValue",
+    "elapsedTimeValueFraction",
+    "elapsedTimeFormat",
+    "elapsedTimeFormatFraction",
+    "formatMinuteUnits",
+    "formatSecondUnits"
+);
 
-export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
+export abstract class UIEmbedElapsedTimeBase extends UIEmbedWithVarsExtend( UIEmbedBase, vars ) {
     public static getName() {
         return "VertixGUI/EmbedElapsedTimeBase";
     }
@@ -26,7 +35,7 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
      * eg: 30 seconds will be displayed as `30 seconds`.
      */
     protected getElapsedTimeFormatVariable() {
-        return uiUtilsWrapAsTemplate( FORMAT_VARIABLE_NAME );
+        return vars.get( "elapsedTimeFormat" );
     }
 
     /**
@@ -37,29 +46,29 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
      * eg: 30 seconds will be displayed as `30 seconds`.
      */
     protected getElapsedTimeFormatFractionVariable() {
-        return uiUtilsWrapAsTemplate( FORMAT_FRACTION_VARIABLE_NAME );
+        return vars.get( "elapsedTimeFormatFraction" );
     }
 
     protected getElapsedTimeOptions() {
-        const timeValue = uiUtilsWrapAsTemplate( VALUE_VARIABLE_NAME ),
-            timeValueFraction = uiUtilsWrapAsTemplate( VALUE_FRACTION_VARIABLE_NAME ),
-            formatMinuteUnits = uiUtilsWrapAsTemplate( FORMAT_MINUTE_UNITS ),
-            formatSecondUnits = uiUtilsWrapAsTemplate( FORMAT_SECOND_UNITS );
+        const timeValue = vars.get( "elapsedTimeValue" ),
+            timeValueFraction = vars.get( "elapsedTimeValueFraction" ),
+            formatMinuteUnits = vars.get( "formatMinuteUnits" ),
+            formatSecondUnits = vars.get( "formatSecondUnits" );
 
         return {
-            [ FORMAT_SECOND_UNITS ]: {
+            formatSecondUnits: {
                 unit: "second",
                 units: "seconds"
             },
-            [ FORMAT_MINUTE_UNITS ]: {
+            formatMinuteUnits: {
                 unit: "minute",
                 units: "minutes"
             },
-            [ FORMAT_VARIABLE_NAME ]: {
+            elapsedTimeFormat: {
                 minutes: `${ timeValue } ${ formatMinuteUnits }`,
                 seconds: `${ timeValue } ${ formatSecondUnits }`
             },
-            [ FORMAT_FRACTION_VARIABLE_NAME ]: {
+            elapsedTimeFormatFraction: {
                 minutes: `${ timeValueFraction } ${ formatMinuteUnits }`,
                 seconds: `${ timeValueFraction } ${ formatSecondUnits }`
             }
@@ -68,17 +77,17 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
 
     protected getElapsedTimeLogic( args: UIArgs ) {
         const result: {
-            [VALUE_VARIABLE_NAME]?: number;
-            [VALUE_FRACTION_VARIABLE_NAME]?: number;
+            elapsedTimeValue?: number;
+            elapsedTimeValueFraction?: number;
 
-            [FORMAT_VARIABLE_NAME]?: string;
-            [FORMAT_FRACTION_VARIABLE_NAME]?: string;
+            elapsedTimeFormat?: string;
+            elapsedTimeFormatFraction?: string;
 
-            [FORMAT_MINUTE_UNITS]: string | null;
-            [FORMAT_SECOND_UNITS]: string | null;
+            formatMinuteUnits: string | null;
+            formatSecondUnits: string | null;
         } = {
-            [ FORMAT_MINUTE_UNITS ]: null,
-            [ FORMAT_SECOND_UNITS ]: null
+            formatMinuteUnits: null,
+            formatSecondUnits: null
         };
 
         const timeValue: number = this.getEndTime( args ).getTime() - Date.now();
@@ -86,16 +95,16 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
         // If less than 1 minute = shows `x` seconds.
         if ( timeValue <= 1000 * 60 ) {
             // Value.
-            result[ VALUE_VARIABLE_NAME ] = Math.max( 0, Math.floor( timeValue / 1000 ) );
+            result.elapsedTimeValue = Math.max( 0, Math.floor( timeValue / 1000 ) );
 
             // Format.
-            result[ FORMAT_VARIABLE_NAME ] = "seconds";
+            result.elapsedTimeFormat = "seconds";
 
             // Shared Value
-            result[ VALUE_FRACTION_VARIABLE_NAME ] = result[ VALUE_VARIABLE_NAME ];
+            result.elapsedTimeValueFraction = result.elapsedTimeValue;
 
             // Unit(s)?.
-            result[ FORMAT_SECOND_UNITS ] = result[ VALUE_VARIABLE_NAME ] > 1 ? "units" : "unit";
+            result.formatSecondUnits = result.elapsedTimeValue > 1 ? "units" : "unit";
         } else {
             // More than 1 minute.
             const minutes = Math.floor( timeValue / 1000 / 60 );
@@ -104,21 +113,21 @@ export abstract class UIEmbedElapsedTimeBase extends UIEmbedBase {
             // Set value.
             if ( seconds > 0 ) {
                 const fraction = Math.ceil( seconds / 6 ); // to tenths
-                result[ VALUE_FRACTION_VARIABLE_NAME ] = parseFloat( `${ minutes }.${ fraction > 9 ? 9 : fraction }` );
+                result.elapsedTimeValueFraction = parseFloat( `${ minutes }.${ fraction > 9 ? 9 : fraction }` );
             } else {
-                result[ VALUE_FRACTION_VARIABLE_NAME ] = minutes;
+                result.elapsedTimeValueFraction = minutes;
             }
-            result[ VALUE_VARIABLE_NAME ] = minutes;
+            result.elapsedTimeValue = minutes;
 
             // Format.
-            result[ FORMAT_VARIABLE_NAME ] = "minutes";
+            result.elapsedTimeFormat = "minutes";
 
             // Unit(s)?.
-            result[ FORMAT_MINUTE_UNITS ] = result[ VALUE_FRACTION_VARIABLE_NAME ] > 1 ? "units" : "unit";
+            result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? "units" : "unit";
         }
 
         // Same format for both.
-        result[ FORMAT_FRACTION_VARIABLE_NAME ] = result[ FORMAT_VARIABLE_NAME ];
+        result.elapsedTimeFormatFraction = result.elapsedTimeFormat;
 
         return result;
     }

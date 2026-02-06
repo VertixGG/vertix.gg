@@ -670,7 +670,8 @@
                     "executionStep": "VertixBot/UI-V2/ClaimResultOwnerStop",
                     "component": "VertixBot/UI-V2/ClaimResultComponent",
                     "previewDefaultVars": {
-                        "absentInterval": "300000"
+                        "absentInterval": "300000",
+                        "absentMinutes": "5.0"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup"
                 }
@@ -683,7 +684,8 @@
                     "executionStep": "VertixBot/UI-V2/ClaimResultOwnerStop",
                     "component": "VertixBot/UI-V2/ClaimResultComponent",
                     "previewDefaultVars": {
-                        "absentInterval": "300000"
+                        "absentInterval": "300000",
+                        "absentMinutes": "5.0"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup"
                 }
@@ -819,7 +821,8 @@
                     "previewDefaultVars": {
                         "ownerId": "123456789",
                         "ownerDisplayName": "Owner",
-                        "absentInterval": "300000"
+                        "absentInterval": "300000",
+                        "absentMinutes": "5.0"
                     }
                 }
             }
@@ -1212,7 +1215,8 @@
                     "component": "VertixBot/UI-V2/DynamicChannelMetaRenameComponent",
                     "previewDefaultVars": {
                         "retryAfter": "300",
-                        "masterChannelId": "123456789"
+                        "masterChannelId": "123456789",
+                        "elapsedTimeFormatFraction": "5.0 minutes"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup"
                 }
@@ -2691,7 +2695,8 @@
                     "executionStep": "VertixBot/UI-V3/ClaimResultOwnerStop",
                     "component": "VertixBot/UI-V3/ClaimResultComponent",
                     "previewDefaultVars": {
-                        "absentInterval": "300000"
+                        "absentInterval": "300000",
+                        "absentMinutes": "5.0"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
                 }
@@ -2704,7 +2709,8 @@
                     "executionStep": "VertixBot/UI-V3/ClaimResultOwnerStop",
                     "component": "VertixBot/UI-V3/ClaimResultComponent",
                     "previewDefaultVars": {
-                        "absentInterval": "300000"
+                        "absentInterval": "300000",
+                        "absentMinutes": "5.0"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/ClaimResultOwnerStopEmbedGroup"
                 }
@@ -2840,7 +2846,8 @@
                     "previewDefaultVars": {
                         "ownerId": "123456789",
                         "ownerDisplayName": "Owner",
-                        "absentInterval": "300000"
+                        "absentInterval": "300000",
+                        "absentMinutes": "5.0"
                     }
                 }
             }
@@ -3894,7 +3901,8 @@
                     "component": "VertixBot/UI-V3/DynamicChannelRenameComponent",
                     "previewDefaultVars": {
                         "retryAfter": "300",
-                        "masterChannelId": "123456789"
+                        "masterChannelId": "123456789",
+                        "elapsedTimeFormatFraction": "5.0 minutes"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbedGroup"
                 }

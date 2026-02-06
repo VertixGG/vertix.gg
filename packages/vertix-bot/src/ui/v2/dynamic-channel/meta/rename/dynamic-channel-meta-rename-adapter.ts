@@ -47,7 +47,7 @@ const DynamicChannelMetaRenameAdapter = new DynamicExecutionAdapterBuilder<Defau
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaRenameRateLimited",
                 embedsGroup: "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbedGroup",
                 navigationType: "ephemeral",
-                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789" }
+                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789", elapsedTimeFormatFraction: "5.0 minutes" }
             } )
             .addTransition( "SubmitSuccess", { from: "Default", to: "Success" } )
             .addTransition( "SubmitBadword", {

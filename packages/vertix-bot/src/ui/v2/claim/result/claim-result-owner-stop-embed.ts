@@ -18,9 +18,6 @@ const ClaimResultOwnerStopEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setLogic( ( args: UIArgs ) => ( {
         absentMinutes: ( args.absentInterval / 60000 ).toFixed( 1 )
     } ) )
-    .setDefaultVars( () => ( {
-        absentMinutes: "5.0"
-    } ) )
     .build();
 
 export { ClaimResultOwnerStopEmbed };

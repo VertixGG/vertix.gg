@@ -792,9 +792,6 @@
                             "description": "Please be aware that if you don't return within **{absentMinutes}** minutes, the channel will once again become available for other members to claim.\n",
                             "vars": {
                                 "absentMinutes": "{absentMinutes}"
-                            },
-                            "defaultVars": {
-                                "absentMinutes": "5.0"
                             }
                         }
                     }
@@ -960,11 +957,6 @@
                                 "ownerId": "{ownerId}",
                                 "ownerDisplayName": "{ownerDisplayName}",
                                 "absentMinutes": "{absentMinutes}"
-                            },
-                            "defaultVars": {
-                                "ownerId": "123456789",
-                                "ownerDisplayName": "User",
-                                "absentMinutes": "5.0"
                             }
                         }
                     }
@@ -1053,6 +1045,24 @@
                             "instanceType": "Dynamic",
                             "title": "👑  {userInitiatorDisplayName} wish to claim this channel",
                             "description": "Unless someone else steps up, <@{userInitiatorId}> will be the proud owner of this channel in just `{elapsedTimeFormatFraction}`.",
+                            "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                }
+                            },
                             "vars": {
                                 "userInitiatorId": "{userInitiatorId}",
                                 "userInitiatorDisplayName": "{userInitiatorDisplayName}",
@@ -1077,6 +1087,22 @@
                             "title": "👑  {candidatesCount} Candidates wish to claim this channel",
                             "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}` , the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
                             "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
                                 "candidatesState": {
                                     "{candidates}": "🏅 {candidates}",
                                     "{candidatesDefault}": "There are no candidates yet."
@@ -1125,6 +1151,22 @@
                             "title": "👑  {userWonDisplayName} has claimed the channel",
                             "description": "{wonMessage}",
                             "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
                                 "wonMessage": {
                                     "{wonSomeoneElse}": "<@{userWonId}> has claimed ownership of this channel, superseding ~~{previousOwnerDisplayName}~~ as the new owner!{results}",
                                     "{wonSameOwner}": "<@{userWonId}> has claimed ownership of this channel, he was already the owner! 😊{results}"
@@ -1591,6 +1633,22 @@
                             "description": "Please wait `{elapsedTimeFormatFraction}` until the next rename{masterChannelMessage}",
                             "color": 16738560,
                             "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
                                 "masterChannelMessage": {
                                     "{masterChannelId}": " or open a new channel: <#{masterChannelId}>",
                                     "{masterChannelMessageDefault}": ""
@@ -2398,6 +2456,22 @@
                             "description": "Settings has been reset to default:\n\n- Name: **{name}** {nameChanged}\n- User limit: ✋**{userLimit}** {userLimitChanged}\n- State: {state} {stateChanged}\n- Visibility State: {visibilityState} {visibilityStateChanged}\n- Allowed Users: {allowedUsers} {allowedUsersChanged}\n- Blocked Users: {blockedUsers} {blockedUsersChanged}{rateLimited}",
                             "color": 8035517,
                             "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
                                 "changedDisplay": "(__restored__)",
                                 "unchangedDisplay": "(__unchanged__)",
                                 "userLimit": {
@@ -4165,6 +4239,24 @@
                             "instanceType": "Dynamic",
                             "title": "👑  {userInitiatorDisplayName} wish to claim this channel",
                             "description": "Unless someone else steps up, <@{userInitiatorId}> will be the proud owner of this channel in just `{elapsedTimeFormatFraction}`.",
+                            "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                }
+                            },
                             "vars": {
                                 "userInitiatorId": "{userInitiatorId}",
                                 "userInitiatorDisplayName": "{userInitiatorDisplayName}",
@@ -4184,6 +4276,22 @@
                             "title": "👑  {candidatesCount} Candidates wish to claim this channel",
                             "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}`, the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
                             "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
                                 "candidatesState": {
                                     "{candidates}": "🏅 {candidates}",
                                     "{candidatesDefault}": "There are no candidates yet."
@@ -4226,6 +4334,22 @@
                             "title": "👑  {userWonDisplayName} has claimed the channel",
                             "description": "{wonMessage}",
                             "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
                                 "wonMessage": {
                                     "{wonSomeoneElse}": "<@{userWonId}> has claimed ownership of this channel, superseding ~~{previousOwnerDisplayName}~~ as the new owner!{results}",
                                     "{wonSameOwner}": "<@{userWonId}> has claimed ownership of this channel, he was already the owner! 😊{results}"
@@ -6069,6 +6193,22 @@
                             "description": "Please wait `{elapsedTimeFormatFraction}` until the next rename{masterChannelMessage}",
                             "color": 16738560,
                             "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
                                 "masterChannelMessage": {
                                     "{masterChannelId}": " or open a new channel: <#{masterChannelId}>",
                                     "{masterChannelMessageDefault}": ""
@@ -6171,6 +6311,22 @@
                             "description": "Settings has been reset to default:\n\n- Name: **{name}** {nameChanged}\n- User limit: ✋**{userLimit}** {userLimitChanged}\n- State: {state} {stateChanged}\n- Visibility State: {visibilityState} {visibilityStateChanged}\n- Region: {region} {regionChanged}\n- Primary Message: {primaryMessageChanged}\n- Allowed Users: {allowedUsers} {allowedUsersChanged}\n- Blocked Users: {blockedUsers} {blockedUsersChanged}{rateLimited}",
                             "color": 8035517,
                             "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
                                 "changedDisplay": "(__restored__)",
                                 "unchangedDisplay": "(__unchanged__)",
                                 "userLimit": {

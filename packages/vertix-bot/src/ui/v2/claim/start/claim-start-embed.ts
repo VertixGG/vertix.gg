@@ -25,11 +25,6 @@ const ClaimStartEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         ownerDisplayName: args.ownerDisplayName,
         absentMinutes: ( args.absentInterval / 60000 ).toFixed( 1 )
     } ) )
-    .setDefaultVars( () => ( {
-        ownerId: "123456789",
-        ownerDisplayName: "User",
-        absentMinutes: "5.0"
-    } ) )
     .build();
 
 export { ClaimStartEmbed };

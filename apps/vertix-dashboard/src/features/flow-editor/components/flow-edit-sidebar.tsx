@@ -213,6 +213,21 @@ function collectEmbedVariables(
         } );
     }
 
+    // Add vars from options that aren't already collected (option-only vars like formatSecondUnits, formatMinuteUnits, etc.)
+    if ( embedDefinition.options ) {
+        Object.keys( embedDefinition.options ).forEach( varName => {
+            if ( !allVars.has( varName ) ) {
+                const previewValue = embedPreviewVars?.[ varName ];
+                const normalized = normalizeOptionValue( embedDefinition.options?.[ varName ] );
+                allVars.set( varName, {
+                    previewValue,
+                    optionString: normalized?.asString,
+                    optionRecord: normalized?.asRecord
+                } );
+            }
+        } );
+    }
+
     return allVars;
 }
 

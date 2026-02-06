@@ -1,11 +1,15 @@
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
-import { UIEmbedElapsedTimeBase } from "@vertix.gg/gui/src/bases/ui-embed-time-elapsed-base";
+import {
+    UIEmbedElapsedTimeBase,
+    vars as elapsedTimeVars
+} from "@vertix.gg/gui/src/bases/ui-embed-time-elapsed-base";
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
 import type {
     ElapsedEmbedBuilderMetadata,
     EndTimeHandler
 } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+import type { OptionsHandler } from "@vertix.gg/gui/src/builders/embed-builder";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
@@ -25,6 +29,12 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars extends Re
             throw new Error( `End time handler is required for elapsed embed '${ builder.name }'` );
         }
 
+        // Merge user-provided vars with the elapsed-time vars so the exporter
+        // includes them in the metadata (making them visible in the dashboard).
+        const mergedVars = builder.vars
+            ? { ...elapsedTimeVars.get(), ...builder.vars }
+            : elapsedTimeVars.get();
+
         const GeneratedEmbed = class extends UIEmbedElapsedTimeBase {
             public static getName() {
                 return builder.name;
@@ -38,7 +48,6 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars extends Re
             }
 
             protected getEndTime( args: UIArgs ): Date {
-
                 return builder.endTime!( args as TArgs );
             }
 
@@ -125,10 +134,10 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars extends Re
             image: builder.image,
             thumbnail: builder.thumbnail,
             footer: builder.footer,
-            options: builder.options,
+            options: this.mergeElapsedTimeOptions( GeneratedEmbed.prototype[ "getElapsedTimeOptions" ]() ),
             arrayOptions: builder.arrayOptions,
             logic: builder.logic,
-            vars: builder.vars,
+            vars: mergedVars,
             defaultVars: builder.defaultVars,
             endTime: builder.endTime
         };
@@ -138,5 +147,25 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars extends Re
         } );
 
         return GeneratedEmbed;
+    }
+
+    private mergeElapsedTimeOptions( elapsedTimeOptions: Record<string, unknown> ): OptionsHandler<TVars> {
+        if ( ! this.options ) {
+            return elapsedTimeOptions;
+        }
+
+        if ( typeof this.options === "function" ) {
+            const userOptionsFn = this.options;
+
+            return ( vars: TVars ) => ( {
+                ...elapsedTimeOptions,
+                ...userOptionsFn( vars )
+            } );
+        }
+
+        return {
+            ...elapsedTimeOptions,
+            ...this.options
+        };
     }
 }

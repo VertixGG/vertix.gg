@@ -140,6 +140,22 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultIntera
             .addTransition( "StartVoting", { from: "StepIn", to: "VoteProcess" } )
             .addTransition( "UpdateVotes", { from: "VoteProcess", to: "VoteProcess" } )
             .addTransition( "AnnounceWinner", { from: "VoteProcess", to: "VoteWon" } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-V2/ClaimResultFlow",
+                description: "Handoff to ClaimResult flow when vote action produces a result",
+                sourceState: "VertixBot/UI-V2/ClaimVoteFlow/States/StepIn",
+                transition: "VertixBot/UI-V2/ClaimVoteFlow/Transitions/StartVoting"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V2/ClaimVoteStepInButton",
+                transitionName: "StartVoting",
+                targetFlowName: "VertixBot/UI-V2/ClaimResultFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V2/ClaimVoteAddButton",
+                transitionName: "StartVoting",
+                targetFlowName: "VertixBot/UI-V2/ClaimResultFlow"
+            } )
             .bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimVoteStepInButton", "StartVoting", handleVoteRequest )
             .bindButton<DefaultInteraction>( "VertixBot/UI-V2/ClaimVoteAddButton", "StartVoting", handleVoteRequest );
     } )

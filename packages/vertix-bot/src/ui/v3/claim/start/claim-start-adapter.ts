@@ -47,6 +47,28 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
                 from: "Default",
                 to: "Default"
             } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-V3/ClaimResultFlow",
+                description: "Handoff to ClaimResult flow when claim button is clicked",
+                sourceState: "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                transition: "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim"
+            } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-V3/ClaimVoteFlow",
+                description: "Handoff to ClaimVote flow when vote process starts",
+                sourceState: "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                transition: "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/ClaimStartButton",
+                transitionName: "RequestClaim",
+                targetFlowName: "VertixBot/UI-V3/ClaimResultFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/ClaimStartButton",
+                transitionName: "RequestClaim",
+                targetFlowName: "VertixBot/UI-V3/ClaimVoteFlow"
+            } )
             .bindButton<DefaultInteraction>( "VertixBot/UI-V3/ClaimStartButton", "RequestClaim", onClaimStartButtonClicked );
     } )
     .getStartArgs( async( context, channel ) => {

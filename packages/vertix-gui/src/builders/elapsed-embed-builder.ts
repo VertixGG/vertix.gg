@@ -149,7 +149,7 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars extends Re
         return GeneratedEmbed;
     }
 
-    private mergeElapsedTimeOptions( elapsedTimeOptions: Record<string, unknown> ): OptionsHandler<TVars> {
+    private mergeElapsedTimeOptions( elapsedTimeOptions: Record<string, JsonValue> ): OptionsHandler<TVars> {
         if ( ! this.options ) {
             return elapsedTimeOptions;
         }

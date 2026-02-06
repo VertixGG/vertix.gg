@@ -18,6 +18,10 @@ class InteractionHandlerRegistry {
     public has( name: string ): boolean {
         return this.handlers.has( name );
     }
+
+    public clear(): void {
+        this.handlers.clear();
+    }
 }
 
 export const interactionHandlerRegistry = new InteractionHandlerRegistry();

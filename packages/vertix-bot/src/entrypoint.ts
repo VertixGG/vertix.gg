@@ -25,7 +25,7 @@ import { config } from "dotenv";
 
 import { UI_LANGUAGES_PATH, UI_LANGUAGES_FILE_EXTENSION } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
-import { collectUIDefinitions, exportUIDefinitions } from "@vertix.gg/gui/src/runtime/ui-definition-exporter";
+import { exportUIDefinitions } from "@vertix.gg/gui/src/runtime/ui-definition-exporter";
 import { UIArgsProviderRegistry } from "@vertix.gg/gui/src/runtime/ui-args-provider-registry";
 import { uiClassRegistry } from "@vertix.gg/gui/src/runtime/ui-class-registry";
 import { interactionHandlerRegistry  } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
@@ -662,11 +662,17 @@ export async function bootstrapUIRuntime(): Promise<UIService> {
  * Used by the API to generate UI definitions at runtime.
  */
 export async function bootstrapUIRuntimeHeadless(): Promise<UIService> {
-    // If UIService is already registered (e.g., HMR hot-reload), just return it
+    // If UIService is already registered (e.g., HMR hot-reload), check if it's still populated.
+    // After Bun --hot, the ServiceLocator persists on globalThis but the UIService's internal maps
+    // may be empty because the module registry was reset.
     const existingUIService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService", { silent: true } );
-    if ( existingUIService ) {
-        GlobalLogger.$.info( bootstrapUIRuntimeHeadless, "UIService already registered, reusing existing instance" );
+    if ( existingUIService && existingUIService.getUIModules().size > 0 ) {
+        GlobalLogger.$.info( bootstrapUIRuntimeHeadless, "UIService already registered with modules, reusing existing instance" );
         return existingUIService;
+    }
+
+    if ( existingUIService ) {
+        GlobalLogger.$.info( bootstrapUIRuntimeHeadless, "UIService found but empty (likely after --hot reload), re-registering modules..." );
     }
 
     GlobalLogger.$.info( bootstrapUIRuntimeHeadless, "Bootstrapping headless UI runtime (no Discord)..." );
@@ -723,26 +729,6 @@ async function exportUIDefinitionsCommand( outputDirArg?: string ) {
         includeFlows: true
     } );
     return resolvedOutputDir;
-}
-
-async function testFlowCommand( flowNameArg?: string ) {
-    const targetFlow = flowNameArg && flowNameArg.length ? flowNameArg : "VertixBot/UI-V3/SetupEditFlow";
-    GlobalLogger.$.info( testFlowCommand, `Testing flow '${ targetFlow }'` );
-    const uiService = await bootstrapUIRuntime();
-    const collections = await collectUIDefinitions( uiService, {
-        outputDir: "",
-        includeAdapters: true,
-        includeComponents: true,
-        includeFlows: true
-    } );
-    const definition = collections.flows.find( ( flow ) => flow.name === targetFlow );
-    if ( !definition ) {
-        GlobalLogger.$.error( testFlowCommand, `Flow '${ targetFlow }' not found in collected definitions` );
-        return;
-    }
-    const requirements = definition.inputRequirements ?? [];
-    GlobalLogger.$.info( testFlowCommand, `Input requirements: ${ JSON.stringify( requirements, null, 2 ) }` );
-    GlobalLogger.$.info( testFlowCommand, `Components count: ${ definition.states?.length ?? 0 } states` );
 }
 
 // Function to register Data Service and Components
@@ -884,21 +870,6 @@ export async function entryPoint( options: {
         GlobalLogger.$.info( entryPoint, "Cleanup command detected" );
         await createCleanupWorker();
         process.exit( 0 );
-    }
-
-    const testFlowArg = process.argv.find( arg => arg.startsWith( "--test-flow" ) );
-    if ( testFlowArg ) {
-        GlobalLogger.$.info( entryPoint, "Test flow command detected" );
-        try {
-            const flowName = testFlowArg.includes( "=" )
-                ? testFlowArg.split( "=" )[ 1 ]
-                : undefined;
-            await testFlowCommand( flowName );
-            process.exit( 0 );
-        } catch( error ) {
-            GlobalLogger.$.error( entryPoint, "Failed to run test flow command", error );
-            process.exit( 1 );
-        }
     }
 
     await PrismaBotClient.$.connect();

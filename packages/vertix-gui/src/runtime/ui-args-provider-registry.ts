@@ -77,4 +77,8 @@ export class UIArgsProviderRegistry extends InitializeBase {
     public has( adapterName: string ): boolean {
         return this.providers.has( adapterName );
     }
+
+    public clear(): void {
+        this.providers.clear();
+    }
 }

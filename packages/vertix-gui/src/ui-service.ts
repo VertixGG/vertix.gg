@@ -221,6 +221,19 @@ export class UIService extends ServiceWithDependenciesBase<{
         return module;
     }
 
+    /**
+     * Clear all registered modules and adapters.
+     * Used during hot-reload to allow re-registration with fresh class instances.
+     */
+    public clearModules(): void {
+        this.uiModulesTypes.clear();
+        this.uiModulesInstances.clear();
+        this.uiModulesFromDefs.clear();
+        this.uiAdaptersTypes.clear();
+        this.uiAdaptersStaticInstances.clear();
+        this.uiAdaptersRegisterOptions.clear();
+    }
+
     public registerModule<T extends TModuleConstructor>( Module: T ) {
         const moduleName = Module.getName();
 

@@ -1,10 +1,13 @@
 import path from "path";
+import { fileURLToPath } from "node:url";
 import { watch } from "fs";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 import { zFindRootPackageJsonPath } from "@zenflux/utils/workspace";
 
 import { collectUIDefinitions } from "@vertix.gg/gui/src/runtime/ui-definition-exporter";
+
+import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
 import type { FSWatcher } from "fs";
 
@@ -17,11 +20,13 @@ import type {
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
-const WATCH_DEBOUNCE_MS = 300;
+const WATCH_DEBOUNCE_MS = 500;
+
+// Use a globalThis symbol to guarantee a single instance even when Bun resolves
+// this module through multiple paths (e.g. workspace alias vs relative import).
+const GLOBAL_KEY = Symbol.for( "vertix.gg/api/UIRuntimeLoader" );
 
 export class UIRuntimeLoader extends InitializeBase {
-    private static instance: UIRuntimeLoader | null = null;
-
     private exportData: UIExportData | null = null;
 
     private uiService: UIService | null = null;
@@ -30,6 +35,8 @@ export class UIRuntimeLoader extends InitializeBase {
 
     private reloadDebounce: ReturnType<typeof setTimeout> | null = null;
 
+    private reloading = false;
+
     private loadingPromise: Promise<UIExportData> | null = null;
 
     public static getName(): string {
@@ -37,10 +44,10 @@ export class UIRuntimeLoader extends InitializeBase {
     }
 
     public static getInstance(): UIRuntimeLoader {
-        if ( !UIRuntimeLoader.instance ) {
-            UIRuntimeLoader.instance = new UIRuntimeLoader();
+        if ( !( globalThis as any )[ GLOBAL_KEY ] ) {
+            ( globalThis as any )[ GLOBAL_KEY ] = new UIRuntimeLoader();
         }
-        return UIRuntimeLoader.instance;
+        return ( globalThis as any )[ GLOBAL_KEY ];
     }
 
     protected initialize(): void {
@@ -77,26 +84,46 @@ export class UIRuntimeLoader extends InitializeBase {
         return this.exportData!;
     }
 
-    private async doCollectDefinitions(): Promise<void> {
+    private async doCollectDefinitions( isReload = false ): Promise<void> {
         if ( !this.uiService ) {
             return;
         }
 
+        if ( isReload && this.reloading ) {
+            this.logger.info( this.doCollectDefinitions, "Reload already in progress, skipping" );
+            return;
+        }
+
+        this.reloading = isReload;
+
         try {
-            const collections = await collectUIDefinitions( this.uiService, {
-                outputDir: "",
-                includeAdapters: true,
-                includeComponents: true,
-                includeFlows: true
-            } );
+            let collections;
+
+            if ( isReload ) {
+                // Spawn a subprocess to collect definitions with a clean module cache.
+                // In-process re-registration doesn't work because Bun caches ESM modules
+                // and won't re-evaluate changed files within the same process.
+                this.logger.info( this.doCollectDefinitions, "Spawning subprocess for fresh UI definitions..." );
+                collections = await collectUIDefinitionsInWorker();
+                this.logger.info( this.doCollectDefinitions, "Subprocess completed" );
+            } else {
+                collections = await collectUIDefinitions( this.uiService, {
+                    outputDir: "",
+                    includeAdapters: true,
+                    includeComponents: true,
+                    includeFlows: true
+                } );
+            }
 
             // The collected definitions have the same runtime shape as UIExportData
             // (the JSON export→parse round-trip produces identical objects)
             this.exportData = collections as unknown as UIExportData;
 
+            this.exportData.meta.exportedAt = new Date().toISOString();
+
             this.logger.info(
                 this.doCollectDefinitions,
-                `Collected: ${ this.exportData.meta.counts.flows } flows, ${ this.exportData.meta.counts.components } components, ${ this.exportData.adapters.length } adapters`
+                `Collected${ isReload ? " (reload)" : "" }: ${ this.exportData.meta.counts.flows } flows, ${ this.exportData.meta.counts.components } components, ${ this.exportData.adapters.length } adapters`
             );
         } catch( error ) {
             this.logger.error(
@@ -117,6 +144,8 @@ export class UIRuntimeLoader extends InitializeBase {
                 flows: [],
                 adapters: []
             };
+        } finally {
+            this.reloading = false;
         }
     }
 
@@ -146,9 +175,9 @@ export class UIRuntimeLoader extends InitializeBase {
                 }
 
                 this.reloadDebounce = setTimeout( () => {
-                    this.logger.info( this.startWatching, `Detected change in ${ filename }, re-collecting definitions...` );
-                    this.doCollectDefinitions().catch( err => {
-                        this.logger.error( this.startWatching, `Failed to re-collect definitions: ${ err }` );
+                    this.logger.info( this.startWatching, `Detected change in ${ filename }, reloading UI modules...` );
+                    this.doCollectDefinitions( true ).catch( err => {
+                        this.logger.error( this.startWatching, `Failed to reload UI modules: ${ err }` );
                     } );
                 }, WATCH_DEBOUNCE_MS );
             } );
@@ -270,6 +299,73 @@ export class UIRuntimeLoader extends InitializeBase {
         } );
 
         return result;
+    }
+}
+
+/**
+ * Collect UI definitions in a subprocess with a completely fresh module cache.
+ *
+ * Uses `Bun.spawn()` instead of `worker_threads.Worker` because Bun's worker
+ * threads share `globalThis` with the parent process. Since `ServiceLocator`
+ * stores its singleton on `global.__vertix_base_service_locator__`, a worker
+ * thread would reuse the parent's cached `UIService` (with stale adapter
+ * metadata) instead of bootstrapping fresh.
+ *
+ * A subprocess gets its own V8/JSC isolate with a separate `globalThis` and
+ * module cache, guaranteeing that all ESM imports are re-evaluated from disk.
+ *
+ * Returns the collected definitions as a parsed object (same shape as UIExportData).
+ */
+async function collectUIDefinitionsInWorker(): Promise<object> {
+    const subprocessScript = path.resolve(
+        path.dirname( fileURLToPath( import.meta.url ) ),
+        "_workers/collect-ui-definitions.ts"
+    );
+
+    GlobalLogger.$.info( collectUIDefinitionsInWorker, "Spawning subprocess for fresh UI definitions..." );
+
+    const proc = Bun.spawn( [ "bun", "run", subprocessScript ], {
+        stdout: "pipe",
+        stderr: "pipe",
+        env: { ...process.env },
+    } );
+
+    // Collect both streams concurrently to avoid pipe-buffer deadlock.
+    // (If we await one before the other, a full pipe buffer on the un-read
+    //  stream can block the subprocess and hang both sides.)
+    const [ stderrText, stdoutText, exitCode ] = await Promise.all( [
+        new Response( proc.stderr ).text(),
+        new Response( proc.stdout ).text(),
+        proc.exited
+    ] );
+
+    if ( stderrText.trim() ) {
+        for ( const line of stderrText.trim().split( "\n" ) ) {
+            GlobalLogger.$.info( collectUIDefinitionsInWorker, `[subprocess] ${ line }` );
+        }
+    }
+
+    if ( exitCode !== 0 ) {
+        throw new Error(
+            `UI definition subprocess exited with code ${ exitCode }.\nstderr: ${ stderrText }`
+        );
+    }
+
+    if ( !stdoutText.trim() ) {
+        throw new Error( "UI definition subprocess produced no output on stdout" );
+    }
+
+    try {
+        const resultData = JSON.parse( stdoutText );
+
+        GlobalLogger.$.info(
+            collectUIDefinitionsInWorker,
+            `Subprocess collected: ${ resultData.meta.counts.flows } flows, ${ resultData.meta.counts.components } components, ${ resultData.adapters.length } adapters`
+        );
+
+        return resultData;
+    } catch ( err ) {
+        throw new Error( `Failed to parse subprocess result: ${ err }\nstdout (first 500 chars): ${ stdoutText.slice( 0, 500 ) }` );
     }
 }
 

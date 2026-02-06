@@ -41,7 +41,12 @@
       "Bash(node_modules/.bin/prisma generate:*)",
       "Bash(bunx prisma generate:*)",
       "mcp__jetbrains__find_files_by_glob",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "WebFetch(domain:bun.com)",
+      "Bash(npm view:*)",
+      "Bash(gtimeout 15 bun run:*)",
+      "Bash(git add:*)",
+      "Bash(git mv:*)"
     ]
   }
 }

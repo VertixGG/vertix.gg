@@ -46,6 +46,10 @@ class UiClassRegistry {
     public values(): IterableIterator<RegisterableClass<object>> {
         return this.classes.values();
     }
+
+    public clear(): void {
+        this.classes.clear();
+    }
 }
 
 export const uiClassRegistry = new UiClassRegistry();

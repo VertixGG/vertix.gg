@@ -21,7 +21,7 @@ export class ElapsedEmbedBuilder<TArgs extends UIArgs = UIArgs, TVars extends Re
         return this;
     }
 
-    public build(): typeof UIEmbedElapsedTimeBase {
+    public build() {
         const builder = this;
 
         // Validation

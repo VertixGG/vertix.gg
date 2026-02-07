@@ -11,6 +11,7 @@
         ],
 
         "types": [
+            "bun",
             "node",
             "prisma-bot-client.d.ts"
         ],

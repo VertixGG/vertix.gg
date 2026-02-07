@@ -98,19 +98,9 @@ export class UIWizardComponentBase extends UIComponentBase {
     }
 
     protected static getControlButtons() {
-        const systemElements = UIService.getSystemElements();
+        const { WizardBackButton, WizardNextButton, WizardFinishButton } = UIService.getSystemElements();
 
-        const wizardControlButtons = [
-            systemElements.WizardBackButton!,
-            systemElements.WizardNextButton!,
-            systemElements.WizardFinishButton!
-        ];
-
-        if ( !wizardControlButtons.every( Boolean ) ) {
-            throw new Error( "Wizard control buttons are not registered." );
-        }
-
-        return wizardControlButtons;
+        return [ WizardBackButton, WizardNextButton, WizardFinishButton ];
     }
 
     /**

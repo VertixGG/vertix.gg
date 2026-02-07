@@ -18,7 +18,7 @@ export function messageHandler( client: Client ) {
         if ( message.guildId ) {
             void GuildModel.$.updateLastActive( message.guildId ).then( ( updated ) => {
                 if ( !updated ) {
-                    void guildLeaveBecauseNotInDatabase( message.guildId );
+                    void guildLeaveBecauseNotInDatabase( message.guildId! );
                 }
             } );
         }

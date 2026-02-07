@@ -28,7 +28,7 @@ export abstract class DynamicChannelAdapterWizardBase<
     public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel", { silent: true } ) ?? null;
+        this.dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel", { silent: true } ) ?? null;
     }
 
     public getChannelTypes() {
@@ -60,7 +60,7 @@ export abstract class DynamicChannelAdapterWizardBase<
     protected async resolveTargetChannel( interaction: TInteraction ) {
         const args = this.getArgsManager().getArgs( this, interaction );
 
-        return this.dynamicChannelService.resolveTargetChannel( interaction, args );
+        return this.dynamicChannelService!.resolveTargetChannel( interaction, args );
     }
 
     protected async hydrateInteractionChannel( interaction: TInteraction ) {
@@ -75,7 +75,7 @@ export abstract class DynamicChannelAdapterWizardBase<
 
     protected async hydrateMessageChannel( message: Message<true>, newArgs?: UIArgs ) {
         const args = newArgs ?? this.getArgsManager().getArgs( this, message );
-        const channel = await this.dynamicChannelService.resolveTargetChannel( message, args );
+        const channel = await this.dynamicChannelService!.resolveTargetChannel( message, args );
 
         if ( !channel ) {
             return;

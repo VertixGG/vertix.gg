@@ -17,6 +17,6 @@ export class SetupEditVerifiedRolesElementsGroup extends UIElementsGroupBase {
 
         const { WizardBackButton, WizardFinishButton } = uiService.$$.getSystemElements();
 
-        return [ [ VerifiedRolesMenu ], [ VerifiedRolesEveryoneSelectMenu ], [ WizardBackButton!, WizardFinishButton! ] ];
+        return [ [ VerifiedRolesMenu ], [ VerifiedRolesEveryoneSelectMenu ], [ WizardBackButton, WizardFinishButton ] ];
     }
 }

@@ -1,35 +1,34 @@
 import  { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
 import type {
-    UIArgs
+    UIArgs,
+    UIEntityTypesConstructor
 } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
-export class ElementsGroupBuilder<
-    TItemsDefinition extends typeof UIElementBase<any>[],
-    TItemsFactory extends ( args?: UIArgs ) => TItemsDefinition
-> {
+type ItemsFactory = ( args?: UIArgs ) => UIEntityTypesConstructor;
+
+export class ElementsGroupBuilder {
     private name: string;
-    private items: TItemsDefinition | TItemsFactory | undefined;
+    private items: UIEntityTypesConstructor | ItemsFactory | undefined;
 
     public constructor( name: string ) {
         this.name = name;
     }
 
-    public setItems( items: TItemsFactory  ): this {
+    public setItems( items: ItemsFactory ): this {
         this.items = items;
         return this;
     }
 
-    public addRow( elements: TItemsDefinition ): this {
+    public addRow( elements: UIEntityTypesConstructor ): this {
         if ( typeof this.items === "function" ) {
             throw new Error( "Cannot use addRow with a dynamic items factory. Use setItems instead." );
         }
         if ( "undefined" === typeof this.items ) {
-            this.items = [ elements ] as unknown as TItemsDefinition;
+            this.items = [ elements ] as UIEntityTypesConstructor;
             return this;
         }
-        ( this.items as any[] ).push( elements );
+        ( this.items as UIEntityTypesConstructor[] ).push( elements );
         return this;
     }
 

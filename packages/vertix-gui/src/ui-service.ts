@@ -72,6 +72,17 @@ interface WaitForAdapterOptions {
     silent?: boolean;
 }
 
+type UISystemElementConstructor = ( new () => UIElementButtonBase ) & { getName(): string };
+
+export interface UISystemElements {
+    RegenerateButton?: UISystemElementConstructor;
+    WizardBackButton?: UISystemElementConstructor;
+    WizardNextButton?: UISystemElementConstructor;
+    WizardFinishButton?: UISystemElementConstructor;
+}
+
+export type UIRequiredSystemElements = Required<UISystemElements>;
+
 const ADAPTER_CLEANUP_TIMER_INTERVAL = Number( process.env.ADAPTER_CLEANUP_TIMER_INTERVAL ) || 300000; // 5 minutes.
 
 const ADAPTER_WAITFOR_DEFAULT_OPTIONS: WaitForAdapterOptions = {
@@ -84,12 +95,7 @@ export class UIService extends ServiceWithDependenciesBase<{
 }> {
     private static cleanupTimerInterval: NodeJS.Timeout;
 
-    private static uiSystemElements: {
-        RegenerateButton?: new () => UIElementButtonBase;
-        WizardBackButton?: new () => UIElementButtonBase;
-        WizardNextButton?: new () => UIElementButtonBase;
-        WizardFinishButton?: new () => UIElementButtonBase;
-    } = {};
+    private static uiSystemElements: UISystemElements = {};
 
     private static uiSystemComponents: {
         InvalidChannelTypeComponent?: UIComponentTypeConstructor;
@@ -136,8 +142,14 @@ export class UIService extends ServiceWithDependenciesBase<{
         this.emitter.emit( "system-components-registered", systemComponents );
     }
 
-    public static getSystemElements() {
-        return UIService.uiSystemElements;
+    public static getSystemElements(): UIRequiredSystemElements {
+        const elements = UIService.uiSystemElements;
+
+        if ( !elements.RegenerateButton || !elements.WizardBackButton || !elements.WizardNextButton || !elements.WizardFinishButton ) {
+            throw new Error( "System elements are not fully registered. Ensure `registerSystemElements()` is called before accessing system elements." );
+        }
+
+        return elements as UIRequiredSystemElements;
     }
 
     public static getSystemComponents() {

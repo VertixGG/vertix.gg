@@ -47,7 +47,9 @@
       "Bash(gtimeout 15 bun run:*)",
       "Bash(git add:*)",
       "Bash(git mv:*)",
-      "Bash(git -C /Users/inewlegend/Desktop/dev/vertix.gg log --oneline -5 -- exports/ui/components.json)"
+      "Bash(git -C /Users/inewlegend/Desktop/dev/vertix.gg log --oneline -5 -- exports/ui/components.json)",
+      "Bash(git checkout:*)",
+      "Bash(git -C /Users/inewlegend/Desktop/dev/vertix.gg diff HEAD -- packages/vertix-gui packages/vertix-bot packages/vertix-base packages/vertix-definitions apps/vertix-api/src/server)"
     ]
   }
 }

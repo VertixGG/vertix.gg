@@ -37,6 +37,8 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
     }
 
     public async getAllScalingSettings() {
+        type Settings = ScalingChannelConfigInterface[ "data" ][ "settings" ];
+
         const key = `${ this.getName() }/settings`;
 
         const results = await PrismaBotClient.$.getClient().channelData.findMany( {
@@ -49,10 +51,20 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
             }
         } );
 
-        return results.map( ( result ) => ( {
-            masterChannel: result.channel,
-            settings: result.object
-        } ) );
+        const entries: { masterChannel: typeof results[number]["channel"]; settings: Settings }[] = [];
+
+        for ( const result of results ) {
+            const settings = await this.getScalingSettings( result.ownerId );
+
+            if ( settings ) {
+                entries.push( {
+                    masterChannel: result.channel,
+                    settings
+                } );
+            }
+        }
+
+        return entries;
     }
 
     public async setCategoryId( ownerId: string, categoryId: string | null ) {

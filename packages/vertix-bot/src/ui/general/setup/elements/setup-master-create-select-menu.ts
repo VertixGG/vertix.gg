@@ -2,6 +2,8 @@ import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-type
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import type { APISelectMenuOption } from "discord.js";
+
 export const MASTER_CHANNEL_TYPE_V2 = "v2";
 export const MASTER_CHANNEL_TYPE_V3 = "v3";
 export const MASTER_CHANNEL_TYPE_SCALING = "scaling";
@@ -23,24 +25,24 @@ export class SetupMasterCreateSelectMenu extends UIElementStringSelectMenu {
         return 0;
     }
 
-    protected async getSelectOptions() {
+    protected async getSelectOptions(): Promise<APISelectMenuOption[]> {
         return [
             {
                 label: "Dynamic Channel (V2)",
                 value: MASTER_CHANNEL_TYPE_V2,
-                emoji: "➕",
+                emoji: { name: "➕" },
                 description: "Classic dynamic voice channels"
             },
             {
                 label: "Dynamic Channel (V3)",
                 value: MASTER_CHANNEL_TYPE_V3,
-                emoji: "✨",
+                emoji: { name: "✨" },
                 description: "Enhanced dynamic channels with more features"
             },
             {
                 label: "Auto-Scaling Channel",
                 value: MASTER_CHANNEL_TYPE_SCALING,
-                emoji: "📈",
+                emoji: { name: "📈" },
                 description: "Automatically scales based on member count"
             }
         ];

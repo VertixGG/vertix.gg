@@ -601,7 +601,7 @@ export abstract class UIAdapterBase<
         throw new ForceMethodImplementation( this, "getChannelTypes" );
     }
 
-    public deleteArgs( interaction: TInteraction ) {
+    public deleteArgs( interaction: TInteraction | Message<true> ) {
         const id = this.getArgsManager().getArgsId( interaction );
 
         this.getSystemArgs().deleteArgs( this, id );

@@ -87,7 +87,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                             continue;
                         }
 
-                        await this.ensureScalingChannelsForMaster( guild, masterChannel, settings );
+                        await this.ensureScalingChannelsForMaster( guild, masterChannel as ChannelExtended, settings );
                     } catch( error ) {
                         this.logger.error(
                             this.initialize,

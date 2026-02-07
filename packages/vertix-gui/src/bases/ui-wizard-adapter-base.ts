@@ -2,8 +2,6 @@ import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
-import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
-
 import type {
     UIArgs,
     UICreateComponentArgs,
@@ -113,9 +111,7 @@ export class UIWizardAdapterBase<
     protected buildEntitiesMap() {
         super.buildEntitiesMap();
 
-        const { WizardBackButton, WizardNextButton, WizardFinishButton } = this.uiService.$$.getSystemElements() as {
-            [key: string]: UIElementButtonBase;
-        };
+        const { WizardBackButton, WizardNextButton, WizardFinishButton } = this.uiService.$$.getSystemElements();
 
         this.bindButton<TInteraction>( WizardBackButton.getName(), this.onWizardBackButtonClicked );
         this.bindButton<TInteraction>( WizardNextButton.getName(), this.onWizardNextButtonClicked );

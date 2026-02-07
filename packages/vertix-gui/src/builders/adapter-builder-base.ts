@@ -53,6 +53,7 @@ import type {
     BindingRegistrationOptions,
     BindingFlowTriggerConfig
 } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { ElementHandlerBinding } from "@vertix.gg/gui/src/builders/transaction-builder";
 import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
@@ -495,7 +496,37 @@ export class AdapterBuilderBase<
                         ) => this.bindUserSelectMenu( name, async( interaction ) => {
                             await callback( getContext(), interaction as T );
                             await applyFlowTriggers( interaction, _options );
-                        } )
+                        } ),
+                        dispatchBinding: ( binding: ElementHandlerBinding ) => {
+                            const handler = binding.handler;
+                            switch ( binding.handlerKind ) {
+                                case "button":
+                                    this.bindButton( binding.elementId, async( interaction ) => {
+                                        await handler( getContext(), interaction );
+                                    } );
+                                    break;
+                                case "modal":
+                                    this.bindModal( binding.elementId, async( interaction ) => {
+                                        await handler( getContext(), interaction );
+                                    } );
+                                    break;
+                                case "modalWithButton":
+                                    this.bindModalWithButton( binding.elementId, binding.modalName!, async( interaction ) => {
+                                        await handler( getContext(), interaction );
+                                    } );
+                                    break;
+                                case "selectMenu":
+                                    this.bindSelectMenu( binding.elementId, async( interaction ) => {
+                                        await handler( getContext(), interaction );
+                                    } );
+                                    break;
+                                case "userSelectMenu":
+                                    this.bindUserSelectMenu( binding.elementId, async( interaction ) => {
+                                        await handler( getContext(), interaction );
+                                    } );
+                                    break;
+                            }
+                        }
                     };
                 }
 

@@ -16,10 +16,19 @@ import type {
 
 export type HandlerKind = "button" | "modal" | "modalWithButton" | "selectMenu" | "userSelectMenu";
 
-export interface ElementHandlerBinding<TContext = unknown> {
+/**
+ * Type-erased handler binding used for storage and cross-context transfer.
+ *
+ * The handler uses a bivariant method signature (`{ handler(...): ... }` style)
+ * so that it can be safely stored regardless of the original `TContext`.
+ * The bind* methods on TransactionBuilder provide full type-safety at
+ * registration time, and consumers cast to the appropriate context type
+ * when invoking at runtime.
+ */
+export interface ElementHandlerBinding {
     elementId: string;
     handlerKind: HandlerKind;
-    handler: ( context: TContext, interaction: unknown ) => Promise<void>;
+    handler( context: unknown, interaction: unknown ): Promise<void>;
     /** For modalWithButton bindings */
     modalName?: string;
 }
@@ -138,7 +147,7 @@ export class TransactionBuilder<TContext = unknown> {
     private transitions = new Map<string, TransitionConfig>();
     private elementBindings = new Map<string, string>();
     private modalButtonBindings: ModalButtonBinding[] = [];
-    private handlerBindings: ElementHandlerBinding<TContext>[] = [];
+    private handlerBindings: ElementHandlerBinding[] = [];
     private isHidden: boolean = false;
     private entryPointsList: FlowIntegrationPointDefinition[] = [];
     private handoffPointsList: FlowIntegrationPointDefinition[] = [];
@@ -204,11 +213,11 @@ export class TransactionBuilder<TContext = unknown> {
     ): this {
         // Bind element to transition
         this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
-        // Add handler binding
+        // Add handler binding (cast to type-erased form for storage)
         this.handlerBindings.push( {
             elementId,
             handlerKind: "button",
-            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+            handler: handler as ElementHandlerBinding["handler"]
         } );
         return this;
     }
@@ -223,11 +232,11 @@ export class TransactionBuilder<TContext = unknown> {
     ): this {
         // Bind element to transition
         this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
-        // Add handler binding
+        // Add handler binding (cast to type-erased form for storage)
         this.handlerBindings.push( {
             elementId,
             handlerKind: "modal",
-            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+            handler: handler as ElementHandlerBinding["handler"]
         } );
         return this;
     }
@@ -248,12 +257,12 @@ export class TransactionBuilder<TContext = unknown> {
             modalName,
             transitionName: this.fullTransitionName( transitionName )
         } );
-        // Add handler binding
+        // Add handler binding (cast to type-erased form for storage)
         this.handlerBindings.push( {
             elementId: buttonElement,
             handlerKind: "modalWithButton",
             modalName,
-            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+            handler: handler as ElementHandlerBinding["handler"]
         } );
         return this;
     }
@@ -268,11 +277,11 @@ export class TransactionBuilder<TContext = unknown> {
     ): this {
         // Bind element to transition
         this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
-        // Add handler binding
+        // Add handler binding (cast to type-erased form for storage)
         this.handlerBindings.push( {
             elementId,
             handlerKind: "selectMenu",
-            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+            handler: handler as ElementHandlerBinding["handler"]
         } );
         return this;
     }
@@ -287,11 +296,11 @@ export class TransactionBuilder<TContext = unknown> {
     ): this {
         // Bind element to transition
         this.elementBindings.set( elementId, this.fullTransitionName( transitionName ) );
-        // Add handler binding
+        // Add handler binding (cast to type-erased form for storage)
         this.handlerBindings.push( {
             elementId,
             handlerKind: "userSelectMenu",
-            handler: handler as ( context: TContext, interaction: unknown ) => Promise<void>
+            handler: handler as ElementHandlerBinding["handler"]
         } );
         return this;
     }
@@ -299,7 +308,7 @@ export class TransactionBuilder<TContext = unknown> {
     /**
      * Get all handler bindings.
      */
-    public getHandlerBindings(): ElementHandlerBinding<TContext>[] {
+    public getHandlerBindings(): ElementHandlerBinding[] {
         return [ ...this.handlerBindings ];
     }
 

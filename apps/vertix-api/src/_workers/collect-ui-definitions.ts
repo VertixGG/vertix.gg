@@ -59,3 +59,5 @@ try {
     log( `Fatal error: ${ error }` );
     process.exit( 1 );
 }
+
+export {};

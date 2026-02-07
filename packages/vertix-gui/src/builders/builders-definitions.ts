@@ -17,6 +17,7 @@ import type {
     FlowContextMutationDefinition,
     FlowNavigationDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
+import type { ElementHandlerBinding } from "@vertix.gg/gui/src/builders/transaction-builder";
 
 export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs> {
     readonly logger: Logger;
@@ -30,7 +31,7 @@ export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TAr
     showModal: ( interaction: MessageComponentInteraction<"cached">, name: string ) => Promise<void>;
 
     // Existing in base, part of args manager
-    deleteArgs: ( interaction: TInteraction ) => void;
+    deleteArgs: ( interaction: TInteraction | Message<true> ) => void;
 
     getArgs: ( interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext ) => UIArgs;
     setArgs: ( interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext, args: UIArgs ) => void;
@@ -163,6 +164,12 @@ export interface IBinder<TInteraction extends UIAdapterReplyContext, TArgs exten
         callback: ( context: TContext, interaction: T ) => Promise<void>,
         options?: BindingRegistrationOptions
     ) => void;
+
+    /**
+     * Dispatch a type-erased handler binding to the appropriate bind method.
+     * This accepts the stored handler directly without requiring the caller to cast.
+     */
+    dispatchBinding: ( binding: ElementHandlerBinding ) => void;
 }
 
 export type BeforeBuildRunHandler<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs, TContext extends IAdapterContext<TInteraction, TArgs>> = (

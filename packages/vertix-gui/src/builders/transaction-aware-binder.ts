@@ -13,7 +13,7 @@ import type {
     IBinder,
     BindingRegistrationOptions
 } from "@vertix.gg/gui/src/builders/builders-definitions";
-import type { TransactionBuilder } from "@vertix.gg/gui/src/builders/transaction-builder";
+import type { ElementHandlerBinding, TransactionBuilder } from "@vertix.gg/gui/src/builders/transaction-builder";
 
 /**
  * TransactionAwareBinder wraps the base binder to auto-inject flowTriggers
@@ -92,6 +92,10 @@ export class TransactionAwareBinder<
         const mergedOptions = this.mergeFlowTriggerOptions( options, flowTrigger );
 
         this.baseBinder.bindUserSelectMenu( name, callback, mergedOptions );
+    }
+
+    public dispatchBinding( binding: ElementHandlerBinding ): void {
+        this.baseBinder.dispatchBinding( binding );
     }
 
     private mergeFlowTriggerOptions(

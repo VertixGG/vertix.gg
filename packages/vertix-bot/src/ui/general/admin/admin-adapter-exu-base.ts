@@ -33,7 +33,7 @@ export class AdminAdapterExuBase<
     public constructor( options: TAdapterRegisterOptions ) {
         super( options );
 
-        this.dynamicChannelService = ServiceLocator.$.get( "VertixBot/Services/DynamicChannel", { silent: true } ) ?? null;
+        this.dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel", { silent: true } ) ?? null;
     }
 
     public getPermissions(): PermissionsBitField {

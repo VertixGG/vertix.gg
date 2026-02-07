@@ -192,11 +192,6 @@ export abstract class UIWizardFlowBase<
 
     private async buildWizardControlRow( stepIndex: number, totalSteps: number ): Promise<UISerializationFlowElement[]> {
         const { WizardBackButton, WizardNextButton, WizardFinishButton } = UIService.getSystemElements();
-
-        if ( !WizardBackButton || !WizardNextButton || !WizardFinishButton ) {
-            return [];
-        }
-
         const args = this.getWizardControlArgs( stepIndex, totalSteps );
         const isLastStep = stepIndex === totalSteps - 1;
         const buttons: Array<{ ctor: new () => { build: ( uiArgs?: UIArgs ) => Promise<UISerializationFlowElement> }; include: boolean }> = [

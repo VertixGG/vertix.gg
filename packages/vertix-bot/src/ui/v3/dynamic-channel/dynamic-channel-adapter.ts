@@ -121,12 +121,12 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
                     await uiService.get( "VertixBot/UI-V3/DynamicChannelResetChannelAdapter" )?.runInitial( interaction );
                 }
             )
-            .bindButton(
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
                 "ClaimChannel",
                 async( _context, interaction ) => {
                     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                    const messages = uiService.get( "VertixBot/UI-V3/ClaimStartAdapter" )?.getStartedMessages( interaction.channel! ),
+                    const messages = uiService.get( "VertixBot/UI-V3/ClaimStartAdapter" )?.getStartedMessages( interaction.channel ),
                         message = Object.values( messages || {} )[ 0 ];
 
                     if ( !message ) {

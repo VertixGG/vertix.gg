@@ -114,7 +114,7 @@ async function onEditDescriptionModalSubmit(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionComponent" );
 }
 
-const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<VoiceChannel, DefaultInteraction, UIArgs>(
+const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<DefaultInteraction, UIArgs>(
     "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditAdapter"
 )
     .setComponents( {

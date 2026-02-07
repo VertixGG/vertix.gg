@@ -272,7 +272,7 @@ const SetupEditVerifiedRolesElementsGroup = new ElementsGroupBuilder( "VertixBot
     .setItems( () => {
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
         const { WizardBackButton, WizardFinishButton } = uiService.$$.getSystemElements();
-        return [ [ VerifiedRolesMenu ], [ VerifiedRolesEveryoneSelectMenu ], [ WizardBackButton!, WizardFinishButton! ] ] as unknown as any[];
+        return [ [ VerifiedRolesMenu ], [ VerifiedRolesEveryoneSelectMenu ], [ WizardBackButton, WizardFinishButton ] ];
     } )
     .build();
 

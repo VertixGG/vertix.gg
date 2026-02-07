@@ -351,33 +351,12 @@ export class WizardAdapterBuilder<
                     const handlerBindings = builder.transactions.getHandlerBindings();
 
                     for ( const binding of handlerBindings ) {
-                        switch ( binding.handlerKind ) {
-                            case "button":
-                                binder.bindButton( binding.elementId, binding.handler as any );
-                                break;
-                            case "modal":
-                                binder.bindModal( binding.elementId, binding.handler as any );
-                                break;
-                            case "modalWithButton":
-                                binder.bindModalWithButton(
-                                    binding.elementId,
-                                    binding.modalName!,
-                                    binding.handler as any
-                                );
-                                break;
-                            case "selectMenu":
-                                binder.bindSelectMenu( binding.elementId, binding.handler as any );
-                                break;
-                            case "userSelectMenu":
-                                binder.bindUserSelectMenu( binding.elementId, binding.handler as any );
-                                break;
-                        }
+                        binder.dispatchBinding( binding );
                     }
                     return;
                 }
 
                 // Otherwise call base implementation
-                // @ts-expect-error - base may not implement
                 return super.onEntityMap?.();
             }
 

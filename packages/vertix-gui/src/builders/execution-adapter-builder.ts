@@ -45,7 +45,7 @@ export class ExecutionAdapterBuilder<
     private onStepHandler:
         | ( ( context: IExecutionAdapterContext<TInteraction, TArgs>, stepName: string, interaction: TInteraction ) => Promise<void> )
         | undefined;
-    private transactions: TransactionBuilder | undefined;
+    private transactions: TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>> | undefined;
 
     public constructor( name: string, adapterBase?: TBase ) {
         super( name, ( adapterBase || UIAdapterExecutionStepsBase ) as TBase );
@@ -144,7 +144,7 @@ export class ExecutionAdapterBuilder<
     /**
      * Get the transactions builder if defined.
      */
-    public getTransactions(): TransactionBuilder | undefined {
+    public getTransactions(): TransactionBuilder<IExecutionAdapterContext<TInteraction, TArgs>> | undefined {
         return this.transactions;
     }
 
@@ -312,27 +312,7 @@ export class ExecutionAdapterBuilder<
                     const handlerBindings = builder.transactions.getHandlerBindings();
 
                     for ( const binding of handlerBindings ) {
-                        switch ( binding.handlerKind ) {
-                            case "button":
-                                binder.bindButton( binding.elementId, binding.handler as any );
-                                break;
-                            case "modal":
-                                binder.bindModal( binding.elementId, binding.handler as any );
-                                break;
-                            case "modalWithButton":
-                                binder.bindModalWithButton(
-                                    binding.elementId,
-                                    binding.modalName!,
-                                    binding.handler as any
-                                );
-                                break;
-                            case "selectMenu":
-                                binder.bindSelectMenu( binding.elementId, binding.handler as any );
-                                break;
-                            case "userSelectMenu":
-                                binder.bindUserSelectMenu( binding.elementId, binding.handler as any );
-                                break;
-                        }
+                        binder.dispatchBinding( binding );
                     }
                     return;
                 }

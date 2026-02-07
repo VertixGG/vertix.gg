@@ -13,6 +13,9 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
+import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+
+const adapterClasses: Record<string, TAdapterClassType> = adapters;
 
 export class UIModuleV3 extends UIModuleBase {
     public static getName() {
@@ -23,8 +26,8 @@ export class UIModuleV3 extends UIModuleBase {
         return fileURLToPath( import.meta.url );
     }
 
-    public static getAdapters() {
-        return Object.values( adapters );
+    public static getAdapters(): ReadonlyArray<TAdapterClassType> {
+        return Object.values( adapterClasses );
     }
 
     /**

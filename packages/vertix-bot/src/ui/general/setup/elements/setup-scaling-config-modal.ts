@@ -7,7 +7,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
 
-import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs, UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
 const getDefaultScalingPrefix = () => {
@@ -94,6 +94,8 @@ export class SetupScalingMaxMembersInput extends UIElementInputBase {
 }
 
 export class SetupScalingConfigModal extends UIModalBase {
+    private buildArgs: UIArgs | undefined;
+
     public static getName() {
         return "VertixBot/UI-General/SetupScalingConfigModal";
     }
@@ -109,8 +111,13 @@ export class SetupScalingConfigModal extends UIModalBase {
         ];
     }
 
+    public async build( args?: UIArgs ) {
+        this.buildArgs = args;
+        return super.build( args );
+    }
+
     protected getTitle() {
-        const index = this.uiArgs?.scalingMasterChannelIndex;
+        const index = this.buildArgs?.scalingMasterChannelIndex;
 
         if ( index === 0 || typeof index === "number" || typeof index === "string" ) {
             const displayIndex = Number( index ) + 1;

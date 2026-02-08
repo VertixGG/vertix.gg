@@ -1,7 +1,6 @@
 import { PrismaAPIClient } from "@vertix.gg/prisma/api-client";
 
-import type { SessionStore } from "@fastify/session";
-import type { Session } from "fastify";
+import type { Session, SessionStore } from "fastify";
 
 export class PrismaSessionStore implements SessionStore {
     private getClient() {
@@ -28,7 +27,7 @@ export class PrismaSessionStore implements SessionStore {
                 return;
             }
 
-            const data = JSON.parse( session.data ) as unknown as Session;
+            const data: Session = JSON.parse( session.data );
             callback( null, data );
         } ).catch( ( error ) => {
             callback( error instanceof Error ? error : new Error( String( error ) ) );
@@ -36,7 +35,7 @@ export class PrismaSessionStore implements SessionStore {
     }
 
     public set( sessionId: string, session: Session, callback: ( err?: Error ) => void ): void {
-        const maxAge = ( session.cookie as { maxAge?: number } | undefined )?.maxAge || 7 * 24 * 60 * 60 * 1000;
+        const maxAge = session.cookie?.maxAge || 7 * 24 * 60 * 60 * 1000;
         const expiresAt = new Date( Date.now() + maxAge );
 
         this.getClient().session.upsert( {

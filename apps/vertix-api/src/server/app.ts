@@ -1,7 +1,4 @@
 import Fastify from "fastify";
-import cors from "@fastify/cors";
-import cookie from "@fastify/cookie";
-import session from "@fastify/session";
 
 import healthRoutePlugin from "@vertix.gg/api/src/server/routes/health-route";
 import modulesRoutePlugin from "@vertix.gg/api/src/server/routes/modules-route";
@@ -15,6 +12,7 @@ import { requireAuth } from "@vertix.gg/api/src/server/middleware/auth-middlewar
 import { discordConfig } from "@vertix.gg/api/src/server/config/discord";
 import { API_PREFIX } from "@vertix.gg/api/src/server/constants";
 import { PrismaSessionStore } from "@vertix.gg/api/src/server/services/session-store";
+import { registerFastifyPlugins } from "@vertix.gg/api/src/server/plugins";
 
 import type { FastifyInstance } from "fastify";
 
@@ -38,20 +36,19 @@ export async function createApp(): Promise<FastifyInstance> {
         }
     } );
 
-    await fastify.register( cors, CORS_CONFIG );
-
-    await fastify.register( cookie );
-
-    await fastify.register( session, {
-        secret: discordConfig.getSessionSecret(),
-        store: new PrismaSessionStore(),
-        cookie: {
-            secure: process.env.NODE_ENV === "production",
-            httpOnly: true,
-            sameSite: "lax",
-            maxAge: SESSION_MAX_AGE
-        },
-        saveUninitialized: false
+    await registerFastifyPlugins( fastify, {
+        cors: CORS_CONFIG,
+        session: {
+            secret: discordConfig.getSessionSecret(),
+            store: new PrismaSessionStore(),
+            cookie: {
+                secure: process.env.NODE_ENV === "production",
+                httpOnly: true,
+                sameSite: "lax",
+                maxAge: SESSION_MAX_AGE
+            },
+            saveUninitialized: false
+        }
     } );
 
     await fastify.register( authRoutePlugin, { prefix: API_PREFIX } );

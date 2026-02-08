@@ -1,5 +1,6 @@
-import { discordConfig } from "@vertix.gg/api/src/server/config/discord";
 import { PrismaAPIClient } from "@vertix.gg/prisma/api-client";
+
+import { discordConfig } from "@vertix.gg/api/src/server/config/discord";
 
 const DISCORD_API_BASE = "https://discord.com/api/v10";
 

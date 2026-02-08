@@ -983,7 +983,7 @@ export class UIDefinitionExporter extends UIBase {
                 emoji: opt.emoji,
                 description: opt.description,
             } ) );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.warn(
                 "extractSelectOptionsForElement",
                 `Failed to get selectOptions for '${ elementName }': ${ error }`
@@ -2192,7 +2192,7 @@ export class UIDefinitionExporter extends UIBase {
         const transitions: FlowDefinition[ "transitions" ] = [];
         const defaultState = `${ flowName }/States/Default`;
 
-        for ( const [ transitionKey, triggers ] of transitionsMap ) {
+        for ( const [ _transitionKey, triggers ] of transitionsMap ) {
             const trigger = triggers[ 0 ]; // Use first trigger for navigation info
             const targetState = trigger?.navigation?.targetState || defaultState;
 

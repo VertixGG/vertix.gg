@@ -75,7 +75,7 @@ async function onButtonsSelected(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep2Component" );
 }
 
-async function onButtonSelected(
+async function _onButtonSelected(
     context: IWizardAdapterContext<WizardInteractions>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction,
     state: "added" | "remove"

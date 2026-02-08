@@ -2,7 +2,7 @@ import { QueryModuleBase } from "@zenflux/react-commander/query/module-base";
 
 import type { DCommandFunctionComponent, DCommandSingleComponentContext } from "@zenflux/react-commander/definitions";
 import type { QueryClient } from "@zenflux/react-commander/query/client";
-import type { GuildCustomizationData, ComponentCustomization } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import type { GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 export type { GuildCustomizationData, ComponentCustomization, EmbedOverrides } from "@vertix.gg/definitions/src/ui-customization-definitions";
 

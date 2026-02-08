@@ -13,7 +13,6 @@ import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultUserSelectMenuChannelVoiceInteraction,
-    UIDefaultButtonChannelTextInteraction,
     UIDefaultStringSelectMenuChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";

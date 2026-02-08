@@ -8,26 +8,26 @@ import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
-        name: uiUtilsWrapAsTemplate( "name" ),
-        limit: uiUtilsWrapAsTemplate( "limit" ),
-        state: uiUtilsWrapAsTemplate( "state" ),
-        region: uiUtilsWrapAsTemplate( "region" ),
+    name: uiUtilsWrapAsTemplate( "name" ),
+    limit: uiUtilsWrapAsTemplate( "limit" ),
+    state: uiUtilsWrapAsTemplate( "state" ),
+    region: uiUtilsWrapAsTemplate( "region" ),
 
-        limitDisplayValue: uiUtilsWrapAsTemplate( "limitDisplayValue" ),
-        limitDisplayUnlimited: uiUtilsWrapAsTemplate( "limitDisplayUnlimited" ),
-        limitValue: uiUtilsWrapAsTemplate( "limitValue" ),
+    limitDisplayValue: uiUtilsWrapAsTemplate( "limitDisplayValue" ),
+    limitDisplayUnlimited: uiUtilsWrapAsTemplate( "limitDisplayUnlimited" ),
+    limitValue: uiUtilsWrapAsTemplate( "limitValue" ),
 
-        statePublic: uiUtilsWrapAsTemplate( "statePublic" ),
-        statePrivate: uiUtilsWrapAsTemplate( "statePrivate" ),
+    statePublic: uiUtilsWrapAsTemplate( "statePublic" ),
+    statePrivate: uiUtilsWrapAsTemplate( "statePrivate" ),
 
-        visibilityState: uiUtilsWrapAsTemplate( "visibilityState" ),
-        visibilityStateShown: uiUtilsWrapAsTemplate( "visibilityStateShown" ),
-        visibilityStateHidden: uiUtilsWrapAsTemplate( "visibilityStateHidden" ),
+    visibilityState: uiUtilsWrapAsTemplate( "visibilityState" ),
+    visibilityStateShown: uiUtilsWrapAsTemplate( "visibilityStateShown" ),
+    visibilityStateHidden: uiUtilsWrapAsTemplate( "visibilityStateHidden" ),
 
-        regionDisplayValue: uiUtilsWrapAsTemplate( "regionDisplayValue" ),
-        regionDisplayAuto: uiUtilsWrapAsTemplate( "regionDisplayAuto" ),
-        regionValue: uiUtilsWrapAsTemplate( "regionValue" )
-    };
+    regionDisplayValue: uiUtilsWrapAsTemplate( "regionDisplayValue" ),
+    regionDisplayAuto: uiUtilsWrapAsTemplate( "regionDisplayAuto" ),
+    regionValue: uiUtilsWrapAsTemplate( "regionValue" )
+};
 
 const DynamicChannelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/DynamicChannelEmbed",
@@ -37,7 +37,7 @@ const DynamicChannelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setTitle( () => "༄ Manage your Dynamic Channel" )
     .setDescription( () => (
-            "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n" +
+        "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n" +
             "Please be advised that the privilege to make alterations is vested solely of the channel owner.\n\n" +
             "_Current settings_:\n" +
         `- Name: **${ vars.name }**\n` +
@@ -47,22 +47,22 @@ const DynamicChannelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         `- Region: 🌍 **${ vars.region }**`
     ) )
     .setOptions( () => ( {
-            limit: {
+        limit: {
             [ vars.limitDisplayValue ]: vars.limitValue,
             [ vars.limitDisplayUnlimited ]: "Unlimited"
-            },
-            state: {
+        },
+        state: {
             [ vars.statePublic ]: "🌐 **Public**",
             [ vars.statePrivate ]: "🚫 **Private**"
-            },
-            visibilityState: {
+        },
+        visibilityState: {
             [ vars.visibilityStateShown ]: "🐵 **Shown**",
             [ vars.visibilityStateHidden ]: "🙈 **Hidden**"
-            },
-            region: {
+        },
+        region: {
             [ vars.regionDisplayValue ]: vars.regionValue,
             [ vars.regionDisplayAuto ]: "Automatic"
-            }
+        }
     } ) )
     .setLogic( ( args: UIArgs ) => {
         const {

@@ -51,7 +51,7 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
             }
         } );
 
-        const entries: { masterChannel: typeof results[number]["channel"]; settings: Settings }[] = [];
+        const entries: { masterChannel: typeof results[ number ][ "channel" ]; settings: Settings }[] = [];
 
         for ( const result of results ) {
             const settings = await this.getScalingSettings( result.ownerId );

@@ -161,7 +161,7 @@ type CodexRunOptions = {
 const DEFAULT_BOT_MODEL = process.env.AI_CHAT_MODEL || "gpt-5.1-codex-mini";
 
 async function runCodex( prompt: string, options: CodexRunOptions = {} ): Promise<CodexRunResult> {
-    const { includeLogs = false, conversationId, readOnly = false, model = DEFAULT_BOT_MODEL, reasoningEffort } = options;
+    const { includeLogs = false, conversationId, readOnly = false, model = DEFAULT_BOT_MODEL, reasoningEffort: _reasoningEffort } = options;
     const codexBinary = await getCodexBinary();
 
     if ( !codexBinary ) {

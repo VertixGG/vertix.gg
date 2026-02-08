@@ -1,3 +1,7 @@
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
+import { IPC_CHANNELS, MANAGEMENT_ACTIONS } from "@vertix.gg/base/src/modules/ipc";
+
 import {
     DEFAULT_GUILD_ID,
     getGuildCustomization,
@@ -6,10 +10,6 @@ import {
     deleteComponentCustomization
 } from "@vertix.gg/api/src/server/services/customization-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
-
-import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
-
-import { IPC_CHANNELS, MANAGEMENT_ACTIONS } from "@vertix.gg/base/src/modules/ipc";
 
 import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
@@ -94,7 +94,7 @@ async function handleGetGuildCustomization(
 
         // Return empty components if no customization exists yet
         return customization ?? { guildId, components: {} };
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleGetGuildCustomization, error, reply, "Failed to fetch guild customization" );
     }
 }
@@ -121,7 +121,7 @@ async function handleUpdateGuildCustomization(
         notifyBotCustomizationRefresh( guildId );
 
         return customization;
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleUpdateGuildCustomization, error, reply, "Failed to update guild customization" );
     }
 }
@@ -153,7 +153,7 @@ async function handleUpdateComponentCustomization(
         notifyBotCustomizationRefresh( guildId );
 
         return result;
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleUpdateComponentCustomization, error, reply, "Failed to update component customization" );
     }
 }
@@ -182,7 +182,7 @@ async function handleDeleteComponentCustomization(
         }
 
         return result;
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleDeleteComponentCustomization, error, reply, "Failed to delete component customization" );
     }
 }
@@ -200,7 +200,7 @@ async function handleGetDefaultCustomization(
     try {
         const customization = await getGuildCustomization( DEFAULT_GUILD_ID );
         return customization ?? { guildId: DEFAULT_GUILD_ID, components: {} };
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleGetDefaultCustomization, error, reply, "Failed to fetch default customization" );
     }
 }
@@ -230,7 +230,7 @@ async function handleUpdateDefaultComponentCustomization(
         notifyBotCustomizationRefresh( DEFAULT_GUILD_ID );
 
         return result;
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleUpdateDefaultComponentCustomization, error, reply, "Failed to update default component customization" );
     }
 }
@@ -257,14 +257,14 @@ async function handleDeleteDefaultComponentCustomization(
         }
 
         return result;
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleDeleteDefaultComponentCustomization, error, reply, "Failed to delete default component customization" );
     }
 }
 
-const customizationRoutePlugin: FastifyPluginAsync = async ( fastify: FastifyInstance ): Promise<void> => {
+const customizationRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance ): Promise<void> => {
     // Guild-specific customization routes (require guild access)
-    fastify.register( async ( guildRoutes ) => {
+    fastify.register( async( guildRoutes ) => {
         guildRoutes.addHook( "preHandler", requireGuildAccess );
 
         // Get all customizations for a guild
@@ -293,7 +293,7 @@ const customizationRoutePlugin: FastifyPluginAsync = async ( fastify: FastifyIns
     } );
 
     // Default customization routes (require owner access)
-    fastify.register( async ( defaultRoutes ) => {
+    fastify.register( async( defaultRoutes ) => {
         defaultRoutes.addHook( "preHandler", requireOwnerAccess );
 
         // Get default customizations

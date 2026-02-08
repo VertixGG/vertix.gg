@@ -5,6 +5,7 @@ import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+
 import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
 
 import type { UIArgs, UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";

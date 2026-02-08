@@ -19,7 +19,7 @@ const fetchMarkdown = async() => {
 
 const markdownPromise = wrapPromiseSuspendable( fetchMarkdown() );
 
-const ChangelogMarkdown = () => {    // eslint-disable-line react/function-component-definition
+const ChangelogMarkdown = () => {
     const markdown = markdownPromise.read();
 
     return (

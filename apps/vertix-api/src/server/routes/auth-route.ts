@@ -40,7 +40,7 @@ async function handleDiscordAuth( request: FastifyRequest, reply: FastifyReply )
 
         const authUrl = discordConfig.getAuthorizationUrl( state );
         return reply.redirect( authUrl );
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleDiscordAuth, error, reply, "Failed to initiate Discord auth" );
     }
 }
@@ -81,7 +81,7 @@ async function handleDiscordCallback(
         await request.session.save();
 
         return reply.redirect( FRONTEND_URL );
-    } catch ( error ) {
+    } catch( error ) {
         request.log.error( error, "Discord callback error" );
         return reply.redirect( `${ FRONTEND_URL }/login?error=auth_failed` );
     }
@@ -133,7 +133,7 @@ async function handleGetGuilds( request: FastifyRequest, reply: FastifyReply ) {
             } ) );
 
         return { guilds: ownedGuilds };
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleGetGuilds, error, reply, "Failed to fetch guilds" );
     }
 }
@@ -168,12 +168,12 @@ async function handleLogout( request: FastifyRequest, reply: FastifyReply ) {
 
         await request.session.destroy();
         return { success: true };
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleLogout, error, reply, "Failed to logout" );
     }
 }
 
-const authRoutePlugin: FastifyPluginAsync = async ( fastify: FastifyInstance ): Promise<void> => {
+const authRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance ): Promise<void> => {
     fastify.get( "/auth/discord", handleDiscordAuth );
 
     fastify.get<{ Querystring: { code?: string; state?: string; error?: string } }>(

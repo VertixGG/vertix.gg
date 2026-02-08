@@ -49,4 +49,3 @@ const AIAgentEmbed = new EmbedBuilder<AIAgentArgs, typeof vars>( "VertixBot/UI-G
 export { AIAgentEmbed };
 export type { AIAgentArgs };
 
-

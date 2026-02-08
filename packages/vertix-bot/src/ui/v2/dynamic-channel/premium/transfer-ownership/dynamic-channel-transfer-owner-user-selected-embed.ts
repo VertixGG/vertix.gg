@@ -7,8 +7,8 @@ import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
-        userDisplayName: uiUtilsWrapAsTemplate( "userDisplayName" )
-    };
+    userDisplayName: uiUtilsWrapAsTemplate( "userDisplayName" )
+};
 
 const DynamicChannelTransferOwnerUserSelectedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
@@ -24,7 +24,7 @@ const DynamicChannelTransferOwnerUserSelectedEmbed = new EmbedBuilder<UIArgs, ty
         `Are you sure you want to transfer the channel ownership to **${ vars.userDisplayName }?**`
     ) )
     .setLogic( ( args: UIArgs ) => ( {
-            userDisplayName: args.userDisplayName
+        userDisplayName: args.userDisplayName
     } ) )
     .setDefaultVars( () => ( {
         userDisplayName: "User"

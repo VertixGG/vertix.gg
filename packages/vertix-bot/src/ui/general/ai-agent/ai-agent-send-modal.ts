@@ -22,4 +22,3 @@ export class AIAgentSendModal extends UIModalBase {
     }
 }
 
-

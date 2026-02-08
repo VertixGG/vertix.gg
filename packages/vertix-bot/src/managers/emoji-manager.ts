@@ -93,7 +93,7 @@ export class EmojiManager extends InitializeBase {
 
             this.logger.info( this.fetchEmojisHeadless, `Fetched ${ this.emojis.items?.length ?? 0 } emojis in headless mode` );
             this.debugger.dumpDown( this.fetchEmojisHeadless, this.emojis, "emojis (headless)" );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.warn( this.fetchEmojisHeadless, `Failed to fetch emojis in headless mode: ${ error }` );
         }
     }

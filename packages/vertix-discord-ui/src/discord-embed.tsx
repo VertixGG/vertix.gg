@@ -13,11 +13,14 @@ import { replaceMentionsWithPills } from "./discord-mentions";
 
 import "./styles/discord-embed.css";
 
+import { DiscordChannelList } from "./discord-channel-list";
+
+import { DiscordChannelDisplay  } from "./discord-channel-display";
+
 import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
 
-import { DiscordChannelList } from "./discord-channel-list";
 import type { DiscordChannelListProps } from "./discord-channel-list";
-import { DiscordChannelDisplay, type DiscordChannelDisplayProps } from "./discord-channel-display";
+import type { DiscordChannelDisplayProps } from "./discord-channel-display";
 
 import type { Components } from "react-markdown";
 import type { VariantProps } from "class-variance-authority";

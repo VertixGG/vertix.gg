@@ -8,6 +8,7 @@ import { ConfigExtrasSelectMenu } from "@vertix.gg/bot/src/ui/general/config-ext
 import { SetupEditSelectEditOptionMenu } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit-select-edit-option-menu";
 
 import { LogChannelSelectMenu } from "@vertix.gg/bot/src/ui/v2/logs-channel/log-channel-select-menu";
+
 const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V2/SetupEditElementsGroup" )
     .addRow( [ SetupEditSelectEditOptionMenu ] )
     .addRow( [ ConfigExtrasSelectMenu ] )

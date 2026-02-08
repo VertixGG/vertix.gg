@@ -43,7 +43,7 @@ export function ServerSelectionPage() {
         }
     }, [ state.selectedGuild, navigate ] );
 
-    const handleSelectGuild = async ( guild: Guild ) => {
+    const handleSelectGuild = async( guild: Guild ) => {
         await selectGuild.run( { guild } );
     };
 

@@ -31,4 +31,3 @@ export class AIAgentConfirmSendButton extends UIElementButtonBase {
     }
 }
 
-

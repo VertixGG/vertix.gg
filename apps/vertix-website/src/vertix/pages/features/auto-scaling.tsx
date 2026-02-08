@@ -14,7 +14,7 @@ export default function AutoScalingPage() {
                 <div className="col-12 col-xl-10">
                     <h1 className="text-center mb-4">Auto-Scaling Channels</h1>
 
-                    {/* Overview */}
+                    { /* Overview */ }
                     <section className="mb-5">
                         <p className="fs-5 text-secondary text-center">
                             Automated voice channel management that dynamically creates and manages
@@ -22,7 +22,7 @@ export default function AutoScalingPage() {
                         </p>
                     </section>
 
-                    {/* Channel Types */}
+                    { /* Channel Types */ }
                     <section className="mb-5">
                         <h3 className="mb-3">Channel Types</h3>
                         <div className="row g-3 mb-4">
@@ -67,7 +67,7 @@ export default function AutoScalingPage() {
 
                     <hr />
 
-                    {/* How It Works */}
+                    { /* How It Works */ }
                     <section className="mb-5">
                         <h3 className="mb-3">How It Works</h3>
                         <DiscordChannelWizard
@@ -82,7 +82,7 @@ export default function AutoScalingPage() {
 
                     <hr />
 
-                    {/* Setup */}
+                    { /* Setup */ }
                     <section className="mb-5">
                         <h3 className="mb-3">Setup</h3>
                         <p className="text-secondary mb-4">
@@ -146,7 +146,7 @@ export default function AutoScalingPage() {
 
                     <hr />
 
-                    {/* Scaling Trigger */}
+                    { /* Scaling Trigger */ }
                     <section className="mb-5">
                         <h3 className="mb-3">Scaling Trigger</h3>
                         <p className="text-secondary">
@@ -161,7 +161,7 @@ export default function AutoScalingPage() {
 
                     <hr />
 
-                    {/* Configuration */}
+                    { /* Configuration */ }
                     <section className="mb-5">
                         <h3 className="mb-3">Configuration</h3>
                         <div className="table-responsive">
@@ -186,7 +186,7 @@ export default function AutoScalingPage() {
                                     </tr>
                                     <tr>
                                         <td><code>prefix</code></td>
-                                        <td>Channel name template with <code>{"{index}"}</code> placeholder</td>
+                                        <td>Channel name template with <code>{ "{index}" }</code> placeholder</td>
                                         <td><code>{ AUTO_SCALING_CONFIG.prefix }</code></td>
                                     </tr>
                                     <tr>
@@ -206,7 +206,7 @@ export default function AutoScalingPage() {
 
                     <hr />
 
-                    {/* Maintenance */}
+                    { /* Maintenance */ }
                     <section className="mb-5">
                         <h3 className="mb-3">Maintenance</h3>
                         <div className="row g-4">

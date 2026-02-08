@@ -98,7 +98,7 @@ export function useEditMode(): UseEditModeReturn {
 
     const isEditMode = ( modes & AppMode.EDIT_NODE ) === AppMode.EDIT_NODE;
 
-    const loadCustomization = useCallback( async ( guildIdToLoad: string ) => {
+    const loadCustomization = useCallback( async( guildIdToLoad: string ) => {
         setIsLoadingCustomization( true );
         setCustomizationError( null );
 
@@ -110,7 +110,7 @@ export function useEditMode(): UseEditModeReturn {
                 isDefault ? {} : { guildId: guildIdToLoad }
             );
             setCustomization( data );
-        } catch ( error ) {
+        } catch( error ) {
             setCustomizationError( error instanceof Error ? error.message : "Failed to load customization" );
             setCustomization( null );
         } finally {
@@ -202,13 +202,13 @@ export function useEditMode(): UseEditModeReturn {
             Object.entries( newPendingChanges ).forEach( ( [ name, change ] ) => {
                 setPendingChange( name, change );
             } );
-        } catch ( error ) {
+        } catch( error ) {
             logger.error( saveComponentCustomization, "Save failed", error );
             throw new Error( error instanceof Error ? error.message : "Failed to save customization" );
         }
     }, [ guildId, pendingChanges, setCustomization, clearPendingChanges, setPendingChange ] );
 
-    const saveAllChanges = useCallback( async () => {
+    const saveAllChanges = useCallback( async() => {
         const componentNames = Object.keys( pendingChanges );
         for ( const componentName of componentNames ) {
             await saveComponentCustomization( componentName );

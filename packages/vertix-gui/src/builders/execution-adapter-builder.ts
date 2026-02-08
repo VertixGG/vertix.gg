@@ -61,7 +61,7 @@ export class ExecutionAdapterBuilder<
         if ( this.transactions ) {
             throw new Error(
                 `Adapter "${ this.name }": Cannot use setExecutionSteps() when defineTransactions() is used. ` +
-                `Define execution step details (embedsGroup, elementsGroup) in addState() instead.`
+                "Define execution step details (embedsGroup, elementsGroup) in addState() instead."
             );
         }
         this.executionSteps = executionSteps;
@@ -132,7 +132,7 @@ export class ExecutionAdapterBuilder<
         if ( this.executionSteps ) {
             throw new Error(
                 `Adapter "${ this.name }": Cannot use defineTransactions() when setExecutionSteps() is used. ` +
-                `Choose one approach: either setExecutionSteps() with onEntityMap(), or defineTransactions() alone.`
+                "Choose one approach: either setExecutionSteps() with onEntityMap(), or defineTransactions() alone."
             );
         }
         const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
@@ -155,7 +155,7 @@ export class ExecutionAdapterBuilder<
         if ( builder.transactions && builder.entityMapHandler ) {
             throw new Error(
                 `Adapter "${ builder.name }": Cannot use both defineTransactions() and onEntityMap(). ` +
-                `When using defineTransactions(), bind handlers via tx.bindButton(), tx.bindModal(), etc.`
+                "When using defineTransactions(), bind handlers via tx.bindButton(), tx.bindModal(), etc."
             );
         }
 

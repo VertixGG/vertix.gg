@@ -39,7 +39,7 @@ export class MCPServer {
             await this.server.connect( this.transport );
 
             logger.info( this.start, `MCP Server "${ environment.getServerName() }" started` );
-        } catch ( error ) {
+        } catch( error ) {
             logger.error( this.start, "Failed to start MCP server", error );
             process.exit( 1 );
         }
@@ -50,13 +50,13 @@ export class MCPServer {
     }
 
     private registerHandlers(): void {
-        this.server.setRequestHandler( ListToolsRequestSchema, async () => {
+        this.server.setRequestHandler( ListToolsRequestSchema, async() => {
             return {
                 tools: getAllTools()
             };
         } );
 
-        this.server.setRequestHandler( CallToolRequestSchema, async ( request ) => {
+        this.server.setRequestHandler( CallToolRequestSchema, async( request ) => {
             const { name, arguments: args } = request.params;
 
             logger.info( this.registerHandlers, `Executing tool: ${ name }` );
@@ -72,7 +72,7 @@ export class MCPServer {
                         }
                     ]
                 };
-            } catch ( error ) {
+            } catch( error ) {
                 const errorMessage = error instanceof Error ? error.message : String( error );
 
                 logger.error( this.registerHandlers, `Tool execution failed: ${ name }`, error );

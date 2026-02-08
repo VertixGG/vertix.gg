@@ -12,11 +12,12 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { UIDataBase } from "@vertix.gg/gui/src/bases/ui-data-base";
 
+import { ChannelType } from "discord.js";
+
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
-import { ChannelType } from "discord.js";
 
 import type { VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";

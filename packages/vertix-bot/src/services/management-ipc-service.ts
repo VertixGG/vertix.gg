@@ -84,7 +84,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             );
 
             this.logger.log( this.subscribeToIPCChannels, "Subscribed to management IPC channels" );
-        } catch ( error ) {
+        } catch {
             this.logger.warn( this.subscribeToIPCChannels, "Failed to subscribe to IPC channels - dashboard management features will be disabled" );
         }
     }

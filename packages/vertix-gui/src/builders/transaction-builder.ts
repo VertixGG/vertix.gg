@@ -217,7 +217,7 @@ export class TransactionBuilder<TContext = unknown> {
         this.handlerBindings.push( {
             elementId,
             handlerKind: "button",
-            handler: handler as ElementHandlerBinding["handler"]
+            handler: handler as ElementHandlerBinding[ "handler" ]
         } );
         return this;
     }
@@ -236,7 +236,7 @@ export class TransactionBuilder<TContext = unknown> {
         this.handlerBindings.push( {
             elementId,
             handlerKind: "modal",
-            handler: handler as ElementHandlerBinding["handler"]
+            handler: handler as ElementHandlerBinding[ "handler" ]
         } );
         return this;
     }
@@ -262,7 +262,7 @@ export class TransactionBuilder<TContext = unknown> {
             elementId: buttonElement,
             handlerKind: "modalWithButton",
             modalName,
-            handler: handler as ElementHandlerBinding["handler"]
+            handler: handler as ElementHandlerBinding[ "handler" ]
         } );
         return this;
     }
@@ -281,7 +281,7 @@ export class TransactionBuilder<TContext = unknown> {
         this.handlerBindings.push( {
             elementId,
             handlerKind: "selectMenu",
-            handler: handler as ElementHandlerBinding["handler"]
+            handler: handler as ElementHandlerBinding[ "handler" ]
         } );
         return this;
     }
@@ -300,7 +300,7 @@ export class TransactionBuilder<TContext = unknown> {
         this.handlerBindings.push( {
             elementId,
             handlerKind: "userSelectMenu",
-            handler: handler as ElementHandlerBinding["handler"]
+            handler: handler as ElementHandlerBinding[ "handler" ]
         } );
         return this;
     }
@@ -521,8 +521,8 @@ export class TransactionBuilder<TContext = unknown> {
     } ): this {
         this.edgeSourceMappingsList.push( {
             triggeringElementId: options.triggeringElementId,
-            transitionName: options.transitionName.includes( "/" ) 
-                ? options.transitionName 
+            transitionName: options.transitionName.includes( "/" )
+                ? options.transitionName
                 : this.fullTransitionName( options.transitionName ),
             targetFlowName: options.targetFlowName
         } );

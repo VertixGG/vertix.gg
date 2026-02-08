@@ -23,7 +23,7 @@ interface TranslationsParams {
 async function handleGetLanguages( _request: FastifyRequest, reply: FastifyReply ) {
     try {
         return await uiRuntimeLoader.getAvailableLanguages();
-    } catch ( error ) {
+    } catch( error ) {
         return handleError( handleGetLanguages, error, reply, "Failed to fetch available languages" );
     }
 }
@@ -41,12 +41,12 @@ async function handleGetTranslations(
 
     try {
         return await uiRuntimeLoader.getLanguageTranslations( code );
-    } catch ( error ) {
+    } catch( error ) {
         return handleError( handleGetTranslations, error, reply, "Failed to fetch language translations" );
     }
 }
 
-const languageRoutePlugin: FastifyPluginAsync = async ( fastify: FastifyInstance ): Promise<void> => {
+const languageRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance ): Promise<void> => {
     fastify.get<{ Reply: LanguageInfo[] }>( API_ROUTES.LANGUAGES, handleGetLanguages );
     fastify.get<{ Params: TranslationsParams; Reply: LanguageTranslations }>(
         API_ROUTES.LANGUAGE_TRANSLATIONS,

@@ -305,7 +305,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     request,
                     5000 // 5 second timeout
                 );
-            } catch ( error ) {
+            } catch( error ) {
                 this.logger.warn( this.getScalingMasterDetails, "Failed to fetch channel info via IPC, falling back to REST API", error );
                 // Fallback to REST API (won't have member counts)
                 const restInfo = await this.services.discordService.fetchScalingChannelInfo(
@@ -416,7 +416,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     request,
                     5000
                 );
-            } catch ( error ) {
+            } catch( error ) {
                 this.logger.warn( this.getDynamicMasterDetails, "Failed to fetch channel info via IPC, falling back to REST API", error );
                 // Fallback to REST API (won't have member counts)
                 const restInfo = await this.services.discordService.fetchScalingChannelInfo(

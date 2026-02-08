@@ -1,13 +1,13 @@
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
+import { ChannelType } from "discord.js";
+
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from "@vertix.gg/bot/src/definitions/master-channel";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
-
-import { ChannelType } from "discord.js";
 
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";

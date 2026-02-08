@@ -55,7 +55,7 @@ async function main() {
 
 try {
     await main();
-} catch ( error ) {
+} catch( error ) {
     log( `Fatal error: ${ error }` );
     process.exit( 1 );
 }

@@ -364,7 +364,7 @@ async function collectUIDefinitionsInWorker(): Promise<object> {
         );
 
         return resultData;
-    } catch ( err ) {
+    } catch( err ) {
         throw new Error( `Failed to parse subprocess result: ${ err }\nstdout (first 500 chars): ${ stdoutText.slice( 0, 500 ) }` );
     }
 }

@@ -9,7 +9,7 @@ const TARGET_GUILD_ID = process.env.AI_CHAT_GUILD_ID;
 const TARGET_CHANNEL_ID = process.env.AI_CHAT_CHANNEL_ID;
 
 const DEFAULT_TYPING_INTERVAL_MS = 8000;
-const CONTEXT_MESSAGE_COUNT = 10;
+const _CONTEXT_MESSAGE_COUNT = 10;
 
 const PRIVATE_SYSTEM_PROMPT = `You are Vertix, a powerful Discord bot with FULL ACCESS to Discord operations. You are responding in a private admin channel.
 

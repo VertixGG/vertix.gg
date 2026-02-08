@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
-
 import "./styles/discord-channel-list.css";
+
+import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
 
 export interface DiscordChannelUser {
     id: string;

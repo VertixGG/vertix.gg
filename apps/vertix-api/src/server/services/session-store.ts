@@ -8,7 +8,7 @@ export class PrismaSessionStore implements SessionStore {
         return PrismaAPIClient.$.getClient();
     }
 
-    get( sessionId: string, callback: ( err: Error | null, session?: Session | null ) => void ): void {
+    public get( sessionId: string, callback: ( err: Error | null, session?: Session | null ) => void ): void {
         this.getClient().session.findUnique( {
             where: { sid: sessionId }
         } ).then( ( session ) => {
@@ -35,7 +35,7 @@ export class PrismaSessionStore implements SessionStore {
         } );
     }
 
-    set( sessionId: string, session: Session, callback: ( err?: Error ) => void ): void {
+    public set( sessionId: string, session: Session, callback: ( err?: Error ) => void ): void {
         const maxAge = ( session.cookie as { maxAge?: number } | undefined )?.maxAge || 7 * 24 * 60 * 60 * 1000;
         const expiresAt = new Date( Date.now() + maxAge );
 
@@ -58,7 +58,7 @@ export class PrismaSessionStore implements SessionStore {
         } );
     }
 
-    destroy( sessionId: string, callback: ( err?: Error ) => void ): void {
+    public destroy( sessionId: string, callback: ( err?: Error ) => void ): void {
         this.getClient().session.deleteMany( {
             where: { sid: sessionId }
         } ).then( () => {

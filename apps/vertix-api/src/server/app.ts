@@ -58,7 +58,7 @@ export async function createApp(): Promise<FastifyInstance> {
 
     await fastify.register( healthRoutePlugin, { prefix: API_PREFIX } );
 
-    await fastify.register( async ( protectedRoutes ) => {
+    await fastify.register( async( protectedRoutes ) => {
         protectedRoutes.addHook( "preHandler", requireAuth );
 
         await protectedRoutes.register( modulesRoutePlugin );

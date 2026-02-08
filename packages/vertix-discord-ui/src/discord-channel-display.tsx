@@ -1,10 +1,12 @@
 import * as React from "react";
 
-import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
-
 import "./styles/discord-channel-display.css";
 
-import { DiscordChannelList, type DiscordChannelListProps, type DiscordChannelListItem } from "./discord-channel-list";
+import { DiscordChannelList   } from "./discord-channel-list";
+
+import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
+
+import type { DiscordChannelListProps, DiscordChannelListItem } from "./discord-channel-list";
 
 export interface DiscordChannelDisplayProps extends React.HTMLAttributes<HTMLDivElement> {
     categoryName?: string;

@@ -30,7 +30,7 @@ async function handleGetGlobalStats( _request: FastifyRequest, reply: FastifyRep
     try {
         const stats = await getGlobalStats();
         return stats;
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleGetGlobalStats, error, reply, "Failed to fetch global stats" );
     }
 }
@@ -48,7 +48,7 @@ async function handleGetGuildStats(
         }
 
         return stats;
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleGetGuildStats, error, reply, "Failed to fetch guild stats" );
     }
 }
@@ -66,17 +66,17 @@ async function handleGetGuildDetails(
         }
 
         return details;
-    } catch ( error ) {
+    } catch( error ) {
         handleError( handleGetGuildDetails, error, reply, "Failed to fetch guild details" );
     }
 }
 
-const dashboardRoutePlugin: FastifyPluginAsync = async ( fastify: FastifyInstance ): Promise<void> => {
+const dashboardRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance ): Promise<void> => {
     // Global stats doesn't need guild access check
     fastify.get( "/dashboard/stats/global", handleGetGlobalStats );
 
     // Guild-specific routes need access check
-    fastify.register( async ( guildRoutes ) => {
+    fastify.register( async( guildRoutes ) => {
         guildRoutes.addHook( "preHandler", requireGuildAccess );
 
         guildRoutes.get<{ Params: GuildParams }>(

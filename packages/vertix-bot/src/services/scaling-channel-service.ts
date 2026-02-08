@@ -11,6 +11,14 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
 
+import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/definitions/vars";
+
+import { ChannelType } from "discord.js";
+
+import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
+import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
+import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
+
 import type {
     CreateScalingSetupPayload,
     UpdateScalingSettingsPayload,
@@ -21,17 +29,9 @@ import type {
     DiscordChannelInfo
 } from "@vertix.gg/base/src/modules/ipc";
 
-import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/definitions/vars";
-
-import { ChannelType } from "discord.js";
-
-import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
-import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
-import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
-
 import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-import type { CategoryChannel, Guild, GuildChannel, VoiceChannel } from "discord.js";
+import type { CategoryChannel, Guild, VoiceChannel } from "discord.js";
 
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 

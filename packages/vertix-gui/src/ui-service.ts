@@ -14,6 +14,8 @@ import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions"
 
 import { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
 
+import { NoOpCustomizationProvider } from "@vertix.gg/gui/src/customization/customization-provider";
+
 import type { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
@@ -48,8 +50,6 @@ import type { TModuleConstructor } from "@vertix.gg/gui/src/definitions/ui-modul
 
 import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
 import type { ICustomizationProvider } from "@vertix.gg/gui/src/customization/customization-provider";
-
-import { NoOpCustomizationProvider } from "@vertix.gg/gui/src/customization/customization-provider";
 
 import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 import type { Client } from "discord.js";

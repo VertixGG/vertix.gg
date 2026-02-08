@@ -1,8 +1,9 @@
-import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import { RedisClient } from "./redis-client";
 
 import { createIPCMessage, createIPCRequest, createIPCResponse } from "./ipc-messages";
+
+import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import type { IPCChannel, IPCMessage, IPCRequest, IPCResponse } from "./ipc-messages";
 
@@ -32,9 +33,7 @@ export class IPCService extends ServiceBase {
 
             this.initializationSucceeded = true;
             this.logger.info( this.initialize, "IPC Service initialized" );
-        } catch ( error ) {
-            // Don't throw - just log and mark as not ready
-            // This allows the service to be registered but marked as unavailable
+        } catch {
             this.initializationSucceeded = false;
             this.logger.warn( this.initialize, "IPC Service initialization failed - Redis not available" );
         }
@@ -84,12 +83,12 @@ export class IPCService extends ServiceBase {
                                         this.logger.error( this.subscribe, `Handler error on ${ channel }`, error );
                                     } );
                                 }
-                            } catch ( error ) {
+                            } catch( error ) {
                                 this.logger.error( this.subscribe, `Handler error on ${ channel }`, error );
                             }
                         }
                     }
-                } catch ( error ) {
+                } catch( error ) {
                     this.logger.error( this.subscribe, `Failed to parse message on ${ channel }`, error );
                 }
             } );
@@ -182,7 +181,7 @@ export class IPCService extends ServiceBase {
                     await RedisClient.$.getClient().publish( responseChannel, serialized );
 
                     this.logger.log( this.onRequest, `Sent response for ${ request.requestId } to ${ responseChannel }` );
-                } catch ( error ) {
+                } catch( error ) {
                     const errorMessage = error instanceof Error ? error.message : "Unknown error";
                     const response = createIPCResponse( responseChannel, request.requestId, null, false, errorMessage );
                     const serialized = JSON.stringify( response );
@@ -191,7 +190,7 @@ export class IPCService extends ServiceBase {
 
                     this.logger.error( this.onRequest, `Error handling request ${ request.requestId }`, error );
                 }
-            } catch ( error ) {
+            } catch( error ) {
                 this.logger.error( this.onRequest, `Failed to parse request on ${ requestChannel }`, error );
             }
         } );
@@ -230,8 +229,8 @@ export class IPCService extends ServiceBase {
                         pending.reject( new Error( response.error || "Request failed" ) );
                     }
                 }
-            } catch ( error ) {
-                this.logger.error( this.ensureResponseChannelSubscribed, `Failed to parse response`, error );
+            } catch( error ) {
+                this.logger.error( this.ensureResponseChannelSubscribed, "Failed to parse response", error );
             }
         } );
 

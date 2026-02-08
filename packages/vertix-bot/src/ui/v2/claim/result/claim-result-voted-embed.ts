@@ -5,9 +5,9 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
-        userDisplayName: uiUtilsWrapAsTemplate( "userDisplayName" ),
-        userId: uiUtilsWrapAsTemplate( "userId" )
-    };
+    userDisplayName: uiUtilsWrapAsTemplate( "userDisplayName" ),
+    userId: uiUtilsWrapAsTemplate( "userId" )
+};
 
 const ClaimResultVotedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/ClaimResultVotedEmbed",
@@ -17,8 +17,8 @@ const ClaimResultVotedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setTitle( `🗳️  You have voted for ${ vars.userDisplayName }` )
     .setDescription( `Your vote has been cast in favor of <@${ vars.userId }> taking ownership of this channel.` )
     .setLogic( ( args: UIArgs ) => ( {
-            userDisplayName: args.userDisplayName,
-            userId: args.userId
+        userDisplayName: args.userDisplayName,
+        userId: args.userId
     } ) )
     .setDefaultVars( () => ( {
         userDisplayName: "User",

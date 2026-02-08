@@ -11,7 +11,7 @@ export default function AutoScalingFeatures() {
                 creates and manages voice channels based on demand.
             </p>
 
-            {/* How It Works */}
+            { /* How It Works */ }
             <div className="mb-4">
                 <h5 className="text-info mb-3">How It Works</h5>
                 <DiscordChannelWizard
@@ -24,7 +24,7 @@ export default function AutoScalingFeatures() {
                 />
             </div>
 
-            {/* Setup Instructions */}
+            { /* Setup Instructions */ }
             <div className="row g-4 mt-2">
                 <div className="col-md-6">
                     <div className="p-3 bg-dark rounded border border-secondary h-100">

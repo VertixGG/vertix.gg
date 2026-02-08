@@ -1,11 +1,13 @@
 import * as React from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
 
-import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
-
 import "./styles/discord-channel-wizard.css";
 
-import { DiscordChannelDisplay, type DiscordChannelDisplayProps } from "./discord-channel-display";
+import { DiscordChannelDisplay  } from "./discord-channel-display";
+
+import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
+
+import type { DiscordChannelDisplayProps } from "./discord-channel-display";
 
 export interface WizardStep {
     title: string;

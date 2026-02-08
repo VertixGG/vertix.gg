@@ -112,7 +112,7 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
     } );
 
     const masterChannelInfos: MasterChannelInfo[] = await Promise.all(
-        masterChannels.map( async ( mc ) => {
+        masterChannels.map( async( mc ) => {
             const dynamicChannelsCount = await client.channel.count( {
                 where: {
                     ownerChannelId: mc.channelId,

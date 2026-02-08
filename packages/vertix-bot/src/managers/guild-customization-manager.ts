@@ -86,7 +86,7 @@ export class GuildCustomizationManager extends InitializeBase {
             } );
 
             return data;
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.getGuildCustomization, `Error fetching customization for guild ${ guildId }:`, error );
             return null;
         }
@@ -112,7 +112,7 @@ export class GuildCustomizationManager extends InitializeBase {
         customizationKey: string,
         languageCode?: string
     ): Promise<ComponentCustomization | null> {
-        this.logger.debug( this.getComponentCustomization, `Looking up component`, { guildId, customizationKey, languageCode } );
+        this.logger.debug( this.getComponentCustomization, "Looking up component", { guildId, customizationKey, languageCode } );
 
         const langKey = languageCode ? `${ customizationKey }::${ languageCode }` : null;
 
@@ -146,24 +146,24 @@ export class GuildCustomizationManager extends InitializeBase {
 
         // No customization at all
         if ( !defaultResult && !guildResult ) {
-            this.logger.debug( this.getComponentCustomization, `No customization found`, { guildId, customizationKey, languageCode } );
+            this.logger.debug( this.getComponentCustomization, "No customization found", { guildId, customizationKey, languageCode } );
             return null;
         }
 
         // Only default exists
         if ( !guildResult ) {
-            this.logger.debug( this.getComponentCustomization, `Using default customization`, { customizationKey, languageCode } );
+            this.logger.debug( this.getComponentCustomization, "Using default customization", { customizationKey, languageCode } );
             return defaultResult;
         }
 
         // Only guild-specific exists
         if ( !defaultResult ) {
-            this.logger.debug( this.getComponentCustomization, `Using guild-specific customization`, { customizationKey, guildId, languageCode } );
+            this.logger.debug( this.getComponentCustomization, "Using guild-specific customization", { customizationKey, guildId, languageCode } );
             return guildResult;
         }
 
         // Merge: default as base, guild-specific on top
-        this.logger.debug( this.getComponentCustomization, `Merging default + guild customization`, { customizationKey, guildId, languageCode } );
+        this.logger.debug( this.getComponentCustomization, "Merging default + guild customization", { customizationKey, guildId, languageCode } );
 
         return {
             embedOverrides: {

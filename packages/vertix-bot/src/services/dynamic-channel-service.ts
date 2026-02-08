@@ -212,7 +212,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 this.handleUpdateDynamicSettings,
                 `Successfully updated dynamic settings for master ${ masterChannelId }`
             );
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleUpdateDynamicSettings, `Failed to update dynamic settings for master ${ masterChannelId }`, error );
         }
     }
@@ -301,7 +301,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     `Failed to create dynamic master channel setup: ${ result.code }`
                 );
             }
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.handleCreateDynamicSetup, `Failed to create dynamic master channel setup for guild ${ guildId }`, error );
         }
     }

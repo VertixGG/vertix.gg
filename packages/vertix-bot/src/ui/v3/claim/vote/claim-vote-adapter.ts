@@ -15,7 +15,6 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
-import type { UIDefaultButtonChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 

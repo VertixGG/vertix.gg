@@ -73,7 +73,7 @@ export class WizardAdapterBuilder<
         if ( this.executionSteps ) {
             throw new Error(
                 `Adapter "${ this.name }": Cannot use defineTransactions() when setExecutionSteps() is used. ` +
-                `Choose one approach: either setExecutionSteps() with onEntityMap(), or defineTransactions() alone.`
+                "Choose one approach: either setExecutionSteps() with onEntityMap(), or defineTransactions() alone."
             );
         }
         const flowName = `${ this.name.replace( /Adapter$/, "" ) }Flow`;
@@ -109,7 +109,7 @@ export class WizardAdapterBuilder<
         if ( this.transactions ) {
             throw new Error(
                 `Adapter "${ this.name }": Cannot use setExecutionSteps() when defineTransactions() is used. ` +
-                `Define execution step details (embedsGroup, elementsGroup) in addState() instead.`
+                "Define execution step details (embedsGroup, elementsGroup) in addState() instead."
             );
         }
         this.executionSteps = executionSteps;

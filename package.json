@@ -110,7 +110,7 @@
         "bun": "latest",
         "bun-types": "latest",
         "cross-env": "^7.0.3",
-        "eslint": "latest",
+        "eslint": "^9",
         "eslint-plugin-react": "^7.37.5",
         "jest": "latest",
         "jest-diff": "^30.2.0",

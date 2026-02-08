@@ -1277,71 +1277,9 @@ class FlowGraphBuilder {
     }
 
     private computeReachableFlows(): void {
-        const flowNames = new Set( this.data.flows.map( f => f.name ) );
+        const result = computeReachableFlows( this.data );
 
-        this.data.systemFlows.forEach( systemFlow => {
-            systemFlow.transitions?.forEach( t => {
-                const targetFlowName = t.to?.split( "/States/" )[ 0 ];
-                if ( targetFlowName && flowNames.has( targetFlowName ) ) {
-                    this.reachableFlows.add( targetFlowName );
-                }
-            } );
-
-            systemFlow.handoffPoints?.forEach( hp => {
-                if ( hp.flowName && flowNames.has( hp.flowName ) ) {
-                    this.reachableFlows.add( hp.flowName );
-                }
-            } );
-
-            systemFlow.edgeSourceMappings?.forEach( esm => {
-                if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) ) {
-                    this.reachableFlows.add( esm.targetFlowName );
-                }
-            } );
-        } );
-
-        this.data.flows.forEach( flow => {
-            flow.handoffPoints?.forEach( hp => {
-                if ( hp.flowName && flowNames.has( hp.flowName ) ) {
-                    if ( this.reachableFlows.has( flow.name ) ) {
-                        this.reachableFlows.add( hp.flowName );
-                    }
-                }
-            } );
-
-            flow.edgeSourceMappings?.forEach( esm => {
-                if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) ) {
-                    if ( this.reachableFlows.has( flow.name ) ) {
-                        this.reachableFlows.add( esm.targetFlowName );
-                    }
-                }
-            } );
-        } );
-
-        let changed = true;
-        while ( changed ) {
-            changed = false;
-
-            this.data.flows.forEach( flow => {
-                if ( !this.reachableFlows.has( flow.name ) ) {
-                    return;
-                }
-
-                flow.handoffPoints?.forEach( hp => {
-                    if ( hp.flowName && flowNames.has( hp.flowName ) && !this.reachableFlows.has( hp.flowName ) ) {
-                        this.reachableFlows.add( hp.flowName );
-                        changed = true;
-                    }
-                } );
-
-                flow.edgeSourceMappings?.forEach( esm => {
-                    if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) && !this.reachableFlows.has( esm.targetFlowName ) ) {
-                        this.reachableFlows.add( esm.targetFlowName );
-                        changed = true;
-                    }
-                } );
-            } );
-        }
+        result.forEach( name => this.reachableFlows.add( name ) );
     }
 
     private addEdge( edge: Edge ): void {
@@ -1505,6 +1443,77 @@ class FlowGraphBuilder {
             } );
         } );
     }
+}
+
+export function computeReachableFlows( data: Pick<ModuleFlowsResponse, "flows" | "systemFlows"> ): Set<string> {
+    const reachableFlows = new Set<string>();
+    const flowNames = new Set( data.flows.map( f => f.name ) );
+
+    data.systemFlows.forEach( systemFlow => {
+        systemFlow.transitions?.forEach( t => {
+            const targetFlowName = t.to?.split( "/States/" )[ 0 ];
+            if ( targetFlowName && flowNames.has( targetFlowName ) ) {
+                reachableFlows.add( targetFlowName );
+            }
+        } );
+
+        systemFlow.handoffPoints?.forEach( hp => {
+            if ( hp.flowName && flowNames.has( hp.flowName ) ) {
+                reachableFlows.add( hp.flowName );
+            }
+        } );
+
+        systemFlow.edgeSourceMappings?.forEach( esm => {
+            if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) ) {
+                reachableFlows.add( esm.targetFlowName );
+            }
+        } );
+    } );
+
+    data.flows.forEach( flow => {
+        flow.handoffPoints?.forEach( hp => {
+            if ( hp.flowName && flowNames.has( hp.flowName ) ) {
+                if ( reachableFlows.has( flow.name ) ) {
+                    reachableFlows.add( hp.flowName );
+                }
+            }
+        } );
+
+        flow.edgeSourceMappings?.forEach( esm => {
+            if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) ) {
+                if ( reachableFlows.has( flow.name ) ) {
+                    reachableFlows.add( esm.targetFlowName );
+                }
+            }
+        } );
+    } );
+
+    let changed = true;
+    while ( changed ) {
+        changed = false;
+
+        data.flows.forEach( flow => {
+            if ( !reachableFlows.has( flow.name ) ) {
+                return;
+            }
+
+            flow.handoffPoints?.forEach( hp => {
+                if ( hp.flowName && flowNames.has( hp.flowName ) && !reachableFlows.has( hp.flowName ) ) {
+                    reachableFlows.add( hp.flowName );
+                    changed = true;
+                }
+            } );
+
+            flow.edgeSourceMappings?.forEach( esm => {
+                if ( esm.targetFlowName && flowNames.has( esm.targetFlowName ) && !reachableFlows.has( esm.targetFlowName ) ) {
+                    reachableFlows.add( esm.targetFlowName );
+                    changed = true;
+                }
+            } );
+        } );
+    }
+
+    return reachableFlows;
 }
 
 export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes: Node[]; edges: Edge[] } {

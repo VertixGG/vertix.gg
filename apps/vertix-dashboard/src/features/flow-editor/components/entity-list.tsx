@@ -5,6 +5,7 @@ import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 import { Search, X } from "lucide-react";
 
 import { MINIMAP_COLORS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
+import { computeReachableFlows } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
@@ -43,6 +44,8 @@ export function EntityList() {
             return [];
         }
 
+        const reachable = computeReachableFlows( moduleFlowsData );
+
         const modals = new Set<string>();
 
         moduleFlowsData.components.forEach( ( component ) => {
@@ -54,7 +57,9 @@ export function EntityList() {
                 label: "Flows",
                 type: "flow" as EntityType,
                 color: MINIMAP_COLORS.FLOW,
-                items: moduleFlowsData.flows.map( ( f ) => f.name )
+                items: moduleFlowsData.flows
+                    .filter( ( f ) => reachable.size === 0 || reachable.has( f.name ) )
+                    .map( ( f ) => f.name )
             },
             {
                 label: "System Flows",

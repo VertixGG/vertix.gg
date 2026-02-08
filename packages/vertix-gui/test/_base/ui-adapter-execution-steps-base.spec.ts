@@ -32,7 +32,7 @@ describe( "VertixGUI/UIAdapterExecutionStepsBase", () => {
             const act = () => UIAdapter.validate();
 
             // Assert.
-            expect( act ).toThrow( "Missing execution step for the group: 'VertixGUI/TestElementsGroup'" );
+            expect( act ).toThrow( "missing execution step for the group: 'VertixGUI/TestElementsGroup'" );
         } );
 
         it( "should throw error if step does not have corresponding group", function() {

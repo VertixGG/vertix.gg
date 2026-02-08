@@ -28,10 +28,14 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
 
     private versionStrategies: UIVersionStrategyBase[] = [ new FallBackVersionStrategy( this.versions ) ];
 
+    private fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+
     public constructor() {
         super();
         // Register a timer to check if versions are registered after initialization
-        setTimeout( () => {
+        this.fallbackTimer = setTimeout( () => {
+            this.fallbackTimer = null;
+
             if ( this.versions.size === 0 ) {
                 console.warn( "No versions registered after initialization, registering default versions [2, 3]" );
                 try {
@@ -41,6 +45,9 @@ export class UIAdapterVersioningService extends ServiceWithDependenciesBase<{
                 }
             }
         }, 5000 ); // Check after 5 seconds to ensure all services are initialized
+
+        // Unref to avoid keeping the process alive during tests
+        this.fallbackTimer.unref?.();
     }
 
     public static getName() {

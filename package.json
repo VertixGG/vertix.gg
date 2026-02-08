@@ -61,7 +61,7 @@
     },
     "dependencies": {
         "@discordjs/rest": "^2.6.0",
-        "@modelcontextprotocol/sdk": "^1.25.3",
+        "@modelcontextprotocol/sdk": "^1.26.0",
         "@types/dagre": "^0.7.53",
         "@typescript-eslint/types": "^8.54.0",
         "@typescript-eslint/typescript-estree": "^8.54.0",

@@ -31,7 +31,7 @@ describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
             "attributes": {
                 "title": "👑  0 Candidates wish to claim this channel",
                 "description": "The countdown is on!\n" +
-                    "In just `1 second`, the voting will come to a close.\n" +
+                    "In just `1 second` , the voting will come to a close.\n" +
                     "In case of a tie, <@{userInitiatorId}> will become the new owner.\n\n" +
                     "There are no candidates yet."
             },
@@ -61,7 +61,7 @@ describe( "VertixBot/UI-V2/ClaimVoteEmbed", () => {
             "attributes": {
                 "title": "👑  3 Candidates wish to claim this channel",
                 "description": "The countdown is on!\n" +
-                    "In just `1.5 minutes`, the voting will come to a close.\n" +
+                    "In just `1.5 minutes` , the voting will come to a close.\n" +
                     "In case of a tie, <@bob> will become the new owner.\n\n" +
                     "🏅 <@iNewLegend> - 5 Votes\n" +
                     "<@alice> - 2 Votes\n" +

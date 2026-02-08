@@ -40,10 +40,14 @@ describe( "VertixGUI/UIVersioningAdapterService", () => {
         expect( versioningService.getAllVersions().get( 3 ) ).toBe( "UI-V3" );
     } );
 
-    it( "should throw an error if versions are already registered", () => {
+    it( "should skip registration if versions are already registered", () => {
         versioningService.registerVersions( [ 1, 3 ] );
 
-        expect( () => versioningService.registerVersions( [ 4, 6 ] ) ).toThrow( "Versions already registered" );
+        // Second call should be a no-op, not add new versions
+        versioningService.registerVersions( [ 4, 6 ] );
+
+        expect( versioningService.getAllVersions().size ).toBe( 3 );
+        expect( versioningService.getAllVersions().has( 4 ) ).toBe( false );
     } );
 
     it( "should return the correct adapter name with version", async() => {

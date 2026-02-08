@@ -20,6 +20,8 @@ packages/vertix-base/src/encryption/key.ts
 **/jest.config.d.ts.map
 packages/**/src/**/*.d.ts
 !packages/**/src/**/declaration.d.ts
+!packages/vertix-prisma/src/prisma-bot-client/**
+!packages/vertix-prisma/src/prisma-api-client/**
 packages/**/src/**/*.d.ts.map
 packages/**/dist/**/*.d.ts
 packages/**/dist/**/*.d.ts.map
@@ -27,6 +29,8 @@ packages/**/dist/**/*.d.ts.map
 # Generated JavaScript files (from TypeScript compilation)
 **/jest.config.js
 packages/**/src/**/*.js
+!packages/vertix-prisma/src/prisma-bot-client/**
+!packages/vertix-prisma/src/prisma-api-client/**
 packages/**/src/**/*.js.map
 packages/**/dist/**/*.js
 packages/**/dist/**/*.js.map

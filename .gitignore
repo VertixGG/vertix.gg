@@ -19,6 +19,7 @@ packages/vertix-base/src/encryption/key.ts
 **/jest.config.d.ts
 **/jest.config.d.ts.map
 packages/**/src/**/*.d.ts
+!packages/**/src/**/declaration.d.ts
 packages/**/src/**/*.d.ts.map
 packages/**/dist/**/*.d.ts
 packages/**/dist/**/*.d.ts.map

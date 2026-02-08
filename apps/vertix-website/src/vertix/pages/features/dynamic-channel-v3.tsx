@@ -1,8 +1,8 @@
 import { useSearchParams } from "react-router-dom";
 
-import SearchableSelect from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
-
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
+
+import SearchableSelect from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
 
 import ButtonsInterface from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/buttons-interface";
 import RenameChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/rename-channel";

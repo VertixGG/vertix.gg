@@ -30,6 +30,24 @@ const config = [
             'packages/vertix-base/src/encryption/decrypt.ts',
             'packages/vertix-base/src/encryption/encrypt.ts'
         ]
+    },
+    {
+        files: [
+            "apps/**/*.{ts,tsx}",
+            "packages/**/*.{ts,tsx}",
+        ],
+        rules: {
+            "import/no-unresolved": [ "error", {
+                ignore: [
+                    "\\.css$",
+                    "\\.scss$",
+                    "\\.png$",
+                    "\\.svg$",
+                    "\\.jpg$",
+                    "\\.webp$",
+                ]
+            } ]
+        }
     }
 ];
 

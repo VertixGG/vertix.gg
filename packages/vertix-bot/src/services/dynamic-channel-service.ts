@@ -2742,6 +2742,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             // Refresh all control panels across all guilds
             const client = this.services.appService.getClient();
             await this.refreshControlPanels( client );
+
+            // Refresh primary messages in all active dynamic channels across all guilds
+            for ( const guild of client.guilds.cache.values() ) {
+                await this.refreshDynamicChannelMessages( guild );
+            }
             return;
         }
 
@@ -2755,10 +2760,59 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         if ( guild ) {
             await this.refreshControlPanelsForGuild( guild );
+
+            // Refresh primary messages in all active dynamic channels for this guild
+            await this.refreshDynamicChannelMessages( guild );
         } else {
             this.logger.warn(
                 this.handleRefreshCustomization,
                 `Guild ${ guildId } not found in cache, skipping panel refresh`
+            );
+        }
+    }
+
+    /**
+     * Refresh primary messages in all active dynamic channels for a guild.
+     * Called after customization changes so existing channels pick up the new settings.
+     */
+    private async refreshDynamicChannelMessages( guild: Guild ) {
+        try {
+            const dynamicChannelsDB = await ChannelModel.$.getDynamics( guild.id );
+
+            if ( !dynamicChannelsDB?.length ) {
+                return;
+            }
+
+            let refreshedCount = 0;
+
+            for ( const channelDB of dynamicChannelsDB ) {
+                const channel = guild.channels.cache.get( channelDB.channelId );
+
+                if ( !channel || !channel.isVoiceBased() ) {
+                    continue;
+                }
+
+                try {
+                    await this.editPrimaryMessage( channel as VoiceChannel );
+                    refreshedCount++;
+                } catch ( error ) {
+                    this.logger.warn(
+                        this.refreshDynamicChannelMessages,
+                        `Failed to refresh primary message for channel '${ channelDB.channelId }' in guild '${ guild.id }': ${ error }`
+                    );
+                }
+            }
+
+            if ( refreshedCount > 0 ) {
+                this.logger.info(
+                    this.refreshDynamicChannelMessages,
+                    `Guild '${ guild.name }' (${ guild.id }) - Refreshed ${ refreshedCount } dynamic channel primary message(s).`
+                );
+            }
+        } catch ( error ) {
+            this.logger.error(
+                this.refreshDynamicChannelMessages,
+                `Failed to refresh dynamic channel messages for guild '${ guild.id }': ${ error }`
             );
         }
     }

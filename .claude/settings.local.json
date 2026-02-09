@@ -65,7 +65,9 @@
       "Bash(git check-ignore:*)",
       "Bash(cat:*)",
       "Bash(bun pm:*)",
-      "mcp__jetbrains__reformat_file"
+      "mcp__jetbrains__reformat_file",
+      "Bash(npm install:*)",
+      "WebFetch(domain:frimousse.liveblocks.io)"
     ]
   }
 }

@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { ArrowLeft, Type, FileText, Palette, Image, Grid3X3, MessageSquare, X, Smile, Link, Save, RotateCcw, Braces, ChevronDown, Trash2, Check } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ArrowLeft, Type, FileText, Palette, Image, Grid3X3, MessageSquare, X, Smile, Link, Save, RotateCcw, Braces, ChevronDown, Trash2, Check, ClipboardPaste } from "lucide-react";
+import { EmojiPicker } from "frimousse";
 
 import zCore from "@zenflux/core";
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
@@ -85,11 +86,38 @@ function resolveEmoji( emojiValue: string | undefined ): { markdown: string; url
     };
 }
 
-// Extract the last grapheme cluster from a string (handles multi-byte emojis correctly)
-function lastGrapheme( text: string ): string {
-    if ( !text ) return "";
-    const segments = [ ...new Intl.Segmenter( undefined, { granularity: "grapheme" } ).segment( text ) ];
-    return segments.length > 0 ? segments[ segments.length - 1 ].segment : "";
+/**
+ * Extract the first emoji from a string. Returns the emoji if found, or null if the text
+ * doesn't start with a valid unicode emoji. Uses Intl.Segmenter for correct grapheme handling.
+ */
+function extractFirstEmoji( text: string ): string | null {
+    if ( !text ) return null;
+
+    const trimmed = text.trim();
+    if ( !trimmed ) return null;
+
+    // Use grapheme segmenter to get the first grapheme cluster
+    const segments = [ ...new Intl.Segmenter( undefined, { granularity: "grapheme" } ).segment( trimmed ) ];
+    if ( segments.length === 0 ) return null;
+
+    const first = segments[ 0 ].segment;
+
+    // Check if the first grapheme is an emoji using Unicode property escapes
+    // This matches emoji presentations, keycap sequences, flag sequences, and ZWJ sequences
+    const emojiPattern = /^(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\u200D(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F))*$/u;
+
+    if ( emojiPattern.test( first ) ) {
+        return first;
+    }
+
+    // Also check for regional indicator sequences (flag emojis like 🇺🇸)
+    const flagPattern = /^[\u{1F1E0}-\u{1F1FF}]{2}$/u;
+
+    if ( flagPattern.test( first ) ) {
+        return first;
+    }
+
+    return null;
 }
 
 function EmojiEditPopover( {
@@ -102,8 +130,10 @@ function EmojiEditPopover( {
     onRemove?: () => void;
 } ) {
     const [ isOpen, setIsOpen ] = useState( false );
-    const [ draft, setDraft ] = useState( "" );
     const [ applied, setApplied ] = useState<string | undefined>( undefined );
+    const [ pasteValue, setPasteValue ] = useState( "" );
+    const [ pasteError, setPasteError ] = useState( false );
+    const popoverRef = useRef<HTMLDivElement>( null );
 
     // The displayed emoji: use local applied value first (immediate feedback), fall back to prop
     const displayEmoji = applied !== undefined ? applied : emoji;
@@ -114,19 +144,37 @@ function EmojiEditPopover( {
         setApplied( undefined );
     }, [ emoji ] );
 
-    // Reset draft when popover opens
+    // Reset paste input when popover opens
     useEffect( () => {
         if ( isOpen ) {
-            setDraft( displayEmoji ?? "" );
+            setPasteValue( "" );
+            setPasteError( false );
         }
-    }, [ isOpen, displayEmoji ] );
+    }, [ isOpen ] );
 
-    const applyEmoji = () => {
-        const single = lastGrapheme( draft );
-        setApplied( single );
-        onChange( single );
+    // Close picker when clicking outside
+    useEffect( () => {
+        if ( !isOpen ) return;
+
+        const handleClickOutside = ( e: MouseEvent ) => {
+            if ( popoverRef.current && !popoverRef.current.contains( e.target as Node ) ) {
+                setIsOpen( false );
+            }
+        };
+
+        document.addEventListener( "mousedown", handleClickOutside );
+        return () => document.removeEventListener( "mousedown", handleClickOutside );
+    }, [ isOpen ] );
+
+    const applyEmoji = useCallback( ( emojiStr: string ) => {
+        setApplied( emojiStr );
+        onChange( emojiStr );
         setIsOpen( false );
-    };
+    }, [ onChange ] );
+
+    const handleEmojiSelect = useCallback( ( emojiData: { emoji: string } ) => {
+        applyEmoji( emojiData.emoji );
+    }, [ applyEmoji ] );
 
     const removeEmoji = () => {
         setApplied( "" );
@@ -136,8 +184,23 @@ function EmojiEditPopover( {
         setIsOpen( false );
     };
 
+    const handlePasteApply = () => {
+        const extracted = extractFirstEmoji( pasteValue );
+
+        if ( extracted ) {
+            applyEmoji( extracted );
+        } else {
+            setPasteError( true );
+        }
+    };
+
+    const handlePasteChange = ( value: string ) => {
+        setPasteValue( value );
+        setPasteError( false );
+    };
+
     return (
-        <div className="relative">
+        <div className="relative" ref={ popoverRef }>
             <button
                 type="button"
                 onClick={ () => setIsOpen( !isOpen ) }
@@ -158,41 +221,110 @@ function EmojiEditPopover( {
             </button>
 
             { isOpen && (
-                <div className="absolute z-50 top-full left-0 mt-1 bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl p-2 min-w-[100px] animate-in fade-in slide-in-from-top-1 duration-150">
-                    <div className="flex items-center gap-1.5">
-                        <input
-                            type="text"
-                            value={ draft }
-                            onChange={ ( e ) => setDraft( e.target.value ) }
-                            placeholder="Emoji"
-                            autoFocus
-                            className="w-14 bg-zinc-900 border border-zinc-600 rounded px-1 py-1 text-sm text-center text-white focus:border-blue-500 focus:outline-none"
-                            onKeyDown={ ( e ) => {
-                                if ( e.key === "Enter" ) {
-                                    applyEmoji();
-                                } else if ( e.key === "Escape" ) {
-                                    setIsOpen( false );
-                                }
-                            } }
-                        />
-                        <button
-                            type="button"
-                            onClick={ applyEmoji }
-                            className="w-6 h-6 flex items-center justify-center rounded bg-green-900/30 border border-green-500/30 text-green-400 hover:bg-green-900/50 hover:text-green-300 transition-colors"
-                            title="Apply emoji"
-                        >
-                            <Check className="w-3 h-3" />
-                        </button>
+                <div className="absolute z-50 top-full left-0 mt-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl overflow-hidden">
+                        { /* Remove button */ }
                         { onRemove && displayEmoji && (
-                            <button
-                                type="button"
-                                onClick={ removeEmoji }
-                                className="w-6 h-6 flex items-center justify-center rounded bg-red-900/30 border border-red-500/30 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-colors"
-                                title="Remove emoji"
-                            >
-                                <Trash2 className="w-3 h-3" />
-                            </button>
+                            <div className="px-2 pt-2 pb-1">
+                                <button
+                                    type="button"
+                                    onClick={ removeEmoji }
+                                    className="w-full flex items-center justify-center gap-1.5 px-2 py-1 rounded bg-red-900/30 border border-red-500/30 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-colors text-xs"
+                                    title="Remove emoji"
+                                >
+                                    <Trash2 className="w-3 h-3" />
+                                    Remove
+                                </button>
+                            </div>
                         ) }
+
+                        <EmojiPicker.Root
+                            onEmojiSelect={ handleEmojiSelect }
+                            columns={ 8 }
+                        >
+                            <EmojiPicker.Search
+                                autoFocus
+                                placeholder="Search emoji…"
+                                className="w-full bg-zinc-900 border-b border-zinc-600 px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none"
+                            />
+                            <EmojiPicker.Viewport className="h-[200px] overflow-y-auto overflow-x-hidden">
+                                <EmojiPicker.Loading>
+                                    <div className="flex items-center justify-center h-[200px] text-zinc-500 text-xs">
+                                        Loading…
+                                    </div>
+                                </EmojiPicker.Loading>
+                                <EmojiPicker.Empty>
+                                    <div className="flex items-center justify-center h-[200px] text-zinc-500 text-xs">
+                                        No emoji found
+                                    </div>
+                                </EmojiPicker.Empty>
+                                <EmojiPicker.List
+                                    className="select-none p-1"
+                                    components={ {
+                                        CategoryHeader: ( { category, ...props } ) => (
+                                            <div
+                                                { ...props }
+                                                className="text-[10px] text-zinc-500 uppercase tracking-wider px-1 py-1 font-medium bg-zinc-800 sticky top-0 z-10"
+                                            >
+                                                { category.label }
+                                            </div>
+                                        ),
+                                        Row: ( { children, ...props } ) => (
+                                            <div { ...props } className="flex">
+                                                { children }
+                                            </div>
+                                        ),
+                                        Emoji: ( { emoji: emojiItem, ...props } ) => (
+                                            <button
+                                                { ...props }
+                                                type="button"
+                                                className="w-7 h-7 flex items-center justify-center rounded hover:bg-zinc-700 transition-colors text-base cursor-pointer"
+                                                title={ emojiItem.label }
+                                            >
+                                                { emojiItem.emoji }
+                                            </button>
+                                        )
+                                    } }
+                                />
+                            </EmojiPicker.Viewport>
+                        </EmojiPicker.Root>
+
+                        { /* Paste emoji input */ }
+                        <div className="border-t border-zinc-600 px-2 py-2">
+                            <div className="flex items-center gap-1.5">
+                                <ClipboardPaste className="w-3 h-3 text-zinc-500 shrink-0" />
+                                <input
+                                    type="text"
+                                    value={ pasteValue }
+                                    onChange={ ( e ) => handlePasteChange( e.target.value ) }
+                                    placeholder="Paste emoji"
+                                    className={ `flex-1 bg-zinc-900 border rounded px-2 py-1 text-xs text-white focus:outline-none min-w-0 ${
+                                        pasteError
+                                            ? "border-red-500 focus:border-red-400"
+                                            : "border-zinc-600 focus:border-blue-500"
+                                    }` }
+                                    onKeyDown={ ( e ) => {
+                                        if ( e.key === "Enter" && pasteValue ) {
+                                            handlePasteApply();
+                                        } else if ( e.key === "Escape" ) {
+                                            setIsOpen( false );
+                                        }
+                                    } }
+                                />
+                                <button
+                                    type="button"
+                                    onClick={ handlePasteApply }
+                                    disabled={ !pasteValue }
+                                    className="w-6 h-6 flex items-center justify-center rounded bg-green-900/30 border border-green-500/30 text-green-400 hover:bg-green-900/50 hover:text-green-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed shrink-0"
+                                    title="Apply pasted emoji"
+                                >
+                                    <Check className="w-3 h-3" />
+                                </button>
+                            </div>
+                            { pasteError && (
+                                <p className="text-[10px] text-red-400 mt-1 px-0.5">Not a valid emoji</p>
+                            ) }
+                        </div>
                     </div>
                 </div>
             ) }

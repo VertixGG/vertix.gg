@@ -228,6 +228,38 @@ export function FlowViewer() {
                         updatedData = { ...updatedData, embed: { ...currentEmbed, defaultVars: updatedDefaultVars } };
                     }
                 }
+
+                // Apply saved element overrides to elementRows so the preview reflects them
+                if ( componentCustomization?.elementOverrides ) {
+                    const currentElementRows = ( updatedData.elementRows ?? node.data?.elementRows ) as Array<Array<{ name: string; definition?: Record<string, unknown> }>> | undefined;
+                    if ( currentElementRows ) {
+                        const updatedElementRows = currentElementRows.map( ( row ) =>
+                            row.map( ( el ) => {
+                                const override = ( componentCustomization.elementOverrides as Record<string, Record<string, unknown>> )[ el.name ];
+                                if ( override && el.definition ) {
+                                    const updatedDef = { ...el.definition };
+                                    for ( const [ field, value ] of Object.entries( override ) ) {
+                                        if ( field === "selectOptions" && typeof value === "object" && value !== null ) {
+                                            // Merge selectOption overrides into existing selectOptions array
+                                            const existingOptions = ( updatedDef.selectOptions ?? [] ) as Array<{ value?: string; label?: string; description?: string; emoji?: string }>;
+                                            const optOverrides = value as Record<string, Record<string, string>>;
+                                            updatedDef.selectOptions = existingOptions.map( ( opt, idx ) => {
+                                                const optValue = opt.value ?? String( idx );
+                                                const optOverride = optOverrides[ optValue ];
+                                                return optOverride ? { ...opt, ...optOverride } : opt;
+                                            } );
+                                        } else {
+                                            updatedDef[ field ] = value;
+                                        }
+                                    }
+                                    return { ...el, definition: updatedDef };
+                                }
+                                return el;
+                            } )
+                        );
+                        updatedData = { ...updatedData, elementRows: updatedElementRows };
+                    }
+                }
             }
 
             return updatedData !== node.data ? { ...node, data: updatedData } : node;

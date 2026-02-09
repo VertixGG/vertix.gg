@@ -28,7 +28,7 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
 
     public async getTranslatableContent(): Promise<UIElementSelectMenuLanguageContent> {
         const translateAbleSelectEntries = await Promise.all(
-            ( await this.getSelectOptions() ).map( async( option ) => {
+            ( await this.getSelectOptions() ).map( async ( option ) => {
                 return {
                     label: option.label,
                     value: option.value
@@ -107,6 +107,41 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         }
 
         result.options = options;
+
+        // Apply guild-specific element overrides
+        const override = await this.fetchElementOverride();
+        if ( override ) {
+            if ( override.placeholder !== undefined && override.placeholder.length > 0 ) {
+                result.placeholder = override.placeholder;
+            }
+
+            if ( override.disabled !== undefined ) {
+                result.disabled = override.disabled;
+            }
+
+            // Apply selectOptions overrides (label, description, emoji per option)
+            if ( override.selectOptions && result.options ) {
+                result.options = result.options.map( ( option ) => {
+                    const optOverride = override.selectOptions?.[ option.value ];
+                    if ( optOverride ) {
+                        if ( optOverride.label !== undefined && optOverride.label.length > 0 ) {
+                            option.label = optOverride.label;
+                        }
+                        if ( optOverride.description !== undefined ) {
+                            option.description = optOverride.description;
+                        }
+                        if ( optOverride.emoji !== undefined ) {
+                            if ( optOverride.emoji.length > 0 ) {
+                                option.emoji = { name: optOverride.emoji };
+                            } else {
+                                delete option.emoji;
+                            }
+                        }
+                    }
+                    return option;
+                } );
+            }
+        }
 
         return result;
     }

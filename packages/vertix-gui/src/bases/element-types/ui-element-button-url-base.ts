@@ -43,6 +43,22 @@ export abstract class UIElementButtonUrlBase extends UIElementBase<APIButtonComp
             result.disabled = disabled;
         }
 
+        // Apply guild-specific element overrides
+        const override = await this.fetchElementOverride();
+        if ( override ) {
+            if ( override.label !== undefined && override.label.length > 0 ) {
+                result.label = override.label;
+            }
+
+            if ( override.url !== undefined && override.url.length > 0 ) {
+                result.url = override.url;
+            }
+
+            if ( override.disabled !== undefined ) {
+                result.disabled = override.disabled;
+            }
+        }
+
         return result;
     }
 }

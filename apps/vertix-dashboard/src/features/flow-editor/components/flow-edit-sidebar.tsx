@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Type, FileText, Palette, Image, Grid3X3, MessageSquare, X, Smile, Link, Save, RotateCcw, Braces } from "lucide-react";
+import { ArrowLeft, Type, FileText, Palette, Image, Grid3X3, MessageSquare, X, Smile, Link, Save, RotateCcw, Braces, ChevronDown, Trash2, Check } from "lucide-react";
 
 import zCore from "@zenflux/core";
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
 import { getEmojiFromPreviewCache } from "@vertix.gg/utils/src/emoji-preview-cache";
+import { ELEMENT_OVERRIDE_STRING_FIELDS } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import { SELECT_MENU_ELEMENT_TYPES, BUTTON_ELEMENT_TYPES } from "@vertix.gg/definitions/src/ui-export-definitions";
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
@@ -83,25 +85,119 @@ function resolveEmoji( emojiValue: string | undefined ): { markdown: string; url
     };
 }
 
-function EmojiPreview( { emoji }: { emoji: string } ) {
-    if ( !emoji ) {
-        return null;
-    }
+// Extract the last grapheme cluster from a string (handles multi-byte emojis correctly)
+function lastGrapheme( text: string ): string {
+    if ( !text ) return "";
+    const segments = [ ...new Intl.Segmenter( undefined, { granularity: "grapheme" } ).segment( text ) ];
+    return segments.length > 0 ? segments[ segments.length - 1 ].segment : "";
+}
 
-    const resolved = resolveEmoji( emoji );
+function EmojiEditPopover( {
+    emoji,
+    onChange,
+    onRemove
+}: {
+    emoji: string | undefined;
+    onChange: ( value: string ) => void;
+    onRemove?: () => void;
+} ) {
+    const [ isOpen, setIsOpen ] = useState( false );
+    const [ draft, setDraft ] = useState( "" );
+    const [ applied, setApplied ] = useState<string | undefined>( undefined );
 
-    if ( resolved?.url ) {
-        return (
-            <img
-                src={ resolved.url }
-                alt={ `:${ resolved.name }:` }
-                className="w-5 h-5"
-            />
-        );
-    }
+    // The displayed emoji: use local applied value first (immediate feedback), fall back to prop
+    const displayEmoji = applied !== undefined ? applied : emoji;
+    const resolved = displayEmoji ? resolveEmoji( displayEmoji ) : null;
 
-    // Unicode emoji or unresolved
-    return <span className="text-base">{ emoji }</span>;
+    // Clear local applied state whenever the prop changes (e.g. after Restore or external update)
+    useEffect( () => {
+        setApplied( undefined );
+    }, [ emoji ] );
+
+    // Reset draft when popover opens
+    useEffect( () => {
+        if ( isOpen ) {
+            setDraft( displayEmoji ?? "" );
+        }
+    }, [ isOpen, displayEmoji ] );
+
+    const applyEmoji = () => {
+        const single = lastGrapheme( draft );
+        setApplied( single );
+        onChange( single );
+        setIsOpen( false );
+    };
+
+    const removeEmoji = () => {
+        setApplied( "" );
+        if ( onRemove ) {
+            onRemove();
+        }
+        setIsOpen( false );
+    };
+
+    return (
+        <div className="relative">
+            <button
+                type="button"
+                onClick={ () => setIsOpen( !isOpen ) }
+                className={ `w-6 h-6 flex items-center justify-center rounded border transition-colors ${
+                    displayEmoji
+                        ? "bg-zinc-900 border-zinc-600 hover:border-zinc-400"
+                        : "bg-zinc-900 border-zinc-700 hover:border-zinc-500 border-dashed"
+                }` }
+                title={ displayEmoji ? "Edit emoji" : "Add emoji" }
+            >
+                { resolved?.url ? (
+                    <img src={ resolved.url } alt={ resolved.name } className="w-4 h-4" />
+                ) : displayEmoji ? (
+                    <span className="text-sm">{ displayEmoji }</span>
+                ) : (
+                    <Smile className="w-3 h-3 text-zinc-600" />
+                ) }
+            </button>
+
+            { isOpen && (
+                <div className="absolute z-50 top-full left-0 mt-1 bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl p-2 min-w-[100px] animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="flex items-center gap-1.5">
+                        <input
+                            type="text"
+                            value={ draft }
+                            onChange={ ( e ) => setDraft( e.target.value ) }
+                            placeholder="Emoji"
+                            autoFocus
+                            className="w-14 bg-zinc-900 border border-zinc-600 rounded px-1 py-1 text-sm text-center text-white focus:border-blue-500 focus:outline-none"
+                            onKeyDown={ ( e ) => {
+                                if ( e.key === "Enter" ) {
+                                    applyEmoji();
+                                } else if ( e.key === "Escape" ) {
+                                    setIsOpen( false );
+                                }
+                            } }
+                        />
+                        <button
+                            type="button"
+                            onClick={ applyEmoji }
+                            className="w-6 h-6 flex items-center justify-center rounded bg-green-900/30 border border-green-500/30 text-green-400 hover:bg-green-900/50 hover:text-green-300 transition-colors"
+                            title="Apply emoji"
+                        >
+                            <Check className="w-3 h-3" />
+                        </button>
+                        { onRemove && displayEmoji && (
+                            <button
+                                type="button"
+                                onClick={ removeEmoji }
+                                className="w-6 h-6 flex items-center justify-center rounded bg-red-900/30 border border-red-500/30 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-colors"
+                                title="Remove emoji"
+                            >
+                                <Trash2 className="w-3 h-3" />
+                            </button>
+                        ) }
+                    </div>
+                </div>
+            ) }
+        </div>
+    );
 }
 
 const BUTTON_STYLES = [
@@ -251,6 +347,56 @@ function extractLeadingEmoji( text: string ): { emoji: string; rest: string } | 
     return null;
 }
 
+function isSelectMenuElement( elementType: string | undefined ): boolean {
+    return !!elementType && ( SELECT_MENU_ELEMENT_TYPES as readonly string[] ).includes( elementType );
+}
+
+function isButtonElement( elementType: string | undefined ): boolean {
+    return !!elementType && ( BUTTON_ELEMENT_TYPES as readonly string[] ).includes( elementType );
+}
+
+function getSelectMenuTypeLabel( elementType: string | undefined ): string {
+    switch ( elementType ) {
+        case "select-menu": return "String Select";
+        case "user-select": return "User Select";
+        case "role-select": return "Role Select";
+        case "channel-select": return "Channel Select";
+        case "mentionable-select": return "Mentionable Select";
+        default: return "Select Menu";
+    }
+}
+
+/**
+ * Normalize an emoji value that may be a string OR a Discord API object
+ * ({ name?: string; id?: string; animated?: boolean }) to a plain string.
+ */
+function normalizeSelectOptionEmoji( emoji: unknown ): string | undefined {
+    if ( !emoji ) {
+        return undefined;
+    }
+
+    if ( typeof emoji === "string" ) {
+        return emoji;
+    }
+
+    if ( typeof emoji === "object" ) {
+        const obj = emoji as { id?: string; name?: string; animated?: boolean };
+
+        // Custom Discord emoji with id → format as <:name:id> or <a:name:id>
+        if ( obj.id && obj.name ) {
+            const prefix = obj.animated ? "a" : "";
+            return `<${ prefix }:${ obj.name }:${ obj.id }>`;
+        }
+
+        // Unicode emoji stored as { name: "🌐" }
+        if ( obj.name ) {
+            return obj.name;
+        }
+    }
+
+    return undefined;
+}
+
 function ElementEditPanel( {
     element,
     onClose,
@@ -260,6 +406,12 @@ function ElementEditPanel( {
     onClose: () => void;
     onUpdate: ( field: string, value: string | boolean ) => void;
 } ) {
+    const elementType = element.definition?.elementType;
+    const isSelect = isSelectMenuElement( elementType );
+    const isButton = isButtonElement( elementType );
+
+    const selectOptions = element.definition?.selectOptions;
+
     const label = element.definition?.label ?? "";
     const definedEmoji = element.definition?.emoji ?? "";
 
@@ -297,9 +449,16 @@ function ElementEditPanel( {
     return (
         <div className="mt-3 p-3 bg-zinc-800 border border-zinc-600 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs font-semibold text-zinc-300">
-                    { element.name.split( "/" ).pop() }
-                </h4>
+                <div className="flex items-center gap-2">
+                    <h4 className="text-xs font-semibold text-zinc-300">
+                        { element.name.split( "/" ).pop() }
+                    </h4>
+                    { isSelect && (
+                        <span className="text-[10px] text-purple-400 bg-purple-900/30 px-1.5 py-0.5 rounded">
+                            { getSelectMenuTypeLabel( elementType ) }
+                        </span>
+                    ) }
+                </div>
                 <button
                     onClick={ onClose }
                     className="text-zinc-400 hover:text-white"
@@ -307,85 +466,158 @@ function ElementEditPanel( {
                     <X className="w-3 h-3" />
                 </button>
             </div>
-            <div className="space-y-2">
-                <div className="flex gap-2">
-                    <div className="flex-1">
+
+            { /* Select Menu editing UI */ }
+            { isSelect && (
+                <div className="space-y-2">
+                    <div>
                         <label className="text-xs text-zinc-500 flex items-center gap-1 mb-1">
-                            <Type className="w-3 h-3" />
-                            Label
+                            <ChevronDown className="w-3 h-3" />
+                            Placeholder
                         </label>
                         <input
                             type="text"
-                            value={ displayLabel }
-                            onChange={ ( e ) => handleLabelChange( e.target.value ) }
+                            value={ element.definition?.placeholder ?? "" }
+                            onChange={ ( e ) => onUpdate( "placeholder", e.target.value ) }
+                            placeholder="Choose an option..."
                             className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 focus:outline-none"
                         />
                     </div>
-                    <div className="w-24">
-                        <label className="text-xs text-zinc-500 flex items-center gap-1 mb-1">
-                            <Smile className="w-3 h-3" />
-                            Emoji
-                        </label>
-                        <div className="flex items-center gap-1">
-                            <div className="w-6 h-6 flex items-center justify-center bg-zinc-900 border border-zinc-600 rounded">
-                                <EmojiPreview emoji={ displayEmoji } />
+
+                    { /* Select Options */ }
+                    { selectOptions && selectOptions.length > 0 && (
+                        <div>
+                            <label className="text-xs text-zinc-500 flex items-center gap-1 mb-1">
+                                <Grid3X3 className="w-3 h-3" />
+                                Options ({ selectOptions.length })
+                            </label>
+                            <div className="space-y-1">
+                                { selectOptions.map( ( option, optIndex ) => (
+                                    <div key={ optIndex } className="bg-zinc-900 border border-zinc-700 rounded p-2 space-y-1">
+                                        <div className="flex items-center gap-1.5">
+                                            <EmojiEditPopover
+                                                emoji={ normalizeSelectOptionEmoji( option.emoji ) }
+                                                onChange={ ( value ) => onUpdate( `selectOptions.${ optIndex }.emoji`, value ) }
+                                                onRemove={ () => onUpdate( `selectOptions.${ optIndex }.emoji`, "" ) }
+                                            />
+                                            <input
+                                                type="text"
+                                                value={ option.label ?? "" }
+                                                onChange={ ( e ) => onUpdate( `selectOptions.${ optIndex }.label`, e.target.value ) }
+                                                className="flex-1 bg-zinc-800 border border-zinc-600 rounded px-2 py-0.5 text-xs text-white focus:border-blue-500 focus:outline-none"
+                                                placeholder="Option label"
+                                            />
+                                        </div>
+                                        { option.description && (
+                                            <input
+                                                type="text"
+                                                value={ option.description }
+                                                onChange={ ( e ) => onUpdate( `selectOptions.${ optIndex }.description`, e.target.value ) }
+                                                className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-0.5 text-[10px] text-zinc-400 focus:border-blue-500 focus:outline-none"
+                                                placeholder="Description"
+                                            />
+                                        ) }
+                                        { option.value && (
+                                            <div className="text-[10px] text-zinc-600 font-mono px-1">
+                                                value: { option.value }
+                                            </div>
+                                        ) }
+                                    </div>
+                                ) ) }
                             </div>
+                        </div>
+                    ) }
+
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            id="element-disabled"
+                            checked={ element.definition?.disabled ?? false }
+                            onChange={ ( e ) => onUpdate( "disabled", e.target.checked ) }
+                            className="w-3 h-3 rounded border-zinc-600 bg-zinc-900 text-blue-500 focus:ring-blue-500"
+                        />
+                        <label htmlFor="element-disabled" className="text-xs text-zinc-500">
+                            Disabled
+                        </label>
+                    </div>
+                </div>
+            ) }
+
+            { /* Button editing UI */ }
+            { ( isButton || !isSelect ) && (
+                <div className="space-y-2">
+                    <div className="flex gap-2">
+                        <div className="flex-1">
+                            <label className="text-xs text-zinc-500 flex items-center gap-1 mb-1">
+                                <Type className="w-3 h-3" />
+                                Label
+                            </label>
                             <input
                                 type="text"
-                                value={ displayEmoji }
-                                onChange={ ( e ) => handleEmojiChange( e.target.value ) }
-                                placeholder="Emoji"
+                                value={ displayLabel }
+                                onChange={ ( e ) => handleLabelChange( e.target.value ) }
                                 className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 focus:outline-none"
                             />
                         </div>
+                        <div>
+                            <label className="text-xs text-zinc-500 flex items-center gap-1 mb-1">
+                                <Smile className="w-3 h-3" />
+                                Emoji
+                            </label>
+                            <EmojiEditPopover
+                                emoji={ displayEmoji }
+                                onChange={ handleEmojiChange }
+                                onRemove={ () => handleEmojiChange( "" ) }
+                            />
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <label className="text-xs text-zinc-500 mb-1 block">Style</label>
-                    <div className="flex flex-wrap gap-1">
-                        { BUTTON_STYLES.map( ( style ) => (
-                            <button
-                                key={ style.value }
-                                onClick={ () => onUpdate( "style", style.value ) }
-                                className={ `px-2 py-0.5 rounded text-xs transition-colors ${
-                                    element.definition?.style === style.value
-                                        ? `${ style.color } text-white ring-1 ring-white/50`
-                                        : "bg-zinc-700 text-zinc-400 hover:bg-zinc-600"
-                                }` }
-                            >
-                                { style.label }
-                            </button>
-                        ) ) }
-                    </div>
-                </div>
-                { ( element.definition?.style === "link" || element.definition?.elementType === "button-url" ) && (
                     <div>
-                        <label className="text-xs text-zinc-500 flex items-center gap-1 mb-1">
-                            <Link className="w-3 h-3" />
-                            URL
-                        </label>
-                        <input
-                            type="text"
-                            value={ element.definition?.url ?? "" }
-                            onChange={ ( e ) => onUpdate( "url", e.target.value ) }
-                            placeholder="https://..."
-                            className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 focus:outline-none"
-                        />
+                        <label className="text-xs text-zinc-500 mb-1 block">Style</label>
+                        <div className="flex flex-wrap gap-1">
+                            { BUTTON_STYLES.map( ( style ) => (
+                                <button
+                                    key={ style.value }
+                                    onClick={ () => onUpdate( "style", style.value ) }
+                                    className={ `px-2 py-0.5 rounded text-xs transition-colors ${
+                                        element.definition?.style === style.value
+                                            ? `${ style.color } text-white ring-1 ring-white/50`
+                                            : "bg-zinc-700 text-zinc-400 hover:bg-zinc-600"
+                                    }` }
+                                >
+                                    { style.label }
+                                </button>
+                            ) ) }
+                        </div>
                     </div>
-                ) }
-                <div className="flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        id="element-disabled"
-                        checked={ element.definition?.disabled ?? false }
-                        onChange={ ( e ) => onUpdate( "disabled", e.target.checked ) }
-                        className="w-3 h-3 rounded border-zinc-600 bg-zinc-900 text-blue-500 focus:ring-blue-500"
-                    />
-                    <label htmlFor="element-disabled" className="text-xs text-zinc-500">
-                        Disabled
-                    </label>
+                    { ( element.definition?.style === "link" || element.definition?.elementType === "button-url" ) && (
+                        <div>
+                            <label className="text-xs text-zinc-500 flex items-center gap-1 mb-1">
+                                <Link className="w-3 h-3" />
+                                URL
+                            </label>
+                            <input
+                                type="text"
+                                value={ element.definition?.url ?? "" }
+                                onChange={ ( e ) => onUpdate( "url", e.target.value ) }
+                                placeholder="https://..."
+                                className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 focus:outline-none"
+                            />
+                        </div>
+                    ) }
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            id="element-disabled"
+                            checked={ element.definition?.disabled ?? false }
+                            onChange={ ( e ) => onUpdate( "disabled", e.target.checked ) }
+                            className="w-3 h-3 rounded border-zinc-600 bg-zinc-900 text-blue-500 focus:ring-blue-500"
+                        />
+                        <label htmlFor="element-disabled" className="text-xs text-zinc-500">
+                            Disabled
+                        </label>
+                    </div>
                 </div>
-            </div>
+            ) }
         </div>
     );
 }
@@ -509,6 +741,55 @@ export function FlowEditSidebar() {
                     updateNodeData.run( { path: `embedDefinition.defaultVars.${ key }`, value, isSavedOverride: true } );
                     // Also update embed.defaultVars so the preview reflects saved variables
                     updateNodeData.run( { path: `embed.defaultVars.${ key }`, value, isSavedOverride: true } );
+                }
+            }
+        }
+
+        // Apply saved element overrides (label, emoji, style, disabled, url, placeholder) to node elementRows.
+        // Use isSavedOverride so Restore goes back to definition defaults.
+        if ( componentCustomization?.elementOverrides ) {
+            const currentElementRows = selectedNode.data?.elementRows as ElementData[][] | undefined;
+
+            if ( currentElementRows ) {
+                for ( const [ elementName, override ] of Object.entries( componentCustomization.elementOverrides ) ) {
+                    // Find the element by name in the 2D elementRows array
+                    for ( let rowIdx = 0; rowIdx < currentElementRows.length; rowIdx++ ) {
+                        for ( let colIdx = 0; colIdx < currentElementRows[ rowIdx ].length; colIdx++ ) {
+                            if ( currentElementRows[ rowIdx ][ colIdx ].name === elementName ) {
+                                for ( const field of ELEMENT_OVERRIDE_STRING_FIELDS ) {
+                                    if ( ( override as Record<string, unknown> )[ field ] !== undefined ) {
+                                        updateNodeData.run( { path: `elementRows.${ rowIdx }.${ colIdx }.definition.${ field }`, value: ( override as Record<string, unknown> )[ field ], isSavedOverride: true } );
+                                    }
+                                }
+                                if ( override.disabled !== undefined ) {
+                                    updateNodeData.run( { path: `elementRows.${ rowIdx }.${ colIdx }.definition.disabled`, value: override.disabled, isSavedOverride: true } );
+                                }
+
+                                // Apply selectOptions overrides (label, description, emoji per option)
+                                if ( override.selectOptions ) {
+                                    const currentSelectOptions = ( currentElementRows[ rowIdx ][ colIdx ].definition?.selectOptions ?? [] ) as Array<{ value?: string; label?: string; description?: string; emoji?: string }>;
+
+                                    for ( let optIdx = 0; optIdx < currentSelectOptions.length; optIdx++ ) {
+                                        const opt = currentSelectOptions[ optIdx ];
+                                        const optValue = opt.value ?? String( optIdx );
+                                        const optOverride = ( override.selectOptions as Record<string, Record<string, string>> )[ optValue ];
+
+                                        if ( optOverride ) {
+                                            if ( optOverride.label !== undefined ) {
+                                                updateNodeData.run( { path: `elementRows.${ rowIdx }.${ colIdx }.definition.selectOptions.${ optIdx }.label`, value: optOverride.label, isSavedOverride: true } );
+                                            }
+                                            if ( optOverride.description !== undefined ) {
+                                                updateNodeData.run( { path: `elementRows.${ rowIdx }.${ colIdx }.definition.selectOptions.${ optIdx }.description`, value: optOverride.description, isSavedOverride: true } );
+                                            }
+                                            if ( optOverride.emoji !== undefined ) {
+                                                updateNodeData.run( { path: `elementRows.${ rowIdx }.${ colIdx }.definition.selectOptions.${ optIdx }.emoji`, value: optOverride.emoji, isSavedOverride: true } );
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -666,8 +947,8 @@ export function FlowEditSidebar() {
                                                 <div className="flex flex-wrap gap-1">
                                                     { row.map( ( element, colIndex ) => {
                                                         const elementType = element.definition?.elementType ?? "button";
-                                                        const isButton = elementType === "button" || elementType === "button-url" || elementType === "link";
-                                                        const isSelect = elementType.includes( "select" );
+                                                        const isButton = isButtonElement( elementType );
+                                                        const isSelect = isSelectMenuElement( elementType );
                                                         const isSelected = selectedElementIndex?.row === rowIndex && selectedElementIndex?.col === colIndex;
 
                                                         return (

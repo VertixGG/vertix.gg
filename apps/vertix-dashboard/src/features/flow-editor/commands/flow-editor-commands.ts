@@ -2,16 +2,18 @@ import zCore from "@zenflux/core";
 import { CommandBase } from "@zenflux/react-commander/command-base";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
+import { ELEMENT_OVERRIDE_STRING_FIELDS } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 import { useSelectedGuildStore } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
 
+import type { Node } from "@xyflow/react";
 import type { ModuleInfo, ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { EntityType } from "@vertix.gg/dashboard/src/features/flow-editor/components/entity-list";
-import type { Node } from "@xyflow/react";
-import type { GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import type { GuildCustomizationData, ElementOverride } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 const logger = zCore.modules.createLogger( "flow-editor-commands" );
 
@@ -321,10 +323,91 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
             }
         }
 
+        // Check for element overrides (label, emoji, style, disabled, url, placeholder)
+        const elementRows = selectedNode.data?.elementRows as Array<Array<{ name: string; definition?: Record<string, unknown> }>> | undefined;
+        const originalElementRows = originalNodeData?.elementRows as Array<Array<{ name: string; definition?: Record<string, unknown> }>> | undefined;
+        const elementOverrides: Record<string, ElementOverride> = {};
+
+        if ( elementRows ) {
+            for ( let rowIdx = 0; rowIdx < elementRows.length; rowIdx++ ) {
+                const row = elementRows[ rowIdx ];
+                for ( let colIdx = 0; colIdx < row.length; colIdx++ ) {
+                    const element = row[ colIdx ];
+                    const originalElement = originalElementRows?.[ rowIdx ]?.[ colIdx ];
+                    const def = element.definition;
+                    const originalDef = originalElement?.definition;
+
+                    if ( !def ) continue;
+
+                    const override: ElementOverride = {};
+                    let hasChanges = false;
+
+                    for ( const field of ELEMENT_OVERRIDE_STRING_FIELDS ) {
+                        if ( def[ field ] !== undefined && def[ field ] !== originalDef?.[ field ] ) {
+                            ( override as Record<string, unknown> )[ field ] = def[ field ];
+                            hasChanges = true;
+                        }
+                    }
+
+                    if ( def.disabled !== undefined && def.disabled !== originalDef?.disabled ) {
+                        override.disabled = def.disabled as boolean;
+                        hasChanges = true;
+                    }
+
+                    // Check for selectOptions changes (label, description, emoji per option)
+                    const currentSelectOptions = def.selectOptions as Array<{ label?: string; value?: string; description?: string; emoji?: string }> | undefined;
+                    const originalSelectOptions = originalDef?.selectOptions as Array<{ label?: string; value?: string; description?: string; emoji?: string }> | undefined;
+
+                    if ( currentSelectOptions?.length ) {
+                        const selectOptionOverrides: Record<string, Record<string, string>> = {};
+
+                        for ( let optIdx = 0; optIdx < currentSelectOptions.length; optIdx++ ) {
+                            const opt = currentSelectOptions[ optIdx ];
+                            const originalOpt = originalSelectOptions?.[ optIdx ];
+                            const optValue = opt.value ?? String( optIdx );
+                            const optOverride: Record<string, string> = {};
+                            let optHasChanges = false;
+
+                            if ( opt.label !== undefined && opt.label !== originalOpt?.label ) {
+                                optOverride.label = opt.label;
+                                optHasChanges = true;
+                            }
+                            if ( opt.description !== undefined && opt.description !== originalOpt?.description ) {
+                                optOverride.description = opt.description;
+                                optHasChanges = true;
+                            }
+                            // Normalize emoji for comparison — emoji may be a string or a Discord API object
+                            const normalizedEmoji = typeof opt.emoji === "string" ? opt.emoji : opt.emoji && typeof opt.emoji === "object" ? ( opt.emoji as { name?: string } ).name ?? "" : opt.emoji;
+                            const normalizedOrigEmoji = typeof originalOpt?.emoji === "string" ? originalOpt.emoji : originalOpt?.emoji && typeof originalOpt.emoji === "object" ? ( originalOpt.emoji as { name?: string } ).name ?? "" : originalOpt?.emoji;
+
+                            if ( normalizedEmoji !== undefined && normalizedEmoji !== normalizedOrigEmoji ) {
+                                optOverride.emoji = typeof normalizedEmoji === "string" ? normalizedEmoji : "";
+                                optHasChanges = true;
+                            }
+
+                            if ( optHasChanges ) {
+                                selectOptionOverrides[ optValue ] = optOverride;
+                            }
+                        }
+
+                        if ( Object.keys( selectOptionOverrides ).length > 0 ) {
+                            override.selectOptions = selectOptionOverrides;
+                            hasChanges = true;
+                        }
+                    }
+
+                    if ( hasChanges ) {
+                        elementOverrides[ element.name ] = override;
+                    }
+                }
+            }
+        }
+
         const selectedLanguage = useLanguageStore.getState().selectedLanguage;
         const hasVariables = Object.keys( variables ).length > 0;
+        const hasElementOverrides = Object.keys( elementOverrides ).length > 0;
 
-        logger.debug( this.apply, "Saving customization", { guildId, customizationKey, embedOverrides, variables: hasVariables ? variables : undefined, languageCode: selectedLanguage } );
+        logger.debug( this.apply, "Saving customization", { guildId, customizationKey, embedOverrides, variables: hasVariables ? variables : undefined, elementOverrides: hasElementOverrides ? elementOverrides : undefined, languageCode: selectedLanguage } );
 
         try {
             // Save to database using query module
@@ -336,6 +419,10 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
 
             if ( hasVariables ) {
                 customization.variables = variables;
+            }
+
+            if ( hasElementOverrides ) {
+                customization.elementOverrides = elementOverrides;
             }
 
             await queryModule.request<GuildCustomizationData>(

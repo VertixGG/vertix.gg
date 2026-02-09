@@ -912,7 +912,7 @@ export class UIDefinitionExporter extends UIBase {
             try {
                 const emoji = await proto.getEmoji.call( {} );
                 if ( emoji ) {
-                    definition.emoji = emoji;
+                    definition.emoji = this.normalizeEmoji( emoji ) ?? ( typeof emoji === "string" ? emoji : undefined );
                 }
             } catch {
             }
@@ -980,7 +980,7 @@ export class UIDefinitionExporter extends UIBase {
             return options.map( ( opt ) => ( {
                 label: opt.label,
                 value: opt.value,
-                emoji: opt.emoji,
+                emoji: this.normalizeEmoji( opt.emoji ),
                 description: opt.description,
             } ) );
         } catch( error ) {
@@ -990,6 +990,37 @@ export class UIDefinitionExporter extends UIBase {
             );
             return undefined;
         }
+    }
+
+    /**
+     * Normalize emoji from Discord API format to a plain string.
+     * Handles: string "🌐", object { name: "🌐" }, object { id, name, animated }, undefined.
+     */
+    private normalizeEmoji( emoji: unknown ): string | undefined {
+        if ( ! emoji ) {
+            return undefined;
+        }
+
+        if ( typeof emoji === "string" ) {
+            return emoji;
+        }
+
+        if ( typeof emoji === "object" ) {
+            const emojiObj = emoji as { id?: string; name?: string; animated?: boolean };
+
+            // Custom Discord emoji with id → format as <:name:id> or <a:name:id>
+            if ( emojiObj.id && emojiObj.name ) {
+                const prefix = emojiObj.animated ? "a" : "";
+                return `<${ prefix }:${ emojiObj.name }:${ emojiObj.id }>`;
+            }
+
+            // Unicode emoji stored as { name: "🌐" }
+            if ( emojiObj.name ) {
+                return emojiObj.name;
+            }
+        }
+
+        return undefined;
     }
 
     private resolveElementType(

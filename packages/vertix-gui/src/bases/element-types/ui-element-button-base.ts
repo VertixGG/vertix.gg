@@ -7,6 +7,13 @@ import type { APIButtonComponentWithCustomId, APIMessageComponentEmoji } from "d
 import type { UIArgs, UIBaseTemplateOptions, UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIElementButtonLanguageContent } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
+const STYLE_MAP: Record<string, ButtonStyle.Primary | ButtonStyle.Secondary | ButtonStyle.Success | ButtonStyle.Danger> = {
+    primary: ButtonStyle.Primary,
+    secondary: ButtonStyle.Secondary,
+    success: ButtonStyle.Success,
+    danger: ButtonStyle.Danger,
+};
+
 export abstract class UIElementButtonBase extends UIElementBase<APIButtonComponentWithCustomId> {
     private content: UIElementButtonLanguageContent | undefined;
 
@@ -99,6 +106,33 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
             result.disabled = disabled;
         }
 
+        // Apply guild-specific element overrides
+        const override = await this.fetchElementOverride();
+        if ( override ) {
+            if ( override.label !== undefined && override.label.length > 0 ) {
+                result.label = override.label;
+            }
+
+            if ( override.emoji !== undefined ) {
+                if ( override.emoji.length > 0 ) {
+                    result.emoji = parseEmoji( override.emoji ) as APIMessageComponentEmoji;
+                } else {
+                    delete result.emoji;
+                }
+            }
+
+            if ( override.style !== undefined ) {
+                const mappedStyle = STYLE_MAP[ override.style ];
+                if ( mappedStyle !== undefined ) {
+                    result.style = mappedStyle;
+                }
+            }
+
+            if ( override.disabled !== undefined ) {
+                result.disabled = override.disabled;
+            }
+        }
+
         return result;
     }
 
@@ -127,4 +161,5 @@ export abstract class UIElementButtonBase extends UIElementBase<APIButtonCompone
 
         return result.label;
     }
+
 }

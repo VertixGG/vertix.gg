@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Handle, Position, useStore } from "@xyflow/react";
 
 import { DiscordMessage, DiscordEmbed, DiscordButton } from "@vertix.gg/discord-ui/src";
+import { SELECT_MENU_ELEMENT_TYPES } from "@vertix.gg/definitions/src/ui-export-definitions";
 
 import type { Node, NodeProps } from "@xyflow/react";
 import type { UIExportElementDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
@@ -59,6 +60,34 @@ type ComponentNodeData = Record<
     stateTransitionTriggers?: StateTransitionTrigger[];
 };
 
+/**
+ * Normalize an emoji that may be a string or Discord API object to a plain string.
+ */
+function normalizeEmoji( emoji: unknown ): string | undefined {
+    if ( !emoji ) {
+        return undefined;
+    }
+
+    if ( typeof emoji === "string" ) {
+        return emoji;
+    }
+
+    if ( typeof emoji === "object" ) {
+        const obj = emoji as { id?: string; name?: string; animated?: boolean };
+
+        if ( obj.id && obj.name ) {
+            const prefix = obj.animated ? "a" : "";
+            return `<${ prefix }:${ obj.name }:${ obj.id }>`;
+        }
+
+        if ( obj.name ) {
+            return obj.name;
+        }
+    }
+
+    return undefined;
+}
+
 function formatElementFallbackLabel( elementName: string ): string {
     const lastSegment = elementName.split( "/" ).pop() ?? elementName;
 
@@ -101,7 +130,7 @@ function isSelectMenu( element: ElementData ): boolean {
     const elementType = element.definition?.elementType;
 
     if ( elementType ) {
-        return [ "select-menu", "user-select", "role-select", "channel-select", "mentionable-select" ].includes( elementType );
+        return ( SELECT_MENU_ELEMENT_TYPES as readonly string[] ).includes( elementType );
     }
 
     return element.name.toLowerCase().includes( "selectmenu" ) || element.name.toLowerCase().includes( "select" );
@@ -317,7 +346,21 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                             if ( isSelectMenu( element ) ) {
                                                 const stateTrigger = getStateTransitionTrigger( element.name );
                                                 const flowTrigger = getFlowTrigger( element.name );
-                                                const options = selectOptionsByElementName.get( element.name ) ?? [];
+                                                const edgeOptions = selectOptionsByElementName.get( element.name ) ?? [];
+
+                                                // Prefer options from element definition (selectOptions), fall back to edge-derived options
+                                                const definitionOptions = element.definition?.selectOptions?.map( opt => {
+                                                    const emojiStr = normalizeEmoji( opt.emoji );
+                                                    const label = opt.label ?? opt.value ?? "";
+                                                    // Only prepend unicode emojis to label — skip custom Discord emoji strings (<:name:id>)
+                                                    const isUnicodeEmoji = emojiStr && !emojiStr.startsWith( "<" );
+                                                    return {
+                                                        value: opt.value ?? "",
+                                                        label: isUnicodeEmoji ? `${ emojiStr } ${ label }` : label
+                                                    };
+                                                } ) ?? [];
+
+                                                const options = definitionOptions.length > 0 ? definitionOptions : edgeOptions;
                                                 const selectedValue = selectedSelectValues[ element.name ] ?? "";
 
                                                 const hasHandle = stateTrigger || flowTrigger;

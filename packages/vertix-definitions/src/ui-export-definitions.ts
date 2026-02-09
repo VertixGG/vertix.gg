@@ -19,6 +19,17 @@ export interface UIExportEmbedItem {
     definition?: UIExportEmbedDefinition;
 }
 
+export const SELECT_MENU_ELEMENT_TYPES = [ "select-menu", "user-select", "role-select", "channel-select", "mentionable-select" ] as const;
+
+export const BUTTON_ELEMENT_TYPES = [ "button", "button-url" ] as const;
+
+export interface SelectOptionDefinition {
+    label?: string;
+    value?: string;
+    emoji?: string;
+    description?: string;
+}
+
 export interface UIExportElementDefinition {
     name: string;
     elementType: "button" | "button-url" | "select-menu" | "user-select" | "role-select" | "channel-select" | "mentionable-select" | "text-input" | "unknown";
@@ -30,6 +41,7 @@ export interface UIExportElementDefinition {
     url?: string;
     placeholder?: string;
     disabled?: boolean;
+    selectOptions?: SelectOptionDefinition[];
 }
 
 export interface UIExportElementItem {

@@ -82,6 +82,18 @@ export abstract class UIElementChannelSelectMenu extends UIElementBase<APIChanne
             result.channel_types = channel_types;
         }
 
+        // Apply guild-specific element overrides
+        const override = await this.fetchElementOverride();
+        if ( override ) {
+            if ( override.placeholder !== undefined && override.placeholder.length > 0 ) {
+                result.placeholder = override.placeholder;
+            }
+
+            if ( override.disabled !== undefined ) {
+                result.disabled = override.disabled;
+            }
+        }
+
         return result;
     }
 }

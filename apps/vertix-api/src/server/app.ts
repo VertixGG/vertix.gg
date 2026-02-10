@@ -32,6 +32,7 @@ const SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 export async function createApp(): Promise<FastifyInstance> {
     const fastify = Fastify( {
+        trustProxy: true,
         logger: {
             level: LOGGER_LEVEL
         }

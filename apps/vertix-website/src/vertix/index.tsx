@@ -7,6 +7,7 @@ import { allImagesLoadedPromise, windowLoadedPromise, wrapPromiseSuspendable } f
 import LoadingContainer from "@vertix.gg/website/src/vertix/ui/loading-container";
 
 import Header from "@vertix.gg/website/src/vertix/header/header";
+import DashboardAnnouncement from "@vertix.gg/website/src/vertix/components/ui/dashboard-announcement";
 
 import localRoutes from "@vertix.gg/website/src/vertix/routes";
 
@@ -42,6 +43,8 @@ const IndexContent = () => {
     return (
         <>
             { !shouldHideHeader && <Header/> }
+
+            <DashboardAnnouncement/>
 
             <section className="content">
                 <Suspense fallback={ LoadingContainer() }>

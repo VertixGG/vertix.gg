@@ -71,3 +71,28 @@ body {
         }
     }
 }
+
+.dashboard-announcement {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 340px;
+    animation: slide-in-right 0.4s ease-out;
+
+    .toast {
+        border: 1px solid var(--vertix-color-true-blue);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

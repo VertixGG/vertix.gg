@@ -68,7 +68,12 @@
       "mcp__jetbrains__reformat_file",
       "Bash(npm install:*)",
       "WebFetch(domain:frimousse.liveblocks.io)",
-      "Bash(/opt/homebrew/bin/npm run vertix:dashboard:deploy)"
+      "Bash(/opt/homebrew/bin/npm run vertix:dashboard:deploy)",
+      "Bash(ssh:*)",
+      "Bash(dig:*)",
+      "Bash(nslookup:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }

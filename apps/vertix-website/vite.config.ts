@@ -5,7 +5,7 @@ import { createReadStream } from "node:fs";
 import { pipeline } from "node:stream/promises";
 
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 
 import type { Plugin, ResolvedConfig } from "vite";
 
@@ -100,8 +100,18 @@ function getContentType( filePath: string ): string {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig( {
+export default defineConfig( ( { mode } ) => {
+    const rootEnv = loadEnv( mode, path.resolve( __dirname, "../.." ), "" );
+    const localEnv = loadEnv( mode, process.cwd(), "" );
+    const env = { ...rootEnv, ...localEnv, ...process.env };
+
+    const dashboardUrl = env.DASHBOARD_PROD_URL || "https://dashboard.vertix.gg";
+
+    return {
     plugins: [ react(), exportsAssetsPlugin() ],
+    define: {
+        "import.meta.env.VITE_DASHBOARD_URL": JSON.stringify( dashboardUrl ),
+    },
     resolve: {
         alias: {
             "@vertix.gg/website": path.resolve( __dirname, "./" ),
@@ -126,4 +136,4 @@ export default defineConfig( {
             }
         }
     }
-} );
+}; } );

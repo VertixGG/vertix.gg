@@ -78,7 +78,7 @@ export default function Header() {
     return (
         <section id="header" className="header">
             <ShinyStars sensitivity={ 0.5 } count={ 30 } className="d-none d-md-block" />
-            <nav className="navbar navbar-expand-xl pt-xl-5">
+            <nav className="navbar navbar-expand-xxxl pt-xl-5">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/">
                         <img id="vertix-logo" className="me-1 user-select-none" width="60px" height="60px"
@@ -116,13 +116,16 @@ export default function Header() {
                             <NavbarItem title="Change log" href="/changelog"/>
                         </ul>
 
-                        <div className="buttons d-flex p-sm-2">
+                        <div className="buttons d-flex justify-content-between p-sm-2">
                             <button id="add-to-server" onClick={ () => onAddToServerClick() }
-                                className="btn ps-4 pe-4 btn-outline-primary btn-effect me-4">Invite
+                                className="btn ps-4 pe-4 btn-outline-primary btn-effect me-xxxl-4">Invite
                                 Vertix
                             </button>
+                            <button id="dashboard" onClick={ () => window.open( import.meta.env.VITE_DASHBOARD_URL || "https://dashboard.vertix.gg" ) }
+                                className="btn btn-outline-info btn-effect me-xxxl-4">Dashboard
+                            </button>
                             <button id="support" onClick={ () => window.open( "https://discord.gg/dEwKeQefUU" ) }
-                                className="btn btn-outline-success btn-effect ms-auto">Support
+                                className="btn btn-outline-success btn-effect">Support
                             </button>
                         </div>
                     </div>

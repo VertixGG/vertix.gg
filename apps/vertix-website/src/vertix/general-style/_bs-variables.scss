@@ -45,3 +45,23 @@ $btn-font-family: var(--vertix-font-component);
 
 $accordion-bg: transparent;
 
+// Custom breakpoint for navbar collapse at 1470px
+$grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px,
+    xxl: 1400px,
+    xxxl: 1470px,
+);
+
+$container-max-widths: (
+    sm: 540px,
+    md: 720px,
+    lg: 960px,
+    xl: 1140px,
+    xxl: 1320px,
+    xxxl: 1440px,
+);
+

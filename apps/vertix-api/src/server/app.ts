@@ -19,9 +19,10 @@ import type { FastifyInstance } from "fastify";
 const LOGGER_LEVEL = "info";
 
 const FRONTEND_URL = process.env.DASHBOARD_URL || "http://localhost:3020";
+const DASHBOARD_PROD_URL = process.env.DASHBOARD_PROD_URL || "https://dashboard.vertix.gg";
 
 const CORS_CONFIG = {
-    origin: [ FRONTEND_URL, "http://localhost:3020" ],
+    origin: [ FRONTEND_URL, DASHBOARD_PROD_URL, "http://localhost:3020" ],
     credentials: true,
     methods: [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
     allowedHeaders: [ "Content-Type", "Authorization" ]

@@ -3,7 +3,7 @@ import { join } from "path";
 import { deploy } from "../../../scripts/base-deploy.js";
 
 deploy( {
-    envPrefix: "WEBSITE_DEPLOY",
+    envPrefix: "DASHBOARD_DEPLOY",
     appDir: join( import.meta.dirname, ".." ),
-    buildCommand: "bun run vertix-website:build",
+    buildCommand: "bun run vertix-dashboard:build",
 } );

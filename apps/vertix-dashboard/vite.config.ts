@@ -13,8 +13,12 @@ export default defineConfig( ( { mode } ) => {
     const localEnv = loadEnv( mode, process.cwd(), "" );
     const env = { ...rootEnv, ...localEnv, ...process.env };
 
+    const isProd = mode === "production";
+
     const apiPort = env.API_PORT || "3021";
     const apiHost = env.API_HOST || "0.0.0.0";
+    const prodHost = env.API_HOST_PROD || `http://${ apiHost }:${ apiPort }`;
+    const apiBaseUrl = `${ prodHost }/api`;
 
     const frontendPort = env.DASHBOARD_PORT || "3020";
     const frontendHost = env.DASHBOARD_HOST || "0.0.0.0";
@@ -70,12 +74,14 @@ export default defineConfig( ( { mode } ) => {
             ]
         },
         define: {
+            "import.meta.env.VITE_API_BASE_URL": JSON.stringify( apiBaseUrl ),
             "VITE_API_PORT": JSON.stringify( apiPort ),
             "VITE_API_HOST": JSON.stringify( apiHost ),
             "__ZENFLUX_DEBUG__": JSON.stringify( true ),
             "process.env.LOGGER_LOG_LEVEL": JSON.stringify( 6 ),
             "process.env.NODE_ENV": JSON.stringify( mode ),
             "process.env": JSON.stringify( {} ),
+            "process": JSON.stringify( { env: {} } ),
         },
         server: {
             host: frontendHost,

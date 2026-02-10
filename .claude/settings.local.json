@@ -67,7 +67,8 @@
       "Bash(bun pm:*)",
       "mcp__jetbrains__reformat_file",
       "Bash(npm install:*)",
-      "WebFetch(domain:frimousse.liveblocks.io)"
+      "WebFetch(domain:frimousse.liveblocks.io)",
+      "Bash(/opt/homebrew/bin/npm run vertix:dashboard:deploy)"
     ]
   }
 }

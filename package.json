@@ -32,6 +32,7 @@
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
         "vertix:ci:typecheck": "bash scripts/ci-typecheck.bash",
         "vertix:dashboard:dev": "cd apps/vertix-dashboard && bun run vertix-dashboard:dev",
+        "vertix:dashboard:deploy": "cd apps/vertix-dashboard && bun run vertix-dashboard:deploy",
         "vertix:eslint": "time bunx --bun eslint .",
         "vertix:eslint:fix": "time bunx --bun eslint . --fix",
         "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",

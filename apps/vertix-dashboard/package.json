@@ -6,7 +6,8 @@
         "vertix-dashboard:typecheck": "bunx --bun tsc --noEmit",
         "vertix-dashboard:dev": "bunx --bun vite --host",
         "vertix-dashboard:build": "vite build",
-        "vertix-dashboard:preview": "vite preview"
+        "vertix-dashboard:preview": "vite preview",
+        "vertix-dashboard:deploy": "bun --bun run ./scripts/deploy.js"
     },
     "dependencies": {
         "@dagrejs/dagre": "^1.1.4",

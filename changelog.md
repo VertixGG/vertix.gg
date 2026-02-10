@@ -6,6 +6,9 @@
     - 🇫🇷 French
     - 🇩🇪 German
     - 🇯🇵 Japanese
+- Dashboard:
+    - **Visual Editor**: A flow-based visual editor for customizing bot UI components, embeds, and elements per guild and per language.
+    - **Bot Management**: Manage auto-scaling and dynamic channel setups directly from the dashboard - create, configure, and delete master channels.
 
 ---
 

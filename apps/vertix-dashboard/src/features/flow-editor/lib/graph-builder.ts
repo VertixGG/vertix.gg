@@ -993,7 +993,7 @@ class MultiStateFlowBuilder {
     private createModalFirstEntry( modalName: string ): string {
         const modalId = `modal-${ this.context.flow.name }-entry`;
         const initialComp = this.context.stateComponents[ 0 ]?.component;
-        const modalDef = initialComp?.modals?.find( m => m.name === modalName );
+        const modalDef = initialComp?.modalDefinitions?.find( m => m.name === modalName );
 
         this.allNodes.push( createModalNode( modalId, modalName, modalDef, this.context.flow.name ) );
         this.addEdge( createFlowToComponentEdge( this.context.flowId, modalId, this.context.flow.name, modalName ) );

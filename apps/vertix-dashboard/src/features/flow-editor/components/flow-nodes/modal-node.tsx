@@ -9,6 +9,8 @@ type ModalNodeData = Record<string, string | UIExportModalInputDefinition[] | un
     label: string;
     title?: string;
     inputs?: UIExportModalInputDefinition[];
+    botName?: string;
+    botAvatarUrl?: string;
 };
 
 function formatModalTitle( label: string ): string {
@@ -21,7 +23,7 @@ type ModalNodeType = Node<ModalNodeData, "modalNode">;
 
 export function ModalNode( props: NodeProps<ModalNodeType> ) {
     const { data, selected } = props;
-    const { label, title, inputs } = data;
+    const { label, title, inputs, botName, botAvatarUrl } = data;
 
     const displayTitle = title || formatModalTitle( label );
     const displayInputs = inputs && inputs.length > 0 ? inputs : [
@@ -39,11 +41,9 @@ export function ModalNode( props: NodeProps<ModalNodeType> ) {
                     <div className="text-white font-semibold text-sm">{ label }</div>
                 </div>
 
-                <div className="bg-[#313338] p-4">
-                    <div
-                        className="w-full [&_.discord-modal]:w-full [&_.discord-modal]:max-w-none [&_.discord-modal-title]:!text-base [&_.discord-modal-title]:!leading-5"
-                    >
-                        <DiscordModal title={ displayTitle }>
+                <div className="p-3">
+                    <div className="w-full [&_.discord-modal]:w-full [&_.discord-modal]:max-w-none">
+                        <DiscordModal title={ displayTitle } avatarUrl={ botAvatarUrl || "/robot.png" } cancelLabel="Cancel" showNotice noticeBotName={ botName || "Vertix" }>
                             { displayInputs.map( ( input, index ) => (
                                 <DiscordInput
                                     key={ index }

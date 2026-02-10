@@ -4,9 +4,11 @@ import type { ReactNode } from "react";
 
 interface DiscordModalProps {
     title: string;
+    avatarUrl?: string;
     submitLabel?: string;
     cancelLabel?: string;
     showNotice?: boolean;
+    noticeBotName?: string;
     children?: ReactNode;
 }
 
@@ -19,12 +21,17 @@ interface DiscordInputProps {
 }
 
 export function DiscordModal( props: DiscordModalProps ) {
-    const { title, submitLabel = "Submit", cancelLabel, showNotice, children } = props;
+    const { title, avatarUrl, submitLabel = "Submit", cancelLabel, showNotice, noticeBotName = "Vertix", children } = props;
 
     return (
         <div className="discord-modal">
             <div className="discord-modal-header">
-                <span className="discord-modal-title">{ title }</span>
+                <div className="discord-modal-header-left">
+                    { avatarUrl && (
+                        <img className="discord-modal-avatar" src={ avatarUrl } alt="" />
+                    ) }
+                    <span className="discord-modal-title">{ title }</span>
+                </div>
                 <button className="discord-modal-close" aria-label="Close">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"/>
@@ -35,9 +42,9 @@ export function DiscordModal( props: DiscordModalProps ) {
                 { showNotice && (
                     <div className="discord-modal-notice">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path fill="currentColor" d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z"/>
+                            <path fill="currentColor" d="M10 1.5L0.5 18h19L10 1.5zM10.75 15.5h-1.5v-1.5h1.5v1.5zm0-3h-1.5V9h1.5v3.5z"/>
                         </svg>
-                        <span>This form will be submitted to Vertix. Do not share passwords or other sensitive information.</span>
+                        <span>This form will be submitted to <strong>{ noticeBotName }</strong>. Do not share passwords or other sensitive information.</span>
                     </div>
                 ) }
                 { children }

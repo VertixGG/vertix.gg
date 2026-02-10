@@ -926,6 +926,37 @@ export function FlowEditSidebar() {
             }
         }
 
+        // Apply saved modal overrides (title + per-input label/placeholder)
+        const currentNodeType = selectedNode?.data?.type as string | undefined;
+        if ( currentNodeType === "modal" && componentCustomization?.modalOverrides ) {
+            const { title: modalTitleOverride, inputOverrides } = componentCustomization.modalOverrides as {
+                title?: string;
+                inputOverrides?: Record<string, { label?: string; placeholder?: string }>;
+            };
+
+            if ( modalTitleOverride !== undefined ) {
+                updateNodeData.run( { path: "title", value: modalTitleOverride, isSavedOverride: true } );
+            }
+
+            if ( inputOverrides ) {
+                const currentInputs = selectedNode.data?.inputs as Array<{ name: string; label?: string; placeholder?: string }> | undefined;
+
+                if ( currentInputs ) {
+                    for ( let i = 0; i < currentInputs.length; i++ ) {
+                        const input = currentInputs[ i ];
+                        const override = inputOverrides[ input.name ];
+
+                        if ( override?.label !== undefined ) {
+                            updateNodeData.run( { path: `inputs.${ i }.label`, value: override.label, isSavedOverride: true } );
+                        }
+                        if ( override?.placeholder !== undefined ) {
+                            updateNodeData.run( { path: `inputs.${ i }.placeholder`, value: override.placeholder, isSavedOverride: true } );
+                        }
+                    }
+                }
+            }
+        }
+
         setAppliedCustomization( appliedKey );
     }, [ customization, translations, selectedNode, isLoadingCustomization, appliedCustomization, selectedLanguage, updateNodeData ] );
 
@@ -936,9 +967,15 @@ export function FlowEditSidebar() {
     const embedDefinition = selectedNode?.data?.embedDefinition as UIExportEmbedDefinition | undefined;
 
     const isComponentNode = nodeType === "component";
+    const isModalNode = nodeType === "modal";
     const previewVars = selectedNode?.data?.previewVars as Record<string, string> | undefined;
     const embedVariables = collectEmbedVariables( embedDefinition, previewVars );
     const varEntries = Array.from( embedVariables.entries() ).sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) );
+
+    const modalTitle = selectedNode?.data?.title as string | undefined;
+    const modalInputs = selectedNode?.data?.inputs as Array<{
+        name: string; label?: string; placeholder?: string; style?: "short" | "paragraph"
+    }> | undefined;
 
     const selectedElement = selectedElementIndex && elementRows
         ? elementRows[ selectedElementIndex.row ]?.[ selectedElementIndex.col ]
@@ -965,6 +1002,14 @@ export function FlowEditSidebar() {
         } else {
             setSelectedElementIndex( { row: rowIndex, col: colIndex } );
         }
+    };
+
+    const handleUpdateModalTitle = ( value: string ) => {
+        updateNodeData.run( { path: "title", value } );
+    };
+
+    const handleUpdateModalInput = ( inputIndex: number, field: string, value: string ) => {
+        updateNodeData.run( { path: `inputs.${ inputIndex }.${ field }`, value } );
     };
 
     return (
@@ -1201,11 +1246,74 @@ export function FlowEditSidebar() {
                             </div>
                         ) }
                     </div>
+                ) : isModalNode && selectedNode ? (
+                    <div key={ selectedNode.id } className="p-4 space-y-4">
+                        { /* Modal Title Section */ }
+                        <div>
+                            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <Type className="w-3 h-3" />
+                                Modal Title
+                            </h3>
+                            <div className="bg-zinc-700/50 rounded-lg p-3">
+                                <input
+                                    type="text"
+                                    value={ modalTitle ?? "" }
+                                    onChange={ ( e ) => handleUpdateModalTitle( e.target.value ) }
+                                    className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-sm text-white focus:border-pink-500 focus:outline-none"
+                                    placeholder="Modal title"
+                                />
+                            </div>
+                        </div>
+
+                        { /* Modal Inputs Section */ }
+                        { modalInputs && modalInputs.length > 0 && (
+                            <div>
+                                <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <FileText className="w-3 h-3" />
+                                    Inputs ({ modalInputs.length })
+                                </h3>
+                                <div className="space-y-3">
+                                    { modalInputs.map( ( input, index ) => (
+                                        <div key={ input.name } className="bg-zinc-700/50 rounded-lg p-3 space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <code className="text-pink-400 text-xs font-mono bg-zinc-800 px-1.5 py-0.5 rounded truncate">
+                                                    { input.name.split( "/" ).pop() }
+                                                </code>
+                                                <span className="text-[10px] text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">
+                                                    { input.style ?? "short" }
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-zinc-400 block mb-0.5">Label</label>
+                                                <input
+                                                    type="text"
+                                                    value={ input.label ?? "" }
+                                                    onChange={ ( e ) => handleUpdateModalInput( index, "label", e.target.value ) }
+                                                    className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-0.5 text-[11px] text-white focus:border-pink-500 focus:outline-none"
+                                                    placeholder="Input label"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-zinc-400 block mb-0.5">Placeholder</label>
+                                                <input
+                                                    type="text"
+                                                    value={ input.placeholder ?? "" }
+                                                    onChange={ ( e ) => handleUpdateModalInput( index, "placeholder", e.target.value ) }
+                                                    className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-0.5 text-[11px] text-white focus:border-pink-500 focus:outline-none"
+                                                    placeholder="Input placeholder"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) ) }
+                                </div>
+                            </div>
+                        ) }
+                    </div>
                 ) : (
                     <div className="p-4 text-zinc-500 text-sm text-center mt-8">
                         { selectedNode
-                            ? `Select a component to edit (current: ${ nodeType })`
-                            : "Click a component to edit"
+                            ? `Select a component or modal to edit (current: ${ nodeType })`
+                            : "Click a component or modal to edit"
                         }
                     </div>
                 ) }

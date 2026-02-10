@@ -260,6 +260,35 @@ export function FlowViewer() {
                         updatedData = { ...updatedData, elementRows: updatedElementRows };
                     }
                 }
+
+                // Apply saved modal overrides (title + per-input label/placeholder)
+                const currentNodeType = node.data?.type as string | undefined;
+                if ( currentNodeType === "modal" && componentCustomization?.modalOverrides ) {
+                    const modalOvr = componentCustomization.modalOverrides as {
+                        title?: string;
+                        inputOverrides?: Record<string, { label?: string; placeholder?: string }>;
+                    };
+
+                    if ( modalOvr.title !== undefined ) {
+                        updatedData = { ...updatedData, title: modalOvr.title };
+                    }
+
+                    if ( modalOvr.inputOverrides ) {
+                        const currentInputs = ( updatedData.inputs ?? node.data?.inputs ) as Array<{ name: string; label?: string; placeholder?: string }> | undefined;
+                        if ( currentInputs ) {
+                            const updatedInputs = currentInputs.map( ( input ) => {
+                                const override = modalOvr.inputOverrides![ input.name ];
+                                if ( !override ) return input;
+                                return {
+                                    ...input,
+                                    ...( override.label !== undefined ? { label: override.label } : {} ),
+                                    ...( override.placeholder !== undefined ? { placeholder: override.placeholder } : {} )
+                                };
+                            } );
+                            updatedData = { ...updatedData, inputs: updatedInputs };
+                        }
+                    }
+                }
             }
 
             return updatedData !== node.data ? { ...node, data: updatedData } : node;

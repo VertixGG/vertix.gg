@@ -458,8 +458,54 @@ function extractNodeCustomization(
         }
     }
 
+    // Check for modal overrides (title + per-input label/placeholder)
+    const nodeType = nodeData.type as string | undefined;
+    const modalOverrides: Record<string, unknown> = {};
+
+    if ( nodeType === "modal" ) {
+        const currentTitle = nodeData.title as string | undefined;
+        const originalTitle = originalNodeData?.title as string | undefined;
+
+        if ( currentTitle !== undefined && currentTitle !== originalTitle ) {
+            modalOverrides.title = currentTitle;
+        }
+
+        const currentInputs = nodeData.inputs as Array<{ name: string; label?: string; placeholder?: string }> | undefined;
+        const originalInputs = originalNodeData?.inputs as Array<{ name: string; label?: string; placeholder?: string }> | undefined;
+
+        if ( currentInputs ) {
+            const inputOverrides: Record<string, { label?: string; placeholder?: string }> = {};
+
+            for ( let i = 0; i < currentInputs.length; i++ ) {
+                const input = currentInputs[ i ];
+                const originalInput = originalInputs?.[ i ];
+                const override: { label?: string; placeholder?: string } = {};
+                let hasChanges = false;
+
+                if ( input.label !== undefined && input.label !== originalInput?.label ) {
+                    override.label = input.label;
+                    hasChanges = true;
+                }
+
+                if ( input.placeholder !== undefined && input.placeholder !== originalInput?.placeholder ) {
+                    override.placeholder = input.placeholder;
+                    hasChanges = true;
+                }
+
+                if ( hasChanges ) {
+                    inputOverrides[ input.name ] = override;
+                }
+            }
+
+            if ( Object.keys( inputOverrides ).length > 0 ) {
+                modalOverrides.inputOverrides = inputOverrides;
+            }
+        }
+    }
+
     const hasVariables = Object.keys( variables ).length > 0;
     const hasElementOverrides = Object.keys( elementOverrides ).length > 0;
+    const hasModalOverrides = Object.keys( modalOverrides ).length > 0;
 
     const customization: Record<string, unknown> = {
         embedOverrides: embedOverrides as { title?: string; description?: string; color?: number }
@@ -471,6 +517,10 @@ function extractNodeCustomization(
 
     if ( hasElementOverrides ) {
         customization.elementOverrides = elementOverrides;
+    }
+
+    if ( hasModalOverrides ) {
+        customization.modalOverrides = modalOverrides;
     }
 
     return { customizationKey, customization };

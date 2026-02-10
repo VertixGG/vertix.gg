@@ -301,7 +301,7 @@ class EdgeBuilder {
             const modalId = `modal-${ compId }-${ idx }`;
             const modalDef = compPreview.modalDefinitions.find( m => m.name === modal );
 
-            allNodes.push( createModalNode( modalId, modal, modalDef, this.context.flow.name ) );
+            allNodes.push( createModalNode( modalId, modal, modalDef, this.context.flow.name, stateKey ) );
 
             const connection = connections.find( c => c.modalName === modal );
             const sourceHandle = connection?.buttonName ? `btn-${ connection.buttonName }` : "bottom";
@@ -793,7 +793,7 @@ class EdgeBuilder {
                 const modalId = `modal-${ edgeSourceCompId }-esm-${ idx }`;
                 const modalDef = compPreview.modalDefinitions.find( m => m.name === modalName );
 
-                allNodes.push( createModalNode( modalId, modalName, modalDef, flow.name ) );
+                allNodes.push( createModalNode( modalId, modalName, modalDef, flow.name, stateKey ) );
 
                 const sourceHandle = `btn-${ mapping.triggeringElementId }`;
                 const edge = createComponentToModalEdge( edgeSourceCompId, modalId, sourceHandle );
@@ -995,7 +995,7 @@ class MultiStateFlowBuilder {
         const initialComp = this.context.stateComponents[ 0 ]?.component;
         const modalDef = initialComp?.modalDefinitions?.find( m => m.name === modalName );
 
-        this.allNodes.push( createModalNode( modalId, modalName, modalDef, this.context.flow.name ) );
+        this.allNodes.push( createModalNode( modalId, modalName, modalDef, this.context.flow.name, this.context.initialStateKey ) );
         this.addEdge( createFlowToComponentEdge( this.context.flowId, modalId, this.context.flow.name, modalName ) );
 
         return modalId;
@@ -1241,7 +1241,7 @@ class SingleComponentFlowBuilder {
             const modalId = `modal-${ compId }-${ idx }`;
             const modalDef = compPreview.modalDefinitions.find( m => m.name === modal );
 
-            this.allNodes.push( createModalNode( modalId, modal, modalDef, this.flow.name ) );
+            this.allNodes.push( createModalNode( modalId, modal, modalDef, this.flow.name, stateKey ) );
 
             const connection = buttonModalConnections.find( c => c.modalName === modal );
             const sourceHandle = connection ? `btn-${ connection.buttonName }` : "bottom";

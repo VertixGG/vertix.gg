@@ -39,14 +39,39 @@ export interface ElementOverride {
 export const ELEMENT_OVERRIDE_STRING_FIELDS = [ "label", "emoji", "style", "url", "placeholder" ] as const;
 
 /**
+ * Interface for modal input customization override.
+ * Allows overriding input properties like label and placeholder per guild.
+ */
+export interface ModalInputOverride {
+    label?: string;
+    placeholder?: string;
+}
+
+/**
+ * Interface for modal customization overrides.
+ * Allows overriding modal title and per-input properties.
+ */
+export interface ModalOverrides {
+    title?: string;
+    inputOverrides?: Record<string, ModalInputOverride>;
+}
+
+/**
+ * String-typed fields of ModalInputOverride.
+ * Used for iterating over modal input override fields when diffing or applying overrides.
+ */
+export const MODAL_INPUT_OVERRIDE_FIELDS = [ "label", "placeholder" ] as const;
+
+/**
  * Interface for component customization.
- * Contains embed overrides, variable overrides, and element overrides.
+ * Contains embed overrides, variable overrides, element overrides, and modal overrides.
  */
 export interface ComponentCustomization {
-    readonly [ key: string ]: EmbedOverrides | Record<string, string> | Record<string, ElementOverride> | undefined;
+    readonly [ key: string ]: EmbedOverrides | Record<string, string> | Record<string, ElementOverride> | ModalOverrides | undefined;
     embedOverrides?: EmbedOverrides;
     variables?: Record<string, string>;
     elementOverrides?: Record<string, ElementOverride>;
+    modalOverrides?: ModalOverrides;
 }
 
 /**

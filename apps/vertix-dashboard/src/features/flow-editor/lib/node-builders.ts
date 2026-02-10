@@ -96,9 +96,11 @@ export function createModalNode(
     modalId: string,
     modalName: string,
     modalDef?: { title?: string; inputs?: Array<{ name: string; label?: string; placeholder?: string; style?: "short" | "paragraph" }> },
-    flowName?: string
+    flowName?: string,
+    stateKey?: string
 ): Node {
     const modalShortName = modalName.split( "/" ).pop()?.replace( /Modal$/, "" ) ?? modalName;
+    const modalNameForKey = modalName.split( "/" ).pop() ?? modalName;
 
     return {
         id: modalId,
@@ -109,7 +111,11 @@ export function createModalNode(
             type: "modal",
             title: modalDef?.title,
             inputs: modalDef?.inputs,
-            flowName
+            flowName,
+            modalName,
+            customizationKey: stateKey
+                ? `${ modalNameForKey }:${ stateKey.split( "/" ).pop() ?? stateKey }`
+                : modalNameForKey
         }
     };
 }

@@ -43,9 +43,9 @@ export async function createApp(): Promise<FastifyInstance> {
             secret: discordConfig.getSessionSecret(),
             store: new PrismaSessionStore(),
             cookie: {
-                secure: process.env.NODE_ENV === "production",
+                secure: true,
                 httpOnly: true,
-                sameSite: "lax",
+                sameSite: "none",
                 maxAge: SESSION_MAX_AGE
             },
             saveUninitialized: false

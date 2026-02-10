@@ -32,7 +32,7 @@ export function ModalNode( props: NodeProps<ModalNodeType> ) {
     const selectedClass = selected ? "ring-4 ring-white ring-opacity-80" : "";
 
     return (
-        <div className="min-w-[320px] max-w-[500px]">
+        <div className="min-w-[320px] max-w-[500px] relative">
             <Handle type="target" position={ Position.Top } className="bg-pink-400! w-2! h-2!" />
 
             <div className={ `bg-zinc-900 rounded-lg border border-pink-500/50 shadow-lg shadow-pink-500/20 overflow-hidden transition-all ${ selectedClass }` }>

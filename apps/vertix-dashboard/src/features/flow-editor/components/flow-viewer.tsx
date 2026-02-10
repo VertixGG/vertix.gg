@@ -12,6 +12,7 @@ import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 
 import { nodeTypes } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes";
+import { NodeContextMenu } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes/node-context-menu";
 import { getLayoutedElements } from "@vertix.gg/dashboard/src/features/flow-editor/lib/layout";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 import { LAYOUT_OPTIONS, VIEWPORT_CONFIG, MINIMAP_COLORS, BACKGROUND_CONFIG, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
@@ -96,9 +97,11 @@ export function FlowViewer() {
     const reactFlowInstanceRef = useRef<ReactFlowInstance | null>( null );
     const lastCenteredNodeRef = useRef<string | null>( null );
     const [ zoom, setZoom ] = useState<number>( VIEWPORT_CONFIG.DEFAULT_ZOOM );
+    const [ contextMenu, setContextMenu ] = useState<{ x: number; y: number; flowName: string } | null>( null );
 
     const handleMove = useCallback( ( _event: MouseEvent | TouchEvent | null, viewport: Viewport ) => {
         setZoom( viewport.zoom );
+        setContextMenu( null );
     }, [] );
 
     // Step 1: Layout — only recompute when structure changes (module, edit mode)
@@ -152,7 +155,10 @@ export function FlowViewer() {
     // Step 2: Content — apply translations + customizations without re-layout
     const { initialNodes, initialEdges } = useMemo( () => {
         const contentNodes = layoutedNodes.map( ( node ) => {
-            if ( node.data?.type !== "component" ) {
+            const nodeType = node.data?.type as string | undefined;
+
+            // Skip nodes that are not editable (module, flow, state)
+            if ( nodeType !== "component" && nodeType !== "modal" ) {
                 return node;
             }
 
@@ -417,14 +423,37 @@ export function FlowViewer() {
 
     const onNodeClick = useCallback( ( _event: React.MouseEvent, node: Node ) => {
         handleNodeSelect( node );
+        setContextMenu( null );
     }, [ handleNodeSelect ] );
 
     const onNodeDoubleClick = useCallback( ( _event: React.MouseEvent, node: Node ) => {
         handleNodeSelect( node );
-    }, [ handleNodeSelect ] );
+
+        const flowName = node.data?.flowName as string | undefined;
+        const nodeType = node.data?.type as string | undefined;
+
+        if ( flowName && guildId && ( nodeType === "component" || nodeType === "modal" ) ) {
+            enterEditMode( flowName, guildId );
+        }
+    }, [ handleNodeSelect, guildId, enterEditMode ] );
 
     const onPaneClick = useCallback( () => {
         handleNodeSelect( null );
+        setContextMenu( null );
+    }, [ handleNodeSelect ] );
+
+    const onNodeContextMenu = useCallback( ( event: React.MouseEvent, node: Node ) => {
+        event.preventDefault();
+
+        const flowName = node.data?.flowName as string | undefined;
+        const nodeType = node.data?.type as string | undefined;
+
+        if ( !flowName || ( nodeType !== "component" && nodeType !== "modal" ) ) {
+            return;
+        }
+
+        handleNodeSelect( node );
+        setContextMenu( { x: event.clientX, y: event.clientY, flowName } );
     }, [ handleNodeSelect ] );
 
     if ( isLoading ) {
@@ -453,6 +482,7 @@ export function FlowViewer() {
                 onNodeClick={ onNodeClick }
                 onNodeDoubleClick={ onNodeDoubleClick }
                 onPaneClick={ onPaneClick }
+                onNodeContextMenu={ onNodeContextMenu }
                 onMove={ handleMove }
                 nodeTypes={ nodeTypes }
                 onInit={ ( instance ) => {
@@ -485,34 +515,34 @@ export function FlowViewer() {
                 { Math.round( zoom * 100 ) }%
             </div>
 
-            <div className="absolute top-4 right-4 flex gap-2">
-                { isEditMode && editingFlowName && (
-                    <div className="px-3 py-2 bg-blue-900/50 text-blue-200 text-sm rounded border border-blue-700">
-                        Editing: { editingFlowName.split( "/" ).pop() }
-                    </div>
-                ) }
-                <button
-                    onClick={ () => {
-                        if ( isEditMode ) {
-                            exitEditMode();
-                        } else if ( selectedNode && guildId ) {
-                            const flowName = selectedNode.data?.flowName as string | undefined;
-                            if ( flowName ) {
-                                enterEditMode( flowName, guildId );
-                            }
-                        }
-                    } }
-                    disabled={ !isEditMode && ( !selectedNode || !guildId ) }
-                    className={ `px-3 py-2 text-white text-sm rounded border transition-colors ${
-                        isEditMode
-                            ? "bg-blue-600 hover:bg-blue-700 border-blue-500"
-                            : selectedNode
-                                ? "bg-zinc-800 hover:bg-zinc-700 border-zinc-600"
-                                : "bg-zinc-800/50 border-zinc-700 cursor-not-allowed opacity-50"
-                    }` }
-                >
-                    { isEditMode ? "Exit Edit Mode" : "Edit Mode" }
-                </button>
+            <div className="absolute top-4 left-4">
+                { isEditMode && editingFlowName ? (
+                    <button
+                        onClick={ () => exitEditMode() }
+                        className="px-3 py-2 bg-blue-900/50 hover:bg-blue-900/70 text-blue-200 text-sm rounded border border-blue-700 transition-colors cursor-pointer flex items-center gap-2"
+                        title="Exit edit mode"
+                    >
+                        <span>Editing: { editingFlowName.split( "/" ).pop() }</span>
+                        <span className="text-blue-400 hover:text-white text-xs font-bold">✕</span>
+                    </button>
+                ) : ( () => {
+                    const nodeType = selectedNode?.data?.type as string | undefined;
+                    const nodeFlowName = selectedNode?.data?.flowName as string | undefined;
+                    if ( nodeFlowName && guildId && ( nodeType === "component" || nodeType === "modal" ) ) {
+                        return (
+                            <button
+                                onClick={ () => enterEditMode( nodeFlowName, guildId ) }
+                                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded border border-blue-500 transition-colors cursor-pointer"
+                            >
+                                Edit
+                            </button>
+                        );
+                    }
+                    return null;
+                } )() }
+            </div>
+
+            <div className="absolute top-4 right-4">
                 <button
                     onClick={ onLayout }
                     className="px-3 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-sm rounded border border-zinc-600 transition-colors"
@@ -520,6 +550,18 @@ export function FlowViewer() {
                     Auto Layout
                 </button>
             </div>
+
+            { contextMenu && guildId && (
+                <NodeContextMenu
+                    x={ contextMenu.x }
+                    y={ contextMenu.y }
+                    flowName={ contextMenu.flowName }
+                    onEdit={ () => {
+                        enterEditMode( contextMenu.flowName, guildId );
+                    } }
+                    onClose={ () => setContextMenu( null ) }
+                />
+            ) }
         </div>
     );
 }

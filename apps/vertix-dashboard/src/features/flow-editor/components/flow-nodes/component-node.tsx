@@ -312,7 +312,7 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
     };
 
     return (
-        <div className="min-w-[380px] max-w-[520px]">
+        <div className="min-w-[380px] max-w-[520px] relative">
             <Handle type="target" position={ Position.Top } className="bg-purple-400! w-2! h-2!" />
             <Handle type="target" position={ Position.Left } id="left" className="bg-emerald-400! w-2! h-2!" />
             <Handle type="target" position={ Position.Right } id="right" className="bg-emerald-400! w-2! h-2!" />

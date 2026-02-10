@@ -4,6 +4,7 @@ import Terms from "./welcome-sections/terms";
 import TemporaryVoiceChannelsFeatures from "./welcome-sections/temporary-voice-channels-features";
 import SetupFeatures from "./welcome-sections/setup-features";
 import AutoScalingFeatures from "./welcome-sections/auto-scaling-features";
+import DashboardFeatures from "./welcome-sections/dashboard-features";
 import BotSetup from "./welcome-sections/bot-setup";
 import ButtonsInterface from "./welcome-sections/buttons-interface";
 import Suggestions from "./welcome-sections/suggestions";
@@ -36,6 +37,9 @@ export default function Welcome() {
                     <hr />
 
                     <AutoScalingFeatures />
+                    <hr />
+
+                    <DashboardFeatures />
                     <hr />
 
                     <SetupFeatures />

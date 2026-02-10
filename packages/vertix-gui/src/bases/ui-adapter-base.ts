@@ -257,12 +257,28 @@ export abstract class UIAdapterBase<
             args._guildId = ownerId;
 
             // Set _customizationKey if not already provided
-            // Format: "ComponentName" (short name, last segment only to match dashboard format)
+            // Format: "ComponentName" or "ComponentName:StateName" for adapters with transactions
             if ( !args._customizationKey ) {
                 // Extract just the last segment of the component name to match dashboard format
                 // e.g., "VertixBot/UI/SetupAdapter" -> "SetupAdapter"
                 const fullName = this.getComponent().getName();
-                args._customizationKey = fullName.split( "/" ).pop() ?? fullName;
+                let customizationKey = fullName.split( "/" ).pop() ?? fullName;
+
+                // For adapters with transactions, append the initial state name
+                // so it matches the dashboard format "ComponentName:StateName"
+                const staticClass = this.constructor as Record<string, unknown>;
+                if ( typeof staticClass.getTransactions === "function" ) {
+                    const transactions = ( staticClass.getTransactions as () => { getInitialState(): string } | undefined )();
+                    if ( transactions ) {
+                        const initialState = transactions.getInitialState();
+                        const stateShortName = initialState.split( "/" ).pop() ?? initialState;
+                        if ( stateShortName ) {
+                            customizationKey = `${ customizationKey }:${ stateShortName }`;
+                        }
+                    }
+                }
+
+                args._customizationKey = customizationKey;
             }
         }
 
@@ -364,6 +380,17 @@ export abstract class UIAdapterBase<
                     : null;
 
             if ( resolvedArgs ) {
+                // Preserve system-internal args from newArgs that getArgsInternal may not return
+                // (e.g., _customizationKey set by triggerTransition, _step set by editReplyWithStep)
+                if ( newArgs ) {
+                    if ( newArgs._customizationKey ) {
+                        resolvedArgs._customizationKey = newArgs._customizationKey;
+                    }
+                    if ( newArgs._step ) {
+                        resolvedArgs._step = newArgs._step;
+                    }
+                }
+
                 if ( currentArgs ) {
                     this.getArgsManager().setArgs( this, interaction, resolvedArgs );
                 } else {
@@ -510,6 +537,17 @@ export abstract class UIAdapterBase<
     ) {
         const args = await this.getArgsInternal( interaction, sendArgs ),
             caller = this.ephemeral.name;
+
+        // Preserve system-internal args from sendArgs that getArgsInternal may not return
+        // (e.g., _customizationKey set by triggerTransition, _step set by ephemeralWithStep)
+        if ( sendArgs ) {
+            if ( sendArgs._customizationKey ) {
+                args._customizationKey = sendArgs._customizationKey;
+            }
+            if ( sendArgs._step ) {
+                args._step = sendArgs._step;
+            }
+        }
 
         await this.build( args, "reply", interaction );
 

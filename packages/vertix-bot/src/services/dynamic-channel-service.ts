@@ -2755,6 +2755,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // Also invalidate __default__ since it's merged as a base layer
         GuildCustomizationManager.$.invalidateCache( "__default__" );
 
+        this.logger.log(
+            this.handleRefreshCustomization,
+            `Cache invalidated for guild ${ guildId } and __default__`
+        );
+
         // Refresh control panel messages with updated customization
         const guild = this.services.appService.getClient().guilds.cache.get( guildId );
 
@@ -2763,6 +2768,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             // Refresh primary messages in all active dynamic channels for this guild
             await this.refreshDynamicChannelMessages( guild );
+
+            this.logger.log(
+                this.handleRefreshCustomization,
+                `Refreshed control panels and dynamic channel messages for guild ${ guildId }`
+            );
         } else {
             this.logger.warn(
                 this.handleRefreshCustomization,
@@ -2795,7 +2805,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 try {
                     await this.editPrimaryMessage( channel as VoiceChannel );
                     refreshedCount++;
-                } catch ( error ) {
+                } catch( error ) {
                     this.logger.warn(
                         this.refreshDynamicChannelMessages,
                         `Failed to refresh primary message for channel '${ channelDB.channelId }' in guild '${ guild.id }': ${ error }`
@@ -2809,7 +2819,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     `Guild '${ guild.name }' (${ guild.id }) - Refreshed ${ refreshedCount } dynamic channel primary message(s).`
                 );
             }
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error(
                 this.refreshDynamicChannelMessages,
                 `Failed to refresh dynamic channel messages for guild '${ guild.id }': ${ error }`

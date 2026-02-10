@@ -1,4 +1,5 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { IPC_CHANNELS, MANAGEMENT_ACTIONS } from "@vertix.gg/base/src/modules/ipc";
 
@@ -14,6 +15,8 @@ import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import type { ComponentCustomization } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
+const logger = new Logger( "VertixAPI/CustomizationRoute" );
 
 interface GuildParams {
     guildId: string;
@@ -42,14 +45,24 @@ async function notifyBotCustomizationRefresh( guildId: string ) {
     try {
         const ipcService = ServiceLocator.$.get<IPCService>( "VertixBase/Modules/IPCService" );
 
-        if ( ipcService?.isReady() ) {
-            await ipcService.publish( IPC_CHANNELS.MANAGEMENT, {
-                action: MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION,
-                data: { guildId }
-            } );
+        if ( !ipcService ) {
+            logger.warn( notifyBotCustomizationRefresh, `IPC service not found in ServiceLocator for guild ${ guildId }` );
+            return;
         }
-    } catch {
-        // Non-critical: customization is already saved to DB
+
+        if ( !ipcService.isReady() ) {
+            logger.warn( notifyBotCustomizationRefresh, `IPC service not ready for guild ${ guildId }` );
+            return;
+        }
+
+        await ipcService.publish( IPC_CHANNELS.MANAGEMENT, {
+            action: MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION,
+            data: { guildId }
+        } );
+
+        logger.info( notifyBotCustomizationRefresh, `Published REFRESH_CUSTOMIZATION for guild ${ guildId }` );
+    } catch ( error ) {
+        logger.error( notifyBotCustomizationRefresh, `Failed to notify bot for guild ${ guildId }`, error );
     }
 }
 

@@ -76,7 +76,7 @@ export function createComponentNode(
         data: {
             label: label ?? compPreview.name,
             type: "component",
-            customizationKey: compPreview.name,
+            customizationKey: stateKey ? `${ compPreview.name }:${ stateKey.split( "/" ).pop() ?? stateKey }` : compPreview.name,
             embedName: compPreview.embedName,
             embed: compPreview.embed,
             embedDefinition: compPreview.embedDefinition,

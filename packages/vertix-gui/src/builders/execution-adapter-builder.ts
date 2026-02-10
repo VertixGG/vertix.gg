@@ -269,6 +269,16 @@ export class ExecutionAdapterBuilder<
                     return;
                 }
 
+                // Set state-specific customization key so each state can have its own customization
+                // Format: "ComponentName:StateName" (matches dashboard customizationKey format)
+                if ( resolved.targetState ) {
+                    const componentShortName = this.getComponent().getName().split( "/" ).pop() ?? this.getComponent().getName();
+                    const stateShortName = resolved.targetState.split( "/" ).pop() ?? resolved.targetState;
+                    const mergedArgs = ( args ?? {} ) as Record<string, unknown>;
+                    mergedArgs._customizationKey = `${ componentShortName }:${ stateShortName }`;
+                    args = mergedArgs as TArgs;
+                }
+
                 switch ( resolved.navigationType ) {
                     case "editReply":
                         await this.editReplyWithStepWrapper( interaction, resolved.executionStep, args );

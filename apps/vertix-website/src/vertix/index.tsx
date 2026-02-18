@@ -44,7 +44,7 @@ const IndexContent = () => {
         <>
             { !shouldHideHeader && <Header/> }
 
-            <DashboardAnnouncement/>
+            { !shouldHideHeader && <DashboardAnnouncement/> }
 
             <section className="content">
                 <Suspense fallback={ LoadingContainer() }>

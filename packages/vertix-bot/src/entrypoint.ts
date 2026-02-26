@@ -36,7 +36,7 @@ import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
-import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
+import { initWorker, CleanupWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
@@ -917,4 +917,8 @@ export async function entryPoint( options: {
     process.env.Z_RUN_TSCONFIG_PATH = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), "../tsconfig.json" );
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
+
+    CleanupWorker.$.handle( client ).catch( ( error ) => {
+        GlobalLogger.$.error( entryPoint, "Startup channel cleanup failed", error );
+    } );
 }

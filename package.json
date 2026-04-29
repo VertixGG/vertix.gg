@@ -2,7 +2,7 @@
     "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
     "name": "vertix.gg",
     "author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
-    "license": "proprietary",
+    "license": "MIT",
     "type": "module",
     "version": "0.0.0",
     "description": "Vertix - Discord Bot",

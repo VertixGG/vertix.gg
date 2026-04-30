@@ -52,10 +52,10 @@ This installs every workspace (`apps/*`, `packages/*`, `assets`) in one shot.
 
 ### 3. Configure Environment Variables
 
-Every Vertix service (bot, api, dashboard, mcp, logger) loads from a **single root-level `.env`** file. The repo ships with a fully-commented [.env.example](.env.example) — copy it to `.env` and fill in your values:
+Every Vertix service (bot, api, dashboard, mcp, logger) loads from a **single root-level `.env`** file. The repo ships with a fully-commented [example.env](example.env) — copy it to `.env` and fill in your values:
 
 ```bash
-cp .env.example .env
+cp example.env .env
 ```
 
 Then open `.env` and fill in at minimum the following values (the rest already have safe defaults):
@@ -73,9 +73,9 @@ Then open `.env` and fill in at minimum the following values (the rest already h
 
 The `OPENAI_API_KEY`, `TOP_GG_TOKEN`, and `*_DEPLOY_*` blocks are **optional** — leave them empty unless you're using those features.
 
-> ⚠️ **Never commit your `.env` file.** It's already gitignored — only `.env.example` is checked in.
+> ⚠️ **Never commit your `.env` file.** It's already gitignored — only `example.env` is checked in.
 >
-> 💡 When you add a new env variable, also add it to [.env.example](.env.example) (with a placeholder, not a real value) so contributors know it exists.
+> 💡 When you add a new env variable, also add it to [example.env](example.env) (with a placeholder, not a real value) so contributors know it exists.
 
 ### 4. Start Infrastructure
 

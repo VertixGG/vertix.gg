@@ -297,13 +297,13 @@ This is a [Bun](https://bun.sh)-managed monorepo:
 vertix.gg/
 ├── apps/
 │   ├── vertix-api/         REST API
+│   ├── vertix-bot/         Discord bot
 │   ├── vertix-dashboard/   Web dashboard (dashboard.vertix.gg)
 │   ├── vertix-mcp/         MCP server
 │   ├── vertix-website/     Marketing site (vertix.gg)
 │   └── redis/              Redis dev container
 ├── packages/
 │   ├── vertix-base/        Shared base utilities
-│   ├── vertix-bot/         Discord bot core
 │   ├── vertix-definitions/ Shared definitions
 │   ├── vertix-discord-ui/  Discord UI rendering
 │   ├── vertix-gui/         GUI framework

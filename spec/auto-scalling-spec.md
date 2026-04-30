@@ -23,11 +23,11 @@ The system uses two internal channel types defined in the Prisma schema:
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `ScalingChannelService` | `packages/vertix-bot/src/services/scaling-channel-service.ts` | Core service managing all scaling operations |
+| `ScalingChannelService` | `apps/vertix-bot/src/services/scaling-channel-service.ts` | Core service managing all scaling operations |
 | `ScalingChannelDataModel` | `packages/vertix-base/src/models/master-channel/scaling-channel-data-model.ts` | Database operations for scaling settings |
-| `scaling-channel-config.ts` | `packages/vertix-bot/src/config/scaling-channel-config.ts` | Default configuration values |
+| `scaling-channel-config.ts` | `apps/vertix-bot/src/config/scaling-channel-config.ts` | Default configuration values |
 | `ChannelModel` | `packages/vertix-base/src/models/channel/channel-model.ts` | Channel database operations with scaling helpers |
-| `ChannelHandler` | `packages/vertix-bot/src/listeners/channel-handler.ts` | Event listener for voice state updates |
+| `ChannelHandler` | `apps/vertix-bot/src/listeners/channel-handler.ts` | Event listener for voice state updates |
 
 ---
 

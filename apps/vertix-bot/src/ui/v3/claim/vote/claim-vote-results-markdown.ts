@@ -23,7 +23,7 @@ export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
     }
 
     protected static getContentPath() {
-        const packageRoot = path.resolve( path.dirname( zFindRootPackageJsonPath() ), "packages/vertix-bot" );
+        const packageRoot = path.resolve( path.dirname( zFindRootPackageJsonPath() ), "apps/vertix-bot" );
 
         return path.resolve( packageRoot, "assets/claim-vote-results-markdown.md" );
     }

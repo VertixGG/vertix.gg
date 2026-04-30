@@ -24,7 +24,7 @@ interface PackageJson {
     [key: string]: any;
 }
 
-const packageJsonPath = path.resolve( path.dirname( zFindRootPackageJsonPath() ), "packages/vertix-bot/package.json" );
+const packageJsonPath = path.resolve( path.dirname( zFindRootPackageJsonPath() ), "apps/vertix-bot/package.json" );
 const packageJsonString = fs.readFileSync( packageJsonPath, { encoding: "utf8" } );
 const packageJson: PackageJson = JSON.parse( packageJsonString );
 

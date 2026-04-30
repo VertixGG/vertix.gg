@@ -10,7 +10,7 @@
         },
         {
             "name": "Bot",
-            "path": "./packages/vertix-bot"
+            "path": "./apps/vertix-bot"
         },
         {
             "name": "GUI",

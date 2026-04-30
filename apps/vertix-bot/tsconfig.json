@@ -8,7 +8,7 @@
         "rootDir": "./",
         "typeRoots": [
             "../../node_modules/@types",
-            "../vertix-prisma/types",
+            "../../packages/vertix-prisma/types",
             "./types",
         ],
 

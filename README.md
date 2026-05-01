@@ -1,24 +1,47 @@
-<p align="center">
-    <a href="https://vertix.gg/">
-        <img src="assets/brand/Robot.png" alt="Vertix" width="220" />
-    </a>
-</p>
+<div align="center">
 
-<h1 align="center">Vertix</h1>
+<a href="https://vertix.gg/">
+    <img src="assets/brand/Robot.png" alt="Vertix" width="220" />
+</a>
 
-<p align="center">
-    <strong>A Discord platform — not just a bot.</strong><br/>
-    Vertix ships advanced temporary voice channels, auto-scaling rooms, and a web dashboard,
-    all powered by a reusable framework for building beautiful Discord UI interactions
-    (embeds, buttons, modals, wizards, select menus) declaratively in TypeScript.
-</p>
+# Vertix
 
-<p align="center">
-    <a href="https://vertix.gg/invite-vertix">Invite Vertix</a> ·
-    <a href="https://vertix.gg/welcome">Documentation</a> ·
-    <a href="https://dashboard.vertix.gg">Dashboard</a> ·
-    <a href="https://vertix.gg/changelog">Changelog</a>
-</p>
+### A Discord platform — not just a bot.
+
+Advanced temporary voice channels, auto-scaling rooms, and a web dashboard,<br/>
+powered by an **open-source framework** for declaring Discord UIs as state machines you can edit visually.
+
+<br/>
+
+[![License: MIT](https://img.shields.io/github/license/VertixGG/vertix.gg?style=for-the-badge&color=blue)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/VertixGG/vertix.gg?style=for-the-badge&color=yellow)](https://github.com/VertixGG/vertix.gg/stargazers)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Bun](https://img.shields.io/badge/Bun-1.3-F9F1E1?style=for-the-badge&logo=bun&logoColor=black)](https://bun.sh/)
+[![discord.js](https://img.shields.io/badge/discord.js-v14-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.js.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/VertixGG/vertix.gg/pulls)
+
+<br/>
+
+**[🚀 Invite Vertix](https://vertix.gg/invite-vertix)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://vertix.gg/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.vertix.gg)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://vertix.gg/changelog)**
+
+</div>
+
+<br/>
+
+<details>
+<summary><strong>📑 Table of Contents</strong></summary>
+
+- [Quick Start](#quick-start--run-vertix-locally) — clone, install, run every service locally
+- [Why You Should Build on Vertix](#why-you-should-build-on-vertix-) — the pitch, use cases, comparisons, stack
+- [How it's modeled](#how-its-actually-modeled) — flows, adapters, the round-trip
+- [Core Concepts](#getting-to-know-the-basics) — Master / Dynamic channels
+- [Voice Channel Features](#temporary-voice-channels--v2-features) — V2 + V3
+- [Auto-Scaling Channels](#auto-scaling-channels-) — fleets that grow on demand
+- [Dashboard](#dashboard-) — visual editor + bot management
+- [Project Structure](#project-structure) — the monorepo layout
+- [License](#license)
+
+</details>
 
 ---
 
@@ -37,7 +60,8 @@ Install these once on your system:
 | [MongoDB](https://www.mongodb.com/try/download/community) | `>= 6.x` | Must run as a **replica set** (Prisma requirement) |
 | Git | latest | To clone the repo |
 
-> 💡 You can also use a managed MongoDB Atlas cluster instead of a local install — just point `BOT_PRISMA_DATABASE_URL` / `API_PRISMA_DATABASE_URL` at it.
+> [!TIP]
+> You can also use a managed **MongoDB Atlas** cluster instead of a local install — just point `BOT_PRISMA_DATABASE_URL` / `API_PRISMA_DATABASE_URL` at it.
 
 You'll also need a [Discord bot token](https://discord.com/developers/applications) and a Discord OAuth2 client (client id + secret + redirect URI) for the dashboard sign-in.
 
@@ -75,9 +99,11 @@ Then open `.env` and fill in at minimum the following values (the rest already h
 
 The `OPENAI_API_KEY`, `TOP_GG_TOKEN`, and `*_DEPLOY_*` blocks are **optional** — leave them empty unless you're using those features.
 
-> ⚠️ **Never commit your `.env` file.** It's already gitignored — only `example.env` is checked in.
->
-> 💡 When you add a new env variable, also add it to [example.env](example.env) (with a placeholder, not a real value) so contributors know it exists.
+> [!WARNING]
+> **Never commit your `.env` file.** It's already gitignored — only `example.env` is checked in.
+
+> [!TIP]
+> When you add a new env variable, also add it to [example.env](example.env) (with a placeholder, not a real value) so contributors know it exists.
 
 ### 4. Start Infrastructure
 
@@ -138,11 +164,8 @@ bun run vertix:logger:dev
 bun run vertix:mcp:dev
 ```
 
-> 🔁 Want the bot to auto-restart on crash during development? Use the included loop script:
->
-> ```bash
-> bash run-bot-loop.sh
-> ```
+> [!TIP]
+> Want the bot to auto-restart on crash during development? Use the included loop script: `bash run-bot-loop.sh`
 
 ### 7. Invite Your Bot & Configure It
 
@@ -257,18 +280,29 @@ const DynamicChannelAdapter = new DynamicExecutionAdapterBuilder( "VertixBot/UI-
 
 ### The round-trip
 
-```
-TypeScript flows + adapter builders          Live Discord UI
-        │                                            ▲
-        │   exporter                                 │ data-driven
-        ▼                                            │ runtime
-  JSON UI definitions  ◄────►  Dashboard visual editor (xyflow)
-        ▲                              │
-        │                              ▼
-        └────  per-guild customization layer  ◄──── ICustomizationProvider
+```mermaid
+flowchart LR
+    TS["<b>TypeScript flows</b><br/>+ adapter builders"]
+    JSON["<b>JSON UI</b><br/>definitions"]
+    Editor["<b>Dashboard</b><br/>visual editor<br/><i>@xyflow/react</i>"]
+    Cust["<b>Per-guild</b><br/>customizations"]
+    Live["<b>Live Discord UI</b>"]
+
+    TS -->|exporter| JSON
+    JSON <-->|read / write| Editor
+    Editor -->|saves overrides| Cust
+    JSON -->|data-driven runtime| Live
+    Cust -->|ICustomizationProvider| Live
+
+    classDef code fill:#1e293b,color:#fff,stroke:#0ea5e9,stroke-width:2px;
+    classDef store fill:#0f172a,color:#fff,stroke:#a855f7,stroke-width:2px;
+    classDef live fill:#064e3b,color:#fff,stroke:#10b981,stroke-width:2px;
+    class TS code;
+    class JSON,Cust store;
+    class Editor,Live live;
 ```
 
-Code is the source of truth. The exporter ([`runtime/ui-definition-exporter.ts`](packages/vertix-gui/src/runtime/ui-definition-exporter.ts)) turns it into JSON. The dashboard renders that JSON as an editable graph. Per-guild edits are stored via [`ICustomizationProvider`](packages/vertix-gui/src/customization/customization-provider.ts), and the bot's [data-driven runtime](packages/vertix-gui/src/runtime) layers them on top of the base flow at render time. No redeploy. No restart.
+Code is the source of truth. The exporter ([`runtime/ui-definition-exporter.ts`](packages/vertix-gui/src/runtime/ui-definition-exporter.ts)) turns it into JSON. The dashboard renders that JSON as an editable graph. Per-guild edits are stored via [`ICustomizationProvider`](packages/vertix-gui/src/customization/customization-provider.ts), and the bot's [data-driven runtime](packages/vertix-gui/src/runtime) layers them on top of the base flow at render time. **No redeploy. No restart.**
 
 ### What you get out of the box
 
@@ -289,6 +323,7 @@ Code is the source of truth. The exporter ([`runtime/ui-definition-exporter.ts`]
 - You're not on TypeScript. The framework leans hard on generics — you'll lose half the value in plain JS.
 - You don't want a dashboard. The framework runs without one, but the visual-editor + customization story is the main reason to pick it.
 
+> [!NOTE]
 > Want to trace a real example end-to-end? Read [`spec/auto-scalling-spec.md`](spec/auto-scalling-spec.md) — it walks through the auto-scaling feature from service layer through flow + adapter to dashboard nodes.
 
 ---
@@ -407,7 +442,8 @@ Setting up Vertix is a breeze:
 4. Pick your interface buttons and click **▶ Next**.
 5. Set your verified roles and click **✔ Finish**.
 
-> 💡 **Pro Tip:** You can always tweak these settings later using the same `/setup` command.
+> [!TIP]
+> You can always tweak these settings later using the same `/setup` command.
 
 ---
 
@@ -467,28 +503,34 @@ bun run vertix:jest
 
 ---
 
-## Suggestions 💡
+## Showcase
 
-Most of the best features in **Vertix** started as a spark of an idea from someone like you. We're committed to building the ultimate Discord experience, and your feedback is our roadmap.
+See it in action without installing anything:
 
-Have an idea? Notice something that could be better? Join the community and let us know — we're excited to evolve Vertix together with you.
-
----
-
-## Links
-
-- 🌐 **Website:** [vertix.gg](https://vertix.gg/)
-- ➕ **Invite:** [vertix.gg/invite-vertix](https://vertix.gg/invite-vertix)
-- 🎛️ **Dashboard:** [dashboard.vertix.gg](https://dashboard.vertix.gg)
-- 📖 **Docs:** [vertix.gg/welcome](https://vertix.gg/welcome)
-- 📜 **Changelog:** [vertix.gg/changelog](https://vertix.gg/changelog)
-- 🔒 **Privacy:** [vertix.gg/privacy-policy](https://vertix.gg/privacy-policy)
-- 📃 **Terms:** [vertix.gg/terms-of-service](https://vertix.gg/terms-of-service)
+| | |
+| --- | --- |
+| 🎬 **Live demos & docs** | [vertix.gg/welcome](https://vertix.gg/welcome) — every dynamic-channel feature rendered as a real interactive Discord component using `@vertix.gg/discord-ui` |
+| 🧰 **Auto-scaling walkthrough** | [vertix.gg/features/auto-scaling](https://vertix.gg/features/auto-scaling) — wizard, configuration, and scaling logic explained step-by-step |
+| 🎛️ **The dashboard** | [dashboard.vertix.gg](https://dashboard.vertix.gg) — sign in with Discord and edit master channel UIs with the visual flow editor |
+| 📜 **Changelog** | [vertix.gg/changelog](https://vertix.gg/changelog) — what shipped recently and what's next |
 
 ---
+
+## Roadmap & Community
+
+Most of the best features in **Vertix** started as a spark of an idea from a community member. Your feedback is our roadmap.
+
+- 🐛 **Bug reports & feature requests:** [open an issue](https://github.com/VertixGG/vertix.gg/issues)
+- 💬 **Got an idea or want to chat?** Join the [Discord community](https://vertix.gg/invite-vertix)
+- 🤝 **Want to contribute?** PRs are welcome — see [Quick Start](#quick-start--run-vertix-locally) to get a local environment running
+
 
 ## License
 
-Vertix is released under the **MIT License** — free for personal and commercial use, fork it, modify it, ship it. See [LICENSE](LICENSE) for the full text.
+Vertix is released under the **[MIT License](LICENSE)** — free for personal and commercial use. Fork it, modify it, ship it.
 
-Contributions are welcome! Open an issue or a pull request on [GitHub](https://github.com/VertixGG/vertix.gg).
+<sub>**Legal:** [Privacy Policy](https://vertix.gg/privacy-policy) · [Terms of Service](https://vertix.gg/terms-of-service)</sub>
+
+<div align="center">
+  <sub>Built with ❤️ by <a href="https://github.com/iNewLegend">Leonid Vinikov</a> and <a href="https://github.com/VertixGG/vertix.gg/graphs/contributors">contributors</a>.</sub>
+</div>

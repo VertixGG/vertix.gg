@@ -7,8 +7,10 @@
 <h1 align="center">Vertix</h1>
 
 <p align="center">
-    <strong>The exceptional Discord bot designed to revolutionize your server experience.</strong><br/>
-    Advanced temporary voice channels, auto-scaling rooms, and a web dashboard — all in one place.
+    <strong>A Discord platform — not just a bot.</strong><br/>
+    Vertix ships advanced temporary voice channels, auto-scaling rooms, and a web dashboard,
+    all powered by a reusable framework for building beautiful Discord UI interactions
+    (embeds, buttons, modals, wizards, select menus) declaratively in TypeScript.
 </p>
 
 <p align="center">
@@ -165,6 +167,132 @@ Once the bot prints `Ready!`, the API is listening on port `3021`, and the dashb
 
 ---
 
+## Why You Should Build on Vertix 🚀
+
+Discord bot UIs get ugly fast. Six months in, you've got a `switch` statement on `customId` 400 lines deep, an i18n bolt-on you wrote on a Friday, embeds living in `.txt` files that *almost* match what's in code, and shipping a UI tweak still means a redeploy. Vertix is built around a different idea: **model your bot as a state machine and the rest falls out** — visual editing, hot customization, type safety, i18n, all of it.
+
+### The pitch in five lines
+
+- **Skip the boilerplate.** No more `if (interaction.customId.startsWith("..."))`. Declare `bindButton(elementId, transition, handler)` and the framework owns the routing, ack/defer, expiry, and disposal.
+- **Edit your bot UI without redeploying.** Every flow, embed, button label, and modal is exportable to JSON, editable per guild and per language, and reloaded by the bot at next render.
+- **Visual editor for free.** Your code is the source of truth — but the dashboard auto-renders it as an `@xyflow/react` node graph: flows are nodes, transitions are edges, modals are child nodes. PMs, designers, and translators can tweak text without ever opening VS Code.
+- **Discord's 100-char `custom_id` limit becomes a non-issue.** Hash-based ids let you nest component trees as deep as you want.
+- **i18n is the default, not a v2 problem.** Seven languages ship out of the box (en, ru, el, es, fr, de, ja); add a JSON file for any other.
+
+### Built for bots like these
+
+Concrete scenarios where Vertix earns its keep — each one is hard to do well in raw discord.js but practically free here:
+
+- **Multi-step `/setup` wizards.** Onboarding flows with Back/Next, per-step validation, and modals for input. → [`UIWizardFlowBase`](packages/vertix-gui/src/bases/ui-wizard-flow-base.ts) + [`WizardAdapterBuilder`](packages/vertix-gui/src/builders/wizard-adapter-builder.ts) gives you `nextStep()` / `previousStep()` / step components and the standard control row out of the box. Vertix's own `/setup` is exactly this.
+- **Ticket / support systems.** Open → pick category → fill modal → assigned → resolved, with claim/transfer/escalation. → State machines with typed transitions and `getRequiredData(transition)` so you can't advance with missing fields. There's a [`ticket/`](apps/vertix-bot/src/ui/ticket) module already wired up.
+- **Per-server admin panels.** Server admins configure your bot from inside Discord *and* from a web dashboard, with both staying in sync. → The same flow JSON powers both surfaces; [`ICustomizationProvider`](packages/vertix-gui/src/customization/customization-provider.ts) keeps per-guild overrides consistent.
+- **Voting / claim / approval flows.** Proposal posted → vote period with live tally → automatic resolution. → Flows with timed transitions ([`UIEmbedTimeElapsedBase`](packages/vertix-gui/src/bases/ui-embed-time-elapsed-base.ts)) and multi-user state — the channel-claim feature in Vertix is built on this.
+- **Bot-as-a-service / white-label products.** You sell access to one bot; each customer wants different copy, branding, language, and feature toggles. → Per-guild customization + 7 built-in languages mean you don't fork the codebase per customer.
+- **Marketplaces, game/RPG bots, character sheets, inventory, combat.** Anything with branching state across many screens. → Cross-flow handoffs (`getEntryPoints` / `getHandoffPoints`) let you split a 50-screen bot into composable, individually-testable flows.
+- **Migrating a v1 UI to v2 without breaking existing servers.** → [`UIAdapterVersioningService`](packages/vertix-gui/src/ui-adapter-versioning-service.ts) runs both side-by-side; servers opt in to the new version when they're ready.
+- **AI agents that drive Discord UIs.** Let a model open a flow, fill a modal, click a button. → The [MCP server](apps/vertix-mcp) exposes the flow graph as tool calls.
+- **PM / translator workflows.** Non-engineers tweak copy, reorder buttons, swap emoji per locale without touching code. → The visual editor reads/writes the same JSON the runtime uses; engineers stay in TS.
+
+### How it compares
+
+| You're using… | Where it hurts | Where Vertix is different |
+| --- | --- | --- |
+| Raw **discord.js** | You hand-roll every collector, customId, and embed string. Six months in: hairball. | Declarative state machines, typed transitions, generated routing. Same `discord.js` underneath — you keep all the escape hatches. |
+| **Sapphire / discord-akairo / discordx** | Great for command routing — but UI is still raw `discord.js` builders and manual interaction handling. | Sits *above* the command layer. You can use Sapphire for slash commands and Vertix for the UI screens those commands open. |
+| **Botpress / Voiceflow / generic flow builders** | Built for chatbots, not Discord. No native embeds, modals, slash commands, or button styles. | Discord-native: every node maps to a real Discord component, with full type info and previews that match production pixel-for-pixel. |
+| **Custom in-house framework** | You'll spend a quarter on i18n, a sprint on customId hashing, a month on the visual editor — and still won't have it. | Already written, battle-tested in production on Vertix's own bot, MIT-licensed. |
+
+### What it utilizes
+
+The framework is intentionally built on the same boring, popular tools you already know — no exotic runtimes, no proprietary protocols.
+
+- **[TypeScript](https://www.typescriptlang.org/)** end-to-end. State, transition, data, and args are all generic parameters. Renaming a transition lights up every consumer at compile time.
+- **[discord.js v14](https://discord.js.org/)** as the transport. Builders ([`ButtonBuilder`](packages/vertix-gui/src/builders/button-builder.ts), [`EmbedBuilder`](packages/vertix-gui/src/builders/embed-builder.ts), [`StringSelectMenuBuilder`](packages/vertix-gui/src/builders/string-select-menu-builder.ts), [`TransactionBuilder`](packages/vertix-gui/src/builders/transaction-builder.ts)) wrap discord.js without hiding it — drop down to `Interaction` whenever you need to.
+- **[Bun](https://bun.sh/)** monorepo with workspaces — install everything in one shot, run any service with a single script.
+- **[Prisma](https://www.prisma.io/) + MongoDB** for the persistence layer (replica-set required, schema in [`packages/vertix-prisma/prisma`](packages/vertix-prisma/prisma)).
+- **[React 18](https://react.dev/) + [@xyflow/react](https://reactflow.dev/) + [Tailwind 4](https://tailwindcss.com/)** for the dashboard's flow editor and the live preview pane.
+- **[Fastify v5](https://fastify.dev/)** for the [REST API](apps/vertix-api) that bridges the dashboard to the bot — Discord OAuth2 sessions, guild-scoped customization endpoints, customization provider sync.
+- **[Redis](https://redis.io/)** for ephemeral interaction state.
+- **[fastmcp](https://github.com/punkpeye/fastmcp)** + **[@modelcontextprotocol/sdk](https://modelcontextprotocol.io/)** so AI agents can drive your UI flows ([`apps/vertix-mcp`](apps/vertix-mcp)).
+
+### How it's actually modeled
+
+**Flows** ([`UIFlowBase<TState, TTransition, TData>`](packages/vertix-gui/src/bases/ui-flow-base.ts)) are typed finite state machines. Each declares:
+
+- `getNextState(transition)` — the transition function.
+- `getRequiredData(transition)` — what must be in the flow's data for a transition to be legal.
+- `getEntryPoints()` / `getHandoffPoints()` — how this flow connects to other flows.
+- `getEdgeSourceMappings()` — explicit `(UI element id → transition → target flow)` triples that the visual editor turns into graph edges.
+
+Wizard flows ([`UIWizardFlowBase`](packages/vertix-gui/src/bases/ui-wizard-flow-base.ts)) inherit Back/Next/Finish/Error transitions and step components — that's how `/setup` is built.
+
+**Adapters** glue flows to live Discord interactions. They're declared with a fluent **builder DSL** ([`ExecutionAdapterBuilder`](packages/vertix-gui/src/builders/execution-adapter-builder.ts), [`WizardAdapterBuilder`](packages/vertix-gui/src/builders/wizard-adapter-builder.ts), [`AdminAdapterBuilder`](packages/vertix-gui/src/builders/admin-adapter-builder.ts)):
+
+```ts
+// Real adapter from apps/vertix-bot/src/ui/v3/dynamic-channel/dynamic-channel-adapter.ts
+const DynamicChannelAdapter = new DynamicExecutionAdapterBuilder( "VertixBot/UI-V3/DynamicChannelAdapter" )
+    .setComponent( DynamicChannelComponent )
+    .setArgsDataSource( [ "all" ], DynamicChannelUIData.getName() )
+    .defineTransactions( ( tx ) => tx
+        .setInitialState( "Default" )
+        .addState( "Default", {
+            executionStep: "default",
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelPrimaryMessageElementsGroup",
+            embedsGroup:   "VertixBot/UI-V3/DynamicChannel/EmbedsGroup",
+        } )
+        .addTransition( "OpenRename", { from: "Default", to: "Default" } )
+        .bindButton(
+            "VertixBot/UI-V3/DynamicChannelRenameButton", "OpenRename",
+            async( _ctx, interaction ) => {
+                await uiService.get( "VertixBot/UI-V3/DynamicChannelRenameAdapter" )
+                    ?.showModal( "VertixBot/UI-V3/DynamicChannelRenameModal", interaction );
+            }
+        )
+        // …more bindButton / bindModal / bindSelectMenu calls
+    )
+    .build();
+```
+
+`bindButton(elementId, transitionName, handler)` is the whole API: it registers the handler, binds it to the named element, declares the transition, and emits a flow trigger that the runtime + exporter pick up. Same pattern for [`bindModal`](packages/vertix-gui/src/builders/transaction-aware-binder.ts) and `bindSelectMenu`.
+
+### The round-trip
+
+```
+TypeScript flows + adapter builders          Live Discord UI
+        │                                            ▲
+        │   exporter                                 │ data-driven
+        ▼                                            │ runtime
+  JSON UI definitions  ◄────►  Dashboard visual editor (xyflow)
+        ▲                              │
+        │                              ▼
+        └────  per-guild customization layer  ◄──── ICustomizationProvider
+```
+
+Code is the source of truth. The exporter ([`runtime/ui-definition-exporter.ts`](packages/vertix-gui/src/runtime/ui-definition-exporter.ts)) turns it into JSON. The dashboard renders that JSON as an editable graph. Per-guild edits are stored via [`ICustomizationProvider`](packages/vertix-gui/src/customization/customization-provider.ts), and the bot's [data-driven runtime](packages/vertix-gui/src/runtime) layers them on top of the base flow at render time. No redeploy. No restart.
+
+### What you get out of the box
+
+| Capability | Implementation |
+| --- | --- |
+| **Visual flow editor** — flows as nodes, handoffs as edges, modals/components as child nodes | `@xyflow/react` editor in [`apps/vertix-dashboard/src/features/flow-editor`](apps/vertix-dashboard/src/features/flow-editor/) |
+| **Data-driven runtime** — export adapters / components / flows to JSON, load them back as live UIs | [`runtime/data-driven-{adapter,component,flow}-factory.ts`](packages/vertix-gui/src/runtime), [`virtual-flow-generator.ts`](packages/vertix-gui/src/runtime/virtual-flow-generator.ts), [`ui-definition-{exporter,loader,runtime}.ts`](packages/vertix-gui/src/runtime) |
+| **Per-guild customization** — guilds override embed text, button labels, modal titles per language | [`ICustomizationProvider`](packages/vertix-gui/src/customization/customization-provider.ts) |
+| **Hash-based `custom_id`** — Discord's 100-char limit is a non-issue | [`UIHashService`](packages/vertix-gui/src/ui-hash-service.ts) + [`UICustomIdHashStrategy`](packages/vertix-gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy.ts) |
+| **Versioned UIs** — V2 + V3 of the same adapter run side-by-side | [`UIAdapterVersioningService`](packages/vertix-gui/src/ui-adapter-versioning-service.ts) |
+| **i18n** — every label/embed/modal resolves through a guild language file | [`ui-language-definitions.ts`](packages/vertix-gui/src/bases/ui-language-definitions.ts), [language JSON](apps/vertix-bot/assets/languages) (en, ru, el, es, fr, de, ja) |
+| **React preview** — render any Discord UI in the browser, pixel-accurate | [`@vertix.gg/discord-ui`](packages/vertix-discord-ui/src) — `<DiscordUIComponentMessage />`, `<DiscordChannelWizard />` |
+| **Args providers + interaction middleware** — declarative data hydration and permission/channel-type pre-checks | [`runtime/ui-args-provider-registry.ts`](packages/vertix-gui/src/runtime/ui-args-provider-registry.ts), [`bases/ui-interaction-middleware.ts`](packages/vertix-gui/src/bases/ui-interaction-middleware.ts) |
+
+### When you probably *shouldn't* use Vertix
+
+- You're shipping a one-off slash command and don't have any UI state. Use raw discord.js or Sapphire.
+- You're not on TypeScript. The framework leans hard on generics — you'll lose half the value in plain JS.
+- You don't want a dashboard. The framework runs without one, but the visual-editor + customization story is the main reason to pick it.
+
+> Want to trace a real example end-to-end? Read [`spec/auto-scalling-spec.md`](spec/auto-scalling-spec.md) — it walks through the auto-scaling feature from service layer through flow + adapter to dashboard nodes.
+
+---
+
 ## Getting to Know the Basics
 
 Before diving in, two key concepts make Vertix work:
@@ -303,14 +431,14 @@ vertix.gg/
 │   ├── vertix-website/     Marketing site (vertix.gg)
 │   └── redis/              Redis dev container
 ├── packages/
-│   ├── vertix-base/        Shared base utilities
-│   ├── vertix-definitions/ Shared definitions
-│   ├── vertix-discord-ui/  Discord UI rendering
-│   ├── vertix-gui/         GUI framework
-│   ├── vertix-logger/      Logging service
-│   ├── vertix-prisma/      Database layer
+│   ├── vertix-base/        Models, managers, encryption, event bus
+│   ├── vertix-definitions/ Shared TypeScript definitions
+│   ├── vertix-discord-ui/  React renderer that previews Discord UIs in the browser
+│   ├── vertix-gui/         ⭐ Discord UI framework (builders, adapters, i18n, hashing, versioning)
+│   ├── vertix-logger/      Centralized logging service
+│   ├── vertix-prisma/      Database layer (MongoDB via Prisma)
 │   ├── vertix-test-utils/  Testing helpers
-│   ├── vertix-ui/          Shared UI components
+│   ├── vertix-ui/          Generic React + Tailwind components
 │   └── vertix-utils/       Shared utilities
 └── assets/                 Brand and emoji assets
 ```

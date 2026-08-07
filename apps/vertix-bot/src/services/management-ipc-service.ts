@@ -3,21 +3,20 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
-import {
-    IPC_CHANNELS,
-    MANAGEMENT_ACTIONS,
-    MANAGEMENT_REQUEST_ACTIONS
-} from "@vertix.gg/base/src/modules/ipc";
+import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
+
+import type { IPCService, IPCMessage, IPCRequest } from "@vertix.gg/base/src/modules/ipc";
+
+import type { IPCManagementRequestPayload } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import type { GetScalingChannelInfoResponse } from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
 
 import type {
-    IPCService,
-    IPCMessage,
-    IPCRequest,
-    ManagementPayload,
-    ManagementRequestPayload,
-    GetScalingChannelInfoResponse,
-    GetDynamicChannelInfoResponse
-} from "@vertix.gg/base/src/modules/ipc";
+    GetDynamicChannelInfoResponse,
+    DynamicChannelIPCManagementPayload
+} from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
 import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
@@ -71,13 +70,13 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
 
         try {
             // Subscribe to pub/sub management channel for actions
-            await this.services.ipcService.subscribe<ManagementPayload>(
+            await this.services.ipcService.subscribe<DynamicChannelIPCManagementPayload>(
                 IPC_CHANNELS.MANAGEMENT,
                 this.handleIPCMessage.bind( this )
             );
 
             // Register request handler for channel info queries
-            await this.services.ipcService.onRequest<ManagementRequestPayload, GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse>(
+            await this.services.ipcService.onRequest<IPCManagementRequestPayload, GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse>(
                 IPC_CHANNELS.MANAGEMENT_REQUEST,
                 IPC_CHANNELS.MANAGEMENT_RESPONSE,
                 this.handleIPCRequest.bind( this )
@@ -89,72 +88,72 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         }
     }
 
-    private async handleIPCMessage( message: IPCMessage<ManagementPayload> ) {
+    private async handleIPCMessage( message: IPCMessage<DynamicChannelIPCManagementPayload> ) {
         const { payload } = message;
 
         this.logger.log( this.handleIPCMessage, `Received IPC message: ${ payload.action }` );
 
         switch ( payload.action ) {
             // Scaling-related actions -> ScalingChannelService
-            case MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP:
                 await this.services.scalingChannelService.handleCreateScalingSetup( payload.data );
                 break;
 
-            case MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS:
                 await this.services.scalingChannelService.handleUpdateScalingSettings( payload.data );
                 break;
 
-            case MANAGEMENT_ACTIONS.TRIGGER_REINDEX:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.TRIGGER_REINDEX:
                 await this.services.scalingChannelService.handleTriggerReindex( payload.data );
                 break;
 
-            case MANAGEMENT_ACTIONS.TRIGGER_CLEANUP:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.TRIGGER_CLEANUP:
                 await this.services.scalingChannelService.handleTriggerCleanup( payload.data );
                 break;
 
-            case MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP:
                 await this.services.scalingChannelService.handleDeleteScalingSetup( payload.data );
                 break;
 
             // Dynamic-related actions -> DynamicChannelService
-            case MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP:
                 await this.services.dynamicChannelService.handleCreateDynamicSetup( payload.data );
                 break;
 
-            case MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS:
                 await this.services.dynamicChannelService.handleUpdateDynamicSettings( payload.data );
                 break;
 
-            case MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP:
                 await this.services.dynamicChannelService.handleDeleteDynamicSetup( payload.data );
                 break;
 
             // Customization-related actions -> DynamicChannelService
-            case MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION:
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION:
                 await this.services.dynamicChannelService.handleRefreshCustomization( payload.data );
                 break;
 
             default:
-                this.logger.warn( this.handleIPCMessage, `Unknown action: ${ ( payload as ManagementPayload ).action }` );
+                this.logger.warn( this.handleIPCMessage, `Unknown action: ${ ( payload as DynamicChannelIPCManagementPayload ).action }` );
         }
     }
 
     private async handleIPCRequest(
-        request: IPCRequest<ManagementRequestPayload>
+        request: IPCRequest<IPCManagementRequestPayload>
     ): Promise<GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse> {
         const { payload } = request;
 
         this.logger.log( this.handleIPCRequest, `Received IPC request: ${ payload.action }` );
 
         switch ( payload.action ) {
-            case MANAGEMENT_REQUEST_ACTIONS.GET_SCALING_CHANNEL_INFO:
+            case IPC_REQUEST_ACTIONS.GET_SCALING_CHANNEL_INFO:
                 return this.services.scalingChannelService.getScalingChannelInfo(
                     payload.guildId,
                     payload.masterChannelId,
                     payload.scalingChannelIds
                 );
 
-            case MANAGEMENT_REQUEST_ACTIONS.GET_DYNAMIC_CHANNEL_INFO:
+            case IPC_REQUEST_ACTIONS.GET_DYNAMIC_CHANNEL_INFO:
                 return this.services.dynamicChannelService.getDynamicChannelInfo(
                     payload.guildId,
                     payload.masterChannelId,
@@ -162,7 +161,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 );
 
             default:
-                throw new Error( `Unknown request action: ${ ( payload as ManagementRequestPayload ).action }` );
+                throw new Error( `Unknown request action: ${ ( payload as IPCManagementRequestPayload ).action }` );
         }
     }
 }

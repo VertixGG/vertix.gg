@@ -2,23 +2,26 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
-import {
-    IPC_CHANNELS,
-    MANAGEMENT_ACTIONS,
-    MANAGEMENT_REQUEST_ACTIONS
-} from "@vertix.gg/base/src/modules/ipc";
+import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
 import type { DiscordService } from "./discord-service";
 
+import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
+
+import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
+
 import type {
-    ManagementPayload,
-    DiscordChannelInfo,
-    IPCService,
     GetScalingChannelInfoRequest,
-    GetScalingChannelInfoResponse,
+    GetScalingChannelInfoResponse
+} from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
+
+import type {
     GetDynamicChannelInfoRequest,
-    GetDynamicChannelInfoResponse
-} from "@vertix.gg/base/src/modules/ipc";
+    GetDynamicChannelInfoResponse,
+    DynamicChannelIPCManagementPayload
+} from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
 function getClient() {
     return PrismaBotClient.$.getClient();
@@ -64,15 +67,15 @@ export interface DynamicChannelInfo {
     channelId: string;
     userOwnerId: string | null;
     createdAt: Date;
-    discord?: DiscordChannelInfo | null;
+    discord?: IPCDiscordChannelInfo | null;
 }
 
 export interface DynamicMasterDetails {
     master: DynamicMasterChannelInfo;
     dynamicChannels: DynamicChannelInfo[];
     discord?: {
-        masterChannel: DiscordChannelInfo | null;
-        category: DiscordChannelInfo | null;
+        masterChannel: IPCDiscordChannelInfo | null;
+        category: IPCDiscordChannelInfo | null;
     };
 }
 
@@ -86,7 +89,7 @@ export interface ScalingChannelInfo {
     id: string;
     channelId: string;
     createdAt: Date;
-    discord?: DiscordChannelInfo | null;
+    discord?: IPCDiscordChannelInfo | null;
 }
 
 export interface GuildManagementDetails {
@@ -98,8 +101,8 @@ export interface ScalingMasterDetails {
     master: ScalingMasterChannelInfo;
     scalingChannels: ScalingChannelInfo[];
     discord?: {
-        masterChannel: DiscordChannelInfo | null;
-        category: DiscordChannelInfo | null;
+        masterChannel: IPCDiscordChannelInfo | null;
+        category: IPCDiscordChannelInfo | null;
     };
 }
 
@@ -141,7 +144,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         await super.initialize();
     }
 
-    private async publishManagementMessage( payload: ManagementPayload ): Promise<void> {
+    private async publishManagementMessage( payload: DynamicChannelIPCManagementPayload ): Promise<void> {
         if ( !this.services.ipcService.isReady() ) {
             throw new Error( "IPC service not available - cannot communicate with bot. Make sure Redis is running." );
         }
@@ -293,7 +296,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         if ( this.services.ipcService.isReady() ) {
             try {
                 const request: GetScalingChannelInfoRequest = {
-                    action: MANAGEMENT_REQUEST_ACTIONS.GET_SCALING_CHANNEL_INFO,
+                    action: IPC_REQUEST_ACTIONS.GET_SCALING_CHANNEL_INFO,
                     guildId,
                     masterChannelId: master.channelId,
                     scalingChannelIds
@@ -328,7 +331,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         const settingsData = master.data?.[ 0 ]?.object as Record<string, unknown> | null;
 
         // Create a map of Discord channel info by channel ID for quick lookup
-        const discordChannelMap = new Map<string, DiscordChannelInfo>();
+        const discordChannelMap = new Map<string, IPCDiscordChannelInfo>();
 
         for ( const channel of discordInfo.scalingChannels ) {
             discordChannelMap.set( channel.id, channel );
@@ -404,7 +407,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         if ( this.services.ipcService.isReady() ) {
             try {
                 const request: GetDynamicChannelInfoRequest = {
-                    action: MANAGEMENT_REQUEST_ACTIONS.GET_DYNAMIC_CHANNEL_INFO,
+                    action: IPC_REQUEST_ACTIONS.GET_DYNAMIC_CHANNEL_INFO,
                     guildId,
                     masterChannelId: master.channelId,
                     dynamicChannelIds
@@ -447,7 +450,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         const settingsData = master.data?.[ 0 ]?.object as Record<string, unknown> | null;
 
         // Create a map of Discord channel info by channel ID
-        const discordChannelMap = new Map<string, DiscordChannelInfo>();
+        const discordChannelMap = new Map<string, IPCDiscordChannelInfo>();
 
         for ( const channel of discordInfo.dynamicChannels ) {
             discordChannelMap.set( channel.id, channel );
@@ -540,7 +543,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         // Send IPC message to bot so it can apply Discord-side changes (rename channels, etc.)
         try {
             await this.publishManagementMessage( {
-                action: MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS,
+                action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS,
                 data: {
                     guildId,
                     masterChannelId,
@@ -568,7 +571,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         }
 
         await this.publishManagementMessage( {
-            action: MANAGEMENT_ACTIONS.TRIGGER_REINDEX,
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.TRIGGER_REINDEX,
             data: {
                 guildId,
                 masterChannelId
@@ -592,7 +595,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         }
 
         await this.publishManagementMessage( {
-            action: MANAGEMENT_ACTIONS.TRIGGER_CLEANUP,
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.TRIGGER_CLEANUP,
             data: {
                 guildId,
                 masterChannelId
@@ -616,7 +619,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         }
 
         await this.publishManagementMessage( {
-            action: MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP,
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP,
             data: {
                 guildId,
                 masterChannelId
@@ -682,7 +685,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         // Send IPC message to bot so it can apply any necessary changes
         try {
             await this.publishManagementMessage( {
-                action: MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS,
+                action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS,
                 data: {
                     guildId,
                     masterChannelId,
@@ -710,7 +713,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         }
 
         await this.publishManagementMessage( {
-            action: MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP,
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP,
             data: {
                 guildId,
                 masterChannelId
@@ -735,7 +738,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         }
 
         await this.publishManagementMessage( {
-            action: MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP,
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP,
             data: {
                 guildId,
                 userOwnerId,
@@ -762,7 +765,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         }
 
         await this.publishManagementMessage( {
-            action: MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP,
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP,
             data: {
                 guildId,
                 userOwnerId,

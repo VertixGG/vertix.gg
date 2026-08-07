@@ -113,10 +113,9 @@ import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 
-import type {
-    GetDynamicChannelInfoResponse,
-    DiscordChannelInfo
-} from "@vertix.gg/base/src/modules/ipc";
+import type { GetDynamicChannelInfoResponse } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
+
+import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
@@ -363,7 +362,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    private getChannelInfo( channel: VoiceChannel ): DiscordChannelInfo {
+    private getChannelInfo( channel: VoiceChannel ): IPCDiscordChannelInfo {
         return {
             id: channel.id,
             name: channel.name,

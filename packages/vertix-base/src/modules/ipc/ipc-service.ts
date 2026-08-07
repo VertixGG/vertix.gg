@@ -5,7 +5,7 @@ import { createIPCMessage, createIPCRequest, createIPCResponse } from "./ipc-mes
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
-import type { IPCChannel, IPCMessage, IPCRequest, IPCResponse } from "./ipc-messages";
+import type { IPCMessage, IPCRequest, IPCResponse } from "./ipc-messages";
 
 type MessageHandler<T = unknown> = ( message: IPCMessage<T> ) => void | Promise<void>;
 type RequestHandler<TReq = unknown, TRes = unknown> = ( request: IPCRequest<TReq> ) => Promise<TRes>;
@@ -16,9 +16,9 @@ interface PendingRequest<T> {
     timeout: NodeJS.Timeout;
 }
 
-export class IPCService extends ServiceBase {
-    private handlers: Map<IPCChannel, Set<MessageHandler>> = new Map();
-    private requestHandlers: Map<IPCChannel, RequestHandler> = new Map();
+export class IPCService<TChannel extends string = string> extends ServiceBase {
+    private handlers: Map<TChannel, Set<MessageHandler>> = new Map();
+    private requestHandlers: Map<TChannel, RequestHandler> = new Map();
     private pendingRequests: Map<string, PendingRequest<unknown>> = new Map();
     private initializationSucceeded = false;
     private responseChannelSubscribed = false;
@@ -46,7 +46,7 @@ export class IPCService extends ServiceBase {
         this.logger.info( this.shutdown, "IPC Service shutdown complete" );
     }
 
-    public async publish<T>( channel: IPCChannel, payload: T ): Promise<void> {
+    public async publish<T>( channel: TChannel, payload: T ): Promise<void> {
         const message = createIPCMessage( channel, payload );
         const serialized = JSON.stringify( message );
 
@@ -55,7 +55,7 @@ export class IPCService extends ServiceBase {
         this.logger.log( this.publish, `Published message to ${ channel }: ${ message.id }` );
     }
 
-    public async subscribe<T = unknown>( channel: IPCChannel, handler: MessageHandler<T> ): Promise<void> {
+    public async subscribe<T = unknown>( channel: TChannel, handler: MessageHandler<T> ): Promise<void> {
         if ( !this.handlers.has( channel ) ) {
             this.handlers.set( channel, new Set() );
 
@@ -101,7 +101,7 @@ export class IPCService extends ServiceBase {
         this.handlers.get( channel )!.add( handler as MessageHandler );
     }
 
-    public unsubscribe<T = unknown>( channel: IPCChannel, handler: MessageHandler<T> ): void {
+    public unsubscribe<T = unknown>( channel: TChannel, handler: MessageHandler<T> ): void {
         const channelHandlers = this.handlers.get( channel );
 
         if ( channelHandlers ) {
@@ -116,8 +116,8 @@ export class IPCService extends ServiceBase {
     }
 
     public async request<TReq, TRes>(
-        requestChannel: IPCChannel,
-        responseChannel: IPCChannel,
+        requestChannel: TChannel,
+        responseChannel: TChannel,
         payload: TReq,
         timeoutMs: number = 10000
     ): Promise<TRes> {
@@ -149,8 +149,8 @@ export class IPCService extends ServiceBase {
     }
 
     public async onRequest<TReq, TRes>(
-        requestChannel: IPCChannel,
-        responseChannel: IPCChannel,
+        requestChannel: TChannel,
+        responseChannel: TChannel,
         handler: RequestHandler<TReq, TRes>
     ): Promise<void> {
         this.requestHandlers.set( requestChannel, handler as RequestHandler );
@@ -200,7 +200,7 @@ export class IPCService extends ServiceBase {
         this.logger.log( this.onRequest, `Listening for requests on ${ requestChannel }` );
     }
 
-    private async ensureResponseChannelSubscribed( responseChannel: IPCChannel ): Promise<void> {
+    private async ensureResponseChannelSubscribed( responseChannel: TChannel ): Promise<void> {
         if ( this.responseChannelSubscribed ) {
             return;
         }

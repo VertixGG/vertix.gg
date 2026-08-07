@@ -19,15 +19,16 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
 import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
 
+import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
+
 import type {
+    GetScalingChannelInfoResponse,
     CreateScalingSetupPayload,
     UpdateScalingSettingsPayload,
     TriggerReindexPayload,
     TriggerCleanupPayload,
-    DeleteScalingSetupPayload,
-    GetScalingChannelInfoResponse,
-    DiscordChannelInfo
-} from "@vertix.gg/base/src/modules/ipc";
+    DeleteScalingSetupPayload
+} from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
 
 import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
@@ -154,7 +155,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
-    private getChannelInfo( channel: VoiceChannel ): DiscordChannelInfo {
+    private getChannelInfo( channel: VoiceChannel ): IPCDiscordChannelInfo {
         return {
             id: channel.id,
             name: channel.name,

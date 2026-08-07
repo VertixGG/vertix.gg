@@ -1,7 +1,9 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
-import { IPC_CHANNELS, MANAGEMENT_ACTIONS } from "@vertix.gg/base/src/modules/ipc";
+import { IPC_CHANNELS } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
 import {
     DEFAULT_GUILD_ID,
@@ -56,12 +58,12 @@ async function notifyBotCustomizationRefresh( guildId: string ) {
         }
 
         await ipcService.publish( IPC_CHANNELS.MANAGEMENT, {
-            action: MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION,
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION,
             data: { guildId }
         } );
 
         logger.info( notifyBotCustomizationRefresh, `Published REFRESH_CUSTOMIZATION for guild ${ guildId }` );
-    } catch ( error ) {
+    } catch( error ) {
         logger.error( notifyBotCustomizationRefresh, `Failed to notify bot for guild ${ guildId }`, error );
     }
 }

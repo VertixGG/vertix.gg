@@ -39,7 +39,7 @@ function resolveDeployConfig( prefix ) {
     };
 
     const missing = Object.entries( config )
-        .filter( ( [ , value ] ) => ! value )
+        .filter( ( [ key, value ] ) => key !== "password" && ! value )
         .map( ( [ key ] ) => `${ prefix }_${ key.toUpperCase() }` );
 
     if ( missing.length > 0 ) {

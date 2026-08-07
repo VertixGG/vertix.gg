@@ -1,4 +1,4 @@
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";

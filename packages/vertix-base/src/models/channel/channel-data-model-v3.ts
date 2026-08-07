@@ -1,8 +1,8 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { ChannelDataModelBase } from "@vertix.gg/base/src/models/channel/channel-data-model-base";
+import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { ChannelDataModelBase } from "@vertix.gg/base/src/models/channel/channel-data-model-base";
 
 export class ChannelDataModelV3 extends ChannelDataModelBase {
     public static getName() {

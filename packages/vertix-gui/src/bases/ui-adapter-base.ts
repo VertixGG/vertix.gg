@@ -1,6 +1,6 @@
 import process from "process";
 
-import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix.gg/base/src/definitions/guild-data-keys";
+import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix.gg/definitions/src/guild-data-keys";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";

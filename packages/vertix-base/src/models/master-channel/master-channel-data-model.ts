@@ -1,8 +1,8 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { MasterChannelDataModelBase } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-base";
+import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 
-import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+import { MasterChannelDataModelBase } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-base";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 

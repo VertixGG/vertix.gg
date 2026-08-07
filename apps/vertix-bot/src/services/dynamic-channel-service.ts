@@ -1,6 +1,6 @@
 import "@vertix.gg/prisma/bot-client";
 
-import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
@@ -28,13 +28,14 @@ import { Routes } from "discord-api-types/v10";
 
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
+import { varsHasIndexPlaceholder } from "@vertix.gg/base/src/utils/vars-utils";
+
 import {
-    varsHasIndexPlaceholder,
     VAR_DYNAMIC_CHANNEL_GAME,
     VAR_DYNAMIC_CHANNEL_INDEX,
     VAR_DYNAMIC_CHANNEL_STATE,
     VAR_DYNAMIC_CHANNEL_USER
-} from "@vertix.gg/base/src/definitions/vars";
+} from "@vertix.gg/definitions/src/dynamic-channel-vars-definitions";
 
 import { GuildCustomizationManager } from "@vertix.gg/bot/src/managers/guild-customization-manager";
 

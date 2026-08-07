@@ -1,4 +1,4 @@
-import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { ChannelType, PermissionsBitField } from "discord.js";

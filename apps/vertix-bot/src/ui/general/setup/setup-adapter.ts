@@ -1,7 +1,7 @@
 import {
     VERSION_UI_V2,
     VERSION_UI_V3
-} from "@vertix.gg/base/src/definitions/version";
+} from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";

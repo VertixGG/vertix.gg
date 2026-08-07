@@ -3,7 +3,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 
 import { DynamicChannelMetaRenameComponent } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-component";
 

@@ -432,7 +432,7 @@ async function registerUIVersionStrategies() {
     GlobalLogger.$.info( registerUIVersionStrategies, "Registering version strategies ..." );
 
     const versionStrategies = await Promise.all( [
-            await import( "@vertix.gg/base/src/version-strategies/ui-master-channel-version-strategy" )
+            await import( "@vertix.gg/bot/src/version-strategies/ui-master-channel-version-strategy" )
         ] ),
         uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>(
             "VertixGUI/UIVersioningAdapterService"

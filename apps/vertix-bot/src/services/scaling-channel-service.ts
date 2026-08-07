@@ -11,7 +11,7 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
 
-import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/definitions/vars";
+import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/utils/vars-utils";
 
 import { ChannelType } from "discord.js";
 

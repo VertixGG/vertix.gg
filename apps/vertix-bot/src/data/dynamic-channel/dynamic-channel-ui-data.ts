@@ -5,7 +5,7 @@ import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-chan
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { Logger } from "@vertix.gg/base/src/modules/logger";

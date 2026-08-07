@@ -28,7 +28,7 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
 
     public async getTranslatableContent(): Promise<UIElementSelectMenuLanguageContent> {
         const translateAbleSelectEntries = await Promise.all(
-            ( await this.getSelectOptions() ).map( async ( option ) => {
+            ( await this.getSelectOptions() ).map( async( option ) => {
                 return {
                     label: option.label,
                     value: option.value

@@ -1,5 +1,5 @@
 import "@vertix.gg/prisma/bot-client";
-import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 

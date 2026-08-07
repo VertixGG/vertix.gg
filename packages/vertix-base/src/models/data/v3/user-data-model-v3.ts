@@ -2,9 +2,9 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { ModelDataOwnerBase } from "@vertix.gg/base/src/bases/model-data-owner-base";
+import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { ModelDataOwnerBase } from "@vertix.gg/base/src/bases/model-data-owner-base";
 
 import type { TDataOwnerDefaultUniqueKeys } from "@vertix.gg/base/src/bases/model-data-owner-base";
 

@@ -1,4 +1,4 @@
-import { DEFAULT_RTC_REGIONS } from "@vertix.gg/base/src/definitions/rtc-regions";
+import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-definitions";
 
 import { DynamicChannelStringMenuBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-string-menu-base";
 

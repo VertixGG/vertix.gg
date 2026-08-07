@@ -1,6 +1,6 @@
-import { ModelBaseCachedWithClient } from "@vertix.gg/base/src/bases/model-base";
+import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 
-import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+import { ModelBaseCachedWithClient } from "@vertix.gg/base/src/bases/model-base";
 
 import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 

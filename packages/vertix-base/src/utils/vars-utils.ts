@@ -1,13 +1,7 @@
-export const VAR_DYNAMIC_CHANNEL_USER = "{user}" as const,
-    VAR_DYNAMIC_CHANNEL_STATE = "{state}" as const,
-    VAR_DYNAMIC_CHANNEL_GAME = "{game}" as const,
-    VAR_DYNAMIC_CHANNEL_INDEX = "{index}" as const;
-
-/**
- * Regex pattern that matches all supported index placeholder variants.
- * Supports: {index}, {{index}}, {auto-scale}, {autoscale}
- */
-export const INDEX_PLACEHOLDER_PATTERN = /\{\{index\}\}|\{index\}|\{auto-scale\}|\{autoscale\}/g;
+import {
+    INDEX_PLACEHOLDER_PATTERN,
+    VAR_DYNAMIC_CHANNEL_INDEX
+} from "@vertix.gg/definitions/src/dynamic-channel-vars-definitions";
 
 /**
  * Checks if a template string contains any index placeholder.

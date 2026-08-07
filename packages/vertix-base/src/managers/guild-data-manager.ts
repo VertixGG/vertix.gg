@@ -1,23 +1,23 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
+
+import {
+    DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
+    DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE
+} from "@vertix.gg/definitions/src/guild-data-keys";
+
+import {
+    DEFAULT_BADWORDS,
+    DEFAULT_BADWORDS_INITIAL_VALUE,
+    DEFAULT_BADWORDS_SEPARATOR
+} from "@vertix.gg/definitions/src/badwords-defaults";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
 import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
 
 import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
-
-import {
-    DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
-    DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE
-} from "@vertix.gg/base/src/definitions/guild-data-keys";
-
-import {
-    DEFAULT_BADWORDS,
-    DEFAULT_BADWORDS_INITIAL_VALUE,
-    DEFAULT_BADWORDS_SEPARATOR
-} from "@vertix.gg/base/src/definitions/badwords-defaults";
 
 import { ManagerDataBase } from "@vertix.gg/base/src/bases/manager-data-base";
 

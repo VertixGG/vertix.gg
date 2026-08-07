@@ -1,4 +1,4 @@
-import { VERSION_UI_V2 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";

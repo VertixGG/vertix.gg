@@ -1,4 +1,4 @@
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";

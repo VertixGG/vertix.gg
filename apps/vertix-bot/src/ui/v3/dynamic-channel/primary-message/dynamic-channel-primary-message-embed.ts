@@ -4,7 +4,7 @@ import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
-import { VERSION_UI_V3 } from "@vertix.gg/base/src/definitions/version";
+import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 

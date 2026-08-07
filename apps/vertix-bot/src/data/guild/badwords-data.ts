@@ -3,8 +3,8 @@ import { UIDataBase } from "@vertix.gg/gui/src/bases/ui-data-base";
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
-import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS } from "@vertix.gg/base/src/definitions/guild-data-keys";
-import { DEFAULT_BADWORDS } from "@vertix.gg/base/src/definitions/badwords-defaults";
+import { DEFAULT_GUILD_SETTINGS_KEY_BADWORDS } from "@vertix.gg/definitions/src/guild-data-keys";
+import { DEFAULT_BADWORDS } from "@vertix.gg/definitions/src/badwords-defaults";
 
 const client = PrismaBotClient.$.getClient();
 // Define interfaces for interaction parameters

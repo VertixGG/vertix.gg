@@ -49,7 +49,7 @@
       {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
-          "label": "Inviter Vertix"
+          "label": "Inviter VoiceChannels"
         }
       },
       {
@@ -779,8 +779,8 @@
     {
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
-        "title": "🛠  Configurer Vertix",
-        "description": "Découvrez les possibilités illimitées de **Vertix** !\nPersonnalisez et optimisez votre serveur à la perfection.\n\nPour créer un nouveau canal maître, cliquez simplement sur :\nle bouton `(➕ Créer un Canal Maître)`.\n\nLes canaux maîtres sont des générateurs de canaux vocaux dynamiques, chacun avec sa propre configuration unique.\n\nNotre fonctionnalité de mots interdits permet une configuration au niveau du serveur pour limiter les noms de canaux dynamiques.\n\n_**Canaux maîtres actuels**_ :\n{masterChannelMessage}\n\n_Mots interdits actuels_ :\n{badwordsMessage}\n\n-# 💡 Vous pouvez définir un canal de logs en modifiant le canal maître.\n",
+        "title": "🛠  Configurer VoiceChannels",
+        "description": "Découvrez les possibilités illimitées de **VoiceChannels** !\nPersonnalisez et optimisez votre serveur à la perfection.\n\nPour créer un nouveau canal maître, cliquez simplement sur :\nle bouton `(➕ Créer un Canal Maître)`.\n\nLes canaux maîtres sont des générateurs de canaux vocaux dynamiques, chacun avec sa propre configuration unique.\n\nNotre fonctionnalité de mots interdits permet une configuration au niveau du serveur pour limiter les noms de canaux dynamiques.\n\n_**Canaux maîtres actuels**_ :\n{masterChannelMessage}\n\n_Mots interdits actuels_ :\n{badwordsMessage}\n\n-# 💡 Vous pouvez définir un canal de logs en modifiant le canal maître.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -833,8 +833,8 @@
     {
       "name": "VertixBot/UI-General/WelcomeEmbed",
       "content": {
-        "title": "༄ Vertix est là, commençons !",
-        "description": "Bienvenue sur Vertix, un ajout incroyable à votre serveur !\nCollaborons et rendons votre serveur encore meilleur.\n\n**Configuration du Bot**\n- Tapez `/setup` ou appuyez sur le bouton `(🛠 Configuration)`.\n- Cliquez sur `(➕ Créer un Canal Maître)`\n- Suivez les étapes.\n\nEncore incertain ? Consultez notre [guide étape par étape](https://vertix.gg/posts/how-to-setup).\n\nVous pouvez toujours modifier les configurations en utilisant la commande `/setup`.\n\nSi vous avez besoin d'aide ou avez des suggestions, n'hésitez pas à rejoindre notre serveur communautaire Discord ! Nous serons ravis de vous aider et d'entendre vos commentaires.\n\nRejoignez-nous sur : https://discord.gg/dEwKeQefUU"
+        "title": "༄ VoiceChannels est là, commençons !",
+        "description": "Bienvenue sur VoiceChannels, un ajout incroyable à votre serveur !\nCollaborons et rendons votre serveur encore meilleur.\n\n**Configuration du Bot**\n- Tapez `/setup` ou appuyez sur le bouton `(🛠 Configuration)`.\n- Cliquez sur `(➕ Créer un Canal Maître)`\n- Suivez les étapes.\n\nEncore incertain ? Consultez notre [guide étape par étape](https://vertix.gg/posts/how-to-setup).\n\nVous pouvez toujours modifier les configurations en utilisant la commande `/setup`.\n\nSi vous avez besoin d'aide ou avez des suggestions, n'hésitez pas à rejoindre notre serveur communautaire Discord ! Nous serons ravis de vous aider et d'entendre vos commentaires.\n\nRejoignez-nous sur : https://discord.gg/dEwKeQefUU"
       }
     }
   ],

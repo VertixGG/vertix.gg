@@ -1,10 +1,10 @@
 <div align="center">
 
 <a href="https://vertix.gg/">
-    <img src="assets/brand/Robot.png" alt="Vertix" width="220" />
+    <img src="assets/brand/Robot.png" alt="VoiceChannels" width="220" />
 </a>
 
-# Vertix
+# VoiceChannels
 
 ### A Discord platform — not just a bot.
 
@@ -22,7 +22,7 @@ powered by an **open-source framework** for declaring Discord UIs as state machi
 
 <br/>
 
-**[🚀 Invite Vertix](https://vertix.gg/invite-vertix)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://vertix.gg/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.vertix.gg)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://vertix.gg/changelog)**
+**[🚀 Invite Vlk](https://vertix.gg/invite-vertix)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://vertix.gg/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.vertix.gg)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://vertix.gg/changelog)**
 
 </div>
 
@@ -32,7 +32,7 @@ powered by an **open-source framework** for declaring Discord UIs as state machi
 <summary><strong>📑 Table of Contents</strong></summary>
 
 - [Quick Start](#quick-start--run-vertix-locally) — clone, install, run every service locally
-- [Why You Should Build on Vertix](#why-you-should-build-on-vertix-) — the pitch, use cases, comparisons, stack
+- [Why You Should Build on Vlk](#why-you-should-build-on-vertix-) — the pitch, use cases, comparisons, stack
 - [How it's modeled](#how-its-actually-modeled) — flows, adapters, the round-trip
 - [Core Concepts](#getting-to-know-the-basics) — Master / Dynamic channels
 - [Voice Channel Features](#temporary-voice-channels--v2-features) — V2 + V3
@@ -45,9 +45,9 @@ powered by an **open-source framework** for declaring Discord UIs as state machi
 
 ---
 
-## Quick Start — Run Vertix Locally
+## Quick Start — Run VoiceChannels Locally
 
-This monorepo contains every Vertix service: the Discord bot, the REST API, the web dashboard, the marketing website, the logger, and the MCP server. The steps below get the entire stack running on your machine.
+This monorepo contains every VoiceChannels service: the Discord bot, the REST API, the web dashboard, the marketing website, the logger, and the MCP server. The steps below get the entire stack running on your machine.
 
 ### 1. Prerequisites
 
@@ -78,7 +78,7 @@ This installs every workspace (`apps/*`, `packages/*`, `assets`) in one shot.
 
 ### 3. Configure Environment Variables
 
-Every Vertix service (bot, api, dashboard, mcp, logger) loads from a **single root-level `.env`** file. The repo ships with a fully-commented [example.env](example.env) — copy it to `.env` and fill in your values:
+Every VoiceChannels service (bot, api, dashboard, mcp, logger) loads from a **single root-level `.env`** file. The repo ships with a fully-commented [example.env](example.env) — copy it to `.env` and fill in your values:
 
 ```bash
 cp example.env .env
@@ -190,9 +190,9 @@ Once the bot prints `Ready!`, the API is listening on port `3021`, and the dashb
 
 ---
 
-## Why You Should Build on Vertix 🚀
+## Why You Should Build on VoiceChannels 🚀
 
-Discord bot UIs get ugly fast. Six months in, you've got a `switch` statement on `customId` 400 lines deep, an i18n bolt-on you wrote on a Friday, embeds living in `.txt` files that *almost* match what's in code, and shipping a UI tweak still means a redeploy. Vertix is built around a different idea: **model your bot as a state machine and the rest falls out** — visual editing, hot customization, type safety, i18n, all of it.
+Discord bot UIs get ugly fast. Six months in, you've got a `switch` statement on `customId` 400 lines deep, an i18n bolt-on you wrote on a Friday, embeds living in `.txt` files that *almost* match what's in code, and shipping a UI tweak still means a redeploy. VoiceChannels is built around a different idea: **model your bot as a state machine and the rest falls out** — visual editing, hot customization, type safety, i18n, all of it.
 
 ### The pitch in five lines
 
@@ -204,12 +204,12 @@ Discord bot UIs get ugly fast. Six months in, you've got a `switch` statement on
 
 ### Built for bots like these
 
-Concrete scenarios where Vertix earns its keep — each one is hard to do well in raw discord.js but practically free here:
+Concrete scenarios where VoiceChannels earns its keep — each one is hard to do well in raw discord.js but practically free here:
 
-- **Multi-step `/setup` wizards.** Onboarding flows with Back/Next, per-step validation, and modals for input. → [`UIWizardFlowBase`](packages/vertix-gui/src/bases/ui-wizard-flow-base.ts) + [`WizardAdapterBuilder`](packages/vertix-gui/src/builders/wizard-adapter-builder.ts) gives you `nextStep()` / `previousStep()` / step components and the standard control row out of the box. Vertix's own `/setup` is exactly this.
+- **Multi-step `/setup` wizards.** Onboarding flows with Back/Next, per-step validation, and modals for input. → [`UIWizardFlowBase`](packages/vertix-gui/src/bases/ui-wizard-flow-base.ts) + [`WizardAdapterBuilder`](packages/vertix-gui/src/builders/wizard-adapter-builder.ts) gives you `nextStep()` / `previousStep()` / step components and the standard control row out of the box. VoiceChannels's own `/setup` is exactly this.
 - **Ticket / support systems.** Open → pick category → fill modal → assigned → resolved, with claim/transfer/escalation. → State machines with typed transitions and `getRequiredData(transition)` so you can't advance with missing fields. There's a [`ticket/`](apps/vertix-bot/src/ui/ticket) module already wired up.
 - **Per-server admin panels.** Server admins configure your bot from inside Discord *and* from a web dashboard, with both staying in sync. → The same flow JSON powers both surfaces; [`ICustomizationProvider`](packages/vertix-gui/src/customization/customization-provider.ts) keeps per-guild overrides consistent.
-- **Voting / claim / approval flows.** Proposal posted → vote period with live tally → automatic resolution. → Flows with timed transitions ([`UIEmbedTimeElapsedBase`](packages/vertix-gui/src/bases/ui-embed-time-elapsed-base.ts)) and multi-user state — the channel-claim feature in Vertix is built on this.
+- **Voting / claim / approval flows.** Proposal posted → vote period with live tally → automatic resolution. → Flows with timed transitions ([`UIEmbedTimeElapsedBase`](packages/vertix-gui/src/bases/ui-embed-time-elapsed-base.ts)) and multi-user state — the channel-claim feature in VoiceChannels is built on this.
 - **Bot-as-a-service / white-label products.** You sell access to one bot; each customer wants different copy, branding, language, and feature toggles. → Per-guild customization + 7 built-in languages mean you don't fork the codebase per customer.
 - **Marketplaces, game/RPG bots, character sheets, inventory, combat.** Anything with branching state across many screens. → Cross-flow handoffs (`getEntryPoints` / `getHandoffPoints`) let you split a 50-screen bot into composable, individually-testable flows.
 - **Migrating a v1 UI to v2 without breaking existing servers.** → [`UIAdapterVersioningService`](packages/vertix-gui/src/ui-adapter-versioning-service.ts) runs both side-by-side; servers opt in to the new version when they're ready.
@@ -218,12 +218,12 @@ Concrete scenarios where Vertix earns its keep — each one is hard to do well i
 
 ### How it compares
 
-| You're using… | Where it hurts | Where Vertix is different |
+| You're using… | Where it hurts | Where VoiceChannels is different |
 | --- | --- | --- |
 | Raw **discord.js** | You hand-roll every collector, customId, and embed string. Six months in: hairball. | Declarative state machines, typed transitions, generated routing. Same `discord.js` underneath — you keep all the escape hatches. |
-| **Sapphire / discord-akairo / discordx** | Great for command routing — but UI is still raw `discord.js` builders and manual interaction handling. | Sits *above* the command layer. You can use Sapphire for slash commands and Vertix for the UI screens those commands open. |
+| **Sapphire / discord-akairo / discordx** | Great for command routing — but UI is still raw `discord.js` builders and manual interaction handling. | Sits *above* the command layer. You can use Sapphire for slash commands and VoiceChannels for the UI screens those commands open. |
 | **Botpress / Voiceflow / generic flow builders** | Built for chatbots, not Discord. No native embeds, modals, slash commands, or button styles. | Discord-native: every node maps to a real Discord component, with full type info and previews that match production pixel-for-pixel. |
-| **Custom in-house framework** | You'll spend a quarter on i18n, a sprint on customId hashing, a month on the visual editor — and still won't have it. | Already written, battle-tested in production on Vertix's own bot, MIT-licensed. |
+| **Custom in-house framework** | You'll spend a quarter on i18n, a sprint on customId hashing, a month on the visual editor — and still won't have it. | Already written, battle-tested in production on VoiceChannels's own bot, MIT-licensed. |
 
 ### What it utilizes
 
@@ -317,7 +317,7 @@ Code is the source of truth. The exporter ([`runtime/ui-definition-exporter.ts`]
 | **React preview** — render any Discord UI in the browser, pixel-accurate | [`@vertix.gg/discord-ui`](packages/vertix-discord-ui/src) — `<DiscordUIComponentMessage />`, `<DiscordChannelWizard />` |
 | **Args providers + interaction middleware** — declarative data hydration and permission/channel-type pre-checks | [`runtime/ui-args-provider-registry.ts`](packages/vertix-gui/src/runtime/ui-args-provider-registry.ts), [`bases/ui-interaction-middleware.ts`](packages/vertix-gui/src/bases/ui-interaction-middleware.ts) |
 
-### When you probably *shouldn't* use Vertix
+### When you probably *shouldn't* use VoiceChannels
 
 - You're shipping a one-off slash command and don't have any UI state. Use raw discord.js or Sapphire.
 - You're not on TypeScript. The framework leans hard on generics — you'll lose half the value in plain JS.
@@ -330,9 +330,9 @@ Code is the source of truth. The exporter ([`runtime/ui-definition-exporter.ts`]
 
 ## Getting to Know the Basics
 
-Before diving in, two key concepts make Vertix work:
+Before diving in, two key concepts make VoiceChannels work:
 
-- **Master Channel** — Think of this as the "generator." When you enter a Master Channel, Vertix automatically creates a private space just for you and moves you there.
+- **Master Channel** — Think of this as the "generator." When you enter a Master Channel, VoiceChannels automatically creates a private space just for you and moves you there.
 - **Dynamic Channel** — Your temporary home. It's created the moment you need it and disappears automatically once the last person leaves, keeping your server clean and organized.
 
 ---
@@ -383,7 +383,7 @@ V3 brings a more modern, intuitive, and lightning-fast interface to your Discord
 
 ## Auto-Scaling Channels 📈
 
-Never worry about running out of voice channel capacity again. Vertix automatically creates and manages voice channels based on demand.
+Never worry about running out of voice channel capacity again. VoiceChannels automatically creates and manages voice channels based on demand.
 
 - **Smart Creation** — When users join the master channel, they're moved to an available room (or a new one is created on demand).
 - **Custom Prefix** — Configure naming like `Room-{index}` for clean, numbered rooms.
@@ -398,7 +398,7 @@ Run `/setup` → `📈 Create Scaling Channel` and you're done. [Learn more →]
 
 ## Dashboard 🎨
 
-Manage your Vertix setup from a web-based dashboard at **[dashboard.vertix.gg](https://dashboard.vertix.gg)** — no commands needed.
+Manage your VoiceChannels setup from a web-based dashboard at **[dashboard.vertix.gg](https://dashboard.vertix.gg)** — no commands needed.
 
 ### Visual Editor
 - Flow-based editor for customizing bot UI components
@@ -416,7 +416,7 @@ Manage your Vertix setup from a web-based dashboard at **[dashboard.vertix.gg](h
 
 ## Flexible Setup at Every Level
 
-Vertix gives you control exactly where you need it.
+VoiceChannels gives you control exactly where you need it.
 
 ### Server Level
 - 🌐 **Language Select** — English, Russian, Greek, Spanish, French, German, Japanese.
@@ -434,7 +434,7 @@ Vertix gives you control exactly where you need it.
 
 ## Getting Started
 
-Setting up Vertix is a breeze:
+Setting up VoiceChannels is a breeze:
 
 1. Type `/setup` in any channel to begin.
 2. Click **➕ Create Master Channel** (or **📈 Create Scaling Channel** for auto-scaling).
@@ -518,7 +518,7 @@ See it in action without installing anything:
 
 ## Roadmap & Community
 
-Most of the best features in **Vertix** started as a spark of an idea from a community member. Your feedback is our roadmap.
+Most of the best features in **VoiceChannels** started as a spark of an idea from a community member. Your feedback is our roadmap.
 
 - 🐛 **Bug reports & feature requests:** [open an issue](https://github.com/VertixGG/vertix.gg/issues)
 - 💬 **Got an idea or want to chat?** Join the [Discord community](https://vertix.gg/invite-vertix)
@@ -527,7 +527,7 @@ Most of the best features in **Vertix** started as a spark of an idea from a com
 
 ## License
 
-Vertix is released under the **[MIT License](LICENSE)** — free for personal and commercial use. Fork it, modify it, ship it.
+VoiceChannels is released under the **[MIT License](LICENSE)** — free for personal and commercial use. Fork it, modify it, ship it.
 
 <sub>**Legal:** [Privacy Policy](https://vertix.gg/privacy-policy) · [Terms of Service](https://vertix.gg/terms-of-service)</sub>
 

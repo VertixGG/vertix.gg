@@ -846,8 +846,34 @@
         ],
         "requiredData": [],
         "entryPoints": [],
-        "handoffPoints": [],
-        "edgeSourceMappings": [],
+        "handoffPoints": [
+            {
+                "flowName": "VertixBot/UI-V2/ClaimResultFlow",
+                "description": "Handoff to ClaimResult flow when claim button is clicked",
+                "sourceState": "VertixBot/UI-V2/ClaimStartFlow/States/Default",
+                "transition": "VertixBot/UI-V2/ClaimStartFlow/Transitions/RequestClaim",
+                "integrationType": "GENERIC"
+            },
+            {
+                "flowName": "VertixBot/UI-V2/ClaimVoteFlow",
+                "description": "Handoff to ClaimVote flow when vote process starts",
+                "sourceState": "VertixBot/UI-V2/ClaimStartFlow/States/Default",
+                "transition": "VertixBot/UI-V2/ClaimStartFlow/Transitions/RequestClaim",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "edgeSourceMappings": [
+            {
+                "triggeringElementId": "VertixBot/UI-V2/ClaimStartButton",
+                "transitionName": "VertixBot/UI-V2/ClaimStartFlow/Transitions/RequestClaim",
+                "targetFlowName": "VertixBot/UI-V2/ClaimResultFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-V2/ClaimStartButton",
+                "transitionName": "VertixBot/UI-V2/ClaimStartFlow/Transitions/RequestClaim",
+                "targetFlowName": "VertixBot/UI-V2/ClaimVoteFlow"
+            }
+        ],
         "hooks": [],
         "options": {
             "generatedFrom": "TransactionBuilder",
@@ -944,8 +970,27 @@
         ],
         "requiredData": [],
         "entryPoints": [],
-        "handoffPoints": [],
-        "edgeSourceMappings": [],
+        "handoffPoints": [
+            {
+                "flowName": "VertixBot/UI-V2/ClaimResultFlow",
+                "description": "Handoff to ClaimResult flow when vote action produces a result",
+                "sourceState": "VertixBot/UI-V2/ClaimVoteFlow/States/StepIn",
+                "transition": "VertixBot/UI-V2/ClaimVoteFlow/Transitions/StartVoting",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "edgeSourceMappings": [
+            {
+                "triggeringElementId": "VertixBot/UI-V2/ClaimVoteStepInButton",
+                "transitionName": "VertixBot/UI-V2/ClaimVoteFlow/Transitions/StartVoting",
+                "targetFlowName": "VertixBot/UI-V2/ClaimResultFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-V2/ClaimVoteAddButton",
+                "transitionName": "VertixBot/UI-V2/ClaimVoteFlow/Transitions/StartVoting",
+                "targetFlowName": "VertixBot/UI-V2/ClaimResultFlow"
+            }
+        ],
         "hooks": [],
         "options": {
             "generatedFrom": "TransactionBuilder",
@@ -2871,8 +2916,34 @@
         ],
         "requiredData": [],
         "entryPoints": [],
-        "handoffPoints": [],
-        "edgeSourceMappings": [],
+        "handoffPoints": [
+            {
+                "flowName": "VertixBot/UI-V3/ClaimResultFlow",
+                "description": "Handoff to ClaimResult flow when claim button is clicked",
+                "sourceState": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                "transition": "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim",
+                "integrationType": "GENERIC"
+            },
+            {
+                "flowName": "VertixBot/UI-V3/ClaimVoteFlow",
+                "description": "Handoff to ClaimVote flow when vote process starts",
+                "sourceState": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                "transition": "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "edgeSourceMappings": [
+            {
+                "triggeringElementId": "VertixBot/UI-V3/ClaimStartButton",
+                "transitionName": "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim",
+                "targetFlowName": "VertixBot/UI-V3/ClaimResultFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-V3/ClaimStartButton",
+                "transitionName": "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim",
+                "targetFlowName": "VertixBot/UI-V3/ClaimVoteFlow"
+            }
+        ],
         "hooks": [],
         "options": {
             "generatedFrom": "TransactionBuilder",
@@ -2969,8 +3040,27 @@
         ],
         "requiredData": [],
         "entryPoints": [],
-        "handoffPoints": [],
-        "edgeSourceMappings": [],
+        "handoffPoints": [
+            {
+                "flowName": "VertixBot/UI-V3/ClaimResultFlow",
+                "description": "Handoff to ClaimResult flow when vote action produces a result",
+                "sourceState": "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn",
+                "transition": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVoting",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "edgeSourceMappings": [
+            {
+                "triggeringElementId": "VertixBot/UI-V3/ClaimVoteStepInButton",
+                "transitionName": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVoting",
+                "targetFlowName": "VertixBot/UI-V3/ClaimResultFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-V3/ClaimVoteAddButton",
+                "transitionName": "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVoting",
+                "targetFlowName": "VertixBot/UI-V3/ClaimResultFlow"
+            }
+        ],
         "hooks": [],
         "options": {
             "generatedFrom": "TransactionBuilder",

@@ -1,19 +1,29 @@
 import { discordTools, executeDiscordTool } from "@vertix.gg/mcp/src/tools/discord";
 import { discordReadOnlyToolDefinitions, isReadOnlyTool } from "@vertix.gg/mcp/src/tools/discord/definitions-readonly";
 
+import { executeUITool, isReadOnlyUITool, uiReadOnlyToolDefinitions, uiTools } from "@vertix.gg/mcp/src/tools/ui";
+
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 
 const isReadOnlyMode = process.env.VERTIX_MCP_READONLY === "true";
 
 export function getAllTools(): Tool[] {
     if ( isReadOnlyMode ) {
-        return discordReadOnlyToolDefinitions;
+        return [ ...discordReadOnlyToolDefinitions, ...uiReadOnlyToolDefinitions ];
     }
 
-    return discordTools;
+    return [ ...discordTools, ...uiTools ];
 }
 
 export async function executeTool( name: string, args: Record<string, unknown> | undefined ): Promise<unknown> {
+    if ( name.startsWith( "ui_" ) ) {
+        if ( isReadOnlyMode && ! isReadOnlyUITool( name ) ) {
+            throw new Error( `Tool "${ name }" is not available in read-only mode` );
+        }
+
+        return executeUITool( name, args );
+    }
+
     if ( isReadOnlyMode && ! isReadOnlyTool( name ) ) {
         throw new Error( `Tool "${ name }" is not available in read-only mode` );
     }

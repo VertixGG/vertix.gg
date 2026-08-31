@@ -4,7 +4,7 @@ import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";
-import { runAgentChatWithSession } from "@vertix.gg/bot/src/utils/agent-client";
+import { AgentManager } from "@vertix.gg/bot/src/managers/agent-manager";
 
 import type { Client, Message, TextBasedChannel, TextChannel } from "discord.js";
 
@@ -23,6 +23,7 @@ IMPORTANT RESTRICTIONS:
 - You CAN read guild info, channels, members, messages, roles, voice states
 - You CAN send messages and reactions as responses
 - You CAN help users understand Vertix features
+- You CAN look up Vertix's own UI with ui_list_adapters, ui_get_adapter and ui_search, to explain exactly what a dialog shows and which buttons it has (you CANNOT send those dialogs)
 
 When users ask about Vertix features, explain:
 - Dynamic voice channels that are created when users join a master channel
@@ -113,19 +114,22 @@ export function mentionHandlerPublic( client: Client ) {
                     ? `${ PUBLIC_SYSTEM_PROMPT }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
                     : userMessage;
 
-                const { response, conversationId } = await runAgentChatWithSession( fullPrompt, {
+                const { response, conversationId } = await AgentManager.$.runChat( fullPrompt, {
                     conversationId: session.conversationId,
                     readOnly: true,
-                    model: "gpt-5.1-codex-mini"
+                    model: AgentManager.$.getPublicModel()
                 } );
 
                 if ( conversationId ) {
                     session.conversationId = conversationId;
                 }
 
-                await message.reply( response );
+                // A turn that only used tools has no text to post, and Discord rejects empty content.
+                if ( response.trim() ) {
+                    await message.reply( response );
+                }
 
-                GlobalLogger.$.log( mentionHandlerPublic, `[PUBLIC] Reply sent${ session.conversationId ? ` [session: ${ session.conversationId.slice( 0, 8 ) }...]` : "" }` );
+                GlobalLogger.$.log( mentionHandlerPublic, `[PUBLIC] ${ response.trim() ? "Reply sent" : "No text reply" }${ session.conversationId ? ` [session: ${ session.conversationId.slice( 0, 8 ) }...]` : "" }` );
             } finally {
                 stopTyping();
             }

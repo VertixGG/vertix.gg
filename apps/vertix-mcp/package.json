@@ -12,6 +12,7 @@
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.24.3",
         "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/definitions": "workspace:*",
         "discord.js": "latest",
         "dotenv": "^16.0.3",
         "picocolors": "^1.0.1",

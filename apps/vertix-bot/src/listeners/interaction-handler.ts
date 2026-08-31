@@ -36,7 +36,15 @@ export function interactionHandler( client: Client ) {
             );
 
             if ( adapter ) {
-                await adapter.run( interaction );
+                // An adapter throwing here surfaces as an 'error' event on the client, which takes
+                // the whole bot down with it.
+                await adapter.run( interaction ).catch( ( error: unknown ) => {
+                    GlobalLogger.$.error(
+                        interactionHandler,
+                        `Adapter '${ customId }' failed to handle interaction '${ interaction.id }'`,
+                        error
+                    );
+                } );
 
                 return;
             }

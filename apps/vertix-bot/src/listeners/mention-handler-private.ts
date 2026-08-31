@@ -1,9 +1,12 @@
 import { Events } from "discord.js";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
-import { runAgentChatWithSession } from "@vertix.gg/bot/src/utils/agent-client";
+import { AgentManager } from "@vertix.gg/bot/src/managers/agent-manager";
+import { getPanelRevision, onPanelRendered, setDynamicInteractionListener, startNewPanel } from "@vertix.gg/bot/src/ui/dynamic/dynamic-ui-factory";
 
 import type { Client, Message, TextBasedChannel } from "discord.js";
+
+import type { DynamicUIInteraction } from "@vertix.gg/definitions/src/ui-ipc-definitions";
 
 const TARGET_GUILD_ID = process.env.AI_CHAT_GUILD_ID;
 const TARGET_CHANNEL_ID = process.env.AI_CHAT_CHANNEL_ID;
@@ -11,20 +14,7 @@ const TARGET_CHANNEL_ID = process.env.AI_CHAT_CHANNEL_ID;
 const DEFAULT_TYPING_INTERVAL_MS = 8000;
 const _CONTEXT_MESSAGE_COUNT = 10;
 
-const PRIVATE_SYSTEM_PROMPT = `You are Vertix, a powerful Discord bot with FULL ACCESS to Discord operations. You are responding in a private admin channel.
-
-You have access to the vertix-mcp tools with FULL permissions:
-- You CAN read all guild info, channels, members, messages, roles, voice states
-- You CAN send messages, DMs, and reactions
-- You CAN create, edit, and delete channels
-- You CAN kick, ban, and timeout users
-- You CAN manage roles and permissions
-- You CAN modify guild settings
-- You CAN manage webhooks and invites
-
-You also have access to the Vertix codebase and can help with development tasks.
-
-Be helpful, precise, and execute commands when requested. This is an admin-only channel with full trust.`;
+const PRIVATE_SYSTEM_PROMPT = process.env.AI_CHAT_PRIVATE_SYSTEM_PROMPT ?? "";
 
 type ChannelSession = {
     conversationId?: string;
@@ -34,9 +24,27 @@ type ChannelSession = {
 const channelSessions = new Map<string, ChannelSession>();
 const SESSION_TIMEOUT_MS = 600000;
 
+function getSession( sessionKey: string ): ChannelSession {
+    let session = channelSessions.get( sessionKey );
+
+    if ( ! session || Date.now() - session.lastActivity > SESSION_TIMEOUT_MS ) {
+        session = { lastActivity: Date.now() };
+        channelSessions.set( sessionKey, session );
+    }
+
+    session.lastActivity = Date.now();
+
+    return session;
+}
+
 export function mentionHandlerPrivate( client: Client ) {
     if ( ! TARGET_GUILD_ID || ! TARGET_CHANNEL_ID ) {
         GlobalLogger.$.log( mentionHandlerPrivate, "[PRIVATE] AI_CHAT_GUILD_ID or AI_CHAT_CHANNEL_ID not set; skipping private handler." );
+        return;
+    }
+
+    if ( ! PRIVATE_SYSTEM_PROMPT.trim() ) {
+        GlobalLogger.$.log( mentionHandlerPrivate, "[PRIVATE] AI_CHAT_PRIVATE_SYSTEM_PROMPT not set; skipping private handler." );
         return;
     }
 
@@ -75,17 +83,13 @@ export function mentionHandlerPrivate( client: Client ) {
 
             GlobalLogger.$.log( mentionHandlerPrivate, `[PRIVATE] Processing mention from ${ message.author.username }` );
 
-            const sessionKey = `private-${ message.channelId }`;
-            let session = channelSessions.get( sessionKey );
+            // A new message from the user starts a new turn: its panel belongs at the bottom of the
+            // conversation, next to what was just said, not rewritten into the one further up.
+            startNewPanel( message.channelId );
 
-            if ( ! session || Date.now() - session.lastActivity > SESSION_TIMEOUT_MS ) {
-                session = { lastActivity: Date.now() };
-                channelSessions.set( sessionKey, session );
-            }
+            const session = getSession( `private-${ message.channelId }` );
 
-            session.lastActivity = Date.now();
-
-            const stopTyping = startTypingHeartbeat( message.channel );
+            const stopTyping = startTypingUntilPanel( message.channel, message.channelId );
 
             try {
                 const contextInfo = buildContextInfo( message );
@@ -96,19 +100,26 @@ export function mentionHandlerPrivate( client: Client ) {
                     ? `${ PRIVATE_SYSTEM_PROMPT }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
                     : userMessage;
 
-                const { response, conversationId } = await runAgentChatWithSession( fullPrompt, {
+                const panelRevision = getPanelRevision( message.channelId );
+
+                const { response, conversationId } = await AgentManager.$.runChat( fullPrompt, {
                     conversationId: session.conversationId,
                     readOnly: false,
-                    model: "gpt-5.2-codex"
+                    model: AgentManager.$.getPrivateModel()
                 } );
 
                 if ( conversationId ) {
                     session.conversationId = conversationId;
                 }
 
-                await message.reply( response );
+                // The panel is the answer - a text message next to it would only repeat it.
+                const answeredWithPanel = getPanelRevision( message.channelId ) !== panelRevision;
 
-                GlobalLogger.$.log( mentionHandlerPrivate, `[PRIVATE] Reply sent${ session.conversationId ? ` [session: ${ session.conversationId.slice( 0, 8 ) }...]` : "" }` );
+                if ( response.trim() && ! answeredWithPanel ) {
+                    await message.reply( response );
+                }
+
+                GlobalLogger.$.log( mentionHandlerPrivate, `[PRIVATE] ${ answeredWithPanel ? "Answered through the panel" : "Reply sent" }${ session.conversationId ? ` [session: ${ session.conversationId.slice( 0, 8 ) }...]` : "" }` );
             } finally {
                 stopTyping();
             }
@@ -119,7 +130,77 @@ export function mentionHandlerPrivate( client: Client ) {
         }
     } );
 
+    setDynamicInteractionListener( ( interaction, origin ) => {
+        if ( origin.channelId !== TARGET_CHANNEL_ID ) {
+            return;
+        }
+
+        void handleDynamicInteraction( client, interaction, origin.channelId );
+    } );
+
     cleanupOldSessions();
+}
+
+/**
+ * A click on a UI the agent built continues the same conversation, so the buttons actually lead
+ * somewhere instead of only printing their canned reply.
+ */
+async function handleDynamicInteraction( client: Client, interaction: DynamicUIInteraction, channelId: string ) {
+    try {
+        const channel = await client.channels.fetch( channelId ).catch( () => null );
+
+        if ( ! channel?.isTextBased() || ! ( "send" in channel ) ) {
+            return;
+        }
+
+        GlobalLogger.$.log(
+            mentionHandlerPrivate,
+            `[PRIVATE] Processing UI interaction '${ interaction.elementId }' of '${ interaction.specName }' from ${ interaction.username }`
+        );
+
+        const session = getSession( `private-${ channelId }` );
+
+        const values = interaction.values?.length
+            ? ` with values: ${ interaction.values.join( ", " ) }`
+            : "";
+
+        const event = `[UI interaction] <@${ interaction.userId }> (${ interaction.username }) used '${ interaction.elementId }' on your UI '${ interaction.specName }'${ values }.\nDo whatever it implies, then answer with a UI - reuse the same UI name to replace the panel - or with one short line.`;
+
+        const prompt = session.conversationId
+            ? event
+            : `${ PRIVATE_SYSTEM_PROMPT }\n\nContext:\n- Channel: (ID: ${ channelId })\n- Mode: FULL ACCESS (admin channel)\n\n${ event }`;
+
+        const stopTyping = startTypingUntilPanel( channel, channelId );
+
+        try {
+            const panelRevision = getPanelRevision( channelId );
+
+            const { response, conversationId } = await AgentManager.$.runChat( prompt, {
+                conversationId: session.conversationId,
+                readOnly: false,
+                model: AgentManager.$.getPrivateModel()
+            } );
+
+            if ( conversationId ) {
+                session.conversationId = conversationId;
+            }
+
+            const answeredWithPanel = getPanelRevision( channelId ) !== panelRevision;
+
+            if ( response.trim() && ! answeredWithPanel ) {
+                await channel.send( response );
+            }
+
+            GlobalLogger.$.log(
+                mentionHandlerPrivate,
+                `[PRIVATE] UI interaction handled${ answeredWithPanel ? " (panel updated)" : "" }`
+            );
+        } finally {
+            stopTyping();
+        }
+    } catch( error ) {
+        GlobalLogger.$.error( mentionHandlerPrivate, "[PRIVATE] Failed to process UI interaction", error );
+    }
 }
 
 function formatMentionMessage( message: Message<boolean>, botId?: string ): string | null {
@@ -164,6 +245,25 @@ function resolveTypingIntervalMs() {
     }
 
     return DEFAULT_TYPING_INTERVAL_MS;
+}
+
+/**
+ * Typing says an answer is on its way. Once the panel is on screen the answer is already there, so
+ * the heartbeat stops even when the agent is still working - it has nothing left to say.
+ */
+function startTypingUntilPanel( channel: TextBasedChannel, channelId: string ) {
+    const stopTyping = startTypingHeartbeat( channel );
+
+    const unsubscribe = onPanelRendered( ( renderedChannelId ) => {
+        if ( renderedChannelId === channelId ) {
+            stopTyping();
+        }
+    } );
+
+    return () => {
+        unsubscribe();
+        stopTyping();
+    };
 }
 
 function startTypingHeartbeat( channel: TextBasedChannel ) {

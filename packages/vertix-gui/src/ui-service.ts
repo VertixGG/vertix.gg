@@ -398,6 +398,15 @@ export class UIService extends ServiceWithDependenciesBase<{
         );
     }
 
+    public unregisterAdapter( uiName: string ): boolean {
+        const existed = this.uiAdaptersTypes.delete( uiName );
+
+        this.uiAdaptersStaticInstances.delete( uiName );
+        this.uiAdaptersRegisterOptions.delete( uiName );
+
+        return existed;
+    }
+
     public async waitForAdapter<T extends keyof TAdapterMapping = "base">(
         uiName: string,
         options = ADAPTER_WAITFOR_DEFAULT_OPTIONS

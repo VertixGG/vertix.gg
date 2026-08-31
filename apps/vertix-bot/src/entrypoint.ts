@@ -315,7 +315,8 @@ export async function registerServices() {
         import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),
         import( "@vertix.gg/bot/src/services/master-channel-service" ),
         import( "@vertix.gg/bot/src/services/scaling-channel-service" ),
-        import( "@vertix.gg/bot/src/services/management-ipc-service" )
+        import( "@vertix.gg/bot/src/services/management-ipc-service" ),
+        import( "@vertix.gg/bot/src/services/ui-ipc-service" )
     ] );
 
     services.forEach( ( service ) => {

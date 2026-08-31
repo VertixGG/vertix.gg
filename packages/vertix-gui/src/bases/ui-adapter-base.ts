@@ -43,6 +43,7 @@ import type {
     BaseMessageOptions,
     ButtonInteraction,
     ChannelType,
+    Client,
     InteractionEditReplyOptions,
     MessageComponentInteraction,
     ModalComponentData,
@@ -348,7 +349,34 @@ export abstract class UIAdapterBase<
         throw new Error( "Not implemented" );
     }
 
-    public async sendToUser( guildId: string | "direct-message", userId: string, argsFromManager: UIArgs ) {
+    /**
+     * Re-renders an existing message with this adapter, exactly as `send()` would have rendered a
+     * new one. Unlike `editMessage()` it does not run the execution-step machinery, so it works for
+     * a message that another adapter originally posted - which is what a panel navigated by
+     * several adapters needs.
+     */
+    public async rerenderMessage( message: Message<true>, sendArgs?: UIArgs ) {
+        const channel = message.channel as TChannel;
+
+        const args = await this.getArgsInternal( channel, sendArgs );
+
+        await this.build( args, "send", channel );
+
+        const result = await message.edit( this.getMessage( "send", channel, sendArgs ) );
+
+        this.channelStartedMessages.set( message.channel.id, result.id, result );
+
+        this.argsManager.setInitialArgs( this, result.id, args, { overwrite: true, silent: true } );
+
+        return result;
+    }
+
+    public async sendToUser(
+        guildId: string | "direct-message",
+        userId: string,
+        argsFromManager: UIArgs,
+        client?: Client<true>
+    ) {
         this.$$.staticDebugger.log(
             this.sendToUser,
             this.getName() + ` - Sending to user: '${ userId }' from guild id: '${ guildId }'`
@@ -356,7 +384,7 @@ export abstract class UIAdapterBase<
 
         await this.build( argsFromManager, "send-to-user", guildId );
 
-        await ( await this.uiService.getClient().users.fetch( userId ) )
+        await ( await ( client ?? this.uiService.getClient() ).users.fetch( userId ) )
             .send( this.getMessage() )
             .catch( () =>
                 this.$$.staticLogger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` )

@@ -1,24 +1,24 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 export default function ClaimChannel() {
     return (
-        <div className="mb-5">
-            <div className="d-flex align-items-center mb-3">
-                <span className="fs-2 me-3">😈</span>
+        <div className="mb-12">
+            <div className="flex items-center mb-4">
+                <span className="text-h2 mr-4">😈</span>
                 <h3 className="mb-0">Claim Channel</h3>
             </div>
-            <div className="row g-5">
-                <div className="col-12">
-                    <div className="mb-4">
-                        <div className="fs-5 text-secondary">
+            <div className="grid grid-cols-12 gap-12">
+                <div className="col-span-12">
+                    <div className="mb-6">
+                        <div className="text-h5 text-vc-ice-dim">
                             <p><b>( 😈 Claim )</b> button will be enabled if the owner leaves the channel</p>
                             <p>for more than X <code>default = 10</code> minutes. If the owner does not return, the claim button will be enabled.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:16 PM"
                             mentionUsername="iNewLegend"
@@ -45,7 +45,7 @@ export default function ClaimChannel() {
                             interactionUser="iNewLegend"
                         />
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:27 PM"
                             mentionUsername="iNewLegend"
@@ -62,14 +62,14 @@ export default function ClaimChannel() {
                             interactionUser="iNewLegend"
                         />
                     </div>
-                    <div className="mb-4">
-                        <div className="fs-5 text-secondary">
+                    <div className="mb-6">
+                        <div className="text-h5 text-vc-ice-dim">
                             <p>If the owner returns or clicks the <code>claim</code> button, ownership will return to them!</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:16 PM"
                             mentionUsername="iNewLegend"
@@ -96,7 +96,7 @@ export default function ClaimChannel() {
                             interactionUser="iNewLegend"
                         />
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:28 PM"
                             mentionUsername="iNewLegend"
@@ -109,15 +109,15 @@ export default function ClaimChannel() {
                             interactionUser="iNewLegend"
                         />
                     </div>
-                    <div className="mb-4">
-                        <div className="fs-5 text-secondary">
+                    <div className="mb-6">
+                        <div className="text-h5 text-vc-ice-dim">
                             <p>If the owner doesn't return, and someone else clicks on the <b>claim</b> button, they will have X minutes (<code>default = 1</code>) to claim the ownership.</p>
                             <p>If they don't claim within that time or if someone else steps in, the whole vote process will begin!</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:30 PM"
                             mentionUsername="iNewLegend"
@@ -139,8 +139,8 @@ export default function ClaimChannel() {
                             interactionUser="iNewLegend"
                         />
                     </div>
-                    <div className="mb-4">
-                        <div className="fs-5 text-secondary">
+                    <div className="mb-6">
+                        <div className="text-h5 text-vc-ice-dim">
                             <p>At the end of the vote, you will see the new owner's name and a link for the vote results.</p>
                             <p>Below is an example of how the link for the results looks like:</p>
                         </div>

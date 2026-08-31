@@ -1,17 +1,17 @@
 import { DiscordUIComponentMessage, DiscordModal, DiscordInput } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 export default function RenameChannel() {
     return (
-        <div className="mb-5">
-            <div className="d-flex align-items-center mb-3">
-                <span className="fs-2 me-3">✏️</span>
+        <div className="mb-12">
+            <div className="flex items-center mb-4">
+                <span className="text-h2 mr-4">✏️</span>
                 <h3 className="mb-0">Rename Channel</h3>
             </div>
-            <div className="row g-5">
-                <div className="col-12">
-                    <div className="mb-4">
-                        <div className="d-flex justify-content-start">
+            <div className="grid grid-cols-12 gap-12">
+                <div className="col-span-12">
+                    <div className="mb-6">
+                        <div className="flex justify-start">
                             <DiscordModal
                                 title="Rename dynamic channel"
                                 cancelLabel="Cancel"
@@ -25,21 +25,21 @@ export default function RenameChannel() {
                             </DiscordModal>
                         </div>
                     </div>
-                    <div className="mb-4">
-                        <div className="fs-5 text-secondary">
-                            <ul className="text-start">
+                    <div className="mb-6">
+                        <div className="text-h5 text-vc-ice-dim">
+                            <ul className="text-left">
                                 <li><strong>Renaming channel is easy click on <b>( ✏️ Rename )</b> button.</strong></li>
                                 <li>Then type new name of the channel and press <code>submit</code>.</li>
                             </ul>
                         </div>
                     </div>
-                    <div className="mb-4">
-                        <div className="discord-chat-container border-box m-0" style={ { minHeight: "450px" } }>
+                    <div className="mb-6">
+                        <div className="discord-chat-container vc-frame-box m-0" style={ { minHeight: "450px" } }>
                             <div className="discord-date-header" style={ { textAlign: "center", color: "#72767d", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
                                 <span style={ { background: "#36393f", padding: "0 8px" } }>June 9, 2023</span>
                             </div>
                             <DiscordUIComponentMessage
-                                author="Vertix"
+                                author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:33 PM"
                                 mentionUsername="iNewLegend"
@@ -64,7 +64,7 @@ export default function RenameChannel() {
                                 } }
                             />
                             <DiscordUIComponentMessage
-                                author="Vertix"
+                                author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:34 PM"
                                 mentionUsername="iNewLegend"

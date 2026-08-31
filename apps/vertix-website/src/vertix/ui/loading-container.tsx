@@ -6,6 +6,14 @@ export enum LoadingContainerType {
     WARNING = "warning",
 }
 
+const SPINNER_COLOR: Record<LoadingContainerType, string> = {
+    [ LoadingContainerType.PRIMARY ]: "text-vc-azure",
+    [ LoadingContainerType.SECONDARY ]: "text-vc-ice-dim",
+    [ LoadingContainerType.SUCCESS ]: "text-vc-mint",
+    [ LoadingContainerType.DANGER ]: "text-vc-crimson",
+    [ LoadingContainerType.WARNING ]: "text-vc-magenta",
+};
+
 export default function LoadingContainer(
     props: {
         type?: LoadingContainerType
@@ -13,14 +21,17 @@ export default function LoadingContainer(
         type: LoadingContainerType.PRIMARY
     }
 ) {
-    const className = `spinner spinner-border text-${ props.type }`;
+    const color = SPINNER_COLOR[ props.type ?? LoadingContainerType.PRIMARY ];
 
     return (
-        <div className="container box-1">
-            <div className="row">
-                <div className="col-12 text-center">
-                    <div className={ className } style={ { width: "100px", height: "100px" } } role="status">
-                    </div>
+        <div className="vc-container vc-page-panel">
+            <div className="flex justify-center">
+                <div
+                    className={ `size-25 animate-spin rounded-full border-4 border-current
+                        border-r-transparent ${ color }` }
+                    role="status"
+                >
+                    <span className="sr-only">Loading…</span>
                 </div>
             </div>
         </div>

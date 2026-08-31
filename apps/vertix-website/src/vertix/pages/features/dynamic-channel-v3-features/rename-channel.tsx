@@ -1,5 +1,5 @@
 import { DiscordUIComponentMessage, DiscordModal, DiscordInput } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 import { DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
 
@@ -7,15 +7,15 @@ export default function RenameChannel() {
     const channelName = "iNewLegend's Office123";
 
     return (
-        <div className="mb-5">
-            <div className="d-flex align-items-center mb-3">
-                <span className="fs-2 me-3">✏️</span>
+        <div className="mb-12">
+            <div className="flex items-center mb-4">
+                <span className="text-h2 mr-4">✏️</span>
                 <h3 className="mb-0">Rename Channel</h3>
             </div>
-            <div className="row g-5">
-                <div className="col-12">
-                    <div className="mb-4">
-                        <div className="d-flex justify-content-start">
+            <div className="grid grid-cols-12 gap-12">
+                <div className="col-span-12">
+                    <div className="mb-6">
+                        <div className="flex justify-start">
                             <DiscordModal
                                 title="Rename dynamic channel"
                                 cancelLabel="Cancel"
@@ -29,18 +29,18 @@ export default function RenameChannel() {
                             </DiscordModal>
                         </div>
                     </div>
-                    <div className="mb-4">
-                        <div className="fs-5 text-secondary">
-                            <ul className="text-start">
+                    <div className="mb-6">
+                        <div className="text-h5 text-vc-ice-dim">
+                            <ul className="text-left">
                                 <li><strong>Renaming channel is easy click on <b>( ✏️ Rename )</b> button.</strong></li>
                                 <li>Then type new name of the channel and press <code>submit</code>.</li>
                             </ul>
                         </div>
                     </div>
-                    <div className="mb-4">
-                        <div className="discord-chat-container border-box m-0">
+                    <div className="mb-6">
+                        <div className="discord-chat-container vc-frame-box m-0">
                             <DiscordUIComponentMessage
-                                author="Vertix"
+                                author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:33 PM"
                                 mentionUsername="iNewLegend"
@@ -54,7 +54,7 @@ export default function RenameChannel() {
                                 } }
                             />
                             <DiscordUIComponentMessage
-                                author="Vertix"
+                                author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:34 PM"
                                 mentionUsername="iNewLegend"

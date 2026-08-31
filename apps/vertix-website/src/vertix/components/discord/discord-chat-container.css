@@ -1,0 +1,51 @@
+.discord-chat-container {
+    background-color: #313338;
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 15px;
+    overflow: visible;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+
+    --discord-ui-scale: 1.25;
+
+    border: 2px solid #21272e;
+    border-radius: 14px;
+    box-shadow: 2px 13px 14px 4px #0000002b;
+    width: 100%;
+    max-width: min-content;
+}
+
+.discord-chat-container .discord-message {
+    width: fit-content;
+}
+
+@media (max-width: 990px) {
+    .discord-chat-container {
+        --discord-ui-scale: 0.9;
+    }
+}
+
+@media (max-width: 770px) {
+    .discord-chat-container {
+        --discord-ui-scale: 0.7;
+        border: 0;
+        border-radius: 0;
+    }
+}
+
+
+@supports (zoom: 1) {
+    .discord-chat-container {
+        zoom: var(--discord-ui-scale);
+    }
+}
+
+@supports not (zoom: 1) {
+    .discord-chat-container {
+        transform: scale(var(--discord-ui-scale));
+        transform-origin: top left;
+    }
+}
+
+

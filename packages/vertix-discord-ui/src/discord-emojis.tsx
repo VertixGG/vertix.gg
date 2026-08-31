@@ -22,6 +22,8 @@ import ClaimChannelEmoji from "@vertix.gg/assets/svg/ClaimChannel.svg";
 
 import ChannelTemplatesEmoji from "@vertix.gg/assets/svg/ChannelTemplates.svg";
 
+import CaptureEmoji from "@vertix.gg/assets/svg/Capture.svg";
+
 import ArrowsClockwiseEmoji from "./assets/emojis/arrows-clockwise.svg";
 import BroomEmoji from "./assets/emojis/broom.svg";
 import BustsEmoji from "./assets/emojis/busts.svg";
@@ -62,7 +64,11 @@ export const DISCORD_EMOJI_ICON_SRC_BY_NAME: Readonly<Record<string, string>> = 
     "ResetChannel": ResetChannelEmoji,
     "TransferChannel": TransferChannelEmoji,
     "ClaimChannel": ClaimChannelEmoji,
+    // The exported bot UI names this emoji `ChannelTemplates`; the site's own
+    // hand-written constant still uses `Templates`, so both resolve.
     "Templates": ChannelTemplatesEmoji,
+    "ChannelTemplates": ChannelTemplatesEmoji,
+    "Capture": CaptureEmoji,
 };
 
 export function getDiscordEmojiIcon( emoji: string ): React.ReactNode | null {

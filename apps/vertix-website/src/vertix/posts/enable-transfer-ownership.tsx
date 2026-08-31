@@ -1,6 +1,6 @@
 import { DiscordUIComponentMessage, DiscordCommandSuggestion } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
@@ -65,23 +65,23 @@ const BADWORDS_MESSAGE = "`badword*`";
 
 export default function EnableTransferOwnership() {
     return (
-        <div className="container box-1">
+        <div className="vc-container vc-page-panel">
             <h5>Enabling Dynamic Channel - Buttons</h5>
             <br />
 
-            <ol className="fs-5">
+            <ol className="text-h5">
                 <li>
                     Enter your discord server and type <code>/setup</code> in any channel.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0 box-normalize">
+                    <div className="discord-chat-container vc-frame-box m-0 box-normalize">
                         <DiscordCommandSuggestion
                             searchTerm="/setup"
                             items={ [
                                 {
                                     command: "/setup",
-                                    description: "Displaying Vertix setup wizard in ephemeral mode.",
-                                    botName: "Vertix",
+                                    description: "Displaying VoiceChannels setup wizard in ephemeral mode.",
+                                    botName: "VoiceChannels",
                                     botAvatar: VertixAvatar
                                 }
                             ] }
@@ -93,9 +93,9 @@ export default function EnableTransferOwnership() {
                     Select <b>Master Channel</b> you want to enable the button in.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 10:22 PM"
                             componentName="VertixBot/UI-General/SetupComponent"
@@ -121,9 +121,9 @@ export default function EnableTransferOwnership() {
                     Select <b>Edit Channel's Buttons</b> option.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 10:22 PM"
                             componentName="VertixBot/UI-V2/ConfigComponent"
@@ -149,9 +149,9 @@ export default function EnableTransferOwnership() {
                     Click on <svg aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z"></path></svg> down arrow.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 10:22 PM"
                             componentName="VertixBot/UI-V2/ConfigComponent"
@@ -173,9 +173,9 @@ export default function EnableTransferOwnership() {
                     Select the <b>🔀 Transfer Ownership</b> for example option, then press <b>done</b> button.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 10:22 PM"
                             componentName="VertixBot/UI-V2/ConfigComponent"
@@ -205,9 +205,9 @@ export default function EnableTransferOwnership() {
                     Select the option that suits you the most.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 10:56 AM"
                             componentName="VertixBot/UI-V2/ConfigComponent"

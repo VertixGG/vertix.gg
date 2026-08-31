@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 
 import { BrowserRouter } from "react-router-dom";
 
-import Vertix from "@vertix.gg/website/src/vertix/index";
+import VoiceChannels from "@vertix.gg/website/src/vertix/index";
 
 // import reportWebVitals from './reportWebVitals';
 
@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <BrowserRouter>
-            <Vertix/>
+            <VoiceChannels/>
         </BrowserRouter>
     </React.StrictMode>
 );

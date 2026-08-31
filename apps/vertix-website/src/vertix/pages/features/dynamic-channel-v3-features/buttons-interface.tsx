@@ -1,21 +1,21 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 import { DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
 
 export default function ButtonsInterface() {
     return (
-        <div className="mb-5">
-            <div className="d-flex align-items-center mb-3">
-                <span className="fs-2 me-3">🎚️</span>
+        <div className="mb-12">
+            <div className="flex items-center mb-4">
+                <span className="text-h2 mr-4">🎚️</span>
                 <h3 className="mb-0">Buttons Interface</h3>
             </div>
-            <div className="row g-5 align-items-center">
-                <div className="col-12">
-                    <div className="mb-4">
-                        <div className="discord-chat-container border-box m-0">
+            <div className="grid grid-cols-12 gap-12 items-center">
+                <div className="col-span-12">
+                    <div className="mb-6">
+                        <div className="discord-chat-container vc-frame-box m-0">
                             <DiscordUIComponentMessage
-                                author="Vertix"
+                                author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="10:52 AM"
                                 mentionUsername="iNewLegend"
@@ -27,8 +27,8 @@ export default function ButtonsInterface() {
                             />
                         </div>
                     </div>
-                    <div className="fs-5 text-secondary">
-                        <ul className="text-start d-inline-block">
+                    <div className="text-h5 text-vc-ice-dim">
+                        <ul className="text-left inline-block">
                             <li><strong>The buttons interface is located inside the dynamic channel.</strong></li>
                             <li>You can access it by opening the chat box of the dynamic channel.</li>
                             <li>You can modify the buttons using <code>/setup</code> command.</li>

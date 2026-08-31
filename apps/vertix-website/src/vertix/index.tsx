@@ -7,19 +7,17 @@ import { allImagesLoadedPromise, windowLoadedPromise, wrapPromiseSuspendable } f
 import LoadingContainer from "@vertix.gg/website/src/vertix/ui/loading-container";
 
 import Header from "@vertix.gg/website/src/vertix/header/header";
+import ShinyStars from "@vertix.gg/website/src/vertix/components/ui/shiny-stars";
 import DashboardAnnouncement from "@vertix.gg/website/src/vertix/components/ui/dashboard-announcement";
 
 import localRoutes from "@vertix.gg/website/src/vertix/routes";
 
-import "@vertix.gg/website/src/vertix/style-static.scss";
-
-( () => {
-    // @ts-ignore
-    import ( "./style-dynamic.scss" );
-} )();
+import "@vertix.gg/website/src/vertix/styles/index.css";
 
 const loadedPromise = windowLoadedPromise(),
     loadedSuspensePromise = wrapPromiseSuspendable( loadedPromise );
+
+const FOOTER_LINK = "px-2 text-vc-ice-dim transition-colors hover:text-vc-cyan";
 
 const RoutesComponent = () => {
     loadedSuspensePromise.read();
@@ -46,36 +44,31 @@ const IndexContent = () => {
 
             { !shouldHideHeader && <DashboardAnnouncement/> }
 
-            <section className="content">
+            <section className="pt-7 md:pt-12">
                 <Suspense fallback={ LoadingContainer() }>
                     <RoutesComponent/>
                 </Suspense>
             </section>
 
-            <div className="container">
-                <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4">
-                    <p className="col-md-4 mb-0 text-muted">© 2023~2026 Vertix.gg</p>
+            <div className="vc-container">
+                <footer className="my-6 flex flex-wrap items-center justify-between gap-3 py-4
+                    font-body text-lg text-vc-ice-dim">
+                    <p className="mb-0">© 2023~2026 VoiceChannels.gg</p>
 
-                    <ul className="nav col-md justify-content-end">
-                        <li className="nav-item"><a href="/privacy-policy" className="nav-link px-2 text-muted">Privacy
-                            Policy</a></li>
-                        <li className="nav-item"><a href="/terms-of-service" className="nav-link px-2 text-muted">Terms
-                            Of Service</a></li>
-                        <li className="nav-item"><a href="/credits" className="nav-link px-2 text-muted">Credits</a>
-                        </li>
-                        <li className="nav-item">
-                            <a href="mailto:leonid@vertix.gg" className="nav-link px-2 text-muted">Contact</a>
-                        </li>
+                    <ul className="flex list-none flex-wrap justify-end gap-1 pl-0 mb-0">
+                        <li><a href="/privacy-policy" className={ FOOTER_LINK }>Privacy Policy</a></li>
+                        <li><a href="/terms-of-service" className={ FOOTER_LINK }>Terms Of Service</a></li>
+                        <li><a href="/credits" className={ FOOTER_LINK }>Credits</a></li>
+                        <li><a href="mailto:leonid@vertix.gg" className={ FOOTER_LINK }>Contact</a></li>
                     </ul>
                 </footer>
 
-                <div className="d-flex justify-content-center opacity-0 text-white">
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">vertix</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">discord</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">bot</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">temporary</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">voice</a>&nbsp;|&nbsp;
-                    <a href="https://vertix.gg" target="_blank" rel="noreferrer">channels</a>
+                <div className="flex justify-center opacity-0">
+                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">discord</a>&nbsp;|&nbsp;
+                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">bot</a>&nbsp;|&nbsp;
+                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">temporary</a>&nbsp;|&nbsp;
+                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">voice</a>&nbsp;|&nbsp;
+                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">channels</a>
                 </div>
             </div>
         </>
@@ -99,9 +92,12 @@ export default function Index() {
     } );
 
     return (
-        <div className="body-container not-loaded">
-            <IndexContent/>
-        </div>
+        <>
+            <ShinyStars/>
+
+            <div className="body-container not-loaded">
+                <IndexContent/>
+            </div>
+        </>
     );
 }
-

@@ -1,7 +1,5 @@
 import * as React from "react";
 
-import "./searchable-select.scss";
-
 function SearchIcon( props: React.ComponentProps<"svg"> ) {
     return (
         <svg
@@ -63,29 +61,33 @@ export default function SearchableSelect( {
     }, [] );
 
     return (
-        <div className="position-relative" ref={ containerRef } style={ { width: "100%", maxWidth: "720px", margin: "0 auto 2rem auto" } }>
+        <div className="relative mx-auto mb-8 w-full max-w-[720px]" ref={ containerRef }>
             <div
-                className="form-control form-control-lg fs-4 py-3 rounded-4 d-flex align-items-center justify-content-between cursor-pointer bg-dark text-white border-secondary"
+                className="flex cursor-pointer items-center justify-between rounded-2xl border
+                    border-vc-hairline-bright bg-vc-space/80 py-4 text-h4 backdrop-blur-sm
+                    transition-colors hover:border-vc-cyan/50"
                 onClick={ () => setIsOpen( !isOpen ) }
-                style={ { cursor: "pointer" } }
             >
-                <span className={ `${ showPlaceholder ? "text-secondary" : "text-white" } px-2` }>
+                <span className={ `px-4 ${ showPlaceholder ? "text-vc-ice-dim" : "text-vc-starlight" }` }>
                     { showPlaceholder ? placeholder : selectedOption?.label }
                 </span>
-                <div className="px-3">
-                    <SearchIcon width={ 22 } height={ 22 } className="text-secondary" />
+                <div className="px-4">
+                    <SearchIcon width={ 22 } height={ 22 } className="text-vc-ice-dim" />
                 </div>
             </div>
 
             { isOpen && (
                 <div
-                    className="position-absolute w-100 mt-1 bg-dark border border-secondary rounded-4 shadow-lg z-3"
-                    style={ { zIndex: 1000, maxHeight: "300px", overflowY: "auto" } }
+                    className="absolute z-[1000] mt-1 max-h-[300px] w-full overflow-y-auto
+                        rounded-2xl border border-vc-hairline-bright bg-vc-surface/95 shadow-lg
+                        backdrop-blur-lg"
                 >
-                    <div className="p-2 border-bottom border-secondary">
+                    <div className="border-b border-vc-hairline-bright p-2">
                         <input
                             type="text"
-                            className="form-control form-control-lg fs-4 searchable-select__search-input text-white border-secondary border-0 shadow-none w-100 bg-transparent"
+                            className="w-full border-0 bg-transparent px-2 py-1 text-h4
+                                text-vc-starlight shadow-none outline-none
+                                placeholder:text-vc-ice-dim focus:outline-none"
                             placeholder="Type to search..."
                             autoFocus
                             value={ searchTerm }
@@ -98,21 +100,19 @@ export default function SearchableSelect( {
                             filteredOptions.map( ( option ) => (
                                 <div
                                     key={ option.value }
-                                    className="px-3 py-2 fs-5 cursor-pointer hover-bg-secondary text-white"
-                                    style={ { cursor: "pointer" } }
+                                    className="cursor-pointer px-4 py-2 text-h5 text-vc-ice
+                                        transition-colors hover:bg-vc-cyan/10 hover:text-vc-cyan"
                                     onClick={ () => {
                                         onSelect( option.value );
                                         setIsOpen( false );
                                         setSearchTerm( "" );
                                     } }
-                                    onMouseEnter={ ( e ) => ( e.currentTarget.style.backgroundColor = "#3d4246" ) }
-                                    onMouseLeave={ ( e ) => ( e.currentTarget.style.backgroundColor = "transparent" ) }
                                 >
                                     { option.label }
                                 </div>
                             ) )
                         ) : (
-                            <div className="px-3 py-2 fs-5 text-secondary italic">No results found</div>
+                            <div className="px-4 py-2 text-h5 text-vc-ice-dim italic">No results found</div>
                         ) }
                     </div>
                 </div>

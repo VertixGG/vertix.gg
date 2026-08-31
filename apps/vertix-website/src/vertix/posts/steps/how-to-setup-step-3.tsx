@@ -1,6 +1,6 @@
 import { DiscordUIComponentMessage, DiscordRoleSelectDropdown } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
@@ -27,9 +27,9 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                 Or continue with <b>( <code>default = @everyone</code> recommended! )</b>
                 <br/>
                 <br/>
-                <div className="discord-chat-container border-box m-0">
+                <div className="discord-chat-container vc-frame-box m-0">
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 2:35 PM"
                         componentName="VertixBot/UI-V3/SetupNewWizardComponent"
@@ -59,7 +59,7 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                     ] }
                 />
 
-                <ul className="pt-5">
+                <ul className="pt-12">
                     <p>Do I need to set <b>Verified Roles</b>?</p>
                     <ul>
                         <li>
@@ -83,9 +83,9 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                 Press <b>( ✔ Finish )</b> to generate your <b>Master Channel.</b>
                 <br/>
                 <br/>
-                <div className="discord-chat-container border-box m-0">
+                <div className="discord-chat-container vc-frame-box m-0">
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 4:26 PM"
                         componentName="VertixBot/UI-V3/SetupNewWizardComponent"
@@ -106,9 +106,9 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                 <br/>
                 <h4>Its done, the <b>Master Channel</b> created!</h4>
                 <br/>
-                <div className="discord-chat-container border-box m-0">
+                <div className="discord-chat-container vc-frame-box m-0">
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 4:26 PM"
                         componentName="VertixBot/UI-General/SetupComponent"

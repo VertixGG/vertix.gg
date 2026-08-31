@@ -1,6 +1,6 @@
 import { DiscordUIComponentMessage, DiscordSelectMenuDropdown, DiscordModal, DiscordInput } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
@@ -37,9 +37,9 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                     </ul>
                 </ul>
                 <br/>
-                <div className="discord-chat-container border-box m-0 box-normalize">
+                <div className="discord-chat-container vc-frame-box m-0 box-normalize">
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 9:13 AM"
                         componentName="VertixBot/UI-General/SetupComponent"
@@ -82,10 +82,10 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
             <br/>
             <li>
                 <h4 id="set-default-channels-name-template">Set default channel's name template</h4>
-                Edit by pressing <div className="btn btn-sm btn-secondary pe-none">#️⃣ Edit Channel
+                Edit by pressing <div className="vc-btn vc-btn-sm pointer-events-none">#️⃣ Edit Channel
                     Name</div> button or
                 continue with <code>default = { "{user}" }'s channel</code>
-                by pressing <a href={ `${ props.displayStep ? "#step-2" : "2" }` } className="btn btn-sm btn-primary">Next ▶</a>
+                by pressing <a href={ `${ props.displayStep ? "#step-2" : "2" }` } className="vc-btn vc-btn-sm vc-btn-azure">Next ▶</a>
                 <br/>
                 <br/>
                 <ul>
@@ -96,9 +96,9 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                     </ul>
                 </ul>
                 <br/>
-                <div className="discord-chat-container border-box m-0">
+                <div className="discord-chat-container vc-frame-box m-0">
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 9:13 AM"
                         componentName="VertixBot/UI-V3/SetupNewWizardComponent"
@@ -138,13 +138,13 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                     value="{user}'s Office"
                 />
             </DiscordModal>
-            <p className="pt-5">
-                Press <div className="btn btn-primary user-select-none pe-none">Submit</div> to proceed.
+            <p className="pt-12">
+                Press <div className="vc-btn vc-btn-azure select-none pointer-events-none">Submit</div> to proceed.
             </p>
             <br/>
-            <div className="discord-chat-container border-box m-0">
+            <div className="discord-chat-container vc-frame-box m-0">
                 <DiscordUIComponentMessage
-                    author="Vertix"
+                    author="VoiceChannels"
                     avatar={ VertixAvatar }
                     timestamp="Today at 9:35 AM"
                     componentName="VertixBot/UI-V3/SetupNewWizardComponent"
@@ -161,8 +161,8 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                     } }
                 />
             </div>
-            <p className="pt-5">
-                Then press <a href={ `${ props.displayStep ? "#step-2" : "2" }` } className="btn btn-sm btn-primary">Next ▶</a> to continue next step.
+            <p className="pt-12">
+                Then press <a href={ `${ props.displayStep ? "#step-2" : "2" }` } className="vc-btn vc-btn-sm vc-btn-azure">Next ▶</a> to continue next step.
             </p>
         </>
     );

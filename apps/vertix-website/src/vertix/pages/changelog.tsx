@@ -6,11 +6,6 @@ import { wrapPromiseSuspendable } from "@vertix.gg/website/src/utils/loading";
 
 import LoadingContainer, { LoadingContainerType } from "@vertix.gg/website/src/vertix//ui/loading-container";
 
-( () => {
-    // @ts-ignore
-    import ( "./changelog.scss" );
-} )();
-
 const fetchMarkdown = async() => {
     const response = await fetch( "https://gist.githubusercontent.com/iNewLegend/5bfa5a9ceb9f11fba67b865cde4b4b05/raw/changelog.md" );
 
@@ -23,7 +18,7 @@ const ChangelogMarkdown = () => {
     const markdown = markdownPromise.read();
 
     return (
-        <div className="container box-1 changelog">
+        <div className="vc-container vc-page-panel changelog">
             <ReactMarkdown children={ markdown }/>
         </div>
 

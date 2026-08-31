@@ -1,0 +1,214 @@
+/* Brand + body faces. Must precede every other rule in the bundle. */
+@import url("https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;600;700&family=Red+Hat+Display:wght@300;400;500;700&display=swap");
+
+/* Scope class detection to the app's own sources. Tailwind's automatic scan
+ * also walks `dist/`, so utilities from previous bundles leak into each new
+ * build; `dist` is only excluded by a global gitignore here, not the repo's. */
+@import "tailwindcss" source(none);
+@import "./components.css";
+@import "./backdrop.css";
+
+/* Must follow every `@import` — a non-import rule in between ends the import
+ * block and the later stylesheets get dropped. */
+@source "../..";
+
+/* ---------------------------------------------------------------------------
+ * Design tokens — derived from the `vc.png` key art: a neon "VC"
+ * (crimson -> azure -> cyan -> mint) glowing over deep space.
+ * ------------------------------------------------------------------------ */
+@theme {
+    /* Breakpoints kept on the values the layouts were written against. */
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --breakpoint-2xl: 1400px;
+
+    /* Where the navbar collapses to the hamburger. Drives the `nav:` variants
+     * in the header markup and the stacked-menu rules in `components.css`, so
+     * the collapse point is defined exactly once. */
+    --breakpoint-nav: 990px;
+
+    /* Deep space, darkest -> lightest */
+    --color-vc-void: #01030b;
+    --color-vc-space: #04081a;
+    --color-vc-space-lighter: #070e24;
+    --color-vc-surface: #0b1330;
+    --color-vc-surface-lighter: #121b3d;
+
+    /* Neon accents (the letters) */
+    --color-vc-crimson: #ff2e63;
+    --color-vc-crimson-soft: #ff7ba6;
+    --color-vc-azure: #1e9bf0;
+    --color-vc-azure-soft: #6cc4ff;
+    --color-vc-cyan: #2fd8f5;
+    --color-vc-cyan-soft: #9beefd;
+    --color-vc-mint: #3ee0a6;
+    --color-vc-mint-soft: #96ffd2;
+    --color-vc-violet: #7a4dd8;
+    --color-vc-magenta: #c04ce0;
+
+    /* Text */
+    --color-vc-starlight: #eaf2ff;
+    --color-vc-ice: #cfdcf3;
+    --color-vc-ice-dim: #8fa3c8;
+
+    /* Structure */
+    --color-vc-hairline: #1b2748;
+    --color-vc-hairline-bright: #2a3a66;
+
+    --font-brand: "El Messiri", sans-serif;
+    --font-body: "Red Hat Display", Tahoma, sans-serif;
+
+    /* Heading scale, carried over from the previous type ramp. */
+    --text-h1: 2.5rem;
+    --text-h2: 2rem;
+    --text-h3: 1.75rem;
+    --text-h4: 1.5rem;
+    --text-h5: 1.25rem;
+    --text-h6: 1rem;
+    --text-fine: 0.9rem;
+}
+
+/* Not a Tailwind token: the bar height is read by several rules at once. */
+:root {
+    --vc-header-height: 72px;
+
+    --vc-gradient-brand: linear-gradient(
+        100deg,
+        var(--color-vc-crimson) 0%,
+        var(--color-vc-magenta) 22%,
+        var(--color-vc-azure) 48%,
+        var(--color-vc-cyan) 70%,
+        var(--color-vc-mint) 100%
+    );
+
+    --vc-gradient-rule: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgb(255 46 99 / 0.7) 18%,
+        rgb(30 155 240 / 0.9) 46%,
+        rgb(47 216 245 / 0.9) 62%,
+        rgb(62 224 166 / 0.7) 84%,
+        transparent 100%
+    );
+
+    --vc-glow-crimson: rgb(255 46 99 / 0.45);
+    --vc-glow-azure: rgb(30 155 240 / 0.45);
+    --vc-glow-cyan: rgb(47 216 245 / 0.45);
+    --vc-glow-mint: rgb(62 224 166 / 0.45);
+}
+
+@media (width >= theme(--breakpoint-lg)) {
+    :root {
+        --vc-header-height: 126px;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------------ */
+@layer base {
+    /* Only on `html`: the value propagates to the viewport from here, so this
+     * clips horizontal overflow without creating a scroll container. Repeating
+     * it on `body` makes the body its own scrollport nested inside the
+     * viewport's, which strands `position: fixed` layers and leaves scrolled
+     * regions unpainted. */
+    html {
+        overflow-x: hidden;
+    }
+
+    body {
+        background-color: var(--color-vc-void);
+        color: var(--color-vc-ice);
+        font-family: var(--font-body);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-body);
+        color: var(--color-vc-starlight);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    h1 { font-size: var(--text-h1); }
+    h2 { font-size: var(--text-h2); }
+    h3 { font-size: var(--text-h3); }
+    h4 { font-size: var(--text-h4); }
+    h5 { font-size: var(--text-h5); }
+    h6 { font-size: var(--text-h6); }
+
+    p {
+        margin-bottom: 1rem;
+    }
+
+    a {
+        color: var(--color-vc-cyan);
+        text-decoration: none;
+        transition: color 200ms ease, text-shadow 200ms ease;
+    }
+
+    a:hover {
+        color: var(--color-vc-cyan-soft);
+        text-shadow: 0 0 14px var(--vc-glow-cyan);
+    }
+
+    b, strong {
+        font-weight: 700;
+    }
+
+    ul, ol {
+        padding-left: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    ul { list-style: disc; }
+    ol { list-style: decimal; }
+
+    li::marker {
+        color: var(--color-vc-azure);
+    }
+
+    code {
+        padding: 0 6px;
+        border: 1px solid rgb(47 216 245 / 0.28);
+        border-radius: 6px;
+        background: rgb(11 19 48 / 0.75);
+        color: var(--color-vc-cyan);
+        font-family: monospace;
+    }
+
+    /* The brand sweep, used as a divider. */
+    hr {
+        border: 0;
+        height: 1px;
+        margin-block: 1rem;
+        background: var(--vc-gradient-rule);
+        box-shadow: 0 0 12px rgb(47 216 245 / 0.25);
+    }
+
+    ::selection {
+        background: rgb(47 216 245 / 0.3);
+        color: var(--color-vc-starlight);
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-vc-azure) transparent;
+    }
+
+    *::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: var(--color-vc-void);
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background: var(--vc-gradient-brand);
+        border: 3px solid var(--color-vc-void);
+        border-radius: 10px;
+    }
+}

@@ -95,9 +95,9 @@ export default function DynamicChannelV2Page() {
     };
 
     return (
-        <div className="container py-5">
-            <div className="row justify-content-center">
-                <div className="col-12 col-xl-10 ">
+        <div className="vc-container py-12">
+            <div className="flex justify-center">
+                <div className="w-full xl:w-10/12">
                     <h1 className="text-center">Dynamic Channel V2 - Features</h1>
                     <hr/>
 

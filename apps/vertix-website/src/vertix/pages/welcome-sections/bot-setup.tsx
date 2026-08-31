@@ -1,52 +1,52 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 import "../../components/discord/discord-chat-container.css";
 
 export default function BotSetup() {
     return (
-        <div className="mb-5">
-            <h4 id="bot-setup" className="mb-4">Getting Started is a Breeze! ✨</h4>
-            <div className="fs-5 text-secondary">
-                <p className="mb-4">
+        <div className="mb-12">
+            <h4 id="bot-setup" className="mb-6">Getting Started is a Breeze! ✨</h4>
+            <div className="text-h5 text-vc-ice-dim">
+                <p className="mb-6">
                     Ready to launch? Follow these simple steps to set up your first Master Channel and transform your server:
                 </p>
-                <div className="row g-4 align-items-center mb-5">
-                    <div className="col-md-12">
-                        <ul className="list-unstyled">
-                            <li className="mb-3">
-                                <span className="badge bg-primary rounded-circle me-2">1</span>
+                <div className="grid grid-cols-12 gap-6 items-center mb-12">
+                    <div className="col-span-12 md:col-span-12">
+                        <ul className="list-none pl-0">
+                            <li className="mb-4">
+                                <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-vc-azure text-sm font-semibold text-vc-void">1</span>
                                 Type <code>/setup</code> in any channel to begin.
                             </li>
-                            <li className="mb-3">
-                                <span className="badge bg-primary rounded-circle me-2">2</span>
+                            <li className="mb-4">
+                                <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-vc-azure text-sm font-semibold text-vc-void">2</span>
                                 Click the <strong>➕ Create Master Channel</strong> button.
                             </li>
-                            <li className="mb-3">
-                                <span className="badge bg-primary rounded-circle me-2">3</span>
+                            <li className="mb-4">
+                                <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-vc-azure text-sm font-semibold text-vc-void">3</span>
                                 Choose a name template or keep the default by clicking <strong>▶ Next</strong>.
                             </li>
-                            <li className="mb-3">
-                                <span className="badge bg-primary rounded-circle me-2">4</span>
+                            <li className="mb-4">
+                                <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-vc-azure text-sm font-semibold text-vc-void">4</span>
                                 Pick your interface buttons and click <strong>▶ Next</strong>.
                             </li>
-                            <li className="mb-3">
-                                <span className="badge bg-primary rounded-circle me-2">5</span>
+                            <li className="mb-4">
+                                <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-vc-azure text-sm font-semibold text-vc-void">5</span>
                                 Set your verified roles and click <strong>✔ Finish</strong>!
                             </li>
                         </ul>
-                        <p className="mt-4 fst-italic">
+                        <p className="mt-6 italic">
                             💡 <strong>Pro Tip:</strong> You can always tweak these settings later using the same <code>/setup</code> command.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div className="mb-4 mt-4">
+            <div className="mb-6 mt-6">
                 <div className="discord-chat-container m-0" style={ { minHeight: "500px" } }>
 
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 5:55 PM"
                         mentionUsername="iNewLegend"

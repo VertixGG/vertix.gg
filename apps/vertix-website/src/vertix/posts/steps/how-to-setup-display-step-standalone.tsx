@@ -23,7 +23,7 @@ export default function HowToSetupDisplayStepStandalone() {
 
     return (
         <>
-            <div className="container box-1">
+            <div className="vc-container vc-page-panel">
                 {
                     <ul>
                         {

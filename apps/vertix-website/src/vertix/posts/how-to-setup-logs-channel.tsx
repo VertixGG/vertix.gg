@@ -1,6 +1,6 @@
 import { DiscordUIComponentMessage, DiscordCommandSuggestion, DiscordMessage, DiscordEmbed } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
@@ -38,25 +38,25 @@ const CONFIG_VARIABLES_ENABLED = {
 
 export default function HowToSetupLogsChannel() {
     return (
-        <div className="container box-1">
+        <div className="vc-container vc-page-panel">
             <h5>Enabling Dynamic Channel - Logs</h5>
             <br />
-            <p className="fs-5">Since <b>Version</b> <code>0.0.5</code> we added <b>Logs Channel</b> is available for each <b>Master Channel</b>.</p>
-            <p className="fs-5">The logs disabled by <code>default</code> and can be enabled using <code>/setup</code> command:</p>
+            <p className="text-h5">Since <b>Version</b> <code>0.0.5</code> we added <b>Logs Channel</b> is available for each <b>Master Channel</b>.</p>
+            <p className="text-h5">The logs disabled by <code>default</code> and can be enabled using <code>/setup</code> command:</p>
 
-            <ol className="fs-5">
+            <ol className="text-h5">
                 <li>
                     Enter your discord server and type <code>/setup</code> in any channel.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0 box-normalize">
+                    <div className="discord-chat-container vc-frame-box m-0 box-normalize">
                         <DiscordCommandSuggestion
                             searchTerm="/setup"
                             items={ [
                                 {
                                     command: "/setup",
-                                    description: "Displaying Vertix setup wizard in ephemeral mode.",
-                                    botName: "Vertix",
+                                    description: "Displaying VoiceChannels setup wizard in ephemeral mode.",
+                                    botName: "VoiceChannels",
                                     botAvatar: VertixAvatar
                                 }
                             ] }
@@ -68,9 +68,9 @@ export default function HowToSetupLogsChannel() {
                     Please select the Master Channel from which you would like to receive logs for the associated dynamic channels.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:42 PM"
                             componentName="VertixBot/UI-General/SetupComponent"
@@ -93,9 +93,9 @@ export default function HowToSetupLogsChannel() {
                     Click on <svg aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z"></path></svg> down arrow.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:42 PM"
                             componentName="VertixBot/UI-V2/ConfigComponent"
@@ -118,9 +118,9 @@ export default function HowToSetupLogsChannel() {
                     Please choose the channel where you would like to display the logs.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:42 PM"
                             componentName="VertixBot/UI-V2/ConfigComponent"
@@ -148,9 +148,9 @@ export default function HowToSetupLogsChannel() {
                     Verify that <b>"</b><small>▹ ✎ ∙ Send logs to custom channel</small><b>"</b> is <code>🟢 On</code>.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:42 PM"
                             componentName="VertixBot/UI-V2/ConfigComponent"
@@ -181,9 +181,9 @@ export default function HowToSetupLogsChannel() {
                     At this point, the logs channel is ready to receive logs from the associated dynamic channels.
                     <br />
                     <br />
-                    <div className="discord-chat-container border-box m-0">
+                    <div className="discord-chat-container vc-frame-box m-0">
                         <DiscordMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             bot={ true }
                             timestamp="Today at 3:44 PM"

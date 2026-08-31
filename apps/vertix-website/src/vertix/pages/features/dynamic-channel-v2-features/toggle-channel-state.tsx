@@ -1,27 +1,27 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 export default function ToggleChannelState() {
     return (
-        <div className="mb-5">
-            <div className="d-flex align-items-center mb-3">
-                <span className="fs-2 me-3">🚫 / 🌐</span>
+        <div className="mb-12">
+            <div className="flex items-center mb-4">
+                <span className="text-h2 mr-4">🚫 / 🌐</span>
                 <h3 className="mb-0">- Toggle Channel State</h3>
             </div>
-            <div className="row g-5">
-                <div className="col-12">
-                    <div className="mb-4">
-                        <div className="fs-5 text-secondary">
+            <div className="grid grid-cols-12 gap-12">
+                <div className="col-span-12">
+                    <div className="mb-6">
+                        <div className="text-h5 text-vc-ice-dim">
                             <p><b>(🚫 Private )</b> button, will allow only granted users to connect the channel.</p>
                         </div>
                     </div>
-                    <div className="mb-4">
-                        <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
+                    <div className="mb-6">
+                        <div className="discord-chat-container vc-frame-box m-0" style={ { minHeight: "500px" } }>
                             <div className="discord-date-header" style={ { textAlign: "center", color: "#72767d", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
                                 <span style={ { background: "#36393f", padding: "0 8px" } }>June 25, 2023</span>
                             </div>
                             <DiscordUIComponentMessage
-                                author="Vertix"
+                                author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 1:00 PM"
                                 mentionUsername="iNewLegend"
@@ -46,7 +46,7 @@ export default function ToggleChannelState() {
                                 } }
                             />
                             <DiscordUIComponentMessage
-                                author="Vertix"
+                                author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 2:51 PM"
                                 mentionUsername="iNewLegend"
@@ -59,17 +59,17 @@ export default function ToggleChannelState() {
                             />
                         </div>
                     </div>
-                    <div className="mb-4">
-                        <div className="fs-5 text-secondary">
+                    <div className="mb-6">
+                        <div className="text-h5 text-vc-ice-dim">
                             <p><b>(🌐 Public )</b> button, restore the permissions of <code>Connect</code> back to default,<br/>Now everyone can connect.</p>
                         </div>
                     </div>
-                    <div className="discord-chat-container border-box m-0" style={ { minHeight: "500px" } }>
+                    <div className="discord-chat-container vc-frame-box m-0" style={ { minHeight: "500px" } }>
                         <div className="discord-date-header" style={ { textAlign: "center", color: "#72767d", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
                             <span style={ { background: "#36393f", padding: "0 8px" } }>June 25, 2023</span>
                         </div>
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 1:00 PM"
                             mentionUsername="iNewLegend"
@@ -94,7 +94,7 @@ export default function ToggleChannelState() {
                             } }
                         />
                         <DiscordUIComponentMessage
-                            author="Vertix"
+                            author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 2:58 PM"
                             mentionUsername="iNewLegend"

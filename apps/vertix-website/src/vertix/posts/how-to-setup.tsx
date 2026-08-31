@@ -1,6 +1,6 @@
 import { DiscordCommandSuggestion, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
@@ -11,11 +11,11 @@ import HowToSetupStep3 from "@vertix.gg/website/src/vertix/posts/steps/how-to-se
 export default function HowToSetup() {
     return (
         <>
-            <div className="container box-1">
+            <div className="vc-container vc-page-panel">
                 <h4>Setup step-by-step</h4>
                 <br/>
 
-                <ul className="fs-5">
+                <ul className="text-h5">
                     <li>
                         Enter your discord server and type <code>/setup</code> in any channel.
                         <br/>
@@ -24,8 +24,8 @@ export default function HowToSetup() {
                             searchTerm="/setup"
                             items={ [ {
                                 command: "/setup",
-                                description: "Displaying Vertix setup wizard in ephemeral mode.",
-                                botName: "Vertix",
+                                description: "Displaying VoiceChannels setup wizard in ephemeral mode.",
+                                botName: "VoiceChannels",
                                 botAvatar: VertixAvatar,
                             } ] }
                         />
@@ -46,27 +46,27 @@ export default function HowToSetup() {
                 <hr/>
                 <br/>
 
-                <ul className="fs-5 ">
+                <ul className="text-h5">
                     <li>
                         <h4>Create the dynamic channel</h4>
                         <br/>
                         Join <b>Master Channel (➕ New Channel )</b>
                         <br/>
-                        <img className="normalize" src="https://i.ibb.co/Tc1xJ5M/generate-dynamic.png" alt="s10"/>
+                        <img className="vc-img" src="https://i.ibb.co/Tc1xJ5M/generate-dynamic.png" alt="s10"/>
                         <br/>
                         You will be automatically moved to new <b>Dynamic Channel (Temporary Voice Channel)</b>.
                         <br/>
                         <br/>
                         Open the chat the interface by clicking on the message badge.
                         <br/>
-                        <img className="normalize" src="https://i.ibb.co/X8nbPs0/enter-dynamic-chan.png" alt="s11"/>
+                        <img className="vc-img" src="https://i.ibb.co/X8nbPs0/enter-dynamic-chan.png" alt="s11"/>
                         <br/>
                         On the right screen of the window you will see the interface.
                         <br/>
                         <br/>
-                        <div className="discord-chat-container border-box m-0">
+                        <div className="discord-chat-container vc-frame-box m-0">
                             <DiscordUIComponentMessage
-                                author="Vertix"
+                                author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:33 PM"
                                 componentName="VertixBot/UI-V2/DynamicChannel"
@@ -103,20 +103,20 @@ export default function HowToSetup() {
 
                 <hr/>
 
-                <div className="container">
+                <div className="vc-container">
                     <br/>
                     <div aria-live="polite" aria-atomic="true"
-                        className="d-flex justify-content-center align-items-center">
-                        <div className="toast show w-100" role="alert" aria-live="assertive" aria-atomic="true"
-                            data-bs-theme="dark">
-                            <div className="toast-header">
+                        className="flex justify-center items-center">
+                        <div className="vc-toast w-full" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div className="flex items-center gap-2 border-b border-vc-cyan/20
+                                px-3 py-2 text-vc-cyan">
                                 <img src="https://simgbb.com/avatar/PGKBv5T3fZLJ.png" width="30"
-                                    className="rounded-4 me-2"
+                                    className="rounded-2xl mr-2"
                                     alt="..."/>
-                                <strong className="me-auto">leonid@vertix.gg</strong>
-                                <small className="d-flex justify-content-end"><span className="d-none d-sm-block">Updated at&nbsp;</span>21/06/2023</small>
+                                <strong className="mr-auto">leonidvinikov@gmail.com</strong>
+                                <small className="flex justify-end"><span className="hidden sm:block">Updated at&nbsp;</span>21/06/2023</small>
                             </div>
-                            <div className="toast-body">
+                            <div className="px-3 py-3 text-vc-ice">
                                 Hi there👋<br/><br/>
                                 Found something wrong?<br/>
                                 Do you have any questions?<br/>
@@ -126,7 +126,7 @@ export default function HowToSetup() {
                                 or use <code>/help</code> command to send us feedback.<br/><br/>
                                 We value your opinion and are eager to take it into consideration!<br/><br/>
                                 Best regards ❤️<br/>
-                                <b>Vertix Team</b>.
+                                <b>VoiceChannels Team</b>.
                             </div>
                         </div>
                     </div>

@@ -6539,7 +6539,8 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "label": "Capture Template",
-                                "style": "secondary"
+                                "style": "secondary",
+                                "emoji": "<:Capture:1544033914526376027>"
                             }
                         },
                         {

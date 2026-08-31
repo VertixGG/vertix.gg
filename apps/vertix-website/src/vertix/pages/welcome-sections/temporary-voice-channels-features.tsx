@@ -1,5 +1,5 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 import V3DataModels from "./v3-user-data-model";
 
@@ -7,12 +7,12 @@ import "../../components/discord/discord-chat-container.css";
 
 export default function TemporaryVoiceChannelsFeatures() {
     return (
-        <div className="mb-5">
+        <div className="mb-12">
             <h4 id="temporary-voice-channels-features">Temporary Voice Channels V2 Features</h4>
-            <div className="mb-4">
+            <div className="mb-6">
                 <div className="discord-chat-container m-0" style={ { minHeight: "300px" } }>
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 5:52 PM"
                         mentionUsername="doctor-helper"
@@ -38,37 +38,37 @@ export default function TemporaryVoiceChannelsFeatures() {
                     />
                 </div>
             </div>
-            <div className="row g-4 mt-2">
-                <div className="col-md-6">
-                    <ul className="list-unstyled fs-5 text-secondary">
-                        <li className="mb-3">✏️ <strong>Rename</strong> - Give your space a unique name.</li>
-                        <li className="mb-3">✋ <strong>Limit</strong> - Control how many people can join.</li>
-                        <li className="mb-3">🚫 <strong>Privacy</strong> - Switch between Public and Private.</li>
-                        <li className="mb-3">🙈 <strong>Visibility</strong> - Hide your channel from the list.</li>
+            <div className="grid grid-cols-12 gap-6 mt-2">
+                <div className="col-span-12 md:col-span-6">
+                    <ul className="list-none pl-0 text-h5 text-vc-ice-dim">
+                        <li className="mb-4">✏️ <strong>Rename</strong> - Give your space a unique name.</li>
+                        <li className="mb-4">✋ <strong>Limit</strong> - Control how many people can join.</li>
+                        <li className="mb-4">🚫 <strong>Privacy</strong> - Switch between Public and Private.</li>
+                        <li className="mb-4">🙈 <strong>Visibility</strong> - Hide your channel from the list.</li>
                     </ul>
                 </div>
-                <div className="col-md-6">
-                    <ul className="list-unstyled fs-5 text-secondary">
-                        <li className="mb-3">👥 <strong>Access</strong> - Manage who's allowed or blocked.</li>
-                        <li className="mb-3">🔃 <strong>Reset</strong> - Start fresh with default settings.</li>
-                        <li className="mb-3">🔀 <strong>Transfer</strong> - Hand over ownership to a friend.</li>
-                        <li className="mb-3">😈 <strong>Claim</strong> - Take over inactive channels automatically.</li>
+                <div className="col-span-12 md:col-span-6">
+                    <ul className="list-none pl-0 text-h5 text-vc-ice-dim">
+                        <li className="mb-4">👥 <strong>Access</strong> - Manage who's allowed or blocked.</li>
+                        <li className="mb-4">🔃 <strong>Reset</strong> - Start fresh with default settings.</li>
+                        <li className="mb-4">🔀 <strong>Transfer</strong> - Hand over ownership to a friend.</li>
+                        <li className="mb-4">😈 <strong>Claim</strong> - Take over inactive channels automatically.</li>
                     </ul>
                 </div>
             </div>
 
-            <hr className="my-5" />
+            <hr className="my-12" />
 
-            <h4 id="temporary-voice-channels-v3" className="mb-4">Experience the Future: Temporary Voice Channels V3 🚀</h4>
-            <p className="fs-5 text-secondary mb-4">
+            <h4 id="temporary-voice-channels-v3" className="mb-6">Experience the Future: Temporary Voice Channels V3 🚀</h4>
+            <p className="text-h5 text-vc-ice-dim mb-6">
                 V3 brings a more modern, intuitive, and lightning-fast interface to your Discord server.
             </p>
 
-            <div className="mb-4">
+            <div className="mb-6">
 
                 <div className="discord-chat-container m-0" style={ { minHeight: "300px" } }>
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 5:52 PM"
                         mentionUsername="doctor-helper"

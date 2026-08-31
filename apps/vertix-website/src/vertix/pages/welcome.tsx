@@ -1,4 +1,4 @@
-import RobotBrand from "@vertix.gg/assets/brand/Robot.png";
+import VCBrand from "@vertix.gg/assets/brand/vc-naked.png";
 
 import Terms from "./welcome-sections/terms";
 import TemporaryVoiceChannelsFeatures from "./welcome-sections/temporary-voice-channels-features";
@@ -14,20 +14,23 @@ import "../components/discord/discord-chat-container.css";
 
 export default function Welcome() {
     return (
-        <div className="p-3 p-md-5">
-            <div className="row justify-content-center">
-                <div className="col-12 col-xl-10">
-                    <div className="documentation-page-header text-center mb-5">
+        <div className="p-4 md:p-12">
+            <div className="flex justify-center">
+                <div className="w-full xl:w-10/12">
+                    <div className="mb-12 flex flex-col items-center justify-center gap-8
+                        text-center md:flex-row md:text-left">
                         <img
-                            src={ RobotBrand }
-                            alt="Vertix"
-                            className="documentation-page-header__robot user-select-none mb-4"
+                            src={ VCBrand }
+                            alt="VoiceChannels"
+                            className="vc-logo w-[clamp(140px,14vw,220px)] shrink-0 select-none"
                         />
-                        <h1 className="display-4 fw-bold mb-3">Welcome to Vertix</h1>
-                        <p className="lead text-secondary mx-auto" style={ { maxWidth: "800px" } }>
-                            We're thrilled to have you here! Vertix is designed to revolutionize your Discord server experience
-                            with the most advanced temporary voice channel management tools. Let's get you started on your journey.
-                        </p>
+                        <div>
+                            <h1 className="mb-4 text-[2.5rem] font-bold leading-tight md:text-[3.5rem]">Welcome to VoiceChannels</h1>
+                            <p className="max-w-[800px] text-xl font-light text-vc-ice-dim">
+                                We're thrilled to have you here! VoiceChannels is designed to revolutionize your Discord server experience
+                                with the most advanced temporary voice channel management tools. Let's get you started on your journey.
+                            </p>
+                        </div>
                     </div>
 
                     <Terms />

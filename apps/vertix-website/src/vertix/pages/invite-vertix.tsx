@@ -18,24 +18,24 @@ export const onAddToServerClick = ( type: "recommended" | "optimal" ) => {
 
 export default function InviteVertix() {
     return (
-        <div className="container box-1 pt-5 text-center">
+        <div className="vc-container vc-page-panel pt-12 text-center">
             <h2>
-                Invite Vertix to your server
+                Invite VoiceChannels to your server
             </h2>
             <h4 className="text-center">
                 Select the option that best suits your needs, you can always change the permissions later.
             </h4>
-            <div className="row p-5">
-                <div className="col-xl-6 mb-3">
-                    <button onClick={ () => onAddToServerClick( "recommended" ) } className="btn btn-lg btn-outline-info btn-effect w-100 h-100 p-5" type="button">
-                        <h2>Recommended Permissions</h2>
-                        <p>The best practice</p>
+            <div className="grid grid-cols-12 p-12">
+                <div className="col-span-12 xl:col-span-6 mb-4">
+                    <button onClick={ () => onAddToServerClick( "recommended" ) } className="vc-btn vc-btn-lg vc-btn-cyan vc-btn-effect h-full w-full flex-col gap-1 p-10" type="button">
+                        <h2 className="mb-0 text-h4">Recommended Permissions</h2>
+                        <p className="mb-0 text-base opacity-80">The best practice</p>
                     </button>
                 </div>
-                <div className="col-xl-6 mb-3">
-                    <button onClick={ () => onAddToServerClick( "optimal" ) } className="btn btn-lg btn-outline-danger btn-effect w-100 h-100 p-5" type="button">
-                        <h2>Minimal Permissions</h2>
-                        <p>For advanced users</p>
+                <div className="col-span-12 xl:col-span-6 mb-4">
+                    <button onClick={ () => onAddToServerClick( "optimal" ) } className="vc-btn vc-btn-lg vc-btn-crimson vc-btn-effect h-full w-full flex-col gap-1 p-10" type="button">
+                        <h2 className="mb-0 text-h4">Minimal Permissions</h2>
+                        <p className="mb-0 text-base opacity-80">For advanced users</p>
                     </button>
                 </div>
             </div>

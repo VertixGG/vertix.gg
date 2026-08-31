@@ -108,32 +108,24 @@ export default defineConfig( ( { mode } ) => {
     const dashboardUrl = env.DASHBOARD_PROD_URL || "https://dashboard.vertix.gg";
 
     return {
-    plugins: [ react(), exportsAssetsPlugin() ],
-    define: {
-        "import.meta.env.VITE_DASHBOARD_URL": JSON.stringify( dashboardUrl ),
-    },
-    resolve: {
-        alias: {
-            "@vertix.gg/website": path.resolve( __dirname, "./" ),
-            "@": path.resolve( __dirname, "./src/vertix" ),
-            "@assets": path.resolve( __dirname, "../../assets" ),
+        plugins: [ react(), exportsAssetsPlugin() ],
+        define: {
+            "import.meta.env.VITE_DASHBOARD_URL": JSON.stringify( dashboardUrl ),
         },
-    },
-    server: {
-        fs: {
-            allow: [
-                path.resolve( __dirname ),
-                path.resolve( __dirname, "../../packages" ),
-                path.resolve( __dirname, "../../assets" )
-            ]
-        }
-    },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                // Ensure SASS variables are available globally if needed,
-                // though explicit imports are preferred for modularity.
+        resolve: {
+            alias: {
+                "@vertix.gg/website": path.resolve( __dirname, "./" ),
+                "@": path.resolve( __dirname, "./src/vertix" ),
+                "@assets": path.resolve( __dirname, "../../assets" ),
+            },
+        },
+        server: {
+            fs: {
+                allow: [
+                    path.resolve( __dirname ),
+                    path.resolve( __dirname, "../../packages" ),
+                    path.resolve( __dirname, "../../assets" )
+                ]
             }
         }
-    }
-}; } );
+    }; } );

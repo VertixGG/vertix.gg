@@ -1,0 +1,139 @@
+/* ---------------------------------------------------------------------------
+ * Deep space backdrop, after the `vc.png` key art: a near-black navy void,
+ * nebula blooms in the brand neons (crimson / azure-cyan / mint) and a drifting
+ * starfield over the top.
+ *
+ * The star positions themselves are generated in `shiny-stars.tsx` — one
+ * box-shadow list per layer, so a whole field costs one composited element.
+ * ------------------------------------------------------------------------ */
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+
+    pointer-events: none;
+
+    background:
+        /* Crimson on the left, the way the "V" bleeds into the dust. */
+        radial-gradient(
+            ellipse 55% 42% at 14% 18%,
+            rgb(255 46 99 / 0.24) 0%,
+            transparent 68%
+        ),
+        /* The violet/magenta core of the nebula, behind the middle. */
+        radial-gradient(
+            ellipse 50% 40% at 46% 30%,
+            rgb(192 76 224 / 0.2) 0%,
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 62% 48% at 52% 40%,
+            rgb(122 77 216 / 0.26) 0%,
+            transparent 72%
+        ),
+        radial-gradient(
+            ellipse 70% 50% at 64% 60%,
+            rgb(30 155 240 / 0.24) 0%,
+            transparent 70%
+        ),
+        /* Mint on the right, following the "C". */
+        radial-gradient(
+            ellipse 45% 40% at 88% 26%,
+            rgb(62 224 166 / 0.18) 0%,
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 80% 55% at 50% 104%,
+            rgb(47 216 245 / 0.14) 0%,
+            transparent 70%
+        ),
+        linear-gradient(180deg, #01030b 0%, #04081a 45%, #01030b 100%);
+}
+
+.vc-starfield {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.vc-starfield__layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    border-radius: 50%;
+}
+
+/* Deliberately static. Each layer's box-shadows span the whole field, so an
+ * animated layer is a full-viewport composited surface — and every
+ * backdrop-filter above it then has to re-blur a moving backdrop each frame,
+ * which reads as flicker. The drift was 0.5px/s and invisible anyway. */
+
+@keyframes vc-drop-in {
+    from {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes vc-slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.vc-animate-drop-in {
+    animation: vc-drop-in 1s ease 200ms backwards;
+}
+
+.vc-animate-slide-in-right {
+    animation: vc-slide-in-right 0.4s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vc-animate-drop-in,
+    .vc-animate-slide-in-right {
+        animation: none !important;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * Page reveal — `index.tsx` swaps `not-loaded` for `loaded` once the window and
+ * every image have settled.
+ * ------------------------------------------------------------------------ */
+.body-container {
+    opacity: 0.2;
+    transition: opacity 1s ease-in-out;
+}
+
+.body-container.loaded {
+    opacity: 1;
+}
+
+.body-container.not-loaded #header {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.body-container.not-loaded footer {
+    display: none;
+}
+
+.body-container.loaded #header {
+    animation: vc-drop-in 1s ease 200ms backwards;
+}

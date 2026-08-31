@@ -1,6 +1,6 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vertix-icon-discord.webp";
+import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
@@ -24,14 +24,14 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                 {
                     props.displayStep ?  <h4>Set temporary dynamic channel's button interface</h4> : null
                 }
-                Click on ( <div className="btn btn-sm btn-dark pe-none"><ArrowDown/></div> ) down arrow to edit or
+                Click on ( <div className="vc-btn vc-btn-sm pointer-events-none"><ArrowDown/></div> ) down arrow to edit or
                 continue with <b>( <code>default = All Buttons Enabled</code> )</b> by
-                pressing <a href={ `${ props.displayStep ? "#step-3" : "3" }` } className="btn btn-sm btn-primary">Next ▶</a>
+                pressing <a href={ `${ props.displayStep ? "#step-3" : "3" }` } className="vc-btn vc-btn-sm vc-btn-azure">Next ▶</a>
                 <br/>
                 <br/>
-                <div className="discord-chat-container border-box m-0">
+                <div className="discord-chat-container vc-frame-box m-0">
                     <DiscordUIComponentMessage
-                        author="Vertix"
+                        author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 9:35 AM"
                         componentName="VertixBot/UI-V2/SetupNewWizardComponent"
@@ -40,7 +40,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                         embedOverrides={ {
                             "VertixBot/UI-V2/SetupStep2Embed": {
                                 title: "Step 2 - Dynamic Channels Setup",
-                                description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v2).",
+                                description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.gg/features/dynamic-channel-v2).",
                             },
                         } }
                         ephemeral={ true }
@@ -97,13 +97,13 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                 <li>😈 <b>Claim Channel</b> - Claim ownership after owner leaves for 10 minutes.</li>
             </ul>
 
-            <p className="pt-5">
-                Select the options that suit you, then click <a href={ `${ props.displayStep ? "#step-3" : "3" }` } className="btn btn-sm btn-primary">Next ▶</a> to continue.
+            <p className="pt-12">
+                Select the options that suit you, then click <a href={ `${ props.displayStep ? "#step-3" : "3" }` } className="vc-btn vc-btn-sm vc-btn-azure">Next ▶</a> to continue.
             </p>
             <br/>
-            <div className="discord-chat-container border-box m-0">
+            <div className="discord-chat-container vc-frame-box m-0">
                 <DiscordUIComponentMessage
-                    author="Vertix"
+                    author="VoiceChannels"
                     avatar={ VertixAvatar }
                     timestamp="Today at 9:35 AM"
                     componentName="VertixBot/UI-V2/SetupNewWizardComponent"
@@ -112,7 +112,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                     embedOverrides={ {
                         "VertixBot/UI-V2/SetupStep2Embed": {
                             title: "Step 2 - Dynamic Channels Setup",
-                            description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v2).",
+                            description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.gg/features/dynamic-channel-v2).",
                         },
                     } }
                     ephemeral={ true }

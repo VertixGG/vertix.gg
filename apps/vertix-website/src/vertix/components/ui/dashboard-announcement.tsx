@@ -29,20 +29,28 @@ export default function DashboardAnnouncement() {
     const dashboardUrl = import.meta.env.VITE_DASHBOARD_URL || "https://dashboard.vertix.gg";
 
     return (
-        <div className="dashboard-announcement">
-            <div className="toast show w-100" role="alert" aria-live="assertive" aria-atomic="true"
-                data-bs-theme="dark">
-                <div className="toast-header">
-                    <strong className="me-auto">✨ New Feature</strong>
-                    <button type="button" className="btn-close btn-close-white" aria-label="Close"
-                        onClick={ handleClose }></button>
+        <div className="vc-animate-slide-in-right fixed bottom-5 right-5 z-[9999] max-w-[340px]">
+            <div className="vc-toast w-full" role="alert" aria-live="assertive" aria-atomic="true">
+                <div className="flex items-center gap-2 border-b border-vc-cyan/20 px-3 py-2">
+                    <strong className="mr-auto text-vc-cyan">✨ New Feature</strong>
+                    <button type="button"
+                        className="rounded p-1 leading-none text-vc-ice-dim transition-colors
+                            hover:text-vc-starlight"
+                        aria-label="Close"
+                        onClick={ handleClose }>
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                            aria-hidden="true">
+                            <path d="M3 3l10 10M13 3L3 13"/>
+                        </svg>
+                    </button>
                 </div>
-                <div className="toast-body">
-                    Introducing the <b>Vertix Dashboard</b> — a brand new way to customize
+                <div className="px-3 py-3 text-vc-ice">
+                    Introducing the <b>VoiceChannels Dashboard</b> — a brand new way to customize
                     your server experience! Edit channel interfaces, manage settings, and fine-tune
                     every detail, all from one place.<br/><br/>
                     <a href={ dashboardUrl } target="_blank" rel="noreferrer"
-                        className="btn btn-sm btn-outline-info">
+                        className="vc-btn vc-btn-cyan vc-btn-sm">
                         Open Dashboard
                     </a>
                 </div>

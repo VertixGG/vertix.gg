@@ -146,6 +146,9 @@ export interface UIGetInteractionsRequest extends UIPeerScopedRequest {
     limit?: number;
 }
 
+/** Everything a peer sends once it holds an id - the handshake itself is the one exception. */
+export type UIPeerRequestPayload = Exclude<UIIPCRequestPayload, UIRegisterPeerRequest>;
+
 export type UIIPCRequestPayload =
     | UIRegisterPeerRequest
     | UIListAdaptersRequest

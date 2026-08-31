@@ -5,6 +5,9 @@ import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";
 import { AgentManager } from "@vertix.gg/bot/src/managers/agent-manager";
+import { AttachmentManager } from "@vertix.gg/bot/src/managers/attachment-manager";
+
+import type { LocalAttachment } from "@vertix.gg/bot/src/managers/attachment-manager";
 
 import type { Client, Message, TextBasedChannel, TextChannel } from "discord.js";
 
@@ -103,11 +106,12 @@ export function mentionHandlerPublic( client: Client ) {
 
             session.lastActivity = Date.now();
 
+            const attachments = await AttachmentManager.$.download( message );
             const stopTyping = startTypingHeartbeat( message.channel );
 
             try {
                 const contextInfo = await buildContextInfo( message );
-                const userMessage = formatMentionMessage( message, botId ) || content;
+                const userMessage = formatMentionMessage( message, botId, attachments.files ) || content;
 
                 const isNewSession = ! session.conversationId;
                 const fullPrompt = isNewSession
@@ -117,7 +121,8 @@ export function mentionHandlerPublic( client: Client ) {
                 const { response, conversationId } = await AgentManager.$.runChat( fullPrompt, {
                     conversationId: session.conversationId,
                     readOnly: true,
-                    model: AgentManager.$.getPublicModel()
+                    model: AgentManager.$.getPublicModel(),
+                    attachments: attachments.files
                 } );
 
                 if ( conversationId ) {
@@ -132,6 +137,8 @@ export function mentionHandlerPublic( client: Client ) {
                 GlobalLogger.$.log( mentionHandlerPublic, `[PUBLIC] ${ response.trim() ? "Reply sent" : "No text reply" }${ session.conversationId ? ` [session: ${ session.conversationId.slice( 0, 8 ) }...]` : "" }` );
             } finally {
                 stopTyping();
+
+                await AttachmentManager.$.cleanup( attachments );
             }
         } catch( error ) {
             GlobalLogger.$.error( mentionHandlerPublic, "[PUBLIC] Failed to process mention", error );
@@ -143,9 +150,11 @@ export function mentionHandlerPublic( client: Client ) {
     cleanupOldSessions();
 }
 
-function formatMentionMessage( message: Message<boolean>, botId?: string ): string | null {
-    const attachments = message.attachments.size
-        ? ` [attachments: ${ [ ... message.attachments.values() ].map( ( file ) => file.name ?? file.url ).join( ", " ) }]`
+function formatMentionMessage( message: Message<boolean>, botId?: string, files: LocalAttachment[] = [] ): string | null {
+    // The paths are what makes an attachment usable - the agent reads files, it cannot fetch a
+    // Discord CDN URL.
+    const attachments = files.length
+        ? ` [attachments, local files to open with Read: ${ files.map( ( file ) => `${ file.path }${ file.contentType ? ` (${ file.contentType })` : "" }` ).join( ", " ) }]`
         : "";
 
     const content = message.content

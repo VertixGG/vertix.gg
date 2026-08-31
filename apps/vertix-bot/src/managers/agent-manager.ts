@@ -75,12 +75,19 @@ export type AgentRunResult = {
     conversationId?: string;
 };
 
+export type AgentAttachment = {
+    path: string;
+    isImage: boolean;
+};
+
 export type AgentRunOptions = {
     includeLogs?: boolean;
     conversationId?: string;
     readOnly?: boolean;
     model?: string;
     reasoningEffort?: ReasoningEffort;
+    /** Local files the agent may open - what a user attached to the message it is answering. */
+    attachments?: AgentAttachment[];
 };
 
 export type AgentChatOptions = Omit<AgentRunOptions, "includeLogs">;
@@ -445,6 +452,14 @@ export class AgentManager extends InitializeBase {
         return this.isEnabled( this.getConfiguredValue( [ "AI_CHAT_CODEX_OSS" ] ) );
     }
 
+    private getCodexImageArgs( attachments: AgentAttachment[] ): string[] {
+        const images = attachments
+            .filter( ( attachment ) => attachment.isImage )
+            .map( ( attachment ) => attachment.path );
+
+        return images.length ? [ "-i", ...images ] : [];
+    }
+
     private getCodexProviderArgs(): string[] {
         if ( ! this.isCodexOssEnabled() ) {
             return [];
@@ -538,6 +553,16 @@ export class AgentManager extends InitializeBase {
             "--strict-mcp-config",
             "--allowedTools", allowedTools
         ];
+    }
+
+    /**
+     * The attachments live outside the repo the CLI is started in, and Claude Code only reaches its
+     * working directory unless the other ones are spelled out.
+     */
+    private getClaudeDirectoryArgs( attachments: AgentAttachment[] ): string[] {
+        const directories = [ ...new Set( attachments.map( ( attachment ) => path.dirname( attachment.path ) ) ) ];
+
+        return directories.length ? [ "--add-dir", ...directories ] : [];
     }
 
     private parseClaudeResult( responseBody: string ): ClaudeCliResult | null {
@@ -650,7 +675,7 @@ export class AgentManager extends InitializeBase {
     }
 
     private async runClaude( prompt: string, options: AgentRunOptions = {} ): Promise<AgentRunResult> {
-        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort() } = options;
+        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort(), attachments = [] } = options;
         const claudeBinary = await this.getClaudeBinary();
 
         if ( ! claudeBinary ) {
@@ -666,7 +691,8 @@ export class AgentManager extends InitializeBase {
             "--model", model,
             "--effort", this.getClaudeEffort( reasoningEffort ),
             "--tools", this.getClaudeTools(),
-            ...this.getClaudeMcpArgs( readOnly )
+            ...this.getClaudeMcpArgs( readOnly ),
+            ...this.getClaudeDirectoryArgs( attachments )
         ];
 
         const args = conversationId
@@ -797,7 +823,7 @@ export class AgentManager extends InitializeBase {
     }
 
     private async runCodex( prompt: string, options: AgentRunOptions = {} ): Promise<AgentRunResult> {
-        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort() } = options;
+        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort(), attachments = [] } = options;
         const codexBinary = await this.getCodexBinary();
 
         if ( ! codexBinary ) {
@@ -820,6 +846,7 @@ export class AgentManager extends InitializeBase {
                 "--sandbox", "read-only",
                 "-o", outputFile,
                 ...this.getCodexProviderArgs(),
+                ...this.getCodexImageArgs( attachments ),
                 "-c", `model_reasoning_effort="${ reasoningEffort }"`,
                 "--model", model
             ];

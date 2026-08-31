@@ -2,7 +2,10 @@ import { Events } from "discord.js";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import { AgentManager } from "@vertix.gg/bot/src/managers/agent-manager";
+import { AttachmentManager } from "@vertix.gg/bot/src/managers/attachment-manager";
 import { getPanelRevision, onPanelRendered, setDynamicInteractionListener, startNewPanel } from "@vertix.gg/bot/src/ui/dynamic/dynamic-ui-factory";
+
+import type { LocalAttachment } from "@vertix.gg/bot/src/managers/attachment-manager";
 
 import type { Client, Message, TextBasedChannel } from "discord.js";
 
@@ -89,11 +92,12 @@ export function mentionHandlerPrivate( client: Client ) {
 
             const session = getSession( `private-${ message.channelId }` );
 
+            const attachments = await AttachmentManager.$.download( message );
             const stopTyping = startTypingUntilPanel( message.channel, message.channelId );
 
             try {
                 const contextInfo = buildContextInfo( message );
-                const userMessage = formatMentionMessage( message, botId ) || content;
+                const userMessage = formatMentionMessage( message, botId, attachments.files ) || content;
 
                 const isNewSession = ! session.conversationId;
                 const fullPrompt = isNewSession
@@ -105,7 +109,8 @@ export function mentionHandlerPrivate( client: Client ) {
                 const { response, conversationId } = await AgentManager.$.runChat( fullPrompt, {
                     conversationId: session.conversationId,
                     readOnly: false,
-                    model: AgentManager.$.getPrivateModel()
+                    model: AgentManager.$.getPrivateModel(),
+                    attachments: attachments.files
                 } );
 
                 if ( conversationId ) {
@@ -122,6 +127,8 @@ export function mentionHandlerPrivate( client: Client ) {
                 GlobalLogger.$.log( mentionHandlerPrivate, `[PRIVATE] ${ answeredWithPanel ? "Answered through the panel" : "Reply sent" }${ session.conversationId ? ` [session: ${ session.conversationId.slice( 0, 8 ) }...]` : "" }` );
             } finally {
                 stopTyping();
+
+                await AttachmentManager.$.cleanup( attachments );
             }
         } catch( error ) {
             GlobalLogger.$.error( mentionHandlerPrivate, "[PRIVATE] Failed to process mention", error );
@@ -203,9 +210,11 @@ async function handleDynamicInteraction( client: Client, interaction: DynamicUII
     }
 }
 
-function formatMentionMessage( message: Message<boolean>, botId?: string ): string | null {
-    const attachments = message.attachments.size
-        ? ` [attachments: ${ [ ... message.attachments.values() ].map( ( file ) => file.name ?? file.url ).join( ", " ) }]`
+function formatMentionMessage( message: Message<boolean>, botId?: string, files: LocalAttachment[] = [] ): string | null {
+    // The paths are what makes an attachment usable - the agent reads files, it cannot fetch a
+    // Discord CDN URL.
+    const attachments = files.length
+        ? ` [attachments, local files to open with Read: ${ files.map( ( file ) => `${ file.path }${ file.contentType ? ` (${ file.contentType })` : "" }` ).join( ", " ) }]`
         : "";
 
     const content = message.content

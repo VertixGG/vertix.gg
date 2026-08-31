@@ -138,6 +138,9 @@ export class UIIPCService extends ServiceWithDependenciesBase<{
 
         this.logger.log( this.handleIPCRequest, `Received UI IPC request: ${ payload.action }` );
 
+        // Any traffic keeps a peer alive, not only what needs its identity.
+        this.touchPeer( payload );
+
         switch ( payload.action ) {
             case UI_IPC_ACTIONS.REGISTER_PEER:
                 return this.registerPeer( payload );
@@ -233,6 +236,15 @@ export class UIIPCService extends ServiceWithDependenciesBase<{
         peer.lastSeen = Date.now();
 
         return peer.identity;
+    }
+
+    private touchPeer( payload: UIIPCRequestPayload ) {
+        const peerId = "peerId" in payload ? payload.peerId : undefined;
+        const peer = peerId ? this.peers.get( peerId ) : null;
+
+        if ( peer ) {
+            peer.lastSeen = Date.now();
+        }
     }
 
     private forgetExpiredPeers() {

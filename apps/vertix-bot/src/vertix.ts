@@ -28,10 +28,6 @@ import type { ClientEvents } from "discord.js";
 
 import type { RestEvents } from "@discordjs/rest";
 
-// The AI client authenticates while the services are still registering, so its identity is handed
-// over once the UI IPC service is up - it posts everything the AI sends as that bot.
-const UI_IPC_SERVICE_WAIT_MS = 30000;
-
 function debugDiscordApiEvents( logger: Logger, client: Client<boolean> ) {
     if ( isDebugEnabled( "DISCORD", "" ) ) {
         const debug = ( ...args: any[] ) => {
@@ -222,19 +218,22 @@ export default async function Main( { enableListeners }: {
                 assert( aiClient.user );
                 logger.info( onAiLogin, `AI Chat Bot: '${ aiClient.user.username }' is authenticated` );
 
-                const uiIPCService = await ServiceLocator.$.waitFor<UIIPCService>( "VertixBot/Services/UIIPC", {
+                // Not awaited on purpose: the services are only registered once this callback
+                // returns, so waiting here would deadlock startup. The identity lands as soon as
+                // the UI IPC service is up, well before a peer can ask for it.
+                void ServiceLocator.$.waitFor<UIIPCService>( "VertixBot/Services/UIIPC", {
                     silent: true,
-                    timeout: UI_IPC_SERVICE_WAIT_MS
-                } ).catch( () => null );
-
-                if ( uiIPCService ) {
-                    uiIPCService.registerClient( UI_PEER_IDENTITIES.AI_CHAT, aiClient as Client<true> );
-                } else {
-                    logger.warn(
-                        onAiLogin,
-                        "UI IPC service did not come up - peers asking for the AI bot will post as the main Vertix bot"
-                    );
-                }
+                    timeout: 10000
+                } )
+                    .then( ( uiIPCService ) => {
+                        uiIPCService.registerClient( UI_PEER_IDENTITIES.AI_CHAT, aiClient as Client<true> );
+                    } )
+                    .catch( () => {
+                        logger.warn(
+                            onAiLogin,
+                            "UI IPC service did not come up - peers asking for the AI bot will post as the main Vertix bot"
+                        );
+                    } );
 
                 logger.log( onAiLogin, "Registering mentionHandlerPublic on AI client..." );
                 await handlers.mentionHandlerPublic( aiClient as Client<true> );

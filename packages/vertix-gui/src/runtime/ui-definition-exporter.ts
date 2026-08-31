@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
@@ -11,6 +11,19 @@ import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-m
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { VirtualFlowGenerator } from "@vertix.gg/gui/src/runtime/virtual-flow-generator";
+
+import {
+    UI_LANGUAGES_INITIAL_CODE,
+    UI_LANGUAGES_INITIAL_FILE_PATH
+} from "@vertix.gg/gui/src/bases/ui-language-definitions";
+
+import type {
+    UIElementButtonLanguageContent,
+    UIElementSelectMenuLanguageContent,
+    UIElementTextInputLanguageContent,
+    UIEmbedLanguageContent,
+    UIModalLanguageContent
+} from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
 import type { UIWizardFlowBase } from "@vertix.gg/gui/src/bases/ui-wizard-flow-base";
 
@@ -62,6 +75,34 @@ import type {
 import type {
     BindingRegistrationOptions
 } from "@vertix.gg/gui/src/builders/builders-definitions";
+
+type LanguageEntry<TContent> = {
+    name: string;
+    content: TContent;
+};
+
+type ElementLanguageContent = Partial<
+    UIElementButtonLanguageContent
+    & UIElementTextInputLanguageContent
+    & UIElementSelectMenuLanguageContent
+>;
+
+interface InitialLanguageFile {
+    code?: string;
+    elements?: {
+        buttons?: LanguageEntry<UIElementButtonLanguageContent>[];
+        textInputs?: LanguageEntry<UIElementTextInputLanguageContent>[];
+        selectMenus?: LanguageEntry<UIElementSelectMenuLanguageContent>[];
+    };
+    embeds?: LanguageEntry<UIEmbedLanguageContent>[];
+    modals?: LanguageEntry<UIModalLanguageContent>[];
+}
+
+interface InitialLanguage {
+    elements: Map<string, ElementLanguageContent>;
+    embeds: Map<string, UIEmbedLanguageContent>;
+    modals: Map<string, UIModalLanguageContent>;
+}
 
 interface ExporterOptions {
     outputDir: string;
@@ -174,6 +215,9 @@ type FlowTriggerRegistrar = (
 
 export class UIDefinitionExporter extends UIBase {
     private readonly logger: Logger;
+
+    // undefined until first use, null once it turned out to be unreadable.
+    private initialLanguage: InitialLanguage | null | undefined;
 
     public static override getName(): string {
         return "VertixGUI/Runtime/UIDefinitionExporter";
@@ -705,6 +749,8 @@ export class UIDefinitionExporter extends UIBase {
                 }
             }
 
+            title = this.getModalLanguageContent( name )?.title ?? title;
+
             const inputs: ModalInputDefinition[] = [];
             const rawInputElements = ModalClass.getInputElements?.() ?? [];
             const inputElements = this.normalize2D( rawInputElements );
@@ -779,6 +825,11 @@ export class UIDefinitionExporter extends UIBase {
                             maxLength = undefined;
                         }
                     }
+
+                    const inputContent = this.getElementLanguageContent( inputName );
+
+                    label = inputContent?.label ?? label;
+                    placeholder = inputContent?.placeholder ?? placeholder;
 
                     inputs.push( {
                         name: inputName,
@@ -935,7 +986,114 @@ export class UIDefinitionExporter extends UIBase {
             }
         }
 
+        this.applyElementLanguageContent( definition, name );
+
         return definition;
+    }
+
+    /**
+     * Language content wins over the class, exactly as it does at render time.
+     */
+    private applyElementLanguageContent( definition: ElementDefinition, name: string ): void {
+        const content = this.getElementLanguageContent( name );
+
+        if ( ! content ) {
+            return;
+        }
+
+        if ( content.label && ! definition.labelOmitted ) {
+            definition.label = content.label;
+        }
+
+        if ( content.placeholder ) {
+            definition.placeholder = content.placeholder;
+        }
+
+        if ( ! content.selectOptions?.length || ! definition.selectOptions?.length ) {
+            return;
+        }
+
+        // Same merge the select menu does: by value where there is one, by position otherwise, and
+        // only the label is translated.
+        definition.selectOptions = definition.selectOptions.map( ( option, index ) => {
+            const translated = content.selectOptions?.find( ( item ) => item.value && item.value === option.value )
+                ?? content.selectOptions?.[ index ];
+
+            return translated?.label ? { ...option, label: translated.label } : option;
+        } );
+    }
+
+    /**
+     * The text a user actually sees comes from the initial language file, not from the classes: at
+     * runtime every getter reads `content?.x || getX()`, so an exporter that only calls the class
+     * hands out whatever the code happened to hardcode - stale wording included.
+     */
+    private getInitialLanguage(): InitialLanguage | null {
+        if ( this.initialLanguage !== undefined ) {
+            return this.initialLanguage;
+        }
+
+        this.initialLanguage = this.loadInitialLanguage();
+
+        return this.initialLanguage;
+    }
+
+    private loadInitialLanguage(): InitialLanguage | null {
+        if ( ! existsSync( UI_LANGUAGES_INITIAL_FILE_PATH ) ) {
+            this.logger.warn(
+                "loadInitialLanguage",
+                `No '${ UI_LANGUAGES_INITIAL_CODE }' language file at '${ UI_LANGUAGES_INITIAL_FILE_PATH }' - exporting the text the classes hardcode.`
+            );
+
+            return null;
+        }
+
+        try {
+            const file = JSON.parse( readFileSync( UI_LANGUAGES_INITIAL_FILE_PATH, "utf-8" ) ) as InitialLanguageFile;
+
+            const elements = new Map<string, ElementLanguageContent>();
+
+            for ( const entry of [
+                ... file.elements?.buttons ?? [],
+                ... file.elements?.textInputs ?? [],
+                ... file.elements?.selectMenus ?? []
+            ] as LanguageEntry<ElementLanguageContent>[] ) {
+                elements.set( entry.name, entry.content );
+            }
+
+            const language: InitialLanguage = {
+                elements,
+                embeds: new Map( ( file.embeds ?? [] ).map( ( entry ) => [ entry.name, entry.content ] ) ),
+                modals: new Map( ( file.modals ?? [] ).map( ( entry ) => [ entry.name, entry.content ] ) )
+            };
+
+            this.logger.log(
+                "loadInitialLanguage",
+                `Loaded '${ file.code ?? UI_LANGUAGES_INITIAL_CODE }': ${ language.elements.size } element(s), ${ language.embeds.size } embed(s), ${ language.modals.size } modal(s).`
+            );
+
+            return language;
+        } catch( error ) {
+            this.logger.warn(
+                "loadInitialLanguage",
+                `Could not read '${ UI_LANGUAGES_INITIAL_FILE_PATH }' - exporting the text the classes hardcode.`,
+                error
+            );
+
+            return null;
+        }
+    }
+
+    private getElementLanguageContent( name: string ): ElementLanguageContent | undefined {
+        return name ? this.getInitialLanguage()?.elements.get( name ) : undefined;
+    }
+
+    private getEmbedLanguageContent( name: string ): UIEmbedLanguageContent | undefined {
+        return name ? this.getInitialLanguage()?.embeds.get( name ) : undefined;
+    }
+
+    private getModalLanguageContent( name: string ): UIModalLanguageContent | undefined {
+        return name ? this.getInitialLanguage()?.modals.get( name ) : undefined;
     }
 
     private async extractSelectOptionsForElement(
@@ -1646,7 +1804,7 @@ export class UIDefinitionExporter extends UIBase {
                     `Embed '${ embedName }' is missing builder metadata.`
                 );
             }
-            definition = this.buildEmbedDefinitionFromMetadata( metadata );
+            definition = this.applyEmbedLanguageContent( this.buildEmbedDefinitionFromMetadata( metadata ), embedName );
             if ( metadata && ( !definition || Object.keys( definition ).length === 0 ) ) {
                 this.logger.warn(
                     "serializeEmbedReference",
@@ -1662,6 +1820,37 @@ export class UIDefinitionExporter extends UIBase {
         }
 
         return reference;
+    }
+
+    /**
+     * Both sides are templates - the vars are filled in when the embed is rendered - so the
+     * language text simply replaces what the class declared, as it does at render time.
+     */
+    private applyEmbedLanguageContent(
+        definition: EmbedContentDefinition | undefined,
+        name: string
+    ): EmbedContentDefinition | undefined {
+        const content = this.getEmbedLanguageContent( name );
+
+        if ( ! content ) {
+            return definition;
+        }
+
+        const merged: EmbedContentDefinition = { ... definition };
+
+        if ( content.title ) {
+            merged.title = content.title;
+        }
+
+        if ( content.description ) {
+            merged.description = content.description;
+        }
+
+        if ( content.footer ) {
+            merged.footer = content.footer;
+        }
+
+        return Object.keys( merged ).length ? merged : definition;
     }
 
     private buildEmbedDefinitionFromMetadata<TArgs extends UIArgs, TVars extends Record<string, JsonValue>>(

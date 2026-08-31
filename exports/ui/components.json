@@ -174,27 +174,27 @@
                                         "value": "en"
                                     },
                                     {
-                                        "label": "🇯🇵 日本語",
+                                        "label": "🇯🇵 Japanese",
                                         "value": "ja"
                                     },
                                     {
-                                        "label": "🇩🇪 Deutsch",
+                                        "label": "🇩🇪 German",
                                         "value": "de"
                                     },
                                     {
-                                        "label": "🇷🇺 Русский",
+                                        "label": "🇷🇺 Russian",
                                         "value": "ru"
                                     },
                                     {
-                                        "label": "🇫🇷 Français",
+                                        "label": "🇫🇷 French",
                                         "value": "fr"
                                     },
                                     {
-                                        "label": "🇬🇷 Ελληνικά",
+                                        "label": "🇬🇷 Greek",
                                         "value": "el"
                                     },
                                     {
-                                        "label": "🇪🇸 Español",
+                                        "label": "🇪🇸 Spanish",
                                         "value": "es"
                                     }
                                 ]
@@ -349,8 +349,8 @@
                         "embed": "VertixBot/UI-General/SetupEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "🛠  Setup Vertix",
-                            "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+                            "title": "🛠  Setup VoiceChannels",
+                            "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
                             "image": "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png",
                             "color": 3369963,
                             "options": {
@@ -468,7 +468,7 @@
                 "inputs": [
                     {
                         "name": "VertixBot/UI-General/SetupScalingPrefixInput",
-                        "label": "Channel Name Prefix",
+                        "label": "CHANNEL NAME PREFIX",
                         "placeholder": "### Room - {index} ###",
                         "style": "short",
                         "minLength": 1,
@@ -476,7 +476,7 @@
                     },
                     {
                         "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
-                        "label": "Max Members Per Channel",
+                        "label": "MAX MEMBERS PER CHANNEL",
                         "placeholder": "10",
                         "style": "short",
                         "minLength": 1,
@@ -526,7 +526,7 @@
                                 "name": "VertixBot/UI-General/WelcomeInviteButton",
                                 "elementType": "button-url",
                                 "instanceType": "Static",
-                                "label": "Invite Vertix",
+                                "label": "Invite VoiceChannels",
                                 "style": "link",
                                 "url": "https://discord.com/oauth2/authorize?client_id=1111283172378955867&permissions=286354576&scope=bot%20applications.commands"
                             }
@@ -554,8 +554,8 @@
                         "embed": "VertixBot/UI-General/WelcomeEmbed",
                         "definition": {
                             "instanceType": "Static",
-                            "title": "༄ Vertix is here, let's get started!",
-                            "description": "Welcome to Vertix, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU",
+                            "title": "༄ VoiceChannels is here, let's get started!",
+                            "description": "Welcome to VoiceChannels, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU",
                             "image": "https://i.imgur.com/x8jMguN.gif",
                             "thumbnail": "https://vertix.gg/assets/Robot-Dz6J42ZT.png",
                             "color": 3369963
@@ -1090,7 +1090,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👑  {candidatesCount} Candidates wish to claim this channel",
-                            "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}` , the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
+                            "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}`, the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
                             "options": {
                                 "formatSecondUnits": {
                                     "unit": "second",
@@ -1306,7 +1306,8 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "style": "secondary",
-                                "emoji": "👥"
+                                "emoji": "👥",
+                                "label": "Access"
                             }
                         },
                         {
@@ -1475,7 +1476,9 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "color": 12954723
+                            "color": 12954723,
+                            "title": "🧹  There are no messages available to clear",
+                            "description": "Keep in mind, that only non-embeds messages can be deleted."
                         }
                     }
                 ]
@@ -1810,7 +1813,8 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "style": "secondary",
-                                "emoji": "👥"
+                                "emoji": "👥",
+                                "label": "Access"
                             }
                         },
                         {
@@ -2023,7 +2027,9 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 7719137
+                            "color": 7719137,
+                            "title": "🌐  The channel is public now",
+                            "description": "Please be aware that your room is currently accessible to anyone.\n\nMembers **without** access will be able to enter the room unless it is hidden or set to private."
                         }
                     }
                 ]
@@ -2080,7 +2086,8 @@
                         "embed": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "color": 13081951
+                            "color": 13081951,
+                            "title": "🐵  The channel is visible now"
                         }
                     }
                 ]
@@ -2093,7 +2100,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👍  Access granted",
-                            "description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 16109389,
@@ -2145,7 +2152,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👎  Access canceled",
-                            "description": "**{userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "description": "**{userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 15548997,
@@ -2197,7 +2204,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🫵  User blocked",
-                            "description": "**{userBlockedDisplayName}** successfully blocked and no longer has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "description": "**{userBlockedDisplayName}** successfully blocked and no longer has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 10038562,
@@ -2249,7 +2256,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🤙  User unblocked",
-                            "description": "**{userUnBlockedDisplayName}** successfully un-blocked!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "description": "**{userUnBlockedDisplayName}** successfully un-blocked!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 16705372,
@@ -2301,7 +2308,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👢  User kicked",
-                            "description": "**{userKickedDisplayName}** successfully kicked!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "description": "**{userKickedDisplayName}** successfully kicked!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 16705372,
@@ -2353,7 +2360,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👥  Manage permissions of your channel",
-                            "description": "**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 4943761,
@@ -3077,7 +3084,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n▥ ∙ Auto create control panel channel: {configControlChannelAutoCreate}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
                             "footer": "Note: Changing user mention will not affect already created dynamic channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
@@ -3253,6 +3260,7 @@
                     {
                         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
                         "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
+                        "placeholder": "{user}'s Channel",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 50
@@ -3555,7 +3563,7 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupStep2Embed",
                         "definition": {
-                            "description": "{dynamicChannelButtonsTemplate}",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -3580,7 +3588,9 @@
                             },
                             "defaultVars": {
                                 "dynamicChannelButtonsTemplate": "Button list"
-                            }
+                            },
+                            "title": "Step 2 - Dynamic Channels Setup",
+                            "footer": "{footer}"
                         }
                     }
                 ]
@@ -3661,6 +3671,7 @@
                     {
                         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
                         "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
+                        "placeholder": "{user}'s Channel",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 50
@@ -3737,6 +3748,7 @@
                     {
                         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
                         "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
+                        "placeholder": "{user}'s Channel",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 50
@@ -3860,7 +3872,7 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupStep2Embed",
                         "definition": {
-                            "description": "{dynamicChannelButtonsTemplate}",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -3885,7 +3897,9 @@
                             },
                             "defaultVars": {
                                 "dynamicChannelButtonsTemplate": "Button list"
-                            }
+                            },
+                            "title": "Step 2 - Dynamic Channels Setup",
+                            "footer": "{footer}"
                         }
                     }
                 ]
@@ -7117,7 +7131,7 @@
                 "inputs": [
                     {
                         "name": "VertixBot/UI-General/SetupScalingPrefixInput",
-                        "label": "Channel Name Prefix",
+                        "label": "CHANNEL NAME PREFIX",
                         "placeholder": "### Room - {index} ###",
                         "style": "short",
                         "minLength": 1,
@@ -7125,7 +7139,7 @@
                     },
                     {
                         "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
-                        "label": "Max Members Per Channel",
+                        "label": "MAX MEMBERS PER CHANNEL",
                         "placeholder": "10",
                         "style": "short",
                         "minLength": 1,
@@ -7352,7 +7366,7 @@
                                         "emoji": "<:TransferChannel:1543908226951807097>"
                                     },
                                     {
-                                        "label": "Templates",
+                                        "label": "Claim",
                                         "value": "templates",
                                         "emoji": "<:ChannelTemplates:1543908219020255252>"
                                     },
@@ -7472,7 +7486,7 @@
                                         "emoji": "<:TransferChannel:1543908226951807097>"
                                     },
                                     {
-                                        "label": "Templates",
+                                        "label": "Claim",
                                         "value": "templates",
                                         "emoji": "<:ChannelTemplates:1543908219020255252>"
                                     },
@@ -7577,7 +7591,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n▥ ∙ Auto create control panel channel: {configControlChannelAutoCreate}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -7646,7 +7660,8 @@
                                 "labelRoleOverride": "**Role Override:",
                                 "labelButtonPrefix": "> -",
                                 "labelButtonNone": "> - *None*"
-                            }
+                            },
+                            "footer": "Note: Changing user mention will not affect already created dynamic channels."
                         }
                     }
                 ]
@@ -7659,7 +7674,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🎚  Edit Buttons Of Master Channel #{index}",
-                            "description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n{dynamicChannelButtonsTemplate}",
+                            "description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n",
                             "footer": "Current enabled buttons at the menu below",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
@@ -7718,7 +7733,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
-                            "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRoles}",
+                            "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
                             "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
@@ -7751,6 +7766,7 @@
                     {
                         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
                         "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
+                        "placeholder": "{user}'s Channel",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 50
@@ -7900,7 +7916,7 @@
                                         "emoji": "<:TransferChannel:1543908226951807097>"
                                     },
                                     {
-                                        "label": "Templates",
+                                        "label": "Claim",
                                         "value": "templates",
                                         "emoji": "<:ChannelTemplates:1543908219020255252>"
                                     },
@@ -8065,7 +8081,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> ▥ ∙ Auto create panel channel: {configControlChannelAutoCreate}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v3).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -8130,7 +8146,8 @@
                                 "defaultFooter": "{defaultFooter}",
                                 "noButtonsFooter": "{noButtonsFooter}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
-                            }
+                            },
+                            "footer": "{footer}"
                         }
                     }
                 ]
@@ -8208,6 +8225,7 @@
                     {
                         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
                         "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
+                        "placeholder": "{user}'s Channel",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 50
@@ -8284,6 +8302,7 @@
                     {
                         "name": "VertixBot/UI-General/ChannelNameTemplateInput",
                         "label": "SET DEFAULT DYNAMIC CHANNELS NAME",
+                        "placeholder": "{user}'s Channel",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 50
@@ -8369,7 +8388,7 @@
                                         "emoji": "<:TransferChannel:1543908226951807097>"
                                     },
                                     {
-                                        "label": "Templates",
+                                        "label": "Claim",
                                         "value": "templates",
                                         "emoji": "<:ChannelTemplates:1543908219020255252>"
                                     },
@@ -8419,7 +8438,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> ▥ ∙ Auto create panel channel: {configControlChannelAutoCreate}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v3).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -8484,7 +8503,8 @@
                                 "defaultFooter": "{defaultFooter}",
                                 "noButtonsFooter": "{noButtonsFooter}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
-                            }
+                            },
+                            "footer": "{footer}"
                         }
                     }
                 ]

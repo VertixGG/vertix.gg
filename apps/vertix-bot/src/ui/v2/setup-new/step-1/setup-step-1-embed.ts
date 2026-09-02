@@ -29,7 +29,7 @@ const SetupStep1Embed = new EmbedBuilder<UIArgs, typeof SETUP_STEP_1_VARS>(
         "_Current template name_:\n" +
         `\`${ SETUP_STEP_1_VARS.dynamicChannelNameTemplate }\`\n\n` +
         "You can keep the default settings by pressing **( `Next ▶` )** button.\n\n" +
-        "Not sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
+        "Not sure how it works? Check out the [explanation](https://voicechannels.xyz/setup/1)."
     ) )
     .setLogic( ( args: UIArgs ) => {
         const template = typeof args.dynamicChannelNameTemplate === "string" && args.dynamicChannelNameTemplate.length

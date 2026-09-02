@@ -142,7 +142,7 @@ export default defineConfig( ( { mode } ) => {
     const localEnv = loadEnv( mode, process.cwd(), "" );
     const env = { ...rootEnv, ...localEnv, ...process.env };
 
-    const dashboardUrl = env.DASHBOARD_PROD_URL || "https://dashboard.voicechannels.gg";
+    const dashboardUrl = env.DASHBOARD_PROD_URL || "https://dashboard.voicechannels.xyz";
 
     return {
         plugins: [ react(), exportsAssetsPlugin(), sitemapPlugin() ],

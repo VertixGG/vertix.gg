@@ -73,7 +73,7 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             "\n" +
             "You can keep the default settings by pressing **( `Next ▶` )** button." +
             "\n\n" +
-            "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v2)."
+            "Not sure what buttons do? check out the [explanation](https://voicechannels.xyz/features/dynamic-channel-v2)."
         );
     }
 

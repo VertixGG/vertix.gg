@@ -26,7 +26,7 @@ export default function DashboardAnnouncement() {
         return null;
     }
 
-    const dashboardUrl = import.meta.env.VITE_DASHBOARD_URL || "https://dashboard.voicechannels.gg";
+    const dashboardUrl = import.meta.env.VITE_DASHBOARD_URL || "https://dashboard.voicechannels.xyz";
 
     return (
         <div className="vc-animate-slide-in-right fixed bottom-5 right-5 z-[9999] max-w-[340px]">

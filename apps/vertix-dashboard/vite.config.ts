@@ -13,8 +13,6 @@ export default defineConfig( ( { mode } ) => {
     const localEnv = loadEnv( mode, process.cwd(), "" );
     const env = { ...rootEnv, ...localEnv, ...process.env };
 
-    const isProd = mode === "production";
-
     const apiPort = env.API_PORT || "3021";
     const apiHost = env.API_HOST || "0.0.0.0";
     const prodHost = env.API_HOST_PROD || `http://${ apiHost }:${ apiPort }`;

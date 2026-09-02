@@ -196,7 +196,7 @@ const SetupStep1Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep1Embed", 
         "_Current template name_:\n" +
         "`" + vars.dynamicChannelNameTemplate + "`\n\n" +
         "You can keep the default settings by pressing **( `Next ▶` )** button.\n\n" +
-        "Not sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
+        "Not sure how it works? Check out the [explanation](https://voicechannels.xyz/setup/1)."
     )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setLogic( ( args ) => ( {
@@ -228,7 +228,7 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
         "\n" +
         "You can keep the default settings by pressing **( `Next ▶` )** button." +
         "\n\n" +
-        "Not sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channel-v3)."
+        "Not sure what buttons do? check out the [explanation](https://voicechannels.xyz/features/dynamic-channel-v3)."
     )
     .setOptions( ( vars ) => ( {
         on: "`🟢∙On`",
@@ -303,7 +303,7 @@ const SetupStep3Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep3Embed", 
     .setDescription( ( vars ) =>
         "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
         "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
-        "Not sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n" +
+        "Not sure how it works?, check out the [explanation](https://voicechannels.xyz/setup/3).\n\n" +
         "**_🛡️ Verified Roles_**\n\n" +
         `> ${ vars.verifiedRolesDisplay }\n\n` +
         "You can keep the default settings by pressing **( `✓ Finish` )** button."

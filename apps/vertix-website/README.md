@@ -1,3 +1,3 @@
 # vertix-website
 
-official [vertix.gg](https://voicechannels.gg) website
+official [vertix.gg](https://voicechannels.xyz) website

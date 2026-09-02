@@ -7,7 +7,7 @@ const WelcomeEmbed = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
     .setInstanceType( UIInstancesTypes.Static )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( "https://i.imgur.com/x8jMguN.gif" )
-    .setThumbnail( "https://vertix.gg/assets/Robot-Dz6J42ZT.png" )
+    .setThumbnail( "https://voicechannels.xyz/assets/Robot-Dz6J42ZT.png" )
     .setTitle( "༄ Vertix is here, let's get started!" )
     .setDescription(
         "Welcome to Vertix, an incredible addition to your server!\n" +
@@ -16,7 +16,7 @@ const WelcomeEmbed = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
         "- Type `/setup` or press `(🛠 Setup)` button.\n" +
         "- Click on `(➕ Create Master Channel)`\n" +
         "- Follow the steps.\n\n" +
-        "Still not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\n" +
+        "Still not sure? Check out our [step by step](https://voicechannels.xyz/posts/how-to-setup) guide.\n\n" +
         "You can always edit the configurations by using the `/setup` command.\n\n" +
         "If you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\n" +
         "Join us at: https://discord.gg/dEwKeQefUU"

@@ -25,7 +25,7 @@ const SetupStep3Embed = new EmbedBuilder<UIArgs, typeof SETUP_STEP_3_VARS>(
     .setDescription( () => (
         "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
         "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
-        "Not sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n" +
+        "Not sure how it works?, check out the [explanation](https://voicechannels.xyz/setup/3).\n\n" +
         "**_🛡️ Verified Roles_**\n\n" +
         "> " +
         SETUP_STEP_3_VARS.verifiedRolesDisplay +

@@ -164,7 +164,7 @@ export default function Header() {
                                 Invite
                             </button>
                             <button id="dashboard"
-                                onClick={ () => window.open( import.meta.env.VITE_DASHBOARD_URL || "https://dashboard.voicechannels.gg" ) }
+                                onClick={ () => window.open( import.meta.env.VITE_DASHBOARD_URL || "https://dashboard.voicechannels.xyz" ) }
                                 className="vc-btn vc-btn-cyan vc-btn-effect w-full nav:w-auto">
                                 Dashboard
                             </button>

@@ -834,7 +834,7 @@
       "name": "VertixBot/UI-General/WelcomeEmbed",
       "content": {
         "title": "༄ VoiceChannels ist da, lass uns anfangen!",
-        "description": "Willkommen bei VoiceChannels, einer großartigen Ergänzung für deinen Server!\nLass uns zusammenarbeiten und deinen Server noch besser machen.\n\n**Bot-Einrichtung**\n- Gib `/setup` ein oder drücke die Schaltfläche `(🛠 Einrichten)`.\n- Klicke auf `(➕ Masterkanal erstellen)`\n- Folge den Schritten.\n\nNoch unsicher? Schau dir unsere [Schritt-für-Schritt-Anleitung](https://vertix.gg/posts/how-to-setup) an.\n\nDu kannst die Konfigurationen jederzeit mit dem Befehl `/setup` bearbeiten.\n\nWenn du Hilfe benötigst oder Vorschläge hast, tritt gerne unserem Discord-Community-Server bei! Wir helfen dir gerne und hören dein Feedback.\n\nTritt uns bei: https://discord.gg/dEwKeQefUU"
+        "description": "Willkommen bei VoiceChannels, einer großartigen Ergänzung für deinen Server!\nLass uns zusammenarbeiten und deinen Server noch besser machen.\n\n**Bot-Einrichtung**\n- Gib `/setup` ein oder drücke die Schaltfläche `(🛠 Einrichten)`.\n- Klicke auf `(➕ Masterkanal erstellen)`\n- Folge den Schritten.\n\nNoch unsicher? Schau dir unsere [Schritt-für-Schritt-Anleitung](https://voicechannels.xyz/posts/how-to-setup) an.\n\nDu kannst die Konfigurationen jederzeit mit dem Befehl `/setup` bearbeiten.\n\nWenn du Hilfe benötigst oder Vorschläge hast, tritt gerne unserem Discord-Community-Server bei! Wir helfen dir gerne und hören dein Feedback.\n\nTritt uns bei: https://discord.gg/dEwKeQefUU"
       }
     }
   ],

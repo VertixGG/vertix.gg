@@ -834,7 +834,7 @@
       "name": "VertixBot/UI-General/WelcomeEmbed",
       "content": {
         "title": "༄ VoiceChannels is here, let's get started!",
-        "description": "Welcome to VoiceChannels, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://vertix.gg/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU"
+        "description": "Welcome to VoiceChannels, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://voicechannels.xyz/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU"
       }
     },
     {
@@ -1480,14 +1480,14 @@
       "name": "VertixBot/UI-V2/SetupStep1Embed",
       "content": {
         "title": "Step 1 - Set Dynamic Channels Template Name",
-        "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
+        "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://voicechannels.xyz/setup/1)."
       }
     },
     {
       "name": "VertixBot/UI-V2/SetupStep2Embed",
       "content": {
         "title": "Step 2 - Dynamic Channels Setup",
-        "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
+        "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.xyz/features/dynamic-channels-showcase).",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙On`",
@@ -1532,7 +1532,7 @@
       "name": "VertixBot/UI-V2/SetupStep3Embed",
       "content": {
         "title": "Step 3 - Select Verified Roles",
-        "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
+        "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://voicechannels.xyz/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -2320,14 +2320,14 @@
       "name": "VertixBot/UI-V3/SetupNewStep1Embed",
       "content": {
         "title": "Step 1 - Set Dynamic Channels Template Name",
-        "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://vertix.gg/setup/1)."
+        "description": "You can specify a default name for dynamic channels that will be used when they are opened.\n\n_Current template name_:\n`{dynamicChannelNameTemplate}`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure how it works? Check out the [explanation](https://voicechannels.xyz/setup/1)."
       }
     },
     {
       "name": "VertixBot/UI-V3/SetupNewStep2Embed",
       "content": {
         "title": "Step 2 - Dynamic Channels Setup",
-        "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://vertix.gg/features/dynamic-channels-showcase).",
+        "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.xyz/features/dynamic-channels-showcase).",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙On`",
@@ -2373,7 +2373,7 @@
       "name": "VertixBot/UI-V3/SetupNewStep3Embed",
       "content": {
         "title": "Step 3 - Select Verified Roles",
-        "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://vertix.gg/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
+        "description": "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\nVerified roles are not used in most cases, almost all the servers use the default settings.\n\nNot sure how it works?, check out the [explanation](https://voicechannels.xyz/setup/3).\n\n**_🛡️ Verified Roles_**\n\n> {verifiedRolesDisplay}\n\nYou can keep the default settings by pressing **( `✓ Finish` )** button.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",

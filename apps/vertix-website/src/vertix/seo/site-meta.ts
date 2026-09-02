@@ -7,7 +7,7 @@
  * from `index.html` and compete with each other as the same document.
  */
 
-export const SITE_ORIGIN = "https://voicechannels.gg";
+export const SITE_ORIGIN = "https://voicechannels.xyz";
 
 export const SITE_NAME = "VoiceChannels";
 

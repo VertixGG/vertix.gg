@@ -528,7 +528,7 @@
                                 "instanceType": "Static",
                                 "label": "Invite VoiceChannels",
                                 "style": "link",
-                                "url": "https://discord.com/oauth2/authorize?client_id=1111283172378955867&permissions=286354576&scope=bot%20applications.commands"
+                                "url": "https://discord.com/oauth2/authorize?client_id=1538844311062581339&permissions=286354576&scope=bot%20applications.commands"
                             }
                         },
                         {
@@ -6485,7 +6485,7 @@
                                 "voteUrl": "{voteUrl}"
                             },
                             "defaultVars": {
-                                "voteUrl": "https://top.gg/bot/1111283172378955867/vote"
+                                "voteUrl": "https://top.gg/bot/1538844311062581339/vote"
                             }
                         }
                     }

@@ -2,9 +2,9 @@
  * @author Leonid Vinikov <leonidvinikov@gmail.com>
  *
  * @see https://discord.com/developers/docs/topics/gateway#sharding-for-very-large-bots
- * @see https://discord.com/api/oauth2/authorize?client_id=1111283172378955867&permissions=8&scope=bot%20applications.commands - Vertix Administrator
- * @see https://discord.com/api/oauth2/authorize?client_id=1111283172378955867&permissions=286354576&scope=bot%20applications.commands - Vertix
- * @see https://discord.com/api/oauth2/authorize?client_id=1111283172378955867&permissions=286346264&scope=bot%20applications.commands - Vertix + Admin
+ * @see https://discord.com/api/oauth2/authorize?client_id=1538844311062581339&permissions=8&scope=bot%20applications.commands - Vertix Administrator
+ * @see https://discord.com/api/oauth2/authorize?client_id=1538844311062581339&permissions=286354576&scope=bot%20applications.commands - Vertix
+ * @see https://discord.com/api/oauth2/authorize?client_id=1538844311062581339&permissions=286346264&scope=bot%20applications.commands - Vertix + Admin
  * @see https://discord.com/api/oauth2/authorize?client_id=1114586106491572254&permissions=286346264&scope=bot%20applications.commands - Vertix Test
  */
 import { fileURLToPath } from "node:url";

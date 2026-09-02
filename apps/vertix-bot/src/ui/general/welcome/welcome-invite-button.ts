@@ -16,6 +16,6 @@ export class WelcomeInviteButton extends UIElementButtonUrlBase {
     }
 
     protected async getURL(): Promise<string> {
-        return "https://discord.com/oauth2/authorize?client_id=1111283172378955867&permissions=286354576&scope=bot%20applications.commands";
+        return "https://discord.com/oauth2/authorize?client_id=1538844311062581339&permissions=286354576&scope=bot%20applications.commands";
     }
 }

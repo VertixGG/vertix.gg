@@ -779,7 +779,7 @@
     {
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
-        "title": "🛠  Vertixをセットアップ",
+        "title": "🛠   VoiceChannels をセットアップ",
         "description": "**VoiceChannels**の無限の可能性を発見しましょう！\nサーバーを完璧にカスタマイズして最適化しましょう。\n\n新しいマスターチャンネルを作成するには：\n`(➕ マスターチャンネルを作成)`ボタンをクリックしてください。\n\nマスターチャンネルは、それぞれ独自の設定を持つダイナミックボイスチャンネルジェネレーターです。\n\n禁止ワード機能により、サーバーレベルでダイナミックチャンネル名を制限する設定が可能です。\n\n_**現在のマスターチャンネル**_：\n{masterChannelMessage}\n\n_現在の禁止ワード_：\n{badwordsMessage}\n\n-# 💡 マスターチャンネルを編集することでログチャンネルを設定できます。\n",
         "options": {
           "masterChannelMessage": {
@@ -833,7 +833,7 @@
     {
       "name": "VertixBot/UI-General/WelcomeEmbed",
       "content": {
-        "title": "༄ Vertixへようこそ、始めましょう！",
+        "title": "༄ VoiceChannelsへようこそ、始めましょう！",
         "description": "Vertixへようこそ、あなたのサーバーへの素晴らしい追加機能です！\n協力してサーバーをさらに良くしましょう。\n\n**ボットのセットアップ**\n- `/setup`と入力するか、`(🛠 セットアップ)`ボタンを押してください。\n- `(➕ マスターチャンネルを作成)`をクリック\n- 手順に従ってください。\n\nまだ不安ですか？[ステップバイステップガイド](https://vertix.gg/posts/how-to-setup)をご覧ください。\n\n`/setup`コマンドでいつでも設定を編集できます。\n\nヘルプが必要な場合や提案がある場合は、Discordコミュニティサーバーに参加してください！喜んでお手伝いし、フィードバックをお聞きします。\n\n参加はこちら：https://discord.gg/dEwKeQefUU"
       }
     }

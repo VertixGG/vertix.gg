@@ -129,14 +129,19 @@ export class GuildManager extends InitializeBase {
     public async onJoined( guild: Guild, defaultChannel: TextChannel, user?: User ) {
         const welcomeAdapter = this.uiService.get( "VertixBot/UI-General/WelcomeAdapter" );
 
-        welcomeAdapter?.send(
-            defaultChannel,
-            user
-                ? {
-                    userId: user.id
-                }
-                : undefined
-        );
+        try {
+            await welcomeAdapter?.send(
+                defaultChannel,
+                user
+                    ? {
+                        userId: user.id
+                    }
+                    : undefined
+            );
+        } catch ( error ) {
+            // A failure to greet should never take down the bot.
+            this.logger.error( this.onJoined, `Guild id: '${ guild.id }' - Failed to send the welcome message`, error );
+        }
     }
 
     private updateStats() {

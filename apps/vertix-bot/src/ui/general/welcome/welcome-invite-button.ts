@@ -12,7 +12,7 @@ export class WelcomeInviteButton extends UIElementButtonUrlBase {
     }
 
     protected async getLabel() {
-        return "Invite Vertix";
+        return "Invite VoiceChannels";
     }
 
     protected async getURL(): Promise<string> {

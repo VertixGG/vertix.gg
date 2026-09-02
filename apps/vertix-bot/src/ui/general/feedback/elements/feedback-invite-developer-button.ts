@@ -18,7 +18,7 @@ export class FeedbackInviteDeveloperButton extends UIElementButtonBase {
     }
 
     protected async getLabel() {
-        return "Invite Vertix Developer";
+        return "Invite Developer";
     }
 
     protected async getEmoji() {

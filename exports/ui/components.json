@@ -52,7 +52,7 @@
                                 "name": "VertixBot/UI-General/FeedbackInviteDeveloperButton",
                                 "elementType": "button",
                                 "instanceType": "Static",
-                                "label": "Invite Vertix Developer",
+                                "label": "Invite Developer",
                                 "style": "primary",
                                 "emoji": "💌"
                             }

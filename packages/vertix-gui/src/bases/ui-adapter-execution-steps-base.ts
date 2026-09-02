@@ -130,7 +130,7 @@ export abstract class UIAdapterExecutionStepsBase<
     public async send( channel: TChannel, sendArgs?: UIArgs ) {
         const initialStep = this.getInitialStep();
 
-        if ( this.getCurrentExecutionStep() !== initialStep ) {
+        if ( this.getCurrentExecutionStep( channel ) !== initialStep ) {
             this.setStepInternal( channel, initialStep );
         }
 
@@ -138,7 +138,8 @@ export abstract class UIAdapterExecutionStepsBase<
     }
 
     public async editReply( interaction: TInteraction, sendArgs?: UIArgs ) {
-        const executionSteps = this.getExecutionStepsArrayAfter( this.getCurrentExecutionStep( interaction ) );
+        const currentStep = this.getCurrentExecutionStep( interaction ),
+            executionSteps = this.getExecutionStepsArrayAfter( currentStep );
 
         /**
          * Conditions are used to determine the current step to execute.
@@ -164,11 +165,12 @@ export abstract class UIAdapterExecutionStepsBase<
             }
         }
 
-        return this.executeEditReplyStep( this.getCurrentExecutionStep(), interaction, sendArgs );
+        return this.executeEditReplyStep( currentStep, interaction, sendArgs );
     }
 
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
-        const executionSteps = this.getExecutionStepsArrayAfter( this.getCurrentExecutionStep( message as Message<true> ) );
+        const currentStep = this.getCurrentExecutionStep( message ),
+            executionSteps = this.getExecutionStepsArrayAfter( currentStep );
 
         if ( executionSteps?.at( 0 )?.getConditions ) {
             for ( const step of executionSteps ) {
@@ -187,7 +189,7 @@ export abstract class UIAdapterExecutionStepsBase<
             }
         }
 
-        return this.executeEditMessageStep( this.getCurrentExecutionStep(), message, newArgs );
+        return this.executeEditMessageStep( currentStep, message, newArgs );
     }
 
     public async ephemeralWithStep(
@@ -292,7 +294,7 @@ export abstract class UIAdapterExecutionStepsBase<
         return stepData.entities;
     }
 
-    protected getCurrentExecutionStep( context?: TInteraction | Message<true> ) {
+    protected getCurrentExecutionStep( context?: TChannel | TInteraction | Message<true> ) {
         if ( this.isStatic() ) {
             if ( !context ) {
                 throw new Error( "Missing context for the static execution." );

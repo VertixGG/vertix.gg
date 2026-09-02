@@ -4,10 +4,10 @@
     "type": "module",
     "scripts": {
         "vertix-prisma:typecheck": "bunx --bun tsc --noEmit",
-        "prisma-generate-bot": "bunx prisma generate --schema prisma/bot.schema.prisma",
-        "prisma-generate-api": "bunx prisma generate --schema prisma/api.schema.prisma",
-        "prisma-migrate-bot-deploy": "bunx prisma migrate deploy --schema prisma/bot.schema.prisma",
-        "prisma-migrate-api-deploy": "bunx prisma migrate deploy --schema prisma/api.schema.prisma"
+        "prisma-generate-bot": "bunx dotenv-cli -e ../../.env -- bunx prisma generate --schema prisma/bot.schema.prisma",
+        "prisma-generate-api": "bunx dotenv-cli -e ../../.env -- bunx prisma generate --schema prisma/api.schema.prisma",
+        "prisma-migrate-bot-deploy": "bunx dotenv-cli -e ../../.env -- bunx prisma db push --schema prisma/bot.schema.prisma",
+        "prisma-migrate-api-deploy": "bunx dotenv-cli -e ../../.env -- bunx prisma db push --schema prisma/api.schema.prisma"
     },
     "dependencies": {
         "@prisma/client": "^6.0.0",

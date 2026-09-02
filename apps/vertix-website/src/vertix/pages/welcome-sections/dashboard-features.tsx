@@ -33,7 +33,7 @@ export default function DashboardFeatures() {
             </div>
 
             <div className="mt-6 text-center">
-                <a href="https://dashboard.vertix.gg" className="vc-btn vc-btn-azure" target="_blank" rel="noopener noreferrer">
+                <a href="https://dashboard.voicechannels.gg" className="vc-btn vc-btn-azure" target="_blank" rel="noopener noreferrer">
                     Open Dashboard
                 </a>
             </div>

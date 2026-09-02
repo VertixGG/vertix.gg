@@ -7,11 +7,11 @@ export const onAddToServerClick = ( type: "recommended" | "optimal" ) => {
 
     switch ( type ) {
         case "recommended":
-            window.open( "https://discord.com/oauth2/authorize?client_id=1111283172378955867&permissions=8&scope=bot%20applications.commands" );
+            window.open( "https://discord.com/oauth2/authorize?client_id=1538844311062581339&permissions=8&scope=bot%20applications.commands" );
             break;
 
         case "optimal":
-            window.open( "https://discord.com/oauth2/authorize?client_id=1111283172378955867&permissions=286346256&scope=bot%20applications.commands" );
+            window.open( "https://discord.com/oauth2/authorize?client_id=1538844311062581339&permissions=286346256&scope=bot%20applications.commands" );
             break;
     }
 };

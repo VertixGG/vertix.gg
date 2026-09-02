@@ -95,7 +95,7 @@ export default function ClaimChannel() {
                                 userWonDisplayName: "iNewLegend",
                                 wonMessage:
                                     "<@iNewLegend> has claimed ownership of this channel, superseding ~~doctor-helper~~ as the new owner!\n\n" +
-                                    "For more details click [here](https://top.gg/bot/1111283172378955867)"
+                                    "For more details click [here](https://top.gg/bot/1538844311062581339)"
                             } }
                             ephemeral={ true }
                             interactionUser="iNewLegend"

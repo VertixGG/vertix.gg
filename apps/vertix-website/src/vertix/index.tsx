@@ -12,6 +12,8 @@ import DashboardAnnouncement from "@vertix.gg/website/src/vertix/components/ui/d
 
 import localRoutes from "@vertix.gg/website/src/vertix/routes";
 
+import { useDocumentMeta } from "@vertix.gg/website/src/vertix/seo/use-document-meta";
+
 import "@vertix.gg/website/src/vertix/styles/index.css";
 
 const loadedPromise = windowLoadedPromise(),
@@ -38,6 +40,8 @@ const IndexContent = () => {
     const location = useLocation();
     const shouldHideHeader = location.pathname === "/welcome";
 
+    useDocumentMeta();
+
     return (
         <>
             { !shouldHideHeader && <Header/> }
@@ -59,17 +63,9 @@ const IndexContent = () => {
                         <li><a href="/privacy-policy" className={ FOOTER_LINK }>Privacy Policy</a></li>
                         <li><a href="/terms-of-service" className={ FOOTER_LINK }>Terms Of Service</a></li>
                         <li><a href="/credits" className={ FOOTER_LINK }>Credits</a></li>
-                        <li><a href="mailto:leonid@vertix.gg" className={ FOOTER_LINK }>Contact</a></li>
+                        <li><a href="mailto:leonidvinikov@gmail.com" className={ FOOTER_LINK }>Contact</a></li>
                     </ul>
                 </footer>
-
-                <div className="flex justify-center opacity-0">
-                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">discord</a>&nbsp;|&nbsp;
-                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">bot</a>&nbsp;|&nbsp;
-                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">temporary</a>&nbsp;|&nbsp;
-                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">voice</a>&nbsp;|&nbsp;
-                    <a href="https://voicechannels.gg" target="_blank" rel="noreferrer">channels</a>
-                </div>
             </div>
         </>
     );

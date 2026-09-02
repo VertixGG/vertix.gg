@@ -19,13 +19,26 @@
 	<meta charset="utf-8"/>
 	<link rel="icon" href="/vc-naked.ico"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+	<!-- Baseline tags. `seo/use-document-meta.ts` rewrites these per route once
+	     the app boots, but crawlers and link unfurlers that don't run JavaScript
+	     (Discord's included) only ever see what is written here. -->
 	<meta
 		name="description"
-		content="VoiceChannels - Discord Bot - Temporary Voice Channels"
+		content="VoiceChannels creates temporary voice channels on demand for your Discord server, with per-channel owner controls, auto-scaling and a web dashboard."
 	/>
+	<link rel="canonical" href="https://voicechannels.gg/"/>
+
+	<meta property="og:type" content="website"/>
+	<meta property="og:site_name" content="VoiceChannels"/>
+	<meta property="og:title" content="VoiceChannels — Temporary Voice Channels Discord Bot"/>
+	<meta property="og:description" content="VoiceChannels creates temporary voice channels on demand for your Discord server, with per-channel owner controls, auto-scaling and a web dashboard."/>
+	<meta property="og:url" content="https://voicechannels.gg/"/>
+	<meta name="twitter:card" content="summary_large_image"/>
+
 	<link rel="apple-touch-icon" href="/vertix.png"/>
 	<link rel="manifest" href="/manifest.json"/>
-	<title>VoiceChannels - Discord Bot - Temporary Voice Channels</title>
+	<title>VoiceChannels — Temporary Voice Channels Discord Bot</title>
 
 	<script>
 		if ( window.parent !== window.self ) {

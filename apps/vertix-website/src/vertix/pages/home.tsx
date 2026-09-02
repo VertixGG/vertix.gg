@@ -82,7 +82,7 @@ export default function Home() {
                     dedication to ensure
                     an exceptional user experience.</p>
                 <p className="text-h5">We value your input and actively review each <a
-                    href="mailto:leonid@vertix.gg">suggestion</a> and customization request
+                    href="mailto:leonidvinikov@gmail.com">suggestion</a> and customization request
                     you provide.</p>
                 <p className="text-h5">Most of the features in <b>VoiceChannels</b> are based on suggestions from our community.
                 </p>

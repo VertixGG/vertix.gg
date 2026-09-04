@@ -19,11 +19,13 @@ const EXPORTS_DIR = join( ROOT, "exports/ui" );
 // and holds no copy of its own.
 const TRANSLATABLE_SUFFIXES = [ "Button", "Input", "SelectMenu", "Menu", "Modal", "Embed", "Markdown" ];
 
+// Only entity names are namespaced; a bare "name" also appears inside select
+// options and embed fields ("English", "▹ Name: <#{id}>") and must not count.
 function collectNames( node, acc = new Set() ) {
     if ( Array.isArray( node ) ) {
         node.forEach( ( item ) => collectNames( item, acc ) );
     } else if ( node && typeof node === "object" ) {
-        if ( typeof node.name === "string" ) {
+        if ( typeof node.name === "string" && node.name.startsWith( "VertixBot/" ) ) {
             acc.add( node.name );
         }
         Object.values( node ).forEach( ( value ) => collectNames( value, acc ) );

@@ -287,6 +287,102 @@
         "content": {
           "label": "Только применить"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
+        "content": {
+          "label": "Отмена"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentConfirmSendButton",
+        "content": {
+          "label": "Отправить в канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentSendButton",
+        "content": {
+          "label": "Отправить"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DeleteButton",
+        "content": {
+          "label": "Удалить"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInviteDeveloperButton",
+        "content": {
+          "label": "Пригласить разработчика"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackReportButton",
+        "content": {
+          "label": "Сообщить о проблеме"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackSuggestionButton",
+        "content": {
+          "label": "Предложите свою идею"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton",
+        "content": {
+          "label": "Применить шаблон"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
+        "content": {
+          "label": "Применить выбранный"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesBackButton",
+        "content": {
+          "label": "◀ Назад"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+        "content": {
+          "label": "Шаблоны"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+        "content": {
+          "label": "Сохранить как шаблон"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
+        "content": {
+          "label": "Подтвердить удаление"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageButton",
+        "content": {
+          "label": "Удалить"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
+        "content": {
+          "label": "Сбросить переопределение роли"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
+        "content": {
+          "label": "Изменить кнопки по умолчанию"
+        }
       }
     ],
     "textInputs": [
@@ -354,6 +450,27 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
         "content": {
           "label": "ВЫБЕРИТЕ НАЗВАНИЕ ДЛЯ ВАШЕГО КАНАЛА"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentMessageInput",
+        "content": {
+          "label": "Сообщение",
+          "placeholder": "Введите сообщение…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DeleteConfirmInput",
+        "content": {
+          "label": "ВВЕДИТЕ DELETE ДЛЯ ПОДТВЕРЖДЕНИЯ",
+          "placeholder": "DELETE"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveInput",
+        "content": {
+          "label": "НАЗВАНИЕ ШАБЛОНА",
+          "placeholder": "Введите название шаблона…"
         }
       }
     ],
@@ -706,6 +823,36 @@
               "label": "∙ Изменить проверенные роли канала"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentChannelSelectMenu",
+        "content": {
+          "placeholder": "Выберите канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+        "content": {
+          "placeholder": "➕ ∙ Создать мастер-канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
+        "content": {
+          "placeholder": "📂 Выберите шаблон для применения…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
+        "content": {
+          "placeholder": "🗑️ Выберите шаблон для удаления…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
+        "content": {
+          "placeholder": "Выберите роль (необязательно)"
         }
       }
     ]
@@ -2456,6 +2603,42 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "Переименовать динамический канал"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentSendModal",
+      "content": {
+        "title": "Отправить сообщение"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/DeleteConfirmModal",
+      "content": {
+        "title": "Подтвердите удаление"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackInviteDeveloperModal",
+      "content": {
+        "title": "Пригласить разработчика"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackModal",
+      "content": {
+        "title": "Отправить отзыв"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackReportModal",
+      "content": {
+        "title": "Отправить сообщение о проблеме"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+      "content": {
+        "title": "Сохранить шаблон"
       }
     }
   ]

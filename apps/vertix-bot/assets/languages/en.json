@@ -287,6 +287,102 @@
         "content": {
           "label": "Apply Only"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
+        "content": {
+          "label": "Cancel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentConfirmSendButton",
+        "content": {
+          "label": "Send to channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentSendButton",
+        "content": {
+          "label": "Send"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DeleteButton",
+        "content": {
+          "label": "Delete"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInviteDeveloperButton",
+        "content": {
+          "label": "Invite Developer"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackReportButton",
+        "content": {
+          "label": "Report a problem"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackSuggestionButton",
+        "content": {
+          "label": "Suggest Your Idea"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplyButton",
+        "content": {
+          "label": "Apply Template"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
+        "content": {
+          "label": "Apply Selected"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesBackButton",
+        "content": {
+          "label": "◀ Back"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+        "content": {
+          "label": "Templates"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+        "content": {
+          "label": "Capture Template"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteConfirmButton",
+        "content": {
+          "label": "Confirm Delete"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageButton",
+        "content": {
+          "label": "Delete"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
+        "content": {
+          "label": "Clear role override"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
+        "content": {
+          "label": "Edit Default Buttons"
+        }
       }
     ],
     "textInputs": [
@@ -354,6 +450,27 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
         "content": {
           "label": "CHOOSE NAME FOR YOUR CHANNEL"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentMessageInput",
+        "content": {
+          "label": "Message",
+          "placeholder": "Type your message..."
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DeleteConfirmInput",
+        "content": {
+          "label": "TYPE DELETE TO CONFIRM",
+          "placeholder": "DELETE"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveInput",
+        "content": {
+          "label": "TEMPLATE NAME",
+          "placeholder": "Enter a name for your template..."
         }
       }
     ],
@@ -706,6 +823,36 @@
               "label": "∙ Edit Channel's Verified Roles"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/AIAgentChannelSelectMenu",
+        "content": {
+          "placeholder": "Select a channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+        "content": {
+          "placeholder": "➕ ∙ Create Master Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
+        "content": {
+          "placeholder": "📂 Select a template to apply..."
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
+        "content": {
+          "placeholder": "🗑️ Select a template to delete..."
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
+        "content": {
+          "placeholder": "Select role (optional)"
         }
       }
     ]
@@ -2456,6 +2603,42 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "Rename dynamic channel"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentSendModal",
+      "content": {
+        "title": "Send message"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/DeleteConfirmModal",
+      "content": {
+        "title": "Confirm deletion"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackInviteDeveloperModal",
+      "content": {
+        "title": "Invite Developer"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackModal",
+      "content": {
+        "title": "Submit Feedback"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackReportModal",
+      "content": {
+        "title": "Submit a issue"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+      "content": {
+        "title": "Save Template"
       }
     }
   ]

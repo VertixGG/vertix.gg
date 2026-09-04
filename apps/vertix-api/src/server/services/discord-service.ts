@@ -35,10 +35,10 @@ export class DiscordService extends ServiceBase {
     public constructor() {
         super();
 
-        const token = process.env.DISCORD_TEST_TOKEN || process.env.DISCORD_TOKEN;
+        const token = process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_TEST_TOKEN || process.env.DISCORD_TOKEN;
 
         if ( !token ) {
-            this.logger.error( "constructor", "DISCORD_TEST_TOKEN/DISCORD_TOKEN not set - cannot start API without Discord token" );
+            this.logger.error( "constructor", "DISCORD_BOT_TOKEN/DISCORD_TEST_TOKEN/DISCORD_TOKEN not set - cannot start API without Discord token" );
             process.exit( 1 );
         }
 

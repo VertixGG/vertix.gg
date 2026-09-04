@@ -834,7 +834,7 @@
       "name": "VertixBot/UI-General/WelcomeEmbed",
       "content": {
         "title": "༄ ¡VoiceChannels está aquí, comencemos!",
-        "description": "¡Bienvenido a VoiceChannels, una increíble adición a tu servidor!\nColaboremos y hagamos tu servidor aún mejor.\n\n**Configuración del Bot**\n- Escribe `/setup` o presiona el botón `(🛠 Configurar)`.\n- Haz clic en `(➕ Crear Canal Maestro)`\n- Sigue los pasos.\n\n¿Aún no estás seguro? Consulta nuestra [guía paso a paso](https://voicechannels.xyz/posts/how-to-setup).\n\nSiempre puedes editar las configuraciones usando el comando `/setup`.\n\nSi necesitas ayuda o tienes sugerencias, ¡no dudes en unirte a nuestro servidor de comunidad de Discord! Estaremos encantados de ayudarte y escuchar tus comentarios.\n\nÚnete a nosotros en: https://discord.gg/dEwKeQefUU"
+        "description": "¡Bienvenido a VoiceChannels, una increíble adición a tu servidor!\nColaboremos y hagamos tu servidor aún mejor.\n\n**Configuración del Bot**\n- Escribe `/setup` o presiona el botón `(🛠 Configurar)`.\n- Haz clic en `(➕ Crear Canal Maestro)`\n- Sigue los pasos.\n\n¿Aún no estás seguro? Consulta nuestra [guía paso a paso](https://voicechannels.online/posts/how-to-setup).\n\nSiempre puedes editar las configuraciones usando el comando `/setup`.\n\nSi necesitas ayuda o tienes sugerencias, ¡no dudes en unirte a nuestro servidor de comunidad de Discord! Estaremos encantados de ayudarte y escuchar tus comentarios.\n\nÚnete a nosotros en: https://discord.gg/dEwKeQefUU"
       }
     }
   ],

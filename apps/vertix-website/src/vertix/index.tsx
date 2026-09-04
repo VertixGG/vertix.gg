@@ -57,7 +57,7 @@ const IndexContent = () => {
             <div className="vc-container">
                 <footer className="my-6 flex flex-wrap items-center justify-between gap-3 py-4
                     font-body text-lg text-vc-ice-dim">
-                    <p className="mb-0">© 2023~2026 voicechannels.xyz</p>
+                    <p className="mb-0">© 2023~2026 voicechannels.online</p>
 
                     <ul className="flex list-none flex-wrap justify-end gap-1 pl-0 mb-0">
                         <li><a href="/privacy-policy" className={ FOOTER_LINK }>Privacy Policy</a></li>

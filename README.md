@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://vertix.gg/">
+<a href="https://voicechannels.online/">
     <img src="assets/brand/Robot.png" alt="VoiceChannels" width="220" />
 </a>
 
@@ -22,7 +22,7 @@ powered by an **open-source framework** for declaring Discord UIs as state machi
 
 <br/>
 
-**[🚀 Invite Vlk](https://vertix.gg/invite-vertix)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://vertix.gg/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.vertix.gg)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://vertix.gg/changelog)**
+**[🚀 Invite Vlk](https://voicechannels.online/invite-vertix)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://voicechannels.online/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.voicechannels.online)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://voicechannels.online/changelog)**
 
 </div>
 
@@ -392,7 +392,7 @@ Never worry about running out of voice channel capacity again. VoiceChannels aut
 - **Auto-Renumbering** — Channels are renumbered every ~5 minutes to keep names consistent.
 - **Safe Deletion** — Tear down a scaling setup with a confirmation that cleans up all related channels.
 
-Run `/setup` → `📈 Create Scaling Channel` and you're done. [Learn more →](https://vertix.gg/features/auto-scaling)
+Run `/setup` → `📈 Create Scaling Channel` and you're done. [Learn more →](https://voicechannels.online/features/auto-scaling)
 
 ---
 
@@ -509,10 +509,10 @@ See it in action without installing anything:
 
 | | |
 | --- | --- |
-| 🎬 **Live demos & docs** | [vertix.gg/welcome](https://vertix.gg/welcome) — every dynamic-channel feature rendered as a real interactive Discord component using `@vertix.gg/discord-ui` |
-| 🧰 **Auto-scaling walkthrough** | [vertix.gg/features/auto-scaling](https://vertix.gg/features/auto-scaling) — wizard, configuration, and scaling logic explained step-by-step |
+| 🎬 **Live demos & docs** | [vertix.gg/welcome](https://voicechannels.online/welcome) — every dynamic-channel feature rendered as a real interactive Discord component using `@vertix.gg/discord-ui` |
+| 🧰 **Auto-scaling walkthrough** | [vertix.gg/features/auto-scaling](https://voicechannels.online/features/auto-scaling) — wizard, configuration, and scaling logic explained step-by-step |
 | 🎛️ **The dashboard** | [dashboard.vertix.gg](https://dashboard.vertix.gg) — sign in with Discord and edit master channel UIs with the visual flow editor |
-| 📜 **Changelog** | [vertix.gg/changelog](https://vertix.gg/changelog) — what shipped recently and what's next |
+| 📜 **Changelog** | [vertix.gg/changelog](https://voicechannels.online/changelog) — what shipped recently and what's next |
 
 ---
 
@@ -521,7 +521,7 @@ See it in action without installing anything:
 Most of the best features in **VoiceChannels** started as a spark of an idea from a community member. Your feedback is our roadmap.
 
 - 🐛 **Bug reports & feature requests:** [open an issue](https://github.com/VertixGG/vertix.gg/issues)
-- 💬 **Got an idea or want to chat?** Join the [Discord community](https://vertix.gg/invite-vertix)
+- 💬 **Got an idea or want to chat?** Join the [Discord community](https://voicechannels.online/invite-vertix)
 - 🤝 **Want to contribute?** PRs are welcome — see [Quick Start](#quick-start--run-vertix-locally) to get a local environment running
 
 
@@ -529,7 +529,7 @@ Most of the best features in **VoiceChannels** started as a spark of an idea fro
 
 VoiceChannels is released under the **[MIT License](LICENSE)** — free for personal and commercial use. Fork it, modify it, ship it.
 
-<sub>**Legal:** [Privacy Policy](https://vertix.gg/privacy-policy) · [Terms of Service](https://vertix.gg/terms-of-service)</sub>
+<sub>**Legal:** [Privacy Policy](https://voicechannels.online/privacy-policy) · [Terms of Service](https://voicechannels.online/terms-of-service)</sub>
 
 <div align="center">
   <sub>Built with ❤️ by <a href="https://github.com/iNewLegend">Leonid Vinikov</a> and <a href="https://github.com/VertixGG/vertix.gg/graphs/contributors">contributors</a>.</sub>

@@ -40,7 +40,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                         embedOverrides={ {
                             "VertixBot/UI-V2/SetupStep2Embed": {
                                 title: "Step 2 - Dynamic Channels Setup",
-                                description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.xyz/features/dynamic-channel-v2).",
+                                description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
                             },
                         } }
                         ephemeral={ true }
@@ -112,7 +112,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                     embedOverrides={ {
                         "VertixBot/UI-V2/SetupStep2Embed": {
                             title: "Step 2 - Dynamic Channels Setup",
-                            description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.xyz/features/dynamic-channel-v2).",
+                            description: "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n- ( ✏️ ∙ **Rename** )\n- ( ✋ ∙ **User Limit** )\n- ( 🧹 ∙ **Clear Chat** )\n- ( 🚫 ∙ **Private** / 🌐 ∙ **Public** )\n- ( 🙈 ∙ **Hidden** / 🐵 ∙ **Shown** )\n- ( 👥 ∙ **Access** )\n- ( 🔃 ∙ **Reset** )\n- ( 🔀 ∙ **Transfer** )\n- ( 😈 ∙ **Claim** )\n\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: `🟢∙On`\n> ⫸ ∙ Auto save dynamic channels: `🔴∙Off`\n> ▥ ∙ Auto create panel channel: `🟢∙On`\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
                         },
                     } }
                     ephemeral={ true }

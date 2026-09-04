@@ -834,7 +834,7 @@
       "name": "VertixBot/UI-General/WelcomeEmbed",
       "content": {
         "title": "༄ VoiceChannelsへようこそ、始めましょう！",
-        "description": "Vertixへようこそ、あなたのサーバーへの素晴らしい追加機能です！\n協力してサーバーをさらに良くしましょう。\n\n**ボットのセットアップ**\n- `/setup`と入力するか、`(🛠 セットアップ)`ボタンを押してください。\n- `(➕ マスターチャンネルを作成)`をクリック\n- 手順に従ってください。\n\nまだ不安ですか？[ステップバイステップガイド](https://voicechannels.xyz/posts/how-to-setup)をご覧ください。\n\n`/setup`コマンドでいつでも設定を編集できます。\n\nヘルプが必要な場合や提案がある場合は、Discordコミュニティサーバーに参加してください！喜んでお手伝いし、フィードバックをお聞きします。\n\n参加はこちら：https://discord.gg/dEwKeQefUU"
+        "description": "Vertixへようこそ、あなたのサーバーへの素晴らしい追加機能です！\n協力してサーバーをさらに良くしましょう。\n\n**ボットのセットアップ**\n- `/setup`と入力するか、`(🛠 セットアップ)`ボタンを押してください。\n- `(➕ マスターチャンネルを作成)`をクリック\n- 手順に従ってください。\n\nまだ不安ですか？[ステップバイステップガイド](https://voicechannels.online/posts/how-to-setup)をご覧ください。\n\n`/setup`コマンドでいつでも設定を編集できます。\n\nヘルプが必要な場合や提案がある場合は、Discordコミュニティサーバーに参加してください！喜んでお手伝いし、フィードバックをお聞きします。\n\n参加はこちら：https://discord.gg/dEwKeQefUU"
       }
     }
   ],

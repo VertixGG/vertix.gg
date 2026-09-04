@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://voicechannels.xyz/sitemap.xml
+Sitemap: https://voicechannels.online/sitemap.xml

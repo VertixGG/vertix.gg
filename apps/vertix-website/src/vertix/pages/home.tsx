@@ -1,6 +1,8 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
+import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
+
 import DiscordDynamicChannelV2 from "../components/discord/discord-dynamic-channel-v2";
 import DiscordDynamicChannelV3 from "../components/discord/discord-dynamic-channel-v3";
 
@@ -11,7 +13,7 @@ export default function Home() {
         <>
             <div className="vc-container vc-page-panel">
                 <div className="grid grid-cols-12 text-center pt-2 select-none">
-                    <div className="col-span-12 lg:col-span-4">
+                    <div className="col-span-12 md:col-span-6 lg:col-span-3">
                         <span className="block text-[clamp(54px,12vw,100px)] font-bold leading-none
                             text-vc-crimson drop-shadow-[0_0_28px_var(--vc-glow-crimson)]">
                             ⫸
@@ -22,7 +24,7 @@ export default function Home() {
                             each voice channels generator</p>
                     </div>
 
-                    <div className="col-span-12 lg:col-span-4">
+                    <div className="col-span-12 md:col-span-6 lg:col-span-3">
                         <span className="block text-[clamp(54px,12vw,100px)] font-bold leading-none
                             text-vc-cyan drop-shadow-[0_0_28px_var(--vc-glow-cyan)]">
                             ❯❯
@@ -33,7 +35,7 @@ export default function Home() {
                             support's log channel per voice channels generator</p>
                     </div>
 
-                    <div className="col-span-12 lg:col-span-4">
+                    <div className="col-span-12 md:col-span-6 lg:col-span-3">
                         <span className="block text-[clamp(54px,12vw,100px)] font-bold leading-none
                             text-vc-mint drop-shadow-[0_0_28px_var(--vc-glow-mint)]">
                             ⌘
@@ -42,6 +44,17 @@ export default function Home() {
                         <h2 className="font-normal">Configuration</h2>
                         <p className="text-vc-ice">Configuration of the features & interface, always available
                             via <code>/setup</code> command</p>
+                    </div>
+
+                    <div className="col-span-12 md:col-span-6 lg:col-span-3">
+                        <span className="block text-[clamp(54px,12vw,100px)] font-bold leading-none
+                            text-vc-azure drop-shadow-[0_0_28px_var(--vc-glow-azure)]">
+                            ⧉
+                        </span>
+
+                        <h2 className="font-normal">Dashboard</h2>
+                        <p className="text-vc-ice">Full UI customization, edit embeds, buttons and texts per language
+                            from your <a href={ DASHBOARD_URL } target="_blank" rel="noreferrer">dashboard</a></p>
                     </div>
                 </div>
 

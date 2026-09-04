@@ -3,12 +3,12 @@
 	"name": "VoiceChannels Discord bot",
 	"icons": [
 		{
-			"src": "favicon.ico",
+			"src": "vc-naked.ico",
 			"sizes": "128x128",
 			"type": "image/x-icon"
 		},
 		{
-			"src": "vertix.png",
+			"src": "vc-naked.png",
 			"type": "image/png",
 			"sizes": "399x400"
 		}

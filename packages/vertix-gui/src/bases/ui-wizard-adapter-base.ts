@@ -158,11 +158,70 @@ export class UIWizardAdapterBase<
     }
 
     private async onWizardFinishButtonClicked( interaction: TInteraction ) {
+        await this.acknowledgeFinishInteraction( interaction );
+
+        if ( ! this.claimFinish( interaction ) ) {
+            return;
+        }
+
+        // Show it greyed out before the work starts, so the wizard cannot be finished twice.
+        await this.editReply( interaction );
+
         await this.onBeforeFinish?.( interaction );
 
         // TODO: ???.
 
         await this.onAfterFinish?.( interaction );
+    }
+
+    /**
+     * Function claimFinish() :: Marks the wizard as finishing, and reports whether this click is
+     * the one that got there first.
+     *
+     * Finishing takes seconds - a setup creates a category, a master channel, a control channel and
+     * its panel message - and the buttons stay live throughout, so a second click would run the
+     * whole thing again and leave the guild with a duplicate setup. The flag both greys the button
+     * out on the next render and turns any later click into a no-op.
+     */
+    private claimFinish( interaction: TInteraction ) {
+        const args = this.getArgsManager().getArgs( this, interaction );
+
+        if ( args?._wizardIsFinishing ) {
+            return false;
+        }
+
+        this.getArgsManager().setArgs( this, interaction, {
+            _wizardIsFinishing: true
+        } );
+
+        return true;
+    }
+
+    /**
+     * Function acknowledgeFinishInteraction() :: Tells discord the click landed, before the finish
+     * work runs.
+     *
+     * Discord invalidates an interaction token that goes unacknowledged for three seconds, and
+     * finishing a setup creates a category, a master channel, a control channel and its panel
+     * message - comfortably longer than that. The deferral used to happen only afterwards, inside
+     * `editReply()`, by which point the token was already dead: discord showed "did not respond in
+     * time" and the logs an `Unknown interaction`, even though the setup itself had succeeded.
+     *
+     * `editReply()` skips its own deferral once the interaction is deferred, and its select menu
+     * branch answers with `update()` rather than a deferral, so those are left untouched here.
+     */
+    private async acknowledgeFinishInteraction( interaction: TInteraction ) {
+        if ( interaction.isCommand() || interaction.isUserSelectMenu() || interaction.isChannelSelectMenu() ) {
+            return;
+        }
+
+        if ( interaction.deferred || interaction.replied ) {
+            return;
+        }
+
+        await interaction.deferUpdate().catch( ( error ) => {
+            this.$$.staticLogger.error( this.acknowledgeFinishInteraction, "", error );
+        } );
     }
 
     private setCurrentStepInArgs( interaction: TInteraction, stepName: string ) {

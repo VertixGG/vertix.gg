@@ -38,7 +38,8 @@ interface TUIWizardElementsGroupWrapperGeneratorArgs {
  *
  *   - Provided `args`, determines the button state (enabled/disabled) for wizard control buttons based on their positions.
  *     It also decides whether the next or finish button should be available based on the component's position.
- *     The finish button can be forcibly disabled if `args` includes `_wizardShouldDisableFinishButton`.
+ *     The finish button can be forcibly disabled if `args` includes `_wizardShouldDisableFinishButton`,
+ *     or `_wizardIsFinishing` once the finish button has been clicked.
  *
  *   - It finally adds the `wizardControlButtons` to the `currentElements` array and returns it.
  *
@@ -99,7 +100,10 @@ export function UIWizardElementsGroupWrapperGenerator( args: TUIWizardElementsGr
                     args._wizardIsFinishButtonAvailable = true;
                 }
 
-                if ( args._wizardShouldDisableFinishButton ) {
+                // `_wizardShouldDisableFinishButton` is recomputed by the wizards on every build,
+                // so finishing carries its own flag - otherwise the rebuild that greys the button
+                // out would immediately re-enable it.
+                if ( args._wizardShouldDisableFinishButton || args._wizardIsFinishing ) {
                     args._wizardIsFinishButtonDisabled = true;
                 }
             }

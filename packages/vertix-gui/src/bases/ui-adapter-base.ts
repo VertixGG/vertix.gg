@@ -69,7 +69,7 @@ export abstract class UIAdapterBase<
     TChannel extends UIAdapterStartContext,
     TInteraction extends UIAdapterReplyContext
 > extends UIAdapterEntityBase {
-    private static staticLogger: Logger = new Logger( this.getName() );
+    protected static staticLogger: Logger = new Logger( this.getName() );
     private static staticDebugger = createDebugger( this.getName(), "UI" );
 
     private static validatedOnce = false;

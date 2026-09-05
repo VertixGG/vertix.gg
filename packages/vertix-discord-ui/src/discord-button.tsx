@@ -2,6 +2,8 @@ import * as React from "react";
 
 import "./styles/discord-button.css";
 
+import { isDiscordMarkup } from "./discord-emojis";
+
 import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
 
 type DiscordButtonVariant = "primary" | "secondary" | "success" | "danger" | "link" | "premium";
@@ -56,8 +58,9 @@ export const DiscordButton = React.forwardRef<HTMLButtonElement, DiscordButtonPr
 
     const hasLabel = Boolean( label || children );
 
-    const isCustomEmojiString = emoji?.startsWith( "<:" ) && emoji?.endsWith( ">" );
-    const displayEmoji = isCustomEmojiString ? undefined : emoji;
+    // An emoji that reached here unresolved is only printable when it is a real character; discord
+    // markup, markdown or an `<emoji name='...'>` token, is dropped instead of printed raw.
+    const displayEmoji = emoji && isDiscordMarkup( emoji ) ? undefined : emoji;
 
     return (
         <button

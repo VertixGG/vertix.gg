@@ -10,21 +10,11 @@ import { Routes } from "discord-api-types/v10";
 import { REST } from "discord.js";
 
 import { getEmojiFromPreviewCache } from "@vertix.gg/utils/src/emoji-preview-cache";
+import { createEmojiToken, replaceEmojiTokens } from "@vertix.gg/utils/src/emoji-token";
 
 import type { RESTGetAPIApplicationEmojisResult } from "discord-api-types/v9";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
-
-/**
- * Matches an emoji token in the form `<emoji name='EmojiName'>`, eg: `<emoji name='ChannelRename'>`.
- *
- * The `emoji` tag name keeps the token unambiguous against every native discord markdown token
- * (`<#id>`, `<@&id>`, `<:name:id>`, `<t:stamp>`) and against wrapped urls. Parsing accepts either
- * quote style and an optional self closing slash, emitting is always the single quoted form.
- */
-const EMOJI_TOKEN_REGEX = /<emoji\s+name=['"]([A-Za-z0-9_]+)['"]\s*\/?>/g;
-
-const EMOJI_TOKEN_PREFIX = "<emoji";
 
 export class EmojiManager extends InitializeBase {
     private static instance: EmojiManager;
@@ -50,7 +40,7 @@ export class EmojiManager extends InitializeBase {
      * unresolvable for every other application. The token stays stable, the id is resolved per run.
      */
     public static getToken( baseName: string ) {
-        return `${ EMOJI_TOKEN_PREFIX } name='${ baseName }'>`;
+        return createEmojiToken( baseName );
     }
 
     public static get $() {
@@ -151,20 +141,17 @@ export class EmojiManager extends InitializeBase {
      * is never destroyed.
      */
     public resolveTokens( text: string ) {
-        if ( ! text.includes( EMOJI_TOKEN_PREFIX ) ) {
-            return text;
-        }
-
-        return text.replace( EMOJI_TOKEN_REGEX, ( token, baseName: string ) => {
+        return replaceEmojiTokens( text, ( baseName ) => {
             const markdown = this.findMarkdown( baseName );
 
-            if ( markdown ) {
-                return markdown;
+            if ( ! markdown ) {
+                this.logger.warn(
+                    this.resolveTokens,
+                    `Emoji token '${ createEmojiToken( baseName ) }' cannot be resolved`
+                );
             }
 
-            this.logger.warn( this.resolveTokens, `Emoji token '${ token }' cannot be resolved` );
-
-            return token;
+            return markdown;
         } );
     }
 

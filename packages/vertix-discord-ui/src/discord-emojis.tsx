@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { getEmojiTokenName, replaceEmojiTokens } from "@vertix.gg/utils/src/emoji-token";
+
 import ChannelRenameEmoji from "@vertix.gg/assets/svg/ChannelRename.svg";
 
 import UserLimitEmoji from "@vertix.gg/assets/svg/UserLimit.svg";
@@ -66,21 +68,53 @@ export const DISCORD_EMOJI_ICON_SRC_BY_NAME: Readonly<Record<string, string>> = 
     "ClaimChannel": ClaimChannelEmoji,
     // The exported bot UI names this emoji `ChannelTemplates`; the site's own
     // hand-written constant still uses `Templates`, so both resolve.
-    "Templates": ChannelTemplatesEmoji,
     "ChannelTemplates": ChannelTemplatesEmoji,
     "Capture": CaptureEmoji,
 };
 
-export function getDiscordEmojiIcon( emoji: string ): React.ReactNode | null {
-    let src = DISCORD_EMOJI_ICON_SRC_BY_UNICODE[ emoji ];
+/**
+ * Function isDiscordMarkup() :: Tells whether an emoji string is markup rather than a printable
+ * character - custom emoji markdown `<:Name:id>`, or an `<emoji name='Name'>` token.
+ *
+ * Markup that did not resolve to an icon has to be dropped, printing it raw leaks the source
+ * syntax into the page.
+ */
+export const isDiscordMarkup = ( emoji: string ) => emoji.startsWith( "<" ) && emoji.endsWith( ">" );
 
-    if ( !src ) {
-        const match = emoji.match( /<:([^:]+):(\d+)>/ );
-        if ( match ) {
-            const name = match[ 1 ];
-            src = DISCORD_EMOJI_ICON_SRC_BY_NAME[ name ];
-        }
+/**
+ * Function getDiscordEmojiIconSrc() :: Resolves a single emoji - unicode, custom emoji markdown or
+ * an `<emoji name='EmojiName'>` token - to the icon that stands for it.
+ *
+ * The exported UI definitions carry the token rather than markdown, because a custom emoji id is
+ * only resolvable by the discord application that owns the emoji.
+ */
+export function getDiscordEmojiIconSrc(
+    emoji: string,
+    overridesByUnicode?: Readonly<Record<string, string>>,
+): string | undefined {
+    const src = overridesByUnicode?.[ emoji ] ?? DISCORD_EMOJI_ICON_SRC_BY_UNICODE[ emoji ];
+
+    if ( src ) {
+        return src;
     }
+
+    const markdownName = emoji.match( /<:([^:]+):(\d+)>/ )?.[ 1 ];
+
+    if ( markdownName ) {
+        return DISCORD_EMOJI_ICON_SRC_BY_NAME[ markdownName ];
+    }
+
+    const tokenName = getEmojiTokenName( emoji );
+
+    if ( tokenName ) {
+        return DISCORD_EMOJI_ICON_SRC_BY_NAME[ tokenName ];
+    }
+
+    return undefined;
+}
+
+export function getDiscordEmojiIcon( emoji: string ): React.ReactNode | null {
+    const src = getDiscordEmojiIconSrc( emoji );
 
     if ( !src ) {
         return null;
@@ -113,6 +147,13 @@ export function replaceEmojisWithIcons( text: string, overrides?: Readonly<Recor
             return `<img src="${ src }" alt="${ name }" class="emoji" draggable="false">`;
         }
         return match;
+    } );
+
+    // Handle the `<emoji name='Name'>` token used by the exported UI definitions.
+    result = replaceEmojiTokens( result, ( name ) => {
+        const src = DISCORD_EMOJI_ICON_SRC_BY_NAME[ name ];
+
+        return src ? `<img src="${ src }" alt="${ name }" class="emoji" draggable="false">` : undefined;
     } );
 
     return result;

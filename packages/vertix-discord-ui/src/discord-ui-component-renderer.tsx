@@ -4,7 +4,7 @@ import { DiscordButton } from "./discord-button";
 import { DiscordEmbed } from "./discord-embed";
 import { DiscordSelectMenu } from "./discord-select-menu";
 import { DiscordSelectMenuDropdown } from "./discord-select-menu-dropdown";
-import { DISCORD_EMOJI_ICON_SRC_BY_NAME, DISCORD_EMOJI_ICON_SRC_BY_UNICODE } from "./discord-emojis";
+import { getDiscordEmojiIconSrc, isDiscordMarkup } from "./discord-emojis";
 
 import { findUIEmbedDefinition, getUIComponentByName } from "./ui-definitions";
 
@@ -411,7 +411,7 @@ function renderElement(
                 const selectDef = definition as UISelectMenuDefinition;
                 if ( selectDef.selectOptions ) {
                     dropdownOptions = selectDef.selectOptions.map( ( opt ) => ( {
-                        iconEmoji: opt.emoji,
+                        ...buildOptionIcon( opt.emoji, context.emojiIconSrcByUnicode ),
                         label: opt.label ?? "",
                         description: opt.description,
                         selected: expandedConfig.selectedValues?.includes( opt.value ?? "" ),
@@ -441,7 +441,7 @@ function renderElement(
                     <DiscordSelectMenuDropdown
                         absolute={ true }
                         options={ dropdownOptions.map( ( opt ) => ( {
-                            iconEmoji: opt.iconEmoji,
+                            ...buildOptionIcon( opt.iconEmoji, context.emojiIconSrcByUnicode ),
                             label: opt.label,
                             description: opt.description,
                             selected: opt.selected,
@@ -484,21 +484,37 @@ function buildEmojiIcon(
         return undefined;
     }
 
-    let src = emojiIconSrcByUnicode?.[ emoji ] ?? DISCORD_EMOJI_ICON_SRC_BY_UNICODE[ emoji ];
-
-    if ( !src ) {
-        const match = emoji.match( /<:([^:]+):(\d+)>/ );
-        if ( match ) {
-            const name = match[ 1 ];
-            src = DISCORD_EMOJI_ICON_SRC_BY_NAME[ name ];
-        }
-    }
+    const src = getDiscordEmojiIconSrc( emoji, emojiIconSrcByUnicode );
 
     if ( !src ) {
         return undefined;
     }
 
     return <img src={ src } alt="" className="discord-emoji" />;
+}
+
+/**
+ * Function buildOptionIcon() :: Splits an option emoji into the two shapes a dropdown can show.
+ *
+ * Anything that resolves to an icon becomes `icon`, and only a plain unicode emoji stays as
+ * `iconEmoji` text. Discord markup - custom emoji markdown or an `<emoji name='...'>` token - is
+ * dropped rather than printed, since it is markup and not something a reader should see.
+ */
+function buildOptionIcon(
+    emoji: string | undefined,
+    emojiIconSrcByUnicode: Readonly<Record<string, string>> | undefined,
+): { icon?: string; iconEmoji?: string } {
+    if ( !emoji ) {
+        return {};
+    }
+
+    const src = getDiscordEmojiIconSrc( emoji, emojiIconSrcByUnicode );
+
+    if ( src ) {
+        return { icon: src };
+    }
+
+    return isDiscordMarkup( emoji ) ? {} : { iconEmoji: emoji };
 }
 
 function chunkBySize<T>( items: ReadonlyArray<T>, chunkSize: number ): ReadonlyArray<ReadonlyArray<T>> {

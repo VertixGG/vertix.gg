@@ -7,6 +7,7 @@
         "vertix-gui:typecheck": "bunx --bun tsc --noEmit"
     },
     "dependencies": {
+        "@vertix.gg/utils": "workspace:*",
         "@vertix.gg/base": "workspace:*"
     }
 }

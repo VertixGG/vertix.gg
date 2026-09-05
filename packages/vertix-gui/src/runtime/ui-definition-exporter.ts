@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
+import { replaceEmojiMarkdownWithTokens } from "@vertix.gg/utils/src/emoji-token";
+
 import { ChannelType } from "discord.js";
 
 import { UIBase } from "@vertix.gg/gui/src/bases/ui-base";
@@ -1758,7 +1760,13 @@ export class UIDefinitionExporter extends UIBase {
 
     private writeJson( filePath: string, payload: unknown ) {
         mkdirSync( path.dirname( filePath ), { recursive: true } );
-        writeFileSync( filePath, JSON.stringify( payload, null, 4 ), "utf8" );
+
+        // The definitions are collected from a live application, so any emoji they carry is
+        // resolved markdown holding that application's ids. Those ids must not cross the export
+        // boundary - consumers resolve the token against their own emoji source instead.
+        const json = replaceEmojiMarkdownWithTokens( JSON.stringify( payload, null, 4 ) );
+
+        writeFileSync( filePath, json, "utf8" );
     }
 
     private extractEntityName( entity: unknown ): string {

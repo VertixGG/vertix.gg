@@ -13,6 +13,7 @@
         "react-dom": "^18.2.0"
     },
     "dependencies": {
+        "@vertix.gg/utils": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "react-markdown": "^8.0.7",

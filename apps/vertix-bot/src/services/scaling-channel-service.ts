@@ -18,6 +18,8 @@ import { ChannelType } from "discord.js";
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
 import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
+import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
+import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
 import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
 
@@ -32,7 +34,7 @@ import type {
 
 import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-import type { CategoryChannel, Guild, VoiceChannel } from "discord.js";
+import type { CategoryChannel, Guild, OverwriteResolvable, VoiceChannel } from "discord.js";
 
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
@@ -319,6 +321,24 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         }
     }
 
+    /**
+     * Function getChannelPermissions() :: The overwrites a scaling channel is created with.
+     *
+     * These channels used to be created with none at all, which lets discord copy the category and
+     * leaves the bot with whatever that category happens to give it - it can end up unable to see,
+     * rename or delete the channels it is meant to manage. The category is still the base, the bot
+     * is granted what it needs on top.
+     */
+    private getChannelPermissions( guild: Guild, category: CategoryChannel ): OverwriteResolvable[] {
+        return PermissionsManager.$.mergeChannelPermissionOverwrites(
+            [ ... category.permissionOverwrites.cache.values() ],
+            [ {
+                id: guild.client.user.id,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS
+            } ]
+        );
+    }
+
     public async createScaledChannel(
         guild: Guild,
         category: CategoryChannel,
@@ -341,7 +361,8 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
                 ownerChannelId: master.id,
                 internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL,
                 version: VERSION_SCALING_CHANNEL_UI_V1,
-                type: ChannelType.GuildVoice
+                type: ChannelType.GuildVoice,
+                permissionOverwrites: this.getChannelPermissions( guild, category )
             } );
 
             this.logger.log( this.createScaledChannel, `Successfully created scaling channel: ${ name }` );
@@ -721,7 +742,8 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
             userOwnerId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL,
             version: VERSION_SCALING_CHANNEL_UI_V1,
-            type: ChannelType.GuildVoice
+            type: ChannelType.GuildVoice,
+            permissionOverwrites: this.getChannelPermissions( guild, category )
         } ).catch( ( error: Error ) => {
             this.logger.error( this.createScalingMasterChannel, "Failed to create master channel", error );
             return null;

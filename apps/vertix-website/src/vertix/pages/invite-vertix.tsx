@@ -11,7 +11,7 @@ export const onAddToServerClick = ( type: "recommended" | "optimal" ) => {
             break;
 
         case "optimal":
-            window.open( "https://discord.com/oauth2/authorize?client_id=1538844311062581339&permissions=286346256&scope=bot%20applications.commands" );
+            window.open( "https://discord.com/oauth2/authorize?client_id=1538844311062581339&permissions=286354448&scope=bot%20applications.commands" );
             break;
     }
 };

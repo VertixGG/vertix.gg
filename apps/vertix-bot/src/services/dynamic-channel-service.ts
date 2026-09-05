@@ -1888,13 +1888,19 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     return;
                 }
 
+                // `.catch()` before `.then()` swallowed the rejection and then ran the success
+                // branch anyway, so a delete the bot had no permission for was reported as done.
+                //
+                // `filterOld` drops anything past the two week bulk delete window instead of
+                // rejecting the whole call over it, and the count comes from what discord actually
+                // removed rather than from what was asked for.
                 await channel
-                    .bulkDelete( messagesToDelete )
-                    .catch( error )
-                    .then( () => {
+                    .bulkDelete( messagesToDelete, true )
+                    .then( ( deletedMessages ) => {
                         result.code = DynamicClearChatResultCode.Success;
-                        result.deletedCount = messagesToDelete.size;
-                    } );
+                        result.deletedCount = deletedMessages.size;
+                    } )
+                    .catch( error );
             } )
             .catch( error );
 

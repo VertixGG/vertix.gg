@@ -100,6 +100,7 @@ interface ICreateControlChannelArgs {
     masterChannel: GuildChannel;
     controlChannelName: string;
     buttonsTemplate: string[];
+    verifiedRoles: string[];
 }
 
 interface ICreateControlChannelResult {
@@ -161,15 +162,24 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     private async createControlChannelWithPanel(
         args: ICreateControlChannelArgs
     ): Promise<ICreateControlChannelResult | null> {
-        const { parent, guild, version, userOwnerId, masterChannel, controlChannelName, buttonsTemplate } = args;
+        const {
+            parent, guild, version, userOwnerId, masterChannel, controlChannelName, buttonsTemplate, verifiedRoles
+        } = args;
 
         const targetPosition = masterChannel.position + 1;
 
-        // Control panel permissions: @everyone can only view, everything else is denied
+        const everyoneRoleId = guild.roles.everyone.id;
+
+        // The panel is read only, and it is shown to the same audience as the channels it drives.
+        //
+        // `@everyone` used to be granted `ViewChannel` outright, which on a server that hides its
+        // channels from it overrode that lockdown and leaked the panel to everyone. It now gets the
+        // grant only when it is itself the audience. The deny list stays on `@everyone` so it
+        // reaches every role, verified or not - none of them are granted those permissions back.
         const controlPanelPermissions = [
             {
-                id: guild.roles.everyone.id,
-                allow: PermissionsBitField.Flags.ViewChannel,
+                id: everyoneRoleId,
+                allow: verifiedRoles.includes( everyoneRoleId ) ? PermissionsBitField.Flags.ViewChannel : 0n,
                 deny: PermissionsBitField.Flags.SendMessages |
                     PermissionsBitField.Flags.SendMessagesInThreads |
                     PermissionsBitField.Flags.CreatePublicThreads |
@@ -184,7 +194,18 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                     PermissionsBitField.Flags.SendTTSMessages |
                     PermissionsBitField.Flags.SendVoiceMessages |
                     PermissionsBitField.Flags.SendPolls
-            }
+            },
+            {
+                id: guild.client.user.id,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS
+            },
+            ...verifiedRoles
+                .filter( ( roleId ) => roleId !== everyoneRoleId )
+                .map( ( roleId ) => ( {
+                    id: roleId,
+                    allow: PermissionsBitField.Flags.ViewChannel,
+                    type: OverwriteType.Role
+                } ) )
         ];
 
         const controlChannelResult = await this.services.channelService.create( {
@@ -293,7 +314,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             userOwnerId: masterChannelDB.userOwnerId,
             masterChannel: masterChannel as GuildChannel,
             controlChannelName: constants.dynamicChannelControlChannelName,
-            buttonsTemplate
+            buttonsTemplate,
+            verifiedRoles: await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, guild.id )
         } );
 
         if ( !controlChannelResult ) {
@@ -737,7 +759,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 userOwnerId: args.userOwnerId,
                 masterChannel,
                 controlChannelName: constants.dynamicChannelControlChannelName,
-                buttonsTemplate: args.dynamicChannelButtonsTemplate || settings.dynamicChannelButtonsTemplate
+                buttonsTemplate: args.dynamicChannelButtonsTemplate || settings.dynamicChannelButtonsTemplate,
+                verifiedRoles: newVerifiedRoles
             } );
 
             if ( controlChannelResult ) {
@@ -849,7 +872,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 userOwnerId: args.userOwnerId,
                 masterChannel,
                 controlChannelName: constants.dynamicChannelControlChannelName,
-                buttonsTemplate: newButtons
+                buttonsTemplate: newButtons,
+                verifiedRoles: newVerifiedRoles
             } );
 
             if ( controlChannelResult ) {

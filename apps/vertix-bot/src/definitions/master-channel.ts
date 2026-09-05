@@ -8,6 +8,7 @@ const { Flags } = PermissionsBitField;
 export const DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS = new PermissionsBitField( [
     Flags.Connect,
     Flags.ManageChannels,
+    Flags.ManageMessages,
     Flags.ManageRoles,
     Flags.MoveMembers,
     Flags.ReadMessageHistory,
@@ -35,11 +36,17 @@ export const DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS = {
     ]
 };
 
+/**
+ * What the bot's own guild role has to hold for the dynamic channel features to work.
+ *
+ * This is only ever read by `getMissingPermissions()` against the guild - it is never written to a
+ * channel, so nothing inherits it. The website's "optimal" invite grants exactly this set.
+ */
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS = {
-    type: OverwriteType.Role,
     allow: [
         Flags.Connect,
         Flags.ManageChannels,
+        Flags.ManageMessages,
         Flags.ManageRoles,
         Flags.MoveMembers,
         Flags.ReadMessageHistory,

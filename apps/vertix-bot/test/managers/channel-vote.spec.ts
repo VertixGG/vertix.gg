@@ -24,6 +24,10 @@ class MessageComponentInteractionForVote extends MessageComponentInteraction<"ca
             data.entitlements = [];
         }
 
+        if ( ! data.authorizing_integration_owners ) {
+            data.authorizing_integration_owners = {};
+        }
+
         if ( ! data.message ) {
             data.message = {
                 id: SnowflakeUtil.generate(),

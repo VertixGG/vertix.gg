@@ -125,9 +125,6 @@ async function onConfigExtrasSelected(
                 argsToSet.dynamicChannelAutoSave = !!parseInt( parted[ 1 ] );
                 break;
 
-            case "dynamicChannelControlChannelAutoCreate":
-                argsToSet.dynamicChannelControlChannelAutoCreate = !!parseInt( parted[ 1 ] );
-                break;
         }
     } );
 
@@ -297,7 +294,6 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {
             case "VertixBot/UI-V2/SetupStep2Component":
                 args._configExtraMenuDisableLogsChannelOption = true;
-                args._configExtraMenuEnableControlChannelAutoCreateOption = true;
 
                 if ( args.dynamicChannelControlChannelAutoCreate === undefined && interaction ) {
                     args.dynamicChannelControlChannelAutoCreate = true;

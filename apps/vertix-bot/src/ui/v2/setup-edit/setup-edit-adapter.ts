@@ -30,7 +30,6 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
-import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
@@ -71,7 +70,6 @@ async function onSetupMasterEditButtonClicked(
     }
 
     args.dynamicChannelControlChannelAutoCreate = !!args.dynamicChannelControlChannelId;
-    args._configExtraMenuEnableControlChannelAutoCreateOption = true;
     args._wizardIsFinishButtonAvailable = true;
 
     context.setArgs( interaction, args );
@@ -293,8 +291,6 @@ async function onConfigExtrasSelected(
     const args = context.getArgs( interaction );
     const values = interaction.values;
 
-    const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
-
     const masterChannelDB = {
         id: args.ChannelDBId,
         version: VERSION_UI_V2
@@ -328,15 +324,6 @@ async function onConfigExtrasSelected(
                 );
                 break;
 
-            case "dynamicChannelControlChannelAutoCreate":
-                args.dynamicChannelControlChannelAutoCreate = !!parseInt( parted[ 1 ], 10 );
-                await masterChannelService.updateControlChannel( {
-                    guildId: interaction.guildId,
-                    masterChannelId: args.masterChannelId,
-                    version: VERSION_UI_V2,
-                    enable: args.dynamicChannelControlChannelAutoCreate
-                } );
-                break;
         }
     }
 

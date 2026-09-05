@@ -60,7 +60,6 @@ import type { VoiceChannel } from "discord.js";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
-import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
 import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 
 import type {
@@ -330,7 +329,6 @@ async function onSetupMasterEditSelected(
     }
 
     args.dynamicChannelControlChannelAutoCreate = !!args.dynamicChannelControlChannelId;
-    args._configExtraMenuEnableControlChannelAutoCreateOption = true;
 
     args._wizardIsFinishButtonAvailable = true;
 
@@ -662,8 +660,6 @@ async function onConfigExtrasSelected(
     const args: UIArgs = context.getArgs( interaction ),
         values = interaction.values;
 
-    const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
-
     const masterChannelDB: ChannelExtended = {
         id: args.ChannelDBId,
         version: VERSION_UI_V3
@@ -688,15 +684,6 @@ async function onConfigExtrasSelected(
                 await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, args.dynamicChannelLogsChannelId );
                 break;
 
-            case "dynamicChannelControlChannelAutoCreate":
-                args.dynamicChannelControlChannelAutoCreate = !!parseInt( parted[ 1 ] );
-                await masterChannelService.updateControlChannel( {
-                    guildId: interaction.guildId,
-                    masterChannelId: args.masterChannelId,
-                    version: VERSION_UI_V3,
-                    enable: args.dynamicChannelControlChannelAutoCreate
-                } );
-                break;
         }
     }
 

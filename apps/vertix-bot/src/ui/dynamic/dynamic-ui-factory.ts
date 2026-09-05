@@ -173,7 +173,6 @@ export function validateDynamicUISpec( spec: DynamicUISpec ) {
         }
     }
 
-
     if ( spec.requiredPermissions !== undefined ) {
         assert(
             /^\d+$/.test( spec.requiredPermissions ),
@@ -387,7 +386,7 @@ async function replyEphemeralStatus( interaction: MinimalInteraction, content: s
             await status.edit( content );
 
             return;
-        } catch ( error ) {
+        } catch( error ) {
             GlobalLogger.$.warn(
                 replyEphemeralStatus,
                 `Could not update the ephemeral status of '${ key }', posting a new one`,

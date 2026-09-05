@@ -53,7 +53,7 @@ export function useDocumentMeta() {
 
         setMeta( "description", description );
 
-        setTag( 'link[rel="canonical"]', () => {
+        setTag( "link[rel=\"canonical\"]", () => {
             const el = document.createElement( "link" );
             el.setAttribute( "rel", "canonical" );
             return el;

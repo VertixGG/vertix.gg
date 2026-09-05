@@ -794,7 +794,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         // Build initial language
         this.buildInMemoryLookup( this.uiInitialLanguage, UI_LANGUAGES_INITIAL_CODE );
 
-        for ( const [ langCode, language ] of [ ... this.uiAvailableLanguages ]) {
+        for ( const [ langCode, language ] of [ ... this.uiAvailableLanguages ] ) {
             this.buildInMemoryLookup( language, langCode );
         }
 

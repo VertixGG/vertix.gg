@@ -67,9 +67,9 @@ const NavbarDropdown: React.FC<{
                             <a
                                 className={ `block px-4 py-2 font-body text-base transition-colors
                                     hover:bg-vc-cyan/10 hover:text-vc-cyan ${
-                                    location.pathname === item.href
-                                        ? "text-vc-cyan"
-                                        : "text-vc-ice" }` }
+        location.pathname === item.href
+            ? "text-vc-cyan"
+            : "text-vc-ice" }` }
                                 href={ item.href }
                                 onMouseEnter={ () => openAndClearTimeout() }
                                 onMouseLeave={ () => setDropdownState( false ) }
@@ -94,7 +94,7 @@ export default function Header() {
 
     return (
         <header id="header" className="relative">
-            {/* Vignette so the bar reads over the nebula without blacking it out. */}
+            { /* Vignette so the bar reads over the nebula without blacking it out. */ }
             <div className="vc-header-vignette pointer-events-none absolute inset-x-0 top-0 -z-10"/>
 
             <nav className="vc-header-glass relative z-20">
@@ -102,8 +102,8 @@ export default function Header() {
                     justify-between px-5 nav:px-8">
 
                     <a className="vc-header-bar flex shrink-0 items-center" href="/">
-                        {/* 324x192 is the mark's own band inside the square source
-                            art; the stylesheet crops to it, so reserve that box here. */}
+                        { /* 324x192 is the mark's own band inside the square source
+                            art; the stylesheet crops to it, so reserve that box here. */ }
                         <img className="vc-logo w-[88px] select-none lg:w-[112px]"
                             width="112" height="66"
                             src={ VCBrand } alt="VoiceChannels"/>
@@ -176,8 +176,8 @@ export default function Header() {
                     </div>
                 </div>
 
-                {/* Neon hairline pinned to the bottom of the brand row, so it stays
-                    put when the stacked menu wraps underneath it. */}
+                { /* Neon hairline pinned to the bottom of the brand row, so it stays
+                    put when the stacked menu wraps underneath it. */ }
                 <div className="vc-header-rule pointer-events-none absolute inset-x-0 h-px"
                     style={ { top: "var(--vc-header-height)" } }/>
             </nav>

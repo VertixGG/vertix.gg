@@ -138,7 +138,7 @@ export class GuildManager extends InitializeBase {
                     }
                     : undefined
             );
-        } catch ( error ) {
+        } catch( error ) {
             // A failure to greet should never take down the bot.
             this.logger.error( this.onJoined, `Guild id: '${ guild.id }' - Failed to send the welcome message`, error );
         }

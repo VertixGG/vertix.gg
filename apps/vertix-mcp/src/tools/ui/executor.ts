@@ -1,9 +1,9 @@
 import { z } from "zod";
 
+import { UI_IPC_ACTIONS } from "@vertix.gg/definitions/src/ui-ipc-definitions";
+
 import { getAdapter, getCatalogMeta, listAdapters, searchUI } from "@vertix.gg/mcp/src/tools/ui/catalog";
 import { requestUI } from "@vertix.gg/mcp/src/tools/ui/ipc-client";
-
-import { UI_IPC_ACTIONS } from "@vertix.gg/definitions/src/ui-ipc-definitions";
 
 import type {
     DynamicUISpec,

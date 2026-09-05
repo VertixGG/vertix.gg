@@ -8,6 +8,10 @@ import login from "@vertix.gg/base/src/discord/login";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
+import { UI_PEER_IDENTITIES } from "@vertix.gg/definitions/src/ui-ipc-definitions";
+
 import * as handlers from "@vertix.gg/bot/src/listeners";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
@@ -15,10 +19,6 @@ import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 
 import { readyHandler } from "@vertix.gg/bot/src/listeners";
-
-import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
-
-import { UI_PEER_IDENTITIES } from "@vertix.gg/definitions/src/ui-ipc-definitions";
 
 import type { UIIPCService } from "@vertix.gg/bot/src/services/ui-ipc-service";
 

@@ -1,4 +1,5 @@
 import { zLintGetConfig } from "@zenflux/eslint";
+import { defaultConditionNames } from "eslint-import-resolver-typescript";
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export const tests = [
@@ -21,6 +22,10 @@ export const tests = [
 
 const baseConfig = await zLintGetConfig();
 
+const RESOLVER_BASE = baseConfig.find( ( entry ) => entry.settings?.[ "import/resolver" ] );
+
+const RUNTIME_CONDITION_NAMES = defaultConditionNames.filter( ( name ) => name !== "types" );
+
 /** @type {import("eslint").Linter.FlatConfig[]} */
 const config = [
     ... baseConfig,
@@ -30,6 +35,21 @@ const config = [
             'packages/vertix-base/src/encryption/decrypt.ts',
             'packages/vertix-base/src/encryption/encrypt.ts'
         ]
+    },
+    {
+        files: RESOLVER_BASE.files,
+
+        settings: {
+            "import/resolver": {
+                ... RESOLVER_BASE.settings[ "import/resolver" ],
+
+                typescript: {
+                    ... RESOLVER_BASE.settings[ "import/resolver" ].typescript,
+
+                    conditionNames: RUNTIME_CONDITION_NAMES,
+                },
+            },
+        },
     },
     {
         files: [

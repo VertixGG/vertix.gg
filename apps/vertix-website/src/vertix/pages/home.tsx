@@ -1,12 +1,12 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
+import "../components/discord/discord-chat-container.css";
+
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 
-import DiscordDynamicChannelV2 from "../components/discord/discord-dynamic-channel-v2";
-import DiscordDynamicChannelV3 from "../components/discord/discord-dynamic-channel-v3";
-
-import "../components/discord/discord-chat-container.css";
+import DiscordDynamicChannelV2 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v2";
+import DiscordDynamicChannelV3 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v3";
 
 export default function Home() {
     return (

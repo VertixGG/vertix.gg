@@ -6,8 +6,9 @@ import { pipeline } from "node:stream/promises";
 
 import react from "@vitejs/plugin-react";
 
-import { ROUTE_META, SITE_ORIGIN } from "./src/vertix/seo/site-meta";
 import { defineConfig, loadEnv } from "vite";
+
+import { ROUTE_META, SITE_ORIGIN } from "./src/vertix/seo/site-meta";
 
 import type { Plugin, ResolvedConfig } from "vite";
 
@@ -122,8 +123,8 @@ function sitemapPlugin(): Plugin {
                 ].join( "\n" ) );
 
             const xml = [
-                '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+                "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">",
                 ...entries,
                 "</urlset>",
                 "",

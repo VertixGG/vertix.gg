@@ -1,8 +1,8 @@
+import { randomUUID } from "crypto";
+
 import { ChannelType, BaseGuildTextChannel, BaseGuildVoiceChannel } from "discord.js";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
-
-import { randomUUID } from "crypto";
 
 import {
     UI_IPC_ACTIONS,

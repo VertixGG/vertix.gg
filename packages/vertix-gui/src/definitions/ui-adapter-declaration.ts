@@ -3,6 +3,7 @@ import type { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-ad
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
+import type { TransactionBuilder } from "@vertix.gg/gui/src/builders/transaction-builder";
 
 export type TPossibleAdapters =
     | UIAdapterBase<UIAdapterStartContext, UIAdapterReplyContext>
@@ -17,6 +18,7 @@ export type TAdapterStaticContract = {
     isDynamic: () => boolean;
     isStatic: () => boolean;
     isMultiLanguage?: () => boolean;
+    getTransactions?: () => TransactionBuilder | undefined;
 };
 
 export type TAdapterClassType = TAdapterStaticContract & { new ( options: TAdapterRegisterOptions ): TPossibleAdapters };

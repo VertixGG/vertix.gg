@@ -52,7 +52,7 @@ import type {
     StringSelectMenuInteraction,
     UserSelectMenuInteraction
 } from "discord.js";
-import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
+import type { TAdapterRegisterOptions, TAdapterStaticContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 const REGENERATE_BUTTON_ID = "regenerate-button";
 
@@ -267,9 +267,9 @@ export abstract class UIAdapterBase<
 
                 // For adapters with transactions, append the initial state name
                 // so it matches the dashboard format "ComponentName:StateName"
-                const staticClass = this.constructor as Record<string, unknown>;
+                const staticClass = this.constructor as Partial<TAdapterStaticContract>;
                 if ( typeof staticClass.getTransactions === "function" ) {
-                    const transactions = ( staticClass.getTransactions as () => { getInitialState(): string } | undefined )();
+                    const transactions = staticClass.getTransactions();
                     if ( transactions ) {
                         const initialState = transactions.getInitialState();
                         const stateShortName = initialState.split( "/" ).pop() ?? initialState;

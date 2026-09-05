@@ -12,7 +12,7 @@ export interface EmbedOverrides {
 /**
  * Interface for select option customization override.
  */
-export interface SelectOptionOverride {
+export type SelectOptionOverride = {
     label?: string;
     description?: string;
     emoji?: string;
@@ -22,7 +22,7 @@ export interface SelectOptionOverride {
  * Interface for element customization overrides.
  * Allows overriding element properties like label, emoji, style per guild.
  */
-export interface ElementOverride {
+export type ElementOverride = {
     label?: string;
     emoji?: string;
     style?: string;
@@ -42,7 +42,7 @@ export const ELEMENT_OVERRIDE_STRING_FIELDS = [ "label", "emoji", "style", "url"
  * Interface for modal input customization override.
  * Allows overriding input properties like label and placeholder per guild.
  */
-export interface ModalInputOverride {
+export type ModalInputOverride = {
     label?: string;
     placeholder?: string;
 }
@@ -51,7 +51,7 @@ export interface ModalInputOverride {
  * Interface for modal customization overrides.
  * Allows overriding modal title and per-input properties.
  */
-export interface ModalOverrides {
+export type ModalOverrides = {
     title?: string;
     inputOverrides?: Record<string, ModalInputOverride>;
 }

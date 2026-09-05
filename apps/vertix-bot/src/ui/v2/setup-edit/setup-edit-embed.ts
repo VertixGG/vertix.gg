@@ -43,6 +43,11 @@ const vars = {
     dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDisplay" ),
 
     verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+
+    staffRoles: uiUtilsWrapAsTemplate( "staffRoles" ),
+    staffRolesDisplay: uiUtilsWrapAsTemplate( "staffRolesDisplay" ),
+    staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" ),
+
     dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
 };
 
@@ -64,6 +69,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         "**_🛡️ Verified Roles_**\n\n" +
         "▹ " +
         vars.verifiedRoles +
+        "\n\n" +
+        "**_🛠️ Staff Roles_**\n\n" +
+        "▹ " +
+        vars.staffRolesDisplay +
         "\n\n" +
         "**_⚙️ Configuration_**\n\n" +
         "@ ∙ Mention user in primary message: " +
@@ -107,6 +116,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         configControlChannelAutoCreate: {
             [ vars.configControlChannelAutoCreateEnabled ]: vars.on,
             [ vars.configControlChannelAutoCreateDisabled ]: vars.off
+        },
+
+        staffRolesDisplay: {
+            [ vars.staffRoles ]: vars.staffRoles,
+            [ vars.staffRolesNone ]: "**None**"
         }
     } ) )
     .setArrayOptions( () => {
@@ -117,6 +131,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
                 options: {}
             },
             verifiedRoles: {
+                format: `<@&${ vars.value }>${ vars.separator }`,
+                separator: ", "
+            },
+            staffRoles: {
                 format: `<@&${ vars.value }>${ vars.separator }`,
                 separator: ", "
             }
@@ -136,6 +154,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             processedLogsChannelId = processedLogsChannelId[ 0 ];
         }
 
+        const staffRoles: string[] = Array.isArray( args.dynamicChannelStaffRoles )
+            ? args.dynamicChannelStaffRoles
+            : [];
+
         return {
             index: args.index + 1,
             masterChannelId: args.masterChannelId,
@@ -144,6 +166,9 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             dynamicChannelLogsChannelId: processedLogsChannelId,
 
             verifiedRoles: args.dynamicChannelVerifiedRoles,
+
+            ...( staffRoles.length ? { staffRoles } : {} ),
+            staffRolesDisplay: staffRoles.length ? vars.staffRoles : vars.staffRolesNone,
 
             configUserMention: args.dynamicChannelMentionable
                 ? vars.configUserMentionEnabled

@@ -8,6 +8,7 @@ export interface MasterChannelSettingsInterface {
     dynamicChannelLogsChannelId: string | null;
     dynamicChannelMentionable: boolean;
     dynamicChannelNameTemplate: string;
+    dynamicChannelStaffRoles: string[];
     dynamicChannelVerifiedRoles: string[];
 }
 

@@ -52,6 +52,7 @@ import {
 
 import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS,
+    DEFAULT_MASTER_CHANNEL_STAFF_ROLES_PERMISSIONS,
     DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
 } from "@vertix.gg/bot/src/definitions/master-channel";
 
@@ -89,9 +90,10 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type {
-    Guild,
     APIPartialChannel,
     Client,
+    Guild,
+    GuildChannel,
     GuildMember,
     Interaction,
     Message,
@@ -958,6 +960,151 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
+     * Function updateStaffRolesPermissions() :: Applies an edited staff roles list to everything the
+     * master channel owns - itself, its category, its control panel and every dynamic channel under
+     * it.
+     *
+     * Staff roles are granted rather than denied, so adding one never has to read the channel
+     * state: the grant outranks whatever deny the state wrote. Removing one does, because a role
+     * can be staff and audience at once - clearing the overwrite of a role that is still a verified
+     * role would take away the access its verified role entitles it to, so such a role is handed
+     * back to the verified roles treatment instead of being cleared.
+     */
+    public async updateStaffRolesPermissions(
+        guildId: string,
+        masterChannelId: string,
+        previousRoles: string[],
+        currentRoles: string[]
+    ) {
+        const removedRoles = previousRoles.filter( ( roleId ) => ! currentRoles.includes( roleId ) ),
+            addedRoles = currentRoles.filter( ( roleId ) => ! previousRoles.includes( roleId ) );
+
+        if ( ! removedRoles.length && ! addedRoles.length ) {
+            return;
+        }
+
+        const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannelId );
+
+        const verifiedRoles = masterChannelDB
+            ? await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, guildId )
+            : [];
+
+        const clearedRoles = removedRoles.filter( ( roleId ) => ! verifiedRoles.includes( roleId ) ),
+            demotedRoles = removedRoles.filter( ( roleId ) => verifiedRoles.includes( roleId ) );
+
+        const dynamicChannelsDB = await ChannelModel.$.getDynamicsByMasterId( guildId, masterChannelId );
+
+        this.logger.info(
+            this.updateStaffRolesPermissions,
+            `Guild id: '${ guildId }', master channel id: '${ masterChannelId }' - ` +
+                `Applying staff roles to ${ dynamicChannelsDB.length } dynamic channel(s), ` +
+                `added: '${ addedRoles }', cleared: '${ clearedRoles }', demoted: '${ demotedRoles }'`
+        );
+
+        const client = this.services.appService.getClient(),
+            masterChannel = client.channels.cache.get( masterChannelId ) as VoiceChannel | undefined;
+
+        // The master channel, its category and the control panel grant a verified role the same
+        // access a staff role gets, so a demoted role keeps what it already has there and only
+        // loses the flags the verified roles never gave it.
+        const staticTargets: GuildChannel[] = [];
+
+        if ( masterChannel ) {
+            staticTargets.push( masterChannel );
+
+            if ( masterChannel.parent ) {
+                staticTargets.push( masterChannel.parent );
+            }
+        }
+
+        const controlChannel = await this.getControlChannel( masterChannelId );
+
+        if ( controlChannel ) {
+            staticTargets.push( controlChannel );
+        }
+
+        for ( const target of staticTargets ) {
+            if ( addedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( target, addedRoles, {
+                    Connect: true,
+                    ViewChannel: true
+                } );
+            }
+
+            if ( clearedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( target, clearedRoles, {
+                    Connect: null,
+                    ViewChannel: null
+                } );
+            }
+
+            if ( demotedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( target, demotedRoles, {
+                    ViewChannel: true
+                } );
+            }
+        }
+
+        // A dynamic channel is the one place where the verified roles are denied rather than
+        // granted, so a demoted role has to be put back to whatever the channel state says.
+        const stateProbeRoles = verifiedRoles.filter( ( roleId ) => ! demotedRoles.includes( roleId ) );
+
+        for ( const dynamicChannelDB of dynamicChannelsDB ) {
+            const channel = client.channels.cache.get( dynamicChannelDB.channelId ) as VoiceChannel | undefined;
+
+            if ( ! channel ) {
+                continue;
+            }
+
+            if ( addedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( channel, addedRoles, {
+                    Connect: true,
+                    ViewChannel: true
+                } );
+            }
+
+            if ( clearedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( channel, clearedRoles, {
+                    Connect: null,
+                    ViewChannel: null
+                } );
+            }
+
+            if ( demotedRoles.length ) {
+                const isPrivate = this.isRolesDeniedFlag( channel, stateProbeRoles, PermissionsBitField.Flags.Connect ),
+                    isHidden = this.isRolesDeniedFlag( channel, stateProbeRoles, PermissionsBitField.Flags.ViewChannel );
+
+                await PermissionsManager.$.editChannelRolesPermissions( channel, demotedRoles, {
+                    Connect: isPrivate ? false : null,
+                    ViewChannel: isHidden ? false : null
+                } );
+            }
+        }
+    }
+
+    /**
+     * Function getControlChannel() :: Resolves the control panel of a master channel, if it has one.
+     */
+    private async getControlChannel( masterChannelId: string ) {
+        const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannelId );
+
+        if ( ! masterChannelDB ) {
+            return null;
+        }
+
+        const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB ),
+            controlChannelId = settings.dynamicChannelControlChannelId;
+
+        if ( ! controlChannelId ) {
+            return null;
+        }
+
+        const controlChannel = this.services.appService.getClient().channels.cache.get( controlChannelId );
+
+        return controlChannel?.type === ChannelType.GuildText ? controlChannel : null;
+    }
+
+    /**
      * Function updateControlChannelVerifiedRoles() :: Moves the control panel with the verified
      * roles list.
      *
@@ -1167,6 +1314,17 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
             )
         };
+
+        // Staff roles outrank every deny the state writes, so they are granted up front and the
+        // saved state below never has to account for them.
+        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+
+        staffRoles.forEach( ( roleId ) => {
+            permissionOverwrites.push( {
+                id: roleId,
+                ...DEFAULT_MASTER_CHANNEL_STAFF_ROLES_PERMISSIONS
+            } );
+        } );
 
         if ( autoSave ) {
             savedData = await UserMasterChannelDataModel.$.getData( user.userId, masterChannelDB.id );
@@ -1550,7 +1708,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const result: IDynamicEditChannelStateResult = {
                 code: DynamicEditChannelStateResultCode.Error
             },
-            roles = await this.getVerifiedRoles( channel );
+            roles = await this.getStateRoles( channel );
 
         let editStatePromise;
 
@@ -1628,7 +1786,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     ) {
         let result = false;
 
-        const roles = await this.getVerifiedRoles( channel );
+        const roles = await this.getStateRoles( channel );
 
         switch ( newState ) {
             case "shown":
@@ -1689,7 +1847,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         let state: ChannelState = "unknown",
             visibilityState: ChannelVisibilityState = "unknown";
 
-        const roles = await this.getVerifiedRoles( channel );
+        const roles = await this.getStateRoles( channel );
 
         switch ( newState ) {
             case "public":
@@ -2399,6 +2557,30 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         return roles;
+    }
+
+    /**
+     * Function getStateRoles() :: The roles a privacy state change is written onto.
+     *
+     * The audience minus the staff roles. A role can be both, and being staff is the promise that
+     * no state ever shuts it out, so writing the state deny onto it would take away the very thing
+     * the staff list grants. Its overwrite is left as the staff grant put it.
+     */
+    private async getStateRoles( dynamicChannel: VoiceBasedChannel ) {
+        const roles = await this.getVerifiedRoles( dynamicChannel ),
+            masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannel.id );
+
+        if ( ! masterChannelDB ) {
+            return roles;
+        }
+
+        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+
+        if ( ! staffRoles.length ) {
+            return roles;
+        }
+
+        return roles.filter( ( roleId ) => ! staffRoles.includes( roleId ) );
     }
 
     private getDeniedFlagCount( channel: VoiceBasedChannel, roles: string[], flag: bigint ) {

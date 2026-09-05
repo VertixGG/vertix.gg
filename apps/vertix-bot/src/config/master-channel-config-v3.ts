@@ -40,6 +40,7 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
 
                 dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
 
+                dynamicChannelStaffRoles: [],
                 dynamicChannelVerifiedRoles: []
             },
 

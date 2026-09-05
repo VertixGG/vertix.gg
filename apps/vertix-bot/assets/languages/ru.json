@@ -544,6 +544,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/StaffRolesMenu",
+        "content": {
+          "placeholder": "🛠️ ∙ Выберите роли персонала"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
         "content": {
           "placeholder": "🛡️ ∙ Роль Everyone",
@@ -1572,7 +1578,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -1592,6 +1598,10 @@
           "configLogs": {
             "{configLogsEnabled}": "{on}",
             "{configLogsDisabled}": "{off}"
+          },
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Нет**"
           }
         },
         "arrayOptions": {
@@ -1611,6 +1621,10 @@
             }
           },
           "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
           }
@@ -2411,7 +2425,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -2431,6 +2445,10 @@
           "configLogs": {
             "{configLogsEnabled}": "{on}",
             "{configLogsDisabled}": "{off}"
+          },
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Нет**"
           }
         },
         "arrayOptions": {
@@ -2452,6 +2470,10 @@
             }
           },
           "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
           }

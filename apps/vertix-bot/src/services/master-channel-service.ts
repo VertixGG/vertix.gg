@@ -961,6 +961,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelLogsChannelId: settings.dynamicChannelLogsChannelId,
             dynamicChannelMentionable: newMentionable,
             dynamicChannelNameTemplate: newName,
+            // Configured after setup, through the edit screen.
+            dynamicChannelStaffRoles: [],
             dynamicChannelVerifiedRoles: newVerifiedRoles
         } );
 

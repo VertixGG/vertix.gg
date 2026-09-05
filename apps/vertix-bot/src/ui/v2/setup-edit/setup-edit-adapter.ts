@@ -355,6 +355,40 @@ async function onLogChannelSelected(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 }
 
+async function onStaffRolesSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    // Rewriting the overwrites of every channel the master channel owns takes longer than the
+    // three seconds discord gives to acknowledge an interaction, so acknowledge it first.
+    if ( ! interaction.deferred && ! interaction.replied ) {
+        try {
+            await interaction.deferUpdate();
+        } catch {}
+    }
+
+    const args = context.getArgs( interaction );
+    const staffRoles = interaction.values.filter( ( roleId ) => roleId !== interaction.guildId ).sort();
+
+    args.dynamicChannelStaffRoles = staffRoles;
+
+    const masterChannelDB = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V2
+    } as ChannelExtended;
+
+    const previousRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+
+    await MasterChannelDataManager.$.setChannelStaffRoles( masterChannelDB, interaction.guildId, staffRoles );
+
+    context.setArgs( interaction, args );
+
+    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+        .updateStaffRolesPermissions( interaction.guildId, args.masterChannelId, previousRoles, staffRoles );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
+}
+
 async function onVerifiedRolesSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
@@ -500,6 +534,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "NameTemplateSubmitted", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "ConfigExtrasUpdated", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "LogChannelUpdated", { from: "MasterOverview", to: "MasterOverview" } )
+            .addTransition( "StaffRolesUpdated", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "DeleteConfirmed", { from: "MasterOverview", to: "SelectMaster" } )
             .addTransition( "Done", { from: "MasterOverview", to: "SelectMaster" } )
             .addTransition( "ShowButtonsEffect", { from: "Buttons", to: "ButtonsEffect" } )
@@ -550,6 +585,11 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "VertixBot/UI-V2/LogChannelSelectMenu",
                 "LogChannelUpdated",
                 onLogChannelSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/StaffRolesMenu",
+                "StaffRolesUpdated",
+                onStaffRolesSelected
             )
             .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
                 "VertixBot/UI-General/VerifiedRolesMenu",
@@ -619,7 +659,8 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelNameTemplate,
                 masterChannelKeys.dynamicChannelButtonsTemplate,
                 masterChannelKeys.dynamicChannelMentionable,
-                masterChannelKeys.dynamicChannelVerifiedRoles
+                masterChannelKeys.dynamicChannelVerifiedRoles,
+                masterChannelKeys.dynamicChannelStaffRoles
             ];
 
             selectedKeys.forEach( ( key ) => {

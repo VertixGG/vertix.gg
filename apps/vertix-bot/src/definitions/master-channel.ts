@@ -62,6 +62,22 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS = {
 };
 
 /**
+ * What each staff role is granted, on every channel the system owns.
+ *
+ * The mirror of the verified roles grant. Verified roles are the audience the privacy state denies;
+ * staff roles are the roles it can never shut out. Discord applies role allows after role denies,
+ * so this outranks both the verified role deny and the `@everyone` one, and a moderator reaches a
+ * private or hidden channel without the owner granting them one at a time.
+ */
+export const DEFAULT_MASTER_CHANNEL_STAFF_ROLES_PERMISSIONS = {
+    type: OverwriteType.Role,
+    allow: [
+        Flags.ViewChannel,
+        Flags.Connect
+    ]
+};
+
+/**
  * What each verified role is granted on a master channel, and through inheritance on every dynamic
  * channel created from it.
  *

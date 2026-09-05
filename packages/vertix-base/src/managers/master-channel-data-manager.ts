@@ -177,6 +177,48 @@ export class MasterChannelDataManager extends InitializeBase {
         return result?.dynamicChannelVerifiedRoles?.length ? result.dynamicChannelVerifiedRoles : [ guildId ];
     }
 
+    /**
+     * Function getChannelStaffRoles() :: Returns the roles that are always let into the dynamic
+     * channels of a master channel.
+     *
+     * The mirror of the verified roles: those are the roles the privacy state denies, these are the
+     * roles it can never shut out, so a moderator can reach a private or hidden channel without the
+     * owner granting them one at a time. Empty by default - nobody bypasses unless an admin says so.
+     */
+    public async getChannelStaffRoles( masterChannelDB: ChannelExtended, cache = true ): Promise<string[]> {
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+
+        return result?.dynamicChannelStaffRoles ?? [];
+    }
+
+    public async setChannelStaffRoles(
+        masterChannelDB: ChannelExtended,
+        guildId: string,
+        roles: string[],
+        shouldAdminLog = true
+    ) {
+        this.logger.log(
+            this.setChannelStaffRoles,
+            `Guild id:${ guildId }, master channel id: '${ masterChannelDB.id }' - Setting channel staff roles: '${ roles }'`
+        );
+
+        if ( shouldAdminLog ) {
+            const previousRoles = await this.getChannelStaffRoles( masterChannelDB );
+
+            this.logger.admin(
+                this.setChannelStaffRoles,
+                `🛠️  Dynamic Channel staff roles modified - guildId: "${ guildId }" masterChannelId: "${ masterChannelDB.id }", "${ previousRoles }" => "${ roles }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelStaffRoles: roles
+        } );
+    }
+
     public async getChannelLogsChannelId( masterChannelDB: ChannelExtended ) {
         const defaults = this.config.defaults.settings;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>

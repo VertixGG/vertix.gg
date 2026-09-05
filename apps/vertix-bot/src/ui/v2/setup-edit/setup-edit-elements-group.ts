@@ -9,10 +9,13 @@ import { SetupEditSelectEditOptionMenu } from "@vertix.gg/bot/src/ui/v2/setup-ed
 
 import { LogChannelSelectMenu } from "@vertix.gg/bot/src/ui/v2/logs-channel/log-channel-select-menu";
 
+import { StaffRolesMenu } from "@vertix.gg/bot/src/ui/general/staff-roles/staff-roles-menu";
+
 const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V2/SetupEditElementsGroup" )
     .addRow( [ SetupEditSelectEditOptionMenu ] )
     .addRow( [ ConfigExtrasSelectMenu ] )
     .addRow( [ LogChannelSelectMenu ] )
+    .addRow( [ StaffRolesMenu ] )
     .addRow( [ DoneButton, DeleteButton ] )
     .build();
 

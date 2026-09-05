@@ -36,6 +36,7 @@ import { LogChannelSelectMenu } from "@vertix.gg/bot/src/ui/v3/logs-channel/log-
 import { ChannelButtonsTemplateSelectMenu } from "@vertix.gg/bot/src/ui/v3/channel-buttons-template/channel-buttons-template-select-menu";
 import { VerifiedRolesMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-menu";
 import { VerifiedRolesEveryoneSelectMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-everyone-select-menu";
+import { StaffRolesMenu } from "@vertix.gg/bot/src/ui/general/staff-roles/staff-roles-menu";
 import { SetupEditButtonsEffectImmediatelyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-immediately-button";
 import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
 import { SetupEditButtonsRoleSelectMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-role-select-menu";
@@ -168,6 +169,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         "**_🎚 Buttons Interface_**\n\n" +
         `${ v.dynamicChannelButtonsTemplate }\n\n` +
         `**_🛡️ Verified Roles_**\n\n▹ ${ v.verifiedRoles }\n\n` +
+        `**_🛠️ Staff Roles_**\n\n▹ ${ v.staffRolesDisplay }\n\n` +
         "**_⚙️ Configuration_**\n\n" +
         `@ ∙ Mention user in primary message: ${ v.configUserMention }\n` +
         `⫸ ∙ Auto save dynamic channels: ${ v.configAutoSave }\n` +
@@ -196,10 +198,18 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         configControlChannelAutoCreate: {
             [ v.configControlChannelAutoCreateEnabled ]: v.on,
             [ v.configControlChannelAutoCreateDisabled ]: v.off
+        },
+        staffRolesDisplay: {
+            [ v.staffRoles ]: v.staffRoles,
+            [ v.staffRolesNone ]: "**None**"
         }
     } ) )
     .setArrayOptions( {
         verifiedRoles: {
+            format: "<@&{value}>{separator}",
+            separator: ", "
+        },
+        staffRoles: {
             format: "<@&{value}>{separator}",
             separator: ", "
         }
@@ -229,12 +239,20 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             }
         } );
 
+        const staffRoles = ( args.dynamicChannelStaffRoles as string[] ) || [];
+
+        // Mirrors the verified roles embed: the array var is left unset when there is nothing to
+        // format, the display var carries the "None" literal instead.
+        const staffRolesDisplay = staffRoles.length ? v.staffRoles : v.staffRolesNone;
+
         return {
             index: ( args.index || 0 ) + 1,
             masterChannelId: args.masterChannelId,
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
             dynamicChannelLogsChannelId: processedLogsChannelId,
             verifiedRoles: args.dynamicChannelVerifiedRoles || [],
+            ...( staffRoles.length ? { staffRoles } : {} ),
+            staffRolesDisplay,
             configUserMention: args.dynamicChannelMentionable ? v.configUserMentionEnabled : v.configUserMentionDisabled,
             configAutoSave: args.dynamicChannelAutoSave ? v.configAutoSaveEnabled : v.configAutoSaveDisabled,
             configLogs: processedLogsChannelId ? v.configLogsEnabled : v.configLogsDisabled,
@@ -258,6 +276,7 @@ const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupE
     .addRow( [ SetupEditSelectEditOptionMenu ] )
     .addRow( [ ConfigExtrasSelectMenu ] )
     .addRow( [ LogChannelSelectMenu ] )
+    .addRow( [ StaffRolesMenu ] )
     .addRow( [ DoneButton, DeleteButton ] )
     .build();
 
@@ -714,6 +733,38 @@ async function onLogChannelSelected(
     await warnOnMissingLogsChannelPermissions( interaction, channelId );
 }
 
+async function onStaffRolesSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    // Rewriting the overwrites of every channel the master channel owns takes longer than the
+    // three seconds discord gives to acknowledge an interaction, so acknowledge it first.
+    if ( ! interaction.deferred && ! interaction.replied ) {
+        try {
+            await interaction.deferUpdate();
+        } catch {}
+    }
+
+    const args: UIArgs = context.getArgs( interaction ),
+        staffRoles = interaction.values.filter( ( roleId ) => roleId !== interaction.guildId ).sort();
+
+    args.dynamicChannelStaffRoles = staffRoles;
+
+    const masterChannelDB: any = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V3
+    };
+
+    const previousRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+
+    await MasterChannelDataManager.$.setChannelStaffRoles( masterChannelDB, interaction.guildId, staffRoles );
+
+    context.setArgs( interaction, args );
+
+    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+        .updateStaffRolesPermissions( interaction.guildId, args.masterChannelId, previousRoles, staffRoles );
+}
+
 async function onVerifiedRolesSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
@@ -839,6 +890,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                     dynamicChannelLogsChannelDisplay: "**None**",
                     dynamicChannelButtonsTemplate: "**Default Settings**\n> - Rename\n> - User Limit\n> - Access",
                     verifiedRoles: "**None**",
+                    staffRolesDisplay: "**None**",
                     configUserMention: "`🟢∙On`",
                     configAutoSave: "`🔴∙Off`",
                     configLogs: "`🔴∙Off`",
@@ -871,6 +923,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "EditChannelName", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "ConfigExtrasChanged", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "LogChannelChanged", { from: "EditMaster", to: "EditMaster" } )
+            .addTransition( "StaffRolesChanged", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "Done", { from: "EditMaster", to: "Default" } )
             .addTransition( "Delete", { from: "EditMaster", to: "Default" } )
             // Transitions from EditButtons
@@ -951,6 +1004,11 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "VertixBot/UI-V3/LogChannelSelectMenu",
                 "LogChannelChanged",
                 onLogChannelSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/StaffRolesMenu",
+                "StaffRolesChanged",
+                onStaffRolesSelected
             )
             .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
                 "VertixBot/UI-General/VerifiedRolesMenu",
@@ -1042,7 +1100,8 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelNameTemplate,
                 masterChannelKeys.dynamicChannelButtonsTemplate,
                 masterChannelKeys.dynamicChannelMentionable,
-                masterChannelKeys.dynamicChannelVerifiedRoles
+                masterChannelKeys.dynamicChannelVerifiedRoles,
+                masterChannelKeys.dynamicChannelStaffRoles
             ];
 
             selectedKeys.forEach( ( key ) => {

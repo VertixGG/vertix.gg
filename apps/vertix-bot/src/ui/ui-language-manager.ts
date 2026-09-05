@@ -25,6 +25,8 @@ import {
     UI_LANGUAGES_PATH
 } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
+import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
+
 import { LanguageUtils } from "@vertix.gg/bot/src/utils/language";
 
 import type { UILanguageManagerInterface } from "@vertix.gg/gui/src/interfaces/language-manager-interface";
@@ -137,7 +139,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                 this.getButtonTranslatedContent,
                 `Button language not found: '${ button.getName() }' - Language: '${ languageCode }'`
             );
-            return button.getTranslatableContent();
+            return this.resolveEmojiTokens( await button.getTranslatableContent() );
         }
 
         return {
@@ -164,7 +166,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                 this.getSelectMenuTranslatedContent,
                 `Select menu language not found: '${ selectMenu.getName() }' - Language: '${ languageCode }'`
             );
-            return selectMenu.getTranslatableContent();
+            return this.resolveEmojiTokens( await selectMenu.getTranslatableContent() );
         }
 
         return {
@@ -188,7 +190,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                 this.getTextInputTranslatedContent,
                 `Text input language not found: '${ textInput.getName() }' - Language: '${ languageCode }'`
             );
-            return textInput.getTranslatableContent();
+            return this.resolveEmojiTokens( await textInput.getTranslatableContent() );
         }
 
         return {
@@ -211,7 +213,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                 this.getEmbedTranslatedContent,
                 `Embed language not found: '${ embed.getName() }' - Language: '${ languageCode }'`
             );
-            return embed.getTranslatableContent();
+            return this.resolveEmojiTokens( await embed.getTranslatableContent() );
         }
 
         return {
@@ -237,7 +239,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                 this.getMarkdownTranslatedContent,
                 `Markdown language not found: '${ markdown.getName() }' - Language: '${ languageCode }'`
             );
-            return markdown.getTranslatableContent();
+            return this.resolveEmojiTokens( await markdown.getTranslatableContent() );
         }
 
         return {
@@ -260,7 +262,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
                 this.getModalTranslatedContent,
                 `Modal language not found: '${ modal.getName() }' - Language: '${ languageCode }'`
             );
-            return modal.getTranslatableContent();
+            return this.resolveEmojiTokens( await modal.getTranslatableContent() );
         }
 
         return {
@@ -808,44 +810,73 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         // Buttons
         const buttonsMap = new Map<string, UIElementButtonLanguageContent>();
         for ( const button of language.elements.buttons ) {
-            buttonsMap.set( button.name, button.content );
+            buttonsMap.set( button.name, this.resolveEmojiTokens( button.content ) );
         }
         this.buttonsByLang.set( langCode, buttonsMap );
 
         // Select menus
         const selectMenusMap = new Map<string, UIElementSelectMenuLanguageContent>();
         for ( const selectMenu of language.elements.selectMenus ) {
-            selectMenusMap.set( selectMenu.name, selectMenu.content );
+            selectMenusMap.set( selectMenu.name, this.resolveEmojiTokens( selectMenu.content ) );
         }
         this.selectMenusByLang.set( langCode, selectMenusMap );
 
         // Text inputs
         const textInputsMap = new Map<string, UIElementTextInputLanguageContent>();
         for ( const textInput of language.elements.textInputs ) {
-            textInputsMap.set( textInput.name, textInput.content );
+            textInputsMap.set( textInput.name, this.resolveEmojiTokens( textInput.content ) );
         }
         this.textInputsByLang.set( langCode, textInputsMap );
 
         // Embeds
         const embedsMap = new Map<string, UIEmbedLanguageContent>();
         for ( const embed of language.embeds ) {
-            embedsMap.set( embed.name, embed.content );
+            embedsMap.set( embed.name, this.resolveEmojiTokens( embed.content ) );
         }
         this.embedsByLang.set( langCode, embedsMap );
 
         // Markdowns
         const markdownsMap = new Map<string, UIMarkdownLanguageContent>();
         for ( const markdown of language.markdowns ) {
-            markdownsMap.set( markdown.name, markdown.content );
+            markdownsMap.set( markdown.name, this.resolveEmojiTokens( markdown.content ) );
         }
         this.markdownsByLang.set( langCode, markdownsMap );
 
         // Modals
         const modalsMap = new Map<string, UIModalLanguageContent>();
         for ( const modal of language.modals ) {
-            modalsMap.set( modal.name, modal.content );
+            modalsMap.set( modal.name, this.resolveEmojiTokens( modal.content ) );
         }
         this.modalsByLang.set( langCode, modalsMap );
+    }
+
+    /**
+     * Function resolveEmojiTokens() :: Returns a deep copy of the content with every
+     * `<emoji name='EmojiName'>` token replaced by the emoji markdown of the running application.
+     *
+     * Emoji ids are per application, so they must never be persisted in a language file. The files
+     * hold the stable token and the id is resolved here, on every boot, against the live emojis.
+     */
+    private resolveEmojiTokens<TContent>( content: TContent ): TContent {
+        if ( "string" === typeof content ) {
+            return EmojiManager.$.resolveTokens( content ) as TContent;
+        }
+
+        if ( Array.isArray( content ) ) {
+            return content.map( ( item ) => this.resolveEmojiTokens( item ) ) as TContent;
+        }
+
+        if ( null === content || "object" !== typeof content ) {
+            return content;
+        }
+
+        const result: Record<string, TContent[ keyof TContent ]> = {};
+
+        for ( const [ key, value ] of Object.entries( content ) ) {
+            result[ key ] = this.resolveEmojiTokens( value );
+        }
+
+        return result as TContent;
     }
 
     private getLanguageFilesPaths( skipInitial = true ): string[] {

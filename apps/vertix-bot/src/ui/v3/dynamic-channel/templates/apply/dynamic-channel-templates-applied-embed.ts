@@ -56,7 +56,7 @@ const DynamicChannelTemplatesAppliedEmbed = new EmbedBuilder<UIArgs, typeof vars
         };
     } )
     .setDefaultVars( () => ( {
-        templatesEmoji: EmojiManager.$.getMarkdown( "Templates" ),
+        templatesEmoji: EmojiManager.$.getMarkdown( "ChannelTemplates" ),
         labelName: "- **Name**:",
         labelLimit: "- **Limit**:",
         labelPrivacy: "- **Privacy**:",

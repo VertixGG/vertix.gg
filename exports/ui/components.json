@@ -4164,7 +4164,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ClaimChannel:1543908220471615628>"
+                                "emoji": "<:ClaimChannel:1545797789429006386>"
                             }
                         }
                     ]
@@ -4461,7 +4461,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelRename:1543908031975264360>"
+                                "emoji": "<:ChannelRename:1545797792344182946>"
                             }
                         },
                         {
@@ -4472,7 +4472,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:UserLimit:1543908225621958707>"
+                                "emoji": "<:UserLimit:1545797775818620928>"
                             }
                         },
                         {
@@ -4483,7 +4483,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelPermissions:1543908229606809642>"
+                                "emoji": "<:ChannelPermissions:1545797777072721920>"
                             }
                         },
                         {
@@ -4494,7 +4494,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelPrivacy:1543908230915301447>"
+                                "emoji": "<:ChannelPrivacy:1545797783217512538>"
                             }
                         },
                         {
@@ -4505,7 +4505,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelRegion:1543908232333103165>"
+                                "emoji": "<:ChannelRegion:1545797785012412506>"
                             }
                         },
                         {
@@ -4516,7 +4516,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:EditChannelMessage:1543908286221389916>"
+                                "emoji": "<:EditChannelMessage:1545797786262446121>"
                             }
                         },
                         {
@@ -4527,7 +4527,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ClearChat:1543908223927590922>"
+                                "emoji": "<:ClearChat:1545797787986436166>"
                             }
                         },
                         {
@@ -4538,7 +4538,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ResetChannel:1543908228314832946>"
+                                "emoji": "<:ResetChannel:1545797794105786410>"
                             }
                         },
                         {
@@ -4549,7 +4549,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:TransferChannel:1543908226951807097>"
+                                "emoji": "<:TransferChannel:1545797796693672087>"
                             }
                         },
                         {
@@ -4560,7 +4560,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelTemplates:1543908219020255252>"
+                                "emoji": "<:ChannelTemplates:1545797790725050469>"
                             }
                         },
                         {
@@ -4571,7 +4571,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ClaimChannel:1543908220471615628>"
+                                "emoji": "<:ClaimChannel:1545797789429006386>"
                             }
                         }
                     ]
@@ -4623,10 +4623,10 @@
                                 "description": "{description}"
                             },
                             "defaultVars": {
-                                "renameEmoji": "<:ChannelRename:1543908031975264360>",
-                                "limitEmoji": "<:UserLimit:1543908225621958707>",
-                                "privacyEmoji": "<:ChannelPrivacy:1543908230915301447>",
-                                "regionEmoji": "<:ChannelRegion:1543908232333103165>",
+                                "renameEmoji": "<:ChannelRename:1545797792344182946>",
+                                "limitEmoji": "<:UserLimit:1545797775818620928>",
+                                "privacyEmoji": "<:ChannelPrivacy:1545797783217512538>",
+                                "regionEmoji": "<:ChannelRegion:1545797785012412506>",
                                 "regionAutomatic": "Automatic",
                                 "limitDisplayValue": "value",
                                 "limitDisplayUnlimited": "unlimited",
@@ -4676,7 +4676,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ClearChat:1543908223927590922>"
+                                "emoji": "<:ClearChat:1545797787986436166>"
                             }
                         }
                     ]
@@ -4865,7 +4865,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelRename:1543908031975264360>"
+                                "emoji": "<:ChannelRename:1545797792344182946>"
                             }
                         },
                         {
@@ -4876,7 +4876,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:UserLimit:1543908225621958707>"
+                                "emoji": "<:UserLimit:1545797775818620928>"
                             }
                         },
                         {
@@ -4887,7 +4887,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelPermissions:1543908229606809642>"
+                                "emoji": "<:ChannelPermissions:1545797777072721920>"
                             }
                         },
                         {
@@ -4898,7 +4898,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelPrivacy:1543908230915301447>"
+                                "emoji": "<:ChannelPrivacy:1545797783217512538>"
                             }
                         },
                         {
@@ -4909,7 +4909,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelRegion:1543908232333103165>"
+                                "emoji": "<:ChannelRegion:1545797785012412506>"
                             }
                         },
                         {
@@ -4920,7 +4920,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:EditChannelMessage:1543908286221389916>"
+                                "emoji": "<:EditChannelMessage:1545797786262446121>"
                             }
                         },
                         {
@@ -4931,7 +4931,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ClearChat:1543908223927590922>"
+                                "emoji": "<:ClearChat:1545797787986436166>"
                             }
                         },
                         {
@@ -4942,7 +4942,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ResetChannel:1543908228314832946>"
+                                "emoji": "<:ResetChannel:1545797794105786410>"
                             }
                         },
                         {
@@ -4953,7 +4953,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:TransferChannel:1543908226951807097>"
+                                "emoji": "<:TransferChannel:1545797796693672087>"
                             }
                         },
                         {
@@ -4964,7 +4964,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ChannelTemplates:1543908219020255252>"
+                                "emoji": "<:ChannelTemplates:1545797790725050469>"
                             }
                         },
                         {
@@ -4975,7 +4975,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ClaimChannel:1543908220471615628>"
+                                "emoji": "<:ClaimChannel:1545797789429006386>"
                             }
                         }
                     ]
@@ -4999,17 +4999,17 @@
                                     "format": "{value}{separator}",
                                     "separator": "\n\n",
                                     "options": {
-                                        "rename": "<:ChannelRename:1543908031975264360> ・ **Rename** - Change your channel name",
-                                        "limit": "<:UserLimit:1543908225621958707> ・ **User Limit** - Set maximum users",
-                                        "access": "<:ChannelPermissions:1543908229606809642> ・ **Access** - Manage user permissions",
-                                        "privacy": "<:ChannelPrivacy:1543908230915301447> ・ **Privacy** - Toggle public/private state",
-                                        "region": "<:ChannelRegion:1543908232333103165> ・ **Region** - Change voice region",
-                                        "edit-primary-message": "<:EditChannelMessage:1543908286221389916> ・ **Edit Message** - Customize primary message",
-                                        "clear-chat": "<:ClearChat:1543908223927590922> ・ **Clear Chat** - Delete chat messages",
-                                        "rest-channel": "<:ResetChannel:1543908228314832946> ・ **Reset** - Reset channel settings",
-                                        "transfer": "<:TransferChannel:1543908226951807097> ・ **Transfer** - Transfer ownership",
-                                        "templates": "<:ChannelTemplates:1543908219020255252> ・ **Templates** - Save/load channel templates",
-                                        "claim-button": "<:ClaimChannel:1543908220471615628>・ **Claim** - Claim abandoned channel"
+                                        "rename": "<emoji name='ChannelRename'> ・ **Rename** - Change your channel name",
+                                        "limit": "<emoji name='UserLimit'> ・ **User Limit** - Set maximum users",
+                                        "access": "<emoji name='ChannelPermissions'> ・ **Access** - Manage user permissions",
+                                        "privacy": "<emoji name='ChannelPrivacy'> ・ **Privacy** - Toggle public/private state",
+                                        "region": "<emoji name='ChannelRegion'> ・ **Region** - Change voice region",
+                                        "edit-primary-message": "<emoji name='EditChannelMessage'> ・ **Edit Message** - Customize primary message",
+                                        "clear-chat": "<emoji name='ClearChat'> ・ **Clear Chat** - Delete chat messages",
+                                        "rest-channel": "<emoji name='ResetChannel'> ・ **Reset** - Reset channel settings",
+                                        "transfer": "<emoji name='TransferChannel'> ・ **Transfer** - Transfer ownership",
+                                        "templates": "<emoji name='ChannelTemplates'> ・ **Templates** - Save/load channel templates",
+                                        "claim-button": "<emoji name='ClaimChannel'>・ **Claim** - Claim abandoned channel"
                                     }
                                 }
                             },
@@ -5436,7 +5436,7 @@
                                 "permissionsEmoji": "{permissionsEmoji}"
                             },
                             "defaultVars": {
-                                "permissionsEmoji": "<:ChannelPermissions:1543908229606809642>"
+                                "permissionsEmoji": "<:ChannelPermissions:1545797777072721920>"
                             }
                         }
                     }
@@ -5689,7 +5689,7 @@
                                 "description": "{description}"
                             },
                             "defaultVars": {
-                                "editPrimaryMessageEmoji": "<:EditChannelMessage:1543908286221389916>"
+                                "editPrimaryMessageEmoji": "<:EditChannelMessage:1545797786262446121>"
                             }
                         }
                     }
@@ -6021,7 +6021,7 @@
                                 "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "privacyEmoji": "<:ChannelPrivacy:1543908230915301447>",
+                                "privacyEmoji": "<:ChannelPrivacy:1545797783217512538>",
                                 "statePublic": "public",
                                 "statePrivate": "private",
                                 "stateShown": "shown",
@@ -6185,7 +6185,7 @@
                                 "region-us-west": "{region-us-west}"
                             },
                             "defaultVars": {
-                                "regionEmoji": "<:ChannelRegion:1543908232333103165>"
+                                "regionEmoji": "<:ChannelRegion:1545797785012412506>"
                             }
                         }
                     }
@@ -6347,7 +6347,7 @@
                                 "instanceType": "Dynamic",
                                 "labelOmitted": true,
                                 "style": "secondary",
-                                "emoji": "<:ResetChannel:1543908228314832946>"
+                                "emoji": "<:ResetChannel:1545797794105786410>"
                             }
                         }
                     ]
@@ -6465,7 +6465,7 @@
                                 "blockedUsers": "None",
                                 "blockedUsersChanged": "(__unchanged__)",
                                 "rateLimited": "",
-                                "resetEmoji": "<:ResetChannel:1543908228314832946>"
+                                "resetEmoji": "<:ResetChannel:1545797794105786410>"
                             }
                         }
                     }
@@ -6540,7 +6540,7 @@
                                 "instanceType": "Dynamic",
                                 "label": "Capture Template",
                                 "style": "secondary",
-                                "emoji": "<:Capture:1544033914526376027>"
+                                "emoji": "<:Capture:1545797774593884292>"
                             }
                         },
                         {
@@ -6551,7 +6551,7 @@
                                 "instanceType": "Dynamic",
                                 "label": "Apply Template",
                                 "style": "secondary",
-                                "emoji": "<:ChannelTemplates:1543908219020255252>"
+                                "emoji": "<:ChannelTemplates:1545797790725050469>"
                             }
                         },
                         {
@@ -6562,7 +6562,7 @@
                                 "instanceType": "Dynamic",
                                 "label": "Delete",
                                 "style": "secondary",
-                                "emoji": "<:Close:1544004204404674660>"
+                                "emoji": "<:Close:1545799823817449542>"
                             }
                         }
                     ]
@@ -6619,7 +6619,7 @@
                                 "instanceType": "Dynamic",
                                 "label": "Apply Selected",
                                 "style": "success",
-                                "emoji": "<:ChannelTemplates:1543908219020255252>"
+                                "emoji": "<:ChannelTemplates:1545797790725050469>"
                             }
                         },
                         {
@@ -6738,7 +6738,7 @@
                                 "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:ChannelTemplates:1543908219020255252>"
+                                "templatesEmoji": "<:ChannelTemplates:1545797790725050469>"
                             }
                         }
                     }
@@ -6779,7 +6779,7 @@
                                 "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:ChannelTemplates:1543908219020255252>"
+                                "templatesEmoji": "<:ChannelTemplates:1545797790725050469>"
                             }
                         }
                     }
@@ -6811,7 +6811,7 @@
                                 "labelNoSettings": "{labelNoSettings}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:ChannelTemplates:1543908219020255252>",
+                                "templatesEmoji": "<:ChannelTemplates:1545797790725050469>",
                                 "labelName": "- **Name**:",
                                 "labelLimit": "- **Limit**:",
                                 "labelPrivacy": "- **Privacy**:",
@@ -6843,7 +6843,7 @@
                                 "maxTemplates": "{maxTemplates}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:Close:1544004204404674660>"
+                                "templatesEmoji": "<:Close:1545799823817449542>"
                             }
                         }
                     }
@@ -6867,7 +6867,7 @@
                                 "maxTemplates": "{maxTemplates}"
                             },
                             "defaultVars": {
-                                "templatesEmoji": "<:Close:1544004204404674660>"
+                                "templatesEmoji": "<:Close:1545799823817449542>"
                             }
                         }
                     }
@@ -7324,57 +7324,57 @@
                                     {
                                         "label": "Rename",
                                         "value": "rename",
-                                        "emoji": "<:ChannelRename:1543908031975264360>"
+                                        "emoji": "<:ChannelRename:1545797792344182946>"
                                     },
                                     {
                                         "label": "Limit",
                                         "value": "limit",
-                                        "emoji": "<:UserLimit:1543908225621958707>"
+                                        "emoji": "<:UserLimit:1545797775818620928>"
                                     },
                                     {
                                         "label": "Access",
                                         "value": "access",
-                                        "emoji": "<:ChannelPermissions:1543908229606809642>"
+                                        "emoji": "<:ChannelPermissions:1545797777072721920>"
                                     },
                                     {
                                         "label": "Privacy",
                                         "value": "privacy",
-                                        "emoji": "<:ChannelPrivacy:1543908230915301447>"
+                                        "emoji": "<:ChannelPrivacy:1545797783217512538>"
                                     },
                                     {
                                         "label": "Region",
                                         "value": "region",
-                                        "emoji": "<:ChannelRegion:1543908232333103165>"
+                                        "emoji": "<:ChannelRegion:1545797785012412506>"
                                     },
                                     {
                                         "label": "Edit Primary Message",
                                         "value": "edit-primary-message",
-                                        "emoji": "<:EditChannelMessage:1543908286221389916>"
+                                        "emoji": "<:EditChannelMessage:1545797786262446121>"
                                     },
                                     {
                                         "label": "Clear Chat",
                                         "value": "clear-chat",
-                                        "emoji": "<:ClearChat:1543908223927590922>"
+                                        "emoji": "<:ClearChat:1545797787986436166>"
                                     },
                                     {
                                         "label": "Reset",
                                         "value": "rest-channel",
-                                        "emoji": "<:ResetChannel:1543908228314832946>"
+                                        "emoji": "<:ResetChannel:1545797794105786410>"
                                     },
                                     {
                                         "label": "Transfer",
                                         "value": "transfer",
-                                        "emoji": "<:TransferChannel:1543908226951807097>"
+                                        "emoji": "<:TransferChannel:1545797796693672087>"
                                     },
                                     {
-                                        "label": "Claim",
+                                        "label": "Templates",
                                         "value": "templates",
-                                        "emoji": "<:ChannelTemplates:1543908219020255252>"
+                                        "emoji": "<:ChannelTemplates:1545797790725050469>"
                                     },
                                     {
                                         "label": "Claim",
                                         "value": "claim-button",
-                                        "emoji": "<:ClaimChannel:1543908220471615628>"
+                                        "emoji": "<:ClaimChannel:1545797789429006386>"
                                     }
                                 ]
                             }
@@ -7444,57 +7444,57 @@
                                     {
                                         "label": "Rename",
                                         "value": "rename",
-                                        "emoji": "<:ChannelRename:1543908031975264360>"
+                                        "emoji": "<:ChannelRename:1545797792344182946>"
                                     },
                                     {
                                         "label": "Limit",
                                         "value": "limit",
-                                        "emoji": "<:UserLimit:1543908225621958707>"
+                                        "emoji": "<:UserLimit:1545797775818620928>"
                                     },
                                     {
                                         "label": "Access",
                                         "value": "access",
-                                        "emoji": "<:ChannelPermissions:1543908229606809642>"
+                                        "emoji": "<:ChannelPermissions:1545797777072721920>"
                                     },
                                     {
                                         "label": "Privacy",
                                         "value": "privacy",
-                                        "emoji": "<:ChannelPrivacy:1543908230915301447>"
+                                        "emoji": "<:ChannelPrivacy:1545797783217512538>"
                                     },
                                     {
                                         "label": "Region",
                                         "value": "region",
-                                        "emoji": "<:ChannelRegion:1543908232333103165>"
+                                        "emoji": "<:ChannelRegion:1545797785012412506>"
                                     },
                                     {
                                         "label": "Edit Primary Message",
                                         "value": "edit-primary-message",
-                                        "emoji": "<:EditChannelMessage:1543908286221389916>"
+                                        "emoji": "<:EditChannelMessage:1545797786262446121>"
                                     },
                                     {
                                         "label": "Clear Chat",
                                         "value": "clear-chat",
-                                        "emoji": "<:ClearChat:1543908223927590922>"
+                                        "emoji": "<:ClearChat:1545797787986436166>"
                                     },
                                     {
                                         "label": "Reset",
                                         "value": "rest-channel",
-                                        "emoji": "<:ResetChannel:1543908228314832946>"
+                                        "emoji": "<:ResetChannel:1545797794105786410>"
                                     },
                                     {
                                         "label": "Transfer",
                                         "value": "transfer",
-                                        "emoji": "<:TransferChannel:1543908226951807097>"
+                                        "emoji": "<:TransferChannel:1545797796693672087>"
                                     },
                                     {
-                                        "label": "Claim",
+                                        "label": "Templates",
                                         "value": "templates",
-                                        "emoji": "<:ChannelTemplates:1543908219020255252>"
+                                        "emoji": "<:ChannelTemplates:1545797790725050469>"
                                     },
                                     {
                                         "label": "Claim",
                                         "value": "claim-button",
-                                        "emoji": "<:ClaimChannel:1543908220471615628>"
+                                        "emoji": "<:ClaimChannel:1545797789429006386>"
                                     }
                                 ]
                             }
@@ -7684,16 +7684,16 @@
                                     "format": "- ( {value} ){separator}",
                                     "separator": "\n",
                                     "options": {
-                                        "rename": "<:ChannelRename:1272447740034682952>  ∙ **Rename**",
-                                        "limit": "<:UserLimit:1269654650206818316> ∙ **User Limit**",
-                                        "access": "<:ChannelPermissions:1269649241207210125> ∙ **Access**",
-                                        "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Privacy**",
-                                        "region": "<:ChannelRegion:1272451511322017804> ∙ **Region**",
-                                        "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Edit Primary Message**",
-                                        "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
-                                        "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
-                                        "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
-                                        "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
+                                        "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+                                        "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+                                        "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+                                        "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+                                        "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+                                        "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+                                        "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+                                        "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+                                        "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
                                     }
                                 }
                             },
@@ -7874,57 +7874,57 @@
                                     {
                                         "label": "Rename",
                                         "value": "rename",
-                                        "emoji": "<:ChannelRename:1543908031975264360>"
+                                        "emoji": "<:ChannelRename:1545797792344182946>"
                                     },
                                     {
                                         "label": "Limit",
                                         "value": "limit",
-                                        "emoji": "<:UserLimit:1543908225621958707>"
+                                        "emoji": "<:UserLimit:1545797775818620928>"
                                     },
                                     {
                                         "label": "Access",
                                         "value": "access",
-                                        "emoji": "<:ChannelPermissions:1543908229606809642>"
+                                        "emoji": "<:ChannelPermissions:1545797777072721920>"
                                     },
                                     {
                                         "label": "Privacy",
                                         "value": "privacy",
-                                        "emoji": "<:ChannelPrivacy:1543908230915301447>"
+                                        "emoji": "<:ChannelPrivacy:1545797783217512538>"
                                     },
                                     {
                                         "label": "Region",
                                         "value": "region",
-                                        "emoji": "<:ChannelRegion:1543908232333103165>"
+                                        "emoji": "<:ChannelRegion:1545797785012412506>"
                                     },
                                     {
                                         "label": "Edit Primary Message",
                                         "value": "edit-primary-message",
-                                        "emoji": "<:EditChannelMessage:1543908286221389916>"
+                                        "emoji": "<:EditChannelMessage:1545797786262446121>"
                                     },
                                     {
                                         "label": "Clear Chat",
                                         "value": "clear-chat",
-                                        "emoji": "<:ClearChat:1543908223927590922>"
+                                        "emoji": "<:ClearChat:1545797787986436166>"
                                     },
                                     {
                                         "label": "Reset",
                                         "value": "rest-channel",
-                                        "emoji": "<:ResetChannel:1543908228314832946>"
+                                        "emoji": "<:ResetChannel:1545797794105786410>"
                                     },
                                     {
                                         "label": "Transfer",
                                         "value": "transfer",
-                                        "emoji": "<:TransferChannel:1543908226951807097>"
+                                        "emoji": "<:TransferChannel:1545797796693672087>"
                                     },
                                     {
-                                        "label": "Claim",
+                                        "label": "Templates",
                                         "value": "templates",
-                                        "emoji": "<:ChannelTemplates:1543908219020255252>"
+                                        "emoji": "<:ChannelTemplates:1545797790725050469>"
                                     },
                                     {
                                         "label": "Claim",
                                         "value": "claim-button",
-                                        "emoji": "<:ClaimChannel:1543908220471615628>"
+                                        "emoji": "<:ClaimChannel:1545797789429006386>"
                                     }
                                 ]
                             }
@@ -8114,17 +8114,17 @@
                                     "format": "- ( {value} ){separator}",
                                     "separator": "\n",
                                     "options": {
-                                        "rename": "<:ChannelRename:1543908031975264360>  ∙ **Rename**",
-                                        "limit": "<:UserLimit:1543908225621958707> ∙ **User Limit**",
-                                        "access": "<:ChannelPermissions:1543908229606809642> ∙ **Access**",
-                                        "privacy": "<:ChannelPrivacy:1543908230915301447> ∙ **Privacy**",
-                                        "region": "<:ChannelRegion:1543908232333103165> ∙ **Region**",
-                                        "edit-primary-message": "<:EditChannelMessage:1543908286221389916> ∙ **Edit Primary Message**",
-                                        "clear-chat": "<:ClearChat:1543908223927590922> ∙ **Clear Chat**",
-                                        "rest-channel": "<:ResetChannel:1543908228314832946>  ∙ **Reset**",
-                                        "transfer": "<:TransferChannel:1543908226951807097> ∙ **Transfer**",
-                                        "templates": "<:ChannelTemplates:1543908219020255252> ∙ **Templates**",
-                                        "claim-button": "<:ClaimChannel:1543908220471615628> ∙ **Claim**"
+                                        "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+                                        "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+                                        "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+                                        "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+                                        "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+                                        "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+                                        "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+                                        "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+                                        "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+                                        "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
                                     }
                                 }
                             },
@@ -8346,57 +8346,57 @@
                                     {
                                         "label": "Rename",
                                         "value": "rename",
-                                        "emoji": "<:ChannelRename:1543908031975264360>"
+                                        "emoji": "<:ChannelRename:1545797792344182946>"
                                     },
                                     {
                                         "label": "Limit",
                                         "value": "limit",
-                                        "emoji": "<:UserLimit:1543908225621958707>"
+                                        "emoji": "<:UserLimit:1545797775818620928>"
                                     },
                                     {
                                         "label": "Access",
                                         "value": "access",
-                                        "emoji": "<:ChannelPermissions:1543908229606809642>"
+                                        "emoji": "<:ChannelPermissions:1545797777072721920>"
                                     },
                                     {
                                         "label": "Privacy",
                                         "value": "privacy",
-                                        "emoji": "<:ChannelPrivacy:1543908230915301447>"
+                                        "emoji": "<:ChannelPrivacy:1545797783217512538>"
                                     },
                                     {
                                         "label": "Region",
                                         "value": "region",
-                                        "emoji": "<:ChannelRegion:1543908232333103165>"
+                                        "emoji": "<:ChannelRegion:1545797785012412506>"
                                     },
                                     {
                                         "label": "Edit Primary Message",
                                         "value": "edit-primary-message",
-                                        "emoji": "<:EditChannelMessage:1543908286221389916>"
+                                        "emoji": "<:EditChannelMessage:1545797786262446121>"
                                     },
                                     {
                                         "label": "Clear Chat",
                                         "value": "clear-chat",
-                                        "emoji": "<:ClearChat:1543908223927590922>"
+                                        "emoji": "<:ClearChat:1545797787986436166>"
                                     },
                                     {
                                         "label": "Reset",
                                         "value": "rest-channel",
-                                        "emoji": "<:ResetChannel:1543908228314832946>"
+                                        "emoji": "<:ResetChannel:1545797794105786410>"
                                     },
                                     {
                                         "label": "Transfer",
                                         "value": "transfer",
-                                        "emoji": "<:TransferChannel:1543908226951807097>"
+                                        "emoji": "<:TransferChannel:1545797796693672087>"
                                     },
                                     {
-                                        "label": "Claim",
+                                        "label": "Templates",
                                         "value": "templates",
-                                        "emoji": "<:ChannelTemplates:1543908219020255252>"
+                                        "emoji": "<:ChannelTemplates:1545797790725050469>"
                                     },
                                     {
                                         "label": "Claim",
                                         "value": "claim-button",
-                                        "emoji": "<:ClaimChannel:1543908220471615628>"
+                                        "emoji": "<:ClaimChannel:1545797789429006386>"
                                     }
                                 ]
                             }
@@ -8471,17 +8471,17 @@
                                     "format": "- ( {value} ){separator}",
                                     "separator": "\n",
                                     "options": {
-                                        "rename": "<:ChannelRename:1543908031975264360>  ∙ **Rename**",
-                                        "limit": "<:UserLimit:1543908225621958707> ∙ **User Limit**",
-                                        "access": "<:ChannelPermissions:1543908229606809642> ∙ **Access**",
-                                        "privacy": "<:ChannelPrivacy:1543908230915301447> ∙ **Privacy**",
-                                        "region": "<:ChannelRegion:1543908232333103165> ∙ **Region**",
-                                        "edit-primary-message": "<:EditChannelMessage:1543908286221389916> ∙ **Edit Primary Message**",
-                                        "clear-chat": "<:ClearChat:1543908223927590922> ∙ **Clear Chat**",
-                                        "rest-channel": "<:ResetChannel:1543908228314832946>  ∙ **Reset**",
-                                        "transfer": "<:TransferChannel:1543908226951807097> ∙ **Transfer**",
-                                        "templates": "<:ChannelTemplates:1543908219020255252> ∙ **Templates**",
-                                        "claim-button": "<:ClaimChannel:1543908220471615628> ∙ **Claim**"
+                                        "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+                                        "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+                                        "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+                                        "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+                                        "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+                                        "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+                                        "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+                                        "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+                                        "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+                                        "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
                                     }
                                 }
                             },

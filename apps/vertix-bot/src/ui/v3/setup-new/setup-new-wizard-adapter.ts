@@ -259,17 +259,17 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
             format: "- ( {value} ){separator}",
             separator: "\n",
             options: {
-                "rename": EmojiManager.$.getMarkdown( "ChannelRename" ) + "  ∙ **Rename**",
-                "limit": EmojiManager.$.getMarkdown( "UserLimit" ) + " ∙ **User Limit**",
-                "access": EmojiManager.$.getMarkdown( "ChannelPermissions" ) + " ∙ **Access**",
-                "privacy": EmojiManager.$.getMarkdown( "ChannelPrivacy" ) + " ∙ **Privacy**",
-                "region": EmojiManager.$.getMarkdown( "ChannelRegion" ) + " ∙ **Region**",
-                "edit-primary-message": EmojiManager.$.getMarkdown( "EditChannelMessage" ) + " ∙ **Edit Primary Message**",
-                "clear-chat": EmojiManager.$.getMarkdown( "ClearChat" ) + " ∙ **Clear Chat**",
-                "rest-channel": EmojiManager.$.getMarkdown( "ResetChannel" ) + "  ∙ **Reset**",
-                "transfer": EmojiManager.$.getMarkdown( "TransferChannel" ) + " ∙ **Transfer**",
-                "templates": EmojiManager.$.getMarkdown( "Templates" ) + " ∙ **Templates**",
-                "claim-button": EmojiManager.$.getMarkdown( "ClaimChannel" ) + " ∙ **Claim**"
+                "rename": EmojiManager.getToken( "ChannelRename" ) + "  ∙ **Rename**",
+                "limit": EmojiManager.getToken( "UserLimit" ) + " ∙ **User Limit**",
+                "access": EmojiManager.getToken( "ChannelPermissions" ) + " ∙ **Access**",
+                "privacy": EmojiManager.getToken( "ChannelPrivacy" ) + " ∙ **Privacy**",
+                "region": EmojiManager.getToken( "ChannelRegion" ) + " ∙ **Region**",
+                "edit-primary-message": EmojiManager.getToken( "EditChannelMessage" ) + " ∙ **Edit Primary Message**",
+                "clear-chat": EmojiManager.getToken( "ClearChat" ) + " ∙ **Clear Chat**",
+                "rest-channel": EmojiManager.getToken( "ResetChannel" ) + "  ∙ **Reset**",
+                "transfer": EmojiManager.getToken( "TransferChannel" ) + " ∙ **Transfer**",
+                "templates": EmojiManager.getToken( "ChannelTemplates" ) + " ∙ **Templates**",
+                "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**"
             }
         }
     } )

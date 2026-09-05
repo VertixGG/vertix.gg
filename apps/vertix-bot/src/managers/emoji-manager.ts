@@ -15,6 +15,17 @@ import type { RESTGetAPIApplicationEmojisResult } from "discord-api-types/v9";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
+/**
+ * Matches an emoji token in the form `<emoji name='EmojiName'>`, eg: `<emoji name='ChannelRename'>`.
+ *
+ * The `emoji` tag name keeps the token unambiguous against every native discord markdown token
+ * (`<#id>`, `<@&id>`, `<:name:id>`, `<t:stamp>`) and against wrapped urls. Parsing accepts either
+ * quote style and an optional self closing slash, emitting is always the single quoted form.
+ */
+const EMOJI_TOKEN_REGEX = /<emoji\s+name=['"]([A-Za-z0-9_]+)['"]\s*\/?>/g;
+
+const EMOJI_TOKEN_PREFIX = "<emoji";
+
 export class EmojiManager extends InitializeBase {
     private static instance: EmojiManager;
 
@@ -28,6 +39,18 @@ export class EmojiManager extends InitializeBase {
 
     public static getName() {
         return "VertixBot/Managers/Emoji";
+    }
+
+    /**
+     * Function getToken() :: Returns the resolve-at-render-time token of an emoji.
+     *
+     * Use this instead of `getMarkdown()` for any content that reaches `getTranslatableContent()`,
+     * since such content is snapshotted into `assets/languages/*.json` on export. Emoji ids belong
+     * to the discord application that produced the export, so baking them makes the emoji
+     * unresolvable for every other application. The token stays stable, the id is resolved per run.
+     */
+    public static getToken( baseName: string ) {
+        return `${ EMOJI_TOKEN_PREFIX } name='${ baseName }'>`;
     }
 
     public static get $() {
@@ -107,21 +130,51 @@ export class EmojiManager extends InitializeBase {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public getMarkdown( baseName: string, fromCache = true ) {
-        const emoji = this.emojis?.items?.find( ( emoji ) => emoji.name!.includes( baseName ) );
+        const markdown = this.findMarkdown( baseName );
+
+        if ( markdown ) {
+            return markdown;
+        }
 
         if ( this.emojis ) {
-            if ( emoji ) {
-                return `<:${ emoji.name }:${ emoji.id }>`;
-            }
-
             throw new Error( `Emoji: '${ baseName }' not found` );
         }
 
-        const previewEmoji = getEmojiFromPreviewCache( baseName );
-        if ( previewEmoji ) {
-            return previewEmoji.markdown;
+        return `:${ baseName }:`; // Fallback placeholder
+    }
+
+    /**
+     * Function resolveTokens() :: Replaces every `<emoji name='EmojiName'>` token with the markdown
+     * of the matching emoji of the currently running application.
+     *
+     * An unresolvable token is left untouched, so plain text that happens to look like a token
+     * is never destroyed.
+     */
+    public resolveTokens( text: string ) {
+        if ( ! text.includes( EMOJI_TOKEN_PREFIX ) ) {
+            return text;
         }
 
-        return `:${ baseName }:`; // Fallback placeholder
+        return text.replace( EMOJI_TOKEN_REGEX, ( token, baseName: string ) => {
+            const markdown = this.findMarkdown( baseName );
+
+            if ( markdown ) {
+                return markdown;
+            }
+
+            this.logger.warn( this.resolveTokens, `Emoji token '${ token }' cannot be resolved` );
+
+            return token;
+        } );
+    }
+
+    private findMarkdown( baseName: string ) {
+        const emoji = this.emojis?.items?.find( ( emoji ) => emoji.name!.includes( baseName ) );
+
+        if ( emoji ) {
+            return `<:${ emoji.name }:${ emoji.id }>`;
+        }
+
+        return getEmojiFromPreviewCache( baseName )?.markdown;
     }
 }

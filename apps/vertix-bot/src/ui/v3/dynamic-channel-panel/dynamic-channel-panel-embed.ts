@@ -39,17 +39,17 @@ const DynamicChannelPanelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             format: vars.value + vars.separator,
             separator: "\n\n",
             options: {
-                "rename": EmojiManager.$.getMarkdown( "ChannelRename" ) + " ・ **Rename** - Change your channel name",
-                "limit": EmojiManager.$.getMarkdown( "UserLimit" ) + " ・ **User Limit** - Set maximum users",
-                "access": EmojiManager.$.getMarkdown( "ChannelPermissions" ) + " ・ **Access** - Manage user permissions",
-                "privacy": EmojiManager.$.getMarkdown( "ChannelPrivacy" ) + " ・ **Privacy** - Toggle public/private state",
-                "region": EmojiManager.$.getMarkdown( "ChannelRegion" ) + " ・ **Region** - Change voice region",
-                "edit-primary-message": EmojiManager.$.getMarkdown( "EditChannelMessage" ) + " ・ **Edit Message** - Customize primary message",
-                "clear-chat": EmojiManager.$.getMarkdown( "ClearChat" ) + " ・ **Clear Chat** - Delete chat messages",
-                "rest-channel": EmojiManager.$.getMarkdown( "ResetChannel" ) + " ・ **Reset** - Reset channel settings",
-                "transfer": EmojiManager.$.getMarkdown( "TransferChannel" ) + " ・ **Transfer** - Transfer ownership",
-                "templates": EmojiManager.$.getMarkdown( "Templates" ) + " ・ **Templates** - Save/load channel templates",
-                "claim-button": EmojiManager.$.getMarkdown( "ClaimChannel" ) + "・ **Claim** - Claim abandoned channel"
+                "rename": EmojiManager.getToken( "ChannelRename" ) + " ・ **Rename** - Change your channel name",
+                "limit": EmojiManager.getToken( "UserLimit" ) + " ・ **User Limit** - Set maximum users",
+                "access": EmojiManager.getToken( "ChannelPermissions" ) + " ・ **Access** - Manage user permissions",
+                "privacy": EmojiManager.getToken( "ChannelPrivacy" ) + " ・ **Privacy** - Toggle public/private state",
+                "region": EmojiManager.getToken( "ChannelRegion" ) + " ・ **Region** - Change voice region",
+                "edit-primary-message": EmojiManager.getToken( "EditChannelMessage" ) + " ・ **Edit Message** - Customize primary message",
+                "clear-chat": EmojiManager.getToken( "ClearChat" ) + " ・ **Clear Chat** - Delete chat messages",
+                "rest-channel": EmojiManager.getToken( "ResetChannel" ) + " ・ **Reset** - Reset channel settings",
+                "transfer": EmojiManager.getToken( "TransferChannel" ) + " ・ **Transfer** - Transfer ownership",
+                "templates": EmojiManager.getToken( "ChannelTemplates" ) + " ・ **Templates** - Save/load channel templates",
+                "claim-button": EmojiManager.getToken( "ClaimChannel" ) + "・ **Claim** - Claim abandoned channel"
             }
         }
     } )

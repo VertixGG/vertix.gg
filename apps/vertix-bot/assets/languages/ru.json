@@ -667,34 +667,48 @@
           "placeholder": "🎚 Выберите кнопки",
           "selectOptions": [
             {
-              "label": "Переименовать"
+              "label": "Переименовать",
+              "value": "rename"
             },
             {
-              "label": "Лимит"
+              "label": "Лимит",
+              "value": "limit"
             },
             {
-              "label": "Доступ"
+              "label": "Доступ",
+              "value": "access"
             },
             {
-              "label": "Приватность"
+              "label": "Приватность",
+              "value": "privacy"
             },
             {
-              "label": "Регион"
+              "label": "Регион",
+              "value": "region"
             },
             {
-              "label": "Редактировать главное сообщение"
+              "label": "Редактировать главное сообщение",
+              "value": "edit-primary-message"
             },
             {
-              "label": "Очистить чат"
+              "label": "Очистить чат",
+              "value": "clear-chat"
             },
             {
-              "label": "Сбросить"
+              "label": "Сбросить",
+              "value": "rest-channel"
             },
             {
-              "label": "Передать"
+              "label": "Передать",
+              "value": "transfer"
             },
             {
-              "label": "Забрать"
+              "label": "Шаблоны",
+              "value": "templates"
+            },
+            {
+              "label": "Забрать",
+              "value": "claim-button"
             }
           ]
         }
@@ -2424,16 +2438,17 @@
             "format": "- ( {value} ){separator}",
             "separator": "\n",
             "options": {
-              "rename": "<:ChannelRename:1272447740034682952>  ∙ **Переименовать**",
-              "limit": "<:UserLimit:1269654650206818316> ∙ **Лимит пользователей**",
-              "access": "<:ChannelPermissions:1269649241207210125> ∙ **Доступ**",
-              "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Приватность**",
-              "region": "<:ChannelRegion:1272451511322017804> ∙ **Регион**",
-              "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Редактировать главное сообщение**",
-              "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Очистить чат**",
-              "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Сбросить**",
-              "transfer": "<:TransferChannel:1269643178856939581> ∙ **Передать**",
-              "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Забрать**"
+              "rename": "<emoji name='ChannelRename'>  ∙ **Переименовать**",
+              "limit": "<emoji name='UserLimit'> ∙ **Лимит пользователей**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Доступ**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Приватность**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Регион**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Редактировать главное сообщение**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Очистить чат**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Сбросить**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           },
           "verifiedRoles": {
@@ -2501,16 +2516,17 @@
             "format": "- ( {value} ){separator}",
             "separator": "\n",
             "options": {
-              "rename": "<:ChannelRename:1272447740034682952>  ∙ **Переименовать**",
-              "limit": "<:UserLimit:1269654650206818316> ∙ **Лимит пользователей**",
-              "access": "<:ChannelPermissions:1269649241207210125> ∙ **Доступ**",
-              "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Приватность**",
-              "region": "<:ChannelRegion:1272451511322017804> ∙ **Регион**",
-              "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Редактировать главное сообщение**",
-              "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Очистить чат**",
-              "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Сбросить**",
-              "transfer": "<:TransferChannel:1269643178856939581> ∙ **Передать**",
-              "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Забрать**"
+              "rename": "<emoji name='ChannelRename'>  ∙ **Переименовать**",
+              "limit": "<emoji name='UserLimit'> ∙ **Лимит пользователей**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Доступ**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Приватность**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Регион**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Редактировать главное сообщение**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Очистить чат**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Сбросить**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           }
         }

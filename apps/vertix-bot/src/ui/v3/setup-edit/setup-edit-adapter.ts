@@ -13,6 +13,8 @@ import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
+import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
@@ -103,16 +105,16 @@ const SetupEditButtonsEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEditButton
             format: "- ( {value} ){separator}",
             separator: "\n",
             options: {
-                "rename": "<:ChannelRename:1272447740034682952>  ∙ **Rename**",
-                "limit": "<:UserLimit:1269654650206818316> ∙ **User Limit**",
-                "access": "<:ChannelPermissions:1269649241207210125> ∙ **Access**",
-                "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Privacy**",
-                "region": "<:ChannelRegion:1272451511322017804> ∙ **Region**",
-                "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Edit Primary Message**",
-                "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
-                "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
-                "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
-                "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
+                "rename": EmojiManager.getToken( "ChannelRename" ) + "  ∙ **Rename**",
+                "limit": EmojiManager.getToken( "UserLimit" ) + " ∙ **User Limit**",
+                "access": EmojiManager.getToken( "ChannelPermissions" ) + " ∙ **Access**",
+                "privacy": EmojiManager.getToken( "ChannelPrivacy" ) + " ∙ **Privacy**",
+                "region": EmojiManager.getToken( "ChannelRegion" ) + " ∙ **Region**",
+                "edit-primary-message": EmojiManager.getToken( "EditChannelMessage" ) + " ∙ **Edit Primary Message**",
+                "clear-chat": EmojiManager.getToken( "ClearChat" ) + " ∙ **Clear Chat**",
+                "rest-channel": EmojiManager.getToken( "ResetChannel" ) + "  ∙ **Reset**",
+                "transfer": EmojiManager.getToken( "TransferChannel" ) + " ∙ **Transfer**",
+                "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**"
             }
         }
     } )

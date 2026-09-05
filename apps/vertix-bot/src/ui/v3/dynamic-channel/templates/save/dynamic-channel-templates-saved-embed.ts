@@ -61,7 +61,7 @@ const DynamicChannelTemplatesSavedEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         return result;
     } )
     .setDefaultVars( () => ( {
-        templatesEmoji: EmojiManager.$.getMarkdown( "Templates" )
+        templatesEmoji: EmojiManager.$.getMarkdown( "ChannelTemplates" )
     } ) )
     .build();
 

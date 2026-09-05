@@ -667,34 +667,48 @@
           "placeholder": "🎚 Sélectionner les boutons",
           "selectOptions": [
             {
-              "label": "Renommer"
+              "label": "Renommer",
+              "value": "rename"
             },
             {
-              "label": "Limite"
+              "label": "Limite",
+              "value": "limit"
             },
             {
-              "label": "Accès"
+              "label": "Accès",
+              "value": "access"
             },
             {
-              "label": "Confidentialité"
+              "label": "Confidentialité",
+              "value": "privacy"
             },
             {
-              "label": "Région"
+              "label": "Région",
+              "value": "region"
             },
             {
-              "label": "Modifier le message principal"
+              "label": "Modifier le message principal",
+              "value": "edit-primary-message"
             },
             {
-              "label": "Effacer le chat"
+              "label": "Effacer le chat",
+              "value": "clear-chat"
             },
             {
-              "label": "Réinitialiser"
+              "label": "Réinitialiser",
+              "value": "rest-channel"
             },
             {
-              "label": "Transférer"
+              "label": "Transférer",
+              "value": "transfer"
             },
             {
-              "label": "Réclamer"
+              "label": "Modèles",
+              "value": "templates"
+            },
+            {
+              "label": "Réclamer",
+              "value": "claim-button"
             }
           ]
         }
@@ -2023,16 +2037,17 @@
             "format": "- ( {value} ){separator}",
             "separator": "\n",
             "options": {
-              "rename": "<:ChannelRename:1272447740034682952>  ∙ **Rename**",
-              "limit": "<:UserLimit:1269654650206818316> ∙ **User Limit**",
-              "access": "<:ChannelPermissions:1269649241207210125> ∙ **Access**",
-              "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Privacy**",
-              "region": "<:ChannelRegion:1272451511322017804> ∙ **Region**",
-              "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Edit Primary Message**",
-              "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
-              "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
-              "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
-              "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
         }
@@ -2488,16 +2503,17 @@
             "format": "- ( {value} ){separator}",
             "separator": "\n",
             "options": {
-              "rename": "<:ChannelRename:1272447740034682952>  ∙ **Rename**",
-              "limit": "<:UserLimit:1269654650206818316> ∙ **User Limit**",
-              "access": "<:ChannelPermissions:1269649241207210125> ∙ **Access**",
-              "privacy": "<:ChannelPrivacy:1269655669984985158> ∙ **Privacy**",
-              "region": "<:ChannelRegion:1272451511322017804> ∙ **Region**",
-              "edit-primary-message": "<:EditChannelMessage:1264200057981243415> ∙ **Edit Primary Message**",
-              "clear-chat": "<:ClearChat:1269552009753919550> ∙ **Clear Chat**",
-              "rest-channel": "<:ResetChannel:1269639351558606959>  ∙ **Reset**",
-              "transfer": "<:TransferChannel:1269643178856939581> ∙ **Transfer**",
-              "claim-button": "<:ClaimChannel:1272450707542245386> ∙ **Claim**"
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           },
           "verifiedRoles": {

@@ -27,6 +27,7 @@ export const
     STEP_3_EMBED_VARS = {
         verifiedRolesDisplay: uiUtilsWrapAsTemplate( "verifiedRolesDisplay" ),
         verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+        verifiedRolesEveryone: uiUtilsWrapAsTemplate( "verifiedRolesEveryone" ),
         verifiedRolesDefault: uiUtilsWrapAsTemplate( "verifiedRolesDefault" )
     };
 

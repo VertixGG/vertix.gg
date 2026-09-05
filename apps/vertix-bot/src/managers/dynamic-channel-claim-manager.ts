@@ -940,8 +940,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
         channel: VoiceChannel,
         _previousOwnerId: string,
         _newOwnerId: string,
-        _from: "claim" | "transfer",
-        _masterChannel: VoiceChannel
+        _from: "claim" | "transfer"
     ) {
         if ( await this.isClaimButtonEnabled( channel ) ) {
             await this.handleAbandonedChannels( channel.client, [ channel ] );

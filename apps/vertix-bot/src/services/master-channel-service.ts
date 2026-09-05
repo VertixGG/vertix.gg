@@ -21,6 +21,8 @@ import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import {
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS,
+    DEFAULT_MASTER_CHANNEL_CREATE_VERIFIED_ROLES_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
 } from "@vertix.gg/bot/src/definitions/master-channel";
@@ -680,10 +682,27 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const newVerifiedRoles = args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ];
 
-        const verifiedRolesWithPermissions = newVerifiedRoles.map( ( roleId ) => ( {
-            id: roleId,
-            ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
-        } ) );
+        // The master channel is a generator, not a place to chat, so its text chat is closed for
+        // `@everyone`, the bot is granted what it needs to run the channel, and each verified role
+        // is granted the reach its dynamic channels are built on.
+        //
+        // The chat lock belongs to `@everyone` alone. Spreading it over the verified roles left
+        // `@everyone` free to chat here whenever a custom role was picked, and the deny was
+        // inherited by every dynamic channel, silencing the audience in their own channels.
+        const masterChannelPermissions = [
+            {
+                id: guild.roles.everyone.id,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+            },
+            {
+                id: guild.client.user.id,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS
+            },
+            ...newVerifiedRoles.map( ( roleId ) => ( {
+                id: roleId,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_VERIFIED_ROLES_PERMISSIONS
+            } ) )
+        ];
 
         const result = await this.services.channelService.create( {
             parent,
@@ -693,7 +712,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: constants.masterChannelName,
             type: ChannelType.GuildVoice,
-            permissionOverwrites: verifiedRolesWithPermissions,
+            permissionOverwrites: masterChannelPermissions,
             // TODO: Should be configurable.
             rtcRegion: "us-west"
         } );
@@ -779,10 +798,27 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             newControlChannelId = settings.dynamicChannelControlChannelId,
             newVerifiedRoles = args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ];
 
-        const verifiedRolesWithPermissions = newVerifiedRoles.map( ( roleId ) => ( {
-            id: roleId,
-            ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
-        } ) );
+        // The master channel is a generator, not a place to chat, so its text chat is closed for
+        // `@everyone`, the bot is granted what it needs to run the channel, and each verified role
+        // is granted the reach its dynamic channels are built on.
+        //
+        // The chat lock belongs to `@everyone` alone. Spreading it over the verified roles left
+        // `@everyone` free to chat here whenever a custom role was picked, and the deny was
+        // inherited by every dynamic channel, silencing the audience in their own channels.
+        const masterChannelPermissions = [
+            {
+                id: guild.roles.everyone.id,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+            },
+            {
+                id: guild.client.user.id,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS
+            },
+            ...newVerifiedRoles.map( ( roleId ) => ( {
+                id: roleId,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_VERIFIED_ROLES_PERMISSIONS
+            } ) )
+        ];
 
         const result = await this.services.channelService.create( {
             parent,
@@ -792,7 +828,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
             name: constants.masterChannelName,
             type: ChannelType.GuildVoice,
-            permissionOverwrites: verifiedRolesWithPermissions,
+            permissionOverwrites: masterChannelPermissions,
             // TODO: Should be configurable.
             rtcRegion: "us-west"
         } );

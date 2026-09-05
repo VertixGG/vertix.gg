@@ -50,7 +50,10 @@ import {
     DynamicResetChannelResultCode
 } from "@vertix.gg/bot/src/definitions/dynamic-channel";
 
-import { DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
+import {
+    DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS,
+    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+} from "@vertix.gg/bot/src/definitions/master-channel";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
@@ -828,6 +831,106 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return null;
     }
 
+    /**
+     * Function updateVerifiedRolesPermissions() :: Brings the dynamic channels of a master channel
+     * in line with an edited verified roles list.
+     *
+     * A role that left the list keeps whatever the channel state had denied it, so its `Connect`
+     * and `ViewChannel` are cleared. A role that joined has to be denied whatever the channel is
+     * already set to, otherwise a private or hidden channel would silently stay open to it.
+     *
+     * The state is read from `previousRoles`, since the stored list is the new one by the time
+     * this runs and a brand new role carries no overwrite to read a state from.
+     */
+    public async updateVerifiedRolesPermissions(
+        guildId: string,
+        masterChannelId: string,
+        previousRoles: string[],
+        currentRoles: string[]
+    ) {
+        const removedRoles = previousRoles.filter( ( roleId ) => ! currentRoles.includes( roleId ) ),
+            addedRoles = currentRoles.filter( ( roleId ) => ! previousRoles.includes( roleId ) );
+
+        if ( ! removedRoles.length && ! addedRoles.length ) {
+            return;
+        }
+
+        const dynamicChannelsDB = await ChannelModel.$.getDynamicsByMasterId( guildId, masterChannelId );
+
+        this.logger.info(
+            this.updateVerifiedRolesPermissions,
+            `Guild id: '${ guildId }', master channel id: '${ masterChannelId }' - ` +
+                `Applying verified roles to ${ dynamicChannelsDB.length } dynamic channel(s), ` +
+                `added: '${ addedRoles }', removed: '${ removedRoles }'`
+        );
+
+        // The master channel carries the same grant, and new dynamic channels inherit it from
+        // there, so it has to move with the list or the next channel is built from a stale one.
+        const masterChannel = this.services.appService
+            .getClient()
+            .channels.cache.get( masterChannelId ) as VoiceChannel | undefined;
+
+        if ( masterChannel ) {
+            if ( addedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( masterChannel, addedRoles, {
+                    Connect: true,
+                    ViewChannel: true
+                } );
+            }
+
+            if ( removedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( masterChannel, removedRoles, {
+                    Connect: null,
+                    ViewChannel: null
+                } );
+            }
+        }
+
+        for ( const dynamicChannelDB of dynamicChannelsDB ) {
+            const channel = this.services.appService
+                .getClient()
+                .channels.cache.get( dynamicChannelDB.channelId ) as VoiceChannel | undefined;
+
+            if ( ! channel ) {
+                this.logger.warn(
+                    this.updateVerifiedRolesPermissions,
+                    `Guild id: '${ guildId }' - Dynamic channel id: '${ dynamicChannelDB.channelId }' not found`
+                );
+                continue;
+            }
+
+            const wasPrivate = this.isRolesDeniedFlag( channel, previousRoles, PermissionsBitField.Flags.Connect ),
+                wasHidden = this.isRolesDeniedFlag( channel, previousRoles, PermissionsBitField.Flags.ViewChannel );
+
+            if ( addedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( channel, addedRoles, {
+                    Connect: wasPrivate ? false : null,
+                    ViewChannel: wasHidden ? false : null
+                } );
+            }
+
+            if ( removedRoles.length ) {
+                await PermissionsManager.$.editChannelRolesPermissions( channel, removedRoles, {
+                    Connect: null,
+                    ViewChannel: null
+                } );
+            }
+
+            // `@everyone` mirrors the restriction whether or not it is one of the verified roles,
+            // so narrowing the list must not hand a private or hidden channel back to everyone.
+            if ( ! currentRoles.includes( channel.guild.roles.everyone.id ) ) {
+                await PermissionsManager.$.editChannelRolesPermissions(
+                    channel,
+                    [ channel.guild.roles.everyone.id ],
+                    {
+                        Connect: wasPrivate ? false : null,
+                        ViewChannel: wasHidden ? false : null
+                    }
+                );
+            }
+        }
+    }
+
     public async getChannelState( channel: VoiceChannel ): Promise<ChannelState> {
         let result: ChannelState;
 
@@ -977,9 +1080,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             )
         };
 
-        // Merge permissions overwriting.
-        defaultProperties.permissionOverwrites = [ ...defaultProperties.permissionOverwrites, ...permissionOverwrites ];
-
         if ( autoSave ) {
             savedData = await UserMasterChannelDataModel.$.getData( user.userId, masterChannelDB.id );
         }
@@ -993,7 +1093,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                         masterChannelDB,
                         masterChannel.guildId
                     ),
-                verifiedFlagsSet: bigint[] = [];
+                verifiedFlagsAllow: bigint[] = [],
+                verifiedFlagsDeny: bigint[] = [];
 
             const {
                 dynamicChannelState,
@@ -1003,36 +1104,67 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 dynamicChannelBlockedUserIds
             } = savedData;
 
+            // V3 states the permission outright - `editChannelPrivacyState()` grants `Connect` for
+            // public and `ViewChannel` for shown - while V2 restores the flag to its default.
+            // Restoring a channel has to speak whichever model its master channel does, otherwise a
+            // saved V3 channel comes back holding V2 permissions until its privacy button is
+            // pressed once.
+            const isPrivacyGranted = VERSION_UI_V3 === masterChannelDB.version;
+
             if ( "private" === dynamicChannelState ) {
-                verifiedFlagsSet.push( PermissionsBitField.Flags.Connect );
+                verifiedFlagsDeny.push( PermissionsBitField.Flags.Connect );
+            } else if ( isPrivacyGranted && "public" === dynamicChannelState ) {
+                verifiedFlagsAllow.push( PermissionsBitField.Flags.Connect );
             }
 
             if ( "hidden" === dynamicChannelVisibilityState ) {
-                verifiedFlagsSet.push( PermissionsBitField.Flags.ViewChannel );
+                verifiedFlagsDeny.push( PermissionsBitField.Flags.ViewChannel );
+            } else if ( isPrivacyGranted && "shown" === dynamicChannelVisibilityState ) {
+                verifiedFlagsAllow.push( PermissionsBitField.Flags.ViewChannel );
             }
 
             if ( dynamicChannelRegion ) {
                 defaultProperties.rtcRegion = dynamicChannelRegion ?? null;
             }
 
-            if ( verifiedFlagsSet.length ) {
-                // Ensure bot connectivity.
-                if ( !PermissionsManager.$.isSelfAdministratorRole( masterChannel.guild ) ) {
-                    // Add bot "ViewChannel" and "Connect" permissions.
+            if ( verifiedFlagsDeny.length || verifiedFlagsAllow.length ) {
+                // Ensure bot connectivity, only a deny can lock the bot out of the channel.
+                //
+                // This has to re-state the full master channel set rather than just `ViewChannel`
+                // and `Connect`: it lands in the same overwrite array as the entry inherited from
+                // the master channel and addresses the same id, so a narrower entry here would
+                // strip the bot of everything else it was granted.
+                if ( verifiedFlagsDeny.length && !PermissionsManager.$.isSelfAdministratorRole( masterChannel.guild ) ) {
                     permissionOverwrites.push( {
                         id: masterChannel.client.user?.id as string,
-                        allow: [ PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.Connect ],
-                        type: OverwriteType.Member
+                        ...DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS
                     } );
                 }
 
                 verifiedRoles.forEach( ( role: string ) => {
                     permissionOverwrites.push( {
                         id: role,
-                        deny: verifiedFlagsSet,
+                        allow: verifiedFlagsAllow,
+                        deny: verifiedFlagsDeny,
                         type: OverwriteType.Role
                     } );
                 } );
+
+                // `@everyone` mirrors the restriction, never the grant. Without this a channel
+                // restored as private would be private only to its own audience and open to
+                // everyone outside it.
+                //
+                // This replaces the entry inherited from the master channel, which carries nothing
+                // but the chat lock that inheritance already strips.
+                const everyoneRoleId = masterChannel.guild.roles.everyone.id;
+
+                if ( verifiedFlagsDeny.length && !verifiedRoles.includes( everyoneRoleId ) ) {
+                    permissionOverwrites.push( {
+                        id: everyoneRoleId,
+                        deny: verifiedFlagsDeny,
+                        type: OverwriteType.Role
+                    } );
+                }
             }
 
             dynamicChannelAllowedUserIds.forEach( ( userId: string ) => {
@@ -1087,10 +1219,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             `Guild id: '${ guild.id }' - Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }' version: '${ masterChannelDB.version }'`
         );
 
-        const defaultPropertiesMerged = { ... defaultProperties };
-
-        // Extend from auto saved data.
-        Object.assign( defaultPropertiesMerged.permissionOverwrites, permissionOverwrites );
+        // Extend from auto saved data, replacing the inherited entry for any role or member the
+        // saved state also addresses.
+        defaultProperties.permissionOverwrites = PermissionsManager.$.mergeChannelPermissionOverwrites(
+            defaultProperties.permissionOverwrites,
+            permissionOverwrites
+        );
 
         // Create a channel for the user.
         const dynamic = await this.services.channelService.create( {
@@ -1334,7 +1468,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         switch ( newState ) {
             case "public":
-                editStatePromise = PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
+                editStatePromise = PermissionsManager.$.editChannelAudiencePermissions( channel, roles, {
                     Connect: null
                 } );
                 break;
@@ -1342,7 +1476,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             case "private":
                 await PermissionsManager.$.ensureChannelBotConnectivityPermissions( channel );
 
-                editStatePromise = PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
+                editStatePromise = PermissionsManager.$.editChannelAudiencePermissions( channel, roles, {
                     Connect: false
                 } );
                 break;
@@ -1410,7 +1544,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         switch ( newState ) {
             case "shown":
-                await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
+                await PermissionsManager.$.editChannelAudiencePermissions( channel, roles, {
                     ViewChannel: null
                 } )
                     .catch( ( error ) => {
@@ -1423,7 +1557,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             case "hidden":
                 await PermissionsManager.$.ensureChannelBotConnectivityPermissions( channel );
-                await PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
+                await PermissionsManager.$.editChannelAudiencePermissions( channel, roles, {
                     ViewChannel: false
                 } )
                     .catch( ( error ) => {
@@ -1504,7 +1638,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         if ( currentState !== state || currentVisibilityState !== visibilityState ) {
             await PermissionsManager.$.ensureChannelBotConnectivityPermissions( channel );
 
-            const editStatePromise = PermissionsManager.$.editChannelRolesPermissions( channel, roles, {
+            const editStatePromise = PermissionsManager.$.editChannelAudiencePermissions( channel, roles, {
                 Connect: state === "public",
                 ViewChannel: visibilityState === "shown"
             } );
@@ -1597,15 +1731,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userOwnerId: newOwnerId
         } );
 
-        await this.updateChannelOwnership( channel, previousOwnerId, newOwnerId, from, masterChannel );
+        await this.updateChannelOwnership( channel, previousOwnerId, newOwnerId, from );
     }
 
     public async updateChannelOwnership(
         channel: VoiceChannel,
         previousOwnerId: string,
         newOwnerId: string,
-        from: "claim" | "transfer",
-        masterChannel: VoiceChannel
+        from: "claim" | "transfer"
     ) {
         this.logger.info(
             this.updateChannelOwnership,
@@ -1618,10 +1751,20 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         await this.log( undefined, channel, this.editChannelOwner, from, { previousOwner, newOwner } );
 
-        // Restore the allowed list.
-        const permissionOverwrites = PermissionsManager.$.getChannelDefaultInheritedPermissionsWithUser(
-            masterChannel,
-            newOwnerId
+        // Hand the channel over in place: keep what it already is - its privacy state, its trusted
+        // and blocked users - drop the previous owner's grant and give the new owner theirs.
+        //
+        // This used to rebuild the overwrites from the master channel, which reset a private or
+        // hidden channel back to public and discarded every trusted and blocked user, and it passed
+        // no owner permissions at all, so the new owner was left holding an empty overwrite.
+        const permissionOverwrites = PermissionsManager.$.mergeChannelPermissionOverwrites(
+            [ ...channel.permissionOverwrites.cache.values() ].filter(
+                ( overwrite ) => overwrite.id !== previousOwnerId
+            ),
+            [ {
+                id: newOwnerId,
+                ...DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+            } ]
         );
 
         // # NOTE: This is will trigger editPrimaryMessage() function, TODO: Such logic should be handled using command pattern.
@@ -1789,7 +1932,19 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return result;
         }
 
-        const userOwnerId = master.db.userOwnerId;
+        const dynamicChannelDB = await ChannelModel.$.getByChannelId( channel.id );
+
+        if ( !dynamicChannelDB ) {
+            this.logger.error(
+                this.resetChannel,
+                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to find channel in database`
+            );
+            return result;
+        }
+
+        // The owner of the channel being reset. `master.db.userOwnerId` is the admin who ran setup,
+        // and reading it from there renamed the channel after them and handed them the owner grant.
+        const userOwnerId = dynamicChannelDB.userOwnerId;
 
         const previousChannelState = await this.getChannelConfiguration( channel, userOwnerId, master.db.id, options ),
             defaultDynamicChannelTemplateName = await MasterChannelDataManager.$.getChannelNameTemplate(
@@ -2167,25 +2322,24 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     private async isVerifiedRolesDeniedFlag( channel: VoiceBasedChannel, flag: bigint ) {
-        const roles = await this.getVerifiedRoles( channel );
+        return this.isRolesDeniedFlag( channel, await this.getVerifiedRoles( channel ), flag );
+    }
 
-        // If no roles with permission overrides exist, then the flag is not denied
-        if ( roles.length === 0 ) {
-            return false;
-        }
-
-        // Only count roles that have explicit permission overrides
+    /**
+     * Function isRolesDeniedFlag() :: Tells whether the flag is denied for every one of the given
+     * roles that carries an overwrite at all.
+     *
+     * Roles without an explicit overwrite are ignored, and a channel where none of them has one is
+     * not denied - it is public by default.
+     */
+    private isRolesDeniedFlag( channel: VoiceBasedChannel, roles: string[], flag: bigint ) {
         const rolesWithOverrides = roles.filter( ( roleId ) => channel.permissionOverwrites.cache.has( roleId ) );
 
-        // If no roles have overrides, the channel should be public by default
-        if ( rolesWithOverrides.length === 0 ) {
+        if ( ! rolesWithOverrides.length ) {
             return false;
         }
 
-        const count = this.getDeniedFlagCount( channel, rolesWithOverrides, flag );
-        const result = count === rolesWithOverrides.length && rolesWithOverrides.length > 0;
-
-        return result;
+        return this.getDeniedFlagCount( channel, rolesWithOverrides, flag ) === rolesWithOverrides.length;
     }
 
     private async updateUserDataPermissionLists( initiator: Interaction, channel: VoiceChannel ) {

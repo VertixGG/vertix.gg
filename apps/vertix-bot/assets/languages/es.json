@@ -1037,7 +1037,7 @@
       "name": "VertixBot/UI-V2/SetupStep3Embed",
       "content": {
         "title": "Paso 3 - Seleccionar roles verificados",
-        "description": "Selecciona los roles cuyos permisos se verán afectados por el estado de los canales dinámicos.\n\nLos roles verificados no se usan en la mayoría de los casos; casi todos los servidores utilizan la configuración predeterminada.\n\n¿No sabes cómo funciona? Consulta la [explicación](https://voicechannels.online/setup/3).\n\n**_🛡️ Roles verificados_**\n\n> {verifiedRolesDisplay}\n\nPuedes mantener la configuración predeterminada pulsando el botón **( `✓ Finish` )**.",
+        "description": "Los roles verificados son los roles sobre los que actúan los botones de privacidad.\n\nCuando el propietario de un canal pulsa **Private** o **Hidden**, el bot cambia los permisos de estos roles. Ellos deciden quién puede ver el canal y quién puede unirse.\n\n⚠️ **¿No sabes qué elegir? Mantén `@everyone`.** Es la opción correcta para casi todos los servidores.\n\n**_Cuándo necesitas otro rol_**\n\nSolo si los miembros nuevos no pueden ver tus canales hasta que alguien les da un rol.\n\n_Ejemplo_: un miembro nuevo entra en tu servidor y no ve nada hasta que recibe el rol `Member`. Si los roles verificados siguen siendo `@everyone`, un canal dinámico público también aparecerá para ese miembro nuevo. Elige `Member` y solo los miembros que hayan pasado tu filtro podrán verlo y unirse.\n\n**_🛡️ Roles verificados_**\n\n> {verifiedRolesDisplay}\n\n¿Sigues con dudas? Consulta la [explicación](https://voicechannels.online/setup/3).\n\nPuedes mantener la configuración predeterminada pulsando el botón **( `✓ Finish` )**.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -1195,10 +1195,11 @@
       "name": "VertixBot/UI-V3/SetupNewStep3Embed",
       "content": {
         "title": "Paso 3 - Seleccionar roles verificados",
-        "description": "Selecciona los roles cuyos permisos se verán afectados por el estado de los canales dinámicos.\n\nLos roles verificados no se usan en la mayoría de los casos; casi todos los servidores utilizan la configuración predeterminada.\n\n¿No sabes cómo funciona? Consulta la [explicación](https://voicechannels.online/setup/3).\n\n**_🛡️ Roles verificados_**\n\n> {verifiedRolesDisplay}\n\nPuedes mantener la configuración predeterminada pulsando el botón **( `✓ Finish` )**.",
+        "description": "Los roles verificados son los roles sobre los que actúan los botones de privacidad.\n\nCuando el propietario de un canal pulsa **Private** o **Hidden**, el bot cambia los permisos de estos roles. Ellos deciden quién puede ver el canal y quién puede unirse.\n\n⚠️ **¿No sabes qué elegir? Mantén `@everyone`.** Es la opción correcta para casi todos los servidores.\n\n**_Cuándo necesitas otro rol_**\n\nSolo si los miembros nuevos no pueden ver tus canales hasta que alguien les da un rol.\n\n_Ejemplo_: un miembro nuevo entra en tu servidor y no ve nada hasta que recibe el rol `Member`. Si los roles verificados siguen siendo `@everyone`, un canal dinámico público también aparecerá para ese miembro nuevo. Elige `Member` y solo los miembros que hayan pasado tu filtro podrán verlo y unirse.\n\n**_🛡️ Roles verificados_**\n\n> {verifiedRolesDisplay}\n\n¿Sigues con dudas? Consulta la [explicación](https://voicechannels.online/setup/3).\n\nPuedes mantener la configuración predeterminada pulsando el botón **( `✓ Finish` )**.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesEveryone}": "**Everyone**",
             "{verifiedRolesDefault}": "**Ninguno**"
           }
         },

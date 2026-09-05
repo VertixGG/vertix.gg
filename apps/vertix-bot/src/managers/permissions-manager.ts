@@ -10,6 +10,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import type {
     Interaction,
+    OverwriteResolvable,
     PermissionOverwriteOptions,
     PermissionResolvable,
     VoiceBasedChannel,
@@ -159,17 +160,23 @@ export class PermissionsManager extends InitializeBase {
         return this.getMissingChannelPermissions( permissions, context );
     }
 
+    /**
+     * Function getChannelDefaultInheritedPermissions() :: Returns the master channel overwrites a
+     * dynamic channel is created from.
+     *
+     * `SendMessages` is dropped from every one of them. The master channel is a generator whose
+     * text chat is deliberately closed, but its dynamic channels are meant to be talked in - the
+     * whole point of the `Clear Chat` feature. Scoping this to the everyone overwrite alone used to
+     * let any other role carrying the deny - a verified role, or anything an admin set on the
+     * master channel - inherit it and end up silenced in every dynamic channel.
+     */
     public getChannelDefaultInheritedPermissions( channel: VoiceBasedChannel ) {
         const { permissionOverwrites } = channel,
             result = [];
 
         for ( const overwrite of permissionOverwrites.cache.values() ) {
-            let { id, allow, deny, type } = overwrite;
-
-            // Exclude `PermissionsBitField.Flags.SendMessages` for everyone.
-            if ( id === channel.guild.id ) {
-                deny = deny.remove( PermissionsBitField.Flags.SendMessages );
-            }
+            const { id, allow, type } = overwrite,
+                deny = overwrite.deny.remove( PermissionsBitField.Flags.SendMessages );
 
             this.debugger.debugPermission( this.getChannelDefaultInheritedPermissions, overwrite );
 
@@ -177,6 +184,26 @@ export class PermissionsManager extends InitializeBase {
         }
 
         return result;
+    }
+
+    /**
+     * Function mergeChannelPermissionOverwrites() :: Merges overwrite lists by id, a later entry
+     * replacing an earlier one for the same role or member.
+     *
+     * Discord keeps one entry per id, so two entries for the same id is ambiguous, and merging them
+     * positionally - as `Object.assign()` over the array does - overwrites whichever unrelated
+     * entries happen to sit at those indexes.
+     */
+    public mergeChannelPermissionOverwrites( ...lists: OverwriteResolvable[][] ): OverwriteResolvable[] {
+        const byId = new Map<string, OverwriteResolvable>();
+
+        for ( const list of lists ) {
+            for ( const overwrite of list ) {
+                byId.set( "string" === typeof overwrite.id ? overwrite.id : overwrite.id.id, overwrite );
+            }
+        }
+
+        return [ ... byId.values() ];
     }
 
     public getChannelDefaultInheritedPermissionsWithUser( channel: VoiceBasedChannel, userId: string, overrides = {} ) {
@@ -204,7 +231,7 @@ export class PermissionsManager extends InitializeBase {
             return;
         }
 
-        await this.ensureChannelBotRolePermissions(
+        await this.ensureChannelBotPermissions(
             channel,
             new PermissionsBitField( [ PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.Connect ] )
         ).catch( ( error ) => {
@@ -262,7 +289,17 @@ export class PermissionsManager extends InitializeBase {
         return botMember.permissions.has( PermissionsBitField.Flags.Administrator );
     }
 
-    public async ensureChannelBotRolePermissions(
+    /**
+     * Function ensureChannelBotPermissions() :: Grants the bot the given permissions on the channel,
+     * on its own member overwrite.
+     *
+     * That is the same overwrite a master channel grants and a dynamic channel inherits, so the bot
+     * ends up with one entry instead of a member one and a role one that have to agree. It used to
+     * write to `botMember.roles.cache.first()`, which is not reliably the integration role.
+     *
+     * `permissionOverwrites.edit()` merges, so the permissions already granted are left alone.
+     */
+    public async ensureChannelBotPermissions(
         channel: VoiceBasedChannel,
         permissions: PermissionsBitField
     ): Promise<void> {
@@ -270,39 +307,66 @@ export class PermissionsManager extends InitializeBase {
 
         if ( !botMember ) {
             this.logger.error(
-                this.ensureChannelBotRolePermissions,
+                this.ensureChannelBotPermissions,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Bot member not found`
             );
             return;
         }
 
-        const botRole = botMember.roles.cache.first();
-
-        if ( !botRole ) {
-            this.logger.error(
-                this.ensureChannelBotRolePermissions,
-                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Bot role not found`
-            );
+        if ( channel.permissionOverwrites.cache.get( botMember.id )?.allow.has( permissions ) ) {
             return;
         }
 
         const permissionsOptions: PermissionOverwriteOptions = {};
+
         for ( const permission of permissions.toArray() ) {
             permissionsOptions[ permission ] = true;
         }
 
-        const rolePermissions = channel.permissionOverwrites.cache.get( botRole.id );
+        await channel.permissionOverwrites.edit( botMember, permissionsOptions ).catch( ( error ) => {
+            this.logger.error(
+                this.ensureChannelBotPermissions,
+                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to grant bot permissions`,
+                error
+            );
+        } );
+    }
 
-        if ( !rolePermissions ) {
-            await this.editChannelRolesPermissions( channel, [ botRole.id ], permissionsOptions );
+    /**
+     * Function editChannelAudiencePermissions() :: Applies a state change to the channel's audience.
+     *
+     * The verified roles receive the change as given. `@everyone` mirrors the restrictions only:
+     *
+     * - a deny has to reach it as well, or a channel whose audience is narrower than `@everyone`
+     *   would report itself private while anyone outside that audience could still walk straight in
+     * - a grant must not, since widening access back to everyone is the very thing choosing a
+     *   narrower audience rules out, so lifting a restriction clears `@everyone` to the server
+     *   default instead of granting it
+     *
+     * When `@everyone` is itself a verified role the two collapse into one and it is left to the
+     * verified pass, which is what gives the default audience its documented "everyone can see and
+     * join" behaviour.
+     */
+    public async editChannelAudiencePermissions(
+        channel: VoiceBasedChannel,
+        roles: string[],
+        permissions: PermissionOverwriteOptions
+    ): Promise<void> {
+        await this.editChannelRolesPermissions( channel, roles, permissions );
+
+        const everyoneRoleId = channel.guild.roles.everyone.id;
+
+        if ( roles.includes( everyoneRoleId ) ) {
             return;
         }
 
-        if ( rolePermissions.allow.has( permissions ) ) {
-            return;
+        const everyonePermissions: PermissionOverwriteOptions = {};
+
+        for ( const permission of Object.keys( permissions ) as ( keyof PermissionOverwriteOptions )[] ) {
+            everyonePermissions[ permission ] = false === permissions[ permission ] ? false : null;
         }
 
-        await this.editChannelRolesPermissions( channel, [ botRole.id ], permissionsOptions );
+        await this.editChannelRolesPermissions( channel, [ everyoneRoleId ], everyonePermissions );
     }
 
     public async editChannelRolesPermissions(

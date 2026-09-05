@@ -9,6 +9,11 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 
 import { WizardAdapterBuilder } from "@vertix.gg/gui/src/builders/wizard-adapter-builder";
 
+import {
+    verifiedRolesFromEveryoneRole,
+    verifiedRolesFromSelectedRoles
+} from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-utils";
+
 import { SetupMasterCreateButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-button";
 import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
 
@@ -135,16 +140,13 @@ async function onVerifiedRolesSelected(
     context: IWizardAdapterContext<WizardInteractions>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
-    const args: UIArgs = context.getArgs( interaction ),
-        roles = interaction.values;
+    const args: UIArgs = context.getArgs( interaction );
 
-    if ( args.dynamicChannelIncludeEveryoneRole ) {
-        roles.push( interaction.guildId );
-    }
-
-    context.setArgs( interaction, {
-        dynamicChannelVerifiedRoles: roles.sort()
-    } );
+    context.setArgs( interaction, verifiedRolesFromSelectedRoles(
+        interaction.values,
+        interaction.guildId,
+        Boolean( args.dynamicChannelIncludeEveryoneRole )
+    ) );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupStep3Component" );
 }
@@ -161,21 +163,11 @@ async function onVerifiedRolesEveryoneSelected(
 
         switch ( parted[ 0 ] ) {
             case "dynamicChannelIncludeEveryoneRole":
-                const state = !!parseInt( parted[ 1 ] ),
-                    isEveryoneExist = args.dynamicChannelVerifiedRoles.includes( interaction.guildId );
-
-                args.dynamicChannelIncludeEveryoneRole = state;
-
-                if ( state && !isEveryoneExist ) {
-                    args.dynamicChannelVerifiedRoles.push( interaction.guildId );
-                } else if ( !state && isEveryoneExist ) {
-                    args.dynamicChannelVerifiedRoles.splice(
-                        args.dynamicChannelVerifiedRoles.indexOf( interaction.guildId ),
-                        1
-                    );
-                }
-
-                args.dynamicChannelVerifiedRoles = args.dynamicChannelVerifiedRoles.sort();
+                Object.assign( args, verifiedRolesFromEveryoneRole(
+                    !!parseInt( parted[ 1 ] ),
+                    args.dynamicChannelVerifiedRoles ?? [],
+                    interaction.guildId
+                ) );
 
                 break;
         }

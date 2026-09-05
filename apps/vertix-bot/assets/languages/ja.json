@@ -1441,10 +1441,11 @@
       "name": "VertixBot/UI-V3/SetupNewStep3Embed",
       "content": {
         "title": "ステップ 3 - 認証済みロールを選択",
-        "description": "ダイナミックチャンネルの状態によって権限が影響を受けるロールを選択してください。\n\n認証済みロールはほとんどの場合使用されません。ほぼすべてのサーバーが既定の設定を使用しています。\n\n仕組みがわからない場合は[説明](https://voicechannels.online/setup/3)をご覧ください。\n\n**_🛡️ 認証済みロール_**\n\n> {verifiedRolesDisplay}\n\n**( `✓ Finish` )** ボタンを押すと、既定の設定のままにできます。",
+        "description": "認証済みロールとは、プライバシーボタンが操作するロールのことです。\n\nチャンネルの所有者が **Private** または **Hidden** を押すと、Bot はこれらのロールの権限を変更します。誰がチャンネルを見られるか、誰が参加できるかはこのロールで決まります。\n\n⚠️ **何を選べばよいか分からない場合は `@everyone` のままにしてください。** ほぼすべてのサーバーではこれが正解です。\n\n**_別のロールが必要になる場合_**\n\n新しいメンバーが、誰かにロールを付与されるまでチャンネルを見られないサーバーの場合だけです。\n\n_例_: 新しいメンバーがサーバーに参加しても、`Member` ロールを受け取るまで何も見えないとします。認証済みロールを `@everyone` のままにすると、公開のダイナミックチャンネルはその新しいメンバーにも表示されます。代わりに `Member` を選べば、あなたの確認を通過したメンバーだけが見て参加できます。\n\n**_🛡️ 認証済みロール_**\n\n> {verifiedRolesDisplay}\n\nそれでも分からない場合は[説明](https://voicechannels.online/setup/3)をご覧ください。\n\n**( `✓ Finish` )** ボタンを押すと、既定の設定のままにできます。",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesEveryone}": "**Everyone**",
             "{verifiedRolesDefault}": "**なし**"
           }
         },
@@ -1509,7 +1510,7 @@
       "name": "VertixBot/UI-V2/SetupStep3Embed",
       "content": {
         "title": "ステップ 3 - 認証済みロールを選択",
-        "description": "ダイナミックチャンネルの状態によって権限が影響を受けるロールを選択してください。\n\n認証済みロールはほとんどの場合使用されません。ほぼすべてのサーバーが既定の設定を使用しています。\n\n仕組みがわからない場合は[説明](https://voicechannels.online/setup/3)をご覧ください。\n\n**_🛡️ 認証済みロール_**\n\n> {verifiedRolesDisplay}\n\n**( `✓ Finish` )** ボタンを押すと、既定の設定のままにできます。",
+        "description": "認証済みロールとは、プライバシーボタンが操作するロールのことです。\n\nチャンネルの所有者が **Private** または **Hidden** を押すと、Bot はこれらのロールの権限を変更します。誰がチャンネルを見られるか、誰が参加できるかはこのロールで決まります。\n\n⚠️ **何を選べばよいか分からない場合は `@everyone` のままにしてください。** ほぼすべてのサーバーではこれが正解です。\n\n**_別のロールが必要になる場合_**\n\n新しいメンバーが、誰かにロールを付与されるまでチャンネルを見られないサーバーの場合だけです。\n\n_例_: 新しいメンバーがサーバーに参加しても、`Member` ロールを受け取るまで何も見えないとします。認証済みロールを `@everyone` のままにすると、公開のダイナミックチャンネルはその新しいメンバーにも表示されます。代わりに `Member` を選べば、あなたの確認を通過したメンバーだけが見て参加できます。\n\n**_🛡️ 認証済みロール_**\n\n> {verifiedRolesDisplay}\n\nそれでも分からない場合は[説明](https://voicechannels.online/setup/3)をご覧ください。\n\n**( `✓ Finish` )** ボタンを押すと、既定の設定のままにできます。",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",

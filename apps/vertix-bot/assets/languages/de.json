@@ -1985,7 +1985,7 @@
       "name": "VertixBot/UI-V2/SetupStep3Embed",
       "content": {
         "title": "Schritt 3 – Verifizierte Rollen auswählen",
-        "description": "Wähle die Rollen aus, deren Berechtigungen vom Zustand der dynamischen Kanäle beeinflusst werden.\n\nVerifizierte Rollen werden in den meisten Fällen nicht benötigt – fast alle Server nutzen die Standardeinstellungen.\n\nNicht sicher, wie es funktioniert? Sieh dir die [Erklärung](https://voicechannels.online/setup/3) an.\n\n**_🛡️ Verifizierte Rollen_**\n\n> {verifiedRolesDisplay}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `✓ Finish` )** klickst.",
+        "description": "Verifizierte Rollen sind die Rollen, auf die die Privatsphäre-Buttons wirken.\n\nWenn ein Kanalbesitzer **Private** oder **Hidden** drückt, ändert der Bot die Berechtigungen dieser Rollen. Sie entscheiden, wer den Kanal sehen und wer ihm beitreten kann.\n\n⚠️ **Nicht sicher, was du wählen sollst? Behalte `@everyone`.** Für fast jeden Server ist das die richtige Wahl.\n\n**_Wann du eine andere Rolle brauchst_**\n\nNur wenn neue Mitglieder deine Kanäle erst sehen können, nachdem ihnen jemand eine Rolle gibt.\n\n_Beispiel_: Ein neues Mitglied tritt deinem Server bei und sieht nichts, bis es die Rolle `Member` bekommt. Bleiben die verifizierten Rollen bei `@everyone`, taucht ein öffentlicher dynamischer Kanal auch bei diesem neuen Mitglied auf. Wähle stattdessen `Member`, dann können nur Mitglieder sehen und beitreten, die deine Prüfung bestanden haben.\n\n**_🛡️ Verifizierte Rollen_**\n\n> {verifiedRolesDisplay}\n\nImmer noch unsicher? Sieh dir die [Erklärung](https://voicechannels.online/setup/3) an.\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `✓ Finish` )** klickst.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -2192,10 +2192,11 @@
       "name": "VertixBot/UI-V3/SetupNewStep3Embed",
       "content": {
         "title": "Schritt 3 – Verifizierte Rollen auswählen",
-        "description": "Wähle die Rollen aus, deren Berechtigungen vom Zustand der dynamischen Kanäle beeinflusst werden.\n\nVerifizierte Rollen werden in den meisten Fällen nicht benötigt – fast alle Server nutzen die Standardeinstellungen.\n\nNicht sicher, wie es funktioniert? Sieh dir die [Erklärung](https://voicechannels.online/setup/3) an.\n\n**_🛡️ Verifizierte Rollen_**\n\n> {verifiedRolesDisplay}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `✓ Finish` )** klickst.",
+        "description": "Verifizierte Rollen sind die Rollen, auf die die Privatsphäre-Buttons wirken.\n\nWenn ein Kanalbesitzer **Private** oder **Hidden** drückt, ändert der Bot die Berechtigungen dieser Rollen. Sie entscheiden, wer den Kanal sehen und wer ihm beitreten kann.\n\n⚠️ **Nicht sicher, was du wählen sollst? Behalte `@everyone`.** Für fast jeden Server ist das die richtige Wahl.\n\n**_Wann du eine andere Rolle brauchst_**\n\nNur wenn neue Mitglieder deine Kanäle erst sehen können, nachdem ihnen jemand eine Rolle gibt.\n\n_Beispiel_: Ein neues Mitglied tritt deinem Server bei und sieht nichts, bis es die Rolle `Member` bekommt. Bleiben die verifizierten Rollen bei `@everyone`, taucht ein öffentlicher dynamischer Kanal auch bei diesem neuen Mitglied auf. Wähle stattdessen `Member`, dann können nur Mitglieder sehen und beitreten, die deine Prüfung bestanden haben.\n\n**_🛡️ Verifizierte Rollen_**\n\n> {verifiedRolesDisplay}\n\nImmer noch unsicher? Sieh dir die [Erklärung](https://voicechannels.online/setup/3) an.\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `✓ Finish` )** klickst.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesEveryone}": "**Everyone**",
             "{verifiedRolesDefault}": "**Keine**"
           }
         },

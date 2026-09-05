@@ -13,6 +13,10 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 import { WizardAdapterBuilder } from "@vertix.gg/gui/src/builders/wizard-adapter-builder";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
+import {
+    verifiedRolesFromEveryoneRole,
+    verifiedRolesFromSelectedRoles
+} from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-utils";
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
@@ -137,15 +141,14 @@ async function onVerifiedRolesSelected(
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
     const args = { ...context.getArgs( interaction ) };
-    const roles = interaction.values;
-
-    if ( args.dynamicChannelIncludeEveryoneRole ) {
-        roles.push( interaction.guildId );
-    }
 
     context.setArgs( interaction, {
         ...args,
-        dynamicChannelVerifiedRoles: roles.sort()
+        ...verifiedRolesFromSelectedRoles(
+            interaction.values,
+            interaction.guildId,
+            Boolean( args.dynamicChannelIncludeEveryoneRole )
+        )
     } );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupStep3Component" );
@@ -163,22 +166,11 @@ async function onVerifiedRolesEveryoneSelected(
 
         switch ( parted[ 0 ] ) {
             case "dynamicChannelIncludeEveryoneRole":
-                const state = !!parseInt( parted[ 1 ] );
-                const isEveryoneExist = args.dynamicChannelVerifiedRoles?.includes( interaction.guildId );
-
-                args.dynamicChannelIncludeEveryoneRole = state;
-
-                if ( state && !isEveryoneExist ) {
-                    args.dynamicChannelVerifiedRoles = args.dynamicChannelVerifiedRoles || [];
-                    args.dynamicChannelVerifiedRoles.push( interaction.guildId );
-                } else if ( !state && isEveryoneExist ) {
-                    args.dynamicChannelVerifiedRoles.splice(
-                        args.dynamicChannelVerifiedRoles.indexOf( interaction.guildId ),
-                        1
-                    );
-                }
-
-                args.dynamicChannelVerifiedRoles = args.dynamicChannelVerifiedRoles?.sort();
+                Object.assign( args, verifiedRolesFromEveryoneRole(
+                    !!parseInt( parted[ 1 ] ),
+                    args.dynamicChannelVerifiedRoles ?? [],
+                    interaction.guildId
+                ) );
                 break;
         }
     } );
@@ -301,16 +293,24 @@ const SetupStep3Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep3Embed", 
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setTitle( () => "Step 3 - Select Verified Roles" )
     .setDescription( ( vars ) =>
-        "Select the roles whose permissions will be impacted by the state of Dynamic Channel's.\n\n" +
-        "Verified roles are not used in most cases, almost all the servers use the default settings.\n\n" +
-        "Not sure how it works?, check out the [explanation](https://voicechannels.online/setup/3).\n\n" +
+        "Verified roles are the roles that the privacy buttons work on.\n\n" +
+        "When a channel owner presses **Private** or **Hidden**, the bot changes the permissions " +
+        "of these roles. They decide who can see the channel and who can join it.\n\n" +
+        "⚠️ **Not sure what to pick? Keep `@everyone`.** It is the right choice for almost every server.\n\n" +
+        "**_When you need a different role_**\n\n" +
+        "Only if new members cannot see your channels until somebody gives them a role.\n\n" +
+        "_Example_: a new member joins your server and sees nothing until they get the `Member` role. " +
+        "If verified roles stay `@everyone`, a public dynamic channel shows up for that new member too. " +
+        "Pick `Member` instead, and only members who passed your gate can see and join.\n\n" +
         "**_🛡️ Verified Roles_**\n\n" +
         `> ${ vars.verifiedRolesDisplay }\n\n` +
+        "Still not sure? check out the [explanation](https://voicechannels.online/setup/3).\n\n" +
         "You can keep the default settings by pressing **( `✓ Finish` )** button."
     )
     .setOptions( ( vars ) => ( {
         verifiedRolesDisplay: {
             [ vars.verifiedRoles ]: vars.verifiedRoles,
+            [ vars.verifiedRolesEveryone ]: "**Everyone**",
             [ vars.verifiedRolesDefault ]: "**None**"
         }
     } ) )
@@ -319,6 +319,26 @@ const SetupStep3Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep3Embed", 
             format: "<@&{value}>{separator}",
             separator: ", "
         }
+    } )
+    .setLogic( ( args ) => {
+        const vars = STEP_3_EMBED_VARS;
+        const result: Record<string, string | string[]> = {};
+        const verifiedRoles: string[] = Array.isArray( args.dynamicChannelVerifiedRoles )
+            ? args.dynamicChannelVerifiedRoles
+            : [];
+
+        if ( verifiedRoles.length ) {
+            result.verifiedRoles = verifiedRoles;
+            result.verifiedRolesDisplay = vars.verifiedRoles;
+        } else if ( args.dynamicChannelIncludeEveryoneRole ) {
+            // Nothing selected while the everyone role is kept, the fallback `onBeforeFinish()`
+            // applies: `args.dynamicChannelVerifiedRoles || [ interaction.guildId ]`.
+            result.verifiedRolesDisplay = vars.verifiedRolesEveryone;
+        } else {
+            result.verifiedRolesDisplay = vars.verifiedRolesDefault;
+        }
+
+        return result;
     } )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();

@@ -8,7 +8,8 @@ import { DynamicChannelTemplatesButton } from "@vertix.gg/bot/src/ui/v3/dynamic-
 import { DynamicChannelTemplatesComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-component";
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
-import type { ChannelTemplate } from "@vertix.gg/base/src/interfaces/channel-template";
+import type { ChannelTemplate, ChannelTemplateConfig } from "@vertix.gg/base/src/interfaces/channel-template";
+import type { ChannelPrivacyState } from "@vertix.gg/bot/src/definitions/dynamic-channel";
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction,
@@ -38,6 +39,30 @@ async function getCurrentChannelConfig( channel: VoiceChannel ) {
         visibilityState,
         region: channel.rtcRegion ?? "auto"
     };
+}
+
+/**
+ * Function templateConfigToPrivacyState() :: Collapses a stored template state pair into the single
+ * V3 privacy state.
+ *
+ * V3 exposes three states - public, private and hidden - and `editChannelPrivacyState()` derives
+ * both flags from one of them, so a template has to be mapped onto that same vocabulary. Hidden
+ * wins over private, matching how the privacy state maps back to the pair.
+ */
+function templateConfigToPrivacyState( config: ChannelTemplateConfig ): ChannelPrivacyState | null {
+    if ( "hidden" === config.visibilityState ) {
+        return "hidden";
+    }
+
+    if ( "private" === config.state ) {
+        return "private";
+    }
+
+    if ( "public" === config.state || "shown" === config.visibilityState ) {
+        return "public";
+    }
+
+    return null;
 }
 
 const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
@@ -203,15 +228,19 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
                             await interaction.channel.setUserLimit( config.userLimit );
                         }
 
-                        if ( config.state && config.state !== "unknown" ) {
-                            await dynamicChannelService.editChannelState( interaction, interaction.channel, config.state );
-                        }
+                        // V3 has a single three state privacy model - public, private, hidden -
+                        // and `editChannelPrivacyState()` is what writes it. The per flag
+                        // `editChannelState()` / `editChannelVisibilityState()` are the V2 model,
+                        // which restores a flag to its default instead of granting it, so applying
+                        // a template through them produced different permissions than the privacy
+                        // button did for the very same state.
+                        const privacyState = templateConfigToPrivacyState( config );
 
-                        if ( config.visibilityState && config.visibilityState !== "unknown" ) {
-                            await dynamicChannelService.editChannelVisibilityState(
+                        if ( privacyState ) {
+                            await dynamicChannelService.editChannelPrivacyState(
                                 interaction,
                                 interaction.channel,
-                                config.visibilityState
+                                privacyState
                             );
                         }
 

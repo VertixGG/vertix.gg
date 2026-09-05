@@ -8,6 +8,11 @@ import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions"
 
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
+import {
+    verifiedRolesFromEveryoneRole,
+    verifiedRolesFromSelectedRoles
+} from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-utils";
+
 import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-button";
 import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
 
@@ -363,15 +368,15 @@ async function onVerifiedRolesSelected(
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
     const args = context.getArgs( interaction );
-    const roles = interaction.values;
-
-    if ( args.dynamicChannelIncludeEveryoneRole ) {
-        roles.push( interaction.guildId );
-    }
+    const selection = verifiedRolesFromSelectedRoles(
+        interaction.values,
+        interaction.guildId,
+        Boolean( args.dynamicChannelIncludeEveryoneRole )
+    );
 
     context.setArgs( interaction, {
-        dynamicChannelVerifiedRoles: roles.sort(),
-        _wizardIsFinishButtonDisabled: !roles.length
+        ...selection,
+        _wizardIsFinishButtonDisabled: !selection.dynamicChannelVerifiedRoles.length
     } );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVerifiedRoles" );
@@ -389,21 +394,11 @@ async function onVerifiedRolesEveryoneSelected(
 
         switch ( parted[ 0 ] ) {
             case "dynamicChannelIncludeEveryoneRole":
-                const state = !!parseInt( parted[ 1 ], 10 );
-                const isEveryoneExist = args.dynamicChannelVerifiedRoles.includes( interaction.guildId );
-
-                args.dynamicChannelIncludeEveryoneRole = state;
-
-                if ( state && !isEveryoneExist ) {
-                    args.dynamicChannelVerifiedRoles.push( interaction.guildId );
-                } else if ( !state && isEveryoneExist ) {
-                    args.dynamicChannelVerifiedRoles.splice(
-                        args.dynamicChannelVerifiedRoles.indexOf( interaction.guildId ),
-                        1
-                    );
-                }
-
-                args.dynamicChannelVerifiedRoles = args.dynamicChannelVerifiedRoles.sort();
+                Object.assign( args, verifiedRolesFromEveryoneRole(
+                    !!parseInt( parted[ 1 ], 10 ),
+                    args.dynamicChannelVerifiedRoles ?? [],
+                    interaction.guildId
+                ) );
 
                 break;
         }
@@ -455,11 +450,20 @@ async function onFinishButtonClicked(
         version: VERSION_UI_V2
     } as ChannelExtended;
 
+    const previousRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, interaction.guildId );
+
     await MasterChannelDataManager.$.setChannelVerifiedRoles(
         masterChannelDB,
         interaction.guildId,
         args.dynamicChannelVerifiedRoles
     );
+
+    // Read back rather than trusting the args, `setChannelVerifiedRoles()` falls back to the
+    // everyone role when the list is emptied.
+    const currentRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, interaction.guildId, false );
+
+    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+        .updateVerifiedRolesPermissions( interaction.guildId, args.masterChannelId, previousRoles, currentRoles );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 }

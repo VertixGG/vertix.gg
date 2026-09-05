@@ -1002,10 +1002,11 @@
       "name": "VertixBot/UI-V3/SetupNewStep3Embed",
       "content": {
         "title": "Étape 3 - Sélectionner les rôles vérifiés",
-        "description": "Sélectionnez les rôles dont les permissions seront affectées par l'état des canaux dynamiques.\n\nLes rôles vérifiés ne sont pas utilisés dans la plupart des cas ; presque tous les serveurs utilisent les paramètres par défaut.\n\nVous ne savez pas comment cela fonctionne ? Consultez l'[explication](https://voicechannels.online/setup/3).\n\n**_🛡️ Rôles vérifiés_**\n\n> {verifiedRolesDisplay}\n\nVous pouvez conserver les paramètres par défaut en appuyant sur le bouton **( `✓ Finish` )**.",
+        "description": "Les rôles vérifiés sont les rôles sur lesquels agissent les boutons de confidentialité.\n\nQuand le propriétaire d'un salon appuie sur **Private** ou **Hidden**, le bot modifie les permissions de ces rôles. Ce sont eux qui déterminent qui peut voir le salon et qui peut le rejoindre.\n\n⚠️ **Vous ne savez pas quoi choisir ? Gardez `@everyone`.** C'est le bon choix pour presque tous les serveurs.\n\n**_Quand vous avez besoin d'un autre rôle_**\n\nUniquement si les nouveaux membres ne peuvent pas voir vos salons tant que quelqu'un ne leur donne pas un rôle.\n\n_Exemple_ : un nouveau membre rejoint votre serveur et ne voit rien tant qu'il n'a pas le rôle `Member`. Si les rôles vérifiés restent `@everyone`, un salon dynamique public apparaîtra aussi pour ce nouveau membre. Choisissez plutôt `Member`, et seuls les membres ayant passé votre filtre pourront le voir et le rejoindre.\n\n**_🛡️ Rôles vérifiés_**\n\n> {verifiedRolesDisplay}\n\nToujours pas sûr ? Consultez l'[explication](https://voicechannels.online/setup/3).\n\nVous pouvez conserver les paramètres par défaut en appuyant sur le bouton **( `✓ Finish` )**.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesEveryone}": "**Everyone**",
             "{verifiedRolesDefault}": "**Aucun**"
           }
         },
@@ -2406,7 +2407,7 @@
       "name": "VertixBot/UI-V2/SetupStep3Embed",
       "content": {
         "title": "Étape 3 - Sélectionner les rôles vérifiés",
-        "description": "Sélectionnez les rôles dont les permissions seront affectées par l'état des canaux dynamiques.\n\nLes rôles vérifiés ne sont pas utilisés dans la plupart des cas ; presque tous les serveurs utilisent les paramètres par défaut.\n\nVous ne savez pas comment cela fonctionne ? Consultez l'[explication](https://voicechannels.online/setup/3).\n\n**_🛡️ Rôles vérifiés_**\n\n> {verifiedRolesDisplay}\n\nVous pouvez conserver les paramètres par défaut en appuyant sur le bouton **( `✓ Finish` )**.",
+        "description": "Les rôles vérifiés sont les rôles sur lesquels agissent les boutons de confidentialité.\n\nQuand le propriétaire d'un salon appuie sur **Private** ou **Hidden**, le bot modifie les permissions de ces rôles. Ce sont eux qui déterminent qui peut voir le salon et qui peut le rejoindre.\n\n⚠️ **Vous ne savez pas quoi choisir ? Gardez `@everyone`.** C'est le bon choix pour presque tous les serveurs.\n\n**_Quand vous avez besoin d'un autre rôle_**\n\nUniquement si les nouveaux membres ne peuvent pas voir vos salons tant que quelqu'un ne leur donne pas un rôle.\n\n_Exemple_ : un nouveau membre rejoint votre serveur et ne voit rien tant qu'il n'a pas le rôle `Member`. Si les rôles vérifiés restent `@everyone`, un salon dynamique public apparaîtra aussi pour ce nouveau membre. Choisissez plutôt `Member`, et seuls les membres ayant passé votre filtre pourront le voir et le rejoindre.\n\n**_🛡️ Rôles vérifiés_**\n\n> {verifiedRolesDisplay}\n\nToujours pas sûr ? Consultez l'[explication](https://voicechannels.online/setup/3).\n\nVous pouvez conserver les paramètres par défaut en appuyant sur le bouton **( `✓ Finish` )**.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",

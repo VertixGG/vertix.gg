@@ -103,6 +103,15 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS = {
     ]
 };
 
+/**
+ * What the bot has to hold on a logs channel to be able to post to it.
+ */
+export const DEFAULT_LOGS_CHANNEL_BOT_PERMISSIONS = new PermissionsBitField( [
+    Flags.ViewChannel,
+    Flags.SendMessages,
+    Flags.EmbedLinks
+] );
+
 export const DEFAULT_SETUP_PERMISSIONS = [
     PermissionsBitField.Flags.ManageGuild,
     PermissionsBitField.Flags.ManageChannels,

@@ -14,6 +14,8 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
+import { warnOnMissingLogsChannelPermissions } from "@vertix.gg/bot/src/ui/general/logs-channel/logs-channel-utils";
+
 import {
     verifiedRolesFromEveryoneRole,
     verifiedRolesFromSelectedRoles
@@ -719,6 +721,10 @@ async function onLogChannelSelected(
     await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, channelId );
 
     context.setArgs( interaction, args );
+
+    // The logs channel belongs to the admin, not to the bot, so nothing grants the bot anything
+    // there. Say so at the moment of the pick rather than letting logging fail in silence later.
+    await warnOnMissingLogsChannelPermissions( interaction, channelId );
 }
 
 async function onVerifiedRolesSelected(

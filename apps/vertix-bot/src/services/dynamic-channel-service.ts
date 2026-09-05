@@ -884,7 +884,33 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     ViewChannel: null
                 } );
             }
+
+            // The category is a template as much as a container - discord copies its overwrites
+            // onto channels created inside it without their own - so it follows the audience too.
+            const masterCategory = masterChannel.parent;
+
+            if ( masterCategory ) {
+                if ( removedRoles.length ) {
+                    await PermissionsManager.$.editChannelRolesPermissions( masterCategory, removedRoles, {
+                        ViewChannel: null
+                    } );
+                }
+
+                if ( addedRoles.length ) {
+                    await PermissionsManager.$.editChannelRolesPermissions( masterCategory, addedRoles, {
+                        ViewChannel: true
+                    } );
+                }
+
+                await PermissionsManager.$.editChannelRolesPermissions(
+                    masterCategory,
+                    [ masterChannel.guild.roles.everyone.id ],
+                    { ViewChannel: currentRoles.includes( masterChannel.guild.roles.everyone.id ) }
+                );
+            }
         }
+
+        await this.updateControlChannelVerifiedRoles( guildId, masterChannelId, removedRoles, currentRoles );
 
         for ( const dynamicChannelDB of dynamicChannelsDB ) {
             const channel = this.services.appService
@@ -916,19 +942,81 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 } );
             }
 
-            // `@everyone` mirrors the restriction whether or not it is one of the verified roles,
-            // so narrowing the list must not hand a private or hidden channel back to everyone.
+            // An audience narrower than `@everyone` keeps `@everyone` out of the channel entirely,
+            // whatever the state is, so narrowing the list must not hand the channel to everyone.
             if ( ! currentRoles.includes( channel.guild.roles.everyone.id ) ) {
                 await PermissionsManager.$.editChannelRolesPermissions(
                     channel,
                     [ channel.guild.roles.everyone.id ],
                     {
-                        Connect: wasPrivate ? false : null,
-                        ViewChannel: wasHidden ? false : null
+                        Connect: false,
+                        ViewChannel: false
                     }
                 );
             }
         }
+    }
+
+    /**
+     * Function updateControlChannelVerifiedRoles() :: Moves the control panel with the verified
+     * roles list.
+     *
+     * The panel is shown to the same audience as the channels it drives, so it has to follow the
+     * list too - otherwise editing the roles leaves a panel visible to people who can no longer see
+     * a single channel it controls, or hidden from the audience that just gained them.
+     *
+     * Only `ViewChannel` is touched; the panel's read only deny list is left alone.
+     */
+    private async updateControlChannelVerifiedRoles(
+        guildId: string,
+        masterChannelId: string,
+        removedRoles: string[],
+        currentRoles: string[]
+    ) {
+        const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannelId );
+
+        if ( ! masterChannelDB ) {
+            return;
+        }
+
+        const settings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB ),
+            controlChannelId = settings.dynamicChannelControlChannelId;
+
+        if ( ! controlChannelId ) {
+            return;
+        }
+
+        const controlChannel = this.services.appService.getClient().channels.cache.get( controlChannelId );
+
+        if ( controlChannel?.type !== ChannelType.GuildText ) {
+            this.logger.warn(
+                this.updateControlChannelVerifiedRoles,
+                `Guild id: '${ guildId }' - Control channel id: '${ controlChannelId }' not found`
+            );
+            return;
+        }
+
+        const everyoneRoleId = controlChannel.guild.roles.everyone.id,
+            audienceRoles = currentRoles.filter( ( roleId ) => roleId !== everyoneRoleId );
+
+        for ( const roleId of removedRoles.filter( ( roleId ) => roleId !== everyoneRoleId ) ) {
+            await controlChannel.permissionOverwrites.edit( roleId, { ViewChannel: null } ).catch( ( error ) => {
+                this.logger.error( this.updateControlChannelVerifiedRoles, "", error );
+            } );
+        }
+
+        for ( const roleId of audienceRoles ) {
+            await controlChannel.permissionOverwrites.edit( roleId, { ViewChannel: true } ).catch( ( error ) => {
+                this.logger.error( this.updateControlChannelVerifiedRoles, "", error );
+            } );
+        }
+
+        // `@everyone` sees the panel only while it is itself the audience.
+        await controlChannel.permissionOverwrites
+            .edit( everyoneRoleId, { ViewChannel: currentRoles.includes( everyoneRoleId ) } )
+            .catch( ( error ) => {
+                this.logger.error( this.updateControlChannelVerifiedRoles, "", error );
+            } );
     }
 
     public async getChannelState( channel: VoiceChannel ): Promise<ChannelState> {
@@ -1150,18 +1238,18 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     } );
                 } );
 
-                // `@everyone` mirrors the restriction, never the grant. Without this a channel
-                // restored as private would be private only to its own audience and open to
-                // everyone outside it.
+                // An audience narrower than `@everyone` keeps `@everyone` out entirely, whatever
+                // the restored state is. Without this a channel restored as public would be open to
+                // everyone outside its own audience.
                 //
                 // This replaces the entry inherited from the master channel, which carries nothing
                 // but the chat lock that inheritance already strips.
                 const everyoneRoleId = masterChannel.guild.roles.everyone.id;
 
-                if ( verifiedFlagsDeny.length && !verifiedRoles.includes( everyoneRoleId ) ) {
+                if ( !verifiedRoles.includes( everyoneRoleId ) ) {
                     permissionOverwrites.push( {
                         id: everyoneRoleId,
-                        deny: verifiedFlagsDeny,
+                        deny: [ PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.Connect ],
                         type: OverwriteType.Role
                     } );
                 }

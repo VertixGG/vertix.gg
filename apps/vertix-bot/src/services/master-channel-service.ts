@@ -54,7 +54,14 @@ import type {
     MasterChannelSettingsInterface
 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
-import type { CategoryChannel, Guild, GuildChannel, VoiceBasedChannel, VoiceChannel } from "discord.js";
+import type {
+    CategoryChannel,
+    Guild,
+    GuildChannel,
+    OverwriteResolvable,
+    VoiceBasedChannel,
+    VoiceChannel
+} from "discord.js";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
@@ -159,6 +166,39 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         };
     }
 
+    /**
+     * Function getAudiencePermissions() :: The overwrites that scope a channel to its audience.
+     *
+     * `@everyone` is granted sight only while it is itself the audience, and denied outright
+     * otherwise - dropping the grant alone would leave it inheriting from the server, which on an
+     * ordinary server still means everyone. A role allow outranks the `@everyone` deny in discord's
+     * resolution, so the audience still gets through, and so do the owner, trusted users and the
+     * bot through their member overwrites.
+     */
+    private getAudiencePermissions( guild: Guild, verifiedRoles: string[] ): OverwriteResolvable[] {
+        const everyoneRoleId = guild.roles.everyone.id,
+            isEveryoneAudience = verifiedRoles.includes( everyoneRoleId );
+
+        return [
+            {
+                id: everyoneRoleId,
+                allow: isEveryoneAudience ? [ PermissionsBitField.Flags.ViewChannel ] : [],
+                deny: isEveryoneAudience ? [] : [ PermissionsBitField.Flags.ViewChannel ]
+            },
+            {
+                id: guild.client.user.id,
+                ...DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS
+            },
+            ...verifiedRoles
+                .filter( ( roleId ) => roleId !== everyoneRoleId )
+                .map( ( roleId ) => ( {
+                    id: roleId,
+                    allow: [ PermissionsBitField.Flags.ViewChannel ],
+                    type: OverwriteType.Role
+                } ) )
+        ];
+    }
+
     private async createControlChannelWithPanel(
         args: ICreateControlChannelArgs
     ): Promise<ICreateControlChannelResult | null> {
@@ -180,7 +220,11 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             {
                 id: everyoneRoleId,
                 allow: verifiedRoles.includes( everyoneRoleId ) ? PermissionsBitField.Flags.ViewChannel : 0n,
-                deny: PermissionsBitField.Flags.SendMessages |
+                // Dropping the allow only makes `@everyone` inherit `ViewChannel` from the server,
+                // which on an ordinary server still shows the panel to everyone. A narrower
+                // audience has to be a deny.
+                deny: ( verifiedRoles.includes( everyoneRoleId ) ? 0n : PermissionsBitField.Flags.ViewChannel ) |
+                    PermissionsBitField.Flags.SendMessages |
                     PermissionsBitField.Flags.SendMessagesInThreads |
                     PermissionsBitField.Flags.CreatePublicThreads |
                     PermissionsBitField.Flags.CreatePrivateThreads |
@@ -596,7 +640,11 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const masterCategory = await CategoryManager.$.create( {
             guild,
-            name: config.data.constants.dynamicChannelsCategoryName
+            name: config.data.constants.dynamicChannelsCategoryName,
+            permissionOverwrites: this.getAudiencePermissions(
+                guild,
+                args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ]
+            )
         } ).catch( ( e ) => {
             this.logger.error( this.createMasterChannel, "", e );
         } );
@@ -711,10 +759,21 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         // The chat lock belongs to `@everyone` alone. Spreading it over the verified roles left
         // `@everyone` free to chat here whenever a custom role was picked, and the deny was
         // inherited by every dynamic channel, silencing the audience in their own channels.
+        const isEveryoneAudience = newVerifiedRoles.includes( guild.roles.everyone.id );
+
         const masterChannelPermissions = [
             {
                 id: guild.roles.everyone.id,
-                ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+                ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
+                // An audience narrower than `@everyone` keeps `@everyone` out of the generator too,
+                // otherwise anyone could join it and spawn a channel they cannot even see.
+                deny: isEveryoneAudience
+                    ? DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS.deny
+                    : [
+                        ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS.deny,
+                        PermissionsBitField.Flags.ViewChannel,
+                        PermissionsBitField.Flags.Connect
+                    ]
             },
             {
                 id: guild.client.user.id,
@@ -828,10 +887,21 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         // The chat lock belongs to `@everyone` alone. Spreading it over the verified roles left
         // `@everyone` free to chat here whenever a custom role was picked, and the deny was
         // inherited by every dynamic channel, silencing the audience in their own channels.
+        const isEveryoneAudience = newVerifiedRoles.includes( guild.roles.everyone.id );
+
         const masterChannelPermissions = [
             {
                 id: guild.roles.everyone.id,
-                ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
+                ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS,
+                // An audience narrower than `@everyone` keeps `@everyone` out of the generator too,
+                // otherwise anyone could join it and spawn a channel they cannot even see.
+                deny: isEveryoneAudience
+                    ? DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS.deny
+                    : [
+                        ...DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS.deny,
+                        PermissionsBitField.Flags.ViewChannel,
+                        PermissionsBitField.Flags.Connect
+                    ]
             },
             {
                 id: guild.client.user.id,

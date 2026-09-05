@@ -4,11 +4,12 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { CategoryModel } from "@vertix.gg/bot/src/models/category-model";
 
-import type { CategoryChannel, Guild } from "discord.js";
+import type { CategoryChannel, Guild, OverwriteResolvable } from "discord.js";
 
 export interface ICategoryCreateArgs {
     name: string;
     guild: Guild;
+    permissionOverwrites?: OverwriteResolvable[];
 }
 
 export class CategoryManager extends InitializeBase {
@@ -47,7 +48,7 @@ export class CategoryManager extends InitializeBase {
     }
 
     public async create( args: ICategoryCreateArgs ) {
-        const { name, guild } = args;
+        const { name, guild, permissionOverwrites } = args;
 
         this.logger.info(
             this.create,
@@ -55,9 +56,12 @@ export class CategoryManager extends InitializeBase {
         );
 
         // Create the channel at discord.
+        // A category is also a template: discord copies its overwrites onto any channel created
+        // inside it without explicit ones, so leaving it open seeds open channels.
         const category = ( await guild.channels.create( {
             name,
-            type: ChannelType.GuildCategory
+            type: ChannelType.GuildCategory,
+            ...( permissionOverwrites ? { permissionOverwrites } : {} )
         } ) ) as CategoryChannel;
 
         // Add the channel to the database.

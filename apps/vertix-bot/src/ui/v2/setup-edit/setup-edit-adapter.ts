@@ -2,11 +2,14 @@ import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
+
+import { warnOnMissingLogsChannelPermissions } from "@vertix.gg/bot/src/ui/general/logs-channel/logs-channel-utils";
 
 import {
     verifiedRolesFromEveryoneRole,
@@ -359,6 +362,8 @@ async function onLogChannelSelected(
     await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, channelId );
 
     context.setArgs( interaction, args );
+
+    await warnOnMissingLogsChannelPermissions( interaction, channelId );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 }

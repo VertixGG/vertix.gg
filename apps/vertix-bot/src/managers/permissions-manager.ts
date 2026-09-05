@@ -9,6 +9,7 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import type {
+    GuildChannel,
     Interaction,
     OverwriteResolvable,
     PermissionOverwriteOptions,
@@ -360,17 +361,38 @@ export class PermissionsManager extends InitializeBase {
             return;
         }
 
+        // Reaching here means the audience is narrower than `@everyone`, so `@everyone` is not part
+        // of this channel at all and stays denied whatever the state is - "public" means public to
+        // the audience. Clearing it on a grant would hand the channel back to everyone and undo the
+        // reason a narrower audience was chosen.
         const everyonePermissions: PermissionOverwriteOptions = {};
 
         for ( const permission of Object.keys( permissions ) as ( keyof PermissionOverwriteOptions )[] ) {
-            everyonePermissions[ permission ] = false === permissions[ permission ] ? false : null;
+            everyonePermissions[ permission ] = false;
         }
 
         await this.editChannelRolesPermissions( channel, [ everyoneRoleId ], everyonePermissions );
     }
 
+    /**
+     * Function getMissingChannelPermissionsForBot() :: Returns the names of the permissions the bot
+     * is missing on a channel it does not own.
+     *
+     * Used for channels an admin points the bot at - a logs channel - where writing overwrites
+     * would be intrusive, so the answer is to tell them rather than to fix it silently.
+     */
+    public getMissingChannelPermissionsForBot( channel: GuildChannel, permissions: PermissionsBitField ): string[] {
+        const botMember = channel.guild.members.cache.get( channel.guild.client.user.id );
+
+        if ( !botMember ) {
+            return permissions.toArray();
+        }
+
+        return channel.permissionsFor( botMember ).missing( permissions );
+    }
+
     public async editChannelRolesPermissions(
-        channel: VoiceBasedChannel,
+        channel: GuildChannel,
         roles: string[],
         permissions: PermissionOverwriteOptions
     ): Promise<void> {

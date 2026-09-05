@@ -46,7 +46,7 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
             constants: {
                 dynamicChannelsCategoryName: "༄ Dynamic Channels",
 
-                dynamicChannelControlChannelName: "control-panel",
+                dynamicChannelControlChannelName: "✨・control-panel",
 
                 dynamicChannelStatePrivate: "🔴",
                 dynamicChannelStatePublic: "🟢",

@@ -851,6 +851,13 @@
                 "embedsGroup": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/SetupEditStaffRoles",
+                "elementsGroup": "VertixBot/UI-V2/SetupEditStaffRolesElementsGroup",
+                "embedsGroup": "VertixBot/UI-V2/SetupEditStaffRolesEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
             }
         ],
         "bindings": [],
@@ -1769,6 +1776,13 @@
                 "key": "VertixBot/UI-V3/SetupEditVerifiedRoles",
                 "elementsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup",
                 "embedsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupEditStaffRoles",
+                "elementsGroup": "VertixBot/UI-V3/SetupEditStaffRolesElementsGroup",
+                "embedsGroup": "VertixBot/UI-V3/SetupEditStaffRolesEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             }

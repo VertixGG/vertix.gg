@@ -1932,6 +1932,7 @@
                 "transitions": [
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenButtons",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVerifiedRoles",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenStaffRoles",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenNameModal",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/NameTemplateSubmitted",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/ConfigExtrasUpdated",
@@ -1998,6 +1999,22 @@
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup"
                 }
+            },
+            {
+                "key": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
+                "transitions": [
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/StaffRolesUpdated",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromStaffRoles"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/SetupEditStaffRoles",
+                    "component": "VertixBot/UI-V2/ConfigComponent",
+                    "previewDefaultVars": {
+                        "view": "Staff roles configuration"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditStaffRolesEmbedGroup"
+                }
             }
         ],
         "transitions": [
@@ -2034,6 +2051,10 @@
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/VerifiedRoles"
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles"
             },
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
@@ -2211,6 +2232,25 @@
                         }
                     }
                 ]
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/StaffRolesMenu",
+                        "sourceEntity": "VertixBot/UI-General/StaffRolesMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
+                            "executionStep": "VertixBot/UI-V2/SetupEditStaffRoles"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
             },
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
@@ -4791,6 +4831,7 @@
                 "transitions": [
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditButtons",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditVerifiedRoles",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditStaffRoles",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/EditChannelName",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/ConfigExtrasChanged",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/LogChannelChanged",
@@ -4808,6 +4849,7 @@
                         "dynamicChannelLogsChannelDisplay": "**None**",
                         "dynamicChannelButtonsTemplate": "**Default Settings**\n> - Rename\n> - User Limit\n> - Access",
                         "verifiedRoles": "**None**",
+                        "staffRolesDisplay": "**None**",
                         "configUserMention": "`🟢∙On`",
                         "configAutoSave": "`🔴∙Off`",
                         "configLogs": "`🔴∙Off`",
@@ -4867,6 +4909,23 @@
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup"
                 }
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
+                "transitions": [
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/StaffRolesChanged",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/StaffRolesBack"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/SetupEditStaffRoles",
+                    "component": "VertixBot/UI-V3/ConfigComponent",
+                    "previewDefaultVars": {
+                        "index": "1",
+                        "staffRolesDisplay": "**None**"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditStaffRolesEmbedGroup"
+                }
             }
         ],
         "transitions": [
@@ -4911,6 +4970,21 @@
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditVerifiedRoles",
                             "executionStep": "VertixBot/UI-V3/SetupEditVerifiedRoles"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
+                            "executionStep": "VertixBot/UI-V3/SetupEditStaffRoles"
                         }
                     }
                 ]
@@ -5155,6 +5229,25 @@
                         }
                     }
                 ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/StaffRolesMenu",
+                        "sourceEntity": "VertixBot/UI-General/StaffRolesMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
+                            "executionStep": "VertixBot/UI-V3/SetupEditStaffRoles"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
             }
         ],
         "requiredData": [],
@@ -5169,6 +5262,11 @@
             {
                 "triggeringElementId": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
                 "transitionName": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditVerifiedRoles",
+                "targetFlowName": "VertixBot/UI-V3/SetupEditFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                "transitionName": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditStaffRoles",
                 "targetFlowName": "VertixBot/UI-V3/SetupEditFlow"
             },
             {

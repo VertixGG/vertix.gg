@@ -953,7 +953,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 previewDefaultVars: {
                     index: "1",
                     masterChannelId: "123456789",
-                    dynamicChannelNameTemplate: "{username}'s Channel",
+                    dynamicChannelNameTemplate: "{user}'s Channel",
                     dynamicChannelLogsChannelDisplay: "**None**",
                     dynamicChannelButtonsTemplate: "**Default Settings**\n> - Rename\n> - User Limit\n> - Access",
                     verifiedRoles: "**None**",

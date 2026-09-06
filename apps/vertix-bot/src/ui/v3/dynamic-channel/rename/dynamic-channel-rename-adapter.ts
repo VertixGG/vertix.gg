@@ -34,7 +34,7 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             // States with their execution steps and navigation type
             .addState( "Default", {
                 executionStep: "default",
-                previewDefaultVars: { defaultChannelName: "{username}'s Channel" }
+                previewDefaultVars: { defaultChannelName: "{user}'s Channel" }
             } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelRenameSuccess",

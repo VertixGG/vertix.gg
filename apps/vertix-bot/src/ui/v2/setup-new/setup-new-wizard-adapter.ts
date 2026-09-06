@@ -198,7 +198,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
                 executionStep: "VertixBot/UI-V2/SetupStep1Component",
                 elementsGroup: "VertixBot/UI-V2/SetupStep1Component/ElementsGroup",
                 embedsGroup: "VertixBot/UI-V2/SetupStep1Component/EmbedsGroup",
-                previewDefaultVars: { dynamicChannelNameTemplate: "{username}'s Channel" }
+                previewDefaultVars: { dynamicChannelNameTemplate: "{user}'s Channel" }
             } )
             .addState( "Step2", {
                 executionStep: "VertixBot/UI-V2/SetupStep2Component",

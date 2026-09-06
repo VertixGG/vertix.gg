@@ -202,7 +202,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                             <div className="flex justify-between">
                                 <span className="text-zinc-400">Name Template:</span>
                                 <span className="text-white font-mono">
-                                    { master.settings?.dynamicChannelNameTemplate || "{username}'s Channel" }
+                                    { master.settings?.dynamicChannelNameTemplate || "{user}'s Channel" }
                                 </span>
                             </div>
                             <div className="flex justify-between">

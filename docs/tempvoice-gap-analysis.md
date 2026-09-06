@@ -90,6 +90,9 @@ skip to the caller rather than failing silently.
 
 ### 4. Access menus handle one user per click - verified
 
+> **Status: skipped, deliberately.** Convenience rather than correctness - the action works, it
+> just costs one interaction per user.
+
 `DynamicChannelUserMenuBase`
 (`apps/vertix-bot/src/ui/v3/dynamic-channel/base/dynamic-channel-user-menu-base.ts`) implements
 `getMinValues()` and never `getMaxValues()`, which is optional in the base. `max_values` is therefore
@@ -172,6 +175,21 @@ better UX. This is purely about coverage.
 
 ### 9. Placeholders - reported
 
+> **Status: partly done.** `{username}` now resolves - it was the persisted default of the api
+> and the dashboard while being absent from the substitution map, so those channels were named
+> literally `{username}'s Channel`. Added `{index-roman}` and `{index-alpha}`, and `{state}` no
+> longer renders empty at creation. `{game}` works now that `GuildPresences` is enabled. Every
+> token across all three engines is documented at `/posts/channel-name-placeholders`.
+> The name engine received only four values, so it was widened to also take the username, the
+> guild id and the member: `{user-username}`, `{role-highest}`, `{role-hoist}` and `{guild-id}`
+> work now. A separate `{owner-nickname}` was dropped - `{user}` already resolves to the
+> nickname with the username as its fallback. Every alias was removed - the `{{double brace}}`
+> forms, `{username}`, `{auto-scale}` and `{autoscale}` - so each value has exactly one
+> spelling. The defaults that shipped `{username}` in the api, the dashboard and four preview
+> vars were rewritten to `{user}`, which is what `uiUtilsWrapAsTemplate` produces. `{random}` is still out - it needs an admin word
+> list setting - and `{channel-id}` would be empty at creation, where the channel does not
+> exist yet.
+
 They document 22 tokens; we have 4 (`{user}`, `{state}`, `{game}`, `{index}` plus aliases). The
 substitution map is a flat record, so tokens are cheap. The ones that need no new intent:
 
@@ -183,6 +201,11 @@ Separately: `apps/vertix-bot/src/ui/general/channel-name-template/channel-name-t
 documents zero placeholders to the admin who is being asked to type one.
 
 ### 10. Empty-channel grace period - reported
+
+> **Status: skipped, deliberately.** TempVoice documents no grace period either - across their
+> whole documentation a channel is only ever "deleted when it empties" - so this is parity, not
+> a gap. Worth knowing that their own troubleshooting page names the 2000 creations per day cap
+> as a leading cause of the bot appearing dead, so the risk is shared rather than avoided.
 
 We delete the moment `channel.members.size === 0`. A user whose client drops for three seconds loses
 the channel and all its state, and the create/delete churn burns against Discord's limit of 2000
@@ -202,7 +225,9 @@ timeouts on the largest channels.
 
 Things that look worth copying and are not.
 
-**`{game}` and the activity placeholders.** Already dead code - there is no `GuildPresences` intent,
+**`{game}` and the activity placeholders.** *(Superseded: `GuildPresences` was enabled on the
+discord side and added to the intents, and nothing renames on a presence change, so the rate limit
+argument below never applied to how we resolve it.)* Was dead code - there is no `GuildPresences` intent,
 so `member.presence` is always null and the token resolves to `""` while being advertised in a code
 comment. Enabling it needs a privileged intent, which requires Discord review at 100+ guilds and is
 routinely refused for channel naming, and then pays out in renames against Discord's ceiling of 2 per

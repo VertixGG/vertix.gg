@@ -2442,7 +2442,7 @@
       "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
       "content": {
         "title": "📈  Авто-масштабируемые каналы #{scalingIndex}",
-        "description": "Настройте ваши авто-масштабируемые голосовые каналы.\n\n➤ ∙ Мастер-канал: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Префикс: `{scalingPrefix}`\n➤ ∙ Макс. участников: `{scalingMaxMembers}`\n\nПлейсхолдеры: `{index}` (алиас: `{auto-scale}`)\n"
+        "description": "Настройте ваши авто-масштабируемые голосовые каналы.\n\n➤ ∙ Мастер-канал: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Префикс: `{scalingPrefix}`\n➤ ∙ Макс. участников: `{scalingMaxMembers}`\n\nПлейсхолдеры: `{index}`\n"
       }
     },
     {

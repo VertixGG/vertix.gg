@@ -53,6 +53,10 @@ const routes = [
         path: "/posts/how-to-setup-logs-channel",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix//posts/how-to-setup-logs-channel" ) ),
     },
+    {
+        path: "/posts/channel-name-placeholders",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/channel-name-placeholders" ) ),
+    },
     // ---
     {
         path: "/welcome",

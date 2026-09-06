@@ -9,7 +9,7 @@ export interface DynamicConfigFormState {
 }
 
 export const DYNAMIC_CONFIG_FORM_INITIAL_STATE: DynamicConfigFormState = {
-    nameTemplate: "{username}'s Channel",
+    nameTemplate: "{user}'s Channel",
     autoSave: true,
     mentionable: false
 };
@@ -21,7 +21,7 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
 
     public apply( args: { settings: DynamicSettings | null } ) {
         return this.setState( {
-            nameTemplate: args.settings?.dynamicChannelNameTemplate || "{username}'s Channel",
+            nameTemplate: args.settings?.dynamicChannelNameTemplate || "{user}'s Channel",
             autoSave: args.settings?.dynamicChannelAutoSave ?? true,
             mentionable: args.settings?.dynamicChannelMentionable ?? false
         } );

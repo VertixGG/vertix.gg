@@ -44,7 +44,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     }, [] );
 
     const hasChanges =
-        state.nameTemplate !== ( settings?.dynamicChannelNameTemplate || "{username}'s Channel" ) ||
+        state.nameTemplate !== ( settings?.dynamicChannelNameTemplate || "{user}'s Channel" ) ||
         state.autoSave !== ( settings?.dynamicChannelAutoSave ?? true ) ||
         state.mentionable !== ( settings?.dynamicChannelMentionable ?? false );
 
@@ -86,14 +86,14 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                     type="text"
                     value={ state.nameTemplate }
                     onChange={ ( e ) => handleUpdateNameTemplate( e.target.value ) }
-                    placeholder="{username}'s Channel"
+                    placeholder="{user}'s Channel"
                     className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
                     disabled={ isSaving }
                 />
                 <div className="flex items-start gap-1 mt-1">
                     <Info className="w-3 h-3 text-zinc-500 mt-0.5 flex-shrink-0" />
                     <span className="text-xs text-zinc-500">
-                        Use { "{username}" } as a placeholder for the channel owner's name
+                        Use { "{user}" } as a placeholder for the channel owner's name
                     </span>
                 </div>
             </div>

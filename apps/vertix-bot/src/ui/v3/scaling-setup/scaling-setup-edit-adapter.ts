@@ -73,7 +73,7 @@ const ScalingSetupEditEmbed = new EmbedBuilder<UIArgs, typeof SCALING_SETUP_EDIT
         `➤ ∙ Channel ID: \`${ v.masterChannelId }\`\n` +
         `➤ ∙ Prefix: \`${ v.scalingPrefix }\`\n` +
         `➤ ∙ Max Members: \`${ v.scalingMaxMembers }\`\n\n` +
-        "Placeholders: `{index}` (alias: `{auto-scale}`)\n"
+        "Placeholder: `{index}`\n"
     )
     .setLogic( ( args ) => ( {
         scalingIndex: Number( args.scalingMasterChannelIndex ?? 0 ) + 1,

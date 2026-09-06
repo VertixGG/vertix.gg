@@ -153,6 +153,7 @@ export default function Header() {
                                 { title: "Setup", href: "/posts/how-to-setup" },
                                 { title: "Enable Logs", href: "/posts/how-to-setup-logs-channel" },
                                 { title: "Enable Features", href: "/posts/enable-transfer-ownership" },
+                                { title: "Name Placeholders", href: "/posts/channel-name-placeholders" },
                             ] }/>
 
                             <NavbarItem title="Change log" href="/changelog"/>

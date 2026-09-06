@@ -2543,7 +2543,7 @@
       "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
       "content": {
         "title": "📈  Automatisch skalierende Kanäle #{scalingIndex}",
-        "description": "Konfiguriere deine automatisch skalierenden Sprachkanäle.\n\n➤ ∙ Master-Kanal: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Präfix: `{scalingPrefix}`\n➤ ∙ Max. Mitglieder: `{scalingMaxMembers}`\n\nPlatzhalter: `{index}` (Alias: `{auto-scale}`)\n"
+        "description": "Konfiguriere deine automatisch skalierenden Sprachkanäle.\n\n➤ ∙ Master-Kanal: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Präfix: `{scalingPrefix}`\n➤ ∙ Max. Mitglieder: `{scalingMaxMembers}`\n\nPlatzhalter: `{index}`\n"
       }
     },
     {

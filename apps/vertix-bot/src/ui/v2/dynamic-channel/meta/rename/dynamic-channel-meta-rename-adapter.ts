@@ -29,7 +29,7 @@ const DynamicChannelMetaRenameAdapter = new DynamicExecutionAdapterBuilder<Defau
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "default",
-                previewDefaultVars: { defaultChannelName: "{username}'s Channel" }
+                previewDefaultVars: { defaultChannelName: "{user}'s Channel" }
             } )
             .addState( "Success", {
                 executionStep: "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess",

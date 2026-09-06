@@ -2119,7 +2119,7 @@
       "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
       "content": {
         "title": "📈  Canaux à mise à l'échelle automatique #{scalingIndex}",
-        "description": "Configurez vos canaux vocaux à mise à l'échelle automatique.\n\n➤ ∙ Canal maître : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Préfixe : `{scalingPrefix}`\n➤ ∙ Membres max. : `{scalingMaxMembers}`\n\nEspaces réservés : `{index}` (alias : `{auto-scale}`)\n"
+        "description": "Configurez vos canaux vocaux à mise à l'échelle automatique.\n\n➤ ∙ Canal maître : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Préfixe : `{scalingPrefix}`\n➤ ∙ Membres max. : `{scalingMaxMembers}`\n\nEspaces réservés : `{index}`\n"
       }
     },
     {

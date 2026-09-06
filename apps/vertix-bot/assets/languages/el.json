@@ -2509,7 +2509,7 @@
       "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
       "content": {
         "title": "📈  Κανάλια αυτόματης κλιμάκωσης #{scalingIndex}",
-        "description": "Ρυθμίστε τα φωνητικά κανάλια αυτόματης κλιμάκωσης.\n\n➤ ∙ Κύριο κανάλι: <#{masterChannelId}>\n➤ ∙ Αναγνωριστικό καναλιού: `{masterChannelId}`\n➤ ∙ Πρόθεμα: `{scalingPrefix}`\n➤ ∙ Μέγιστα μέλη: `{scalingMaxMembers}`\n\nΣύμβολα κράτησης θέσης: `{index}` (ψευδώνυμο: `{auto-scale}`)\n"
+        "description": "Ρυθμίστε τα φωνητικά κανάλια αυτόματης κλιμάκωσης.\n\n➤ ∙ Κύριο κανάλι: <#{masterChannelId}>\n➤ ∙ Αναγνωριστικό καναλιού: `{masterChannelId}`\n➤ ∙ Πρόθεμα: `{scalingPrefix}`\n➤ ∙ Μέγιστα μέλη: `{scalingMaxMembers}`\n\nΣύμβολα κράτησης θέσης: `{index}`\n"
       }
     },
     {

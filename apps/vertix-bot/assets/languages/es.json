@@ -2186,7 +2186,7 @@
       "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
       "content": {
         "title": "📈  Canales con escalado automático #{scalingIndex}",
-        "description": "Configura tus canales de voz con escalado automático.\n\n➤ ∙ Canal maestro: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Prefijo: `{scalingPrefix}`\n➤ ∙ Máx. de miembros: `{scalingMaxMembers}`\n\nMarcadores: `{index}` (alias: `{auto-scale}`)\n"
+        "description": "Configura tus canales de voz con escalado automático.\n\n➤ ∙ Canal maestro: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Prefijo: `{scalingPrefix}`\n➤ ∙ Máx. de miembros: `{scalingMaxMembers}`\n\nMarcadores: `{index}`\n"
       }
     },
     {

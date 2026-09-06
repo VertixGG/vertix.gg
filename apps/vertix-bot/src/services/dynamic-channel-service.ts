@@ -28,11 +28,17 @@ import { Routes } from "discord-api-types/v10";
 
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
-import { varsHasIndexPlaceholder } from "@vertix.gg/base/src/utils/vars-utils";
+import { varsHasIndexPlaceholder, varsIndexAsAlpha, varsIndexAsRoman } from "@vertix.gg/base/src/utils/vars-utils";
 
 import {
     VAR_DYNAMIC_CHANNEL_GAME,
     VAR_DYNAMIC_CHANNEL_INDEX,
+    VAR_DYNAMIC_CHANNEL_GUILD_ID,
+    VAR_DYNAMIC_CHANNEL_INDEX_ALPHA,
+    VAR_DYNAMIC_CHANNEL_INDEX_ROMAN,
+    VAR_DYNAMIC_CHANNEL_USER_USERNAME,
+    VAR_DYNAMIC_CHANNEL_ROLE_HIGHEST,
+    VAR_DYNAMIC_CHANNEL_ROLE_HOIST,
     VAR_DYNAMIC_CHANNEL_STATE,
     VAR_DYNAMIC_CHANNEL_USER
 } from "@vertix.gg/definitions/src/dynamic-channel-vars-definitions";
@@ -486,13 +492,18 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         userId: string,
         newName?: string,
     ): Promise<string> {
-        // Supported placeholders: {user}, {state}, {game}, {index}
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id ),
             userDisplayName = await guildGetMemberDisplayName( channel.guild, userId );
 
         // Get the user's current game name
         const member = channel.guild.members.cache.get( userId );
         const gameName = member ? this.getUserCurrentGame( member ) : null;
+
+        const ownerVars = {
+            userName: member?.user.username ?? null,
+            guildId: channel.guild.id,
+            member: member ?? null
+        };
 
         const { settings } = this.config.data;
 
@@ -508,7 +519,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 userDisplayName,
                 state: await this.getChannelState( channel ),
                 gameName,
-                index
+                index,
+                ...ownerVars
             } );
         }
 
@@ -520,7 +532,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 userDisplayName,
                 state: await this.getChannelState( channel ),
                 gameName,
-                index
+                index,
+                ...ownerVars
             } );
         }
 
@@ -536,7 +549,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userDisplayName,
             state: await this.getChannelState( channel ),
             gameName,
-            index
+            index,
+            ...ownerVars
         } );
     }
 
@@ -554,6 +568,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             state: ChannelState | null;
             gameName?: string | null;
             index?: number | null;
+            userName?: string | null;
+            guildId?: string | null;
+            member?: GuildMember | null;
         } = {
             state: null,
             userDisplayName: null,
@@ -582,18 +599,28 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         const gameName = args.gameName ? this.sanitizeChannelNamePart( args.gameName ) : "";
 
+        const indexRoman = args.index != null ? varsIndexAsRoman( args.index ) : "",
+            indexAlpha = args.index != null ? varsIndexAsAlpha( args.index ) : "";
+
+        const userName = args.userName ? this.sanitizeChannelNamePart( args.userName ) : userDisplayName;
+
+        // `roles.highest` falls back to the everyone role, whose name would land in the channel name
+        // as "everyone" once the sanitizer drops the at sign.
+        const highestRole = args.member?.roles.highest,
+            roleHighest = highestRole && highestRole.id !== args.member?.guild.id ? highestRole.name : undefined,
+            roleHoist = args.member?.roles.hoist?.name;
+
         const replacements: Record<string, string> = {
             [ VAR_DYNAMIC_CHANNEL_STATE ]: state,
             [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName,
             [ VAR_DYNAMIC_CHANNEL_GAME ]: gameName,
             [ VAR_DYNAMIC_CHANNEL_INDEX ]: indexValue,
-            "{{username}}": userDisplayName,
-            "{{user}}": userDisplayName,
-            "{{state}}": state,
-            "{{game}}": gameName,
-            "{{index}}": indexValue,
-            "{auto-scale}": indexValue,
-            "{autoscale}": indexValue
+            [ VAR_DYNAMIC_CHANNEL_INDEX_ROMAN ]: indexRoman,
+            [ VAR_DYNAMIC_CHANNEL_INDEX_ALPHA ]: indexAlpha,
+            [ VAR_DYNAMIC_CHANNEL_USER_USERNAME ]: userName,
+            [ VAR_DYNAMIC_CHANNEL_GUILD_ID ]: args.guildId ?? "",
+            [ VAR_DYNAMIC_CHANNEL_ROLE_HIGHEST ]: roleHighest ? this.sanitizeChannelNamePart( roleHighest ) : "",
+            [ VAR_DYNAMIC_CHANNEL_ROLE_HOIST ]: roleHoist ? this.sanitizeChannelNamePart( roleHoist ) : "",
         };
 
         return channelNameTemplate.replace(
@@ -1468,9 +1495,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             dynamicChannelName = await this.assembleChannelNameTemplate( dynamicChannelTemplateName, {
                 userDisplayName: displayName,
-                state: null,
+                state: "public",
                 gameName,
-                index
+                index,
+                userName: args.username,
+                guildId: guild.id,
+                member: member ?? null
             } );
         }
 
@@ -2226,6 +2256,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userDisplayName: await guildGetMemberDisplayName( channel.guild, userOwnerId ),
             state: await this.getChannelState( channel ),
             gameName: ownerGameName,
+            userName: ownerMember?.user.username ?? null,
+            guildId: channel.guild.id,
+            member: ownerMember ?? null,
             index: await this.getDynamicChannelTemplateIndex(
                 channel.guild.id,
                 master.db.channelId,

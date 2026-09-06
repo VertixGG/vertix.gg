@@ -76,6 +76,14 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.7,
     },
     {
+        path: "/posts/channel-name-placeholders",
+        title: "Channel Name Placeholders | VoiceChannels",
+        description:
+            "Every placeholder VoiceChannels understands in a channel name, an auto-scaling prefix "
+            + "and a primary message - what each one becomes and where it works.",
+        priority: 0.7,
+    },
+    {
         path: "/posts/enable-transfer-ownership",
         title: "How to Enable Channel Features | VoiceChannels",
         description:

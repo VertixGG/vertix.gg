@@ -158,6 +158,7 @@ export default async function Main( { enableListeners }: {
         intents: [
             "GuildIntegrations",
             "GuildInvites",
+            "GuildPresences",
             "Guilds",
             "GuildVoiceStates",
             "DirectMessages"

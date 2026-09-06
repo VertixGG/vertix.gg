@@ -1185,7 +1185,7 @@
       "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
       "content": {
         "title": "📈  自動スケーリングチャンネル #{scalingIndex}",
-        "description": "自動スケーリングのボイスチャンネルを設定します。\n\n➤ ∙ マスターチャンネル: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ プレフィックス: `{scalingPrefix}`\n➤ ∙ 最大メンバー数: `{scalingMaxMembers}`\n\nプレースホルダー: `{index}`（エイリアス: `{auto-scale}`）\n"
+        "description": "自動スケーリングのボイスチャンネルを設定します。\n\n➤ ∙ マスターチャンネル: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ プレフィックス: `{scalingPrefix}`\n➤ ∙ 最大メンバー数: `{scalingMaxMembers}`\n\nプレースホルダー: `{index}`\n"
       }
     },
     {

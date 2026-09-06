@@ -277,7 +277,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     dynamicChannelsCount,
                     version: master.version || "0.0.0.3",
                     settings: settingsData ? {
-                        dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{username}'s Channel",
+                        dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{user}'s Channel",
                         dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
                         dynamicChannelMentionable: ( settingsData.dynamicChannelMentionable as boolean ) ?? false,
                         dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || []
@@ -503,7 +503,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 dynamicChannelsCount: dynamicChannels.length,
                 version: master.version || "0.0.0.3",
                 settings: settingsData ? {
-                    dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{username}'s Channel",
+                    dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{user}'s Channel",
                     dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
                     dynamicChannelMentionable: ( settingsData.dynamicChannelMentionable as boolean ) ?? false,
                     dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || []

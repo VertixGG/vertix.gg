@@ -327,6 +327,35 @@
                             }
                         },
                         {
+                            "element": "VertixBot/UI-General/SetupServerOptionsEditButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/SetupServerOptionsEditButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Edit Server Options",
+                                "style": "primary",
+                                "emoji": "⚙️"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/ServerOptionsElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VoiceRoleMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/VoiceRoleMenu",
+                                "elementType": "role-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🎙️ ∙ Select Voice Role"
+                            }
+                        }
+                    ],
+                    [
+                        {
                             "element": "VertixBot/UI-General/SetupBadwordsEditButton",
                             "definition": {
                                 "name": "VertixBot/UI-General/SetupBadwordsEditButton",
@@ -335,6 +364,16 @@
                                 "label": "Edit Bad Words",
                                 "style": "primary",
                                 "emoji": "🙅"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/DoneButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/DoneButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "✓ Done",
+                                "style": "success"
                             }
                         }
                     ]
@@ -350,7 +389,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🛠  Setup VoiceChannels",
-                            "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+                            "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
                             "image": "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png",
                             "color": 3369963,
                             "options": {
@@ -361,6 +400,10 @@
                                 "badwordsMessage": {
                                     "{badwords}": "`{badwords}`",
                                     "{badwordsMessageDefault}": "**None**"
+                                },
+                                "voiceRoleMessage": {
+                                    "{voiceRoleId}": "<@&{voiceRoleId}>",
+                                    "{voiceRoleMessageDefault}": "**None**"
                                 },
                                 "none": "**None**"
                             },
@@ -397,6 +440,9 @@
                                 "badwords": "{badwords}",
                                 "badwordsMessage": "{badwordsMessage}",
                                 "badwordsMessageDefault": "{badwordsMessageDefault}",
+                                "voiceRoleId": "{voiceRoleId}",
+                                "voiceRoleMessage": "{voiceRoleMessage}",
+                                "voiceRoleMessageDefault": "{voiceRoleMessageDefault}",
                                 "none": "{none}",
                                 "labelName": "{labelName}",
                                 "labelChannelId": "{labelChannelId}",
@@ -404,6 +450,7 @@
                                 "labelButtons": "{labelButtons}",
                                 "labelVerifiedRoles": "{labelVerifiedRoles}",
                                 "labelStaffRoles": "{labelStaffRoles}",
+                                "labelVoiceRole": "{labelVoiceRole}",
                                 "labelLogsChannel": "{labelLogsChannel}",
                                 "labelAutoSave": "{labelAutoSave}",
                                 "labelVersion": "{labelVersion}",
@@ -418,6 +465,7 @@
                                 "labelButtons": "▹ Buttons:",
                                 "labelVerifiedRoles": "▹ Verified Roles:",
                                 "labelStaffRoles": "▹ Staff Roles:",
+                                "labelVoiceRole": "▹ Voice Role:",
                                 "labelLogsChannel": "▹ Logs Channel:",
                                 "labelAutoSave": "▹ Auto Save:",
                                 "labelVersion": "▹ UI Version:",
@@ -762,6 +810,96 @@
                 ]
             }
         ],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/ChannelCreateFailedComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/ChannelCreateFailedComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/ChannelCreateFailedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "⚠️  Your channel could not be created",
+                            "description": "Joining <#{masterChannelId}> did not create a channel for you.\n\nThis usually means the server reached one of Discord's limits - a category holds 50 channels and a server holds 500 - or that a permission the bot needs was removed.\n\nPlease let a server admin know. The reason is written to the bot logs.",
+                            "color": 14855469,
+                            "vars": {
+                                "masterChannelId": "{masterChannelId}"
+                            },
+                            "defaultVars": {
+                                "masterChannelId": "123456789"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/UnassignableRoleComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/UnassignableRoleComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/UnassignableRoleEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎙️  That role cannot be used",
+                            "description": "The role <@&{roleId}> was saved, but the bot cannot hand it out - {reason}.\n\nMove the bot's own role above it in **Server Settings → Roles**, or pick a different role.",
+                            "color": 15548997,
+                            "vars": {
+                                "roleId": "{roleId}",
+                                "reason": "{reason}"
+                            },
+                            "defaultVars": {
+                                "roleId": "123456789",
+                                "reason": "the role is above the bot in the role list"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
         "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
@@ -2431,6 +2569,26 @@
                         }
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-General/StaffMemberEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/StaffMemberEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔑  Staff member",
+                            "description": "**{staffMemberDisplayName}** holds a staff role of this server.\n\nStaff roles keep access to every dynamic channel whatever state its owner picks, so they cannot be blocked or kicked out of your channel.",
+                            "color": 15548997,
+                            "vars": {
+                                "staffMemberDisplayName": "{staffMemberDisplayName}"
+                            },
+                            "defaultVars": {
+                                "staffMemberDisplayName": "Example User"
+                            }
+                        }
+                    }
+                ]
             }
         ],
         "modals": [],
@@ -2441,8 +2599,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 12,
-                "withDefinition": 12,
+                "total": 13,
+                "withDefinition": 13,
                 "missingDefinition": 0
             }
         }
@@ -2798,6 +2956,11 @@
                                         "label": "∙ Edit Channel's Staff Roles",
                                         "value": "edit-dynamic-channel-staff-roles",
                                         "emoji": "🔑"
+                                    },
+                                    {
+                                        "label": "∙ Edit Channel's Voice Role",
+                                        "value": "edit-dynamic-channel-voice-role",
+                                        "emoji": "🎙️"
                                     }
                                 ]
                             }
@@ -3108,6 +3271,34 @@
                         }
                     ]
                 ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditVoiceRoleElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VoiceRoleMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/VoiceRoleMenu",
+                                "elementType": "role-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🎙️ ∙ Select Voice Role"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/WizardBackButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "◀ Back",
+                                "style": "primary"
+                            }
+                        }
+                    ]
+                ]
             }
         ],
         "embedsGroups": [
@@ -3119,7 +3310,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
                             "footer": "Note: Changing user mention will not affect already created dynamic channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
@@ -3149,6 +3340,11 @@
                                 "staffRolesDisplay": {
                                     "{staffRoles}": "{staffRoles}",
                                     "{staffRolesNone}": "**None**"
+                                },
+                                "voiceRoleDisplay": {
+                                    "{voiceRoleId}": "<@&{voiceRoleId}>",
+                                    "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
+                                    "{voiceRoleNone}": "**None**"
                                 }
                             },
                             "arrayOptions": {
@@ -3204,6 +3400,10 @@
                                 "staffRoles": "{staffRoles}",
                                 "staffRolesDisplay": "{staffRolesDisplay}",
                                 "staffRolesNone": "{staffRolesNone}",
+                                "voiceRoleId": "{voiceRoleId}",
+                                "voiceRoleDisplay": "{voiceRoleDisplay}",
+                                "voiceRoleGuild": "{voiceRoleGuild}",
+                                "voiceRoleNone": "{voiceRoleNone}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
                             },
                             "defaultVars": {
@@ -3328,6 +3528,36 @@
                         }
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditVoiceRoleEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupEditVoiceRoleEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎙️  Edit Voice Role Of Master Channel #{index}",
+                            "description": "A member holds this role only while they sit in a dynamic channel of this master channel, and loses it the moment they leave.\n\nUse it to show a text channel to whoever is in voice right now, or to group them in the member list.\n\nLeaving it empty falls back to the server wide voice role.\n\n**_Current Voice Role_**\n\n> {voiceRoleDisplay}",
+                            "footer": "Note: The bot's own role has to sit above the role it hands out, or discord refuses it.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "voiceRoleDisplay": {
+                                    "{voiceRoleId}": "<@&{voiceRoleId}>",
+                                    "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
+                                    "{voiceRoleNone}": "**None**"
+                                }
+                            },
+                            "vars": {
+                                "index": "{index}",
+                                "voiceRoleId": "{voiceRoleId}",
+                                "voiceRoleDisplay": "{voiceRoleDisplay}",
+                                "voiceRoleGuild": "{voiceRoleGuild}",
+                                "voiceRoleNone": "{voiceRoleNone}"
+                            }
+                        }
+                    }
+                ]
             }
         ],
         "modals": [
@@ -3370,8 +3600,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 5,
-                "withDefinition": 5,
+                "total": 6,
+                "withDefinition": 6,
                 "missingDefinition": 0
             }
         }
@@ -5551,6 +5781,26 @@
                         }
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-General/StaffMemberEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/StaffMemberEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔑  Staff member",
+                            "description": "**{staffMemberDisplayName}** holds a staff role of this server.\n\nStaff roles keep access to every dynamic channel whatever state its owner picks, so they cannot be blocked or kicked out of your channel.",
+                            "color": 15548997,
+                            "vars": {
+                                "staffMemberDisplayName": "{staffMemberDisplayName}"
+                            },
+                            "defaultVars": {
+                                "staffMemberDisplayName": "Example User"
+                            }
+                        }
+                    }
+                ]
             }
         ],
         "modals": [],
@@ -5561,8 +5811,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 8,
-                "withDefinition": 8,
+                "total": 9,
+                "withDefinition": 9,
                 "missingDefinition": 0
             }
         }
@@ -7189,7 +7439,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "📈  Auto-Scaling Channels #{scalingIndex}",
-                            "description": "Configure your auto-scaling voice channels.\n\n➤ ∙ Master Channel: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Prefix: `{scalingPrefix}`\n➤ ∙ Max Members: `{scalingMaxMembers}`\n\nPlaceholders: `{index}` (alias: `{auto-scale}`)\n",
+                            "description": "Configure your auto-scaling voice channels.\n\n➤ ∙ Master Channel: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Prefix: `{scalingPrefix}`\n➤ ∙ Max Members: `{scalingMaxMembers}`\n\nPlaceholder: `{index}`\n",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "vars": {
@@ -7296,6 +7546,11 @@
                                         "label": "∙ Edit Channel's Staff Roles",
                                         "value": "edit-dynamic-channel-staff-roles",
                                         "emoji": "🔑"
+                                    },
+                                    {
+                                        "label": "∙ Edit Channel's Voice Role",
+                                        "value": "edit-dynamic-channel-voice-role",
+                                        "emoji": "🎙️"
                                     }
                                 ]
                             }
@@ -7696,6 +7951,34 @@
                         }
                     ]
                 ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupEditVoiceRoleElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VoiceRoleMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/VoiceRoleMenu",
+                                "elementType": "role-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🎙️ ∙ Select Voice Role"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/WizardBackButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "◀ Back",
+                                "style": "primary"
+                            }
+                        }
+                    ]
+                ]
             }
         ],
         "embedsGroups": [
@@ -7707,7 +7990,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -7736,6 +8019,11 @@
                                 "staffRolesDisplay": {
                                     "{staffRoles}": "{staffRoles}",
                                     "{staffRolesNone}": "**None**"
+                                },
+                                "voiceRoleDisplay": {
+                                    "{voiceRoleId}": "<@&{voiceRoleId}>",
+                                    "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
+                                    "{voiceRoleNone}": "**None**"
                                 }
                             },
                             "arrayOptions": {
@@ -7777,6 +8065,10 @@
                                 "staffRoles": "{staffRoles}",
                                 "staffRolesDisplay": "{staffRolesDisplay}",
                                 "staffRolesNone": "{staffRolesNone}",
+                                "voiceRoleId": "{voiceRoleId}",
+                                "voiceRoleDisplay": "{voiceRoleDisplay}",
+                                "voiceRoleGuild": "{voiceRoleGuild}",
+                                "voiceRoleNone": "{voiceRoleNone}",
                                 "labelDefaultSettings": "{labelDefaultSettings}",
                                 "labelRoleOverride": "{labelRoleOverride}",
                                 "labelButtonPrefix": "{labelButtonPrefix}",
@@ -7915,6 +8207,36 @@
                         }
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-V3/SetupEditVoiceRoleEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/SetupEditVoiceRoleEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🎙️  Edit Voice Role Of Master Channel #{index}",
+                            "description": "A member holds this role only while they sit in a dynamic channel of this master channel, and loses it the moment they leave.\n\nUse it to show a text channel to whoever is in voice right now, or to group them in the member list.\n\nLeaving it empty falls back to the server wide voice role.\n\n**_Current Voice Role_**\n\n> {voiceRoleDisplay}",
+                            "footer": "Note: The bot's own role has to sit above the role it hands out, or discord refuses it.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "voiceRoleDisplay": {
+                                    "{voiceRoleId}": "<@&{voiceRoleId}>",
+                                    "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
+                                    "{voiceRoleNone}": "**None**"
+                                }
+                            },
+                            "vars": {
+                                "index": "{index}",
+                                "voiceRoleId": "{voiceRoleId}",
+                                "voiceRoleDisplay": "{voiceRoleDisplay}",
+                                "voiceRoleGuild": "{voiceRoleGuild}",
+                                "voiceRoleNone": "{voiceRoleNone}"
+                            }
+                        }
+                    }
+                ]
             }
         ],
         "modals": [
@@ -7957,8 +8279,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 5,
-                "withDefinition": 5,
+                "total": 6,
+                "withDefinition": 6,
                 "missingDefinition": 0
             }
         }

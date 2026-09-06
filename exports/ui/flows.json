@@ -202,6 +202,7 @@
                     "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
                     "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
                     "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal",
+                    "VertixBot/UI-General/SetupFlow/Transitions/OpenServerOptions",
                     "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords",
                     "VertixBot/UI-General/SetupFlow/Transitions/SubmitScalingConfig"
                 ],
@@ -212,6 +213,25 @@
                     "previewDefaultVars": {
                         "masterChannelMessage": "**None**",
                         "badwordsMessage": "**None**"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "transitions": [
+                    "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords",
+                    "VertixBot/UI-General/SetupFlow/Transitions/VoiceRoleChanged",
+                    "VertixBot/UI-General/SetupFlow/Transitions/ServerOptionsDone"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-General/SetupServerOptions",
+                    "component": "VertixBot/UI-General/SetupComponent",
+                    "previewDefaultVars": {
+                        "masterChannelMessage": "**None**",
+                        "badwordsMessage": "**None**",
+                        "voiceRoleMessage": "**None**"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup"
                 }
@@ -288,12 +308,72 @@
             },
             {
                 "from": "VertixBot/UI-General/SetupFlow/States/Initial",
-                "to": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "to": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/SetupServerOptionsEditButton",
+                        "sourceEntity": "VertixBot/UI-General/SetupServerOptionsEditButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                            "executionStep": "VertixBot/UI-General/SetupServerOptions"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "to": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
                 "triggeredBy": [
                     {
                         "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/BadwordsModal",
                         "sourceEntity": "VertixBot/UI-General/BadwordsModal",
                         "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                            "executionStep": "VertixBot/UI-General/SetupServerOptions"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "to": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/BadwordsModal",
+                        "sourceEntity": "VertixBot/UI-General/BadwordsModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                            "executionStep": "VertixBot/UI-General/SetupServerOptions"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "to": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/VoiceRoleMenu",
+                        "sourceEntity": "VertixBot/UI-General/VoiceRoleMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                            "executionStep": "VertixBot/UI-General/SetupServerOptions"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "to": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/DoneButton",
+                        "sourceEntity": "VertixBot/UI-General/DoneButton",
+                        "handlerKind": "button",
                         "navigation": {
                             "targetState": "VertixBot/UI-General/SetupFlow/States/Initial",
                             "executionStep": "default"
@@ -1221,7 +1301,7 @@
                     "executionStep": "default",
                     "component": "VertixBot/UI-V2/DynamicChannelMetaRenameComponent",
                     "previewDefaultVars": {
-                        "defaultChannelName": "{username}'s Channel"
+                        "defaultChannelName": "{user}'s Channel"
                     }
                 }
             },
@@ -1322,7 +1402,8 @@
                     "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Transitions/UnblockUser",
                     "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Transitions/KickUser",
                     "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Transitions/Error",
-                    "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Transitions/NothingChanged"
+                    "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Transitions/NothingChanged",
+                    "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Transitions/StaffMember"
                 ],
                 "hooks": [],
                 "options": {
@@ -1466,6 +1547,19 @@
                     "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsStateNothingChanged",
                     "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
                     "previewEmbedsGroup": "VertixBot/UI-General/NothingChangedEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/StaffMember",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsStateStaffMember",
+                    "component": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
+                    "previewDefaultVars": {
+                        "staffMemberDisplayName": "User"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-General/StaffMemberEmbedGroup"
                 }
             }
         ],
@@ -1645,6 +1739,10 @@
             {
                 "from": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Default",
                 "to": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/NothingChanged"
+            },
+            {
+                "from": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/StaffMember"
             }
         ],
         "requiredData": [],
@@ -1933,6 +2031,7 @@
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenButtons",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVerifiedRoles",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenStaffRoles",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVoiceRole",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenNameModal",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/NameTemplateSubmitted",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/ConfigExtrasUpdated",
@@ -2001,6 +2100,22 @@
                 }
             },
             {
+                "key": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
+                "transitions": [
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/VoiceRoleUpdated",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromVoiceRole"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/SetupEditVoiceRole",
+                    "component": "VertixBot/UI-V2/ConfigComponent",
+                    "previewDefaultVars": {
+                        "view": "Voice role configuration"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditVoiceRoleEmbedGroup"
+                }
+            },
+            {
                 "key": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
                 "transitions": [
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/StaffRolesUpdated",
@@ -2055,6 +2170,10 @@
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles"
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole"
             },
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
@@ -2253,6 +2372,25 @@
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
             },
             {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/VoiceRoleMenu",
+                        "sourceEntity": "VertixBot/UI-General/VoiceRoleMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
+                            "executionStep": "VertixBot/UI-V2/SetupEditVoiceRole"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+            },
+            {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
                 "triggeredBy": [
@@ -2305,7 +2443,7 @@
                     "executionStep": "VertixBot/UI-V2/SetupStep1Component",
                     "component": "VertixBot/UI-V2/SetupNewWizardComponent",
                     "previewDefaultVars": {
-                        "dynamicChannelNameTemplate": "{username}'s Channel"
+                        "dynamicChannelNameTemplate": "{user}'s Channel"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V2/SetupStep1Component/EmbedsGroup"
                 }
@@ -3332,7 +3470,8 @@
                     "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/UnblockSuccess",
                     "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/KickSuccess",
                     "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/Error",
-                    "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/NothingChanged"
+                    "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/NothingChanged",
+                    "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Transitions/StaffMember"
                 ],
                 "hooks": [],
                 "options": {
@@ -3427,6 +3566,19 @@
                     "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
                     "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
                     "previewEmbedsGroup": "VertixBot/UI-General/NothingChangedEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/StaffMember",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsStateStaffMember",
+                    "component": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",
+                    "previewDefaultVars": {
+                        "staffMemberDisplayName": "User"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-General/StaffMemberEmbedGroup"
                 }
             }
         ],
@@ -3585,6 +3737,10 @@
             {
                 "from": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default",
                 "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/NothingChanged"
+            },
+            {
+                "from": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default",
+                "to": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/StaffMember"
             }
         ],
         "requiredData": [],
@@ -3992,7 +4148,7 @@
                     "executionStep": "default",
                     "component": "VertixBot/UI-V3/DynamicChannelRenameComponent",
                     "previewDefaultVars": {
-                        "defaultChannelName": "{username}'s Channel"
+                        "defaultChannelName": "{user}'s Channel"
                     }
                 }
             },
@@ -4832,6 +4988,7 @@
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditButtons",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditVerifiedRoles",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditStaffRoles",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditVoiceRole",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/EditChannelName",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/ConfigExtrasChanged",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/LogChannelChanged",
@@ -4845,11 +5002,12 @@
                     "previewDefaultVars": {
                         "index": "1",
                         "masterChannelId": "123456789",
-                        "dynamicChannelNameTemplate": "{username}'s Channel",
+                        "dynamicChannelNameTemplate": "{user}'s Channel",
                         "dynamicChannelLogsChannelDisplay": "**None**",
                         "dynamicChannelButtonsTemplate": "**Default Settings**\n> - Rename\n> - User Limit\n> - Access",
                         "verifiedRoles": "**None**",
                         "staffRolesDisplay": "**None**",
+                        "voiceRoleDisplay": "**None**",
                         "configUserMention": "`🟢∙On`",
                         "configAutoSave": "`🔴∙Off`",
                         "configLogs": "`🔴∙Off`",
@@ -4908,6 +5066,23 @@
                         "index": "1"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
+                "transitions": [
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/VoiceRoleChanged",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/VoiceRoleBack"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/SetupEditVoiceRole",
+                    "component": "VertixBot/UI-V3/ConfigComponent",
+                    "previewDefaultVars": {
+                        "index": "1",
+                        "voiceRoleDisplay": "**None**"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditVoiceRoleEmbedGroup"
                 }
             },
             {
@@ -4985,6 +5160,21 @@
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
                             "executionStep": "VertixBot/UI-V3/SetupEditStaffRoles"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
+                            "executionStep": "VertixBot/UI-V3/SetupEditVoiceRole"
                         }
                     }
                 ]
@@ -5248,6 +5438,25 @@
             {
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
                 "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/VoiceRoleMenu",
+                        "sourceEntity": "VertixBot/UI-General/VoiceRoleMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
+                            "executionStep": "VertixBot/UI-V3/SetupEditVoiceRole"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
             }
         ],
         "requiredData": [],
@@ -5267,6 +5476,11 @@
             {
                 "triggeringElementId": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
                 "transitionName": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditStaffRoles",
+                "targetFlowName": "VertixBot/UI-V3/SetupEditFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                "transitionName": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditVoiceRole",
                 "targetFlowName": "VertixBot/UI-V3/SetupEditFlow"
             },
             {
@@ -5309,7 +5523,7 @@
                     "executionStep": "VertixBot/UI-V3/SetupStep1Component",
                     "component": "VertixBot/UI-V3/SetupNewWizardComponent",
                     "previewDefaultVars": {
-                        "dynamicChannelNameTemplate": "{username}'s Channel"
+                        "dynamicChannelNameTemplate": "{user}'s Channel"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/SetupStep1Component/EmbedsGroup"
                 }

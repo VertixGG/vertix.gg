@@ -75,6 +75,13 @@
                 "hooks": []
             },
             {
+                "key": "VertixBot/UI-General/SetupServerOptions",
+                "elementsGroup": "VertixBot/UI-General/ServerOptionsElementsGroup",
+                "embedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
                 "key": "maxMasterChannelsReached",
                 "elementsGroup": null,
                 "embedsGroup": "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",
@@ -205,6 +212,38 @@
             {
                 "hook": "getReplyArgs",
                 "handler": "VertixBot/UI-General/AIAgentAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-General/ChannelCreateFailedAdapter",
+        "adapterKind": "base",
+        "component": "VertixBot/UI-General/ChannelCreateFailedComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Dynamic",
+        "permissions": "0",
+        "executionSteps": [],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-General/ChannelCreateFailedAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-General/UnassignableRoleAdapter",
+        "adapterKind": "base",
+        "component": "VertixBot/UI-General/UnassignableRoleComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Dynamic",
+        "permissions": "0",
+        "executionSteps": [],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-General/UnassignableRoleAdapter/Hooks/GetReplyArgs"
             }
         ]
     },
@@ -682,6 +721,13 @@
                 "embedsGroup": "VertixBot/UI-General/NothingChangedEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelPermissionsStateStaffMember",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/StaffMemberEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
             }
         ],
         "bindings": [],
@@ -849,6 +895,13 @@
                 "key": "VertixBot/UI-V2/SetupEditVerifiedRoles",
                 "elementsGroup": "VertixBot/UI-V2/SetupEditVerifiedRolesElementsGroup",
                 "embedsGroup": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/SetupEditVoiceRole",
+                "elementsGroup": "VertixBot/UI-V2/SetupEditVoiceRoleElementsGroup",
+                "embedsGroup": "VertixBot/UI-V2/SetupEditVoiceRoleEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },
@@ -1315,6 +1368,13 @@
                 "embedsGroup": "VertixBot/UI-General/NothingChangedEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelPermissionsStateStaffMember",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/StaffMemberEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
             }
         ],
         "bindings": [],
@@ -1776,6 +1836,13 @@
                 "key": "VertixBot/UI-V3/SetupEditVerifiedRoles",
                 "elementsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup",
                 "embedsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupEditVoiceRole",
+                "elementsGroup": "VertixBot/UI-V3/SetupEditVoiceRoleElementsGroup",
+                "embedsGroup": "VertixBot/UI-V3/SetupEditVoiceRoleEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },

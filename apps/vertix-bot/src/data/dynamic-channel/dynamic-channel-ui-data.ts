@@ -33,7 +33,14 @@ export interface DynamicChannelUIDataIdentifier {
     masterChannelId?: string;
     guildId?: string;
     masterChannelIndex?: number;
-    memberRoleIds?: string[];
+    /**
+     * Roles of the channel owner, never of whoever triggered the render.
+     *
+     * The primary message is one message the whole channel reads, so the button set it carries
+     * has to be decided by the owner. Filling this from an interaction would hand the decision
+     * to whoever pressed a button last, and everyone else would see their set.
+     */
+    ownerRoleIds?: string[];
 }
 
 export interface DynamicChannelUIDataResult {
@@ -119,9 +126,9 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
             const templateButtonsByRole = masterChannelSettings?.dynamicChannelButtonsTemplateByRole ?? {};
 
             const matchedButtons = new Set<string>();
-            const memberRoleIds = identifier.memberRoleIds ?? [];
+            const ownerRoleIds = identifier.ownerRoleIds ?? [];
 
-            for ( const roleId of memberRoleIds ) {
+            for ( const roleId of ownerRoleIds ) {
                 const override = templateButtonsByRole[ roleId ];
                 if ( Array.isArray( override ) ) {
                     for ( const buttonId of override ) {

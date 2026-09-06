@@ -1663,16 +1663,16 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             ownerId: string;
             channelId: string;
             dynamicChannelMentionable?: boolean;
-            memberRoleIds?: string[];
+            ownerRoleIds?: string[];
         } = {
             ownerId: dynamicChannelDB.userOwnerId,
             channelId: channel.id
         };
 
-        const memberRoleIds = await this.getMemberRoleIds( channel, dynamicChannelDB.userOwnerId );
+        const ownerRoleIds = await this.getMemberRoleIds( channel, dynamicChannelDB.userOwnerId );
 
-        if ( memberRoleIds.length ) {
-            sendArgs.memberRoleIds = memberRoleIds;
+        if ( ownerRoleIds.length ) {
+            sendArgs.ownerRoleIds = ownerRoleIds;
         }
 
         if ( masterChannelDB ) {
@@ -2125,16 +2125,16 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             ownerId: string;
             channel: VoiceChannel;
             dynamicChannelMentionable?: boolean;
-            memberRoleIds?: string[];
+            ownerRoleIds?: string[];
         } = {
             ownerId: dynamicChannelDB.userOwnerId,
             channel
         };
 
-        const memberRoleIds = await this.getMemberRoleIds( channel, dynamicChannelDB.userOwnerId );
+        const ownerRoleIds = await this.getMemberRoleIds( channel, dynamicChannelDB.userOwnerId );
 
-        if ( memberRoleIds.length ) {
-            editMessageArgs.memberRoleIds = memberRoleIds;
+        if ( ownerRoleIds.length ) {
+            editMessageArgs.ownerRoleIds = ownerRoleIds;
         }
 
         if ( masterChannelDB ) {

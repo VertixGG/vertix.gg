@@ -15,8 +15,7 @@ import type {
     ModalSubmitInteraction,
     Message,
     StringSelectMenuInteraction,
-    UserSelectMenuInteraction,
-    GuildMember
+    UserSelectMenuInteraction
 } from "discord.js";
 
 import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
@@ -740,12 +739,6 @@ export class AdapterBuilderBase<
                 ...( "object" === typeof context ? ( context as Record<string, unknown> ) : {} ),
                 ...( argsFromManager ?? {} )
             };
-
-            const member = ( context as { member?: GuildMember | null } ).member;
-
-            if ( member ) {
-                identifier.memberRoleIds = Array.from( member.roles.cache.keys() );
-            }
 
             const data = await ( dataComponent as { read: ( payload: Record<string, unknown> ) => Promise<UIArgs | null> } )
                 .read( identifier );

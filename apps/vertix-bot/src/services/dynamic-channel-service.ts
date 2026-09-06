@@ -1301,7 +1301,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         let savedData: MasterChannelUserDataInterface | null = null,
             dynamicChannelName = "",
-            dynamicChannelUserLimit = 0,
+            dynamicChannelUserLimit = masterChannel.userLimit,
             permissionOverwrites: OverwriteResolvable[] = [];
 
         // Default channel properties.
@@ -1332,7 +1332,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         if ( savedData ) {
             dynamicChannelName = savedData.dynamicChannelName;
-            dynamicChannelUserLimit = savedData.dynamicChannelUserLimit;
+
+            if ( savedData.dynamicChannelUserLimit >= 0 ) {
+                dynamicChannelUserLimit = savedData.dynamicChannelUserLimit;
+            }
 
             const verifiedRoles =
                     await MasterChannelDataManager.$.getChannelVerifiedRoles(

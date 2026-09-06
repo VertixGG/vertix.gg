@@ -30,6 +30,9 @@ TempVoice's entire Overview tab and which we have none of.
 
 ### 1. The admin's default user limit is silently dropped - verified
 
+> **Status: fixed.** The local is now seeded from the master channel, and saved data only
+> overrides it when it holds a real value, so the `-1` sentinel and a missing key both fall through.
+
 `getChannelDefaultInheritedProperties()` reads `{ bitrate, userLimit }` off the master channel
 (`apps/vertix-bot/src/services/dynamic-channel-service.ts:1210`). `createDynamicChannel` spreads that
 into the create call and then overwrites it on the next line with `userLimit: dynamicChannelUserLimit`

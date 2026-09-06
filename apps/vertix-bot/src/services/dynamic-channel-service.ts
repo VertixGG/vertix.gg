@@ -130,6 +130,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     uiVersioningAdapterService: UIAdapterVersioningService;
     channelCleanupService: ChannelCleanupService;
 }> {
+    private static readonly CHANNEL_NAME_UNSAFE_CHARS = /[@#`*_~|:<>\\\u0000-\u001F\u007F]/g;
+
     private readonly debugger: Debugger;
 
     private config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
@@ -538,6 +540,13 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         } );
     }
 
+    private sanitizeChannelNamePart( value: string ) {
+        return value
+            .replace( DynamicChannelService.CHANNEL_NAME_UNSAFE_CHARS, "" )
+            .replace( /\s+/g, " " )
+            .trim();
+    }
+
     private async assembleChannelNameTemplate(
         channelNameTemplate: string,
         args: {
@@ -564,22 +573,24 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         if ( args.userDisplayName ) {
-            userDisplayName = args.userDisplayName.replace( /[^a-zA-Z0-9]/g, "" );
+            userDisplayName = this.sanitizeChannelNamePart( args.userDisplayName );
         }
 
         if ( args.index != null ) {
             indexValue = String( args.index );
         }
 
+        const gameName = args.gameName ? this.sanitizeChannelNamePart( args.gameName ) : "";
+
         const replacements: Record<string, string> = {
             [ VAR_DYNAMIC_CHANNEL_STATE ]: state,
             [ VAR_DYNAMIC_CHANNEL_USER ]: userDisplayName,
-            [ VAR_DYNAMIC_CHANNEL_GAME ]: args.gameName ?? "",
+            [ VAR_DYNAMIC_CHANNEL_GAME ]: gameName,
             [ VAR_DYNAMIC_CHANNEL_INDEX ]: indexValue,
             "{{username}}": userDisplayName,
             "{{user}}": userDisplayName,
             "{{state}}": state,
-            "{{game}}": args.gameName ?? "",
+            "{{game}}": gameName,
             "{{index}}": indexValue,
             "{auto-scale}": indexValue,
             "{autoscale}": indexValue

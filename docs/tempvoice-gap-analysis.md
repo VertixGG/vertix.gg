@@ -51,6 +51,11 @@ Two notes before fixing:
 
 ### 2. `{user}` deletes non-Latin display names - verified
 
+> **Status: fixed.** The strip is now a blocklist of characters that are hostile in a Discord
+> name rather than a Latin-alphanumeric whitelist, so scripts and spacing survive. The badword
+> coverage in finding 8 is still open, but it was never what this strip protected - an
+> all-alphanumeric badword passed it unchanged.
+
 `assembleChannelNameTemplate` sanitises with `replace( /[^a-zA-Z0-9]/g, "" )`
 (`apps/vertix-bot/src/services/dynamic-channel-service.ts:567`).
 

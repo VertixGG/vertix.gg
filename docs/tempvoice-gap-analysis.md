@@ -309,15 +309,16 @@ the screen. The v2 adapter ends every handler with one; v3 mostly does not.
 Fixed: `onVerifiedRolesSelected` and `onVerifiedRolesEveryoneSelected`, which acknowledged nothing at
 all, so picking a verified role showed "This interaction failed" after three seconds.
 
-**Still open, and the sharp one: `onButtonsSelected`.** The button template is persisted *only* by
-the effect handlers - `onDoneButtonClicked` does nothing on the buttons step - and nothing navigates
-to the effect screen in v3. The v2 handler ends with
-`editReplyWithStep( …, "VertixBot/UI-V2/SetupEditButtonsEffect" )`; the v3 one ends after
-`setArgs`. If that reads correctly, selecting buttons on a V3 master channel cannot be saved. Worth
-confirming against a live V3 master channel before changing it.
+Also fixed: the whole button-editing flow. The template is persisted *only* by the effect handlers -
+`onDoneButtonClicked` does nothing on the buttons step - and in v3 nothing navigated to the effect
+screen, so a selection could not be saved at all. `onButtonsSelected` now reaches it, and both
+effect handlers return to the buttons step afterwards rather than dead-ending, which matches the
+declared `EditButtonsEffect -> EditButtons` transitions and the role branch's own reset of
+`dynamicChannelButtonsRoleId`. v2 was unaffected throughout - its handlers already navigated, which
+is why the flow worked there.
 
-Nine other handlers in that adapter also never render. Some are fine - `onDoneButtonClicked` renders
-a different adapter - and telling them apart needs reading each against its transition.
+Seven other handlers in that adapter still never render. Some are fine - `onDoneButtonClicked`
+renders a different adapter - and telling them apart needs reading each against its transition.
 
 ## Traps
 

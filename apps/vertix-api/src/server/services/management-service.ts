@@ -2,6 +2,11 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
+import { MasterChannelDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
+
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
+
 import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ipc-definitions";
 
 import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
@@ -30,8 +35,41 @@ function getClient() {
 const SCALING_SETTINGS_KEY = "VertixBase/Models/ScalingChannelData/settings";
 const SCALING_DATA_VERSION = "0.0.0.1";
 
-const DYNAMIC_SETTINGS_KEY = "VertixBase/Models/MasterChannelData/settings";
-const DYNAMIC_DATA_VERSION = "0.0.0.3";
+/**
+ * The bot writes its settings row under `<model name>/settings` at the model's own data version,
+ * and the model differs per ui version. Deriving both from the models keeps this in step with them
+ * rather than restating a string that neither model produces.
+ */
+const DYNAMIC_SETTINGS_BY_VERSION = {
+    [ VERSION_UI_V2 ]: {
+        key: `${ MasterChannelDataModel.getName() }/settings`,
+        version: VERSION_UI_V2
+    },
+    [ VERSION_UI_V3 ]: {
+        key: `${ MasterChannelDataModelV3.getName() }/settings`,
+        version: VERSION_UI_V3
+    }
+} as const;
+
+const DYNAMIC_SETTINGS_KEYS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.key );
+const DYNAMIC_SETTINGS_VERSIONS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.version );
+
+function getDynamicSettingsRef( channelVersion: string | null ) {
+    return (
+        DYNAMIC_SETTINGS_BY_VERSION[ channelVersion as keyof typeof DYNAMIC_SETTINGS_BY_VERSION ] ??
+        DYNAMIC_SETTINGS_BY_VERSION[ VERSION_UI_V3 ]
+    );
+}
+
+function getDynamicSettingsObject(
+    master: { version: string | null; data?: { key: string; version: string; object: unknown }[] }
+) {
+    const ref = getDynamicSettingsRef( master.version );
+
+    const row = master.data?.find( ( entry ) => entry.key === ref.key && entry.version === ref.version );
+
+    return ( row?.object as Record<string, unknown> | undefined ) ?? null;
+}
 
 export interface ScalingMasterChannelInfo {
     id: string;
@@ -184,8 +222,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 include: {
                     data: {
                         where: {
-                            key: DYNAMIC_SETTINGS_KEY,
-                            version: DYNAMIC_DATA_VERSION
+                            key: { in: DYNAMIC_SETTINGS_KEYS },
+                            version: { in: DYNAMIC_SETTINGS_VERSIONS }
                         }
                     }
                 }
@@ -229,7 +267,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     }
                 } );
 
-                const settingsData = master.data?.[ 0 ]?.object as Record<string, unknown> | null;
+                const settingsData = getDynamicSettingsObject( master );
 
                 return {
                     id: master.id,
@@ -374,8 +412,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             include: {
                 data: {
                     where: {
-                        key: DYNAMIC_SETTINGS_KEY,
-                        version: DYNAMIC_DATA_VERSION
+                        key: { in: DYNAMIC_SETTINGS_KEYS },
+                        version: { in: DYNAMIC_SETTINGS_VERSIONS }
                     }
                 }
             }
@@ -447,7 +485,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             };
         }
 
-        const settingsData = master.data?.[ 0 ]?.object as Record<string, unknown> | null;
+        const settingsData = getDynamicSettingsObject( master );
 
         // Create a map of Discord channel info by channel ID
         const discordChannelMap = new Map<string, IPCDiscordChannelInfo>();
@@ -646,13 +684,15 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             return false;
         }
 
+        const settingsRef = getDynamicSettingsRef( master.version );
+
         // Update the database directly so the UI sees changes immediately
         const existingData = await getClient().channelData.findUnique( {
             where: {
                 ownerId_key_version: {
                     ownerId: masterChannelId,
-                    key: DYNAMIC_SETTINGS_KEY,
-                    version: DYNAMIC_DATA_VERSION
+                    key: settingsRef.key,
+                    version: settingsRef.version
                 }
             }
         } );
@@ -667,8 +707,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             where: {
                 ownerId_key_version: {
                     ownerId: masterChannelId,
-                    key: DYNAMIC_SETTINGS_KEY,
-                    version: DYNAMIC_DATA_VERSION
+                    key: settingsRef.key,
+                    version: settingsRef.version
                 }
             },
             update: {
@@ -676,8 +716,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             },
             create: {
                 ownerId: masterChannelId,
-                key: DYNAMIC_SETTINGS_KEY,
-                version: DYNAMIC_DATA_VERSION,
+                key: settingsRef.key,
+                version: settingsRef.version,
                 object: updatedSettings
             }
         } );

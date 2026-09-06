@@ -101,6 +101,13 @@ overwrites batched through `channel.permissionOverwrites.set()`.
 
 ### 5. The dashboard reads and writes a settings key that does not exist - verified
 
+> **Status: fixed.** The key and the data version are now derived from the two models and
+> selected by the master channel's own `version` column, so V2 and V3 masters each resolve to
+> the row the bot actually wrote. Confirmed at runtime: V2 is
+> `VertixBase/Models/MasterChannelDataModel/settings` at `0.0.0.2` and V3 is
+> `VertixBase/Models/MasterChannelDataV3/settings` at `0.0.0.3` - the old constant matched
+> neither, and its hardcoded `0.0.0.3` was wrong for V2 as well.
+
 `apps/vertix-api/src/server/services/management-service.ts:33` defines
 `DYNAMIC_SETTINGS_KEY = "VertixBase/Models/MasterChannelData/settings"`.
 

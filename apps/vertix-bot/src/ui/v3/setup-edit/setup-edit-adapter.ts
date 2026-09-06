@@ -1,5 +1,6 @@
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
@@ -37,6 +38,8 @@ import { ChannelButtonsTemplateSelectMenu } from "@vertix.gg/bot/src/ui/v3/chann
 import { VerifiedRolesMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-menu";
 import { VerifiedRolesEveryoneSelectMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-everyone-select-menu";
 import { StaffRolesMenu } from "@vertix.gg/bot/src/ui/general/staff-roles/staff-roles-menu";
+import { VoiceRoleMenu } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-menu";
+import { warnOnUnassignableVoiceRole } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-utils";
 import { SetupEditButtonsEffectImmediatelyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-immediately-button";
 import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
 import { SetupEditButtonsRoleSelectMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-role-select-menu";
@@ -50,6 +53,7 @@ import {
     SETUP_EDIT_BUTTONS_EMBED_VARS,
     SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS,
     SETUP_EDIT_STAFF_ROLES_EMBED_VARS,
+    SETUP_EDIT_VOICE_ROLE_EMBED_VARS,
     SETUP_EDIT_EMBED_VARS
 } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-definitions";
 
@@ -208,6 +212,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         `${ v.dynamicChannelButtonsTemplate }\n\n` +
         `**_🛡️ Verified Roles_**\n\n▹ ${ v.verifiedRoles }\n\n` +
         `**_🔑 Staff Roles_**\n\n▹ ${ v.staffRolesDisplay }\n\n` +
+        `**_🎙️ Voice Role_**\n\n▹ ${ v.voiceRoleDisplay }\n\n` +
         "**_⚙️ Configuration_**\n\n" +
         `@ ∙ Mention user in primary message: ${ v.configUserMention }\n` +
         `⫸ ∙ Auto save dynamic channels: ${ v.configAutoSave }\n` +
@@ -240,6 +245,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         staffRolesDisplay: {
             [ v.staffRoles ]: v.staffRoles,
             [ v.staffRolesNone ]: "**None**"
+        },
+        voiceRoleDisplay: {
+            [ v.voiceRoleId ]: `<@&${ v.voiceRoleId }>`,
+            [ v.voiceRoleGuild ]: `<@&${ v.voiceRoleId }> *(from the server options)*`,
+            [ v.voiceRoleNone ]: "**None**"
         }
     } ) )
     .setArrayOptions( {
@@ -283,6 +293,12 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         // format, the display var carries the "None" literal instead.
         const staffRolesDisplay = staffRoles.length ? v.staffRoles : v.staffRolesNone;
 
+        // A master channel without its own voice role shows the one it inherits, so an admin sees
+        // what actually applies rather than a bare None.
+        const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,
+            guildVoiceRoleId = args.guildVoiceRoleId as string | null,
+            resolvedVoiceRoleId = ownVoiceRoleId || guildVoiceRoleId;
+
         return {
             index: ( args.index || 0 ) + 1,
             masterChannelId: args.masterChannelId,
@@ -291,6 +307,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             verifiedRoles: args.dynamicChannelVerifiedRoles || [],
             ...( staffRoles.length ? { staffRoles } : {} ),
             staffRolesDisplay,
+            ...( resolvedVoiceRoleId ? { voiceRoleId: resolvedVoiceRoleId } : {} ),
+            voiceRoleDisplay: ownVoiceRoleId
+                ? v.voiceRoleId
+                : ( guildVoiceRoleId ? v.voiceRoleGuild : v.voiceRoleNone ),
             configUserMention: args.dynamicChannelMentionable ? v.configUserMentionEnabled : v.configUserMentionDisabled,
             configAutoSave: args.dynamicChannelAutoSave ? v.configAutoSaveEnabled : v.configAutoSaveDisabled,
             configLogs: processedLogsChannelId ? v.configLogsEnabled : v.configLogsDisabled,
@@ -339,6 +359,59 @@ const SetupEditVerifiedRolesElementsGroup = new ElementsGroupBuilder( "VertixBot
     } )
     .build();
 
+const SetupEditVoiceRoleEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_VOICE_ROLE_EMBED_VARS>( "VertixBot/UI-V3/SetupEditVoiceRoleEmbed", SETUP_EDIT_VOICE_ROLE_EMBED_VARS )
+    .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setImage( UI_IMAGE_EMPTY_LINE_URL )
+    .setTitle( ( v ) => `🎙️  Edit Voice Role Of Master Channel #${ v.index }` )
+    .setDescription( ( v ) =>
+        "A member holds this role only while they sit in a dynamic channel of this master channel, " +
+        "and loses it the moment they leave.\n\n" +
+        "Use it to show a text channel to whoever is in voice right now, or to group them in the " +
+        "member list.\n\n" +
+        "Leaving it empty falls back to the server wide voice role.\n\n" +
+        `**_Current Voice Role_**\n\n> ${ v.voiceRoleDisplay }`
+    )
+    .setFooterText( () =>
+        "Note: The bot's own role has to sit above the role it hands out, or discord refuses it."
+    )
+    .setOptions( ( v ) => ( {
+        voiceRoleDisplay: {
+            [ v.voiceRoleId ]: `<@&${ v.voiceRoleId }>`,
+            [ v.voiceRoleGuild ]: `<@&${ v.voiceRoleId }> *(from the server options)*`,
+            [ v.voiceRoleNone ]: "**None**"
+        }
+    } ) )
+    .setLogic( ( args, v ) => {
+        const roleId = args.dynamicChannelVoiceRoleId as string | null,
+            guildRoleId = args.guildVoiceRoleId as string | null;
+
+        const result: Record<string, string | number> = {
+            index: ( args.index || 0 ) + 1
+        };
+
+        if ( roleId ) {
+            result.voiceRoleId = roleId;
+            result.voiceRoleDisplay = v.voiceRoleId;
+        } else if ( guildRoleId ) {
+            result.voiceRoleId = guildRoleId;
+            result.voiceRoleDisplay = v.voiceRoleGuild;
+        } else {
+            result.voiceRoleDisplay = v.voiceRoleNone;
+        }
+
+        return result;
+    } )
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .build();
+
+const SetupEditVoiceRoleElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditVoiceRoleElementsGroup" )
+    .setItems( () => {
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const { WizardBackButton } = uiService.$$.getSystemElements();
+        return [ [ VoiceRoleMenu ], [ WizardBackButton ] ];
+    } )
+    .build();
+
 const SetupEditStaffRolesElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditStaffRolesElementsGroup" )
     .setItems( () => {
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
@@ -353,11 +426,13 @@ const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ConfigComponen
     .addElementsGroup( SetupEditButtonsEffectElementsGroup )
     .addElementsGroup( SetupEditVerifiedRolesElementsGroup )
     .addElementsGroup( SetupEditStaffRolesElementsGroup )
+    .addElementsGroup( SetupEditVoiceRoleElementsGroup )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditStaffRolesEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVoiceRoleEmbed ) )
     .addModal( ChannelNameTemplateModal )
     .addModal( DeleteConfirmModal )
     .setDefaultElementsGroup( "VertixBot/UI-V3/SetupEditElementsGroup" )
@@ -428,6 +503,10 @@ async function onSelectEditOptionSelected(
 
         case "edit-dynamic-channel-staff-roles":
             await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditStaffRoles" );
+            break;
+
+        case "edit-dynamic-channel-voice-role":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVoiceRole" );
             break;
     }
 }
@@ -818,6 +897,29 @@ async function onStaffRolesSelected(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditStaffRoles" );
 }
 
+async function onVoiceRoleSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    const args: UIArgs = context.getArgs( interaction ),
+        roleId = interaction.values.at( 0 ) ?? null;
+
+    args.dynamicChannelVoiceRoleId = roleId;
+
+    const masterChannelDB: any = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V3
+    };
+
+    await MasterChannelDataManager.$.setChannelVoiceRoleId( masterChannelDB, interaction.guildId, roleId );
+
+    context.setArgs( interaction, args );
+
+    await warnOnUnassignableVoiceRole( interaction, roleId );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVoiceRole" );
+}
+
 async function onVerifiedRolesSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
@@ -882,6 +984,12 @@ async function onBackButtonClicked(
         id: args.ChannelDBId,
         version: VERSION_UI_V3
     };
+
+    if ( "VertixBot/UI-V3/SetupEditVoiceRole" === context.getCurrentExecutionStep( interaction )?.name ) {
+        await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
+
+        return;
+    }
 
     if ( "VertixBot/UI-V3/SetupEditStaffRoles" === context.getCurrentExecutionStep( interaction )?.name ) {
         ( args as UIArgs )[ keys.dynamicChannelStaffRoles ] =
@@ -958,6 +1066,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                     dynamicChannelButtonsTemplate: "**Default Settings**\n> - Rename\n> - User Limit\n> - Access",
                     verifiedRoles: "**None**",
                     staffRolesDisplay: "**None**",
+                    voiceRoleDisplay: "**None**",
                     configUserMention: "`🟢∙On`",
                     configAutoSave: "`🔴∙Off`",
                     configLogs: "`🔴∙Off`",
@@ -982,6 +1091,12 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 embedsGroup: "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup",
                 previewDefaultVars: { index: "1" }
             } )
+            .addState( "EditVoiceRole", {
+                executionStep: "VertixBot/UI-V3/SetupEditVoiceRole",
+                elementsGroup: "VertixBot/UI-V3/SetupEditVoiceRoleElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/SetupEditVoiceRoleEmbedGroup",
+                previewDefaultVars: { index: "1", voiceRoleDisplay: "**None**" }
+            } )
             .addState( "EditStaffRoles", {
                 executionStep: "VertixBot/UI-V3/SetupEditStaffRoles",
                 elementsGroup: "VertixBot/UI-V3/SetupEditStaffRolesElementsGroup",
@@ -994,6 +1109,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "OpenEditButtons", { from: "EditMaster", to: "EditButtons" } )
             .addTransition( "OpenEditVerifiedRoles", { from: "EditMaster", to: "EditVerifiedRoles" } )
             .addTransition( "OpenEditStaffRoles", { from: "EditMaster", to: "EditStaffRoles" } )
+            .addTransition( "OpenEditVoiceRole", { from: "EditMaster", to: "EditVoiceRole" } )
             .addTransition( "EditChannelName", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "ConfigExtrasChanged", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "LogChannelChanged", { from: "EditMaster", to: "EditMaster" } )
@@ -1015,6 +1131,9 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             // Transitions from EditStaffRoles
             .addTransition( "StaffRolesChanged", { from: "EditStaffRoles", to: "EditStaffRoles" } )
             .addTransition( "StaffRolesBack", { from: "EditStaffRoles", to: "EditMaster" } )
+            // Transitions from EditVoiceRole
+            .addTransition( "VoiceRoleChanged", { from: "EditVoiceRole", to: "EditVoiceRole" } )
+            .addTransition( "VoiceRoleBack", { from: "EditVoiceRole", to: "EditMaster" } )
             .addEdgeSourceMapping( {
                 triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
                 transitionName: "OpenEditButtons",
@@ -1028,6 +1147,11 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addEdgeSourceMapping( {
                 triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
                 transitionName: "OpenEditStaffRoles",
+                targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                transitionName: "OpenEditVoiceRole",
                 targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
             } )
             .addEdgeSourceMapping( {
@@ -1090,6 +1214,11 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "VertixBot/UI-General/StaffRolesMenu",
                 "StaffRolesChanged",
                 onStaffRolesSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/VoiceRoleMenu",
+                "VoiceRoleChanged",
+                onVoiceRoleSelected
             )
             .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
                 "VertixBot/UI-General/VerifiedRolesMenu",
@@ -1182,7 +1311,8 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelButtonsTemplate,
                 masterChannelKeys.dynamicChannelMentionable,
                 masterChannelKeys.dynamicChannelVerifiedRoles,
-                masterChannelKeys.dynamicChannelStaffRoles
+                masterChannelKeys.dynamicChannelStaffRoles,
+                masterChannelKeys.dynamicChannelVoiceRoleId
             ];
 
             selectedKeys.forEach( ( key ) => {
@@ -1235,6 +1365,8 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "object" === typeof availableArgs.dynamicChannelButtonsTemplateByRole
                 ? ( availableArgs.dynamicChannelButtonsTemplateByRole as Record<string, string[]> )
                 : undefined;
+
+            args.guildVoiceRoleId = await GuildDataManager.$.getVoiceRoleId( masterChannelDB.guildId );
 
             args.dynamicChannelButtonsTemplateByRole = {
                 ...buttonsTemplateByRoleFromDb,

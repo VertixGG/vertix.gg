@@ -10,6 +10,7 @@ export interface MasterChannelSettingsInterface {
     dynamicChannelNameTemplate: string;
     dynamicChannelStaffRoles: string[];
     dynamicChannelVerifiedRoles: string[];
+    dynamicChannelVoiceRoleId: string | null;
 }
 
 export interface MasterChannelConstantsInterface {

@@ -47,6 +47,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupServerOptionsEditButton",
+        "content": {
+          "label": "Edit Server Options"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Invite VoiceChannels"
@@ -574,6 +580,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/VoiceRoleMenu",
+        "content": {
+          "placeholder": "🎙️ ∙ Select Voice Role"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Select Buttons",
@@ -666,6 +678,9 @@
             },
             {
               "label": "∙ Edit Channel's Staff Roles"
+            },
+            {
+              "label": "∙ Edit Channel's Voice Role"
             }
           ]
         }
@@ -847,6 +862,9 @@
             },
             {
               "label": "∙ Edit Channel's Staff Roles"
+            },
+            {
+              "label": "∙ Edit Channel's Voice Role"
             }
           ]
         }
@@ -943,6 +961,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/UnassignableRoleEmbed",
+      "content": {
+        "title": "🎙️  That role cannot be used",
+        "description": "The role <@&{roleId}> was saved, but the bot cannot hand it out - {reason}.\n\nMove the bot's own role above it in **Server Settings → Roles**, or pick a different role."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NothingChangedEmbed",
       "content": {
         "title": "🤷  Nothing changed",
@@ -967,7 +992,7 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Setup VoiceChannels",
-        "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_Current badwords_:\n{badwordsMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+        "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -977,7 +1002,11 @@
             "{badwords}": "`{badwords}`",
             "{badwordsMessageDefault}": "**None**"
           },
-          "none": "**None**"
+          "none": "**None**",
+          "voiceRoleMessage": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleMessageDefault}": "**None**"
+          }
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1598,7 +1627,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configure Master Channel #{index}",
-        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
         "footer": "Note: Changing user mention will not affect already created dynamic channels.",
         "options": {
           "on": "`🟢∙On`",
@@ -1622,6 +1651,11 @@
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**None**"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
+            "{voiceRoleNone}": "**None**"
           }
         },
         "arrayOptions": {
@@ -1667,6 +1701,21 @@
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  Edit Voice Role Of Master Channel #{index}",
+        "description": "A member holds this role only while they sit in a dynamic channel of this master channel, and loses it the moment they leave.\n\nUse it to show a text channel to whoever is in voice right now, or to group them in the member list.\n\nLeaving it empty falls back to the server wide voice role.\n\n**_Current Voice Role_**\n\n> {voiceRoleDisplay}",
+        "footer": "Note: The bot's own role has to sit above the role it hands out, or discord refuses it.",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
+            "{voiceRoleNone}": "**None**"
           }
         }
       }
@@ -2465,7 +2514,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configure Master Channel #{index}",
-        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
         "footer": "Note: Changing user mention will not affect already created dynamic channels.",
         "options": {
           "on": "`🟢∙On`",
@@ -2489,6 +2538,11 @@
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**None**"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
+            "{voiceRoleNone}": "**None**"
           }
         },
         "arrayOptions": {
@@ -2536,6 +2590,21 @@
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  Edit Voice Role Of Master Channel #{index}",
+        "description": "A member holds this role only while they sit in a dynamic channel of this master channel, and loses it the moment they leave.\n\nUse it to show a text channel to whoever is in voice right now, or to group them in the member list.\n\nLeaving it empty falls back to the server wide voice role.\n\n**_Current Voice Role_**\n\n> {voiceRoleDisplay}",
+        "footer": "Note: The bot's own role has to sit above the role it hands out, or discord refuses it.",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
+            "{voiceRoleNone}": "**None**"
           }
         }
       }

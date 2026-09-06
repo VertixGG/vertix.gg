@@ -219,6 +219,39 @@ export class MasterChannelDataManager extends InitializeBase {
         } );
     }
 
+    /**
+     * Function getChannelVoiceRoleId() :: The voice role of a single master channel, or null when
+     * it defers to the guild wide default.
+     */
+    public async getChannelVoiceRoleId( masterChannelDB: ChannelExtended, cache = true ): Promise<string | null> {
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+
+        return result?.dynamicChannelVoiceRoleId ?? null;
+    }
+
+    public async setChannelVoiceRoleId(
+        masterChannelDB: ChannelExtended,
+        guildId: string,
+        roleId: string | null,
+        shouldAdminLog = true
+    ) {
+        if ( shouldAdminLog ) {
+            const previousRoleId = await this.getChannelVoiceRoleId( masterChannelDB );
+
+            this.logger.admin(
+                this.setChannelVoiceRoleId,
+                `🎙️  Dynamic Channel voice role modified - guildId: "${ guildId }" masterChannelId: "${ masterChannelDB.id }", "${ previousRoleId }" => "${ roleId }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelVoiceRoleId: roleId
+        } );
+    }
+
     public async getChannelLogsChannelId( masterChannelDB: ChannelExtended ) {
         const defaults = this.config.defaults.settings;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>

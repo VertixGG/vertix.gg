@@ -41,7 +41,9 @@ import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
-import { BadwordsEditButton } from "@vertix.gg/bot/src/ui/general/badwords/badwords-edit-button";
+import { ServerOptionsEditButton } from "@vertix.gg/bot/src/ui/general/server-options/server-options-edit-button";
+import { ServerOptionsElementsGroup } from "@vertix.gg/bot/src/ui/general/server-options/server-options-elements-group";
+import { warnOnUnassignableVoiceRole } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-utils";
 
 import { LanguageChooseButton } from "@vertix.gg/bot/src/ui/general/language/language-choose-button";
 
@@ -77,13 +79,14 @@ import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versi
 
 import type {
     UIDefaultStringSelectMenuChannelTextInteraction,
+    UIDefaultStringSelectRolesChannelTextInteraction,
     UIDefaultButtonChannelTextInteraction,
     UIDefaultModalChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
 import type { BaseGuildTextChannel } from "discord.js";
-import type { IAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { IAdapterContext, IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
 type SetupInteractions =
     | UIDefaultButtonChannelTextInteraction
@@ -310,6 +313,35 @@ async function onScalingConfigModalSubmitted(
     context.deleteArgs( interaction );
 }
 
+async function onServerOptionsClicked(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    await context.editReplyWithStep( interaction, "VertixBot/UI-General/SetupServerOptions" );
+}
+
+async function onServerOptionsDoneClicked(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    await context.editReplyWithStep( interaction, "default" );
+}
+
+async function onVoiceRoleSelected(
+    context: IExecutionAdapterContext<UIDefaultStringSelectRolesChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    const roleId = interaction.values.at( 0 ) ?? null;
+
+    await GuildDataManager.$.setVoiceRoleId( interaction.guildId, roleId );
+
+    if ( roleId ) {
+        await warnOnUnassignableVoiceRole( interaction, roleId );
+    }
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-General/SetupServerOptions" );
+}
+
 async function onEditBadwordsClicked(
     context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
@@ -362,8 +394,11 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         "_**Current master channels**_:\n" +
         vars.masterChannelMessage +
         "\n\n" +
-        "_Current badwords_:\n" +
+        "_**Server Badwords**_:\n" +
         vars.badwordsMessage +
+        "\n\n" +
+        "_**Server Voice Role**_:\n" +
+        vars.voiceRoleMessage +
         "\n\n" +
         "-# 💡 You can set logs channel by editing the master channel.\n"
     )
@@ -387,11 +422,16 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             }
         };
     } )
-    .setOptions( ( { masterChannels, masterChannelMessageDefault, badwords, badwordsMessageDefault } ) => {
+    .setOptions( ( {
+        masterChannels, masterChannelMessageDefault, badwords, badwordsMessageDefault,
+        voiceRoleId, voiceRoleMessageDefault
+    } ) => {
         const masterChannelsKey = String( masterChannels );
         const masterChannelMessageDefaultKey = String( masterChannelMessageDefault );
         const badwordsKey = String( badwords );
         const badwordsMessageDefaultKey = String( badwordsMessageDefault );
+        const voiceRoleIdKey = String( voiceRoleId );
+        const voiceRoleMessageDefaultKey = String( voiceRoleMessageDefault );
 
         return {
             masterChannelMessage: {
@@ -401,6 +441,10 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             badwordsMessage: {
                 [ badwordsKey ]: "`" + badwords + "`",
                 [ badwordsMessageDefaultKey ]: "**None**"
+            },
+            voiceRoleMessage: {
+                [ voiceRoleIdKey ]: `<@&${ voiceRoleId }>`,
+                [ voiceRoleMessageDefaultKey ]: "**None**"
             },
             none: "**None**"
         };
@@ -464,6 +508,10 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 .map( ( roleId: string ) => `<@&${ roleId }>` )
                 .join( ", " ) || vars.none;
 
+            // A master channel without its own voice role defers to the guild wide default.
+            const resolvedVoiceRoleId = data.dynamicChannelVoiceRoleId || args?.voiceRoleId;
+            const voiceRoleDisplay = resolvedVoiceRoleId ? `<@&${ resolvedVoiceRoleId }>` : vars.none;
+
             const nameTemplate = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
             const logsDisplay = data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none;
             const autoSaveDisplay = String( data.dynamicChannelAutoSave ?? "false" );
@@ -476,6 +524,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 `${ vars.labelButtons } **${ buttonsDisplay }**`,
                 `${ vars.labelVerifiedRoles } ${ rolesDisplay }`,
                 `${ vars.labelStaffRoles } ${ staffRolesDisplay }`,
+                `${ vars.labelVoiceRole } ${ voiceRoleDisplay }`,
                 `${ vars.labelLogsChannel } ${ logsDisplay }`,
                 `${ vars.labelAutoSave } \`${ autoSaveDisplay }\``,
                 `${ vars.labelVersion } \`${ version }\``
@@ -498,6 +547,13 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             result.badwordsMessage = vars.badwordsMessageDefault;
         }
 
+        if ( args?.voiceRoleId ) {
+            result.voiceRoleId = args.voiceRoleId;
+            result.voiceRoleMessage = vars.voiceRoleId;
+        } else {
+            result.voiceRoleMessage = vars.voiceRoleMessageDefault;
+        }
+
         return result;
     } )
     .setDefaultVars( () => ( {
@@ -508,6 +564,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         labelButtons: "▹ Buttons:",
         labelVerifiedRoles: "▹ Verified Roles:",
         labelStaffRoles: "▹ Staff Roles:",
+        labelVoiceRole: "▹ Voice Role:",
         labelLogsChannel: "▹ Logs Channel:",
         labelAutoSave: "▹ Auto Save:",
         labelVersion: "▹ UI Version:",
@@ -520,11 +577,12 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupElementsGroup" )
     .addRow( [ SetupMasterEditSelectMenu ] )
     .addRow( [ SetupMasterCreateSelectMenu ] )
-    .addRow( [ LanguageChooseButton, BadwordsEditButton ] )
+    .addRow( [ LanguageChooseButton, ServerOptionsEditButton ] )
     .build();
 
 const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponent" )
     .addElementsGroup( SetupElementsGroup )
+    .addElementsGroup( ServerOptionsElementsGroup )
     .addEmbedsSingleGroup( SetupEmbed )
     .addEmbedsSingleGroup( SetupMaxMasterChannelsEmbed )
     .addModal( BadwordsModal )
@@ -557,7 +615,8 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
 
         const args: ISetupArgs = {
             masterChannels: await ChannelModel.$.getMasters( interaction.guild.id, "settings" ),
-            badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) )
+            badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) ),
+            voiceRoleId: await GuildDataManager.$.getVoiceRoleId( interaction.guild.id )
         };
 
         if ( argsFromManager?.maxMasterChannels ) {
@@ -577,6 +636,16 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                     badwordsMessage: "**None**",
                 }
             } )
+            .addState( "ServerOptions", {
+                executionStep: "VertixBot/UI-General/SetupServerOptions",
+                embedsGroup: "VertixBot/UI-General/SetupEmbedGroup",
+                elementsGroup: "VertixBot/UI-General/ServerOptionsElementsGroup",
+                previewDefaultVars: {
+                    masterChannelMessage: "**None**",
+                    badwordsMessage: "**None**",
+                    voiceRoleMessage: "**None**"
+                }
+            } )
             .addState( "MaxMasterChannelsReached", {
                 executionStep: "maxMasterChannelsReached",
                 embedsGroup: "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",
@@ -589,7 +658,10 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             .addTransition( "EditMaster", { from: "Initial", to: "Initial" } )
             .addTransition( "ChooseLanguage", { from: "Initial", to: "Initial" } )
             .addTransition( "OpenBadwordsModal", { from: "Initial", to: "Initial" } )
-            .addTransition( "SubmitBadwords", { from: "Initial", to: "Initial" } )
+            .addTransition( "OpenServerOptions", { from: "Initial", to: "ServerOptions" } )
+            .addTransition( "SubmitBadwords", { from: [ "Initial", "ServerOptions" ], to: "ServerOptions" } )
+            .addTransition( "VoiceRoleChanged", { from: "ServerOptions", to: "ServerOptions" } )
+            .addTransition( "ServerOptionsDone", { from: "ServerOptions", to: "Initial" } )
             .addTransition( "SubmitScalingConfig", { from: "Initial", to: "Initial" } )
             .addEntryPoint( {
                 flowName: "VertixBot/UI-General/CommandsFlow",
@@ -671,6 +743,27 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                             await onCreateScalingChannelClicked( context, interaction );
                             break;
                     }
+                }
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/SetupServerOptionsEditButton",
+                "OpenServerOptions",
+                async( context, interaction ) => {
+                    await onServerOptionsClicked( context, interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/DoneButton",
+                "ServerOptionsDone",
+                async( context, interaction ) => {
+                    await onServerOptionsDoneClicked( context, interaction );
+                }
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/VoiceRoleMenu",
+                "VoiceRoleChanged",
+                async( context, interaction ) => {
+                    await onVoiceRoleSelected( context, interaction );
                 }
             )
             .bindButton<UIDefaultButtonChannelTextInteraction>(

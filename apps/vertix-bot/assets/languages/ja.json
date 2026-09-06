@@ -47,6 +47,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupServerOptionsEditButton",
+        "content": {
+          "label": "サーバー設定を編集"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Vertixを招待"
@@ -574,6 +580,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/VoiceRoleMenu",
+        "content": {
+          "placeholder": "🎙️ ∙ ボイスロールを選択"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 ボタンを選択",
@@ -666,6 +678,9 @@
             },
             {
               "label": "∙ チャンネルのスタッフロールを編集"
+            },
+            {
+              "label": "∙ チャンネルのボイスロールを編集"
             }
           ]
         }
@@ -847,6 +862,9 @@
             },
             {
               "label": "∙ チャンネルのスタッフロールを編集"
+            },
+            {
+              "label": "∙ チャンネルのボイスロールを編集"
             }
           ]
         }
@@ -943,6 +961,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/UnassignableRoleEmbed",
+      "content": {
+        "title": "🎙️  このロールは使用できません",
+        "description": "ロール <@&{roleId}> は保存されましたが、ボットが付与できません - {reason}。\n\n**サーバー設定 → ロール** でボット自身のロールをその上に移動するか、別のロールを選んでください。"
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NothingChangedEmbed",
       "content": {
         "title": "🤷  変更なし",
@@ -967,7 +992,7 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠   VoiceChannels をセットアップ",
-        "description": "**VoiceChannels**の無限の可能性を発見しましょう！\nサーバーを完璧にカスタマイズして最適化しましょう。\n\n新しいマスターチャンネルを作成するには：\n`(➕ マスターチャンネルを作成)`ボタンをクリックしてください。\n\nマスターチャンネルは、それぞれ独自の設定を持つダイナミックボイスチャンネルジェネレーターです。\n\n禁止ワード機能により、サーバーレベルでダイナミックチャンネル名を制限する設定が可能です。\n\n_**現在のマスターチャンネル**_：\n{masterChannelMessage}\n\n_現在の禁止ワード_：\n{badwordsMessage}\n\n-# 💡 マスターチャンネルを編集することでログチャンネルを設定できます。\n",
+        "description": "**VoiceChannels**の無限の可能性を発見しましょう！\nサーバーを完璧にカスタマイズして最適化しましょう。\n\n新しいマスターチャンネルを作成するには：\n`(➕ マスターチャンネルを作成)`ボタンをクリックしてください。\n\nマスターチャンネルは、それぞれ独自の設定を持つダイナミックボイスチャンネルジェネレーターです。\n\n禁止ワード機能により、サーバーレベルでダイナミックチャンネル名を制限する設定が可能です。\n\n_**現在のマスターチャンネル**_：\n{masterChannelMessage}\n\n_**サーバーの禁止ワード**_：\n{badwordsMessage}\n\n_**サーバーのボイスロール**_：\n{voiceRoleMessage}\n\n-# 💡 マスターチャンネルを編集することでログチャンネルを設定できます。\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -977,7 +1002,11 @@
             "{badwords}": "`{badwords}`",
             "{badwordsMessageDefault}": "**なし**"
           },
-          "none": "**なし**"
+          "none": "**なし**",
+          "voiceRoleMessage": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleMessageDefault}": "**なし**"
+          }
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1028,7 +1057,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1052,6 +1081,11 @@
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**なし**"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
+            "{voiceRoleNone}": "**なし**"
           }
         },
         "arrayOptions": {
@@ -1256,7 +1290,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1280,6 +1314,11 @@
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**なし**"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
+            "{voiceRoleNone}": "**なし**"
           }
         },
         "arrayOptions": {
@@ -1911,6 +1950,21 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  マスターチャンネル #{index} のボイスロールを編集",
+        "description": "このロールは、メンバーがこのマスターチャンネルのダイナミックチャンネルにいる間だけ付与され、退出した瞬間に外れます。\n\n今ボイスにいる人だけにテキストチャンネルを見せたり、メンバーリストでまとめたりするのに使えます。\n\n空のままにすると、サーバー全体のボイスロールが使われます。\n\n**_現在のボイスロール_**\n\n> {voiceRoleDisplay}",
+        "footer": "注意: ボット自身のロールが付与するロールより上にないと、Discord は拒否します。",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
+            "{voiceRoleNone}": "**なし**"
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
@@ -2131,6 +2185,21 @@
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  マスターチャンネル #{index} のボイスロールを編集",
+        "description": "このロールは、メンバーがこのマスターチャンネルのダイナミックチャンネルにいる間だけ付与され、退出した瞬間に外れます。\n\n今ボイスにいる人だけにテキストチャンネルを見せたり、メンバーリストでまとめたりするのに使えます。\n\n空のままにすると、サーバー全体のボイスロールが使われます。\n\n**_現在のボイスロール_**\n\n> {voiceRoleDisplay}",
+        "footer": "注意: ボット自身のロールが付与するロールより上にないと、Discord は拒否します。",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
+            "{voiceRoleNone}": "**なし**"
           }
         }
       }

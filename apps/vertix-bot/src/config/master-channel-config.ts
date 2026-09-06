@@ -50,7 +50,9 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
                 dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
 
                 dynamicChannelStaffRoles: [],
-                dynamicChannelVerifiedRoles: []
+                dynamicChannelVerifiedRoles: [],
+
+                dynamicChannelVoiceRoleId: null
             }
         };
     }

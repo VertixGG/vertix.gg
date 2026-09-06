@@ -9,6 +9,7 @@ export const MAX_EDIT_MASTER_BUTTONS_PER_ROW = 2;
 export interface ISetupArgs extends UIArgs {
     masterChannels?: PrismaBot.Channel[];
     badwords?: string[];
+    voiceRoleId?: string | null;
     maxMasterChannels?: number;
     scalingEditMasterChannelId?: string;
     scalingPrefix?: string;
@@ -38,6 +39,9 @@ export const SETUP_EMBED_VARS = {
     badwords: uiUtilsWrapAsTemplate( "badwords" ),
     badwordsMessage: uiUtilsWrapAsTemplate( "badwordsMessage" ),
     badwordsMessageDefault: uiUtilsWrapAsTemplate( "badwordsMessageDefault" ),
+    voiceRoleId: uiUtilsWrapAsTemplate( "voiceRoleId" ),
+    voiceRoleMessage: uiUtilsWrapAsTemplate( "voiceRoleMessage" ),
+    voiceRoleMessageDefault: uiUtilsWrapAsTemplate( "voiceRoleMessageDefault" ),
     none: uiUtilsWrapAsTemplate( "none" ),
 
     // Master channel display labels
@@ -47,6 +51,7 @@ export const SETUP_EMBED_VARS = {
     labelButtons: uiUtilsWrapAsTemplate( "labelButtons" ),
     labelVerifiedRoles: uiUtilsWrapAsTemplate( "labelVerifiedRoles" ),
     labelStaffRoles: uiUtilsWrapAsTemplate( "labelStaffRoles" ),
+    labelVoiceRole: uiUtilsWrapAsTemplate( "labelVoiceRole" ),
     labelLogsChannel: uiUtilsWrapAsTemplate( "labelLogsChannel" ),
     labelAutoSave: uiUtilsWrapAsTemplate( "labelAutoSave" ),
     labelVersion: uiUtilsWrapAsTemplate( "labelVersion" ),

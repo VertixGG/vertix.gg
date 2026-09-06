@@ -47,6 +47,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupServerOptionsEditButton",
+        "content": {
+          "label": "Editar opciones del servidor"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Invitar VoiceChannels"
@@ -574,6 +580,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/VoiceRoleMenu",
+        "content": {
+          "placeholder": "🎙️ ∙ Seleccionar rol de voz"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Seleccionar botones",
@@ -666,6 +678,9 @@
             },
             {
               "label": "∙ Editar roles del staff del canal"
+            },
+            {
+              "label": "∙ Editar el rol de voz del canal"
             }
           ]
         }
@@ -847,6 +862,9 @@
             },
             {
               "label": "∙ Editar roles del staff del canal"
+            },
+            {
+              "label": "∙ Editar el rol de voz del canal"
             }
           ]
         }
@@ -943,6 +961,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/UnassignableRoleEmbed",
+      "content": {
+        "title": "🎙️  Ese rol no se puede usar",
+        "description": "El rol <@&{roleId}> se guardó, pero el bot no puede otorgarlo - {reason}.\n\nMueve el rol del propio bot por encima en **Ajustes del servidor → Roles**, o elige otro rol."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NothingChangedEmbed",
       "content": {
         "title": "🤷  Nada cambió",
@@ -967,7 +992,7 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Configurar VoiceChannels",
-        "description": "¡Descubre las posibilidades ilimitadas de **VoiceChannels**!\nPersonaliza y optimiza tu servidor a la perfección.\n\nPara crear un nuevo canal maestro simplemente haz clic en:\nel botón `(➕ Crear Canal Maestro)`.\n\nLos canales maestros son generadores de canales de voz dinámicos, cada uno con su propia configuración única.\n\nNuestra función de palabras prohibidas permite la configuración a nivel de servidor para limitar los nombres de canales dinámicos.\n\n_**Canales maestros actuales**_:\n{masterChannelMessage}\n\n_Palabras prohibidas actuales_:\n{badwordsMessage}\n\n-# 💡 Puedes establecer un canal de registros editando el canal maestro.\n",
+        "description": "¡Descubre las posibilidades ilimitadas de **VoiceChannels**!\nPersonaliza y optimiza tu servidor a la perfección.\n\nPara crear un nuevo canal maestro simplemente haz clic en:\nel botón `(➕ Crear Canal Maestro)`.\n\nLos canales maestros son generadores de canales de voz dinámicos, cada uno con su propia configuración única.\n\nNuestra función de palabras prohibidas permite la configuración a nivel de servidor para limitar los nombres de canales dinámicos.\n\n_**Canales maestros actuales**_:\n{masterChannelMessage}\n\n_**Palabras prohibidas del servidor**_:\n{badwordsMessage}\n\n_**Rol de voz del servidor**_:\n{voiceRoleMessage}\n\n-# 💡 Puedes establecer un canal de registros editando el canal maestro.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -977,7 +1002,11 @@
             "{badwords}": "`{badwords}`",
             "{badwordsMessageDefault}": "**Ninguna**"
           },
-          "none": "**Ninguno**"
+          "none": "**Ninguno**",
+          "voiceRoleMessage": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleMessageDefault}": "**Ninguno**"
+          }
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1605,6 +1634,21 @@
       }
     },
     {
+      "name": "VertixBot/UI-V3/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  Editar el rol de voz del canal maestro #{index}",
+        "description": "Un miembro tiene este rol solo mientras está en un canal dinámico de este canal maestro, y lo pierde en cuanto sale.\n\nÚsalo para mostrar un canal de texto solo a quienes están en voz ahora, o para agruparlos en la lista de miembros.\n\nSi lo dejas vacío, se usa el rol de voz de todo el servidor.\n\n**_Rol de voz actual_**\n\n> {voiceRoleDisplay}",
+        "footer": "Nota: el rol del propio bot debe estar por encima del rol que otorga, o Discord lo rechaza.",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(de las opciones del servidor)*",
+            "{voiceRoleNone}": "**Ninguno**"
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Editar los roles verificados del canal maestro #{index}",
@@ -1724,7 +1768,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurar el canal maestro #{index}",
-        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
+        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rol de voz_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
         "footer": "Nota: cambiar la mención de usuario no afectará a los canales dinámicos ya creados.",
         "options": {
           "on": "`🟢∙Sí`",
@@ -1748,6 +1792,11 @@
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**Ninguno**"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(de las opciones del servidor)*",
+            "{voiceRoleNone}": "**Ninguno**"
           }
         },
         "arrayOptions": {
@@ -2228,7 +2277,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurar el canal maestro #{index}",
-        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
+        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rol de voz_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
         "footer": "Nota: cambiar la mención de usuario no afectará a los canales dinámicos ya creados.",
         "options": {
           "on": "`🟢∙Sí`",
@@ -2252,6 +2301,11 @@
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**Ninguno**"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(de las opciones del servidor)*",
+            "{voiceRoleNone}": "**Ninguno**"
           }
         },
         "arrayOptions": {
@@ -2360,6 +2414,21 @@
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  Editar el rol de voz del canal maestro #{index}",
+        "description": "Un miembro tiene este rol solo mientras está en un canal dinámico de este canal maestro, y lo pierde en cuanto sale.\n\nÚsalo para mostrar un canal de texto solo a quienes están en voz ahora, o para agruparlos en la lista de miembros.\n\nSi lo dejas vacío, se usa el rol de voz de todo el servidor.\n\n**_Rol de voz actual_**\n\n> {voiceRoleDisplay}",
+        "footer": "Nota: el rol del propio bot debe estar por encima del rol que otorga, o Discord lo rechaza.",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(de las opciones del servidor)*",
+            "{voiceRoleNone}": "**Ninguno**"
           }
         }
       }

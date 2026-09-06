@@ -48,6 +48,11 @@ const vars = {
     staffRolesDisplay: uiUtilsWrapAsTemplate( "staffRolesDisplay" ),
     staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" ),
 
+    voiceRoleId: uiUtilsWrapAsTemplate( "voiceRoleId" ),
+    voiceRoleDisplay: uiUtilsWrapAsTemplate( "voiceRoleDisplay" ),
+    voiceRoleGuild: uiUtilsWrapAsTemplate( "voiceRoleGuild" ),
+    voiceRoleNone: uiUtilsWrapAsTemplate( "voiceRoleNone" ),
+
     dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
 };
 
@@ -73,6 +78,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         "**_🔑 Staff Roles_**\n\n" +
         "▹ " +
         vars.staffRolesDisplay +
+        "\n\n" +
+        "**_🎙️ Voice Role_**\n\n" +
+        "▹ " +
+        vars.voiceRoleDisplay +
         "\n\n" +
         "**_⚙️ Configuration_**\n\n" +
         "@ ∙ Mention user in primary message: " +
@@ -121,6 +130,12 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         staffRolesDisplay: {
             [ vars.staffRoles ]: vars.staffRoles,
             [ vars.staffRolesNone ]: "**None**"
+        },
+
+        voiceRoleDisplay: {
+            [ vars.voiceRoleId ]: `<@&${ vars.voiceRoleId }>`,
+            [ vars.voiceRoleGuild ]: `<@&${ vars.voiceRoleId }> *(from the server options)*`,
+            [ vars.voiceRoleNone ]: "**None**"
         }
     } ) )
     .setArrayOptions( () => {
@@ -158,6 +173,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             ? args.dynamicChannelStaffRoles
             : [];
 
+        const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,
+            guildVoiceRoleId = args.guildVoiceRoleId as string | null,
+            resolvedVoiceRoleId = ownVoiceRoleId || guildVoiceRoleId;
+
         return {
             index: args.index + 1,
             masterChannelId: args.masterChannelId,
@@ -169,6 +188,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
 
             ...( staffRoles.length ? { staffRoles } : {} ),
             staffRolesDisplay: staffRoles.length ? vars.staffRoles : vars.staffRolesNone,
+
+            ...( resolvedVoiceRoleId ? { voiceRoleId: resolvedVoiceRoleId } : {} ),
+            voiceRoleDisplay: ownVoiceRoleId
+                ? vars.voiceRoleId
+                : ( guildVoiceRoleId ? vars.voiceRoleGuild : vars.voiceRoleNone ),
 
             configUserMention: args.dynamicChannelMentionable
                 ? vars.configUserMentionEnabled

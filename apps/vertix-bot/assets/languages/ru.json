@@ -47,6 +47,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/SetupServerOptionsEditButton",
+        "content": {
+          "label": "Изменить настройки сервера"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
           "label": "Пригласить VoiceChannels"
@@ -574,6 +580,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/VoiceRoleMenu",
+        "content": {
+          "placeholder": "🎙️ ∙ Выберите голосовую роль"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Выберите кнопки",
@@ -666,6 +678,9 @@
             },
             {
               "label": "∙ Изменить роли персонала канала"
+            },
+            {
+              "label": "∙ Изменить голосовую роль канала"
             }
           ]
         }
@@ -847,6 +862,9 @@
             },
             {
               "label": "∙ Изменить роли персонала канала"
+            },
+            {
+              "label": "∙ Изменить голосовую роль канала"
             }
           ]
         }
@@ -943,6 +961,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/UnassignableRoleEmbed",
+      "content": {
+        "title": "🎙️  Эту роль нельзя использовать",
+        "description": "Роль <@&{roleId}> сохранена, но бот не может её выдать - {reason}.\n\nПереместите роль самого бота выше в **Настройках сервера → Роли**, или выберите другую роль."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NothingChangedEmbed",
       "content": {
         "title": "🤷  Ничего не изменилось",
@@ -967,7 +992,7 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Настройка VoiceChannels",
-        "description": "Откройте для себя безграничные возможности **VoiceChannels**!\nНастройте и оптимизируйте свой сервер до совершенства.\n\nЧтобы создать новый мастер-канал, просто нажмите:\n`(➕ Создать мастер-канал)` кнопку.\n\nМастер-каналы — это генераторы динамических голосовых каналов, каждый со своей уникальной конфигурацией.\n\nНаша функция запрещённых слов позволяет настраивать ограничения на уровне сервера для названий динамических каналов.\n\n_**Текущие мастер-каналы**_:\n{masterChannelMessage}\n\n_Текущие запрещённые слова_:\n{badwordsMessage}\n\n-# 💡 Вы можете установить канал логов, редактируя мастер-канал.\n",
+        "description": "Откройте для себя безграничные возможности **VoiceChannels**!\nНастройте и оптимизируйте свой сервер до совершенства.\n\nЧтобы создать новый мастер-канал, просто нажмите:\n`(➕ Создать мастер-канал)` кнопку.\n\nМастер-каналы — это генераторы динамических голосовых каналов, каждый со своей уникальной конфигурацией.\n\nНаша функция запрещённых слов позволяет настраивать ограничения на уровне сервера для названий динамических каналов.\n\n_**Текущие мастер-каналы**_:\n{masterChannelMessage}\n\n_**Запрещённые слова сервера**_:\n{badwordsMessage}\n\n_**Голосовая роль сервера**_:\n{voiceRoleMessage}\n\n-# 💡 Вы можете установить канал логов, редактируя мастер-канал.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -977,7 +1002,11 @@
             "{badwords}": "`{badwords}`",
             "{badwordsMessageDefault}": "**Нет**"
           },
-          "none": "**Нет**"
+          "none": "**Нет**",
+          "voiceRoleMessage": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleMessageDefault}": "**Нет**"
+          }
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1598,7 +1627,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -1622,6 +1651,11 @@
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**Нет**"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
+            "{voiceRoleNone}": "**Нет**"
           }
         },
         "arrayOptions": {
@@ -1667,6 +1701,21 @@
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  Редактирование голосовой роли мастер-канала #{index}",
+        "description": "Участник держит эту роль только пока находится в динамическом канале этого мастер-канала, и теряет её сразу после выхода.\n\nИспользуйте её, чтобы показывать текстовый канал тем, кто сейчас в голосовом, или чтобы группировать их в списке участников.\n\nЕсли оставить пустым, применяется голосовая роль всего сервера.\n\n**_Текущая голосовая роль_**\n\n> {voiceRoleDisplay}",
+        "footer": "Примечание: роль самого бота должна быть выше выдаваемой роли, иначе Discord откажет.",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
+            "{voiceRoleNone}": "**Нет**"
           }
         }
       }
@@ -2465,7 +2514,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -2489,6 +2538,11 @@
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**Нет**"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
+            "{voiceRoleNone}": "**Нет**"
           }
         },
         "arrayOptions": {
@@ -2536,6 +2590,21 @@
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  Редактирование голосовой роли мастер-канала #{index}",
+        "description": "Участник держит эту роль только пока находится в динамическом канале этого мастер-канала, и теряет её сразу после выхода.\n\nИспользуйте её, чтобы показывать текстовый канал тем, кто сейчас в голосовом, или чтобы группировать их в списке участников.\n\nЕсли оставить пустым, применяется голосовая роль всего сервера.\n\n**_Текущая голосовая роль_**\n\n> {voiceRoleDisplay}",
+        "footer": "Примечание: роль самого бота должна быть выше выдаваемой роли, иначе Discord откажет.",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
+            "{voiceRoleNone}": "**Нет**"
           }
         }
       }

@@ -998,7 +998,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelNameTemplate: newName,
             // Configured after setup, through the edit screen.
             dynamicChannelStaffRoles: [],
-            dynamicChannelVerifiedRoles: newVerifiedRoles
+            dynamicChannelVerifiedRoles: newVerifiedRoles,
+            // Unset defers to the guild wide voice role.
+            dynamicChannelVoiceRoleId: null
         } );
 
         // TODO: Duplicate code.

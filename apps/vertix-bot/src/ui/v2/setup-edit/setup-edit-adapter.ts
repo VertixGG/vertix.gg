@@ -1,5 +1,6 @@
 import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 
@@ -10,6 +11,7 @@ import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions"
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
 import { warnOnMissingLogsChannelPermissions } from "@vertix.gg/bot/src/ui/general/logs-channel/logs-channel-utils";
+import { warnOnUnassignableVoiceRole } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-utils";
 
 import {
     verifiedRolesFromEveryoneRole,
@@ -110,6 +112,10 @@ async function onSelectEditOptionSelected(
 
         case "edit-dynamic-channel-staff-roles":
             await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditStaffRoles" );
+            break;
+
+        case "edit-dynamic-channel-voice-role":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVoiceRole" );
             break;
     }
 }
@@ -359,6 +365,29 @@ async function onLogChannelSelected(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 }
 
+async function onVoiceRoleSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+    const roleId = interaction.values.at( 0 ) ?? null;
+
+    args.dynamicChannelVoiceRoleId = roleId;
+
+    const masterChannelDB = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V2
+    } as ChannelExtended;
+
+    await MasterChannelDataManager.$.setChannelVoiceRoleId( masterChannelDB, interaction.guildId, roleId );
+
+    context.setArgs( interaction, args );
+
+    await warnOnUnassignableVoiceRole( interaction, roleId );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVoiceRole" );
+}
+
 async function onStaffRolesSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
@@ -453,6 +482,12 @@ async function onBackButtonClicked(
         version: VERSION_UI_V2
     } as ChannelExtended;
 
+    if ( "VertixBot/UI-V2/SetupEditVoiceRole" === context.getCurrentExecutionStep( interaction )?.name ) {
+        await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
+
+        return;
+    }
+
     if ( "VertixBot/UI-V2/SetupEditStaffRoles" === context.getCurrentExecutionStep( interaction )?.name ) {
         args[ keys.dynamicChannelStaffRoles ] = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
 
@@ -540,6 +575,12 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 elementsGroup: "VertixBot/UI-V2/SetupEditVerifiedRolesElementsGroup",
                 embedsGroup: "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup"
             } )
+            .addState( "VoiceRole", {
+                executionStep: "VertixBot/UI-V2/SetupEditVoiceRole",
+                previewDefaultVars: { view: "Voice role configuration" },
+                elementsGroup: "VertixBot/UI-V2/SetupEditVoiceRoleElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditVoiceRoleEmbedGroup"
+            } )
             .addState( "StaffRoles", {
                 executionStep: "VertixBot/UI-V2/SetupEditStaffRoles",
                 previewDefaultVars: { view: "Staff roles configuration" },
@@ -551,6 +592,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "OpenButtons", { from: "MasterOverview", to: "Buttons" } )
             .addTransition( "OpenVerifiedRoles", { from: "MasterOverview", to: "VerifiedRoles" } )
             .addTransition( "OpenStaffRoles", { from: "MasterOverview", to: "StaffRoles" } )
+            .addTransition( "OpenVoiceRole", { from: "MasterOverview", to: "VoiceRole" } )
             .addTransition( "OpenNameModal", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "NameTemplateSubmitted", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "ConfigExtrasUpdated", { from: "MasterOverview", to: "MasterOverview" } )
@@ -567,6 +609,8 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "FinishVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
             .addTransition( "StaffRolesUpdated", { from: "StaffRoles", to: "StaffRoles" } )
             .addTransition( "BackFromStaffRoles", { from: "StaffRoles", to: "MasterOverview" } )
+            .addTransition( "VoiceRoleUpdated", { from: "VoiceRole", to: "VoiceRole" } )
+            .addTransition( "BackFromVoiceRole", { from: "VoiceRole", to: "MasterOverview" } )
             // Handler bindings
             .bindButton<UIDefaultButtonChannelTextInteraction>(
                 "VertixBot/UI-General/SetupMasterEditSelectMenu",
@@ -612,6 +656,11 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "VertixBot/UI-General/StaffRolesMenu",
                 "StaffRolesUpdated",
                 onStaffRolesSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/VoiceRoleMenu",
+                "VoiceRoleUpdated",
+                onVoiceRoleSelected
             )
             .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
                 "VertixBot/UI-General/VerifiedRolesMenu",
@@ -682,12 +731,15 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelButtonsTemplate,
                 masterChannelKeys.dynamicChannelMentionable,
                 masterChannelKeys.dynamicChannelVerifiedRoles,
-                masterChannelKeys.dynamicChannelStaffRoles
+                masterChannelKeys.dynamicChannelStaffRoles,
+                masterChannelKeys.dynamicChannelVoiceRoleId
             ];
 
             selectedKeys.forEach( ( key ) => {
                 args[ key ] = masterChannelSettings[ key ];
             } );
+
+            args.guildVoiceRoleId = await GuildDataManager.$.getVoiceRoleId( masterChannelDB.guildId );
         } else {
             const guildId = interaction?.guild?.id || "";
             args.masterChannels = await ChannelModel.$.getMasters( guildId, "settings" );

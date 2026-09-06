@@ -27,6 +27,14 @@ export const SETUP_EDIT_STAFF_ROLES_EMBED_VARS = {
     staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" )
 };
 
+export const SETUP_EDIT_VOICE_ROLE_EMBED_VARS = {
+    index: uiUtilsWrapAsTemplate( "index" ),
+    voiceRoleId: uiUtilsWrapAsTemplate( "voiceRoleId" ),
+    voiceRoleDisplay: uiUtilsWrapAsTemplate( "voiceRoleDisplay" ),
+    voiceRoleGuild: uiUtilsWrapAsTemplate( "voiceRoleGuild" ),
+    voiceRoleNone: uiUtilsWrapAsTemplate( "voiceRoleNone" )
+};
+
 export const SETUP_EDIT_EMBED_VARS = {
     separator: "{separator}",
     value: "{value}",
@@ -56,6 +64,10 @@ export const SETUP_EDIT_EMBED_VARS = {
     staffRoles: uiUtilsWrapAsTemplate( "staffRoles" ),
     staffRolesDisplay: uiUtilsWrapAsTemplate( "staffRolesDisplay" ),
     staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" ),
+    voiceRoleId: uiUtilsWrapAsTemplate( "voiceRoleId" ),
+    voiceRoleDisplay: uiUtilsWrapAsTemplate( "voiceRoleDisplay" ),
+    voiceRoleGuild: uiUtilsWrapAsTemplate( "voiceRoleGuild" ),
+    voiceRoleNone: uiUtilsWrapAsTemplate( "voiceRoleNone" ),
 
     // Button display labels
     labelDefaultSettings: uiUtilsWrapAsTemplate( "labelDefaultSettings" ),

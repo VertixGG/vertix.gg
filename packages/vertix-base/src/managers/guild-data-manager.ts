@@ -4,7 +4,8 @@ import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 
 import {
     DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
-    DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE
+    DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
+    DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE
 } from "@vertix.gg/definitions/src/guild-data-keys";
 
 import {
@@ -132,6 +133,53 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
                 `🌍  Language has been modified - "${ language }" (${ guild.name }) (${ guild.memberCount })`
             );
         }
+    }
+
+    /**
+     * Function getVoiceRoleId() :: The guild wide default voice role, or null when unset.
+     *
+     * `default: null` keeps `getData` from creating the row on a read, so a guild that never set
+     * one stays unset instead of gaining an empty row the first time anyone joins a channel.
+     */
+    public async getVoiceRoleId( guildId: string ): Promise<string | null> {
+        const result = await this.getData(
+            {
+                ownerId: guildId,
+                key: DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE,
+                default: null,
+                cache: true
+            },
+            true
+        );
+
+        return result?.values?.[ 0 ] ?? null;
+    }
+
+    public async setVoiceRoleId( guildId: string, roleId: string | null, shouldAdminLog = true ) {
+        const previousRoleId = await this.getVoiceRoleId( guildId );
+
+        if ( ! roleId ) {
+            await this.deleteData( { ownerId: guildId, key: DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE }, true );
+        } else {
+            await this.setData(
+                {
+                    ownerId: guildId,
+                    key: DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE,
+                    default: roleId,
+                    cache: true
+                },
+                true
+            );
+        }
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setVoiceRoleId,
+                `🎙️  Voice role modified - guildId: "${ guildId }", "${ previousRoleId }" => "${ roleId }"`
+            );
+        }
+
+        return { previousRoleId, roleId };
     }
 
     public async hasSomeBadword( guildId: string, content: string ) {

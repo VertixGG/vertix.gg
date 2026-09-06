@@ -11,6 +11,7 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 import { gToken } from "@vertix.gg/base/src/discord/login";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+
 import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
 import { UserModel } from "@vertix.gg/base/src/models/user-model";
@@ -42,6 +43,8 @@ import {
     VAR_DYNAMIC_CHANNEL_STATE,
     VAR_DYNAMIC_CHANNEL_USER
 } from "@vertix.gg/definitions/src/dynamic-channel-vars-definitions";
+
+import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
 
 import { GuildCustomizationManager } from "@vertix.gg/bot/src/managers/guild-customization-manager";
 
@@ -389,6 +392,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const { oldState, newState, displayName, channelName } = args,
             { guild } = oldState;
 
+        await VoiceRoleManager.$.syncMember( oldState, newState );
+
         this.logger.info(
             this.onJoinDynamicChannel,
             `Guild id: '${ guild.id }' - User '${ displayName }' join dynamic channel '${ channelName }'`
@@ -402,8 +407,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     public async onLeaveDynamicChannel( args: IChannelLeaveGenericArgs ) {
-        const { oldState, displayName, channelName } = args,
+        const { oldState, newState, displayName, channelName } = args,
             { guild } = oldState;
+
+        await VoiceRoleManager.$.syncMember( oldState, newState );
 
         this.logger.info(
             this.onLeaveDynamicChannel,

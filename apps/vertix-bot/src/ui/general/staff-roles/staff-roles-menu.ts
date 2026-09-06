@@ -18,7 +18,7 @@ export class StaffRolesMenu extends UIElementRoleSelectMenu {
     }
 
     protected async getPlaceholder() {
-        return "🛠️ ∙ Select Staff Roles";
+        return "🔑 ∙ Select Staff Roles";
     }
 
     protected async getMinValues() {

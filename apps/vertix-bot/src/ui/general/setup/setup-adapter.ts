@@ -460,6 +460,10 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 .map( ( roleId: string ) => `<@&${ roleId }>` )
                 .join( ", " ) || "@@everyone";
 
+            const staffRolesDisplay = ( data.dynamicChannelStaffRoles || [] )
+                .map( ( roleId: string ) => `<@&${ roleId }>` )
+                .join( ", " ) || vars.none;
+
             const nameTemplate = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
             const logsDisplay = data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none;
             const autoSaveDisplay = String( data.dynamicChannelAutoSave ?? "false" );
@@ -471,6 +475,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 `${ vars.labelDynamicChannelsName } \`${ nameTemplate }\``,
                 `${ vars.labelButtons } **${ buttonsDisplay }**`,
                 `${ vars.labelVerifiedRoles } ${ rolesDisplay }`,
+                `${ vars.labelStaffRoles } ${ staffRolesDisplay }`,
                 `${ vars.labelLogsChannel } ${ logsDisplay }`,
                 `${ vars.labelAutoSave } \`${ autoSaveDisplay }\``,
                 `${ vars.labelVersion } \`${ version }\``
@@ -502,6 +507,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         labelDynamicChannelsName: "▹ Dynamic Channels Name:",
         labelButtons: "▹ Buttons:",
         labelVerifiedRoles: "▹ Verified Roles:",
+        labelStaffRoles: "▹ Staff Roles:",
         labelLogsChannel: "▹ Logs Channel:",
         labelAutoSave: "▹ Auto Save:",
         labelVersion: "▹ UI Version:",

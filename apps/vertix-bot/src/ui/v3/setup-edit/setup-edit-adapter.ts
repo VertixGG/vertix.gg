@@ -49,6 +49,7 @@ import {
     SETUP_EDIT_BUTTONS_EFFECT_EMBED_VARS,
     SETUP_EDIT_BUTTONS_EMBED_VARS,
     SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS,
+    SETUP_EDIT_STAFF_ROLES_EMBED_VARS,
     SETUP_EDIT_EMBED_VARS
 } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-definitions";
 
@@ -155,6 +156,43 @@ const SetupEditVerifiedRolesEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEdit
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
+const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_STAFF_ROLES_EMBED_VARS>( "VertixBot/UI-V3/SetupEditStaffRolesEmbed", SETUP_EDIT_STAFF_ROLES_EMBED_VARS )
+    .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setImage( UI_IMAGE_EMPTY_LINE_URL )
+    .setTitle( ( v ) => `🔑  Edit Staff Roles Of Master Channel #${ v.index }` )
+    .setDescription( ( v ) =>
+        "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\n" +
+        `A role selected here keeps access to every dynamic channel of Master Channel #${ v.index }, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\n` +
+        "Leave it empty if nobody should bypass the owner.\n\n" +
+        `**_Current Staff Roles_**\n\n> ${ v.staffRolesDisplay }`
+    )
+    .setFooterText( () =>
+        "Note: The changes are applied immediately to the existing dynamic channels."
+    )
+    .setOptions( ( v ) => ( {
+        staffRolesDisplay: {
+            [ v.staffRoles ]: v.staffRoles,
+            [ v.staffRolesNone ]: "**None**"
+        }
+    } ) )
+    .setArrayOptions( {
+        staffRoles: {
+            format: "<@&{value}>{separator}",
+            separator: ", "
+        }
+    } )
+    .setLogic( ( args, v ) => {
+        const staffRoles = ( args.dynamicChannelStaffRoles as string[] ) || [];
+
+        return {
+            index: ( args.index || 0 ) + 1,
+            ...( staffRoles.length ? { staffRoles } : {} ),
+            staffRolesDisplay: staffRoles.length ? v.staffRoles : v.staffRolesNone
+        };
+    } )
+    .setInstanceType( UIInstancesTypes.Dynamic )
+    .build();
+
 const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "VertixBot/UI-V3/SetupEditEmbed", SETUP_EDIT_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
@@ -169,7 +207,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         "**_🎚 Buttons Interface_**\n\n" +
         `${ v.dynamicChannelButtonsTemplate }\n\n` +
         `**_🛡️ Verified Roles_**\n\n▹ ${ v.verifiedRoles }\n\n` +
-        `**_🛠️ Staff Roles_**\n\n▹ ${ v.staffRolesDisplay }\n\n` +
+        `**_🔑 Staff Roles_**\n\n▹ ${ v.staffRolesDisplay }\n\n` +
         "**_⚙️ Configuration_**\n\n" +
         `@ ∙ Mention user in primary message: ${ v.configUserMention }\n` +
         `⫸ ∙ Auto save dynamic channels: ${ v.configAutoSave }\n` +
@@ -276,7 +314,6 @@ const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupE
     .addRow( [ SetupEditSelectEditOptionMenu ] )
     .addRow( [ ConfigExtrasSelectMenu ] )
     .addRow( [ LogChannelSelectMenu ] )
-    .addRow( [ StaffRolesMenu ] )
     .addRow( [ DoneButton, DeleteButton ] )
     .build();
 
@@ -302,15 +339,25 @@ const SetupEditVerifiedRolesElementsGroup = new ElementsGroupBuilder( "VertixBot
     } )
     .build();
 
+const SetupEditStaffRolesElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditStaffRolesElementsGroup" )
+    .setItems( () => {
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const { WizardBackButton } = uiService.$$.getSystemElements();
+        return [ [ StaffRolesMenu ], [ WizardBackButton ] ];
+    } )
+    .build();
+
 const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ConfigComponent" )
     .addElementsGroup( SetupEditElementsGroup )
     .addElementsGroup( SetupEditButtonsElementsGroup )
     .addElementsGroup( SetupEditButtonsEffectElementsGroup )
     .addElementsGroup( SetupEditVerifiedRolesElementsGroup )
+    .addElementsGroup( SetupEditStaffRolesElementsGroup )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditStaffRolesEmbed ) )
     .addModal( ChannelNameTemplateModal )
     .addModal( DeleteConfirmModal )
     .setDefaultElementsGroup( "VertixBot/UI-V3/SetupEditElementsGroup" )
@@ -377,6 +424,10 @@ async function onSelectEditOptionSelected(
 
         case "edit-dynamic-channel-verified-roles":
             await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVerifiedRoles" );
+            break;
+
+        case "edit-dynamic-channel-staff-roles":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditStaffRoles" );
             break;
     }
 }
@@ -763,6 +814,8 @@ async function onStaffRolesSelected(
 
     await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
         .updateStaffRolesPermissions( interaction.guildId, args.masterChannelId, previousRoles, staffRoles );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditStaffRoles" );
 }
 
 async function onVerifiedRolesSelected(
@@ -830,6 +883,17 @@ async function onBackButtonClicked(
         version: VERSION_UI_V3
     };
 
+    if ( "VertixBot/UI-V3/SetupEditStaffRoles" === context.getCurrentExecutionStep( interaction )?.name ) {
+        ( args as UIArgs )[ keys.dynamicChannelStaffRoles ] =
+            await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB ) as unknown;
+
+        context.setArgs( interaction, args );
+
+        await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
+
+        return;
+    }
+
     const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, interaction.guild.id );
 
     if ( verifiedRoles?.length && verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
@@ -840,6 +904,7 @@ async function onBackButtonClicked(
 
     context.setArgs( interaction, args );
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onFinishButtonClicked(
@@ -869,6 +934,8 @@ async function onFinishButtonClicked(
 
     await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
         .updateVerifiedRolesPermissions( interaction.guildId, args.masterChannelId, previousRoles, currentRoles );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interactions>( "VertixBot/UI-V3/SetupEditAdapter" )
@@ -915,15 +982,21 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 embedsGroup: "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup",
                 previewDefaultVars: { index: "1" }
             } )
+            .addState( "EditStaffRoles", {
+                executionStep: "VertixBot/UI-V3/SetupEditStaffRoles",
+                elementsGroup: "VertixBot/UI-V3/SetupEditStaffRolesElementsGroup",
+                embedsGroup: "VertixBot/UI-V3/SetupEditStaffRolesEmbedGroup",
+                previewDefaultVars: { index: "1", staffRolesDisplay: "**None**" }
+            } )
             // Transitions from Default
             .addTransition( "SelectMasterChannel", { from: "Default", to: "EditMaster" } )
             // Transitions from EditMaster
             .addTransition( "OpenEditButtons", { from: "EditMaster", to: "EditButtons" } )
             .addTransition( "OpenEditVerifiedRoles", { from: "EditMaster", to: "EditVerifiedRoles" } )
+            .addTransition( "OpenEditStaffRoles", { from: "EditMaster", to: "EditStaffRoles" } )
             .addTransition( "EditChannelName", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "ConfigExtrasChanged", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "LogChannelChanged", { from: "EditMaster", to: "EditMaster" } )
-            .addTransition( "StaffRolesChanged", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "Done", { from: "EditMaster", to: "Default" } )
             .addTransition( "Delete", { from: "EditMaster", to: "Default" } )
             // Transitions from EditButtons
@@ -939,6 +1012,9 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "VerifiedRolesSelected", { from: "EditVerifiedRoles", to: "EditVerifiedRoles" } )
             .addTransition( "VerifiedRolesBack", { from: "EditVerifiedRoles", to: "EditMaster" } )
             .addTransition( "VerifiedRolesFinish", { from: "EditVerifiedRoles", to: "EditMaster" } )
+            // Transitions from EditStaffRoles
+            .addTransition( "StaffRolesChanged", { from: "EditStaffRoles", to: "EditStaffRoles" } )
+            .addTransition( "StaffRolesBack", { from: "EditStaffRoles", to: "EditMaster" } )
             .addEdgeSourceMapping( {
                 triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
                 transitionName: "OpenEditButtons",
@@ -947,6 +1023,11 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addEdgeSourceMapping( {
                 triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
                 transitionName: "OpenEditVerifiedRoles",
+                targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                transitionName: "OpenEditStaffRoles",
                 targetFlowName: "VertixBot/UI-V3/SetupEditFlow"
             } )
             .addEdgeSourceMapping( {

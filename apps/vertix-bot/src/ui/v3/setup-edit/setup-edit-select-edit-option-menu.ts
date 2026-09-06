@@ -39,6 +39,11 @@ export class SetupEditSelectEditOptionMenu extends UIElementStringSelectMenu {
                 label: "∙ Edit Channel's Verified Roles",
                 value: "edit-dynamic-channel-verified-roles",
                 emoji: "🛡️" as any
+            },
+            {
+                label: "∙ Edit Channel's Staff Roles",
+                value: "edit-dynamic-channel-staff-roles",
+                emoji: "🔑" as any
             }
         ];
     }

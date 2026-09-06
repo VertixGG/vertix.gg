@@ -18,15 +18,20 @@ import { SetupEditButtonsEffectEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit
 import { SetupEditVerifiedRolesElementsGroup } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-verified-roles/setup-edit-verified-roles-elements-group";
 import { SetupEditVerifiedRolesEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-verified-roles/setup-edit-verified-roles-embed";
 
+import { SetupEditStaffRolesElementsGroup } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-staff-roles/setup-edit-staff-roles-elements-group";
+import { SetupEditStaffRolesEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-staff-roles/setup-edit-staff-roles-embed";
+
 const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V2/ConfigComponent" )
     .addElementsGroup( SetupEditElementsGroup )
     .addElementsGroup( SetupEditButtonsElementsGroup )
     .addElementsGroup( SetupEditButtonsEffectElementsGroup )
     .addElementsGroup( SetupEditVerifiedRolesElementsGroup )
+    .addElementsGroup( SetupEditStaffRolesElementsGroup )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditStaffRolesEmbed ) )
     .addModal( ChannelNameTemplateModal )
     .addModal( DeleteConfirmModal )
     .setDefaultElementsGroup( "VertixBot/UI-V2/SetupEditElementsGroup" )

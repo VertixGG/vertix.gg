@@ -546,7 +546,7 @@
       {
         "name": "VertixBot/UI-General/StaffRolesMenu",
         "content": {
-          "placeholder": "🛠️ ∙ Выберите роли персонала"
+          "placeholder": "🔑 ∙ Выберите роли персонала"
         }
       },
       {
@@ -663,6 +663,9 @@
             },
             {
               "label": "∙ Изменить проверенные роли канала"
+            },
+            {
+              "label": "∙ Изменить роли персонала канала"
             }
           ]
         }
@@ -841,6 +844,9 @@
             },
             {
               "label": "∙ Изменить проверенные роли канала"
+            },
+            {
+              "label": "∙ Изменить роли персонала канала"
             }
           ]
         }
@@ -1578,7 +1584,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -1624,6 +1630,26 @@
             "format": "<@&{value}>{separator}",
             "separator": ", "
           },
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Редактирование ролей персонала мастер-канала #{index}",
+        "description": "Роли персонала — зеркало проверенных ролей: проверенные роли это аудитория, которую канал может закрыть, а роли персонала — те, кого он закрыть не может.\n\nВыбранная здесь роль сохраняет доступ ко всем динамическим каналам мастер-канала #{index} при любом состоянии приватности, которое выберет владелец, так что модератор попадёт в приватный или скрытый канал без отдельного приглашения.\n\nОставьте список пустым, если никто не должен обходить владельца.\n\n**_Текущие роли персонала_**\n\n> {staffRolesDisplay}",
+        "footer": "Примечание: изменения применяются к существующим динамическим каналам сразу.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Нет**"
+          }
+        },
+        "arrayOptions": {
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
@@ -2425,7 +2451,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -2473,6 +2499,26 @@
             "format": "<@&{value}>{separator}",
             "separator": ", "
           },
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Редактирование ролей персонала мастер-канала #{index}",
+        "description": "Роли персонала — зеркало проверенных ролей: проверенные роли это аудитория, которую канал может закрыть, а роли персонала — те, кого он закрыть не может.\n\nВыбранная здесь роль сохраняет доступ ко всем динамическим каналам мастер-канала #{index} при любом состоянии приватности, которое выберет владелец, так что модератор попадёт в приватный или скрытый канал без отдельного приглашения.\n\nОставьте список пустым, если никто не должен обходить владельца.\n\n**_Текущие роли персонала_**\n\n> {staffRolesDisplay}",
+        "footer": "Примечание: изменения применяются к существующим динамическим каналам сразу.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Нет**"
+          }
+        },
+        "arrayOptions": {
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "

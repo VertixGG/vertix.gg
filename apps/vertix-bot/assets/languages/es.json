@@ -546,7 +546,7 @@
       {
         "name": "VertixBot/UI-General/StaffRolesMenu",
         "content": {
-          "placeholder": "🛠️ ∙ Seleccionar roles del staff"
+          "placeholder": "🔑 ∙ Seleccionar roles del staff"
         }
       },
       {
@@ -663,6 +663,9 @@
             },
             {
               "label": "∙ Editar roles verificados del canal"
+            },
+            {
+              "label": "∙ Editar roles del staff del canal"
             }
           ]
         }
@@ -841,6 +844,9 @@
             },
             {
               "label": "∙ Editar roles verificados del canal"
+            },
+            {
+              "label": "∙ Editar roles del staff del canal"
             }
           ]
         }
@@ -1565,6 +1571,26 @@
       }
     },
     {
+      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Editar los roles del staff del canal maestro #{index}",
+        "description": "Los roles del staff son el reflejo de los roles verificados: los roles verificados son la audiencia que un canal puede dejar fuera, los roles del staff son los que nunca puede dejar fuera.\n\nUn rol seleccionado aquí mantiene el acceso a todos los canales dinámicos del canal maestro #{index}, sea cual sea el estado de privacidad que elija su propietario, de modo que un moderador puede entrar en un canal privado u oculto sin que lo admitan de uno en uno.\n\nDéjalo vacío si nadie debe saltarse al propietario.\n\n**_Roles del staff actuales_**\n\n> {staffRolesDisplay}",
+        "footer": "Nota: los cambios se aplican de inmediato a los canales dinámicos existentes.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Ninguno**"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Editar los roles verificados del canal maestro #{index}",
@@ -1684,7 +1710,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurar el canal maestro #{index}",
-        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
+        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
         "footer": "Nota: cambiar la mención de usuario no afectará a los canales dinámicos ya creados.",
         "options": {
           "on": "`🟢∙Sí`",
@@ -2188,7 +2214,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurar el canal maestro #{index}",
-        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
+        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
         "footer": "Nota: cambiar la mención de usuario no afectará a los canales dinámicos ya creados.",
         "options": {
           "on": "`🟢∙Sí`",
@@ -2300,6 +2326,26 @@
               "7": "😈 ∙ **Claim**",
               "12": "🔀 ∙ **Transfer**"
             }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Editar los roles del staff del canal maestro #{index}",
+        "description": "Los roles del staff son el reflejo de los roles verificados: los roles verificados son la audiencia que un canal puede dejar fuera, los roles del staff son los que nunca puede dejar fuera.\n\nUn rol seleccionado aquí mantiene el acceso a todos los canales dinámicos del canal maestro #{index}, sea cual sea el estado de privacidad que elija su propietario, de modo que un moderador puede entrar en un canal privado u oculto sin que lo admitan de uno en uno.\n\nDéjalo vacío si nadie debe saltarse al propietario.\n\n**_Roles del staff actuales_**\n\n> {staffRolesDisplay}",
+        "footer": "Nota: los cambios se aplican de inmediato a los canales dinámicos existentes.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Ninguno**"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
           }
         }
       }

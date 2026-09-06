@@ -70,7 +70,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         "▹ " +
         vars.verifiedRoles +
         "\n\n" +
-        "**_🛠️ Staff Roles_**\n\n" +
+        "**_🔑 Staff Roles_**\n\n" +
         "▹ " +
         vars.staffRolesDisplay +
         "\n\n" +

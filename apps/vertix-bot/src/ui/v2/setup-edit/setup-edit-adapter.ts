@@ -107,6 +107,10 @@ async function onSelectEditOptionSelected(
         case "edit-dynamic-channel-verified-roles":
             await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVerifiedRoles" );
             break;
+
+        case "edit-dynamic-channel-staff-roles":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditStaffRoles" );
+            break;
     }
 }
 
@@ -386,7 +390,7 @@ async function onStaffRolesSelected(
     await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
         .updateStaffRolesPermissions( interaction.guildId, args.masterChannelId, previousRoles, staffRoles );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditStaffRoles" );
 }
 
 async function onVerifiedRolesSelected(
@@ -448,6 +452,16 @@ async function onBackButtonClicked(
         id: args.ChannelDBId,
         version: VERSION_UI_V2
     } as ChannelExtended;
+
+    if ( "VertixBot/UI-V2/SetupEditStaffRoles" === context.getCurrentExecutionStep( interaction )?.name ) {
+        args[ keys.dynamicChannelStaffRoles ] = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+
+        context.setArgs( interaction, args );
+
+        await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
+
+        return;
+    }
 
     const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles(
         masterChannelDB,
@@ -526,15 +540,21 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 elementsGroup: "VertixBot/UI-V2/SetupEditVerifiedRolesElementsGroup",
                 embedsGroup: "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup"
             } )
+            .addState( "StaffRoles", {
+                executionStep: "VertixBot/UI-V2/SetupEditStaffRoles",
+                previewDefaultVars: { view: "Staff roles configuration" },
+                elementsGroup: "VertixBot/UI-V2/SetupEditStaffRolesElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditStaffRolesEmbedGroup"
+            } )
             // Transitions
             .addTransition( "SelectMaster", { from: "SelectMaster", to: "MasterOverview" } )
             .addTransition( "OpenButtons", { from: "MasterOverview", to: "Buttons" } )
             .addTransition( "OpenVerifiedRoles", { from: "MasterOverview", to: "VerifiedRoles" } )
+            .addTransition( "OpenStaffRoles", { from: "MasterOverview", to: "StaffRoles" } )
             .addTransition( "OpenNameModal", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "NameTemplateSubmitted", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "ConfigExtrasUpdated", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "LogChannelUpdated", { from: "MasterOverview", to: "MasterOverview" } )
-            .addTransition( "StaffRolesUpdated", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "DeleteConfirmed", { from: "MasterOverview", to: "SelectMaster" } )
             .addTransition( "Done", { from: "MasterOverview", to: "SelectMaster" } )
             .addTransition( "ShowButtonsEffect", { from: "Buttons", to: "ButtonsEffect" } )
@@ -545,6 +565,8 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "VerifiedRolesEveryoneToggled", { from: "VerifiedRoles", to: "VerifiedRoles" } )
             .addTransition( "BackFromVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
             .addTransition( "FinishVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
+            .addTransition( "StaffRolesUpdated", { from: "StaffRoles", to: "StaffRoles" } )
+            .addTransition( "BackFromStaffRoles", { from: "StaffRoles", to: "MasterOverview" } )
             // Handler bindings
             .bindButton<UIDefaultButtonChannelTextInteraction>(
                 "VertixBot/UI-General/SetupMasterEditSelectMenu",

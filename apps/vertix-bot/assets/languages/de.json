@@ -546,7 +546,7 @@
       {
         "name": "VertixBot/UI-General/StaffRolesMenu",
         "content": {
-          "placeholder": "🛠️ ∙ Team-Rollen auswählen"
+          "placeholder": "🔑 ∙ Team-Rollen auswählen"
         }
       },
       {
@@ -663,6 +663,9 @@
             },
             {
               "label": "∙ Verifizierte Rollen des Kanals bearbeiten"
+            },
+            {
+              "label": "∙ Team-Rollen des Kanals bearbeiten"
             }
           ]
         }
@@ -841,6 +844,9 @@
             },
             {
               "label": "∙ Verifizierte Rollen des Kanals bearbeiten"
+            },
+            {
+              "label": "∙ Team-Rollen des Kanals bearbeiten"
             }
           ]
         }
@@ -1221,6 +1227,26 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Team-Rollen von Master-Kanal #{index} bearbeiten",
+        "description": "Team-Rollen sind das Gegenstück zu den verifizierten Rollen: Die verifizierten Rollen sind das Publikum, das ein Kanal aussperren kann, die Team-Rollen sind die, die er nie aussperren kann.\n\nEine hier ausgewählte Rolle behält den Zugriff auf jeden dynamischen Kanal von Master-Kanal #{index}, unabhängig davon, welchen Privatsphäre-Status der Besitzer wählt - so erreicht ein Moderator einen privaten oder versteckten Kanal, ohne einzeln eingelassen zu werden.\n\nLass die Liste leer, wenn niemand den Besitzer umgehen soll.\n\n**_Aktuelle Team-Rollen_**\n\n> {staffRolesDisplay}",
+        "footer": "Hinweis: Die Änderungen werden sofort auf die bestehenden dynamischen Kanäle angewendet.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Keine**"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Verifizierte Rollen von Master-Kanal #{index} bearbeiten",
@@ -1244,7 +1270,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Master-Kanal #{index} konfigurieren",
-        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
+        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
         "footer": "Hinweis: Das Ändern der Benutzererwähnung wirkt sich nicht auf bereits erstellte dynamische Kanäle aus.",
         "options": {
           "on": "`🟢∙An`",
@@ -1650,7 +1676,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Master-Kanal #{index} konfigurieren",
-        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
+        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
         "footer": "Hinweis: Das Ändern der Benutzererwähnung wirkt sich nicht auf bereits erstellte dynamische Kanäle aus.",
         "options": {
           "on": "`🟢∙An`",
@@ -2429,6 +2455,26 @@
       "content": {
         "title": "🔀  Kanalbesitz erfolgreich übertragen!",
         "description": "Du bist nicht mehr der Besitzer dieses Kanals."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Team-Rollen von Master-Kanal #{index} bearbeiten",
+        "description": "Team-Rollen sind das Gegenstück zu den verifizierten Rollen: Die verifizierten Rollen sind das Publikum, das ein Kanal aussperren kann, die Team-Rollen sind die, die er nie aussperren kann.\n\nEine hier ausgewählte Rolle behält den Zugriff auf jeden dynamischen Kanal von Master-Kanal #{index}, unabhängig davon, welchen Privatsphäre-Status der Besitzer wählt - so erreicht ein Moderator einen privaten oder versteckten Kanal, ohne einzeln eingelassen zu werden.\n\nLass die Liste leer, wenn niemand den Besitzer umgehen soll.\n\n**_Aktuelle Team-Rollen_**\n\n> {staffRolesDisplay}",
+        "footer": "Hinweis: Die Änderungen werden sofort auf die bestehenden dynamischen Kanäle angewendet.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Keine**"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
       }
     },
     {

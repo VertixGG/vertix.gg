@@ -46,6 +46,7 @@ export const SETUP_EMBED_VARS = {
     labelDynamicChannelsName: uiUtilsWrapAsTemplate( "labelDynamicChannelsName" ),
     labelButtons: uiUtilsWrapAsTemplate( "labelButtons" ),
     labelVerifiedRoles: uiUtilsWrapAsTemplate( "labelVerifiedRoles" ),
+    labelStaffRoles: uiUtilsWrapAsTemplate( "labelStaffRoles" ),
     labelLogsChannel: uiUtilsWrapAsTemplate( "labelLogsChannel" ),
     labelAutoSave: uiUtilsWrapAsTemplate( "labelAutoSave" ),
     labelVersion: uiUtilsWrapAsTemplate( "labelVersion" ),

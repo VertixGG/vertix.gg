@@ -546,7 +546,7 @@
       {
         "name": "VertixBot/UI-General/StaffRolesMenu",
         "content": {
-          "placeholder": "🛠️ ∙ Select Staff Roles"
+          "placeholder": "🔑 ∙ Select Staff Roles"
         }
       },
       {
@@ -663,6 +663,9 @@
             },
             {
               "label": "∙ Edit Channel's Verified Roles"
+            },
+            {
+              "label": "∙ Edit Channel's Staff Roles"
             }
           ]
         }
@@ -841,6 +844,9 @@
             },
             {
               "label": "∙ Edit Channel's Verified Roles"
+            },
+            {
+              "label": "∙ Edit Channel's Staff Roles"
             }
           ]
         }
@@ -1578,7 +1584,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configure Master Channel #{index}",
-        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
         "footer": "Note: Changing user mention will not affect already created dynamic channels.",
         "options": {
           "on": "`🟢∙On`",
@@ -1624,6 +1630,26 @@
             "format": "<@&{value}>{separator}",
             "separator": ", "
           },
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Edit Staff Roles Of Master Channel #{index}",
+        "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeave it empty if nobody should bypass the owner.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
+        "footer": "Note: The changes are applied immediately to the existing dynamic channels.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**None**"
+          }
+        },
+        "arrayOptions": {
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
@@ -2425,7 +2451,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configure Master Channel #{index}",
-        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
         "footer": "Note: Changing user mention will not affect already created dynamic channels.",
         "options": {
           "on": "`🟢∙On`",
@@ -2473,6 +2499,26 @@
             "format": "<@&{value}>{separator}",
             "separator": ", "
           },
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Edit Staff Roles Of Master Channel #{index}",
+        "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeave it empty if nobody should bypass the owner.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
+        "footer": "Note: The changes are applied immediately to the existing dynamic channels.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**None**"
+          }
+        },
+        "arrayOptions": {
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "

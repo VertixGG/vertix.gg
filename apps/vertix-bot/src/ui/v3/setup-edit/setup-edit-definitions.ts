@@ -18,6 +18,15 @@ export const SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS = {
     verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" )
 };
 
+export const SETUP_EDIT_STAFF_ROLES_EMBED_VARS = {
+    separator: "{separator}",
+    value: "{value}",
+    index: uiUtilsWrapAsTemplate( "index" ),
+    staffRoles: uiUtilsWrapAsTemplate( "staffRoles" ),
+    staffRolesDisplay: uiUtilsWrapAsTemplate( "staffRolesDisplay" ),
+    staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" )
+};
+
 export const SETUP_EDIT_EMBED_VARS = {
     separator: "{separator}",
     value: "{value}",

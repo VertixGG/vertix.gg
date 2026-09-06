@@ -546,7 +546,7 @@
       {
         "name": "VertixBot/UI-General/StaffRolesMenu",
         "content": {
-          "placeholder": "🛠️ ∙ スタッフロールを選択"
+          "placeholder": "🔑 ∙ スタッフロールを選択"
         }
       },
       {
@@ -663,6 +663,9 @@
             },
             {
               "label": "∙ チャンネルの認証済みロールを編集"
+            },
+            {
+              "label": "∙ チャンネルのスタッフロールを編集"
             }
           ]
         }
@@ -841,6 +844,9 @@
             },
             {
               "label": "∙ チャンネルの認証済みロールを編集"
+            },
+            {
+              "label": "∙ チャンネルのスタッフロールを編集"
             }
           ]
         }
@@ -1008,7 +1014,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🛠️ スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1236,7 +1242,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🛠️ スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1871,6 +1877,26 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  マスターチャンネル #{index} のスタッフロールを編集",
+        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n所有者を迂回できる人を作らない場合は空のままにしてください。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
+        "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**なし**"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
@@ -2071,6 +2097,26 @@
           "results": {
             "{resultsDefault}": "",
             "{resultsLink}": "\n\n詳細は[こちら]({resultsLink})をクリックしてください"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  マスターチャンネル #{index} のスタッフロールを編集",
+        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n所有者を迂回できる人を作らない場合は空のままにしてください。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
+        "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**なし**"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
           }
         }
       }

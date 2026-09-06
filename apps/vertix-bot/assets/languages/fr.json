@@ -546,7 +546,7 @@
       {
         "name": "VertixBot/UI-General/StaffRolesMenu",
         "content": {
-          "placeholder": "🛠️ ∙ Sélectionner les rôles du staff"
+          "placeholder": "🔑 ∙ Sélectionner les rôles du staff"
         }
       },
       {
@@ -663,6 +663,9 @@
             },
             {
               "label": "∙ Modifier les rôles vérifiés du canal"
+            },
+            {
+              "label": "∙ Modifier les rôles du staff du canal"
             }
           ]
         }
@@ -841,6 +844,9 @@
             },
             {
               "label": "∙ Modifier les rôles vérifiés du canal"
+            },
+            {
+              "label": "∙ Modifier les rôles du staff du canal"
             }
           ]
         }
@@ -1300,6 +1306,26 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Modifier les rôles du staff du canal maître #{index}",
+        "description": "Les rôles du staff sont le miroir des rôles vérifiés : les rôles vérifiés sont le public qu'un canal peut exclure, les rôles du staff sont ceux qu'il ne peut jamais exclure.\n\nUn rôle sélectionné ici conserve l'accès à tous les canaux dynamiques du canal maître #{index}, quel que soit l'état de confidentialité choisi par son propriétaire - un modérateur peut ainsi rejoindre un canal privé ou masqué sans y être admis un par un.\n\nLaissez la liste vide si personne ne doit contourner le propriétaire.\n\n**_Rôles du staff actuels_**\n\n> {staffRolesDisplay}",
+        "footer": "Remarque : les changements sont appliqués immédiatement aux canaux dynamiques existants.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Aucun**"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Modifier les rôles vérifiés du canal maître #{index}",
@@ -1630,7 +1656,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurer le canal maître #{index}",
-        "description": "Configurez le canal maître selon vos préférences.\n\n**_🎛️ Général_**\n\n➤ ∙ Nom : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Nom des canaux dynamiques : `{dynamicChannelNameTemplate}`\n➤ ∙ Canal des journaux : {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interface des boutons_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Rôles vérifiés_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Rôles du staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mentionner l'utilisateur dans le message principal : {configUserMention}\n⫸ ∙ Sauvegarde automatique des canaux dynamiques : {configAutoSave}\n❯❯ ∙ Envoyer les journaux vers un canal personnalisé : {configLogs}\n\n",
+        "description": "Configurez le canal maître selon vos préférences.\n\n**_🎛️ Général_**\n\n➤ ∙ Nom : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Nom des canaux dynamiques : `{dynamicChannelNameTemplate}`\n➤ ∙ Canal des journaux : {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interface des boutons_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Rôles vérifiés_**\n\n▹ {verifiedRoles}\n\n**_🔑 Rôles du staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mentionner l'utilisateur dans le message principal : {configUserMention}\n⫸ ∙ Sauvegarde automatique des canaux dynamiques : {configAutoSave}\n❯❯ ∙ Envoyer les journaux vers un canal personnalisé : {configLogs}\n\n",
         "footer": "Remarque : la modification de la mention d'utilisateur n'affectera pas les canaux dynamiques déjà créés.",
         "options": {
           "on": "`🟢∙Oui`",
@@ -2337,6 +2363,26 @@
       }
     },
     {
+      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  Modifier les rôles du staff du canal maître #{index}",
+        "description": "Les rôles du staff sont le miroir des rôles vérifiés : les rôles vérifiés sont le public qu'un canal peut exclure, les rôles du staff sont ceux qu'il ne peut jamais exclure.\n\nUn rôle sélectionné ici conserve l'accès à tous les canaux dynamiques du canal maître #{index}, quel que soit l'état de confidentialité choisi par son propriétaire - un modérateur peut ainsi rejoindre un canal privé ou masqué sans y être admis un par un.\n\nLaissez la liste vide si personne ne doit contourner le propriétaire.\n\n**_Rôles du staff actuels_**\n\n> {staffRolesDisplay}",
+        "footer": "Remarque : les changements sont appliqués immédiatement aux canaux dynamiques existants.",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**Aucun**"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Modifier les rôles vérifiés du canal maître #{index}",
@@ -2491,7 +2537,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurer le canal maître #{index}",
-        "description": "Configurez le canal maître selon vos préférences.\n\n**_🎛️ Général_**\n\n➤ ∙ Nom : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Nom des canaux dynamiques : `{dynamicChannelNameTemplate}`\n➤ ∙ Canal des journaux : {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interface des boutons_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Rôles vérifiés_**\n\n▹ {verifiedRoles}\n\n**_🛠️ Rôles du staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mentionner l'utilisateur dans le message principal : {configUserMention}\n⫸ ∙ Sauvegarde automatique des canaux dynamiques : {configAutoSave}\n❯❯ ∙ Envoyer les journaux vers un canal personnalisé : {configLogs}\n\n",
+        "description": "Configurez le canal maître selon vos préférences.\n\n**_🎛️ Général_**\n\n➤ ∙ Nom : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Nom des canaux dynamiques : `{dynamicChannelNameTemplate}`\n➤ ∙ Canal des journaux : {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interface des boutons_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Rôles vérifiés_**\n\n▹ {verifiedRoles}\n\n**_🔑 Rôles du staff_**\n\n▹ {staffRolesDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mentionner l'utilisateur dans le message principal : {configUserMention}\n⫸ ∙ Sauvegarde automatique des canaux dynamiques : {configAutoSave}\n❯❯ ∙ Envoyer les journaux vers un canal personnalisé : {configLogs}\n\n",
         "footer": "Remarque : la modification de la mention d'utilisateur n'affectera pas les canaux dynamiques déjà créés.",
         "options": {
           "on": "`🟢∙Oui`",

@@ -538,6 +538,7 @@ async function onTemplateEditModalSubmitted(
 
     await MasterChannelDataManager.$.setChannelNameTemplate( masterChannelDB, value );
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onButtonsSelected(
@@ -590,6 +591,8 @@ async function onButtonsRoleSelected(
         dynamicChannelButtonsRoleId: roleId,
         dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( template )
     } );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
 }
 
 async function onEditDefaultButtonsClicked(
@@ -609,6 +612,8 @@ async function onEditDefaultButtonsClicked(
         dynamicChannelButtonsRoleId: null,
         dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( defaultButtons )
     } );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
 }
 
 async function onClearButtonsRoleOverrideClicked(
@@ -619,6 +624,8 @@ async function onClearButtonsRoleOverrideClicked(
     const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
 
     if ( !roleId ) {
+        await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
+
         return;
     }
 
@@ -639,6 +646,8 @@ async function onClearButtonsRoleOverrideClicked(
         dynamicChannelButtonsRoleId: null,
         dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( fallback )
     } );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
 }
 
 async function onButtonsEffectImmediatelyButtonsClicked(
@@ -842,6 +851,7 @@ async function onConfigExtrasSelected(
 
     context.setArgs( interaction, args );
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onLogChannelSelected(
@@ -865,6 +875,8 @@ async function onLogChannelSelected(
     // The logs channel belongs to the admin, not to the bot, so nothing grants the bot anything
     // there. Say so at the moment of the pick rather than letting logging fail in silence later.
     await warnOnMissingLogsChannelPermissions( interaction, channelId );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
 async function onStaffRolesSelected(

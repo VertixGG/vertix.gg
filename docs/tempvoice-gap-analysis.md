@@ -299,7 +299,7 @@ Visible symptom: changing an already-set server language, or editing badwords fr
 list to another, silently reverted. `GuildModel` and `UserModel` are the only models on this base;
 master channel settings use `ModelDataOwnerBase` and were never affected.
 
-### The v3 setup-edit handlers do not render - partly fixed
+### The v3 setup-edit handlers do not render - fixed
 
 Nothing in the framework renders after a bound handler. `run()` ends at `runEntityCallback`, and
 `applyFlowTriggers` is not wired into the `dispatchBinding` path that `defineTransactions` handlers
@@ -317,8 +317,17 @@ declared `EditButtonsEffect -> EditButtons` transitions and the role branch's ow
 `dynamicChannelButtonsRoleId`. v2 was unaffected throughout - its handlers already navigated, which
 is why the flow worked there.
 
-Seven other handlers in that adapter still never render. Some are fine - `onDoneButtonClicked`
-renders a different adapter - and telling them apart needs reading each against its transition.
+The remaining six were fixed the same way, each rendering the step its own declared transition
+already pointed at: `onTemplateEditModalSubmitted`, `onButtonsRoleSelected`,
+`onEditDefaultButtonsClicked`, `onClearButtonsRoleOverrideClicked`, `onConfigExtrasSelected` and
+`onLogChannelSelected`. Three of those exist in v2 and all three already ended with that call, so v3
+was the outlier rather than the transitions.
+
+These were not cosmetic. Everything an admin changed on the master edit screen - the name template,
+the config toggles, the logs channel - was written to the database while the embed kept showing the
+old value and the interaction went unacknowledged, so the screen and the database disagreed.
+
+Every handler in that adapter renders now.
 
 ## Traps
 

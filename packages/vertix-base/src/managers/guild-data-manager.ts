@@ -15,7 +15,7 @@ import {
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
-import { badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
+import { badwordsMask, badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
 
 import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
 
@@ -136,6 +136,10 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
 
     public async hasSomeBadword( guildId: string, content: string ) {
         return badwordsSomeUsed( content, await this.getBadwords( guildId ) );
+    }
+
+    public async maskBadwords( guildId: string, content: string ) {
+        return badwordsMask( content, await this.getBadwords( guildId ) );
     }
 
     public removeFromCache( ownerId: string ) {

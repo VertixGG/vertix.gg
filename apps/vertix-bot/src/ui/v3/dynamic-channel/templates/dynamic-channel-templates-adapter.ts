@@ -3,6 +3,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { ChannelTemplateModel } from "@vertix.gg/base/src/models/data/channel-template-model";
+import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
 
 import { DynamicChannelTemplatesButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-button";
 import { DynamicChannelTemplatesComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-component";
@@ -17,6 +18,8 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { VoiceChannel } from "discord.js";
+
+import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 type DefaultInteraction =
@@ -63,6 +66,101 @@ function templateConfigToPrivacyState( config: ChannelTemplateConfig ): ChannelP
     }
 
     return null;
+}
+
+async function onApplyTemplateConfirmed(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction>,
+    interaction: UIDefaultButtonChannelVoiceInteraction
+) {
+    if ( !interaction.deferred && !interaction.replied ) {
+        try {
+            await interaction.deferUpdate();
+        } catch {
+            return;
+        }
+    }
+
+    const args = context.getArgs( interaction ) ?? {};
+    const selectedTemplateId = typeof args.selectedTemplateId === "string"
+        ? args.selectedTemplateId
+        : "";
+
+    if ( !selectedTemplateId ) {
+        await context.triggerTransition( "OpenApplyMenu", interaction );
+        return;
+    }
+
+    const template = await ChannelTemplateModel.$.getTemplateById(
+        interaction.user.id,
+        interaction.guildId,
+        selectedTemplateId
+    );
+
+    if ( !template ) {
+        await context.triggerTransition( "OpenApplyMenu", interaction );
+        return;
+    }
+
+    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>(
+        "VertixBot/Services/DynamicChannel"
+    );
+
+    const config = template.config;
+
+    try {
+        if ( config.userLimit !== undefined ) {
+            await interaction.channel.setUserLimit( config.userLimit );
+        }
+
+        // V3 has a single three state privacy model - public, private, hidden -
+        // and `editChannelPrivacyState()` is what writes it. The per flag
+        // `editChannelState()` / `editChannelVisibilityState()` are the V2 model,
+        // which restores a flag to its default instead of granting it, so applying
+        // a template through them produced different permissions than the privacy
+        // button did for the very same state.
+        const privacyState = templateConfigToPrivacyState( config );
+
+        if ( privacyState ) {
+            await dynamicChannelService.editChannelPrivacyState(
+                interaction,
+                interaction.channel,
+                privacyState
+            );
+        }
+
+        if ( typeof config.region === "string" ) {
+            const region = config.region.trim();
+
+            if ( region.length ) {
+                await interaction.channel.setRTCRegion( region === "auto" ? null : region );
+            }
+        }
+
+        if ( config.nameTemplate ) {
+            // A template stores the channel name literally, so one captured before a
+            // word was added to the list would replay past the current filter forever.
+            const nameTemplate = await GuildDataManager.$.maskBadwords(
+                interaction.guildId,
+                config.nameTemplate
+            );
+
+            await interaction.channel.setName( nameTemplate ).catch( ( error ) => {
+                context.logger.error( onApplyTemplateConfirmed, "", error );
+            } );
+        }
+    } catch( error ) {
+        context.logger.error( onApplyTemplateConfirmed, "", error );
+    }
+
+    context.setArgs(
+        interaction,
+        Object.assign( {}, args, {
+            appliedTemplate: template,
+            selectedTemplateId: ""
+        } )
+    );
+
+    await context.triggerTransition( "ConfirmApply", interaction );
 }
 
 const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<DefaultInteraction>(
@@ -187,87 +285,7 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelTemplatesApplyConfirmButton",
                 "ConfirmApply",
-                async( context, interaction ) => {
-                    if ( !interaction.deferred && !interaction.replied ) {
-                        try {
-                            await interaction.deferUpdate();
-                        } catch {
-                            return;
-                        }
-                    }
-
-                    const args = context.getArgs( interaction ) ?? {};
-                    const selectedTemplateId = typeof args.selectedTemplateId === "string"
-                        ? args.selectedTemplateId
-                        : "";
-
-                    if ( !selectedTemplateId ) {
-                        await context.triggerTransition( "OpenApplyMenu", interaction );
-                        return;
-                    }
-
-                    const template = await ChannelTemplateModel.$.getTemplateById(
-                        interaction.user.id,
-                        interaction.guildId,
-                        selectedTemplateId
-                    );
-
-                    if ( !template ) {
-                        await context.triggerTransition( "OpenApplyMenu", interaction );
-                        return;
-                    }
-
-                    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>(
-                        "VertixBot/Services/DynamicChannel"
-                    );
-
-                    const config = template.config;
-
-                    try {
-                        if ( config.userLimit !== undefined ) {
-                            await interaction.channel.setUserLimit( config.userLimit );
-                        }
-
-                        // V3 has a single three state privacy model - public, private, hidden -
-                        // and `editChannelPrivacyState()` is what writes it. The per flag
-                        // `editChannelState()` / `editChannelVisibilityState()` are the V2 model,
-                        // which restores a flag to its default instead of granting it, so applying
-                        // a template through them produced different permissions than the privacy
-                        // button did for the very same state.
-                        const privacyState = templateConfigToPrivacyState( config );
-
-                        if ( privacyState ) {
-                            await dynamicChannelService.editChannelPrivacyState(
-                                interaction,
-                                interaction.channel,
-                                privacyState
-                            );
-                        }
-
-                        if ( typeof config.region === "string" ) {
-                            const region = config.region.trim();
-
-                            if ( region.length ) {
-                                await interaction.channel.setRTCRegion( region === "auto" ? null : region );
-                            }
-                        }
-
-                        if ( config.nameTemplate ) {
-                            await interaction.channel.setName( config.nameTemplate ).catch( () => {} );
-                        }
-                    } catch {
-                    }
-
-                    context.setArgs(
-                        interaction,
-                        Object.assign( {}, args, {
-                            appliedTemplate: template,
-                            selectedTemplateId: ""
-                        } )
-                    );
-
-                    await context.triggerTransition( "ConfirmApply", interaction );
-                }
+                onApplyTemplateConfirmed
             )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(
                 "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",

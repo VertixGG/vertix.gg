@@ -152,6 +152,12 @@ reconciliation sweep on boot, since a crash otherwise leaves roles stuck on memb
 
 ### 8. Badword coverage holes - reported
 
+> **Status: fixed.** Creation, reset and template apply now mask matched words with asterisks.
+> Renaming still refuses outright, which stays the better answer when a user typed the name -
+> the three assembling paths cannot refuse, since the user would be left without a channel.
+> Template apply also stopped swallowing its errors: the handler is a named function now, so it
+> can log what failed.
+
 `hasSomeBadword` has one call site, `editChannelName`. Three paths set a channel name without it:
 
 - reset, via `editChannelNameInternal()` directly

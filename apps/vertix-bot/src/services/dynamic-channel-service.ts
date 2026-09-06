@@ -1474,6 +1474,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             } );
         }
 
+        dynamicChannelName = await GuildDataManager.$.maskBadwords( guild.id, dynamicChannelName );
+
         this.logger.info(
             this.createDynamicChannel,
             `Guild id: '${ guild.id }' - Creating dynamic channel '${ dynamicChannelName }' for user '${ displayName }' ownerId: '${ userOwnerId }' version: '${ masterChannelDB.version }'`
@@ -2232,7 +2234,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             )
         } );
 
-        const renameResult = await this.editChannelNameInternal( channel, defaultDynamicChannelName );
+        const renameResult = await this.editChannelNameInternal(
+            channel,
+            await GuildDataManager.$.maskBadwords( channel.guildId, defaultDynamicChannelName )
+        );
 
         if ( renameResult.code === DynamicEditChannelNameInternalResultCode.RateLimit ) {
             result.code = DynamicResetChannelResultCode.SuccessRenameRateLimit;

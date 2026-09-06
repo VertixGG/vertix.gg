@@ -29,6 +29,26 @@ export const badwordsSomeUsed = ( content: string, badwords: string[] ): string 
 };
 
 /**
+ * Function badwordsMask() :: Replace every word matching one of the badwords with asterisks.
+ *
+ * Renaming a channel refuses a badword outright, which is the right answer when a user typed it.
+ * The paths that assemble a name themselves - creating a channel, resetting one, applying a saved
+ * template - cannot refuse, since the user would be left without a channel, so they mask instead.
+ */
+export const badwordsMask = ( content: string, badwords: string[] ): string => {
+    if ( !badwords.length ) {
+        return content;
+    }
+
+    return content
+        .split( " " )
+        .map( ( word ) =>
+            badwords.some( ( badword ) => isMatch( word, badword ) ) ? "*".repeat( word.length ) : word
+        )
+        .join( " " );
+};
+
+/**
  * Function badwordsNormalizeArray() :: Normalize the badwords array, removing the empty and extra spaces.
  */
 export const badwordsNormalizeArray = ( badwords: string[] | undefined ): string[] => {

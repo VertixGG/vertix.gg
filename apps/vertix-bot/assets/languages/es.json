@@ -936,6 +936,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChannelCreateFailedEmbed",
+      "content": {
+        "title": "⚠️  No se pudo crear tu canal",
+        "description": "Entrar en <#{masterChannelId}> no creó un canal para ti.\n\nNormalmente esto significa que el servidor alcanzó uno de los límites de Discord - una categoría admite 50 canales y un servidor 500 - o que se quitó un permiso que el bot necesita.\n\nAvisa a un administrador del servidor. El motivo queda registrado en los logs del bot."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NothingChangedEmbed",
       "content": {
         "title": "🤷  Nada cambió",

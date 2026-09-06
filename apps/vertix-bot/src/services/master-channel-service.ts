@@ -60,7 +60,8 @@ import type {
     GuildChannel,
     OverwriteResolvable,
     VoiceBasedChannel,
-    VoiceChannel
+    VoiceChannel,
+    VoiceState
 } from "discord.js";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
@@ -559,6 +560,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                     this.onJoinMasterChannel,
                     `Guild id: '${ guild.id }' - Failed to create dynamic channel for user: '${ displayName }'`
                 );
+
+                await this.notifyChannelCreateFailed( newState );
+
                 return;
             }
         } catch( e ) {
@@ -568,7 +572,38 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             );
 
             this.logger.error( this.onJoinMasterChannel, "", e );
+
+            await this.notifyChannelCreateFailed( newState );
         }
+    }
+
+    /**
+     * Function notifyChannelCreateFailed() :: Tells the user their channel was not created.
+     *
+     * Without this the three layers below only write to the log and return, so the user sits in the
+     * master channel with nothing happening and no reason given - which reads as the bot being down.
+     */
+    private async notifyChannelCreateFailed( newState: VoiceState ) {
+        const userId = newState.member?.id;
+
+        if ( !userId ) {
+            return;
+        }
+
+        const adapter = this.services.uiService.get( "VertixBot/UI-General/ChannelCreateFailedAdapter" );
+
+        if ( !adapter ) {
+            this.logger.error(
+                this.notifyChannelCreateFailed,
+                `Guild id: '${ newState.guild.id }' - Failed to get channel create failed adapter`
+            );
+
+            return;
+        }
+
+        await adapter.sendToUser( newState.guild.id, userId, {
+            masterChannelId: newState.channelId
+        } );
     }
 
     public async onDeleteMasterChannel( channel: VoiceBasedChannel ) {

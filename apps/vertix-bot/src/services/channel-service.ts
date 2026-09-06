@@ -257,10 +257,11 @@ export class ChannelService extends ServiceWithDependenciesBase<{
 
         const channel = await guild.channels
             .create( args )
-            .catch( () =>
+            .catch( ( error ) =>
                 this.logger.error(
                     this.create,
-                    `Guild id: '${ guild.id }' - Error while creating channel for guild: '${ guild.name }'`
+                    `Guild id: '${ guild.id }' - Error while creating channel for guild: '${ guild.name }'`,
+                    error
                 )
             );
 

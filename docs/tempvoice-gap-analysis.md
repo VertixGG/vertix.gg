@@ -127,6 +127,11 @@ than a design decision.
 
 ### 6. Admin defaults for channel creation - reported
 
+> **Status: the silent half is fixed.** The create error is no longer discarded by an argument
+> less `catch`, so the log names the actual cause, and the user now gets a DM telling them the
+> channel was not created and to contact an admin. Fallback categories and the rest of the
+> creation defaults are still open.
+
 `MasterChannelSettingsInterface` (`packages/vertix-base/src/interfaces/master-channel-config.ts`) has
 no key for default privacy state, default user limit, target category, or channel position. This is
 TempVoice's entire Overview tab.

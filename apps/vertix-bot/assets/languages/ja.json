@@ -936,6 +936,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChannelCreateFailedEmbed",
+      "content": {
+        "title": "⚠️  チャンネルを作成できませんでした",
+        "description": "<#{masterChannelId}> に参加しましたが、チャンネルは作成されませんでした。\n\n通常これは、サーバーが Discord の制限に達したこと（カテゴリは 50 チャンネル、サーバーは 500 チャンネルまで）、またはボットに必要な権限が削除されたことを意味します。\n\nサーバー管理者にお知らせください。理由はボットのログに記録されています。"
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NothingChangedEmbed",
       "content": {
         "title": "🤷  変更なし",

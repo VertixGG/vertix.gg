@@ -936,6 +936,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChannelCreateFailedEmbed",
+      "content": {
+        "title": "⚠️  Не удалось создать ваш канал",
+        "description": "Вход в <#{masterChannelId}> не создал для вас канал.\n\nОбычно это значит, что сервер достиг одного из ограничений Discord — категория вмещает 50 каналов, а сервер 500 — или что у бота отобрали нужное право.\n\nСообщите администратору сервера. Причина записана в логи бота."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NothingChangedEmbed",
       "content": {
         "title": "🤷  Ничего не изменилось",

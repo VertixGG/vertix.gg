@@ -12,6 +12,29 @@ Each finding carries a confidence marker:
 - **verified** - checked directly against the code while writing this document, line references below
 - **reported** - came out of the analysis and is consistent with the code, but was not re-checked by hand
 
+Last updated 2026-09-06, after working through the list.
+
+---
+
+## Status
+
+| # | Item | State |
+|---|---|---|
+| 1 | Default user limit dropped | fixed |
+| 2 | `{user}` deletes non-Latin names | fixed |
+| 3 | Owners can block and kick moderators | fixed |
+| 4 | Access menus handle one user per click | **skipped** - convenience, not correctness |
+| 5 | Dashboard settings key does not exist | fixed |
+| 6 | Admin defaults for channel creation | **partly** - the failure now names a full category; fallback categories not built |
+| 7 | Temporary voice role | fixed |
+| 8 | Badword coverage holes | fixed |
+| 9 | Placeholders | fixed, minus `{random}` and `{channel-id}` |
+| 10 | Empty-channel grace period | **skipped** - parity, TempVoice has none either |
+| 11 | Overwrite budget guard | **skipped** - see the entry, the premise did not hold |
+
+Two defects surfaced while doing the work that were not in the original analysis, and are recorded
+under [Found while fixing](#found-while-fixing).
+
 ---
 
 ## Summary
@@ -20,9 +43,14 @@ We are not far behind on owner-facing capability. The panel already covers renam
 access, privacy, region, reset, transfer and claim, and three things we have are things TempVoice
 either lacks or charges for: channel templates, vote-based claim, and per-role button sets.
 
-The largest wins available are not features to build. They are defects in features already shipped.
-The genuine feature gap is concentrated in one place: admin-side channel creation defaults, which is
-TempVoice's entire Overview tab and which we have none of.
+The largest wins available were not features to build. They were defects in features already
+shipped - and that held up: of the nine items acted on, six were bugs in things that already
+existed, and the two most valuable findings of the whole exercise were not in this comparison at
+all. They are under [Found while fixing](#found-while-fixing).
+
+The genuine feature gap was concentrated in one place: admin-side channel creation defaults, which
+is TempVoice's entire Overview tab. That is still mostly open - the failure now explains itself,
+but the defaults do not exist.
 
 ---
 
@@ -130,10 +158,20 @@ than a design decision.
 
 ### 6. Admin defaults for channel creation - reported
 
-> **Status: the silent half is fixed.** The create error is no longer discarded by an argument
-> less `catch`, so the log names the actual cause, and the user now gets a DM telling them the
-> channel was not created and to contact an admin. Fallback categories and the rest of the
-> creation defaults are still open.
+> **Status: the message is done, the overflow is not.** The create error is no longer discarded by
+> an argument-less `catch`, so the log names the real cause. The user gets a direct message, and
+> when the cause is a full category the message says exactly that instead of listing everything it
+> might be - `isCategoryFull()` counts the category's children against
+> `DISCORD_CATEGORY_CHANNELS_LIMIT` rather than parsing discord's error text.
+>
+> Fallback categories were deliberately not built. The ceiling is real - a master channel keeps its
+> generator, its control panel and every dynamic channel in one category, so 48 concurrent channels
+> per generator - but overflow is a bigger change than it looks: our categories carry the audience
+> permissions, so a fallback category has to be created with those and kept in sync when the
+> verified roles change, and `updateVerifiedRolesPermissions()` walks `masterChannel.parent` only.
+> Getting that wrong gives the overflow channels the wrong permissions, which is worse than the
+> wall. The rest of the creation defaults - privacy, user limit, category choice, position - are
+> still open.
 
 `MasterChannelSettingsInterface` (`packages/vertix-base/src/interfaces/master-channel-config.ts`) has
 no key for default privacy state, default user limit, target category, or channel position. This is
@@ -145,6 +183,14 @@ user clicks the generator and nothing happens with no message. **An error embed 
 worth shipping on its own, ahead of the fallback-category setting.**
 
 ### 7. Temporary voice role - reported
+
+> **Status: fixed.** A role held only while a member sits in a dynamic channel. Configurable per
+> guild and per master channel, the master channel winning when set, and the inherited value is
+> shown rather than a bare None so an admin can see what applies. `ChannelService.onSwitch()`
+> decomposes a switch into join-then-leave and the event bus does not await its subscribers, so the
+> manager converges on the two voice states rather than reacting to either event - a naive add and
+> remove would have left a member who moved between two channels holding nothing. Assignability is
+> checked at pick time, and the role is reclaimed on boot from anyone no longer in a channel.
 
 Assign a Discord role while a user sits in a dynamic channel - the standard way to gate a text
 channel to "people currently in voice". We have nothing: our access model is entirely permission
@@ -214,12 +260,64 @@ cause of a temp-voice bot appearing dead.
 
 ### 11. Overwrite budget guard - reported
 
+> **Status: skipped, and the premise was wrong.** The concern was unbounded accumulation. There is
+> none: the saved allow and block lists are *derived* from the channel's own overwrites each time
+> (`getChannelUserIdsWithPermissionState`), so they cannot exceed what is on the channel, and every
+> entry costs the owner one deliberate menu interaction. TempVoice's cap of 25 is a product choice,
+> not a platform requirement, and copying it would be worse for a server that legitimately trusts
+> thirty people. If it ever does bite, the symptom is slow transfers and resets on large channels
+> and the answer is batching through `permissionOverwrites.set()`, not refusing the 26th person.
+
 TempVoice caps trust and block at 25 each and says why: permission overwrite cost. We have no cap.
 Channels accumulate overwrites, and `updateChannelOwnership` rewrites the entire merged set on every
 transfer. Not urgent at current scale; degrades quietly and then presents as transfer and reset
 timeouts on the largest channels.
 
 ---
+
+## Found while fixing
+
+Neither was in the original comparison. Both were surfaced by verification passes that were
+checking something else.
+
+### Updates to guild and user data reverted on restart - fixed
+
+`ModelDataBase` hardcoded `VERSION_UI_V2` when creating and when deleting a row, but read
+`args.version` when updating one - and `IDataModel.setData` is declared
+`Omit<IDataUpdateArgs, "version">`, so no caller could ever supply it. Prisma requires all three
+fields of `ownerId_key_version`, so every update threw a validation error.
+
+Two things hid it: the throw was swallowed as a `warn` with no error object, and
+`ManagerDataBase.updateData` writes the cache *before* calling the model, so the new value read back
+correctly for the life of the process and only reverted on restart.
+
+It also typechecked, because the implementation declared the wider type while the interface declared
+the narrower one, and parameters of method-syntax declarations are bivariant - `strictFunctionTypes`
+does not apply to them.
+
+Visible symptom: changing an already-set server language, or editing badwords from one non-empty
+list to another, silently reverted. `GuildModel` and `UserModel` are the only models on this base;
+master channel settings use `ModelDataOwnerBase` and were never affected.
+
+### The v3 setup-edit handlers do not render - partly fixed
+
+Nothing in the framework renders after a bound handler. `run()` ends at `runEntityCallback`, and
+`applyFlowTriggers` is not wired into the `dispatchBinding` path that `defineTransactions` handlers
+take, so a transition's `to:` is flow-graph metadata and only an explicit `editReplyWithStep` moves
+the screen. The v2 adapter ends every handler with one; v3 mostly does not.
+
+Fixed: `onVerifiedRolesSelected` and `onVerifiedRolesEveryoneSelected`, which acknowledged nothing at
+all, so picking a verified role showed "This interaction failed" after three seconds.
+
+**Still open, and the sharp one: `onButtonsSelected`.** The button template is persisted *only* by
+the effect handlers - `onDoneButtonClicked` does nothing on the buttons step - and nothing navigates
+to the effect screen in v3. The v2 handler ends with
+`editReplyWithStep( …, "VertixBot/UI-V2/SetupEditButtonsEffect" )`; the v3 one ends after
+`setArgs`. If that reads correctly, selecting buttons on a V3 master channel cannot be saved. Worth
+confirming against a live V3 master channel before changing it.
+
+Nine other handlers in that adapter also never render. Some are fine - `onDoneButtonClicked` renders
+a different adapter - and telling them apart needs reading each against its transition.
 
 ## Traps
 
@@ -289,6 +387,18 @@ Where we already match or beat them, and first-pass findings that did not surviv
   anything like `/join` would require first.
 
 ---
+
+## Keeping this current
+
+`exports/ui/*.json` is regenerated by running the bot with `--export-ui`, and
+`bun run vertix:languages:check` gates on it in two directions: everything in the exports must exist
+in `en.json`, and everything in `en.json` must exist in every other locale. The second direction
+works from `en.json` alone and is always accurate. The first goes blind whenever the exports are
+older than the code, which is the normal state right after adding a screen - a forgotten entry would
+not be reported until the exports are regenerated.
+
+Every placeholder token is documented for users at `/posts/channel-name-placeholders` on the
+website.
 
 ## Source
 

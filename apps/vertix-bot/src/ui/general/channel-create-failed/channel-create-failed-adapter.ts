@@ -19,7 +19,8 @@ const ChannelCreateFailedAdapter = new AdapterBuilderBase<
 >( "VertixBot/UI-General/ChannelCreateFailedAdapter", UIAdapterBase )
     .setComponent( ChannelCreateFailedComponent )
     .getReplyArgs( async( _context, _interaction, argsFromManager ) => ( {
-        masterChannelId: argsFromManager?.masterChannelId
+        masterChannelId: argsFromManager?.masterChannelId,
+        isCategoryFull: argsFromManager?.isCategoryFull
     } ) )
     .disableMiddleware()
     .build();

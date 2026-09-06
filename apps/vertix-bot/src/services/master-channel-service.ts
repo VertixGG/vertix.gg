@@ -21,6 +21,7 @@ import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import {
+    DISCORD_CATEGORY_CHANNELS_LIMIT,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_VERIFIED_ROLES_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,
@@ -602,8 +603,23 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         }
 
         await adapter.sendToUser( newState.guild.id, userId, {
-            masterChannelId: newState.channelId
+            masterChannelId: newState.channelId,
+            isCategoryFull: this.isCategoryFull( newState.channel?.parent ?? null )
         } );
+    }
+
+    /**
+     * Function isCategoryFull() :: Whether the category has no room for another channel.
+     *
+     * Worth naming separately in the message: an admin can act on a full category, while the
+     * generic wording leaves them guessing between that, a server limit and a lost permission.
+     */
+    private isCategoryFull( category: CategoryChannel | null ) {
+        if ( ! category ) {
+            return false;
+        }
+
+        return category.children.cache.size >= DISCORD_CATEGORY_CHANNELS_LIMIT;
     }
 
     public async onDeleteMasterChannel( channel: VoiceBasedChannel ) {

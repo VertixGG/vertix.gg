@@ -957,7 +957,13 @@
       "name": "VertixBot/UI-General/ChannelCreateFailedEmbed",
       "content": {
         "title": "⚠️  Your channel could not be created",
-        "description": "Joining <#{masterChannelId}> did not create a channel for you.\n\nThis usually means the server reached one of Discord's limits - a category holds 50 channels and a server holds 500 - or that a permission the bot needs was removed.\n\nPlease let a server admin know. The reason is written to the bot logs."
+        "description": "Joining <#{masterChannelId}> did not create a channel for you.\n\n{reason}",
+        "options": {
+          "reason": {
+            "{reasonCategoryFull}": "The category this channel lives in is full. Discord allows 50 channels per category, and it has reached that.\n\nPlease let a server admin know - they can free a channel or move the generator to another category.",
+            "{reasonUnknown}": "This usually means the server reached one of Discord's limits, or that a permission the bot needs was removed.\n\nPlease let a server admin know. The reason is written to the bot logs."
+          }
+        }
       }
     },
     {

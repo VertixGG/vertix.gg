@@ -957,7 +957,13 @@
       "name": "VertixBot/UI-General/ChannelCreateFailedEmbed",
       "content": {
         "title": "⚠️  Dein Kanal konnte nicht erstellt werden",
-        "description": "Das Betreten von <#{masterChannelId}> hat keinen Kanal für dich erstellt.\n\nMeist bedeutet das, dass der Server eines der Discord-Limits erreicht hat - eine Kategorie fasst 50 Kanäle und ein Server 500 - oder dass eine Berechtigung des Bots entfernt wurde.\n\nBitte informiere einen Server-Admin. Der Grund steht in den Bot-Logs."
+        "description": "Das Betreten von <#{masterChannelId}> hat keinen Kanal für dich erstellt.\n\n{reason}",
+        "options": {
+          "reason": {
+            "{reasonCategoryFull}": "Die Kategorie, in der dieser Kanal liegt, ist voll. Discord erlaubt 50 Kanäle pro Kategorie, und diese Grenze ist erreicht.\n\nBitte informiere einen Server-Admin - er kann einen Kanal freigeben oder den Generator in eine andere Kategorie verschieben.",
+            "{reasonUnknown}": "Meist bedeutet das, dass der Server ein Discord-Limit erreicht hat oder dass eine Berechtigung des Bots entfernt wurde.\n\nBitte informiere einen Server-Admin. Der Grund steht in den Bot-Logs."
+          }
+        }
       }
     },
     {

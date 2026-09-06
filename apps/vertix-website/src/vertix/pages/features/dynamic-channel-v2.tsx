@@ -95,23 +95,19 @@ export default function DynamicChannelV2Page() {
     };
 
     return (
-        <div className="vc-container py-12">
-            <div className="flex justify-center">
-                <div className="w-full xl:w-10/12">
-                    <h1 className="text-center">Dynamic Channel V2 - Features</h1>
-                    <hr/>
+        <div className="vc-container vc-page-panel">
+            <h1 className="text-center">Dynamic Channels v2 - Features</h1>
+            <hr/>
 
-                    <SearchableSelect
-                        options={ FEATURE_OPTIONS }
-                        value={ selectedFeature }
-                        onSelect={ handleFeatureSelect }
-                        placeholder="Select Feature"
-                        defaultValue="all"
-                    />
+            <SearchableSelect
+                options={ FEATURE_OPTIONS }
+                value={ selectedFeature }
+                onSelect={ handleFeatureSelect }
+                placeholder="Select Feature"
+                defaultValue="all"
+            />
 
-                    { renderFeatureContent() }
-                </div>
-            </div>
+            { renderFeatureContent() }
         </div>
     );
 }

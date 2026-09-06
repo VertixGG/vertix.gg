@@ -51,7 +51,7 @@ export abstract class ModelDataBase<
         } );
     }
 
-    public async setData( args: IDataUpdateArgs ) {
+    public async setData( args: Omit<IDataUpdateArgs, "version"> ) {
         if ( null === args.default ) {
             return this.logger.error( this.setData, `Cannot set data for: '${ args.key }' to null.` );
         }
@@ -68,17 +68,15 @@ export abstract class ModelDataBase<
 
         try {
             result = await this.dataModel.update( {
-                where: {
-                    ownerId_key_version: {
-                        ownerId: args.ownerId,
-                        version: args.version,
-                        key: args.key
-                    }
-                },
+                where: this.getWhereUnique( { ...args, version: VERSION_UI_V2 } ),
                 data: this.getInternalNormalizedData( createArgs )
             } );
         } catch( e ) {
-            this.logger.warn( this.setData, `Issue for data for key: '${ args.key }' ownerId: '${ args.ownerId }'` );
+            this.logger.error(
+                this.setData,
+                `Failed to update data for key: '${ args.key }' ownerId: '${ args.ownerId }'`,
+                e
+            );
 
             return e;
         }

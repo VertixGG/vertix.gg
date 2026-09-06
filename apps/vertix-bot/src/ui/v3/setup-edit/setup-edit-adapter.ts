@@ -561,14 +561,16 @@ async function onButtonsSelected(
             dynamicChannelButtonsTemplate: buttons,
             dynamicChannelButtonsTemplateByRole: byRole
         } );
-        return;
+    } else {
+        context.setArgs( interaction, {
+            dynamicChannelButtonsTemplate: buttons,
+            dynamicChannelButtonsTemplateDefault: buttons
+        } );
     }
 
-    context.setArgs( interaction, {
-        dynamicChannelButtonsTemplate: buttons,
-        dynamicChannelButtonsTemplateDefault: buttons
-    } );
-
+    // The effect step is the only place the template is written - `onDoneButtonClicked` does
+    // nothing on this step - so a selection that never reaches it cannot be saved.
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtonsEffect" );
 }
 
 async function onButtonsRoleSelected(
@@ -702,6 +704,7 @@ async function onButtonsEffectImmediatelyButtonsClicked(
         }
     } );
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
 }
 
 async function onButtonsEffectNewlyButtonClicked(
@@ -731,6 +734,7 @@ async function onButtonsEffectNewlyButtonClicked(
         } );
     }
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
 }
 
 async function onDoneButtonClicked(

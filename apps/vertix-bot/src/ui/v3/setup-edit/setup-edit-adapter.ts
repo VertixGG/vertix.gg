@@ -936,6 +936,7 @@ async function onVerifiedRolesSelected(
         _wizardIsFinishButtonDisabled: !selection.dynamicChannelVerifiedRoles.length
     } );
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVerifiedRoles" );
 }
 
 async function onVerifiedRolesEveryoneSelected(
@@ -963,6 +964,7 @@ async function onVerifiedRolesEveryoneSelected(
 
     context.setArgs( interaction, args );
 
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditVerifiedRoles" );
 }
 
 async function onBackButtonClicked(

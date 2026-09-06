@@ -899,6 +899,20 @@
                 "hooks": []
             },
             {
+                "key": "VertixBot/UI-V2/SetupEditDefaultPrivacy",
+                "elementsGroup": "VertixBot/UI-V2/SetupEditDefaultPrivacyElementsGroup",
+                "embedsGroup": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/SetupEditDefaultUserLimit",
+                "elementsGroup": "VertixBot/UI-V2/SetupEditDefaultUserLimitElementsGroup",
+                "embedsGroup": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
                 "key": "VertixBot/UI-V2/SetupEditVoiceRole",
                 "elementsGroup": "VertixBot/UI-V2/SetupEditVoiceRoleElementsGroup",
                 "embedsGroup": "VertixBot/UI-V2/SetupEditVoiceRoleEmbedGroup",
@@ -1836,6 +1850,20 @@
                 "key": "VertixBot/UI-V3/SetupEditVerifiedRoles",
                 "elementsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup",
                 "embedsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupEditDefaultPrivacy",
+                "elementsGroup": "VertixBot/UI-V3/SetupEditDefaultPrivacyElementsGroup",
+                "embedsGroup": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupEditDefaultUserLimit",
+                "elementsGroup": "VertixBot/UI-V3/SetupEditDefaultUserLimitElementsGroup",
+                "embedsGroup": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },

@@ -30,7 +30,10 @@ import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type {
+    ChannelPrivacyStateDefault,
+    MasterChannelConfigInterface
+} from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
@@ -116,6 +119,14 @@ async function onSelectEditOptionSelected(
 
         case "edit-dynamic-channel-voice-role":
             await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVoiceRole" );
+            break;
+
+        case "edit-dynamic-channel-default-privacy":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditDefaultPrivacy" );
+            break;
+
+        case "edit-dynamic-channel-default-user-limit":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditDefaultUserLimit" );
             break;
     }
 }
@@ -365,6 +376,95 @@ async function onLogChannelSelected(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 }
 
+async function onDefaultPrivacySelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+    const state = interaction.values.at( 0 ) as ChannelPrivacyStateDefault | undefined;
+
+    if ( state ) {
+        args.dynamicChannelDefaultPrivacyState = state;
+
+        await MasterChannelDataManager.$.setChannelDefaultPrivacyState(
+            { id: args.ChannelDBId, version: VERSION_UI_V2 } as ChannelExtended,
+            interaction.guildId,
+            state
+        );
+
+        context.setArgs( interaction, args );
+    }
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditDefaultPrivacy" );
+}
+
+async function onDefaultUserLimitSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+    const selected = interaction.values.at( 0 );
+
+    if ( selected ) {
+        const userLimit = Number( selected );
+
+        args.dynamicChannelDefaultUserLimit = userLimit;
+
+        await MasterChannelDataManager.$.setChannelDefaultUserLimit(
+            { id: args.ChannelDBId, version: VERSION_UI_V2 } as ChannelExtended,
+            interaction.guildId,
+            userLimit
+        );
+
+        context.setArgs( interaction, args );
+    }
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditDefaultUserLimit" );
+}
+
+async function onDefaultPrivacyResetClicked(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+
+    const { settings } = ConfigManager.$.get<MasterChannelConfigInterface>(
+        "Vertix/Config/MasterChannel",
+        VERSION_UI_V2
+    ).data;
+
+    args.dynamicChannelDefaultPrivacyState = settings.dynamicChannelDefaultPrivacyState;
+
+    await MasterChannelDataManager.$.setChannelDefaultPrivacyState(
+        { id: args.ChannelDBId, version: VERSION_UI_V2 } as ChannelExtended,
+        interaction.guildId,
+        settings.dynamicChannelDefaultPrivacyState
+    );
+
+    context.setArgs( interaction, args );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditDefaultPrivacy" );
+}
+
+async function onDefaultUserLimitInheritClicked(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+
+    args.dynamicChannelDefaultUserLimit = null;
+
+    await MasterChannelDataManager.$.setChannelDefaultUserLimit(
+        { id: args.ChannelDBId, version: VERSION_UI_V2 } as ChannelExtended,
+        interaction.guildId,
+        null
+    );
+
+    context.setArgs( interaction, args );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditDefaultUserLimit" );
+}
+
 async function onVoiceRoleSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
@@ -482,6 +582,15 @@ async function onBackButtonClicked(
         version: VERSION_UI_V2
     } as ChannelExtended;
 
+    const currentStep = context.getCurrentExecutionStep( interaction )?.name;
+
+    if ( "VertixBot/UI-V2/SetupEditDefaultPrivacy" === currentStep
+        || "VertixBot/UI-V2/SetupEditDefaultUserLimit" === currentStep ) {
+        await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
+
+        return;
+    }
+
     if ( "VertixBot/UI-V2/SetupEditVoiceRole" === context.getCurrentExecutionStep( interaction )?.name ) {
         await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 
@@ -575,6 +684,18 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 elementsGroup: "VertixBot/UI-V2/SetupEditVerifiedRolesElementsGroup",
                 embedsGroup: "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup"
             } )
+            .addState( "DefaultPrivacy", {
+                executionStep: "VertixBot/UI-V2/SetupEditDefaultPrivacy",
+                previewDefaultVars: { view: "Default privacy configuration" },
+                elementsGroup: "VertixBot/UI-V2/SetupEditDefaultPrivacyElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbedGroup"
+            } )
+            .addState( "DefaultUserLimit", {
+                executionStep: "VertixBot/UI-V2/SetupEditDefaultUserLimit",
+                previewDefaultVars: { view: "Default user limit configuration" },
+                elementsGroup: "VertixBot/UI-V2/SetupEditDefaultUserLimitElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbedGroup"
+            } )
             .addState( "VoiceRole", {
                 executionStep: "VertixBot/UI-V2/SetupEditVoiceRole",
                 previewDefaultVars: { view: "Voice role configuration" },
@@ -593,6 +714,8 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "OpenVerifiedRoles", { from: "MasterOverview", to: "VerifiedRoles" } )
             .addTransition( "OpenStaffRoles", { from: "MasterOverview", to: "StaffRoles" } )
             .addTransition( "OpenVoiceRole", { from: "MasterOverview", to: "VoiceRole" } )
+            .addTransition( "OpenDefaultPrivacy", { from: "MasterOverview", to: "DefaultPrivacy" } )
+            .addTransition( "OpenDefaultUserLimit", { from: "MasterOverview", to: "DefaultUserLimit" } )
             .addTransition( "OpenNameModal", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "NameTemplateSubmitted", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "ConfigExtrasUpdated", { from: "MasterOverview", to: "MasterOverview" } )
@@ -611,6 +734,12 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "BackFromStaffRoles", { from: "StaffRoles", to: "MasterOverview" } )
             .addTransition( "VoiceRoleUpdated", { from: "VoiceRole", to: "VoiceRole" } )
             .addTransition( "BackFromVoiceRole", { from: "VoiceRole", to: "MasterOverview" } )
+            .addTransition( "DefaultPrivacyUpdated", { from: "DefaultPrivacy", to: "DefaultPrivacy" } )
+            .addTransition( "BackFromDefaultPrivacy", { from: "DefaultPrivacy", to: "MasterOverview" } )
+            .addTransition( "DefaultUserLimitUpdated", { from: "DefaultUserLimit", to: "DefaultUserLimit" } )
+            .addTransition( "BackFromDefaultUserLimit", { from: "DefaultUserLimit", to: "MasterOverview" } )
+            .addTransition( "DefaultPrivacyReset", { from: "DefaultPrivacy", to: "DefaultPrivacy" } )
+            .addTransition( "DefaultUserLimitInherit", { from: "DefaultUserLimit", to: "DefaultUserLimit" } )
             // Handler bindings
             .bindButton<UIDefaultButtonChannelTextInteraction>(
                 "VertixBot/UI-General/SetupMasterEditSelectMenu",
@@ -661,6 +790,26 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "VertixBot/UI-General/VoiceRoleMenu",
                 "VoiceRoleUpdated",
                 onVoiceRoleSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/DefaultPrivacyStateMenu",
+                "DefaultPrivacyUpdated",
+                onDefaultPrivacySelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/DefaultUserLimitMenu",
+                "DefaultUserLimitUpdated",
+                onDefaultUserLimitSelected
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/DefaultPrivacyResetButton",
+                "DefaultPrivacyReset",
+                onDefaultPrivacyResetClicked
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/DefaultUserLimitInheritButton",
+                "DefaultUserLimitInherit",
+                onDefaultUserLimitInheritClicked
             )
             .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
                 "VertixBot/UI-General/VerifiedRolesMenu",
@@ -732,7 +881,9 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelMentionable,
                 masterChannelKeys.dynamicChannelVerifiedRoles,
                 masterChannelKeys.dynamicChannelStaffRoles,
-                masterChannelKeys.dynamicChannelVoiceRoleId
+                masterChannelKeys.dynamicChannelVoiceRoleId,
+                masterChannelKeys.dynamicChannelDefaultPrivacyState,
+                masterChannelKeys.dynamicChannelDefaultUserLimit
             ];
 
             selectedKeys.forEach( ( key ) => {

@@ -1346,7 +1346,6 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         let savedData: MasterChannelUserDataInterface | null = null,
             dynamicChannelName = "",
-            dynamicChannelUserLimit = masterChannel.userLimit,
             permissionOverwrites: OverwriteResolvable[] = [];
 
         // Default channel properties.
@@ -1359,6 +1358,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
             )
         };
+
+        // Unset means copy the master channel, which is what happened before the setting existed.
+        // That number does double duty on the master channel - it also caps how many people can
+        // wait in it - so an admin who wants small channels needs a way to say so without also
+        // narrowing the door.
+        const defaultUserLimit = await MasterChannelDataManager.$.getChannelDefaultUserLimit( masterChannelDB );
+
+        let dynamicChannelUserLimit = defaultUserLimit ?? masterChannel.userLimit;
 
         // Staff roles outrank every deny the state writes, so they are granted up front and the
         // saved state below never has to account for them.
@@ -1375,6 +1382,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             savedData = await UserMasterChannelDataModel.$.getData( user.userId, masterChannelDB.id );
         }
 
+        // The saved state of a returning owner wins, otherwise the master channel's default
+        // decides what the channel starts as. The privacy button models hidden as public and
+        // not visible, so the two axes are derived rather than stored separately.
+        const defaultPrivacyState = await MasterChannelDataManager.$.getChannelDefaultPrivacyState( masterChannelDB );
+
+        let dynamicChannelState: ChannelState = "private" === defaultPrivacyState ? "private" : "public",
+            dynamicChannelVisibilityState: ChannelVisibilityState =
+                "hidden" === defaultPrivacyState ? "hidden" : "shown";
+
         if ( savedData ) {
             dynamicChannelName = savedData.dynamicChannelName;
 
@@ -1382,84 +1398,88 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 dynamicChannelUserLimit = savedData.dynamicChannelUserLimit;
             }
 
-            const verifiedRoles =
-                    await MasterChannelDataManager.$.getChannelVerifiedRoles(
-                        masterChannelDB,
-                        masterChannel.guildId
-                    ),
-                verifiedFlagsAllow: bigint[] = [],
-                verifiedFlagsDeny: bigint[] = [];
-
-            const {
-                dynamicChannelState,
-                dynamicChannelVisibilityState,
-                dynamicChannelRegion,
-                dynamicChannelAllowedUserIds,
-                dynamicChannelBlockedUserIds
-            } = savedData;
-
-            // V3 states the permission outright - `editChannelPrivacyState()` grants `Connect` for
-            // public and `ViewChannel` for shown - while V2 restores the flag to its default.
-            // Restoring a channel has to speak whichever model its master channel does, otherwise a
-            // saved V3 channel comes back holding V2 permissions until its privacy button is
-            // pressed once.
-            const isPrivacyGranted = VERSION_UI_V3 === masterChannelDB.version;
-
-            if ( "private" === dynamicChannelState ) {
-                verifiedFlagsDeny.push( PermissionsBitField.Flags.Connect );
-            } else if ( isPrivacyGranted && "public" === dynamicChannelState ) {
-                verifiedFlagsAllow.push( PermissionsBitField.Flags.Connect );
+            if ( "unknown" !== savedData.dynamicChannelState ) {
+                dynamicChannelState = savedData.dynamicChannelState;
             }
 
-            if ( "hidden" === dynamicChannelVisibilityState ) {
-                verifiedFlagsDeny.push( PermissionsBitField.Flags.ViewChannel );
-            } else if ( isPrivacyGranted && "shown" === dynamicChannelVisibilityState ) {
-                verifiedFlagsAllow.push( PermissionsBitField.Flags.ViewChannel );
+            if ( "unknown" !== savedData.dynamicChannelVisibilityState ) {
+                dynamicChannelVisibilityState = savedData.dynamicChannelVisibilityState;
             }
 
-            if ( dynamicChannelRegion ) {
-                defaultProperties.rtcRegion = dynamicChannelRegion ?? null;
+            if ( savedData.dynamicChannelRegion ) {
+                defaultProperties.rtcRegion = savedData.dynamicChannelRegion ?? null;
             }
+        }
 
-            if ( verifiedFlagsDeny.length || verifiedFlagsAllow.length ) {
-                // Ensure bot connectivity, only a deny can lock the bot out of the channel.
-                //
-                // This has to re-state the full master channel set rather than just `ViewChannel`
-                // and `Connect`: it lands in the same overwrite array as the entry inherited from
-                // the master channel and addresses the same id, so a narrower entry here would
-                // strip the bot of everything else it was granted.
-                if ( verifiedFlagsDeny.length && !PermissionsManager.$.isSelfAdministratorRole( masterChannel.guild ) ) {
-                    permissionOverwrites.push( {
-                        id: masterChannel.client.user?.id as string,
-                        ...DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS
-                    } );
-                }
+        const verifiedRoles =
+                await MasterChannelDataManager.$.getChannelVerifiedRoles(
+                    masterChannelDB,
+                    masterChannel.guildId
+                ),
+            verifiedFlagsAllow: bigint[] = [],
+            verifiedFlagsDeny: bigint[] = [];
 
-                verifiedRoles.forEach( ( role: string ) => {
-                    permissionOverwrites.push( {
-                        id: role,
-                        allow: verifiedFlagsAllow,
-                        deny: verifiedFlagsDeny,
-                        type: OverwriteType.Role
-                    } );
+        // V3 states the permission outright - `editChannelPrivacyState()` grants `Connect` for
+        // public and `ViewChannel` for shown - while V2 restores the flag to its default.
+        // Restoring a channel has to speak whichever model its master channel does, otherwise a
+        // saved V3 channel comes back holding V2 permissions until its privacy button is
+        // pressed once.
+        const isPrivacyGranted = VERSION_UI_V3 === masterChannelDB.version;
+
+        if ( "private" === dynamicChannelState ) {
+            verifiedFlagsDeny.push( PermissionsBitField.Flags.Connect );
+        } else if ( isPrivacyGranted && "public" === dynamicChannelState ) {
+            verifiedFlagsAllow.push( PermissionsBitField.Flags.Connect );
+        }
+
+        if ( "hidden" === dynamicChannelVisibilityState ) {
+            verifiedFlagsDeny.push( PermissionsBitField.Flags.ViewChannel );
+        } else if ( isPrivacyGranted && "shown" === dynamicChannelVisibilityState ) {
+            verifiedFlagsAllow.push( PermissionsBitField.Flags.ViewChannel );
+        }
+
+        if ( verifiedFlagsDeny.length || verifiedFlagsAllow.length ) {
+            // Ensure bot connectivity, only a deny can lock the bot out of the channel.
+            //
+            // This has to re-state the full master channel set rather than just `ViewChannel`
+            // and `Connect`: it lands in the same overwrite array as the entry inherited from
+            // the master channel and addresses the same id, so a narrower entry here would
+            // strip the bot of everything else it was granted.
+            if ( verifiedFlagsDeny.length && !PermissionsManager.$.isSelfAdministratorRole( masterChannel.guild ) ) {
+                permissionOverwrites.push( {
+                    id: masterChannel.client.user?.id as string,
+                    ...DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS
                 } );
-
-                // An audience narrower than `@everyone` keeps `@everyone` out entirely, whatever
-                // the restored state is. Without this a channel restored as public would be open to
-                // everyone outside its own audience.
-                //
-                // This replaces the entry inherited from the master channel, which carries nothing
-                // but the chat lock that inheritance already strips.
-                const everyoneRoleId = masterChannel.guild.roles.everyone.id;
-
-                if ( !verifiedRoles.includes( everyoneRoleId ) ) {
-                    permissionOverwrites.push( {
-                        id: everyoneRoleId,
-                        deny: [ PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.Connect ],
-                        type: OverwriteType.Role
-                    } );
-                }
             }
+
+            verifiedRoles.forEach( ( role: string ) => {
+                permissionOverwrites.push( {
+                    id: role,
+                    allow: verifiedFlagsAllow,
+                    deny: verifiedFlagsDeny,
+                    type: OverwriteType.Role
+                } );
+            } );
+
+            // An audience narrower than `@everyone` keeps `@everyone` out entirely, whatever
+            // the restored state is. Without this a channel restored as public would be open to
+            // everyone outside its own audience.
+            //
+            // This replaces the entry inherited from the master channel, which carries nothing
+            // but the chat lock that inheritance already strips.
+            const everyoneRoleId = masterChannel.guild.roles.everyone.id;
+
+            if ( !verifiedRoles.includes( everyoneRoleId ) ) {
+                permissionOverwrites.push( {
+                    id: everyoneRoleId,
+                    deny: [ PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.Connect ],
+                    type: OverwriteType.Role
+                } );
+            }
+        }
+
+        if ( savedData ) {
+            const { dynamicChannelAllowedUserIds, dynamicChannelBlockedUserIds } = savedData;
 
             dynamicChannelAllowedUserIds.forEach( ( userId: string ) => {
                 permissionOverwrites.push( {
@@ -1618,7 +1638,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
                 await UserMasterChannelDataModel.$.setData( user.userId, masterChannelDB.id, {
                     dynamicChannelName,
-                    dynamicChannelUserLimit: masterChannel.userLimit,
+                    dynamicChannelUserLimit,
                     dynamicChannelState: await this.getChannelState( dynamic.channel ),
                     dynamicChannelVisibilityState: await this.getChannelVisibilityState( dynamic.channel ),
                     dynamicChannelAllowedUserIds: [],

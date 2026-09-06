@@ -52,6 +52,8 @@ export const SETUP_EMBED_VARS = {
     labelVerifiedRoles: uiUtilsWrapAsTemplate( "labelVerifiedRoles" ),
     labelStaffRoles: uiUtilsWrapAsTemplate( "labelStaffRoles" ),
     labelVoiceRole: uiUtilsWrapAsTemplate( "labelVoiceRole" ),
+    labelNewChannelPrivacy: uiUtilsWrapAsTemplate( "labelNewChannelPrivacy" ),
+    labelNewChannelLimit: uiUtilsWrapAsTemplate( "labelNewChannelLimit" ),
     labelLogsChannel: uiUtilsWrapAsTemplate( "labelLogsChannel" ),
     labelAutoSave: uiUtilsWrapAsTemplate( "labelAutoSave" ),
     labelVersion: uiUtilsWrapAsTemplate( "labelVersion" ),

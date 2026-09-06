@@ -10,7 +10,7 @@ import { InitializeBase } from "@vertix.gg/base/src/bases";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
-import type { MasterChannelConfigInterface, MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { ChannelPrivacyStateDefault, MasterChannelConfigInterface, MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 export type MasterChannelSettingsAllVersions =
@@ -249,6 +249,79 @@ export class MasterChannelDataManager extends InitializeBase {
 
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
             dynamicChannelVoiceRoleId: roleId
+        } );
+    }
+
+    /**
+     * Function getChannelDefaultPrivacyState() :: What a newly created dynamic channel starts as.
+     */
+    public async getChannelDefaultPrivacyState(
+        masterChannelDB: ChannelExtended,
+        cache = true
+    ): Promise<ChannelPrivacyStateDefault> {
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+
+        return result?.dynamicChannelDefaultPrivacyState ?? defaults.dynamicChannelDefaultPrivacyState;
+    }
+
+    public async setChannelDefaultPrivacyState(
+        masterChannelDB: ChannelExtended,
+        guildId: string,
+        state: ChannelPrivacyStateDefault,
+        shouldAdminLog = true
+    ) {
+        if ( shouldAdminLog ) {
+            const previousState = await this.getChannelDefaultPrivacyState( masterChannelDB );
+
+            this.logger.admin(
+                this.setChannelDefaultPrivacyState,
+                `🔒  Dynamic Channel default privacy modified - guildId: "${ guildId }" masterChannelId: "${ masterChannelDB.id }", "${ previousState }" => "${ state }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelDefaultPrivacyState: state
+        } );
+    }
+
+    /**
+     * Function getChannelDefaultUserLimit() :: The user limit a new dynamic channel starts with.
+     *
+     * Null means it is not set, and the limit of the master channel is copied instead - the
+     * behaviour that predates this setting.
+     */
+    public async getChannelDefaultUserLimit(
+        masterChannelDB: ChannelExtended,
+        cache = true
+    ): Promise<number | null> {
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+
+        return result?.dynamicChannelDefaultUserLimit ?? null;
+    }
+
+    public async setChannelDefaultUserLimit(
+        masterChannelDB: ChannelExtended,
+        guildId: string,
+        userLimit: number | null,
+        shouldAdminLog = true
+    ) {
+        if ( shouldAdminLog ) {
+            const previousUserLimit = await this.getChannelDefaultUserLimit( masterChannelDB );
+
+            this.logger.admin(
+                this.setChannelDefaultUserLimit,
+                `✋  Dynamic Channel default user limit modified - guildId: "${ guildId }" masterChannelId: "${ masterChannelDB.id }", "${ previousUserLimit }" => "${ userLimit }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelDefaultUserLimit: userLimit
         } );
     }
 

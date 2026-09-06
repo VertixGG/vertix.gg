@@ -24,6 +24,13 @@ import { SetupEditStaffRolesEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/ed
 import { SetupEditVoiceRoleElementsGroup } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-voice-role/setup-edit-voice-role-elements-group";
 import { SetupEditVoiceRoleEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-voice-role/setup-edit-voice-role-embed";
 
+import {
+    SetupEditDefaultPrivacyElementsGroup,
+    SetupEditDefaultUserLimitElementsGroup
+} from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-defaults/setup-edit-defaults-elements-groups";
+import { SetupEditDefaultPrivacyEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-defaults/setup-edit-default-privacy-embed";
+import { SetupEditDefaultUserLimitEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-defaults/setup-edit-default-user-limit-embed";
+
 const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V2/ConfigComponent" )
     .addElementsGroup( SetupEditElementsGroup )
     .addElementsGroup( SetupEditButtonsElementsGroup )
@@ -31,12 +38,16 @@ const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V2/ConfigComponen
     .addElementsGroup( SetupEditVerifiedRolesElementsGroup )
     .addElementsGroup( SetupEditStaffRolesElementsGroup )
     .addElementsGroup( SetupEditVoiceRoleElementsGroup )
+    .addElementsGroup( SetupEditDefaultPrivacyElementsGroup )
+    .addElementsGroup( SetupEditDefaultUserLimitElementsGroup )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditStaffRolesEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVoiceRoleEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditDefaultPrivacyEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditDefaultUserLimitEmbed ) )
     .addModal( ChannelNameTemplateModal )
     .addModal( DeleteConfirmModal )
     .setDefaultElementsGroup( "VertixBot/UI-V2/SetupEditElementsGroup" )

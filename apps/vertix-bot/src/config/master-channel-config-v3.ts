@@ -26,6 +26,10 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
             settings: {
                 dynamicChannelAutoSave: false,
 
+                dynamicChannelDefaultPrivacyState: "public",
+
+                dynamicChannelDefaultUserLimit: null,
+
                 dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( i ) =>
                     i.getId().toString()
                 ),

@@ -53,6 +53,9 @@ const vars = {
     voiceRoleGuild: uiUtilsWrapAsTemplate( "voiceRoleGuild" ),
     voiceRoleNone: uiUtilsWrapAsTemplate( "voiceRoleNone" ),
 
+    newChannelPrivacy: uiUtilsWrapAsTemplate( "newChannelPrivacy" ),
+    newChannelLimit: uiUtilsWrapAsTemplate( "newChannelLimit" ),
+
     dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
 };
 
@@ -67,6 +70,8 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         `➤ ∙ Name: <#${ vars.masterChannelId }>\n` +
         `➤ ∙ Channel ID: \`${ vars.masterChannelId }\`\n` +
         `➤ ∙ Dynamic Channels Name: \`${ vars.dynamicChannelNameTemplate }\`\n` +
+        `➤ ∙ New Channel Privacy: ${ vars.newChannelPrivacy }\n` +
+        `➤ ∙ New Channel Limit: ${ vars.newChannelLimit }\n` +
         `➤ ∙ Logs Channel: ${ vars.dynamicChannelLogsChannelDisplay }\n\n` +
         "**_🎚 Buttons Interface_**\n\n" +
         vars.dynamicChannelButtonsTemplate +
@@ -173,6 +178,16 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             ? args.dynamicChannelStaffRoles
             : [];
 
+        const privacyState = args.dynamicChannelDefaultPrivacyState as string;
+        const newChannelPrivacy = "private" === privacyState
+            ? "🚫 Private"
+            : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
+
+        const defaultUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
+        const newChannelLimit = null === defaultUserLimit || undefined === defaultUserLimit
+            ? "Copied from the generator channel"
+            : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
+
         const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,
             guildVoiceRoleId = args.guildVoiceRoleId as string | null,
             resolvedVoiceRoleId = ownVoiceRoleId || guildVoiceRoleId;
@@ -183,6 +198,9 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
 
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
             dynamicChannelLogsChannelId: processedLogsChannelId,
+
+            newChannelPrivacy,
+            newChannelLimit,
 
             verifiedRoles: args.dynamicChannelVerifiedRoles,
 

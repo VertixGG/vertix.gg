@@ -11,6 +11,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyResetButton",
+        "content": {
+          "label": "Reset To Default"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+        "content": {
+          "label": "Copy Generator Channel"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/DoneButton",
         "content": {
           "label": "✓ Done"
@@ -508,6 +520,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ Select Privacy State"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitMenu",
+        "content": {
+          "placeholder": "✋ ∙ Select User Limit"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/LanguageSelectMenu",
         "content": {
           "placeholder": "🌍 Select Language",
@@ -681,6 +705,12 @@
             },
             {
               "label": "∙ Edit Channel's Voice Role"
+            },
+            {
+              "label": "∙ Edit Privacy State"
+            },
+            {
+              "label": "∙ Edit User Limit"
             }
           ]
         }
@@ -865,6 +895,12 @@
             },
             {
               "label": "∙ Edit Channel's Voice Role"
+            },
+            {
+              "label": "∙ Edit Privacy State"
+            },
+            {
+              "label": "∙ Edit User Limit"
             }
           ]
         }
@@ -1633,7 +1669,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configure Master Channel #{index}",
-        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
         "footer": "Note: Changing user mention will not affect already created dynamic channels.",
         "options": {
           "on": "`🟢∙On`",
@@ -1722,6 +1758,34 @@
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
             "{voiceRoleNone}": "**None**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Edit Default Privacy Of Master Channel #{index}",
+        "description": "This is the state a **newly created** dynamic channel starts in. It does not touch channels that already exist, and the owner can still change their own channel afterwards.\n\n**Public** - anyone in the audience can see and join.\n**Private** - visible, but only the owner lets people in.\n**Hidden** - not visible at all until the owner shows it.\n\nWith auto save on, a returning owner gets their own last state instead of this.\n\n**_Current Default_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Public**",
+            "{privacyPrivate}": "🚫 **Private**",
+            "{privacyHidden}": "🙈 **Hidden**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Edit Default User Limit Of Master Channel #{index}",
+        "description": "This is the user limit a **newly created** dynamic channel starts with. It does not touch channels that already exist, and the owner can still change their own channel afterwards.\n\nCopying the generator channel is the old behaviour. Setting a number here is usually better, because the generator's own limit also caps how many people can wait in it at once.\n\nWith auto save on, a returning owner gets their own last limit instead of this.\n\n**_Current Default_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Copied from the generator channel**",
+            "{userLimitUnlimited}": "**No limit**",
+            "{userLimitValue}": "**{userLimit} users**"
           }
         }
       }
@@ -2520,7 +2584,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configure Master Channel #{index}",
-        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
         "footer": "Note: Changing user mention will not affect already created dynamic channels.",
         "options": {
           "on": "`🟢∙On`",
@@ -2611,6 +2675,34 @@
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
             "{voiceRoleNone}": "**None**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Edit Default Privacy Of Master Channel #{index}",
+        "description": "This is the state a **newly created** dynamic channel starts in. It does not touch channels that already exist, and the owner can still change their own channel afterwards.\n\n**Public** - anyone in the audience can see and join.\n**Private** - visible, but only the owner lets people in.\n**Hidden** - not visible at all until the owner shows it.\n\nWith auto save on, a returning owner gets their own last state instead of this.\n\n**_Current Default_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Public**",
+            "{privacyPrivate}": "🚫 **Private**",
+            "{privacyHidden}": "🙈 **Hidden**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Edit Default User Limit Of Master Channel #{index}",
+        "description": "This is the user limit a **newly created** dynamic channel starts with. It does not touch channels that already exist, and the owner can still change their own channel afterwards.\n\nCopying the generator channel is the old behaviour. Setting a number here is usually better, because the generator's own limit also caps how many people can wait in it at once.\n\nWith auto save on, a returning owner gets their own last limit instead of this.\n\n**_Current Default_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Copied from the generator channel**",
+            "{userLimitUnlimited}": "**No limit**",
+            "{userLimitValue}": "**{userLimit} users**"
           }
         }
       }

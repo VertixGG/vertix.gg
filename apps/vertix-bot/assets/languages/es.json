@@ -11,6 +11,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyResetButton",
+        "content": {
+          "label": "Restablecer al valor por defecto"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+        "content": {
+          "label": "Copiar el canal generador"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/DoneButton",
         "content": {
           "label": "✓ Hecho"
@@ -508,6 +520,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ Seleccionar estado de privacidad"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitMenu",
+        "content": {
+          "placeholder": "✋ ∙ Seleccionar límite de usuarios"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/LanguageSelectMenu",
         "content": {
           "placeholder": "🌍 Seleccionar idioma",
@@ -681,6 +705,12 @@
             },
             {
               "label": "∙ Editar el rol de voz del canal"
+            },
+            {
+              "label": "∙ Editar estado de privacidad"
+            },
+            {
+              "label": "∙ Editar límite de usuarios"
             }
           ]
         }
@@ -865,6 +895,12 @@
             },
             {
               "label": "∙ Editar el rol de voz del canal"
+            },
+            {
+              "label": "∙ Editar estado de privacidad"
+            },
+            {
+              "label": "∙ Editar límite de usuarios"
             }
           ]
         }
@@ -1655,6 +1691,34 @@
       }
     },
     {
+      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Editar la privacidad por defecto del canal maestro #{index}",
+        "description": "Este es el estado con el que empieza un canal dinámico **recién creado**. No afecta a los que ya existen, y el propietario puede cambiarlo después.\n\n**Público** - cualquiera de la audiencia puede verlo y entrar.\n**Privado** - visible, pero solo el propietario deja entrar.\n**Oculto** - no visible hasta que el propietario lo muestre.\n\nCon el guardado automático activado, un propietario que vuelve recibe su propio último estado en lugar de este.\n\n**_Valor actual_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Público**",
+            "{privacyPrivate}": "🚫 **Privado**",
+            "{privacyHidden}": "🙈 **Oculto**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Editar el límite de usuarios por defecto del canal maestro #{index}",
+        "description": "Este es el límite de usuarios con el que empieza un canal dinámico **recién creado**. No afecta a los que ya existen, y el propietario puede cambiarlo después.\n\nCopiar el canal generador es el comportamiento antiguo. Poner un número aquí suele ser mejor, porque el límite del generador también restringe cuántas personas pueden esperar dentro.\n\nCon el guardado automático activado, un propietario que vuelve recibe su propio último límite en lugar de este.\n\n**_Valor actual_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Copiado del canal generador**",
+            "{userLimitUnlimited}": "**Sin límite**",
+            "{userLimitValue}": "**{userLimit} usuarios**"
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Editar los roles verificados del canal maestro #{index}",
@@ -1774,7 +1838,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurar el canal maestro #{index}",
-        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rol de voz_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
+        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Privacidad de canales nuevos: {newChannelPrivacy}\n➤ ∙ Límite de canales nuevos: {newChannelLimit}\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rol de voz_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
         "footer": "Nota: cambiar la mención de usuario no afectará a los canales dinámicos ya creados.",
         "options": {
           "on": "`🟢∙Sí`",
@@ -2283,7 +2347,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurar el canal maestro #{index}",
-        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rol de voz_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
+        "description": "Configura el canal maestro según tus preferencias.\n\n**_🎛️ General_**\n\n➤ ∙ Nombre: <#{masterChannelId}>\n➤ ∙ ID del canal: `{masterChannelId}`\n➤ ∙ Nombre de los canales dinámicos: `{dynamicChannelNameTemplate}`\n➤ ∙ Privacidad de canales nuevos: {newChannelPrivacy}\n➤ ∙ Límite de canales nuevos: {newChannelLimit}\n➤ ∙ Canal de registros: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interfaz de botones_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Roles verificados_**\n\n▹ {verifiedRoles}\n\n**_🔑 Roles del staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rol de voz_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuración_**\n\n@ ∙ Mencionar al usuario en el mensaje principal: {configUserMention}\n⫸ ∙ Guardar automáticamente los canales dinámicos: {configAutoSave}\n❯❯ ∙ Enviar registros a un canal personalizado: {configLogs}\n\n",
         "footer": "Nota: cambiar la mención de usuario no afectará a los canales dinámicos ya creados.",
         "options": {
           "on": "`🟢∙Sí`",
@@ -2435,6 +2499,34 @@
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(de las opciones del servidor)*",
             "{voiceRoleNone}": "**Ninguno**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Editar la privacidad por defecto del canal maestro #{index}",
+        "description": "Este es el estado con el que empieza un canal dinámico **recién creado**. No afecta a los que ya existen, y el propietario puede cambiarlo después.\n\n**Público** - cualquiera de la audiencia puede verlo y entrar.\n**Privado** - visible, pero solo el propietario deja entrar.\n**Oculto** - no visible hasta que el propietario lo muestre.\n\nCon el guardado automático activado, un propietario que vuelve recibe su propio último estado en lugar de este.\n\n**_Valor actual_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Público**",
+            "{privacyPrivate}": "🚫 **Privado**",
+            "{privacyHidden}": "🙈 **Oculto**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Editar el límite de usuarios por defecto del canal maestro #{index}",
+        "description": "Este es el límite de usuarios con el que empieza un canal dinámico **recién creado**. No afecta a los que ya existen, y el propietario puede cambiarlo después.\n\nCopiar el canal generador es el comportamiento antiguo. Poner un número aquí suele ser mejor, porque el límite del generador también restringe cuántas personas pueden esperar dentro.\n\nCon el guardado automático activado, un propietario que vuelve recibe su propio último límite en lugar de este.\n\n**_Valor actual_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Copiado del canal generador**",
+            "{userLimitUnlimited}": "**Sin límite**",
+            "{userLimitValue}": "**{userLimit} usuarios**"
           }
         }
       }

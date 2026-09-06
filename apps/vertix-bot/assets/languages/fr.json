@@ -11,6 +11,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyResetButton",
+        "content": {
+          "label": "Rétablir la valeur par défaut"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+        "content": {
+          "label": "Copier le canal générateur"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/DoneButton",
         "content": {
           "label": "✓ Terminé"
@@ -508,6 +520,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ Sélectionner l'état de confidentialité"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitMenu",
+        "content": {
+          "placeholder": "✋ ∙ Sélectionner la limite d'utilisateurs"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/LanguageSelectMenu",
         "content": {
           "placeholder": "🌍 Sélectionner la langue",
@@ -681,6 +705,12 @@
             },
             {
               "label": "∙ Modifier le rôle vocal du canal"
+            },
+            {
+              "label": "∙ Modifier l'état de confidentialité"
+            },
+            {
+              "label": "∙ Modifier la limite d'utilisateurs"
             }
           ]
         }
@@ -865,6 +895,12 @@
             },
             {
               "label": "∙ Modifier le rôle vocal du canal"
+            },
+            {
+              "label": "∙ Modifier l'état de confidentialité"
+            },
+            {
+              "label": "∙ Modifier la limite d'utilisateurs"
             }
           ]
         }
@@ -1390,6 +1426,34 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Modifier la confidentialité par défaut du canal maître #{index}",
+        "description": "C'est l'état dans lequel démarre un canal dynamique **nouvellement créé**. Les canaux existants ne sont pas touchés, et le propriétaire peut toujours modifier le sien ensuite.\n\n**Public** - toute l'audience peut le voir et le rejoindre.\n**Privé** - visible, mais seul le propriétaire fait entrer.\n**Masqué** - invisible jusqu'à ce que le propriétaire l'affiche.\n\nAvec la sauvegarde automatique activée, un propriétaire qui revient retrouve son propre dernier état à la place.\n\n**_Valeur actuelle_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Public**",
+            "{privacyPrivate}": "🚫 **Privé**",
+            "{privacyHidden}": "🙈 **Masqué**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Modifier la limite d'utilisateurs par défaut du canal maître #{index}",
+        "description": "C'est la limite d'utilisateurs avec laquelle démarre un canal dynamique **nouvellement créé**. Les canaux existants ne sont pas touchés, et le propriétaire peut la modifier ensuite.\n\nCopier le canal générateur est l'ancien comportement. Indiquer un nombre ici vaut généralement mieux, car la limite du générateur restreint aussi le nombre de personnes pouvant y patienter.\n\nAvec la sauvegarde automatique activée, un propriétaire qui revient retrouve sa propre dernière limite à la place.\n\n**_Valeur actuelle_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Copié depuis le canal générateur**",
+            "{userLimitUnlimited}": "**Aucune limite**",
+            "{userLimitValue}": "**{userLimit} utilisateurs**"
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Modifier les rôles vérifiés du canal maître #{index}",
@@ -1720,7 +1784,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurer le canal maître #{index}",
-        "description": "Configurez le canal maître selon vos préférences.\n\n**_🎛️ Général_**\n\n➤ ∙ Nom : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Nom des canaux dynamiques : `{dynamicChannelNameTemplate}`\n➤ ∙ Canal des journaux : {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interface des boutons_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Rôles vérifiés_**\n\n▹ {verifiedRoles}\n\n**_🔑 Rôles du staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rôle vocal_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mentionner l'utilisateur dans le message principal : {configUserMention}\n⫸ ∙ Sauvegarde automatique des canaux dynamiques : {configAutoSave}\n❯❯ ∙ Envoyer les journaux vers un canal personnalisé : {configLogs}\n\n",
+        "description": "Configurez le canal maître selon vos préférences.\n\n**_🎛️ Général_**\n\n➤ ∙ Nom : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Nom des canaux dynamiques : `{dynamicChannelNameTemplate}`\n➤ ∙ Confidentialité des nouveaux canaux: {newChannelPrivacy}\n➤ ∙ Limite des nouveaux canaux: {newChannelLimit}\n➤ ∙ Canal des journaux : {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interface des boutons_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Rôles vérifiés_**\n\n▹ {verifiedRoles}\n\n**_🔑 Rôles du staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rôle vocal_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mentionner l'utilisateur dans le message principal : {configUserMention}\n⫸ ∙ Sauvegarde automatique des canaux dynamiques : {configAutoSave}\n❯❯ ∙ Envoyer les journaux vers un canal personnalisé : {configLogs}\n\n",
         "footer": "Remarque : la modification de la mention d'utilisateur n'affectera pas les canaux dynamiques déjà créés.",
         "options": {
           "on": "`🟢∙Oui`",
@@ -2467,6 +2531,34 @@
       }
     },
     {
+      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Modifier la confidentialité par défaut du canal maître #{index}",
+        "description": "C'est l'état dans lequel démarre un canal dynamique **nouvellement créé**. Les canaux existants ne sont pas touchés, et le propriétaire peut toujours modifier le sien ensuite.\n\n**Public** - toute l'audience peut le voir et le rejoindre.\n**Privé** - visible, mais seul le propriétaire fait entrer.\n**Masqué** - invisible jusqu'à ce que le propriétaire l'affiche.\n\nAvec la sauvegarde automatique activée, un propriétaire qui revient retrouve son propre dernier état à la place.\n\n**_Valeur actuelle_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Public**",
+            "{privacyPrivate}": "🚫 **Privé**",
+            "{privacyHidden}": "🙈 **Masqué**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Modifier la limite d'utilisateurs par défaut du canal maître #{index}",
+        "description": "C'est la limite d'utilisateurs avec laquelle démarre un canal dynamique **nouvellement créé**. Les canaux existants ne sont pas touchés, et le propriétaire peut la modifier ensuite.\n\nCopier le canal générateur est l'ancien comportement. Indiquer un nombre ici vaut généralement mieux, car la limite du générateur restreint aussi le nombre de personnes pouvant y patienter.\n\nAvec la sauvegarde automatique activée, un propriétaire qui revient retrouve sa propre dernière limite à la place.\n\n**_Valeur actuelle_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Copié depuis le canal générateur**",
+            "{userLimitUnlimited}": "**Aucune limite**",
+            "{userLimitValue}": "**{userLimit} utilisateurs**"
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Modifier les rôles vérifiés du canal maître #{index}",
@@ -2621,7 +2713,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configurer le canal maître #{index}",
-        "description": "Configurez le canal maître selon vos préférences.\n\n**_🎛️ Général_**\n\n➤ ∙ Nom : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Nom des canaux dynamiques : `{dynamicChannelNameTemplate}`\n➤ ∙ Canal des journaux : {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interface des boutons_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Rôles vérifiés_**\n\n▹ {verifiedRoles}\n\n**_🔑 Rôles du staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rôle vocal_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mentionner l'utilisateur dans le message principal : {configUserMention}\n⫸ ∙ Sauvegarde automatique des canaux dynamiques : {configAutoSave}\n❯❯ ∙ Envoyer les journaux vers un canal personnalisé : {configLogs}\n\n",
+        "description": "Configurez le canal maître selon vos préférences.\n\n**_🎛️ Général_**\n\n➤ ∙ Nom : <#{masterChannelId}>\n➤ ∙ ID du canal : `{masterChannelId}`\n➤ ∙ Nom des canaux dynamiques : `{dynamicChannelNameTemplate}`\n➤ ∙ Confidentialité des nouveaux canaux: {newChannelPrivacy}\n➤ ∙ Limite des nouveaux canaux: {newChannelLimit}\n➤ ∙ Canal des journaux : {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Interface des boutons_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Rôles vérifiés_**\n\n▹ {verifiedRoles}\n\n**_🔑 Rôles du staff_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Rôle vocal_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mentionner l'utilisateur dans le message principal : {configUserMention}\n⫸ ∙ Sauvegarde automatique des canaux dynamiques : {configAutoSave}\n❯❯ ∙ Envoyer les journaux vers un canal personnalisé : {configLogs}\n\n",
         "footer": "Remarque : la modification de la mention d'utilisateur n'affectera pas les canaux dynamiques déjà créés.",
         "options": {
           "on": "`🟢∙Oui`",

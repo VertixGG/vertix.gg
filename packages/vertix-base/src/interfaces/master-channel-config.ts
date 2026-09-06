@@ -1,7 +1,15 @@
 import type { ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
 
+/**
+ * What a dynamic channel starts as. `hidden` is public plus not visible, which is how the privacy
+ * button already models the three states.
+ */
+export type ChannelPrivacyStateDefault = "public" | "private" | "hidden";
+
 export interface MasterChannelSettingsInterface {
     dynamicChannelAutoSave: boolean;
+    dynamicChannelDefaultPrivacyState: ChannelPrivacyStateDefault;
+    dynamicChannelDefaultUserLimit: number | null;
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
     dynamicChannelControlChannelId: string | null;

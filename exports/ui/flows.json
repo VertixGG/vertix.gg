@@ -2032,6 +2032,8 @@
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVerifiedRoles",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenStaffRoles",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVoiceRole",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenDefaultPrivacy",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenDefaultUserLimit",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenNameModal",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/NameTemplateSubmitted",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/ConfigExtrasUpdated",
@@ -2097,6 +2099,40 @@
                         "view": "Verified roles configuration"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                "transitions": [
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/DefaultPrivacyUpdated",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromDefaultPrivacy",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/DefaultPrivacyReset"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/SetupEditDefaultPrivacy",
+                    "component": "VertixBot/UI-V2/ConfigComponent",
+                    "previewDefaultVars": {
+                        "view": "Default privacy configuration"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                "transitions": [
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/DefaultUserLimitUpdated",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromDefaultUserLimit",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/DefaultUserLimitInherit"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/SetupEditDefaultUserLimit",
+                    "component": "VertixBot/UI-V2/ConfigComponent",
+                    "previewDefaultVars": {
+                        "view": "Default user limit configuration"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbedGroup"
                 }
             },
             {
@@ -2174,6 +2210,14 @@
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole"
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy"
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit"
             },
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
@@ -2389,6 +2433,74 @@
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/DefaultPrivacyStateMenu",
+                        "sourceEntity": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                            "executionStep": "VertixBot/UI-V2/SetupEditDefaultPrivacy"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/DefaultUserLimitMenu",
+                        "sourceEntity": "VertixBot/UI-General/DefaultUserLimitMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                            "executionStep": "VertixBot/UI-V2/SetupEditDefaultUserLimit"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/DefaultPrivacyResetButton",
+                        "sourceEntity": "VertixBot/UI-General/DefaultPrivacyResetButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                            "executionStep": "VertixBot/UI-V2/SetupEditDefaultPrivacy"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/DefaultUserLimitInheritButton",
+                        "sourceEntity": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                            "executionStep": "VertixBot/UI-V2/SetupEditDefaultUserLimit"
+                        }
+                    }
+                ]
             },
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
@@ -4989,6 +5101,8 @@
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditVerifiedRoles",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditStaffRoles",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditVoiceRole",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditDefaultPrivacy",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditDefaultUserLimit",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/EditChannelName",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/ConfigExtrasChanged",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/LogChannelChanged",
@@ -5004,6 +5118,8 @@
                         "masterChannelId": "123456789",
                         "dynamicChannelNameTemplate": "{user}'s Channel",
                         "dynamicChannelLogsChannelDisplay": "**None**",
+                        "newChannelPrivacy": "🌐 Public",
+                        "newChannelLimit": "No limit",
                         "dynamicChannelButtonsTemplate": "**Default Settings**\n> - Rename\n> - User Limit\n> - Access",
                         "verifiedRoles": "**None**",
                         "staffRolesDisplay": "**None**",
@@ -5066,6 +5182,42 @@
                         "index": "1"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                "transitions": [
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultPrivacyChanged",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultPrivacyBack",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultPrivacyReset"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/SetupEditDefaultPrivacy",
+                    "component": "VertixBot/UI-V3/ConfigComponent",
+                    "previewDefaultVars": {
+                        "index": "1",
+                        "privacyState": "🌐 **Public**"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                "transitions": [
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultUserLimitChanged",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultUserLimitBack",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultUserLimitInherit"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/SetupEditDefaultUserLimit",
+                    "component": "VertixBot/UI-V3/ConfigComponent",
+                    "previewDefaultVars": {
+                        "index": "1",
+                        "userLimitDisplay": "**No limit**"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbedGroup"
                 }
             },
             {
@@ -5178,6 +5330,14 @@
                         }
                     }
                 ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit"
             },
             {
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
@@ -5457,6 +5617,74 @@
             {
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
                 "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/DefaultPrivacyStateMenu",
+                        "sourceEntity": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                            "executionStep": "VertixBot/UI-V3/SetupEditDefaultPrivacy"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/DefaultUserLimitMenu",
+                        "sourceEntity": "VertixBot/UI-General/DefaultUserLimitMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                            "executionStep": "VertixBot/UI-V3/SetupEditDefaultUserLimit"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/DefaultPrivacyResetButton",
+                        "sourceEntity": "VertixBot/UI-General/DefaultPrivacyResetButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                            "executionStep": "VertixBot/UI-V3/SetupEditDefaultPrivacy"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/DefaultUserLimitInheritButton",
+                        "sourceEntity": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                            "executionStep": "VertixBot/UI-V3/SetupEditDefaultUserLimit"
+                        }
+                    }
+                ]
             }
         ],
         "requiredData": [],

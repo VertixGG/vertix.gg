@@ -11,6 +11,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyResetButton",
+        "content": {
+          "label": "Сбросить к значению по умолчанию"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+        "content": {
+          "label": "Скопировать канал-генератор"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/DoneButton",
         "content": {
           "label": "✓ Готово"
@@ -508,6 +520,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ Выберите состояние приватности"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitMenu",
+        "content": {
+          "placeholder": "✋ ∙ Выберите лимит пользователей"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/LanguageSelectMenu",
         "content": {
           "placeholder": "🌍 Выберите язык",
@@ -681,6 +705,12 @@
             },
             {
               "label": "∙ Изменить голосовую роль канала"
+            },
+            {
+              "label": "∙ Изменить состояние приватности"
+            },
+            {
+              "label": "∙ Изменить лимит пользователей"
             }
           ]
         }
@@ -865,6 +895,12 @@
             },
             {
               "label": "∙ Изменить голосовую роль канала"
+            },
+            {
+              "label": "∙ Изменить состояние приватности"
+            },
+            {
+              "label": "∙ Изменить лимит пользователей"
             }
           ]
         }
@@ -1633,7 +1669,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Приватность новых каналов: {newChannelPrivacy}\n➤ ∙ Лимит новых каналов: {newChannelLimit}\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -1722,6 +1758,34 @@
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
             "{voiceRoleNone}": "**Нет**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Редактирование приватности по умолчанию мастер-канала #{index}",
+        "description": "Это состояние, с которым начинает **вновь созданный** динамический канал. Существующие каналы не затрагиваются, и владелец может изменить свой канал позже.\n\n**Публичный** - любой из аудитории видит и заходит.\n**Приватный** - виден, но впускает только владелец.\n**Скрытый** - не виден, пока владелец не покажет его.\n\nПри включённом автосохранении вернувшийся владелец получает своё прошлое состояние вместо этого.\n\n**_Текущее значение_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Публичный**",
+            "{privacyPrivate}": "🚫 **Приватный**",
+            "{privacyHidden}": "🙈 **Скрытый**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Редактирование лимита пользователей по умолчанию мастер-канала #{index}",
+        "description": "Это лимит пользователей, с которым начинает **вновь созданный** динамический канал. Существующие каналы не затрагиваются, и владелец может изменить его позже.\n\nКопирование канала-генератора — прежнее поведение. Указать число здесь обычно лучше, потому что лимит самого генератора также ограничивает, сколько человек может в нём ждать.\n\nПри включённом автосохранении вернувшийся владелец получает свой прошлый лимит вместо этого.\n\n**_Текущее значение_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Скопировано из канала-генератора**",
+            "{userLimitUnlimited}": "**Без лимита**",
+            "{userLimitValue}": "**{userLimit} польз.**"
           }
         }
       }
@@ -2520,7 +2584,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Приватность новых каналов: {newChannelPrivacy}\n➤ ∙ Лимит новых каналов: {newChannelLimit}\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -2611,6 +2675,34 @@
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
             "{voiceRoleNone}": "**Нет**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Редактирование приватности по умолчанию мастер-канала #{index}",
+        "description": "Это состояние, с которым начинает **вновь созданный** динамический канал. Существующие каналы не затрагиваются, и владелец может изменить свой канал позже.\n\n**Публичный** - любой из аудитории видит и заходит.\n**Приватный** - виден, но впускает только владелец.\n**Скрытый** - не виден, пока владелец не покажет его.\n\nПри включённом автосохранении вернувшийся владелец получает своё прошлое состояние вместо этого.\n\n**_Текущее значение_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Публичный**",
+            "{privacyPrivate}": "🚫 **Приватный**",
+            "{privacyHidden}": "🙈 **Скрытый**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Редактирование лимита пользователей по умолчанию мастер-канала #{index}",
+        "description": "Это лимит пользователей, с которым начинает **вновь созданный** динамический канал. Существующие каналы не затрагиваются, и владелец может изменить его позже.\n\nКопирование канала-генератора — прежнее поведение. Указать число здесь обычно лучше, потому что лимит самого генератора также ограничивает, сколько человек может в нём ждать.\n\nПри включённом автосохранении вернувшийся владелец получает свой прошлый лимит вместо этого.\n\n**_Текущее значение_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Скопировано из канала-генератора**",
+            "{userLimitUnlimited}": "**Без лимита**",
+            "{userLimitValue}": "**{userLimit} польз.**"
           }
         }
       }

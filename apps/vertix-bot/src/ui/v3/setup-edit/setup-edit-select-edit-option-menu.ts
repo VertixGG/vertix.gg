@@ -49,6 +49,16 @@ export class SetupEditSelectEditOptionMenu extends UIElementStringSelectMenu {
                 label: "∙ Edit Channel's Voice Role",
                 value: "edit-dynamic-channel-voice-role",
                 emoji: "🎙️" as any
+            },
+            {
+                label: "∙ Edit Privacy State",
+                value: "edit-dynamic-channel-default-privacy",
+                emoji: "🛡️" as any
+            },
+            {
+                label: "∙ Edit User Limit",
+                value: "edit-dynamic-channel-default-user-limit",
+                emoji: "✋" as any
             }
         ];
     }

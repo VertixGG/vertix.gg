@@ -11,6 +11,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyResetButton",
+        "content": {
+          "label": "既定値に戻す"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+        "content": {
+          "label": "ジェネレーターをコピー"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/DoneButton",
         "content": {
           "label": "✓ 完了"
@@ -508,6 +520,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ プライバシー状態を選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitMenu",
+        "content": {
+          "placeholder": "✋ ∙ ユーザー上限を選択"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/LanguageSelectMenu",
         "content": {
           "placeholder": "🌍 言語を選択",
@@ -681,6 +705,12 @@
             },
             {
               "label": "∙ チャンネルのボイスロールを編集"
+            },
+            {
+              "label": "∙ プライバシー状態を編集"
+            },
+            {
+              "label": "∙ ユーザー上限を編集"
             }
           ]
         }
@@ -865,6 +895,12 @@
             },
             {
               "label": "∙ チャンネルのボイスロールを編集"
+            },
+            {
+              "label": "∙ プライバシー状態を編集"
+            },
+            {
+              "label": "∙ ユーザー上限を編集"
             }
           ]
         }
@@ -1063,7 +1099,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1296,7 +1332,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1971,6 +2007,34 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  マスターチャンネル #{index} の既定プライバシーを編集",
+        "description": "**新しく作成される** ダイナミックチャンネルが最初に取る状態です。既存のチャンネルには影響せず、所有者は後から自分のチャンネルを変更できます。\n\n**公開** - 対象者なら誰でも見えて参加できます。\n**プライベート** - 見えますが、入れるのは所有者が許可した人だけです。\n**非表示** - 所有者が表示するまで見えません。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の状態が適用されます。\n\n**_現在の既定値_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **公開**",
+            "{privacyPrivate}": "🚫 **プライベート**",
+            "{privacyHidden}": "🙈 **非表示**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  マスターチャンネル #{index} の既定ユーザー上限を編集",
+        "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**ジェネレーターチャンネルからコピー**",
+            "{userLimitUnlimited}": "**上限なし**",
+            "{userLimitValue}": "**{userLimit} 人**"
+          }
+        }
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
@@ -2206,6 +2270,34 @@
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
             "{voiceRoleNone}": "**なし**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  マスターチャンネル #{index} の既定プライバシーを編集",
+        "description": "**新しく作成される** ダイナミックチャンネルが最初に取る状態です。既存のチャンネルには影響せず、所有者は後から自分のチャンネルを変更できます。\n\n**公開** - 対象者なら誰でも見えて参加できます。\n**プライベート** - 見えますが、入れるのは所有者が許可した人だけです。\n**非表示** - 所有者が表示するまで見えません。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の状態が適用されます。\n\n**_現在の既定値_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **公開**",
+            "{privacyPrivate}": "🚫 **プライベート**",
+            "{privacyHidden}": "🙈 **非表示**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  マスターチャンネル #{index} の既定ユーザー上限を編集",
+        "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**ジェネレーターチャンネルからコピー**",
+            "{userLimitUnlimited}": "**上限なし**",
+            "{userLimitValue}": "**{userLimit} 人**"
           }
         }
       }

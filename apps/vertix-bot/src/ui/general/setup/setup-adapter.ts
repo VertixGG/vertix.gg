@@ -512,6 +512,16 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             const resolvedVoiceRoleId = data.dynamicChannelVoiceRoleId || args?.voiceRoleId;
             const voiceRoleDisplay = resolvedVoiceRoleId ? `<@&${ resolvedVoiceRoleId }>` : vars.none;
 
+            const privacyState = data.dynamicChannelDefaultPrivacyState;
+            const privacyDisplay = "private" === privacyState
+                ? "🚫 Private"
+                : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
+
+            const defaultUserLimit = data.dynamicChannelDefaultUserLimit;
+            const userLimitDisplay = null === defaultUserLimit || undefined === defaultUserLimit
+                ? "Copied from the generator channel"
+                : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
+
             const nameTemplate = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
             const logsDisplay = data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none;
             const autoSaveDisplay = String( data.dynamicChannelAutoSave ?? "false" );
@@ -521,6 +531,8 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 `${ vars.labelName } <#${ channel.channelId }>`,
                 `${ vars.labelChannelId } \`${ channel.channelId }\``,
                 `${ vars.labelDynamicChannelsName } \`${ nameTemplate }\``,
+                `${ vars.labelNewChannelPrivacy } ${ privacyDisplay }`,
+                `${ vars.labelNewChannelLimit } ${ userLimitDisplay }`,
                 `${ vars.labelButtons } **${ buttonsDisplay }**`,
                 `${ vars.labelVerifiedRoles } ${ rolesDisplay }`,
                 `${ vars.labelStaffRoles } ${ staffRolesDisplay }`,
@@ -565,6 +577,8 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         labelVerifiedRoles: "▹ Verified Roles:",
         labelStaffRoles: "▹ Staff Roles:",
         labelVoiceRole: "▹ Voice Role:",
+        labelNewChannelPrivacy: "▹ New Channel Privacy:",
+        labelNewChannelLimit: "▹ New Channel Limit:",
         labelLogsChannel: "▹ Logs Channel:",
         labelAutoSave: "▹ Auto Save:",
         labelVersion: "▹ UI Version:",

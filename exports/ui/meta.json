@@ -1,6 +1,6 @@
 {
     "schemaVersion": "1.0.0",
-    "exportedAt": "2026-09-06T19:41:16.217Z",
+    "exportedAt": "2026-09-06T21:16:57.649Z",
     "counts": {
         "components": 48,
         "adapters": 40,
@@ -31,8 +31,8 @@
             "adapters": 13,
             "flows": 11,
             "embeds": {
-                "total": 56,
-                "withDefinition": 56,
+                "total": 58,
+                "withDefinition": 58,
                 "missingDefinition": 0
             },
             "componentsWithEmbeds": 16,
@@ -44,8 +44,8 @@
             "adapters": 18,
             "flows": 16,
             "embeds": {
-                "total": 66,
-                "withDefinition": 66,
+                "total": 68,
+                "withDefinition": 68,
                 "missingDefinition": 0
             },
             "componentsWithEmbeds": 23,
@@ -53,8 +53,8 @@
         }
     ],
     "embedCoverage": {
-        "total": 132,
-        "withDefinition": 132,
+        "total": 136,
+        "withDefinition": 136,
         "missingDefinition": 0
     }
 }

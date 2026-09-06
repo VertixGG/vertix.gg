@@ -35,6 +35,23 @@ export const SETUP_EDIT_VOICE_ROLE_EMBED_VARS = {
     voiceRoleNone: uiUtilsWrapAsTemplate( "voiceRoleNone" )
 };
 
+export const SETUP_EDIT_DEFAULT_PRIVACY_EMBED_VARS = {
+    index: uiUtilsWrapAsTemplate( "index" ),
+    privacyState: uiUtilsWrapAsTemplate( "privacyState" ),
+    privacyPublic: uiUtilsWrapAsTemplate( "privacyPublic" ),
+    privacyPrivate: uiUtilsWrapAsTemplate( "privacyPrivate" ),
+    privacyHidden: uiUtilsWrapAsTemplate( "privacyHidden" )
+};
+
+export const SETUP_EDIT_DEFAULT_USER_LIMIT_EMBED_VARS = {
+    index: uiUtilsWrapAsTemplate( "index" ),
+    userLimit: uiUtilsWrapAsTemplate( "userLimit" ),
+    userLimitDisplay: uiUtilsWrapAsTemplate( "userLimitDisplay" ),
+    userLimitInherit: uiUtilsWrapAsTemplate( "userLimitInherit" ),
+    userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" ),
+    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" )
+};
+
 export const SETUP_EDIT_EMBED_VARS = {
     separator: "{separator}",
     value: "{value}",
@@ -68,6 +85,8 @@ export const SETUP_EDIT_EMBED_VARS = {
     voiceRoleDisplay: uiUtilsWrapAsTemplate( "voiceRoleDisplay" ),
     voiceRoleGuild: uiUtilsWrapAsTemplate( "voiceRoleGuild" ),
     voiceRoleNone: uiUtilsWrapAsTemplate( "voiceRoleNone" ),
+    newChannelPrivacy: uiUtilsWrapAsTemplate( "newChannelPrivacy" ),
+    newChannelLimit: uiUtilsWrapAsTemplate( "newChannelLimit" ),
 
     // Button display labels
     labelDefaultSettings: uiUtilsWrapAsTemplate( "labelDefaultSettings" ),

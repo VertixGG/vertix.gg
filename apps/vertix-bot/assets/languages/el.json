@@ -11,6 +11,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyResetButton",
+        "content": {
+          "label": "Επαναφορά στην προεπιλογή"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitInheritButton",
+        "content": {
+          "label": "Αντιγραφή καναλιού-γεννήτριας"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/DoneButton",
         "content": {
           "label": "✓ Ολοκληρώθηκε"
@@ -508,6 +520,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
+        "content": {
+          "placeholder": "🛡️ ∙ Επιλέξτε κατάσταση απορρήτου"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/DefaultUserLimitMenu",
+        "content": {
+          "placeholder": "✋ ∙ Επιλέξτε όριο χρηστών"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/LanguageSelectMenu",
         "content": {
           "placeholder": "🌍 Επιλέξτε γλώσσα",
@@ -681,6 +705,12 @@
             },
             {
               "label": "∙ Επεξεργασία ρόλου φωνής καναλιού"
+            },
+            {
+              "label": "∙ Επεξεργασία κατάστασης απορρήτου"
+            },
+            {
+              "label": "∙ Επεξεργασία ορίου χρηστών"
             }
           ]
         }
@@ -865,6 +895,12 @@
             },
             {
               "label": "∙ Επεξεργασία ρόλου φωνής καναλιού"
+            },
+            {
+              "label": "∙ Επεξεργασία κατάστασης απορρήτου"
+            },
+            {
+              "label": "∙ Επεξεργασία ορίου χρηστών"
             }
           ]
         }
@@ -1633,7 +1669,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Διαμόρφωση κύριου καναλιού #{index}",
-        "description": "Διαμορφώστε το κύριο κανάλι σύμφωνα με τις προτιμήσεις σας.\n\n**_🎛️ Γενικά_**\n\n➤ ∙ Όνομα: <#{masterChannelId}>\n➤ ∙ ID καναλιού: `{masterChannelId}`\n➤ ∙ Όνομα δυναμικών καναλιών: `{dynamicChannelNameTemplate}`\n➤ ∙ Κανάλι αρχείων: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Διεπαφή κουμπιών_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Επαληθευμένοι ρόλοι_**\n\n▹ {verifiedRoles}\n\n**_🔑 Ρόλοι προσωπικού_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Ρόλος φωνής_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Διαμόρφωση_**\n\n@ ∙ Αναφορά χρήστη στο κύριο μήνυμα: {configUserMention}\n⫸ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n❯❯ ∙ Αποστολή αρχείων σε προσαρμοσμένο κανάλι: {configLogs}\n\n",
+        "description": "Διαμορφώστε το κύριο κανάλι σύμφωνα με τις προτιμήσεις σας.\n\n**_🎛️ Γενικά_**\n\n➤ ∙ Όνομα: <#{masterChannelId}>\n➤ ∙ ID καναλιού: `{masterChannelId}`\n➤ ∙ Όνομα δυναμικών καναλιών: `{dynamicChannelNameTemplate}`\n➤ ∙ Απόρρητο νέων καναλιών: {newChannelPrivacy}\n➤ ∙ Όριο νέων καναλιών: {newChannelLimit}\n➤ ∙ Κανάλι αρχείων: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Διεπαφή κουμπιών_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Επαληθευμένοι ρόλοι_**\n\n▹ {verifiedRoles}\n\n**_🔑 Ρόλοι προσωπικού_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Ρόλος φωνής_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Διαμόρφωση_**\n\n@ ∙ Αναφορά χρήστη στο κύριο μήνυμα: {configUserMention}\n⫸ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n❯❯ ∙ Αποστολή αρχείων σε προσαρμοσμένο κανάλι: {configLogs}\n\n",
         "footer": "Σημείωση: Η αλλαγή αναφοράς χρήστη δεν θα επηρεάσει τα ήδη δημιουργημένα δυναμικά κανάλια.",
         "options": {
           "on": "`🟢∙Ενεργό`",
@@ -1722,6 +1758,34 @@
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(από τις επιλογές διακομιστή)*",
             "{voiceRoleNone}": "**Κανένας**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Επεξεργασία προεπιλεγμένου απορρήτου του κύριου καναλιού #{index}",
+        "description": "Αυτή είναι η κατάσταση με την οποία ξεκινά ένα **νέο** δυναμικό κανάλι. Δεν επηρεάζει τα υπάρχοντα, και ο ιδιοκτήτης μπορεί να αλλάξει το δικό του κανάλι μετά.\n\n**Δημόσιο** - όποιος ανήκει στο κοινό βλέπει και μπαίνει.\n**Ιδιωτικό** - ορατό, αλλά μόνο ο ιδιοκτήτης δέχεται κόσμο.\n**Κρυφό** - καθόλου ορατό μέχρι ο ιδιοκτήτης να το εμφανίσει.\n\nΜε ενεργή την αυτόματη αποθήκευση, ένας ιδιοκτήτης που επιστρέφει παίρνει τη δική του τελευταία κατάσταση αντί γι' αυτό.\n\n**_Τρέχουσα προεπιλογή_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Δημόσιο**",
+            "{privacyPrivate}": "🚫 **Ιδιωτικό**",
+            "{privacyHidden}": "🙈 **Κρυφό**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Επεξεργασία προεπιλεγμένου ορίου χρηστών του κύριου καναλιού #{index}",
+        "description": "Αυτό είναι το όριο χρηστών με το οποίο ξεκινά ένα **νέο** δυναμικό κανάλι. Δεν επηρεάζει τα υπάρχοντα, και ο ιδιοκτήτης μπορεί να το αλλάξει μετά.\n\nΗ αντιγραφή από το κανάλι-γεννήτρια είναι η παλιά συμπεριφορά. Ένας αριθμός εδώ είναι συνήθως καλύτερος, γιατί το όριο της γεννήτριας περιορίζει και πόσοι μπορούν να περιμένουν μέσα της.\n\nΜε ενεργή την αυτόματη αποθήκευση, ένας ιδιοκτήτης που επιστρέφει παίρνει το δικό του τελευταίο όριο αντί γι' αυτό.\n\n**_Τρέχουσα προεπιλογή_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Αντιγράφεται από το κανάλι-γεννήτρια**",
+            "{userLimitUnlimited}": "**Χωρίς όριο**",
+            "{userLimitValue}": "**{userLimit} χρήστες**"
           }
         }
       }
@@ -1958,7 +2022,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Ρύθμιση του κύριου καναλιού #{index}",
-        "description": "Ρυθμίστε το κύριο κανάλι σύμφωνα με τις προτιμήσεις σας.\n\n**_🎛️ Γενικά_**\n\n➤ ∙ Όνομα: <#{masterChannelId}>\n➤ ∙ Αναγνωριστικό καναλιού: `{masterChannelId}`\n➤ ∙ Όνομα δυναμικών καναλιών: `{dynamicChannelNameTemplate}`\n➤ ∙ Κανάλι καταγραφής: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Διεπαφή κουμπιών_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Επαληθευμένοι ρόλοι_**\n\n▹ {verifiedRoles}\n\n**_🔑 Ρόλοι προσωπικού_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Ρόλος φωνής_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Ρυθμίσεις_**\n\n@ ∙ Αναφορά χρήστη στο κύριο μήνυμα: {configUserMention}\n⫸ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n❯❯ ∙ Αποστολή καταγραφών σε προσαρμοσμένο κανάλι: {configLogs}\n\n",
+        "description": "Ρυθμίστε το κύριο κανάλι σύμφωνα με τις προτιμήσεις σας.\n\n**_🎛️ Γενικά_**\n\n➤ ∙ Όνομα: <#{masterChannelId}>\n➤ ∙ Αναγνωριστικό καναλιού: `{masterChannelId}`\n➤ ∙ Όνομα δυναμικών καναλιών: `{dynamicChannelNameTemplate}`\n➤ ∙ Απόρρητο νέων καναλιών: {newChannelPrivacy}\n➤ ∙ Όριο νέων καναλιών: {newChannelLimit}\n➤ ∙ Κανάλι καταγραφής: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Διεπαφή κουμπιών_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Επαληθευμένοι ρόλοι_**\n\n▹ {verifiedRoles}\n\n**_🔑 Ρόλοι προσωπικού_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Ρόλος φωνής_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Ρυθμίσεις_**\n\n@ ∙ Αναφορά χρήστη στο κύριο μήνυμα: {configUserMention}\n⫸ ∙ Αυτόματη αποθήκευση δυναμικών καναλιών: {configAutoSave}\n❯❯ ∙ Αποστολή καταγραφών σε προσαρμοσμένο κανάλι: {configLogs}\n\n",
         "footer": "Σημείωση: Η αλλαγή της αναφοράς χρήστη δεν επηρεάζει τα ήδη δημιουργημένα δυναμικά κανάλια.",
         "options": {
           "on": "`🟢∙Ναι`",
@@ -2372,6 +2436,34 @@
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(από τις επιλογές διακομιστή)*",
             "{voiceRoleNone}": "**Κανένας**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  Επεξεργασία προεπιλεγμένου απορρήτου του κύριου καναλιού #{index}",
+        "description": "Αυτή είναι η κατάσταση με την οποία ξεκινά ένα **νέο** δυναμικό κανάλι. Δεν επηρεάζει τα υπάρχοντα, και ο ιδιοκτήτης μπορεί να αλλάξει το δικό του κανάλι μετά.\n\n**Δημόσιο** - όποιος ανήκει στο κοινό βλέπει και μπαίνει.\n**Ιδιωτικό** - ορατό, αλλά μόνο ο ιδιοκτήτης δέχεται κόσμο.\n**Κρυφό** - καθόλου ορατό μέχρι ο ιδιοκτήτης να το εμφανίσει.\n\nΜε ενεργή την αυτόματη αποθήκευση, ένας ιδιοκτήτης που επιστρέφει παίρνει τη δική του τελευταία κατάσταση αντί γι' αυτό.\n\n**_Τρέχουσα προεπιλογή_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **Δημόσιο**",
+            "{privacyPrivate}": "🚫 **Ιδιωτικό**",
+            "{privacyHidden}": "🙈 **Κρυφό**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  Επεξεργασία προεπιλεγμένου ορίου χρηστών του κύριου καναλιού #{index}",
+        "description": "Αυτό είναι το όριο χρηστών με το οποίο ξεκινά ένα **νέο** δυναμικό κανάλι. Δεν επηρεάζει τα υπάρχοντα, και ο ιδιοκτήτης μπορεί να το αλλάξει μετά.\n\nΗ αντιγραφή από το κανάλι-γεννήτρια είναι η παλιά συμπεριφορά. Ένας αριθμός εδώ είναι συνήθως καλύτερος, γιατί το όριο της γεννήτριας περιορίζει και πόσοι μπορούν να περιμένουν μέσα της.\n\nΜε ενεργή την αυτόματη αποθήκευση, ένας ιδιοκτήτης που επιστρέφει παίρνει το δικό του τελευταίο όριο αντί γι' αυτό.\n\n**_Τρέχουσα προεπιλογή_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitInherit}": "**Αντιγράφεται από το κανάλι-γεννήτρια**",
+            "{userLimitUnlimited}": "**Χωρίς όριο**",
+            "{userLimitValue}": "**{userLimit} χρήστες**"
           }
         }
       }

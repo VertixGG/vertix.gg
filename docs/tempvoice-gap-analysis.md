@@ -69,6 +69,13 @@ a display name into unfiltered channel-name injection. Ship it together with fin
 
 ### 3. Owners can block and kick moderators - verified
 
+> **Status: fixed.** Blocking and kicking now refuse a member holding one of the master
+> channel's staff roles, and answer with a dedicated embed naming the member rather than a
+> generic error. Granting and clearing access are deliberately not guarded - neither can shut a
+> staff member out, and guarding the clear path would make an already blocked staff member
+> unfixable. The status lives only on `EditStatus` and `ActStatus`, so the compiler rejects a
+> branch for it on the two actions that cannot return it.
+
 `editUserAccess` (`apps/vertix-bot/src/services/dynamic-channel-service.ts:2345`) and `kickUser`
 (`:2464`) guard exactly two cases: the target is the bot, and the target is the initiator. The same
 is true of `addUserAccess` (`:2291`) and `removeUserAccess` (`:2404`).

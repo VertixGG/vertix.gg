@@ -109,8 +109,19 @@ export type ChannelVisibilityState = "unknown" | "shown" | "hidden";
  */
 export type ChannelPrivacyState = ChannelState | ChannelVisibilityState;
 
-export type AddStatus = "error" | "action-on-bot-user" | "self-grant" | "already-granted" | "success";
-export type EditStatus = "error" | "action-on-bot-user" | "self-edit" | "already-have" | "success";
+export type AddStatus =
+    | "error"
+    | "action-on-bot-user"
+    | "self-grant"
+    | "already-granted"
+    | "success";
+export type EditStatus =
+    | "error"
+    | "action-on-bot-user"
+    | "action-on-staff-user"
+    | "self-edit"
+    | "already-have"
+    | "success";
 export type RemoveStatus =
     | "error"
     | "action-on-bot-user"
@@ -118,4 +129,10 @@ export type RemoveStatus =
     | "user-blocked"
     | "not-in-the-list"
     | "success";
-export type ActStatus = "error" | "action-on-bot-user" | "self-action" | "not-in-the-list" | "success";
+export type ActStatus =
+    | "error"
+    | "action-on-bot-user"
+    | "action-on-staff-user"
+    | "self-action"
+    | "not-in-the-list"
+    | "success";

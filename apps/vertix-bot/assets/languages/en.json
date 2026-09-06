@@ -943,6 +943,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/StaffMemberEmbed",
+      "content": {
+        "title": "🔑  Staff member",
+        "description": "**{staffMemberDisplayName}** holds a staff role of this server.\n\nStaff roles keep access to every dynamic channel whatever state its owner picks, so they cannot be blocked or kicked out of your channel."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NotYourChannelEmbed",
       "content": {
         "title": "⛔  This is not your channel!",

@@ -943,6 +943,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/StaffMemberEmbed",
+      "content": {
+        "title": "🔑  Membre du staff",
+        "description": "**{staffMemberDisplayName}** possède un rôle du staff de ce serveur.\n\nLes rôles du staff conservent l'accès à tous les canaux dynamiques quel que soit l'état choisi par leur propriétaire, ils ne peuvent donc pas être bloqués ni expulsés de votre canal."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NotYourChannelEmbed",
       "content": {
         "title": "⛔  Ce n'est pas votre canal !",

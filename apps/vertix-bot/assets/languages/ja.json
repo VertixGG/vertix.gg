@@ -943,6 +943,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/StaffMemberEmbed",
+      "content": {
+        "title": "🔑  スタッフメンバー",
+        "description": "**{staffMemberDisplayName}** はこのサーバーのスタッフロールを持っています。\n\nスタッフロールは所有者がどの状態を選んでもすべてのダイナミックチャンネルへのアクセスを保つため、あなたのチャンネルからブロックしたりキックしたりすることはできません。"
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NotYourChannelEmbed",
       "content": {
         "title": "⛔  これはあなたのチャンネルではありません！",

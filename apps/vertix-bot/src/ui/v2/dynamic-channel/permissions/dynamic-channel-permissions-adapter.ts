@@ -259,6 +259,13 @@ async function onBlockSelected(
             } );
             break;
 
+        case "action-on-staff-user":
+            return await context.ephemeralWithStep(
+                interaction,
+                "VertixBot/UI-V2/DynamicChannelPermissionsStateStaffMember",
+                { staffMemberDisplayName: target.displayName }
+            );
+
         case "action-on-bot-user":
         case "self-edit":
         case "already-have":
@@ -338,6 +345,13 @@ async function onKickSelected(
             break;
 
         case "not-in-the-list":
+        case "action-on-staff-user":
+            return await context.ephemeralWithStep(
+                interaction,
+                "VertixBot/UI-V2/DynamicChannelPermissionsStateStaffMember",
+                { staffMemberDisplayName: target.displayName }
+            );
+
         case "action-on-bot-user":
         case "self-action":
             return await context.ephemeralWithStep(
@@ -443,6 +457,12 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup",
                 navigationType: "ephemeral"
             } )
+            .addState( "StaffMember", {
+                executionStep: "VertixBot/UI-V2/DynamicChannelPermissionsStateStaffMember",
+                embedsGroup: "VertixBot/UI-General/StaffMemberEmbedGroup",
+                navigationType: "ephemeral",
+                previewDefaultVars: { staffMemberDisplayName: "User" }
+            } )
             .addTransition( "SetPrivate", { from: "Default", to: "Private" } )
             .addTransition( "SetPublic", { from: "Default", to: "Public" } )
             .addTransition( "SetHidden", { from: "Default", to: "Hidden" } )
@@ -475,6 +495,11 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             } )
             .addTransition( "Error", { from: "Default", to: "Error" } )
             .addTransition( "NothingChanged", { from: "Default", to: "NothingChanged" } )
+            .addTransition( "StaffMember", {
+                from: "Default",
+                to: "StaffMember",
+                mutations: [ { type: "set", path: [ "staffMemberDisplayName" ] } ]
+            } )
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(
                 "VertixBot/UI-V2/DynamicChannelPermissionsStateButton",
                 "SetPrivate",

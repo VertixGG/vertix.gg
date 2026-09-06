@@ -80,6 +80,12 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 navigationType: "ephemeral",
                 embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
             } )
+            .addState( "StaffMember", {
+                executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateStaffMember",
+                navigationType: "ephemeral",
+                previewDefaultVars: { staffMemberDisplayName: "User" },
+                embedsGroup: "VertixBot/UI-General/StaffMemberEmbedGroup"
+            } )
             // Transitions - State changes
             .addTransition( "SetPublic", { from: [ "Default", "Private" ], to: "Public" } )
             .addTransition( "SetPrivate", { from: [ "Default", "Public" ], to: "Private" } )
@@ -114,6 +120,11 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             // Error transitions
             .addTransition( "Error", { from: "Default", to: "Error" } )
             .addTransition( "NothingChanged", { from: "Default", to: "NothingChanged" } )
+            .addTransition( "StaffMember", {
+                from: "Default",
+                to: "StaffMember",
+                mutations: [ { type: "set", path: [ "staffMemberDisplayName" ] } ]
+            } )
             // Handler bindings (combines element-to-transition binding with handler)
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
                 "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
@@ -221,6 +232,11 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                                 userBlockedDisplayName: member.displayName
                             } );
                             break;
+                        case "action-on-staff-user":
+                            await context.triggerTransition( "StaffMember", voiceInteraction, {
+                                staffMemberDisplayName: member.displayName
+                            } );
+                            break;
                         case "already-have":
                             await context.triggerTransition( "NothingChanged", voiceInteraction );
                             break;
@@ -293,6 +309,10 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                     if ( result === "success" ) {
                         await context.triggerTransition( "KickSuccess", voiceInteraction, {
                             userKickedDisplayName: member.displayName
+                        } );
+                    } else if ( result === "action-on-staff-user" ) {
+                        await context.triggerTransition( "StaffMember", voiceInteraction, {
+                            staffMemberDisplayName: member.displayName
                         } );
                     } else {
                         await context.triggerTransition( "Error", voiceInteraction );

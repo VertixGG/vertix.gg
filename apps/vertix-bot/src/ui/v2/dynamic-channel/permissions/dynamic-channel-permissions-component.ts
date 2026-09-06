@@ -3,6 +3,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 
 import { NothingChangedEmbed } from "@vertix.gg/bot/src/ui/general/misc/nothing-changed-embed";
+import { StaffMemberEmbed } from "@vertix.gg/bot/src/ui/general/misc/staff-member-embed";
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
 
@@ -46,7 +47,8 @@ export class DynamicChannelPermissionsComponent extends UIComponentBase {
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelPermissionsAccessEmbed ),
 
             UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( NothingChangedEmbed )
+            UIEmbedsGroupBase.createSingleGroup( NothingChangedEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( StaffMemberEmbed )
         ];
     }
 

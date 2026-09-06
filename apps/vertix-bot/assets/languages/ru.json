@@ -943,6 +943,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/StaffMemberEmbed",
+      "content": {
+        "title": "🔑  Участник персонала",
+        "description": "**{staffMemberDisplayName}** имеет роль персонала этого сервера.\n\nРоли персонала сохраняют доступ ко всем динамическим каналам при любом состоянии, которое выберет владелец, поэтому их нельзя заблокировать или выгнать из вашего канала."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NotYourChannelEmbed",
       "content": {
         "title": "⛔  Это не ваш канал!",

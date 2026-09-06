@@ -943,6 +943,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/StaffMemberEmbed",
+      "content": {
+        "title": "🔑  Team-Mitglied",
+        "description": "**{staffMemberDisplayName}** hat eine Team-Rolle dieses Servers.\n\nTeam-Rollen behalten den Zugriff auf jeden dynamischen Kanal, unabhängig davon, welchen Status der Besitzer wählt, daher können sie nicht blockiert oder aus deinem Kanal geworfen werden."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/NotYourChannelEmbed",
       "content": {
         "title": "⛔  Das ist nicht dein Kanal!",

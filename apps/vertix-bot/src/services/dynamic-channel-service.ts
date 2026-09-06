@@ -2382,6 +2382,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return result;
         }
 
+        if ( ! state && await this.isChannelStaffMember( channel, member ) ) {
+            result = "action-on-staff-user";
+
+            await this.log( initiator, channel, this.editUserAccess, result, { member, permissions, state } );
+
+            return result;
+        }
+
         // Check if permissions are already set.
         const alreadyHave =
             ( state && channel.permissionOverwrites.cache.get( member.id )?.allow.has( permissions ) ) ||
@@ -2499,6 +2507,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return result;
         }
 
+        if ( await this.isChannelStaffMember( channel, member ) ) {
+            result = "action-on-staff-user";
+
+            await this.log( initiator, channel, this.kickUser, result, { member } );
+
+            return result;
+        }
+
         // Check if a member is in the channel.
         if ( !channel.members.has( member.id ) ) {
             result = "not-in-the-list";
@@ -2595,6 +2611,26 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         return roles.filter( ( roleId ) => ! staffRoles.includes( roleId ) );
+    }
+
+    /**
+     * Function isChannelStaffMember() :: Tells whether the member holds one of the master channel's
+     * staff roles.
+     *
+     * A member level deny outranks a role level allow in discord's resolution, so the staff grant
+     * written at creation does not survive an owner blocking that member by hand. The owner facing
+     * actions have to refuse instead.
+     */
+    private async isChannelStaffMember( dynamicChannel: VoiceBasedChannel, member: GuildMember ) {
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( dynamicChannel.id );
+
+        if ( ! masterChannelDB ) {
+            return false;
+        }
+
+        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+
+        return staffRoles.some( ( roleId ) => member.roles.cache.has( roleId ) );
     }
 
     private getDeniedFlagCount( channel: VoiceBasedChannel, roles: string[], flag: bigint ) {
@@ -2870,6 +2906,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                             message = `${ tryingPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
                             break;
 
+                        case "action-on-staff-user":
+                            message = `${ tryingPrefix } - Nothing done, the user holds a **staff role**`;
+                            break;
+
                         case "self-edit":
                             message = `${ tryingPrefix } - Nothing done, cannot do that on his **self**`;
                             break;
@@ -2929,6 +2969,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
                     case "action-on-bot-user":
                         message = `${ tryingKickPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
+                        break;
+
+                    case "action-on-staff-user":
+                        message = `${ tryingKickPrefix } - Nothing done, the user holds a **staff role**`;
                         break;
 
                     case "self-action":

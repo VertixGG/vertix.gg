@@ -92,7 +92,6 @@ const FALLBACK_ADVANCE = 0.62;
 
 const EM = {
     gap: 0.7,
-    padding: 1.05,
     tileHeight: 2.6,
     radius: 0.62,
     icon: 1.35,
@@ -107,9 +106,11 @@ const EM = {
     noteLineHeight: 1.35
 } as const;
 
+/** Discord's own dark theme values, mirrored from `discord-tokens.css` so a sheet dropped into a
+    message sits on the same ground as the embed around it. */
 const COLOR = {
-    page: "#1b1e22",
-    pill: "#3a3d43",
+    page: "#2b2d31",
+    pill: "#4e5058",
     text: "#ffffff",
     note: "#b6bcc4"
 } as const;
@@ -186,7 +187,6 @@ export function buildSheetSvg(
 ): SheetSvg {
     const fontSize = FONT_SIZE,
         gap = EM.gap * fontSize,
-        padding = EM.padding * fontSize,
         tileHeight = EM.tileHeight * fontSize,
         iconSize = EM.icon * fontSize;
 
@@ -197,28 +197,22 @@ export function buildSheetSvg(
 
     const fixed = ( EM.padLeft + EM.icon + EM.iconGap + EM.padRight ) * fontSize;
 
-    const columnWidths: number[] = [];
+    const widestLabel = shown.reduce(
+        ( widest, tile ) => Math.max( widest, labelWidth( tile.label, fontSize ) ),
+        0
+    );
 
-    for ( let column = 0; column < columns; column++ ) {
-        let widest = 0;
-
-        for ( let index = column; index < shown.length; index += columns ) {
-            widest = Math.max( widest, labelWidth( shown[ index ].label, fontSize ) );
-        }
-
-        columnWidths.push( widest + fixed );
-    }
-
-    const gridWidth = columnWidths.reduce( ( total, width ) => total + width, 0 ) + ( gap * ( columns - 1 ) );
+    const columnWidth = widestLabel + fixed,
+        gridWidth = ( columnWidth * columns ) + ( gap * ( columns - 1 ) );
 
     const headHeight = config.title ? ( EM.wordmark * 1.2 * fontSize ) + ( 0.2 * fontSize ) : 0,
         noteHeight = config.note ? ( EM.note * EM.noteLineHeight * fontSize ) + ( 0.2 * fontSize ) : 0;
 
     const noteWidth = config.note ? measureText( config.note, EM.note * fontSize ) : 0;
 
-    const width = Math.ceil( Math.max( gridWidth, noteWidth ) + ( padding * 2 ) ),
+    const width = Math.ceil( Math.max( gridWidth, noteWidth ) ),
         height = Math.ceil(
-            ( padding * 2 ) + headHeight + noteHeight + ( rows * tileHeight ) + ( gap * ( rows - 1 ) )
+            headHeight + noteHeight + ( rows * tileHeight ) + ( gap * ( rows - 1 ) )
         );
 
     const parts: string[] = [];
@@ -232,13 +226,13 @@ export function buildSheetSvg(
 
     parts.push( `<rect width="${ width }" height="${ height }" fill="${ COLOR.page }"/>` );
 
-    let cursorY = padding;
+    let cursorY = 0;
 
     if ( config.title ) {
         const wordmarkSize = EM.wordmark * fontSize;
 
         parts.push(
-            `<text x="${ round( padding ) }"` +
+            "<text x=\"0\"" +
             ` y="${ round( cursorY + ( EM.capHeight * wordmarkSize ) ) }"` +
             ` fill="${ COLOR.text }" font-family="${ SHEET_FONT_FAMILY }" font-weight="700"` +
             ` font-size="${ round( wordmarkSize ) }" letter-spacing="${ round( 0.02 * wordmarkSize ) }"` +
@@ -252,7 +246,7 @@ export function buildSheetSvg(
         const noteSize = EM.note * fontSize;
 
         parts.push(
-            `<text x="${ round( padding ) }"` +
+            "<text x=\"0\"" +
             ` y="${ round( cursorY + ( EM.capHeight * noteSize ) ) }" fill="${ COLOR.note }"` +
             ` font-family="${ SHEET_FONT_FAMILY }" font-weight="500" font-size="${ round( noteSize ) }">` +
             escapeXml( config.note ) +
@@ -266,14 +260,9 @@ export function buildSheetSvg(
         const column = index % columns,
             row = Math.floor( index / columns );
 
-        let x = padding;
-
-        for ( let before = 0; before < column; before++ ) {
-            x += columnWidths[ before ] + gap;
-        }
-
-        const y = cursorY + ( row * ( tileHeight + gap ) ),
-            tileWidth = columnWidths[ column ];
+        const x = column * ( columnWidth + gap ),
+            y = cursorY + ( row * ( tileHeight + gap ) ),
+            tileWidth = columnWidth;
 
         parts.push(
             `<rect x="${ round( x ) }" y="${ round( y ) }" width="${ round( tileWidth ) }"` +

@@ -1,0 +1,85 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "rhel-openssl-1.0.x", "linux-arm64-openssl-3.0.x"]
+  output        = "../src/prisma-ai-client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("VERTIX_AI_PRISMA_DATABASE_URL")
+}
+
+/// Discord events that wake Vertix AI.
+///
+/// Each enabled event hands the model the event context plus the guild's system
+/// prompt, and lets it decide whether to act. Several need gateway intents that
+/// must be enabled on the application first - see `trigger-event-definitions.ts`.
+enum E_AI_TRIGGER_EVENT {
+  /// Someone @mentions the bot.
+  MESSAGE_MENTION
+  /// Any message posted in one of `triggerChannelIds`.
+  MESSAGE_IN_CHANNEL
+  /// A message was edited.
+  MESSAGE_EDIT
+  /// A message was deleted.
+  MESSAGE_DELETE
+  /// A member joined the server. Needs the privileged GuildMembers intent.
+  MEMBER_JOIN
+  /// A member left or was kicked. Needs the privileged GuildMembers intent.
+  MEMBER_LEAVE
+  /// A member was banned. Needs the GuildModeration intent.
+  MEMBER_BAN
+  /// A channel was created.
+  CHANNEL_CREATE
+  /// A channel was deleted.
+  CHANNEL_DELETE
+  /// Someone joined a voice channel. Needs the GuildVoiceStates intent.
+  VOICE_JOIN
+  /// Someone left a voice channel. Needs the GuildVoiceStates intent.
+  VOICE_LEAVE
+}
+
+/// Per-guild configuration for Vertix AI.
+///
+/// Keyed by the raw Discord guild id on purpose: this app is its own Discord
+/// application and can be invited to servers Vertix itself is not in, so it
+/// must not depend on a row existing in the bot's `Guild` collection.
+model AIGuildSettings {
+  id                String               @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId           String               @unique
+  // ---
+  /// Null means the guild is still on the shipped default prompt.
+  systemPrompt      String?
+  // ---
+  /// Empty means the AI never acts on its own - the safe default.
+  triggerEvents     E_AI_TRIGGER_EVENT[]
+  /// Scopes MESSAGE_IN_CHANNEL; ignored by the other events.
+  triggerChannelIds String[]
+  // ---
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+}
+
+/// A destructive action the model proposed, waiting for the person to agree.
+///
+/// Persisted rather than held in memory so a restart between "shall I?" and
+/// "yes" does not silently drop the approval - which reads to the user as the
+/// bot ignoring them.
+model AIPendingAction {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId     String
+  userId      String
+  // ---
+  toolName    String
+  /// Hash of the normalised arguments; the retry must match it exactly.
+  fingerprint String
+  /// The arguments verbatim, replayed so the model can reproduce them.
+  argsJson    String
+  // ---
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@unique([guildId, userId])
+}

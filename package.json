@@ -17,6 +17,10 @@
         "assets"
     ],
     "scripts": {
+        "vertix:ai:bun:start:dev": "cd apps/vertix-ai && bun run vertix-ai:bun:start:dev",
+        "vertix:ai:bun:start:dev--watch": "cd apps/vertix-ai && bun run vertix-ai:bun:start:dev--watch",
+        "vertix:ai:eslint": "bunx --bun eslint apps/vertix-ai",
+        "vertix:ai:typecheck": "cd apps/vertix-ai && bun run vertix-ai:typecheck",
         "vertix:api:dev": "cd apps/vertix-api && bun run vertix-api:bun:start:dev",
         "vertix:api:typecheck": "cd apps/vertix-api && bun run vertix-api:typecheck",
         "vertix:base:eslint": "bunx --bun eslint packages/vertix-base",

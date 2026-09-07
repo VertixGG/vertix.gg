@@ -1,0 +1,26 @@
+{
+    "name": "@vertix.gg/ai",
+    "version": "0.0.0",
+    "license": "MIT",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "main": "index.ts",
+    "type": "module",
+    "scripts": {
+        "vertix-ai:bun:start:dev": "bunx dotenv-cli -e ../../.env -- bun src/index-bun.ts",
+        "vertix-ai:bun:start:dev--debug": "bun --inspect src/index-bun.ts",
+        "vertix-ai:bun:start:dev--watch": "bunx dotenv-cli -e ../../.env -- bun --watch src/index-bun.ts",
+        "vertix-ai:typecheck": "bunx --bun tsc --noEmit"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.24.3",
+        "@vertix.gg/ai": "workspace:*",
+        "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/definitions": "workspace:*",
+        "@vertix.gg/gui": "workspace:*",
+        "@vertix.gg/prisma": "workspace:*",
+        "@vertix.gg/utils": "workspace:*",
+        "discord.js": "latest",
+        "dotenv": "^16.0.3",
+        "picocolors": "^1.0.1"
+    }
+}

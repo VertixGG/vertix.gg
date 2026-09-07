@@ -7,7 +7,9 @@
         "prisma-generate-bot": "bunx dotenv-cli -e ../../.env -- bunx prisma generate --schema prisma/bot.schema.prisma",
         "prisma-generate-api": "bunx dotenv-cli -e ../../.env -- bunx prisma generate --schema prisma/api.schema.prisma",
         "prisma-migrate-bot-deploy": "bunx dotenv-cli -e ../../.env -- bunx prisma db push --schema prisma/bot.schema.prisma",
-        "prisma-migrate-api-deploy": "bunx dotenv-cli -e ../../.env -- bunx prisma db push --schema prisma/api.schema.prisma"
+        "prisma-migrate-api-deploy": "bunx dotenv-cli -e ../../.env -- bunx prisma db push --schema prisma/api.schema.prisma",
+        "prisma-generate-ai": "bunx dotenv-cli -e ../../.env -- bunx prisma generate --schema prisma/ai.schema.prisma",
+        "prisma-migrate-ai-deploy": "bunx dotenv-cli -e ../../.env -- bunx prisma db push --schema prisma/ai.schema.prisma"
     },
     "dependencies": {
         "@prisma/client": "^6.0.0",
@@ -39,6 +41,18 @@
         "./._api-client-library": {
             "require": "./src/prisma-api-client/runtime/library.js",
             "types": "./src/prisma-api-client/runtime/library.d.ts"
+        },
+        "./ai-client": {
+            "default": "./src/prisma-ai-client.ts",
+            "types": "./types/prisma-ai-client.d.ts"
+        },
+        "./._ai-client-internal": {
+            "require": "./src/prisma-ai-client/index.js",
+            "types": "./src/prisma-ai-client/index.d.ts"
+        },
+        "./._ai-client-library": {
+            "require": "./src/prisma-ai-client/runtime/library.js",
+            "types": "./src/prisma-ai-client/runtime/library.d.ts"
         }
     },
     "devDependencies": {

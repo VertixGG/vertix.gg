@@ -1,0 +1,38 @@
+{
+    "extends": "./tsconfig.paths.json",
+
+    "compilerOptions": {
+        "incremental": true,
+        "rootDir": "./",
+        "typeRoots": [
+            "../../node_modules/@types",
+            "../../packages/vertix-prisma/types",
+            "./types"
+        ],
+
+        "types": [
+            "node",
+            "prisma-bot-client.d.ts",
+            "prisma-ai-client.d.ts"
+        ],
+
+        "target": "ESNext",
+
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": false
+    }
+}

@@ -295,18 +295,6 @@
         }
       },
       {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-        "content": {
-          "label": "Άμεσα"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-        "content": {
-          "label": "Μόνο εφαρμογή"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
         "content": {
           "label": "Ακύρωση"
@@ -393,13 +381,13 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
         "content": {
-          "label": "Εκκαθάριση παράκαμψης ρόλου"
+          "label": "Χρήση Προεπιλογής Για Αυτόν Τον Ρόλο"
         }
       },
       {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
+        "name": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
         "content": {
-          "label": "Επεξεργασία προεπιλεγμένων κουμπιών"
+          "label": "Ενημέρωση Υπαρχόντων Καναλιών"
         }
       }
     ],
@@ -877,6 +865,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 Επεξεργασία",
+          "selectOptions": [
+            {
+              "label": "Προεπιλεγμένα κουμπιά — όλοι",
+              "value": "default"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
         "content": {
           "placeholder": "◎ ∙ Επιλέξτε επιλογή επεξεργασίας",
@@ -932,7 +932,7 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "Επιλέξτε ρόλο (προαιρετικά)"
+          "placeholder": "➕ Δώσε σε έναν ρόλο δικά του κουμπιά"
         }
       }
     ]
@@ -1914,9 +1914,57 @@
     {
       "name": "VertixBot/UI-V3/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  Επεξεργασία κουμπιών του κύριου καναλιού #{index}",
-        "description": "Επιλέξτε ποια κουμπιά θέλετε να είναι ορατά στα μέλη σας.\n\nΜόνο τα επιλεγμένα κουμπιά θα είναι ενεργά/ορατά στα _δυναμικά κανάλια_ που δημιουργούνται από αυτό το κύριο κανάλι.\n\n",
-        "footer": "Ενεργά κουμπιά στο παρακάτω μενού"
+        "title": "🎚  Κουμπιά του Master Καναλιού #{index}",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "Κάθε επιλογή αποθηκεύεται αμέσως. Τα ήδη ανοιχτά κανάλια κρατούν τα κουμπιά τους μέχρι να πατήσεις Ενημέρωση Υπαρχόντων Καναλιών.",
+        "options": {
+          "buttonsNone": "> - *Κανένα. Οι κάτοχοι θα έβλεπαν έναν πίνακα χωρίς κανένα κουμπί.*",
+          "rosterHeading": "**Ρόλοι με δικά τους κουμπιά**",
+          "rosterButtonsWord": "Κουμπιά",
+          "rosterMore": "> - *… και {rosterMoreCount} ακόμη. Όλοι τους βρίσκονται στο πάνω μενού.*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**Επεξεργάζεσαι τα προεπιλεγμένα κουμπιά του <#{masterChannelId}>.**\nΌποιος κατέχει κανάλι που δημιουργήθηκε εδώ βλέπει αυτά τα κουμπιά — εκτός αν έχει έναν από τους ρόλους παρακάτω, που αντικαθιστά αυτό το σύνολο γι' αυτόν.",
+            "{scopeRoleOwn}": "**Επεξεργάζεσαι τα κουμπιά του <@&{roleId}>.**\nΈνας κάτοχος με αυτόν τον ρόλο βλέπει αυτά τα κουμπιά **αντί για** το προεπιλεγμένο σύνολο. Κάθε άλλος κάτοχος κρατά το προεπιλεγμένο σύνολο, και αυτό δεν αλλάζει.",
+            "{scopeRoleNew}": "**Ο <@&{roleId}> δεν έχει ακόμη δικά του κουμπιά.**\nΟι κάτοχοί του ακολουθούν το προεπιλεγμένο σύνολο, που είναι ό,τι είναι τσεκαρισμένο τώρα στο μενού κουμπιών. Τσέκαρε ή ξετσέκαρε οτιδήποτε και αυτός ο ρόλος αποκτά δικό του σύνολο από εκείνη τη στιγμή — το προεπιλεγμένο σύνολο μένει ακριβώς ως έχει.",
+            "{scopeRoleMissing}": "**Αυτός ο ρόλος δεν υπάρχει πλέον σε αυτόν τον διακομιστή.**\nΚανείς δεν μπορεί να τον έχει, οπότε τα αποθηκευμένα κουμπιά του δεν φτάνουν σε κανέναν. Πάτα **Χρήση Προεπιλογής Για Αυτόν Τον Ρόλο** για να τον καθαρίσεις."
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**Σε κάθε πίνακα**",
+            "{listRoleOwn}": "**Στον πίνακα ενός κατόχου με αυτόν τον ρόλο**",
+            "{listRoleNew}": "**Το προεπιλεγμένο σύνολο — άλλαξέ το εδώ για να γίνει το δικό του σύνολο αυτού του ρόλου**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *Κανένας ακόμη. Κάθε κάτοχος παίρνει το προεπιλεγμένο σύνολο.*\n> - *Για παράδειγμα: ένας ρόλος να μπορεί να διεκδικεί και να επαναφέρει κανάλια, ενώ όλοι οι άλλοι μόνο να μετονομάζουν.*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nΈνας κάτοχος με δύο από αυτούς τους ρόλους παίρνει το σύνολο του ρόλου που βρίσκεται ψηλότερα στις **Ρυθμίσεις Διακομιστή → Ρόλοι**."
+          },
+          "hintDisplay": {
+            "{hintDefault}": "Για να δώσεις σε έναν ρόλο διαφορετικό σύνολο, διάλεξέ τον στο **➕ Δώσε σε έναν ρόλο δικά του κουμπιά**.",
+            "{hintRoleOwn}": "Το **Χρήση Προεπιλογής Για Αυτόν Τον Ρόλο** διαγράφει αυτό το σύνολο και επαναφέρει τους κατόχους του στο προεπιλεγμένο.",
+            "{hintRoleNew}": "Τίποτα δεν αποθηκεύεται για αυτόν τον ρόλο μέχρι να αλλάξεις ένα κουμπί.",
+            "{hintEveryone}": "⚠️ Ο **@everyone** δεν μπορεί να έχει δικό του σύνολο — κάθε μέλος έχει αυτόν τον ρόλο, οπότε το σύνολό του θα αντικαθιστούσε το προεπιλεγμένο για κάθε κάτοχο. Επεξεργάσου το προεπιλεγμένο σύνολο ή διάλεξε πιο στενό ρόλο.",
+            "{hintPushed}": "✅ Στάλθηκε σε κάθε ανοιχτό κανάλι αυτού του master καναλιού. Καθένα δείχνει τώρα το σύνολο που πρέπει να πάρει ο δικός του κάτοχος."
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+            }
+          }
+        }
       }
     },
     {
@@ -2493,14 +2541,6 @@
       "content": {
         "title": "🤷  Δεν μπορείτε να ψηφίσετε τον εαυτό σας",
         "description": "Είναι υπέροχο που πιστεύετε στον εαυτό σας, αλλά η ψήφος για τον εαυτό σας δεν επιτρέπεται σε αυτήν την εκλογή."
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed",
-      "content": {
-        "title": "🎚  Επεξεργασία κουμπιών του κύριου καναλιού #{index}",
-        "description": "Η επεξεργασία των κουμπιών θα επηρεάσει τα δυναμικά κανάλια που δημιουργήθηκαν από το __κύριο κανάλι #{index}__.\n\nΥπάρχουν δύο επιλογές:\n\n- Άμεση εφαρμογή των αλλαγών σε όλα τα κανάλια\n- Εφαρμογή των αλλαγών μόνο στα νέα _δυναμικά κανάλια_.",
-        "footer": "Ενεργά κουμπιά στο παρακάτω μενού"
       }
     },
     {

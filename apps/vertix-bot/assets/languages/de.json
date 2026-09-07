@@ -295,18 +295,6 @@
         }
       },
       {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-        "content": {
-          "label": "Sofort"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-        "content": {
-          "label": "Nur anwenden"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
         "content": {
           "label": "Abbrechen"
@@ -393,13 +381,13 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
         "content": {
-          "label": "Rollen-Überschreibung entfernen"
+          "label": "Standard für diese Rolle verwenden"
         }
       },
       {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
+        "name": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
         "content": {
-          "label": "Standard-Buttons bearbeiten"
+          "label": "Bestehende Kanäle aktualisieren"
         }
       }
     ],
@@ -877,6 +865,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 In Bearbeitung",
+          "selectOptions": [
+            {
+              "label": "Standard-Buttons — alle",
+              "value": "default"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
         "content": {
           "placeholder": "◎ ∙ Bearbeitungsoption auswählen",
@@ -932,7 +932,7 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "Rolle auswählen (optional)"
+          "placeholder": "➕ Einer Rolle eigene Buttons geben"
         }
       }
     ]
@@ -1778,14 +1778,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed",
-      "content": {
-        "title": "🎚  Buttons von Master-Kanal #{index} bearbeiten",
-        "description": "Das Bearbeiten der Buttons wirkt sich auf die dynamischen Kanäle aus, die von __Master-Kanal #{index}__ erstellt wurden.\n\nEs gibt zwei Optionen:\n\n- Änderungen sofort auf alle Kanäle anwenden\n- Änderungen nur auf neu erstellte _dynamische Kanäle_ anwenden.",
-        "footer": "Aktuell aktivierte Buttons im Menü unten"
-      }
-    },
-    {
       "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
       "content": {
         "title": "🎚  Buttons von Master-Kanal #{index} bearbeiten",
@@ -2481,9 +2473,57 @@
     {
       "name": "VertixBot/UI-V3/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  Buttons von Master-Kanal #{index} bearbeiten",
-        "description": "Wähle aus, welche Buttons für deine Mitglieder sichtbar sein sollen.\n\nNur ausgewählte Buttons werden in _dynamischen Kanälen_ aktiviert/sichtbar sein, die von diesem Master-Kanal erstellt wurden.\n\n",
-        "footer": "Aktuell aktivierte Buttons im Menü unten"
+        "title": "🎚  Buttons von Master-Kanal #{index}",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "Jede Auswahl wird sofort gespeichert. Bereits offene Kanäle behalten ihre Buttons, bis du Bestehende Kanäle aktualisieren drückst.",
+        "options": {
+          "buttonsNone": "> - *Keine. Besitzer sähen ein Panel ganz ohne Buttons.*",
+          "rosterHeading": "**Rollen mit eigenen Buttons**",
+          "rosterButtonsWord": "Buttons",
+          "rosterMore": "> - *… und {rosterMoreCount} weitere. Alle stehen im oberen Menü.*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**Du bearbeitest die Standard-Buttons von <#{masterChannelId}>.**\nWer einen hier erstellten Kanal besitzt, sieht diese Buttons — außer er hat eine der weiter unten aufgeführten Rollen, die diesen Satz für ihn ersetzt.",
+            "{scopeRoleOwn}": "**Du bearbeitest die Buttons von <@&{roleId}>.**\nEin Besitzer mit dieser Rolle sieht diese Buttons **statt** des Standardsatzes. Alle anderen Besitzer behalten den Standardsatz, und er bleibt unverändert.",
+            "{scopeRoleNew}": "**<@&{roleId}> hat noch keine eigenen Buttons.**\nIhre Besitzer folgen dem Standardsatz, der gerade im Button-Menü angehakt ist. Hake irgendetwas an oder ab, und diese Rolle bekommt ab diesem Moment einen eigenen Satz — der Standardsatz bleibt genau so, wie er ist.",
+            "{scopeRoleMissing}": "**Diese Rolle existiert auf diesem Server nicht mehr.**\nNiemand kann sie haben, also erreichen ihre gespeicherten Buttons niemanden. Drücke **Standard für diese Rolle verwenden**, um sie zu entfernen."
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**Auf jedem Panel**",
+            "{listRoleOwn}": "**Auf dem Panel eines Besitzers mit dieser Rolle**",
+            "{listRoleNew}": "**Der Standardsatz — ändere ihn hier, um daraus den eigenen Satz dieser Rolle zu machen**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *Noch keine. Jeder Besitzer bekommt den Standardsatz.*\n> - *Zum Beispiel: eine Rolle darf Kanäle beanspruchen und zurücksetzen, alle anderen nur umbenennen.*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nEin Besitzer mit zwei dieser Rollen bekommt den Satz der Rolle, die in **Servereinstellungen → Rollen** höher steht."
+          },
+          "hintDisplay": {
+            "{hintDefault}": "Um einer Rolle einen anderen Satz zu geben, wähle sie unter **➕ Einer Rolle eigene Buttons geben**.",
+            "{hintRoleOwn}": "**Standard für diese Rolle verwenden** löscht diesen Satz und setzt ihre Besitzer auf den Standardsatz zurück.",
+            "{hintRoleNew}": "Für diese Rolle wird nichts gespeichert, bis du einen Button änderst.",
+            "{hintEveryone}": "⚠️ **@everyone** kann keinen eigenen Satz haben — jedes Mitglied hat diese Rolle, ihr Satz würde also den Standardsatz für jeden einzelnen Besitzer ersetzen. Bearbeite stattdessen den Standardsatz oder wähle eine engere Rolle.",
+            "{hintPushed}": "✅ An jeden offenen Kanal dieses Master-Kanals gesendet. Jeder zeigt jetzt den Satz, den sein eigener Besitzer bekommen soll."
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+            }
+          }
+        }
       }
     },
     {

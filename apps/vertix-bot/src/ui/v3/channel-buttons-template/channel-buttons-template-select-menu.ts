@@ -19,8 +19,10 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
         return "🎚 Select Buttons";
     }
 
+    // A panel with no buttons on it is broken however it was reached, so discord refuses the
+    // empty submission and no ambiguous empty set can be stored in the first place.
     protected async getMinValues() {
-        return 0;
+        return 1;
     }
 
     protected async getMaxValues() {

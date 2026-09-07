@@ -12,7 +12,7 @@ export class SetupEditButtonsRoleSelectMenu extends UIElementRoleSelectMenu {
     }
 
     protected async getPlaceholder() {
-        return "Select role (optional)";
+        return "➕ Give a role its own buttons";
     }
 
     protected async getMinValues() {

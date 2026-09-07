@@ -14,7 +14,6 @@ import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
-import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import { warnOnMissingLogsChannelPermissions } from "@vertix.gg/bot/src/ui/general/logs-channel/logs-channel-utils";
 
 import {
@@ -44,16 +43,16 @@ import { DefaultPrivacyResetButton } from "@vertix.gg/bot/src/ui/general/master-
 import { DefaultUserLimitInheritButton } from "@vertix.gg/bot/src/ui/general/master-defaults/default-user-limit-inherit-button";
 import { DefaultUserLimitMenu } from "@vertix.gg/bot/src/ui/general/master-defaults/default-user-limit-menu";
 import { warnOnUnassignableVoiceRole } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-utils";
-import { SetupEditButtonsEffectImmediatelyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-immediately-button";
-import { SetupEditButtonsEffectNewlyButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-effect-newly-button";
 import { SetupEditButtonsRoleSelectMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-role-select-menu";
+import { SetupEditButtonsScopeSelectMenu, SCOPE_DEFAULT_VALUE } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-scope-select-menu";
+import { SetupEditButtonsUpdateExistingButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-update-existing-button";
 import { SetupEditButtonsClearRoleOverrideButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-clear-role-override-button";
-import { SetupEditButtonsEditDefaultButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-edit-default-button";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
+
+import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import { SetupEditSelectEditOptionMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-select-edit-option-menu";
 
 import {
-    SETUP_EDIT_BUTTONS_EFFECT_EMBED_VARS,
     SETUP_EDIT_BUTTONS_EMBED_VARS,
     SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS,
     SETUP_EDIT_STAFF_ROLES_EMBED_VARS,
@@ -94,35 +93,115 @@ type Interactions =
     | UIDefaultChannelSelectMenuChannelTextInteraction
     | UIDefaultModalChannelTextInteraction;
 
-const SetupEditButtonsEffectEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEditButtonsEffectEmbed", SETUP_EDIT_BUTTONS_EFFECT_EMBED_VARS )
-    .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( UI_IMAGE_EMPTY_LINE_URL )
-    .setTitle( ( v ) => `🎚  Edit Buttons Of Master Channel #${ v.index }` )
-    .setDescription( ( v ) =>
-        `Editing buttons will impact the dynamic channels created by __Master Channel #${ v.index }__.\n\n` +
-        "There are have two options:\n\n" +
-        "- Affect changes immediately to all channels\n" +
-        "- Apply changes only to newly created _Dynamic Channels_."
-    )
-    .setFooterText( () => "Current enabled buttons at the menu below" )
-    .setLogic( ( args: UIArgs ) => ( { index: ( args.index || 0 ) + 1 } ) )
-    .setInstanceType( UIInstancesTypes.Dynamic )
-    .build();
+const V2_TO_V3_BUTTON_IDS: Record<string, string> = {
+    "0": "rename",
+    "1": "limit",
+    "2": "clear-chat",
+    "3": "privacy",
+    "4": "privacy",
+    "5": "access",
+    "6": "rest-channel",
+    "7": "transfer",
+    "8": "claim-button"
+};
 
-const SetupEditButtonsEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEditButtonsEmbed", SETUP_EDIT_BUTTONS_EMBED_VARS )
+/**
+ * Function migrateV2Buttons() :: Turns a stored button list into ids this version knows.
+ *
+ * V2 wrote numbers, V3 writes slugs, and either can be sitting in a settings row. The unknown-id
+ * filter runs on every list rather than only on the ones that start with a number - an id this
+ * version dropped would otherwise reach the screen and print as its own raw value.
+ */
+function migrateV2Buttons( buttons: ( string | number )[] | undefined | null ): string[] {
+    if ( ! buttons ) {
+        return [];
+    }
+
+    return Array.from(
+        new Set( buttons.map( ( button ) => V2_TO_V3_BUTTON_IDS[ button.toString() ] ?? button.toString() ) )
+    ).filter( ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id ) );
+}
+
+const ROSTER_LIMIT = 15;
+
+const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_BUTTONS_EMBED_VARS>( "VertixBot/UI-V3/SetupEditButtonsEmbed", SETUP_EDIT_BUTTONS_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
-    .setTitle( ( v ) => `🎚  Edit Buttons Of Master Channel #${ v.index }` )
+    .setTitle( ( v ) => `🎚  Buttons Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
-        "Select which buttons you wish to be visible for your members.\n\n" +
-        "Only selected buttons will be enabled/visible at\n" +
-        "_Dynamic Channels_ that created by this master channel.\n\n" +
-        v.dynamicChannelButtonsTemplate
+        `${ v.scopeDisplay }\n\n` +
+        `${ v.listHeadingDisplay }\n${ v.buttonsList }\n\n` +
+        `${ v.rosterHeading }\n${ v.rosterDisplay }\n\n` +
+        v.hintDisplay
     )
-    .setFooterText( () => "Current enabled buttons at the menu below" )
+    .setFooterText( () =>
+        "Every pick is saved straight away. Channels that are already open keep their buttons " +
+        "until you press Update Existing Channels."
+    )
+    .setOptions( ( v ) => ( {
+        buttonsNone: "> - *None. Owners would see a panel with no buttons on it.*",
+
+        rosterHeading: "**Roles with buttons of their own**",
+
+        rosterButtonsWord: "Buttons",
+
+        rosterMore: `> - *… and ${ v.rosterMoreCount } more. Every one of them is in the top menu.*`,
+
+        scopeDisplay: {
+            [ v.scopeDefault ]:
+                `**You are editing the default buttons of <#${ v.masterChannelId }>.**\n` +
+                "Whoever owns a channel created here sees these buttons — unless they have one of " +
+                "the roles listed further down, which replaces this set for them.",
+            [ v.scopeRoleOwn ]:
+                `**You are editing the buttons for <@&${ v.roleId }>.**\n` +
+                "An owner who has this role sees these buttons **instead of** the default set. " +
+                "Every other owner keeps the default set, and it is not changed.",
+            [ v.scopeRoleNew ]:
+                `**<@&${ v.roleId }> has no buttons of its own yet.**\n` +
+                "Its owners follow the default set, which is what is ticked in the button menu " +
+                "right now. Tick or untick anything and this role gets a set of its own from that " +
+                "moment on — the default set stays exactly as it is.",
+            [ v.scopeRoleMissing ]:
+                "**This role no longer exists on this server.**\n" +
+                "Nobody can have it, so its saved buttons never reach anyone. Press " +
+                "**Use The Default For This Role** to clear it away."
+        },
+
+        listHeadingDisplay: {
+            [ v.listDefault ]: "**On every panel**",
+            [ v.listRoleOwn ]: "**On the panel of an owner who has this role**",
+            [ v.listRoleNew ]: "**The default set — change it here to turn it into this role's own set**"
+        },
+
+        rosterDisplay: {
+            [ v.rosterNone ]:
+                "> - *None yet. Every owner gets the default set.*\n" +
+                "> - *For example: let one role claim and reset channels while everyone else can only rename.*",
+            [ v.rosterOne ]: v.rosterList,
+            [ v.rosterMany ]:
+                `${ v.rosterList }\nAn owner who has two of these roles gets the set of whichever ` +
+                "role sits higher in **Server Settings → Roles**."
+        },
+
+        hintDisplay: {
+            [ v.hintDefault ]:
+                "To give one role a different set, pick it in **➕ Give a role its own buttons**.",
+            [ v.hintRoleOwn ]:
+                "**Use The Default For This Role** deletes this set and puts its owners back on the default one.",
+            [ v.hintRoleNew ]:
+                "Nothing is saved for this role until you change a button.",
+            [ v.hintEveryone ]:
+                "⚠️ **@everyone** cannot have a set of its own — every member has that role, so its " +
+                "set would replace the default one for every single owner. Edit the default set " +
+                "instead, or pick a narrower role.",
+            [ v.hintPushed ]:
+                "✅ Sent to every channel this master channel has open. Each one now shows the set " +
+                "its own owner should get."
+        }
+    } ) )
     .setArrayOptions( {
-        dynamicChannelButtonsTemplate: {
-            format: "- ( {value} ){separator}",
+        buttonsList: {
+            format: "> - {value}{separator}",
             separator: "\n",
             options: {
                 "rename": EmojiManager.getToken( "ChannelRename" ) + "  ∙ **Rename**",
@@ -134,14 +213,92 @@ const SetupEditButtonsEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEditButton
                 "clear-chat": EmojiManager.getToken( "ClearChat" ) + " ∙ **Clear Chat**",
                 "rest-channel": EmojiManager.getToken( "ResetChannel" ) + "  ∙ **Reset**",
                 "transfer": EmojiManager.getToken( "TransferChannel" ) + " ∙ **Transfer**",
+                "templates": EmojiManager.getToken( "ChannelTemplates" ) + " ∙ **Templates**",
                 "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**"
             }
         }
     } )
-    .setLogic( ( args: UIArgs ) => ( {
-        index: ( args.index || 0 ) + 1,
-        dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
-    } ) )
+    .setLogic( ( args, v ) => {
+        const roleId = ( args.dynamicChannelButtonsRoleId as string | null | undefined ) ?? null,
+            notice = ( args.dynamicChannelButtonsNotice as string | null | undefined ) ?? null,
+            selected = ( args.dynamicChannelButtonsTemplate as string[] | undefined ) ?? [],
+            byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {},
+            meta = ( args.dynamicChannelButtonsRoleMeta as { id: string; name: string; position: number }[] | undefined ) ?? [];
+
+        const known = new Set( meta.map( ( role ) => role.id ) ),
+            hasOwnSet = Boolean( roleId ) && Boolean( byRole[ roleId as string ]?.length ),
+            isMissingRole = Boolean( roleId ) && ! known.has( roleId as string );
+
+        // A count rather than the buttons themselves: an emoji token is around thirty six
+        // characters, so a roster of them reaches several kilobytes and discord rejects the whole
+        // message rather than trimming it.
+        const total = DynamicChannelPrimaryMessageElementsGroup.getAll().length,
+            rosterIds = Object.keys( byRole ).filter( ( id ) => byRole[ id ]?.length );
+
+        rosterIds.sort( ( a, b ) => {
+            const roleA = meta.find( ( role ) => role.id === a ),
+                roleB = meta.find( ( role ) => role.id === b );
+
+            if ( ! roleA !== ! roleB ) {
+                return roleA ? 1 : -1;
+            }
+
+            return ( roleB?.position ?? 0 ) - ( roleA?.position ?? 0 );
+        } );
+
+        const shown = rosterIds.slice( 0, ROSTER_LIMIT ),
+            remaining = rosterIds.length - shown.length;
+
+        const rosterLines = shown.map(
+            ( id ) => `> - <@&${ id }> — ${ v.rosterButtonsWord }: ${ byRole[ id ].length } / ${ total }`
+        );
+
+        if ( remaining > 0 ) {
+            rosterLines.push( v.rosterMore );
+        }
+
+        let scopeDisplay: string = v.scopeDefault,
+            listHeadingDisplay: string = v.listDefault,
+            hintDisplay: string = v.hintDefault;
+
+        if ( roleId ) {
+            scopeDisplay = isMissingRole ? v.scopeRoleMissing : ( hasOwnSet ? v.scopeRoleOwn : v.scopeRoleNew );
+            listHeadingDisplay = hasOwnSet || isMissingRole ? v.listRoleOwn : v.listRoleNew;
+            hintDisplay = hasOwnSet || isMissingRole ? v.hintRoleOwn : v.hintRoleNew;
+        }
+
+        // The notice replaces the closing line for one render. It has to be set on every handler,
+        // because args merge per key and a value left behind would pin the notice to the screen.
+        if ( "everyone" === notice ) {
+            hintDisplay = v.hintEveryone;
+        } else if ( "pushed" === notice ) {
+            hintDisplay = v.hintPushed;
+        }
+
+        let rosterDisplay: string = v.rosterNone;
+
+        if ( rosterIds.length > 1 ) {
+            rosterDisplay = v.rosterMany;
+        } else if ( rosterIds.length ) {
+            rosterDisplay = v.rosterOne;
+        }
+
+        return {
+            index: ( args.index as number || 0 ) + 1,
+            masterChannelId: ( args.masterChannelId as string | undefined ) ?? "",
+            roleId: roleId ?? "",
+            scopeDisplay,
+            listHeadingDisplay,
+            // The array form lets the translated button names apply. An empty one would render as
+            // a blank line, so the guard sentence is passed as a plain string instead.
+            buttonsList: selected.length ? selected : v.buttonsNone,
+            rosterHeading: v.rosterHeading,
+            rosterDisplay,
+            rosterList: rosterLines.join( "\n" ),
+            rosterMoreCount: remaining,
+            hintDisplay
+        };
+    } )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
@@ -360,18 +517,20 @@ const SetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupE
     .addRow( [ DoneButton, DeleteButton ] )
     .build();
 
+// Lazily, because the back button is a system element that is not registered yet while this module
+// is being evaluated.
 const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsElementsGroup" )
-    .addRow( [ SetupEditButtonsRoleSelectMenu ] )
-    .addRow( [ SetupEditButtonsEditDefaultButton, SetupEditButtonsClearRoleOverrideButton ] )
-    .addRow( [ ChannelButtonsTemplateSelectMenu ] )
-    .addRow( [ DoneButton ] )
-    .build();
+    .setItems( () => {
+        const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+        const { WizardBackButton } = uiService.$$.getSystemElements();
 
-const SetupEditButtonsEffectElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup" )
-    .addRow( [ SetupEditButtonsRoleSelectMenu ] )
-    .addRow( [ SetupEditButtonsEditDefaultButton, SetupEditButtonsClearRoleOverrideButton ] )
-    .addRow( [ ChannelButtonsTemplateSelectMenu ] )
-    .addRow( [ SetupEditButtonsEffectImmediatelyButton, SetupEditButtonsEffectNewlyButton ] )
+        return [
+            [ SetupEditButtonsScopeSelectMenu ],
+            [ SetupEditButtonsRoleSelectMenu ],
+            [ ChannelButtonsTemplateSelectMenu ],
+            [ SetupEditButtonsClearRoleOverrideButton, SetupEditButtonsUpdateExistingButton, WizardBackButton ]
+        ];
+    } )
     .build();
 
 const SetupEditVerifiedRolesElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3/SetupEditVerifiedRolesElementsGroup" )
@@ -533,7 +692,6 @@ const SetupEditStaffRolesElementsGroup = new ElementsGroupBuilder( "VertixBot/UI
 const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ConfigComponent" )
     .addElementsGroup( SetupEditElementsGroup )
     .addElementsGroup( SetupEditButtonsElementsGroup )
-    .addElementsGroup( SetupEditButtonsEffectElementsGroup )
     .addElementsGroup( SetupEditVerifiedRolesElementsGroup )
     .addElementsGroup( SetupEditStaffRolesElementsGroup )
     .addElementsGroup( SetupEditVoiceRoleElementsGroup )
@@ -541,7 +699,6 @@ const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ConfigComponen
     .addElementsGroup( SetupEditDefaultUserLimitElementsGroup )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEmbed ) )
-    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditButtonsEffectEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditStaffRolesEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVoiceRoleEmbed ) )
@@ -553,6 +710,40 @@ const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ConfigComponen
     .setDefaultEmbedsGroup( "VertixBot/UI-V3/SetupEditEmbedGroup" )
     .setInstanceType( UIInstancesTypes.Static )
     .build();
+
+/**
+ * Function syncButtonsRoleMeta() :: Refreshes the names of the roles that own a button set.
+ *
+ * Elements hold no guild handle, so the names have to be read here and put on args. It is rebuilt
+ * on every render rather than kept, which is what makes a role deleted since the last look fall
+ * out of the map on its own - and that absence is what the screen reports back to the admin.
+ */
+function syncButtonsRoleMeta(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: Interactions
+) {
+    const args = context.getArgs( interaction ),
+        byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {},
+        roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
+
+    const ids = new Set( Object.keys( byRole ) );
+
+    if ( roleId ) {
+        ids.add( roleId );
+    }
+
+    const meta: { id: string; name: string; position: number }[] = [];
+
+    ids.forEach( ( id ) => {
+        const role = interaction.guild?.roles.cache.get( id );
+
+        if ( role ) {
+            meta.push( { id, name: role.name, position: role.position } );
+        }
+    } );
+
+    context.setArgs( interaction, { dynamicChannelButtonsRoleMeta: meta } );
+}
 
 async function onSetupMasterEditSelected(
     context: IExecutionAdapterContext<Interactions>,
@@ -585,9 +776,40 @@ async function onSetupMasterEditSelected(
 
     args.dynamicChannelControlChannelAutoCreate = !!args.dynamicChannelControlChannelId;
 
+    // The buttons screen keeps its saved sets apart from the set being looked at, and this is the
+    // only place they can be seeded: the adapter is static, so the framework never calls
+    // `getReplyArgs()` and nothing else ever puts them on args.
+    //
+    // Both are rebuilt rather than referenced. `getAllSettings()` hands back the config defaults
+    // themselves when a master channel has none of its own, so the empty by-role object is one
+    // instance shared by every such channel in the process, and `sortIds()` sorts in place.
+    args.guildId = interaction.guildId;
+
+    const storedTemplate = args.dynamicChannelButtonsTemplate;
+
+    args.dynamicChannelButtonsTemplateDefault = DynamicChannelPrimaryMessageElementsGroup.sortIds(
+        migrateV2Buttons( Array.isArray( storedTemplate ) ? [ ...storedTemplate ] : [] )
+    );
+
+    const storedByRole = args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined,
+        byRole: Record<string, string[]> = {};
+
+    Object.entries( storedByRole ?? {} ).forEach( ( [ roleId, buttons ] ) => {
+        byRole[ roleId ] = DynamicChannelPrimaryMessageElementsGroup.sortIds(
+            migrateV2Buttons( Array.isArray( buttons ) ? [ ...buttons ] : [] )
+        );
+    } );
+
+    args.dynamicChannelButtonsTemplateByRole = byRole;
+    args.dynamicChannelButtonsTemplate = [ ...( args.dynamicChannelButtonsTemplateDefault as string[] ) ];
+    args.dynamicChannelButtonsRoleId = null;
+    args.dynamicChannelButtonsNotice = null;
+
     args._wizardIsFinishButtonAvailable = true;
 
     context.setArgs( interaction, args );
+
+    syncButtonsRoleMeta( context, interaction );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
@@ -608,7 +830,19 @@ async function onSelectEditOptionSelected(
             break;
 
         case "edit-dynamic-channel-buttons":
-            await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
+            // Opened on the default set every time. Args are merged per key and never cleared, so
+            // without this the screen resumes on whichever role was open earlier in the session.
+            context.setArgs( interaction, {
+                dynamicChannelButtonsRoleId: null,
+                dynamicChannelButtonsTemplate: [
+                    ...( ( context.getArgs( interaction ).dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [] )
+                ],
+                dynamicChannelButtonsNotice: null
+            } );
+
+            syncButtonsRoleMeta( context, interaction );
+
+            await context.editReplyWithStep( interaction, BUTTONS_STEP );
             break;
 
         case "edit-dynamic-channel-verified-roles":
@@ -663,151 +897,171 @@ async function onTemplateEditModalSubmitted(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 }
 
-async function onButtonsSelected(
+const BUTTONS_STEP = "VertixBot/UI-V3/SetupEditButtons";
+
+/**
+ * Function readButtonsScope() :: The saved sets plus the one the screen is pointed at.
+ *
+ * Every handler starts here so the role names are refreshed first - a role deleted since the last
+ * render drops out of the meta and the screen says so instead of naming something that is gone.
+ */
+function readButtonsScope( context: IExecutionAdapterContext<Interactions>, interaction: Interactions ) {
+    syncButtonsRoleMeta( context, interaction );
+
+    const args = context.getArgs( interaction );
+
+    return {
+        args,
+        roleId: ( args.dynamicChannelButtonsRoleId as string | null | undefined ) ?? null,
+        byRole: ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {},
+        templateDefault: ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [],
+        masterChannelDB: {
+            id: args.ChannelDBId,
+            version: VERSION_UI_V3
+        } as ChannelExtended
+    };
+}
+
+/**
+ * Function scopeTemplate() :: The set a scope should show.
+ *
+ * A role with nothing of its own opens on the default set rather than on an empty menu, so the
+ * common intent - this role, plus one more button - is a single tick instead of rebuilding the
+ * list. The copy matters: `sortIds()` sorts in place and args share their nested arrays with the
+ * stored bag, so sorting a borrowed reference would reorder the saved default.
+ */
+function scopeTemplate( byRole: Record<string, string[]>, templateDefault: string[], roleId: string | null ) {
+    const source = roleId && byRole[ roleId ]?.length ? byRole[ roleId ] : templateDefault;
+
+    return DynamicChannelPrimaryMessageElementsGroup.sortIds( [ ...source ] );
+}
+
+async function onButtonsScopeSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
-    const args = context.getArgs( interaction );
-    if ( !args ) {
-        return;
-    }
+    const { byRole, templateDefault } = readButtonsScope( context, interaction ),
+        selected = interaction.values.at( 0 ) ?? SCOPE_DEFAULT_VALUE,
+        roleId = SCOPE_DEFAULT_VALUE === selected ? null : selected;
 
-    const buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds( interaction.values );
+    // Nothing is written. Looking at another scope has to be free, otherwise the list above stops
+    // being something an admin will browse.
+    context.setArgs( interaction, {
+        dynamicChannelButtonsRoleId: roleId,
+        dynamicChannelButtonsTemplate: scopeTemplate( byRole, templateDefault, roleId ),
+        dynamicChannelButtonsNotice: null
+    } );
 
-    const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
-
-    if ( roleId ) {
-        const byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {};
-        byRole[ roleId ] = buttons;
-
-        context.setArgs( interaction, {
-            dynamicChannelButtonsTemplate: buttons,
-            dynamicChannelButtonsTemplateByRole: byRole
-        } );
-    } else {
-        context.setArgs( interaction, {
-            dynamicChannelButtonsTemplate: buttons,
-            dynamicChannelButtonsTemplateDefault: buttons
-        } );
-    }
-
-    // The effect step is the only place the template is written - `onDoneButtonClicked` does
-    // nothing on this step - so a selection that never reaches it cannot be saved.
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtonsEffect" );
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
 }
 
 async function onButtonsRoleSelected(
     context: IExecutionAdapterContext<Interactions>,
-    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
-    const args = context.getArgs( interaction );
-    const roleId = interaction.values.at( 0 ) ?? null;
+    const { args, byRole, templateDefault } = readButtonsScope( context, interaction ),
+        roleId = interaction.values.at( 0 ) ?? null;
 
-    const byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {};
+    if ( ! roleId ) {
+        context.setArgs( interaction, { dynamicChannelButtonsNotice: null } );
 
-    const template = roleId
-        ? ( Array.isArray( byRole[ roleId ] ) ? byRole[ roleId ] : [] )
-        : ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [];
+        await context.editReplyWithStep( interaction, BUTTONS_STEP );
+
+        return;
+    }
+
+    // Discord seeds every member's roles with @everyone under the guild id, so a set stored there
+    // would match every owner alive and leave the default set unreachable.
+    if ( roleId === args.guildId ) {
+        context.setArgs( interaction, { dynamicChannelButtonsNotice: "everyone" } );
+
+        await context.editReplyWithStep( interaction, BUTTONS_STEP );
+
+        return;
+    }
 
     context.setArgs( interaction, {
         dynamicChannelButtonsRoleId: roleId,
-        dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( template )
+        dynamicChannelButtonsTemplate: scopeTemplate( byRole, templateDefault, roleId ),
+        dynamicChannelButtonsNotice: null
     } );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
 }
 
-async function onEditDefaultButtonsClicked(
+async function onButtonsSelected(
     context: IExecutionAdapterContext<Interactions>,
-    interaction: UIDefaultButtonChannelTextInteraction
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
-    const args = context.getArgs( interaction );
+    const { byRole, roleId, masterChannelDB } = readButtonsScope( context, interaction );
 
-    const masterChannelDB: ChannelExtended = {
-        id: args.ChannelDBId,
-        version: VERSION_UI_V3
-    } as ChannelExtended;
+    const buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds(
+        interaction.values.filter( ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id ) )
+    );
 
-    const defaultButtons = ( await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, true ) ) ?? [];
+    // Saved on the pick, like every other setting on this screen's siblings. There is no pending
+    // state to lose and nothing to press afterwards to make it count.
+    if ( roleId ) {
+        await MasterChannelDataManager.$.setChannelButtonsTemplateForRole( masterChannelDB, roleId, buttons );
+    } else {
+        await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
+    }
 
+    // A fresh map rather than an assignment into the old one - `getArgs()` hands back a shallow
+    // copy, so writing through a nested object reaches the stored bag directly and would show the
+    // set as saved whether or not the write above succeeded.
     context.setArgs( interaction, {
-        dynamicChannelButtonsRoleId: null,
-        dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( defaultButtons )
+        dynamicChannelButtonsTemplate: buttons,
+        dynamicChannelButtonsNotice: null,
+        ...( roleId
+            ? { dynamicChannelButtonsTemplateByRole: { ...byRole, [ roleId ]: buttons } }
+            : { dynamicChannelButtonsTemplateDefault: buttons } )
     } );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
 }
 
 async function onClearButtonsRoleOverrideClicked(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    const args = context.getArgs( interaction );
-    const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
+    const { byRole, roleId, templateDefault, masterChannelDB } = readButtonsScope( context, interaction );
 
-    if ( !roleId ) {
-        await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
+    if ( ! roleId ) {
+        await context.editReplyWithStep( interaction, BUTTONS_STEP );
 
         return;
     }
-
-    const masterChannelDB: ChannelExtended = {
-        id: args.ChannelDBId,
-        version: VERSION_UI_V3
-    } as ChannelExtended;
 
     await MasterChannelDataManager.$.removeChannelButtonsTemplateForRole( masterChannelDB, roleId );
 
-    const byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {};
-    delete byRole[ roleId ];
-
-    const fallback = ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [];
-
     context.setArgs( interaction, {
-        dynamicChannelButtonsTemplateByRole: byRole,
+        dynamicChannelButtonsTemplateByRole: { ...byRole, [ roleId ]: [] },
         dynamicChannelButtonsRoleId: null,
-        dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.sortIds( fallback )
+        dynamicChannelButtonsTemplate: scopeTemplate( byRole, templateDefault, null ),
+        dynamicChannelButtonsNotice: null
     } );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
 }
 
-async function onButtonsEffectImmediatelyButtonsClicked(
+/**
+ * Function onButtonsUpdateExistingClicked() :: Refreshes the channels that are already open.
+ *
+ * One press covers both scopes, because each channel is rebuilt through its own owner - so every
+ * panel ends up with whichever set that owner should be getting, not with the set on screen.
+ */
+async function onButtonsUpdateExistingClicked(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    const args = context.getArgs( interaction );
-
-    if ( !args ) {
-        return;
-    }
-
-    const template = Array.isArray( args.dynamicChannelButtonsTemplate ) ? args.dynamicChannelButtonsTemplate : [];
-    const buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds( template );
-
-    const masterChannelDB: ChannelExtended = {
-        id: args.ChannelDBId,
-        version: VERSION_UI_V3
-    } as ChannelExtended;
-
-    const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
-
-    if ( roleId ) {
-        await MasterChannelDataManager.$.setChannelButtonsTemplateForRole( masterChannelDB, roleId, buttons );
-        context.setArgs( interaction, {
-            dynamicChannelButtonsRoleId: null,
-            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplateDefault
-        } );
-    } else {
-        await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
-        context.setArgs( interaction, {
-            dynamicChannelButtonsTemplateDefault: buttons
-        } );
-    }
+    const { args } = readButtonsScope( context, interaction );
 
     const claimChannelButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(
         "VertixBot/UI-V3/DynamicChannelClaimChannelButton"
     )?.getId();
+
+    const buttons = ( args.dynamicChannelButtonsTemplate as string[] | undefined ) ?? [];
 
     setTimeout( async() => {
         const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
@@ -818,8 +1072,7 @@ async function onButtonsEffectImmediatelyButtonsClicked(
         for ( const channelDB of channels ) {
             const channel = appService.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
 
-            if ( !channel ) {
-                console.warn( `Channel ${ channelDB.channelId } not found.` );
+            if ( ! channel ) {
                 continue;
             }
 
@@ -835,37 +1088,9 @@ async function onButtonsEffectImmediatelyButtonsClicked(
         }
     } );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
-}
+    context.setArgs( interaction, { dynamicChannelButtonsNotice: "pushed" } );
 
-async function onButtonsEffectNewlyButtonClicked(
-    context: IExecutionAdapterContext<Interactions>,
-    interaction: UIDefaultButtonChannelTextInteraction
-) {
-    const args = context.getArgs( interaction ),
-        buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
-
-    const masterChannelDB: ChannelExtended = {
-        id: args.ChannelDBId,
-        version: VERSION_UI_V3
-    } as ChannelExtended;
-
-    const roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
-
-    if ( roleId ) {
-        await MasterChannelDataManager.$.setChannelButtonsTemplateForRole( masterChannelDB, roleId, buttons );
-        context.setArgs( interaction, {
-            dynamicChannelButtonsRoleId: null,
-            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplateDefault
-        } );
-    } else {
-        await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
-        context.setArgs( interaction, {
-            dynamicChannelButtonsTemplateDefault: buttons
-        } );
-    }
-
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditButtons" );
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
 }
 
 async function onDoneButtonClicked(
@@ -1216,8 +1441,12 @@ async function onBackButtonClicked(
 
     const currentStep = context.getCurrentExecutionStep( interaction )?.name;
 
+    // Everything below the guards falls through to the verified roles case and writes them back
+    // from the database, so a step that shares this button has to claim itself here or leaving it
+    // quietly rewrites settings it never touched.
     if ( "VertixBot/UI-V3/SetupEditDefaultPrivacy" === currentStep
-        || "VertixBot/UI-V3/SetupEditDefaultUserLimit" === currentStep ) {
+        || "VertixBot/UI-V3/SetupEditDefaultUserLimit" === currentStep
+        || BUTTONS_STEP === currentStep ) {
         await context.editReplyWithStep( interaction, "VertixBot/UI-V3/SetupEditMaster" );
 
         return;
@@ -1317,13 +1546,17 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 executionStep: "VertixBot/UI-V3/SetupEditButtons",
                 elementsGroup: "VertixBot/UI-V3/SetupEditButtonsElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/SetupEditButtonsEmbedGroup",
-                previewDefaultVars: { index: "1" }
-            } )
-            .addState( "EditButtonsEffect", {
-                executionStep: "VertixBot/UI-V3/SetupEditButtonsEffect",
-                elementsGroup: "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup",
-                embedsGroup: "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup",
-                previewDefaultVars: { index: "1" }
+                previewDefaultVars: {
+                    index: "1",
+                    masterChannelId: "0",
+                    roleId: "0",
+                    scopeDisplay: "**Default buttons**",
+                    listHeadingDisplay: "**On every panel**",
+                    buttonsList: "> - *None*",
+                    rosterHeading: "**Roles with buttons of their own**",
+                    rosterDisplay: "> - *None yet*",
+                    hintDisplay: "Pick a role to give it a set of its own."
+                }
             } )
             .addState( "EditVerifiedRoles", {
                 executionStep: "VertixBot/UI-V3/SetupEditVerifiedRoles",
@@ -1370,14 +1603,12 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "Done", { from: "EditMaster", to: "Default" } )
             .addTransition( "Delete", { from: "EditMaster", to: "Default" } )
             // Transitions from EditButtons
-            .addTransition( "ButtonsSelected", { from: "EditButtons", to: "EditButtonsEffect" } )
+            .addTransition( "ButtonsSelected", { from: "EditButtons", to: "EditButtons" } )
+            .addTransition( "ButtonsScopeSelected", { from: "EditButtons", to: "EditButtons" } )
             .addTransition( "ButtonsRoleSelected", { from: "EditButtons", to: "EditButtons" } )
-            .addTransition( "EditDefaultButtons", { from: "EditButtons", to: "EditButtons" } )
             .addTransition( "ClearRoleOverride", { from: "EditButtons", to: "EditButtons" } )
-            .addTransition( "ButtonsDone", { from: "EditButtons", to: "EditMaster" } )
-            // Transitions from EditButtonsEffect
-            .addTransition( "ApplyImmediately", { from: "EditButtonsEffect", to: "EditButtons" } )
-            .addTransition( "ApplyNewly", { from: "EditButtonsEffect", to: "EditButtons" } )
+            .addTransition( "UpdateExistingChannels", { from: "EditButtons", to: "EditButtons" } )
+            .addTransition( "ButtonsBack", { from: "EditButtons", to: "EditMaster" } )
             // Transitions from EditVerifiedRoles
             .addTransition( "VerifiedRolesSelected", { from: "EditVerifiedRoles", to: "EditVerifiedRoles" } )
             .addTransition( "VerifiedRolesBack", { from: "EditVerifiedRoles", to: "EditMaster" } )
@@ -1436,15 +1667,15 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "ButtonsSelected",
                 onButtonsSelected
             )
-            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
                 "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
                 "ButtonsRoleSelected",
                 onButtonsRoleSelected
             )
-            .bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
-                "EditDefaultButtons",
-                onEditDefaultButtonsClicked
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+                "ButtonsScopeSelected",
+                onButtonsScopeSelected
             )
             .bindButton<UIDefaultButtonChannelTextInteraction>(
                 "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
@@ -1452,14 +1683,9 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 onClearButtonsRoleOverrideClicked
             )
             .bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-                "ApplyImmediately",
-                onButtonsEffectImmediatelyButtonsClicked
-            )
-            .bindButton<UIDefaultButtonChannelTextInteraction>(
-                "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-                "ApplyNewly",
-                onButtonsEffectNewlyButtonClicked
+                "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
+                "UpdateExistingChannels",
+                onButtonsUpdateExistingClicked
             )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
                 "VertixBot/UI-General/ConfigExtrasSelectMenu",
@@ -1601,24 +1827,6 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             selectedKeys.forEach( ( key ) => {
                 ( args )[ key ] = ( masterChannelSettings )[ key ] ?? ( globalDefaults as any )[ key ];
             } );
-
-            // Migration from V2 IDs (numbers) to V3 IDs (strings)
-            const migrateV2Buttons = ( buttons: any[] ) => {
-                if ( !buttons ) return [];
-                const v2ToV3Mapping: Record<string, string> = {
-                    "0": "rename",
-                    "1": "limit",
-                    "2": "clear-chat",
-                    "3": "privacy",
-                    "4": "privacy",
-                    "5": "access",
-                    "6": "rest-channel",
-                    "7": "transfer",
-                    "8": "claim-button"
-                };
-                return Array.from( new Set( buttons.map( ( b ) => v2ToV3Mapping[ b.toString() ] || b.toString() ) ) )
-                    .filter( ( b ) => DynamicChannelPrimaryMessageElementsGroup.getById( b ) !== undefined );
-            };
 
             let buttonsTemplateFromDb = masterChannelSettings.dynamicChannelButtonsTemplate;
             if ( Array.isArray( buttonsTemplateFromDb ) && buttonsTemplateFromDb.length > 0 ) {

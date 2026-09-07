@@ -14,7 +14,7 @@ export class SetupEditButtonsClearRoleOverrideButton extends UIElementButtonBase
     }
 
     protected async getLabel() {
-        return "Clear role override";
+        return "Use The Default For This Role";
     }
 
     protected async getStyle(): Promise<UIButtonStyleTypes> {
@@ -22,12 +22,23 @@ export class SetupEditButtonsClearRoleOverrideButton extends UIElementButtonBase
     }
 
     protected async getEmoji(): Promise<string> {
-        return "🧹";
+        return "↩️";
     }
 
-    protected async isDisabled(): Promise<boolean> {
-        const args = this.uiArgs as { dynamicChannelButtonsRoleId?: string | null } | undefined;
-        return !args?.dynamicChannelButtonsRoleId;
+    /**
+     * Hidden rather than greyed out. It only ever applies to a role that has a set of its own, and
+     * a control that is present but refuses to work reads as broken, where an absent one reads as
+     * nothing to do here.
+     */
+    protected async isAvailable(): Promise<boolean> {
+        const args = this.uiArgs as {
+            dynamicChannelButtonsRoleId?: string | null;
+            dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
+        } | undefined;
+
+        const roleId = args?.dynamicChannelButtonsRoleId;
+
+        return Boolean( roleId ) && Boolean( args?.dynamicChannelButtonsTemplateByRole?.[ roleId as string ]?.length );
     }
 }
 

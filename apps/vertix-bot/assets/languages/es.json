@@ -295,18 +295,6 @@
         }
       },
       {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-        "content": {
-          "label": "Inmediatamente"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-        "content": {
-          "label": "Solo aplicar"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
         "content": {
           "label": "Cancelar"
@@ -393,13 +381,13 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
         "content": {
-          "label": "Quitar anulación de rol"
+          "label": "Usar El Conjunto Por Defecto"
         }
       },
       {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
+        "name": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
         "content": {
-          "label": "Editar botones predeterminados"
+          "label": "Actualizar Canales Existentes"
         }
       }
     ],
@@ -877,6 +865,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 Editando",
+          "selectOptions": [
+            {
+              "label": "Botones por defecto — todos",
+              "value": "default"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
         "content": {
           "placeholder": "◎ ∙ Seleccionar opción de edición",
@@ -932,7 +932,7 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "Seleccionar rol (opcional)"
+          "placeholder": "➕ Dar botones propios a un rol"
         }
       }
     ]
@@ -1595,9 +1595,57 @@
     {
       "name": "VertixBot/UI-V3/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  Editar los botones del canal maestro #{index}",
-        "description": "Selecciona qué botones quieres que sean visibles para tus miembros.\n\nSolo los botones seleccionados estarán activados/visibles en los _canales dinámicos_ creados por este canal maestro.\n\n",
-        "footer": "Botones actualmente activados en el menú de abajo"
+        "title": "🎚  Botones del Canal Maestro #{index}",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "Cada elección se guarda al instante. Los canales ya abiertos conservan sus botones hasta que pulses Actualizar Canales Existentes.",
+        "options": {
+          "buttonsNone": "> - *Ninguno. Los propietarios verían un panel sin ningún botón.*",
+          "rosterHeading": "**Roles con botones propios**",
+          "rosterButtonsWord": "Botones",
+          "rosterMore": "> - *… y {rosterMoreCount} más. Todos están en el menú de arriba.*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**Estás editando los botones por defecto de <#{masterChannelId}>.**\nQuien posea un canal creado aquí ve estos botones — salvo que tenga uno de los roles listados más abajo, que sustituye este conjunto para él.",
+            "{scopeRoleOwn}": "**Estás editando los botones de <@&{roleId}>.**\nUn propietario con este rol ve estos botones **en lugar del** conjunto por defecto. Los demás propietarios conservan el conjunto por defecto, y no se modifica.",
+            "{scopeRoleNew}": "**<@&{roleId}> aún no tiene botones propios.**\nSus propietarios siguen el conjunto por defecto, que es lo que está marcado ahora mismo en el menú de botones. Marca o desmarca cualquier cosa y este rol tendrá su propio conjunto desde ese momento — el conjunto por defecto se queda exactamente igual.",
+            "{scopeRoleMissing}": "**Este rol ya no existe en este servidor.**\nNadie puede tenerlo, así que sus botones guardados no llegan a nadie. Pulsa **Usar El Conjunto Por Defecto** para eliminarlo."
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**En todos los paneles**",
+            "{listRoleOwn}": "**En el panel de un propietario con este rol**",
+            "{listRoleNew}": "**El conjunto por defecto — cámbialo aquí para convertirlo en el conjunto propio de este rol**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *Ninguno todavía. Todos los propietarios reciben el conjunto por defecto.*\n> - *Por ejemplo: que un rol pueda reclamar y restablecer canales mientras los demás solo pueden renombrar.*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nUn propietario que tenga dos de estos roles recibe el conjunto del rol que esté más arriba en **Ajustes del Servidor → Roles**."
+          },
+          "hintDisplay": {
+            "{hintDefault}": "Para dar a un rol un conjunto distinto, elígelo en **➕ Dar botones propios a un rol**.",
+            "{hintRoleOwn}": "**Usar El Conjunto Por Defecto** borra este conjunto y devuelve a sus propietarios al conjunto por defecto.",
+            "{hintRoleNew}": "No se guarda nada para este rol hasta que cambies un botón.",
+            "{hintEveryone}": "⚠️ **@everyone** no puede tener un conjunto propio — todos los miembros tienen ese rol, así que su conjunto sustituiría al conjunto por defecto para absolutamente todos los propietarios. Edita el conjunto por defecto o elige un rol más concreto.",
+            "{hintPushed}": "✅ Enviado a todos los canales que este canal maestro tiene abiertos. Cada uno muestra ahora el conjunto que le corresponde a su propio propietario."
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+            }
+          }
+        }
       }
     },
     {
@@ -2112,14 +2160,6 @@
             }
           }
         }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed",
-      "content": {
-        "title": "🎚  Editar los botones del canal maestro #{index}",
-        "description": "Editar los botones afectará a los canales dinámicos creados por el __canal maestro #{index}__.\n\nHay dos opciones:\n\n- Aplicar los cambios de inmediato a todos los canales\n- Aplicar los cambios solo a los _canales dinámicos_ recién creados.",
-        "footer": "Botones actualmente activados en el menú de abajo"
       }
     },
     {

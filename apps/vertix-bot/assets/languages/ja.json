@@ -295,18 +295,6 @@
         }
       },
       {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-        "content": {
-          "label": "即時"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-        "content": {
-          "label": "適用のみ"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
         "content": {
           "label": "キャンセル"
@@ -393,13 +381,13 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
         "content": {
-          "label": "ロール上書きをクリア"
+          "label": "このロールに既定を使う"
         }
       },
       {
-        "name": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
+        "name": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
         "content": {
-          "label": "デフォルトボタンを編集"
+          "label": "既存チャンネルを更新"
         }
       }
     ],
@@ -877,6 +865,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 編集中",
+          "selectOptions": [
+            {
+              "label": "既定のボタン — 全員",
+              "value": "default"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
         "content": {
           "placeholder": "◎ ∙ 編集オプションを選択",
@@ -932,7 +932,7 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "ロールを選択（任意）"
+          "placeholder": "➕ ロールに専用のボタンを与える"
         }
       }
     ]
@@ -1435,17 +1435,57 @@
     {
       "name": "VertixBot/UI-V3/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  マスターチャンネル #{index} のボタンを編集",
-        "description": "メンバーに表示したいボタンを選択してください。\n\n選択したボタンのみが、このマスターチャンネルで作成された_ダイナミックチャンネル_で有効・表示されます。\n\n",
-        "footer": "下のメニューで現在有効なボタン"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed",
-      "content": {
-        "title": "🎚  マスターチャンネル #{index} のボタンを編集",
-        "description": "ボタンを編集すると、__マスターチャンネル #{index}__ が作成したダイナミックチャンネルに影響します。\n\n2 つの選択肢があります:\n\n- すべてのチャンネルに変更を即時反映する\n- 新しく作成される_ダイナミックチャンネル_にのみ変更を適用する。",
-        "footer": "下のメニューで現在有効なボタン"
+        "title": "🎚  マスターチャンネル #{index} のボタン",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "選ぶたびにすぐ保存されます。すでに開いているチャンネルは、既存チャンネルを更新を押すまで今のボタンのままです。",
+        "options": {
+          "buttonsNone": "> - *なし。所有者にはボタンのないパネルが表示されます。*",
+          "rosterHeading": "**専用のボタンを持つロール**",
+          "rosterButtonsWord": "ボタン",
+          "rosterMore": "> - *… ほか {rosterMoreCount} 件。すべて上のメニューにあります。*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここで作られたチャンネルの所有者にはこのボタンが表示されます。ただし下に並んでいるロールを持つ場合は、そのロールの構成に置き換わります。",
+            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。",
+            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。",
+            "{scopeRoleMissing}": "**このロールはこのサーバーにもう存在しません。**\n誰も持てないため、保存されたボタンは誰にも届きません。**このロールに既定を使う** を押して削除してください。"
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**すべてのパネルに表示**",
+            "{listRoleOwn}": "**このロールを持つ所有者のパネルに表示**",
+            "{listRoleNew}": "**既定の構成 — ここで変更すると、このロール専用の構成になります**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *まだありません。すべての所有者が既定の構成になります。*\n> - *例: あるロールだけがチャンネルの引き継ぎとリセットを行え、ほかは名前の変更だけにする。*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nこれらのロールを 2 つ持つ所有者には、**サーバー設定 → ロール** でより上にあるロールの構成が適用されます。"
+          },
+          "hintDisplay": {
+            "{hintDefault}": "あるロールに別の構成を与えるには、**➕ ロールに専用のボタンを与える** から選んでください。",
+            "{hintRoleOwn}": "**このロールに既定を使う** はこの構成を削除し、その所有者を既定の構成に戻します。",
+            "{hintRoleNew}": "ボタンを変更するまで、このロールには何も保存されません。",
+            "{hintEveryone}": "⚠️ **@everyone** に専用の構成は持たせられません。全メンバーがこのロールを持つため、その構成がすべての所有者の既定を置き換えてしまいます。既定の構成を編集するか、対象の狭いロールを選んでください。",
+            "{hintPushed}": "✅ このマスターチャンネルが開いているすべてのチャンネルに送信しました。それぞれの所有者に応じた構成が表示されます。"
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+            }
+          }
+        }
       }
     },
     {

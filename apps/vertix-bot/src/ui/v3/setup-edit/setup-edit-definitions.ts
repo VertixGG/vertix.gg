@@ -1,14 +1,40 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-export const SETUP_EDIT_BUTTONS_EFFECT_EMBED_VARS = {
-    index: uiUtilsWrapAsTemplate( "index" )
-};
-
 export const SETUP_EDIT_BUTTONS_EMBED_VARS = {
-    separator: "{separator}",
-    value: "{value}",
     index: uiUtilsWrapAsTemplate( "index" ),
-    dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
+    masterChannelId: uiUtilsWrapAsTemplate( "masterChannelId" ),
+    roleId: uiUtilsWrapAsTemplate( "roleId" ),
+
+    scopeDisplay: uiUtilsWrapAsTemplate( "scopeDisplay" ),
+    scopeDefault: uiUtilsWrapAsTemplate( "scopeDefault" ),
+    scopeRoleOwn: uiUtilsWrapAsTemplate( "scopeRoleOwn" ),
+    scopeRoleNew: uiUtilsWrapAsTemplate( "scopeRoleNew" ),
+    scopeRoleMissing: uiUtilsWrapAsTemplate( "scopeRoleMissing" ),
+
+    listHeadingDisplay: uiUtilsWrapAsTemplate( "listHeadingDisplay" ),
+    listDefault: uiUtilsWrapAsTemplate( "listDefault" ),
+    listRoleOwn: uiUtilsWrapAsTemplate( "listRoleOwn" ),
+    listRoleNew: uiUtilsWrapAsTemplate( "listRoleNew" ),
+
+    buttonsList: uiUtilsWrapAsTemplate( "buttonsList" ),
+    buttonsNone: uiUtilsWrapAsTemplate( "buttonsNone" ),
+
+    rosterHeading: uiUtilsWrapAsTemplate( "rosterHeading" ),
+    rosterButtonsWord: uiUtilsWrapAsTemplate( "rosterButtonsWord" ),
+    rosterDisplay: uiUtilsWrapAsTemplate( "rosterDisplay" ),
+    rosterNone: uiUtilsWrapAsTemplate( "rosterNone" ),
+    rosterOne: uiUtilsWrapAsTemplate( "rosterOne" ),
+    rosterMany: uiUtilsWrapAsTemplate( "rosterMany" ),
+    rosterList: uiUtilsWrapAsTemplate( "rosterList" ),
+    rosterMore: uiUtilsWrapAsTemplate( "rosterMore" ),
+    rosterMoreCount: uiUtilsWrapAsTemplate( "rosterMoreCount" ),
+
+    hintDisplay: uiUtilsWrapAsTemplate( "hintDisplay" ),
+    hintDefault: uiUtilsWrapAsTemplate( "hintDefault" ),
+    hintRoleOwn: uiUtilsWrapAsTemplate( "hintRoleOwn" ),
+    hintRoleNew: uiUtilsWrapAsTemplate( "hintRoleNew" ),
+    hintEveryone: uiUtilsWrapAsTemplate( "hintEveryone" ),
+    hintPushed: uiUtilsWrapAsTemplate( "hintPushed" )
 };
 
 export const SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS = {

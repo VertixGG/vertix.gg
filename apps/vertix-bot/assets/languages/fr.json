@@ -187,15 +187,15 @@
         }
       },
       {
-        "name": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
+        "name": "VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
         "content": {
-          "label": "Immédiatement"
+          "label": "Utiliser L'Ensemble Par Défaut"
         }
       },
       {
-        "name": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+        "name": "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
         "content": {
-          "label": "Appliquer seulement"
+          "label": "Mettre À Jour Les Salons Existants"
         }
       },
       {
@@ -672,6 +672,24 @@
         "name": "VertixBot/UI-V2/LogChannelSelectMenu",
         "content": {
           "placeholder": "❯❯ ∙ Canal de logs"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+        "content": {
+          "placeholder": "➕ Donner ses propres boutons à un rôle"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 Modification",
+          "selectOptions": [
+            {
+              "label": "Boutons par défaut — tout le monde",
+              "value": "default"
+            }
+          ]
         }
       },
       {
@@ -1333,9 +1351,57 @@
     {
       "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  Modifier les boutons du canal maître #{index}",
-        "description": "Sélectionnez les boutons que vous souhaitez rendre visibles pour vos membres.\n\nSeuls les boutons sélectionnés seront activés/visibles dans les _canaux dynamiques_ créés par ce canal maître.\n\n",
-        "footer": "Boutons actuellement activés dans le menu ci-dessous"
+        "title": "🎚  Boutons du Salon Maître #{index}",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "Chaque choix est enregistré aussitôt. Les salons déjà ouverts gardent leurs boutons jusqu'à ce que tu appuies sur Mettre À Jour Les Salons Existants.",
+        "options": {
+          "buttonsNone": "> - *Aucun. Les propriétaires verraient un panneau sans le moindre bouton.*",
+          "rosterHeading": "**Rôles ayant leurs propres boutons**",
+          "rosterButtonsWord": "Boutons",
+          "rosterMore": "> - *… et {rosterMoreCount} de plus. Ils sont tous dans le menu du haut.*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**Tu modifies les boutons par défaut de <#{masterChannelId}>.**\nQuiconque possède un salon créé ici voit ces boutons — sauf s'il a l'un des rôles listés plus bas, qui remplace cet ensemble pour lui.",
+            "{scopeRoleOwn}": "**Tu modifies les boutons de <@&{roleId}>.**\nUn propriétaire ayant ce rôle voit ces boutons **au lieu de** l'ensemble par défaut. Tous les autres propriétaires gardent l'ensemble par défaut, et celui-ci n'est pas modifié.",
+            "{scopeRoleNew}": "**<@&{roleId}> n'a pas encore de boutons à lui.**\nSes propriétaires suivent l'ensemble par défaut, c'est-à-dire ce qui est coché dans le menu des boutons en ce moment. Coche ou décoche quoi que ce soit et ce rôle obtient son propre ensemble à partir de cet instant — l'ensemble par défaut reste exactement tel quel.",
+            "{scopeRoleMissing}": "**Ce rôle n'existe plus sur ce serveur.**\nPersonne ne peut l'avoir, donc ses boutons enregistrés n'atteignent personne. Appuie sur **Utiliser L'Ensemble Par Défaut** pour le retirer."
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**Sur chaque panneau**",
+            "{listRoleOwn}": "**Sur le panneau d'un propriétaire ayant ce rôle**",
+            "{listRoleNew}": "**L'ensemble par défaut — modifie-le ici pour en faire l'ensemble propre à ce rôle**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *Aucun pour l'instant. Chaque propriétaire reçoit l'ensemble par défaut.*\n> - *Par exemple : laisser un rôle réclamer et réinitialiser les salons pendant que les autres peuvent seulement renommer.*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nUn propriétaire ayant deux de ces rôles reçoit l'ensemble du rôle placé le plus haut dans **Paramètres du serveur → Rôles**."
+          },
+          "hintDisplay": {
+            "{hintDefault}": "Pour donner à un rôle un ensemble différent, choisis-le dans **➕ Donner ses propres boutons à un rôle**.",
+            "{hintRoleOwn}": "**Utiliser L'Ensemble Par Défaut** supprime cet ensemble et remet ses propriétaires sur l'ensemble par défaut.",
+            "{hintRoleNew}": "Rien n'est enregistré pour ce rôle tant que tu ne changes pas un bouton.",
+            "{hintEveryone}": "⚠️ **@everyone** ne peut pas avoir son propre ensemble — tous les membres ont ce rôle, donc son ensemble remplacerait l'ensemble par défaut pour absolument chaque propriétaire. Modifie plutôt l'ensemble par défaut, ou choisis un rôle plus restreint.",
+            "{hintPushed}": "✅ Envoyé à tous les salons ouverts de ce salon maître. Chacun affiche désormais l'ensemble que son propre propriétaire doit recevoir."
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+            }
+          }
+        }
       }
     },
     {
@@ -2739,14 +2805,6 @@
             "separator": "\n"
           }
         }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed",
-      "content": {
-        "title": "🎚  Modifier les boutons du canal maître #{index}",
-        "description": "La modification des boutons affectera les canaux dynamiques créés par le __canal maître #{index}__.\n\nIl existe deux options :\n\n- Appliquer les changements immédiatement à tous les canaux\n- Appliquer les changements uniquement aux _canaux dynamiques_ nouvellement créés.",
-        "footer": "Boutons actuellement activés dans le menu ci-dessous"
       }
     },
     {

@@ -187,15 +187,15 @@
         }
       },
       {
-        "name": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
+        "name": "VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
         "content": {
-          "label": "Немедленно"
+          "label": "Вернуть набор по умолчанию"
         }
       },
       {
-        "name": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+        "name": "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
         "content": {
-          "label": "Только применить"
+          "label": "Обновить существующие каналы"
         }
       },
       {
@@ -672,6 +672,24 @@
         "name": "VertixBot/UI-V2/LogChannelSelectMenu",
         "content": {
           "placeholder": "❯❯ ∙ Канал логов"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+        "content": {
+          "placeholder": "➕ Задать роли собственные кнопки"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 Редактирование",
+          "selectOptions": [
+            {
+              "label": "Кнопки по умолчанию — все",
+              "value": "default"
+            }
+          ]
         }
       },
       {
@@ -1650,19 +1668,59 @@
       }
     },
     {
-      "name": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed",
-      "content": {
-        "title": "🎚  Редактирование кнопок мастер-канала #{index}",
-        "description": "Редактирование кнопок повлияет на динамические каналы, созданные __мастер-каналом #{index}__.\n\nЕсть два варианта:\n\n- Применить изменения немедленно ко всем каналам\n- Применить изменения только к новым _динамическим каналам_.",
-        "footer": "Текущие включённые кнопки в меню ниже"
-      }
-    },
-    {
       "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  Редактирование кнопок мастер-канала #{index}",
-        "description": "Выберите, какие кнопки вы хотите сделать видимыми для ваших участников.\n\nТолько выбранные кнопки будут включены/видимы в\n_динамических каналах_, созданных этим мастер-каналом.\n\n",
-        "footer": "Текущие включённые кнопки в меню ниже"
+        "title": "🎚  Кнопки мастер-канала #{index}",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "Каждый выбор сохраняется сразу. Уже открытые каналы сохраняют свои кнопки, пока вы не нажмёте Обновить существующие каналы.",
+        "options": {
+          "buttonsNone": "> - *Нет ни одной. Владельцы увидели бы панель совсем без кнопок.*",
+          "rosterHeading": "**Роли со своим набором кнопок**",
+          "rosterButtonsWord": "Кнопок",
+          "rosterMore": "> - *… и ещё {rosterMoreCount}. Все они есть в верхнем меню.*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**Вы редактируете кнопки по умолчанию для <#{masterChannelId}>.**\nВладелец любого созданного здесь канала видит эти кнопки — если только у него нет одной из перечисленных ниже ролей, которая заменяет ему этот набор.",
+            "{scopeRoleOwn}": "**Вы редактируете кнопки роли <@&{roleId}>.**\nВладелец с этой ролью видит эти кнопки **вместо** набора по умолчанию. У всех остальных владельцев остаётся набор по умолчанию, и он не меняется.",
+            "{scopeRoleNew}": "**У роли <@&{roleId}> пока нет своих кнопок.**\nЕё владельцы следуют набору по умолчанию — именно он сейчас отмечен в меню кнопок. Отметьте или снимите что угодно, и с этого момента у роли появится собственный набор, а набор по умолчанию останется прежним.",
+            "{scopeRoleMissing}": "**Этой роли больше нет на сервере.**\nНикто не может её иметь, поэтому сохранённые кнопки никому не достаются. Нажмите **Вернуть набор по умолчанию**, чтобы убрать её."
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**На каждой панели**",
+            "{listRoleOwn}": "**На панели владельца с этой ролью**",
+            "{listRoleNew}": "**Набор по умолчанию — измените его здесь, чтобы он стал собственным набором этой роли**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *Пока ни одной. Все владельцы получают набор по умолчанию.*\n> - *Например: одна роль может забирать и сбрасывать каналы, а остальные — только переименовывать.*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nВладелец, у которого есть две такие роли, получает набор той роли, что стоит выше в **Настройках сервера → Роли**."
+          },
+          "hintDisplay": {
+            "{hintDefault}": "Чтобы дать роли другой набор, выберите её в **➕ Задать роли собственные кнопки**.",
+            "{hintRoleOwn}": "**Вернуть набор по умолчанию** удаляет этот набор и возвращает его владельцев к набору по умолчанию.",
+            "{hintRoleNew}": "Для этой роли ничего не сохранится, пока вы не измените кнопку.",
+            "{hintEveryone}": "⚠️ У **@everyone** не может быть собственного набора — эта роль есть у каждого участника, поэтому её набор заменил бы набор по умолчанию вообще всем владельцам. Отредактируйте набор по умолчанию или выберите более узкую роль.",
+            "{hintPushed}": "✅ Отправлено во все открытые каналы этого мастер-канала. В каждом теперь показан набор, который положен его собственному владельцу."
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **Переименовать**",
+              "limit": "<emoji name='UserLimit'> ∙ **Лимит пользователей**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Доступ**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Приватность**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Регион**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Редактировать главное сообщение**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Очистить чат**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Сбросить**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
+            }
+          }
+        }
       }
     },
     {

@@ -187,15 +187,15 @@
         }
       },
       {
-        "name": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
+        "name": "VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
         "content": {
-          "label": "Immediately"
+          "label": "Use The Default For This Role"
         }
       },
       {
-        "name": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+        "name": "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
         "content": {
-          "label": "Apply Only"
+          "label": "Update Existing Channels"
         }
       },
       {
@@ -672,6 +672,24 @@
         "name": "VertixBot/UI-V2/LogChannelSelectMenu",
         "content": {
           "placeholder": "❯❯ ∙ Logs-Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+        "content": {
+          "placeholder": "➕ Give a role its own buttons"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+        "content": {
+          "placeholder": "🎚 Editing",
+          "selectOptions": [
+            {
+              "label": "Default buttons — everyone",
+              "value": "default"
+            }
+          ]
         }
       },
       {
@@ -1650,19 +1668,59 @@
       }
     },
     {
-      "name": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed",
-      "content": {
-        "title": "🎚  Edit Buttons Of Master Channel #{index}",
-        "description": "Editing buttons will impact the dynamic channels created by __Master Channel #{index}__.\n\nThere are have two options:\n\n- Affect changes immediately to all channels\n- Apply changes only to newly created _Dynamic Channels_.",
-        "footer": "Current enabled buttons at the menu below"
-      }
-    },
-    {
       "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
       "content": {
-        "title": "🎚  Edit Buttons Of Master Channel #{index}",
-        "description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n",
-        "footer": "Current enabled buttons at the menu below"
+        "title": "🎚  Buttons Of Master Channel #{index}",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "Every pick is saved straight away. Channels that are already open keep their buttons until you press Update Existing Channels.",
+        "options": {
+          "buttonsNone": "> - *None. Owners would see a panel with no buttons on it.*",
+          "rosterHeading": "**Roles with buttons of their own**",
+          "rosterButtonsWord": "Buttons",
+          "rosterMore": "> - *… and {rosterMoreCount} more. Every one of them is in the top menu.*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**You are editing the default buttons of <#{masterChannelId}>.**\nWhoever owns a channel created here sees these buttons — unless they have one of the roles listed further down, which replaces this set for them.",
+            "{scopeRoleOwn}": "**You are editing the buttons for <@&{roleId}>.**\nAn owner who has this role sees these buttons **instead of** the default set. Every other owner keeps the default set, and it is not changed.",
+            "{scopeRoleNew}": "**<@&{roleId}> has no buttons of its own yet.**\nIts owners follow the default set, which is what is ticked in the button menu right now. Tick or untick anything and this role gets a set of its own from that moment on — the default set stays exactly as it is.",
+            "{scopeRoleMissing}": "**This role no longer exists on this server.**\nNobody can have it, so its saved buttons never reach anyone. Press **Use The Default For This Role** to clear it away."
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**On every panel**",
+            "{listRoleOwn}": "**On the panel of an owner who has this role**",
+            "{listRoleNew}": "**The default set — change it here to turn it into this role's own set**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *None yet. Every owner gets the default set.*\n> - *For example: let one role claim and reset channels while everyone else can only rename.*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nAn owner who has two of these roles gets the set of whichever role sits higher in **Server Settings → Roles**."
+          },
+          "hintDisplay": {
+            "{hintDefault}": "To give one role a different set, pick it in **➕ Give a role its own buttons**.",
+            "{hintRoleOwn}": "**Use The Default For This Role** deletes this set and puts its owners back on the default one.",
+            "{hintRoleNew}": "Nothing is saved for this role until you change a button.",
+            "{hintEveryone}": "⚠️ **@everyone** cannot have a set of its own — every member has that role, so its set would replace the default one for every single owner. Edit the default set instead, or pick a narrower role.",
+            "{hintPushed}": "✅ Sent to every channel this master channel has open. Each one now shows the set its own owner should get."
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+            }
+          }
+        }
       }
     },
     {

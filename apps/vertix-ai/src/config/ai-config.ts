@@ -22,6 +22,10 @@ const DEFAULT_HISTORY_LIMIT = 1000;
 // history costs about 2.4s - cheap. Generation is the slow part, not context.
 const DEFAULT_HISTORY_MAX_CHARS = 120000;
 
+// How many bot-only messages in a row before this bot stops answering another
+// bot, so two bots addressing each other cannot talk forever with no human.
+const DEFAULT_BOT_CONVERSATION_MAX_TURNS = 6;
+
 const DEFAULT_MCP_COMMAND = "bun";
 
 /**
@@ -196,6 +200,14 @@ export class AIConfig extends InitializeBase {
      */
     public getHistoryMaxChars(): number {
         return this.readPositiveInteger( process.env.VERTIX_AI_HISTORY_MAX_CHARS, DEFAULT_HISTORY_MAX_CHARS );
+    }
+
+    /** Consecutive bot-only messages before this bot stops answering a bot. */
+    public getBotConversationMaxTurns(): number {
+        return this.readPositiveInteger(
+            process.env.VERTIX_AI_BOT_CONVERSATION_MAX_TURNS,
+            DEFAULT_BOT_CONVERSATION_MAX_TURNS
+        );
     }
 
     /** The small "12k/64k tok" line under each reply. */

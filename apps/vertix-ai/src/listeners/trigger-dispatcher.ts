@@ -192,6 +192,37 @@ async function maybeRefuseCommandRequest( client: Client, message: Message ): Pr
     return true;
 }
 
+/**
+ * True when the last messages in the channel are all bots, up to the configured
+ * cap - the guard that stops this bot and another from answering each other
+ * forever. A human message resets the run; this bot's own replies count as bot
+ * turns, so the exchange decays on its own.
+ */
+async function botConversationExhausted( message: Message ): Promise<boolean> {
+    const max = AIConfig.$.getBotConversationMaxTurns();
+
+    const recent = await ( message.channel as TextBasedChannel ).messages
+        .fetch( { limit: max + 1 } )
+        .catch( () => null );
+
+    if ( !recent ) {
+        return false;
+    }
+
+    let botRun = 0;
+
+    // Newest first; the first human ends the run.
+    for ( const entry of recent.values() ) {
+        if ( !entry.author.bot ) {
+            break;
+        }
+
+        botRun += 1;
+    }
+
+    return botRun >= max;
+}
+
 async function handleMessage( client: Client, message: Message ): Promise<void> {
     // A non-owner (another bot included) asking to run a command is refused here
     // rather than ignored. Everything below is for real triggers only.
@@ -199,13 +230,46 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
         return;
     }
 
-    // Otherwise, other bots are ignored entirely.
-    if ( message.author.bot ) {
+    // Never react to our own messages - that would loop instantly.
+    if ( message.author.id === client.user?.id ) {
         return;
     }
 
-    if ( !message.inGuild() || !message.content.trim().length ) {
+    const text = messageText( message );
+
+    if ( !message.inGuild() || !text.trim().length ) {
         return;
+    }
+
+    const botId = client.user?.id ?? "";
+    const botName = ( client.user?.username ?? "" ).toLowerCase();
+
+    const isMention = message.mentions.users.has( botId );
+
+    // Addressed by a Discord mention, or by this bot's name in the text.
+    const namesBot = isMention || ( botName.length > 0 && text.toLowerCase().includes( botName ) );
+
+    // A message that pings someone else and does not name this bot is theirs to
+    // answer - "@SuperBot which model are you" is not for us, even in a watched
+    // channel. This is deterministic so the model never gets to butt in.
+    const mentionsSomeoneElse = message.mentions.users.some( ( user ) => user.id !== botId );
+
+    if ( mentionsSomeoneElse && !namesBot ) {
+        return;
+    }
+
+    // Another bot is ignored unless it addresses this one by name or mention,
+    // and even then only until the turn cap, so two bots cannot loop forever.
+    if ( message.author.bot ) {
+        if ( !namesBot ) {
+            return;
+        }
+
+        if ( await botConversationExhausted( message ) ) {
+            GlobalLogger.$.debug( handleMessage, "Bot-to-bot turn cap reached - staying quiet" );
+
+            return;
+        }
     }
 
     const settings = await AIGuildDataManager.$.getTriggerSettings( message.guildId );
@@ -214,12 +278,9 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
         return;
     }
 
-    const isMention = Boolean( client.user && message.mentions.users.has( client.user.id ) );
     const isWatchedChannel = settings.channelIds.includes( message.channelId );
 
-    const content = client.user
-        ? message.content.replaceAll( `<@${ client.user.id }>`, "" ).trim()
-        : message.content.trim();
+    const content = botId ? text.replaceAll( `<@${ botId }>`, "" ).trim() : text;
 
     // A mention inside a watched channel is one event, not two.
     let event: E_AI_TRIGGER_EVENT | null = null;
@@ -233,6 +294,10 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
     if ( !event ) {
         return;
     }
+
+    // A direct address - a mention, or a bot naming this one - skips the gate.
+    // Passive channel chatter still has to earn its reply.
+    const directlyAddressed = isMention || ( message.author.bot && namesBot );
 
     GlobalLogger.$.log(
         handleMessage,
@@ -268,15 +333,15 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
             channelId: message.channelId,
             channelName: "name" in message.channel ? ( message.channel.name ?? "unknown" ) : "unknown",
             userId: message.author.id,
-            userName: message.author.username
+            userName: message.member?.displayName ?? message.author.displayName
         },
-        summary: `${ message.author.username } said in #${ "name" in message.channel ? message.channel.name : "channel" }:\n${ content }`
+        summary: `${ message.member?.displayName ?? message.author.displayName } said in #${ "name" in message.channel ? message.channel.name : "channel" }:\n${ content }`
     };
 
-    // A direct mention is already an unambiguous request, so it skips the gate.
-    // Everything passive has to earn a reply first - otherwise a watched channel
-    // gets answered on every message, including ones aimed at other bots.
-    if ( "MESSAGE_MENTION" !== event && !await AIService.$.shouldRespond( triggerContext ) ) {
+    // A direct address is an unambiguous request, so it skips the gate. Everything
+    // passive has to earn a reply first - otherwise a watched channel gets
+    // answered on every message, including ones aimed at other people.
+    if ( !directlyAddressed && !await AIService.$.shouldRespond( triggerContext ) ) {
         GlobalLogger.$.debug( handleMessage, `Decided not to reply to '${ message.id }'` );
 
         return;
@@ -461,15 +526,20 @@ async function fetchHistory( client: Client, message: Message ): Promise<{ messa
                 } );
             }
 
-            if ( !entry.content.trim().length ) {
+            // A components-v2 bot leaves `content` empty, so read its text out of
+            // the component tree - otherwise its side of the chat is invisible.
+            const entryText = isSelf ? entry.content : messageText( entry );
+
+            if ( !entryText.trim().length ) {
                 continue;
             }
 
             // Our own replies carry a usage footer; the model must never see it or
-            // it will start writing its own.
+            // it will start writing its own. Others are prefixed with the name they
+            // are shown as (nickname), so the model refers to them the same way.
             const content = isSelf
-                ? AIService.$.stripUsageFooter( entry.content )
-                : `${ entry.author.username }: ${ entry.content }`;
+                ? AIService.$.stripUsageFooter( entryText )
+                : `${ entry.member?.displayName ?? entry.author.displayName }: ${ entryText }`;
 
             if ( usedChars + content.length > maxChars ) {
                 GlobalLogger.$.debug(

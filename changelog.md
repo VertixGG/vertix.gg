@@ -1,5 +1,29 @@
 # Changelog
 
+**Version: 0.0.17 ~ 07/09/2026**
+- We Are Now VoiceChannels:
+    - **New Name**: Vertix is now **VoiceChannels**, with a new look and a new home at [voicechannels.online](https://voicechannels.online). Every master channel, setting and dynamic channel you already have keeps working exactly as it did - there is nothing to redo.
+- New Features:
+    - **Staff Roles**: Pick the roles that should always reach a dynamic channel. Their members can join whatever state the owner sets it to, and an owner cannot block or kick them.
+    - **Temporary Voice Role**: Hand out a role while someone is sitting in a dynamic channel and take it back when they leave - useful for a colour, a badge, or access to a text channel that only people in voice should see. Set it for the whole server, or per master channel.
+    - **Buttons Per Role**: Give one role a different set of buttons from everyone else. An owner who has that role sees their set; every other owner keeps the default one.
+    - **New Channel Defaults**: Choose what a freshly created channel starts as - public, private or hidden - and the user limit it starts with, separately from the limit on the generator itself.
+- Improvements:
+    - **Rebuilt Buttons Screen**: The screen now says which set you are editing, lists every role that has one of its own, and saves the moment you pick. Channels that are already open are refreshed with one button.
+    - **Verified Roles Now Govern Access**: The roles you mark as verified actually decide who can see and join the channels a master channel creates.
+    - **Clearer Channel Names**: Every placeholder now has one spelling, and there is a page listing all of them and where each one works.
+    - **Bad Words Everywhere**: The bad word filter now applies to every way a channel name can be set, not only the first one.
+    - **A Reason When Creation Fails**: If a channel cannot be created because its category is full, we now say so instead of doing nothing.
+- Fixes:
+    - **The Generator's User Limit Is Applied**: New channels start with the limit set on the master channel instead of no limit at all.
+    - **Names In Any Alphabet**: Non-latin names are no longer stripped out of a channel name.
+    - **Settings Stay Saved**: Server and user settings no longer revert after a restart.
+    - **Every Setup Screen Responds**: The staff roles, verified roles, buttons and voice role screens all draw again after you change something.
+    - **Removing A Role's Buttons Removes Them**: The role used to come back the next time you opened the screen.
+    - **Emoji Show Up Everywhere**: Buttons and menus no longer lose their icons on the site or in the bot.
+
+---
+
 **Version: 0.0.16 ~ 05/02/2026**
 - New Languages:
     - 🇪🇸 Spanish

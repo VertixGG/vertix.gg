@@ -92,6 +92,15 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.7,
     },
     {
+        path: "/tools/button-sheet",
+        title: "Button Sheet | VoiceChannels",
+        description:
+            "Generate a PNG of every button a dynamic channel owner gets, drawn with the bot's own "
+            + "emoji.",
+        priority: 0.3,
+        noSitemap: true,
+    },
+    {
         path: "/changelog",
         title: "Changelog | VoiceChannels",
         description: "Release notes for the VoiceChannels Discord bot.",

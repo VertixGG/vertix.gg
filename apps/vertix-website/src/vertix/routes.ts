@@ -54,6 +54,10 @@ const routes = [
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix//posts/how-to-setup-logs-channel" ) ),
     },
     {
+        path: "/tools/button-sheet",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/tools/button-sheet" ) ),
+    },
+    {
         path: "/posts/channel-name-placeholders",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/channel-name-placeholders" ) ),
     },

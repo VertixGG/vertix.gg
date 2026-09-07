@@ -63,6 +63,8 @@ const config = [
                     "\\.scss$",
                     "\\.png$",
                     "\\.svg$",
+                    "\\.svg\\?raw$",
+                    "\\.ttf\\?url$",
                     "\\.jpg$",
                     "\\.webp$",
                 ]

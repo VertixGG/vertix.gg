@@ -3,7 +3,8 @@ export const API_ROUTES = {
     MODULES: "/modules",
     FLOWS: "/flows",
     LANGUAGES: "/languages",
-    LANGUAGE_TRANSLATIONS: "/languages/translations/:code"
+    LANGUAGE_TRANSLATIONS: "/languages/translations/:code",
+    BUTTON_SHEET: "/tools/button-sheet.png"
 } as const;
 
 export const API_PREFIX = "/api";

@@ -29,12 +29,15 @@
      * the collapse point is defined exactly once. */
     --breakpoint-nav: 990px;
 
-    /* Deep space, darkest -> lightest */
-    --color-vc-void: #01030b;
-    --color-vc-space: #04081a;
-    --color-vc-space-lighter: #070e24;
-    --color-vc-surface: #0b1330;
-    --color-vc-surface-lighter: #121b3d;
+    /* Neutral dark, darkest -> lightest. Held a few degrees cool so the neons
+     * still read as belonging to the surface under them, but well short of the
+     * saturated navy this ramp used to be — the accents carry the brand now,
+     * the background stays out of the way. */
+    --color-vc-void: #0e1015;
+    --color-vc-space: #13151c;
+    --color-vc-space-lighter: #181b23;
+    --color-vc-surface: #1e212a;
+    --color-vc-surface-lighter: #262a35;
 
     /* Neon accents (the letters) */
     --color-vc-crimson: #ff2e63;
@@ -48,14 +51,19 @@
     --color-vc-violet: #7a4dd8;
     --color-vc-magenta: #c04ce0;
 
-    /* Text */
-    --color-vc-starlight: #eaf2ff;
-    --color-vc-ice: #cfdcf3;
-    --color-vc-ice-dim: #8fa3c8;
+    /* Text — neutral greys rather than blue-tinted ones, so body copy stops
+     * competing with the accents. */
+    --color-vc-starlight: #f4f6fa;
+    --color-vc-ice: #c6ccd8;
+    --color-vc-ice-dim: #8a91a0;
 
     /* Structure */
-    --color-vc-hairline: #1b2748;
-    --color-vc-hairline-bright: #2a3a66;
+    --color-vc-hairline: #262a34;
+    --color-vc-hairline-bright: #363b47;
+
+    /* One radius for the whole site; `-lg` is for full panels only. */
+    --radius-vc: 12px;
+    --radius-vc-lg: 16px;
 
     --font-brand: "El Messiri", sans-serif;
     --font-body: "Red Hat Display", Tahoma, sans-serif;
@@ -86,17 +94,19 @@
     --vc-gradient-rule: linear-gradient(
         90deg,
         transparent 0%,
-        rgb(255 46 99 / 0.7) 18%,
-        rgb(30 155 240 / 0.9) 46%,
-        rgb(47 216 245 / 0.9) 62%,
-        rgb(62 224 166 / 0.7) 84%,
+        rgb(255 46 99 / 0.35) 18%,
+        rgb(30 155 240 / 0.45) 46%,
+        rgb(47 216 245 / 0.45) 62%,
+        rgb(62 224 166 / 0.35) 84%,
         transparent 100%
     );
 
-    --vc-glow-crimson: rgb(255 46 99 / 0.45);
-    --vc-glow-azure: rgb(30 155 240 / 0.45);
-    --vc-glow-cyan: rgb(47 216 245 / 0.45);
-    --vc-glow-mint: rgb(62 224 166 / 0.45);
+    /* Roughly half their old strength. A glow is an accent here, not the
+     * lighting model. */
+    --vc-glow-crimson: rgb(255 46 99 / 0.22);
+    --vc-glow-azure: rgb(30 155 240 / 0.22);
+    --vc-glow-cyan: rgb(47 216 245 / 0.22);
+    --vc-glow-mint: rgb(62 224 166 / 0.22);
 }
 
 @media (width >= theme(--breakpoint-lg)) {
@@ -151,7 +161,6 @@
 
     a:hover {
         color: var(--color-vc-cyan-soft);
-        text-shadow: 0 0 14px var(--vc-glow-cyan);
     }
 
     b, strong {
@@ -172,10 +181,10 @@
 
     code {
         padding: 0 6px;
-        border: 1px solid rgb(47 216 245 / 0.28);
+        border: 1px solid var(--color-vc-hairline-bright);
         border-radius: 6px;
-        background: rgb(11 19 48 / 0.75);
-        color: var(--color-vc-cyan);
+        background: var(--color-vc-surface);
+        color: var(--color-vc-cyan-soft);
         font-family: monospace;
     }
 
@@ -185,7 +194,6 @@
         height: 1px;
         margin-block: 1rem;
         background: var(--vc-gradient-rule);
-        box-shadow: 0 0 12px rgb(47 216 245 / 0.25);
     }
 
     ::selection {
@@ -195,7 +203,7 @@
 
     * {
         scrollbar-width: thin;
-        scrollbar-color: var(--color-vc-azure) transparent;
+        scrollbar-color: var(--color-vc-hairline-bright) transparent;
     }
 
     *::-webkit-scrollbar {
@@ -207,8 +215,12 @@
     }
 
     *::-webkit-scrollbar-thumb {
-        background: var(--vc-gradient-brand);
+        background: var(--color-vc-hairline-bright);
         border: 3px solid var(--color-vc-void);
         border-radius: 10px;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background: var(--color-vc-ice-dim);
     }
 }

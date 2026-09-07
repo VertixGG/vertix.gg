@@ -1,7 +1,8 @@
 /* ---------------------------------------------------------------------------
- * Deep space backdrop, after the `vc.png` key art: a near-black navy void,
- * nebula blooms in the brand neons (crimson / azure-cyan / mint) and a drifting
- * starfield over the top.
+ * Backdrop. A neutral dark ground with two very soft accent blooms and a faint
+ * starfield over the top — enough to keep the page from reading as flat grey,
+ * far short of the nebula this used to be. The content, not the background,
+ * carries the colour now.
  *
  * The star positions themselves are generated in `shiny-stars.tsx` — one
  * box-shadow list per layer, so a whole field costs one composited element.
@@ -17,40 +18,24 @@ body::before {
     pointer-events: none;
 
     background:
-        /* Crimson on the left, the way the "V" bleeds into the dust. */
+        /* Crimson high on the left, mint low on the right: the two ends of the
+         * mark, just enough to tint the corners. */
         radial-gradient(
-            ellipse 55% 42% at 14% 18%,
-            rgb(255 46 99 / 0.24) 0%,
-            transparent 68%
+            ellipse 60% 45% at 12% 8%,
+            rgb(255 46 99 / 0.07) 0%,
+            transparent 65%
         ),
-        /* The violet/magenta core of the nebula, behind the middle. */
         radial-gradient(
-            ellipse 50% 40% at 46% 30%,
-            rgb(192 76 224 / 0.2) 0%,
+            ellipse 55% 45% at 88% 22%,
+            rgb(47 216 245 / 0.06) 0%,
+            transparent 65%
+        ),
+        radial-gradient(
+            ellipse 75% 45% at 55% 100%,
+            rgb(62 224 166 / 0.05) 0%,
             transparent 70%
         ),
-        radial-gradient(
-            ellipse 62% 48% at 52% 40%,
-            rgb(122 77 216 / 0.26) 0%,
-            transparent 72%
-        ),
-        radial-gradient(
-            ellipse 70% 50% at 64% 60%,
-            rgb(30 155 240 / 0.24) 0%,
-            transparent 70%
-        ),
-        /* Mint on the right, following the "C". */
-        radial-gradient(
-            ellipse 45% 40% at 88% 26%,
-            rgb(62 224 166 / 0.18) 0%,
-            transparent 70%
-        ),
-        radial-gradient(
-            ellipse 80% 55% at 50% 104%,
-            rgb(47 216 245 / 0.14) 0%,
-            transparent 70%
-        ),
-        linear-gradient(180deg, #01030b 0%, #04081a 45%, #01030b 100%);
+        linear-gradient(180deg, #0e1015 0%, #121419 50%, #0e1015 100%);
 }
 
 .vc-starfield {

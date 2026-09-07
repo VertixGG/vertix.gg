@@ -212,7 +212,8 @@
                     "component": "VertixBot/UI-General/SetupComponent",
                     "previewDefaultVars": {
                         "masterChannelMessage": "**None**",
-                        "badwordsMessage": "**None**"
+                        "badwordsMessage": "**None**",
+                        "voiceRoleMessage": "**None**"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup"
                 }

@@ -648,6 +648,7 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 previewDefaultVars: {
                     masterChannelMessage: "**None**",
                     badwordsMessage: "**None**",
+                    voiceRoleMessage: "**None**"
                 }
             } )
             .addState( "ServerOptions", {

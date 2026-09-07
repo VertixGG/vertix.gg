@@ -134,7 +134,8 @@ export default function Home() {
                             componentName="VertixBot/UI-General/SetupComponent"
                             variables={ {
                                 masterChannelMessage: "None",
-                                badwordsMessage: "`bla`"
+                                badwordsMessage: "`bla`",
+                                voiceRoleMessage: "None"
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-General/SetupMasterEditSelectMenu": { hidden: true },

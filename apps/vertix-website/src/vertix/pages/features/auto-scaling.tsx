@@ -94,6 +94,11 @@ export default function AutoScalingPage() {
                         avatar={ VertixAvatar }
                         timestamp="Today at 9:13 AM"
                         componentName="VertixBot/UI-General/SetupComponent"
+                        variables={ {
+                            masterChannelMessage: "None",
+                            badwordsMessage: "None",
+                            voiceRoleMessage: "None"
+                        } }
                         ephemeral={ true }
                         interactionUser="iNewLegend"
                         interactionUserAvatar={ UserAvatar }

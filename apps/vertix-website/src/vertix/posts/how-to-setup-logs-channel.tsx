@@ -81,6 +81,7 @@ export default function HowToSetupLogsChannel() {
                             variables={ {
                                 masterChannelMessage: "**#1**\n▷ Name: 🔊 ➕ New Channel\n▷ Channel ID: 1120213539064385597\n▷ Dynamic Channels Name: `{user}'s Channel`\n▷ Buttons: ✏️, ✋, 🧹, 🚫, 🙈, 👥, 🔃, 🔀, 😈\n▷ Verified Roles: @everyone\n▷ Logs Channel: None",
                                 badwordsMessage: "`badword*`",
+                                voiceRoleMessage: "None",
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-General/SetupMasterEditSelectMenu": { highlighted: true }

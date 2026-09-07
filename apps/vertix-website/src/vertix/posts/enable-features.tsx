@@ -5,6 +5,8 @@ import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
+// Copied from the `buttonsList` array options of `VertixBot/UI-V2/SetupEditButtonsEmbed`, so the
+// page reads exactly like the screen it is documenting.
 const DYNAMIC_BUTTON_LABELS = [
     "✏️ ∙ **Rename**",
     "✋ ∙ **User Limit**",
@@ -12,9 +14,11 @@ const DYNAMIC_BUTTON_LABELS = [
     "🚫 ∙ **Private** / 🌐 ∙ **Public**",
     "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
     "👥 ∙ **Access**",
-    "🔃 ∙ **Reset Channel**",
-    "😈 ∙ **Claim Channel**"
+    "🔃 ∙ **Reset**",
+    "😈 ∙ **Claim**"
 ];
+
+const BUTTONS_LIST = DYNAMIC_BUTTON_LABELS.map( ( label ) => `> - ${ label }` ).join( "\n" );
 
 const BUTTON_OPTION_VALUES = {
     rename: "0",
@@ -39,6 +43,8 @@ const DEFAULT_SELECTED_BUTTON_VALUES = [
     BUTTON_OPTION_VALUES.claim
 ];
 
+// The renderer substitutes only from this map - it does not read the language file's `options`,
+// so every display variable is given its resolved text rather than the token the bot resolves.
 const CONFIG_VARIABLES = {
     index: "1",
     masterChannelId: "1120709141841842227",
@@ -46,10 +52,45 @@ const CONFIG_VARIABLES = {
     dynamicChannelButtonsTemplate: DYNAMIC_BUTTON_LABELS.map( ( label ) => `- ( ${ label } )` ).join( "\n" ),
     verifiedRoles: "@everyone",
     dynamicChannelLogsChannelDisplay: "**None**",
+    newChannelPrivacy: "🌐 Public",
+    newChannelLimit: "Copied from the generator channel",
+    staffRolesDisplay: "**None**",
+    voiceRoleDisplay: "**None**",
     configUserMention: "`🟢∙On`",
     configAutoSave: "`🔴∙Off`",
     configLogs: "`🔴∙Off`",
     configControlChannelAutoCreate: "`🟢∙On`",
+};
+
+const BUTTONS_VARIABLES = {
+    ...CONFIG_VARIABLES,
+
+    // Written with the channel's display name rather than a `<#id>` mention: discord renders that
+    // as a pill, the site has no channel resolver and would print the raw id.
+    scopeDisplay:
+        "**You are editing the default buttons of 🔊 ➕ New Channel.**\n" +
+        "Whoever owns a channel created here sees these buttons — unless they have one of the " +
+        "roles listed further down, which replaces this set for them.",
+    listHeadingDisplay: "**On every panel**",
+    buttonsList: BUTTONS_LIST,
+    rosterHeading: "**Roles with buttons of their own**",
+    rosterDisplay:
+        "> - *None yet. Every owner gets the default set.*\n" +
+        "> - *For example: let one role claim and reset channels while everyone else can only rename.*",
+    hintDisplay: "To give one role a different set, pick it in **➕ Give a role its own buttons**."
+};
+
+// After the pick is saved, the same screen comes back with Transfer in the list and the closing
+// line replaced by the confirmation.
+const BUTTONS_SAVED_VARIABLES = {
+    ...BUTTONS_VARIABLES,
+
+    buttonsList: [ ...DYNAMIC_BUTTON_LABELS, "🔀 ∙ **Transfer**" ]
+        .map( ( label ) => `> - ${ label }` )
+        .join( "\n" ),
+    hintDisplay:
+        "✅ Sent to every channel this master channel has open. Each one now shows the set its " +
+        "own owner should get."
 };
 
 const MASTER_CHANNEL_MESSAGE =
@@ -63,10 +104,10 @@ const MASTER_CHANNEL_MESSAGE =
 
 const BADWORDS_MESSAGE = "`badword*`";
 
-export default function EnableTransferOwnership() {
+export default function EnableFeatures() {
     return (
         <div className="vc-container vc-page-panel">
-            <h5>Enabling Dynamic Channel - Buttons</h5>
+            <h5>Enabling Dynamic Channel Features</h5>
             <br />
 
             <ol className="text-h5">
@@ -90,7 +131,7 @@ export default function EnableTransferOwnership() {
                 </li>
                 <br />
                 <li>
-                    Select <b>Master Channel</b> you want to enable the button in.
+                    Select the <b>Master Channel</b> you want to turn the feature on for.
                     <br />
                     <br />
                     <div className="discord-chat-container vc-frame-box m-0">
@@ -105,7 +146,8 @@ export default function EnableTransferOwnership() {
                             interactionCommand="/setup"
                             variables={ {
                                 masterChannelMessage: MASTER_CHANNEL_MESSAGE,
-                                badwordsMessage: BADWORDS_MESSAGE
+                                badwordsMessage: BADWORDS_MESSAGE,
+                                voiceRoleMessage: "None"
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-General/SetupMasterEditSelectMenu": {
@@ -161,8 +203,9 @@ export default function EnableTransferOwnership() {
                             interactionUser="iNewLegend"
                             interactionUserAvatar={ UserAvatar }
                             interactionCommand="/setup"
-                            variables={ CONFIG_VARIABLES }
+                            variables={ BUTTONS_VARIABLES }
                             elementOverrides={ {
+                                "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu": { selectedLabel: "🌐 Default buttons" },
                                 "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu": { highlightedCaret: true }
                             } }
                         />
@@ -170,7 +213,8 @@ export default function EnableTransferOwnership() {
                 </li>
                 <br />
                 <li>
-                    Select the <b>🔀 Transfer Ownership</b> for example option, then press <b>done</b> button.
+                    Tick the feature you want to turn on — <b>🔀 Transfer</b> here, as an example.
+                    Anything you tick is added, anything you untick is removed.
                     <br />
                     <br />
                     <div className="discord-chat-container vc-frame-box m-0">
@@ -185,7 +229,10 @@ export default function EnableTransferOwnership() {
                             interactionUser="iNewLegend"
                             interactionUserAvatar={ UserAvatar }
                             interactionCommand="/setup"
-                            variables={ CONFIG_VARIABLES }
+                            variables={ BUTTONS_VARIABLES }
+                            elementOverrides={ {
+                                "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu": { selectedLabel: "🌐 Default buttons" }
+                            } }
                             expandedSelectMenu={ {
                                 elementName: "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
                                 selectedValues: DEFAULT_SELECTED_BUTTON_VALUES,
@@ -196,13 +243,11 @@ export default function EnableTransferOwnership() {
                 </li>
                 <br />
                 <li>
-                    At this point, you have two options:
-                    <ul>
-                        <li>Enable it for all dynamic channels (including newly created).</li>
-                        <li>Enable it only for newly created dynamic channels.</li>
-                    </ul>
+                    Your pick is saved straight away — the list in the message updates to include it.
                     <br />
-                    Select the option that suits you the most.
+                    <br />
+                    Channels that are <b>already open</b> keep the buttons they were created with.
+                    Press <b>🔄 Update Existing Channels</b> to send the new set to them as well.
                     <br />
                     <br />
                     <div className="discord-chat-container vc-frame-box m-0">
@@ -211,17 +256,26 @@ export default function EnableTransferOwnership() {
                             avatar={ VertixAvatar }
                             timestamp="Today at 10:56 AM"
                             componentName="VertixBot/UI-V2/ConfigComponent"
-                            preferredElementsGroup="VertixBot/UI-V2/SetupEditButtonsEffectElementsGroup"
-                            preferredEmbedsGroup="VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup"
+                            preferredElementsGroup="VertixBot/UI-V2/SetupEditButtonsElementsGroup"
+                            preferredEmbedsGroup="VertixBot/UI-V2/SetupEditButtonsEmbedGroup"
                             ephemeral={ true }
                             interactionUser="iNewLegend"
                             interactionUserAvatar={ UserAvatar }
                             interactionCommand="/setup"
-                            variables={ CONFIG_VARIABLES }
+                            variables={ BUTTONS_SAVED_VARIABLES }
+                            elementOverrides={ {
+                                "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu": { selectedLabel: "🌐 Default buttons" },
+                                "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton": { highlighted: true }
+                            } }
                         />
                     </div>
                     <br />
-                    That's all! Now your members can transfer ownership of dynamic channels.
+                    That's all — every feature on this screen is turned on and off the same way.
+                    <br />
+                    <br />
+                    Want one role to get a different set? Pick it in{ " " }
+                    <b>➕ Give a role its own buttons</b> — its owners see that set instead of the
+                    default one, and everyone else is unaffected.
                 </li>
             </ol>
         </div>

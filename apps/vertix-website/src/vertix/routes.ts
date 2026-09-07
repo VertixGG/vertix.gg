@@ -42,8 +42,8 @@ const routes = [
     },
     // ---
     {
-        path: "/posts/enable-transfer-ownership",
-        component: React.lazy( () => import( "@vertix.gg/website/src/vertix//posts/enable-transfer-ownership" ) ),
+        path: "/posts/enable-features",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix//posts/enable-features" ) ),
     },
     {
         path: "/posts/how-to-setup",

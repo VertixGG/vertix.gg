@@ -84,7 +84,7 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.7,
     },
     {
-        path: "/posts/enable-transfer-ownership",
+        path: "/posts/enable-features",
         title: "How to Enable Channel Features | VoiceChannels",
         description:
             "Turn individual dynamic channel features — such as transfer ownership — on or off "

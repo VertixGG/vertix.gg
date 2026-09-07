@@ -116,6 +116,7 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                             masterChannelMessage: "{masterChannels}",
                             masterChannels: "**#1**\n▷ Name: 🔊 🆕 New Channel\n▷ Channel ID: 1121075197588541460\n▷ Dynamic Channels Name: `{user}'s Channel`\n▷ Buttons: ✏️, ✋, 🧹, 🚫, 🙈, 👥, 🔃, 🔀, 😈\n▷ Verified Roles: @Trusted Members",
                             badwordsMessage: "`badword`",
+                            voiceRoleMessage: "None",
                         } }
                         ephemeral={ true }
                         interactionUser="iNewLegend"

@@ -106,10 +106,11 @@ const EM = {
     noteLineHeight: 1.35
 } as const;
 
-/** Discord's own dark theme values, mirrored from `discord-tokens.css` so a sheet dropped into a
-    message sits on the same ground as the embed around it. */
+/** Discord's own dark theme values, mirrored from `discord-tokens.css`.
+ *
+ * Nothing paints the ground: the sheet is transparent, so it takes on whatever it is dropped onto -
+ * an embed, a message, either theme - rather than carrying a slab of one particular colour. */
 const COLOR = {
-    page: "#2b2d31",
     pill: "#4e5058",
     text: "#ffffff",
     note: "#b6bcc4"
@@ -223,8 +224,6 @@ export function buildSheetSvg(
             `src:url(data:font/ttf;base64,${ options.embeddedFont }) format("truetype");}</style></defs>`
         );
     }
-
-    parts.push( `<rect width="${ width }" height="${ height }" fill="${ COLOR.page }"/>` );
 
     let cursorY = 0;
 

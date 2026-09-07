@@ -139,11 +139,15 @@ export class MasterChannelDataManager extends InitializeBase {
         const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, true );
         const previous = settings?.dynamicChannelButtonsTemplateByRole?.[ roleId ] ?? [];
 
+        // An omitted key does not survive the round trip - `setSettings()` merges through
+        // `deepMerge()`, which copies the stored object and then walks only the keys it was given,
+        // so a role left out of this map keeps whatever it already had. Arrays are replaced
+        // wholesale, so writing an empty one is the only removal that actually lands, and every
+        // reader already treats an empty role entry as no set at all.
         const nextByRole: Record<string, string[]> = {
-            ...( settings?.dynamicChannelButtonsTemplateByRole ?? {} )
+            ...( settings?.dynamicChannelButtonsTemplateByRole ?? {} ),
+            [ roleId ]: []
         };
-
-        delete nextByRole[ roleId ];
 
         if ( shouldAdminLog ) {
             this.logger.admin(

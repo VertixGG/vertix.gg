@@ -2016,28 +2016,9 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "༄ Manage your Dynamic Channel",
-                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n{dynamicChannelButtonsTemplate}\n\n_Please be advised that the privilege to make alterations is vested solely to the channel owner._",
+                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n",
                             "color": 3369963,
-                            "arrayOptions": {
-                                "dynamicChannelButtonsTemplate": {
-                                    "format": "{value}{separator}",
-                                    "separator": "\n",
-                                    "options": {
-                                        "0": "✏️ ∙ **Rename** - Change your channel name",
-                                        "1": "✋ ∙ **User Limit** - Set maximum users",
-                                        "2": "🧹 ∙ **Clear Chat** - Delete chat messages",
-                                        "3": "🚫 ∙ **Private** / 🌐 ∙ **Public** - Toggle privacy state",
-                                        "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown** - Toggle visibility",
-                                        "5": "👥 ∙ **Access** - Manage user permissions",
-                                        "6": "🔃 ∙ **Reset** - Reset channel settings",
-                                        "7": "😈 ∙ **Claim** - Claim abandoned channel",
-                                        "12": "🔀 ∙ **Transfer** - Transfer ownership"
-                                    }
-                                }
-                            },
-                            "vars": {
-                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
-                            }
+                            "vars": {}
                         }
                     }
                 ]
@@ -5146,7 +5127,7 @@
                             "instanceType": "Dynamic",
                             "title": "{title}",
                             "description": "{description}\n\n{renameEmoji} ・ Name: **{name}**\n\n{limitEmoji} ・ User Limit: **{limit}**\n\n{privacyEmoji} ・ Privacy State: **{state}**\n\n{regionEmoji} ・ Region:  **{region}**\n",
-                            "image": "https://i.imgur.com/sGjDVJ4.png",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3",
                             "color": 3369963,
                             "options": {
                                 "limit": {
@@ -5549,47 +5530,13 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "༄ Manage your Dynamic Channel",
-                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n{dynamicChannelButtonsTemplate}\n\n_Please be advised that the privilege to make alterations is vested solely to the channel owner._",
-                            "image": "https://i.imgur.com/sGjDVJ4.png",
+                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3",
                             "color": 3369963,
-                            "arrayOptions": {
-                                "dynamicChannelButtonsTemplate": {
-                                    "format": "{value}{separator}",
-                                    "separator": "\n\n",
-                                    "options": {
-                                        "rename": "<emoji name='ChannelRename'> ・ **Rename** - Change your channel name",
-                                        "limit": "<emoji name='UserLimit'> ・ **User Limit** - Set maximum users",
-                                        "access": "<emoji name='ChannelPermissions'> ・ **Access** - Manage user permissions",
-                                        "privacy": "<emoji name='ChannelPrivacy'> ・ **Privacy** - Toggle public/private state",
-                                        "region": "<emoji name='ChannelRegion'> ・ **Region** - Change voice region",
-                                        "edit-primary-message": "<emoji name='EditChannelMessage'> ・ **Edit Message** - Customize primary message",
-                                        "clear-chat": "<emoji name='ClearChat'> ・ **Clear Chat** - Delete chat messages",
-                                        "rest-channel": "<emoji name='ResetChannel'> ・ **Reset** - Reset channel settings",
-                                        "transfer": "<emoji name='TransferChannel'> ・ **Transfer** - Transfer ownership",
-                                        "templates": "<emoji name='ChannelTemplates'> ・ **Templates** - Save/load channel templates",
-                                        "claim-button": "<emoji name='ClaimChannel'>・ **Claim** - Claim abandoned channel"
-                                    }
-                                }
-                            },
                             "vars": {
                                 "separator": "{separator}",
                                 "value": "{value}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
-                            },
-                            "defaultVars": {
-                                "dynamicChannelButtonsTemplate": [
-                                    "rename",
-                                    "limit",
-                                    "access",
-                                    "privacy",
-                                    "region",
-                                    "edit-primary-message",
-                                    "clear-chat",
-                                    "rest-channel",
-                                    "transfer",
-                                    "templates",
-                                    "claim-button"
-                                ]
                             }
                         }
                     }

@@ -7,6 +7,13 @@ import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.
 
 import { ArrowDown } from "@vertix.gg/website/src/vertix/ui/arrows";
 
+// The embed's footer is a display variable; the renderer substitutes only from the map it is
+// handed, so it is given the text the bot resolves it to.
+const STEP_VARIABLES = {
+    footer: "Newly created dynamic channels through this master channel will be affected by the "
+        + "configuration you have selected."
+};
+
 interface IHowToSetupStep2Props {
     displayStep?: boolean
 }
@@ -34,6 +41,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                         author="VoiceChannels"
                         avatar={ VertixAvatar }
                         timestamp="Today at 9:35 AM"
+                        variables={ STEP_VARIABLES }
                         componentName="VertixBot/UI-V2/SetupNewWizardComponent"
                         preferredElementsGroup="VertixBot/UI-V2/SetupStep2Component/ElementsGroup"
                         preferredEmbedsGroup="VertixBot/UI-V2/SetupStep2Component/EmbedsGroup"
@@ -109,6 +117,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                     componentName="VertixBot/UI-V2/SetupNewWizardComponent"
                     preferredElementsGroup="VertixBot/UI-V2/SetupStep2Component/ElementsGroup"
                     preferredEmbedsGroup="VertixBot/UI-V2/SetupStep2Component/EmbedsGroup"
+                    variables={ STEP_VARIABLES }
                     embedOverrides={ {
                         "VertixBot/UI-V2/SetupStep2Embed": {
                             title: "Step 2 - Dynamic Channels Setup",

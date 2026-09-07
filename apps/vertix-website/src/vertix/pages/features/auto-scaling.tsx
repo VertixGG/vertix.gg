@@ -7,6 +7,8 @@ import { AUTO_SCALING_CONFIG, autoScalingWizardSteps, reindexWizardSteps } from 
 
 import "../../components/discord/discord-chat-container.css";
 
+import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+
 export default function AutoScalingPage() {
     return (
         <div className="vc-container vc-page-panel">
@@ -94,11 +96,7 @@ export default function AutoScalingPage() {
                         avatar={ VertixAvatar }
                         timestamp="Today at 9:13 AM"
                         componentName="VertixBot/UI-General/SetupComponent"
-                        variables={ {
-                            masterChannelMessage: "None",
-                            badwordsMessage: "None",
-                            voiceRoleMessage: "None"
-                        } }
+                        variables={ SETUP_EMPTY_VARIABLES }
                         ephemeral={ true }
                         interactionUser="iNewLegend"
                         interactionUserAvatar={ UserAvatar }

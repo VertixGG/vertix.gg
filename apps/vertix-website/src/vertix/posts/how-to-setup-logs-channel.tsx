@@ -3,37 +3,26 @@ import { DiscordUIComponentMessage, DiscordCommandSuggestion, DiscordMessage, Di
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
+import {
+    DYNAMIC_CHANNEL_BUTTON_ORDER,
+    MASTER_CHANNEL_VARIABLES,
+    SETUP_EMPTY_VARIABLES,
+    masterChannelButtonList
+} from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
-const DYNAMIC_BUTTON_LABELS = [
-    "✏️ ∙ **Rename**",
-    "✋ ∙ **User Limit**",
-    "🧹 ∙ **Clear Chat**",
-    "🚫 ∙ **Private** / 🌐 ∙ **Public**",
-    "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
-    "👥 ∙ **Access**",
-    "🔃 ∙ **Reset**",
-    "🔀 ∙ **Transfer**",
-    "😈 ∙ **Claim**"
-];
-
 const CONFIG_VARIABLES = {
-    index: "1",
-    masterChannelId: "1120213539064385597",
-    dynamicChannelNameTemplate: "{user}'s Channel",
-    dynamicChannelButtonsTemplate: DYNAMIC_BUTTON_LABELS.map( ( label ) => `- ( ${ label } )` ).join( "\n" ),
-    verifiedRoles: "@everyone",
-    dynamicChannelLogsChannelDisplay: "**None**",
-    configUserMention: "`🟢∙On`",
-    configAutoSave: "`🔴∙Off`",
-    configLogs: "`🔴∙Off`",
-    configControlChannelAutoCreate: "`🟢∙On`",
+    ...MASTER_CHANNEL_VARIABLES,
+
+    dynamicChannelButtonsTemplate: masterChannelButtonList( DYNAMIC_CHANNEL_BUTTON_ORDER )
 };
 
 const CONFIG_VARIABLES_ENABLED = {
     ...CONFIG_VARIABLES,
+
     dynamicChannelLogsChannelDisplay: "#general",
-    configLogs: "`🟢∙On`",
+    configLogs: "`🟢∙On`"
 };
 
 export default function HowToSetupLogsChannel() {
@@ -79,9 +68,9 @@ export default function HowToSetupLogsChannel() {
                             interactionUserAvatar={ UserAvatar }
                             interactionCommand="/setup"
                             variables={ {
+                                ...SETUP_EMPTY_VARIABLES,
                                 masterChannelMessage: "**#1**\n▷ Name: 🔊 ➕ New Channel\n▷ Channel ID: 1120213539064385597\n▷ Dynamic Channels Name: `{user}'s Channel`\n▷ Buttons: ✏️, ✋, 🧹, 🚫, 🙈, 👥, 🔃, 🔀, 😈\n▷ Verified Roles: @everyone\n▷ Logs Channel: None",
                                 badwordsMessage: "`badword*`",
-                                voiceRoleMessage: "None",
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-General/SetupMasterEditSelectMenu": { highlighted: true }

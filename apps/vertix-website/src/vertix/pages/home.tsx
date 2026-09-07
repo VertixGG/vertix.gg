@@ -8,6 +8,8 @@ import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 import DiscordDynamicChannelV2 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v2";
 import DiscordDynamicChannelV3 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v3";
 
+import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+
 export default function Home() {
     return (
         <>
@@ -133,9 +135,8 @@ export default function Home() {
                             ephemeral={ true }
                             componentName="VertixBot/UI-General/SetupComponent"
                             variables={ {
-                                masterChannelMessage: "None",
-                                badwordsMessage: "`bla`",
-                                voiceRoleMessage: "None"
+                                ...SETUP_EMPTY_VARIABLES,
+                                badwordsMessage: "`bla`"
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-General/SetupMasterEditSelectMenu": { hidden: true },

@@ -75,6 +75,7 @@ export default function HowToSetup() {
                                     limit: "Unlimited",
                                     state: "🌐 **Public**",
                                     visibilityState: "😎 **Shown**",
+                                    region: "**Automatic**",
                                     displayText: "Private",
                                 } }
                                 elementOverrides={ {

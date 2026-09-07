@@ -3,76 +3,39 @@ import { DiscordUIComponentMessage, DiscordCommandSuggestion } from "@vertix.gg/
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
+import {
+    DYNAMIC_CHANNEL_BUTTON_IDS,
+    DYNAMIC_CHANNEL_BUTTON_ORDER,
+    MASTER_CHANNEL_ID,
+    MASTER_CHANNEL_VARIABLES,
+    SETUP_EMPTY_VARIABLES,
+    editButtonsList,
+    masterChannelButtonList
+} from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
-// Copied from the `buttonsList` array options of `VertixBot/UI-V2/SetupEditButtonsEmbed`, so the
-// page reads exactly like the screen it is documenting.
-const DYNAMIC_BUTTON_LABELS = [
-    "✏️ ∙ **Rename**",
-    "✋ ∙ **User Limit**",
-    "🧹 ∙ **Clear Chat**",
-    "🚫 ∙ **Private** / 🌐 ∙ **Public**",
-    "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
-    "👥 ∙ **Access**",
-    "🔃 ∙ **Reset**",
-    "😈 ∙ **Claim**"
-];
+const SHOWN_BUTTON_IDS = DYNAMIC_CHANNEL_BUTTON_ORDER.filter(
+    ( id ) => id !== DYNAMIC_CHANNEL_BUTTON_IDS.transfer
+);
 
-const BUTTONS_LIST = DYNAMIC_BUTTON_LABELS.map( ( label ) => `> - ${ label }` ).join( "\n" );
+const SAVED_BUTTON_IDS = DYNAMIC_CHANNEL_BUTTON_ORDER;
 
-const BUTTON_OPTION_VALUES = {
-    rename: "0",
-    limit: "1",
-    clearChat: "2",
-    privatePublic: "3",
-    shownHidden: "4",
-    access: "5",
-    reset: "6",
-    transfer: "12",
-    claim: "7"
-};
-
-const DEFAULT_SELECTED_BUTTON_VALUES = [
-    BUTTON_OPTION_VALUES.rename,
-    BUTTON_OPTION_VALUES.limit,
-    BUTTON_OPTION_VALUES.clearChat,
-    BUTTON_OPTION_VALUES.privatePublic,
-    BUTTON_OPTION_VALUES.shownHidden,
-    BUTTON_OPTION_VALUES.access,
-    BUTTON_OPTION_VALUES.reset,
-    BUTTON_OPTION_VALUES.claim
-];
-
-// The renderer substitutes only from this map - it does not read the language file's `options`,
-// so every display variable is given its resolved text rather than the token the bot resolves.
 const CONFIG_VARIABLES = {
-    index: "1",
-    masterChannelId: "1120709141841842227",
-    dynamicChannelNameTemplate: "{user}'s Channel",
-    dynamicChannelButtonsTemplate: DYNAMIC_BUTTON_LABELS.map( ( label ) => `- ( ${ label } )` ).join( "\n" ),
-    verifiedRoles: "@everyone",
-    dynamicChannelLogsChannelDisplay: "**None**",
-    newChannelPrivacy: "🌐 Public",
-    newChannelLimit: "Copied from the generator channel",
-    staffRolesDisplay: "**None**",
-    voiceRoleDisplay: "**None**",
-    configUserMention: "`🟢∙On`",
-    configAutoSave: "`🔴∙Off`",
-    configLogs: "`🔴∙Off`",
-    configControlChannelAutoCreate: "`🟢∙On`",
+    ...MASTER_CHANNEL_VARIABLES,
+
+    dynamicChannelButtonsTemplate: masterChannelButtonList( SHOWN_BUTTON_IDS )
 };
 
 const BUTTONS_VARIABLES = {
     ...CONFIG_VARIABLES,
 
-    // Written with the channel's display name rather than a `<#id>` mention: discord renders that
-    // as a pill, the site has no channel resolver and would print the raw id.
     scopeDisplay:
         "**You are editing the default buttons of 🔊 ➕ New Channel.**\n" +
         "Whoever owns a channel created here sees these buttons — unless they have one of the " +
         "roles listed further down, which replaces this set for them.",
     listHeadingDisplay: "**On every panel**",
-    buttonsList: BUTTONS_LIST,
+    buttonsList: editButtonsList( SHOWN_BUTTON_IDS ),
     rosterHeading: "**Roles with buttons of their own**",
     rosterDisplay:
         "> - *None yet. Every owner gets the default set.*\n" +
@@ -85,9 +48,7 @@ const BUTTONS_VARIABLES = {
 const BUTTONS_SAVED_VARIABLES = {
     ...BUTTONS_VARIABLES,
 
-    buttonsList: [ ...DYNAMIC_BUTTON_LABELS, "🔀 ∙ **Transfer**" ]
-        .map( ( label ) => `> - ${ label }` )
-        .join( "\n" ),
+    buttonsList: editButtonsList( SAVED_BUTTON_IDS ),
     hintDisplay:
         "✅ Sent to every channel this master channel has open. Each one now shows the set its " +
         "own owner should get."
@@ -96,7 +57,7 @@ const BUTTONS_SAVED_VARIABLES = {
 const MASTER_CHANNEL_MESSAGE =
     "**#1**\n" +
     "▷ Name: 🔊 ➕ New Channel\n" +
-    "▷ Channel ID: 1120709141841842227\n" +
+    `▷ Channel ID: ${ MASTER_CHANNEL_ID }\n` +
     "▷ Dynamic Channels Name: `{user}'s Channel`\n" +
     "▷ Buttons: ✏️, ✋, 🧹, 🚫, 🙈, 👥, 🔃, 😈\n" +
     "▷ Verified Roles: @everyone\n" +
@@ -145,9 +106,9 @@ export default function EnableFeatures() {
                             interactionUserAvatar={ UserAvatar }
                             interactionCommand="/setup"
                             variables={ {
+                                ...SETUP_EMPTY_VARIABLES,
                                 masterChannelMessage: MASTER_CHANNEL_MESSAGE,
-                                badwordsMessage: BADWORDS_MESSAGE,
-                                voiceRoleMessage: "None"
+                                badwordsMessage: BADWORDS_MESSAGE
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-General/SetupMasterEditSelectMenu": {
@@ -235,8 +196,8 @@ export default function EnableFeatures() {
                             } }
                             expandedSelectMenu={ {
                                 elementName: "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                                selectedValues: DEFAULT_SELECTED_BUTTON_VALUES,
-                                highlightedValue: BUTTON_OPTION_VALUES.transfer
+                                selectedValues: SHOWN_BUTTON_IDS,
+                                highlightedValue: DYNAMIC_CHANNEL_BUTTON_IDS.transfer
                             } }
                         />
                     </div>

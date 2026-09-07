@@ -3,6 +3,8 @@ import { DiscordUIComponentMessage, DiscordRoleSelectDropdown } from "@vertix.gg
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
+import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
 interface IHowToSetupStep3Props {
@@ -35,7 +37,7 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                         componentName="VertixBot/UI-V3/SetupNewWizardComponent"
                         preferredElementsGroup="VertixBot/UI-V3/SetupStep3Component/ElementsGroup"
                         preferredEmbedsGroup="VertixBot/UI-V3/SetupStep3Component/EmbedsGroup"
-                        variables={ { verifiedRolesDisplay: "{verifiedRolesDefault}" } }
+                        variables={ { verifiedRolesDisplay: "**None**" } }
                         ephemeral={ true }
                         interactionUser="iNewLegend"
                         interactionUserAvatar={ UserAvatar }
@@ -113,10 +115,10 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                         timestamp="Today at 4:26 PM"
                         componentName="VertixBot/UI-General/SetupComponent"
                         variables={ {
+                            ...SETUP_EMPTY_VARIABLES,
                             masterChannelMessage: "{masterChannels}",
                             masterChannels: "**#1**\n▷ Name: 🔊 🆕 New Channel\n▷ Channel ID: 1121075197588541460\n▷ Dynamic Channels Name: `{user}'s Channel`\n▷ Buttons: ✏️, ✋, 🧹, 🚫, 🙈, 👥, 🔃, 🔀, 😈\n▷ Verified Roles: @Trusted Members",
                             badwordsMessage: "`badword`",
-                            voiceRoleMessage: "None",
                         } }
                         ephemeral={ true }
                         interactionUser="iNewLegend"

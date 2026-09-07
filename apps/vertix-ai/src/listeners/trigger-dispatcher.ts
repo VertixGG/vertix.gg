@@ -59,6 +59,58 @@ export function registerTriggerDispatcher( client: Client ): void {
     } );
 }
 
+/** A component node as it comes back from `Component#toJSON()`. */
+interface ComponentNode {
+    content?: unknown;
+    components?: unknown;
+    accessory?: unknown;
+}
+
+/** Collects the text out of a components-v2 node and everything nested in it. */
+function collectComponentText( node: unknown, out: string[] ): void {
+    if ( !node || "object" !== typeof node ) {
+        return;
+    }
+
+    const record = node as ComponentNode;
+
+    // TextDisplay (type 10) and button/section labels expose their text here.
+    if ( "string" === typeof record.content && record.content.trim().length ) {
+        out.push( record.content );
+    }
+
+    if ( Array.isArray( record.components ) ) {
+        for ( const child of record.components ) {
+            collectComponentText( child, out );
+        }
+    }
+
+    if ( record.accessory ) {
+        collectComponentText( record.accessory, out );
+    }
+}
+
+/**
+ * The visible text of a message, wherever Discord put it.
+ *
+ * A components-v2 bot (SuperBot is one) leaves `content` empty and carries its
+ * text in TextDisplay components instead, so reading `content` alone sees
+ * nothing. This falls back to walking the component tree.
+ */
+function messageText( message: Message ): string {
+    if ( message.content.trim().length ) {
+        return message.content;
+    }
+
+    const out: string[] = [];
+
+    for ( const component of message.components ) {
+        collectComponentText( component.toJSON(), out );
+    }
+
+    return out.join( "\n" );
+}
+
 async function handleMessageEdit( client: Client, message: Message | PartialMessage ): Promise<void> {
     // This handler exists only to refuse a non-owner's command request that
     // lands as an edit. A streaming bot keeps firing edit events after the text
@@ -67,9 +119,9 @@ async function handleMessageEdit( client: Client, message: Message | PartialMess
         return;
     }
 
-    // The edit event delivers empty content for a streamed bot edit even when it
-    // is not flagged partial (and an uncached edit is partial), so a forced REST
-    // fetch is the only way to see the real author and text.
+    // A streamed or components-v2 edit arrives with empty `content` even when not
+    // flagged partial (and an uncached edit is partial), so a forced REST fetch
+    // is the reliable way to read the final author, text and components.
     let full: Message;
 
     if ( message.partial || !message.content?.trim().length ) {
@@ -99,7 +151,9 @@ async function maybeRefuseCommandRequest( client: Client, message: Message ): Pr
         return true;
     }
 
-    if ( !message.inGuild() || !message.content.trim().length ) {
+    const text = messageText( message );
+
+    if ( !message.inGuild() || !text.trim().length ) {
         return false;
     }
 
@@ -107,15 +161,15 @@ async function maybeRefuseCommandRequest( client: Client, message: Message ): Pr
 
     // A bot addresses this one by name in text, not by a Discord mention.
     const namesBot = isMention
-        || Boolean( client.user && message.content.toLowerCase().includes( client.user.username.toLowerCase() ) );
+        || Boolean( client.user && text.toLowerCase().includes( client.user.username.toLowerCase() ) );
 
     if ( !namesBot || AIConfig.$.isOwner( message.author.id ) ) {
         return false;
     }
 
     const content = client.user
-        ? message.content.replaceAll( `<@${ client.user.id }>`, "" ).trim()
-        : message.content.trim();
+        ? text.replaceAll( `<@${ client.user.id }>`, "" ).trim()
+        : text.trim();
 
     if ( !COMMAND_REQUEST_PATTERN.test( content ) || !message.channel.isSendable() ) {
         return false;

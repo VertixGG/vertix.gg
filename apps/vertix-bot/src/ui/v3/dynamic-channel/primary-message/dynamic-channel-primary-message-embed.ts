@@ -53,7 +53,7 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3" )
+    .setImage( () => "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&version=1" )
     .setTitle( () => vars.title )
     .setDescription( () => (
         `${ vars.description }\n\n` +

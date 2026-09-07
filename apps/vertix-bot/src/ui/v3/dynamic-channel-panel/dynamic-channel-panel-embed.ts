@@ -21,7 +21,7 @@ const DynamicChannelPanelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3" )
+    .setImage( () => "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&version=1" )
     .setTitle( () => "༄ Manage your Dynamic Channel" )
     .setDescription( () =>
         "Embrace the responsibility of overseeing your dynamic channel, " +

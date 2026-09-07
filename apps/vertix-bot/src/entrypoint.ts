@@ -36,7 +36,7 @@ import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
-import { CleanupWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
+import { CleanupWorker, initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
@@ -460,8 +460,7 @@ async function registerUIVersionStrategies() {
 
 async function createCleanupWorker() {
     try {
-        // not run in development
-        // await initWorker();
+        await initWorker();
         GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );
     } catch( error ) {
         GlobalLogger.$.error( createCleanupWorker, "", error );
@@ -920,6 +919,7 @@ export async function entryPoint( options: {
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 
+    // TODO: Dont run in dev mode
     CleanupWorker.$.handle( client ).catch( ( error ) => {
         GlobalLogger.$.error( entryPoint, "Startup channel cleanup failed", error );
     } );

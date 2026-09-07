@@ -1,0 +1,248 @@
+/* ---------------------------------------------------------------------------
+ * Channel lifecycle demo. A stripped-down channel list that plays the
+ * create -> fill -> empty -> delete loop.
+ *
+ * Rows collapse with `grid-template-rows: 0fr -> 1fr` rather than `height`, so
+ * the panel resizes smoothly without any measured pixel values. Browsers that
+ * don't animate that interpolation just snap, which is fine.
+ * ------------------------------------------------------------------------ */
+
+.vc-lifecycle {
+    margin: 0;
+    width: 100%;
+    max-width: 340px;
+}
+
+.vc-lifecycle__panel {
+    /* Reserves the tallest beat of the loop. Without it the panel grows and
+     * shrinks under the hero copy as members come and go, and the whole column
+     * jitters once a second. */
+    min-height: 218px;
+
+    padding: 14px 12px;
+
+    border: 1px solid var(--color-vc-hairline);
+    border-radius: var(--radius-vc-lg);
+
+    background: var(--color-vc-space-lighter);
+    box-shadow: 0 24px 60px rgb(6 7 10 / 0.5);
+}
+
+.vc-lifecycle__group {
+    margin: 0 0 8px;
+    padding-inline: 8px;
+
+    color: var(--color-vc-ice-dim);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* --- Channel rows ---------------------------------------------------------- */
+
+.vc-lifecycle__channel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 7px 8px;
+    border-radius: 8px;
+
+    color: var(--color-vc-ice-dim);
+    font-size: 0.95rem;
+
+    transition: background-color 300ms ease, color 300ms ease,
+        box-shadow 300ms ease;
+}
+
+.vc-lifecycle__icon {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+
+.vc-lifecycle__name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* The always-on generator. `data-hot` is the beat someone walks into it. */
+.vc-lifecycle__channel--generator {
+    border: 1px dashed var(--color-vc-hairline-bright);
+    color: var(--color-vc-ice);
+}
+
+.vc-lifecycle__channel--generator[data-hot="true"] {
+    border-color: rgb(47 216 245 / 0.55);
+    background: rgb(47 216 245 / 0.08);
+    color: var(--color-vc-cyan-soft);
+    box-shadow: 0 0 0 3px rgb(47 216 245 / 0.1);
+}
+
+.vc-lifecycle__hint {
+    margin-left: auto;
+
+    color: var(--color-vc-ice-dim);
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.vc-lifecycle__channel--temp {
+    margin-top: 6px;
+    background: var(--color-vc-surface);
+    color: var(--color-vc-starlight);
+}
+
+.vc-lifecycle__count {
+    margin-left: auto;
+
+    min-width: 20px;
+    padding: 1px 6px;
+    border-radius: 999px;
+
+    background: var(--color-vc-surface-lighter);
+
+    color: var(--color-vc-ice-dim);
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+
+/* --- Collapsing slot ------------------------------------------------------- */
+
+.vc-lifecycle__slot {
+    display: grid;
+    grid-template-rows: 0fr;
+
+    opacity: 0;
+
+    transition: grid-template-rows 450ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 300ms ease;
+}
+
+.vc-lifecycle__slot[data-present="true"] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+/* The grid child that actually clips. `min-height: 0` is what lets an `0fr`
+ * track shrink past its content's intrinsic height. */
+.vc-lifecycle__slot-inner {
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* --- Members --------------------------------------------------------------- */
+
+.vc-lifecycle__members {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.vc-lifecycle__member {
+    display: grid;
+    grid-template-rows: 0fr;
+
+    opacity: 0;
+
+    transition: grid-template-rows 380ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 260ms ease;
+}
+
+.vc-lifecycle__member[data-present="true"] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.vc-lifecycle__member-inner {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    min-height: 0;
+    overflow: hidden;
+
+    padding: 5px 8px 5px 26px;
+
+    color: var(--color-vc-ice);
+    font-size: 0.88rem;
+
+    transform: translateX(-6px);
+    transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vc-lifecycle__member[data-present="true"] .vc-lifecycle__member-inner {
+    transform: none;
+}
+
+.vc-lifecycle__avatar {
+    display: grid;
+    place-items: center;
+
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--vc-member-accent);
+
+    background: var(--color-vc-surface);
+
+    color: var(--vc-member-accent);
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.vc-lifecycle__owner {
+    margin-left: auto;
+
+    padding: 1px 6px;
+    border-radius: 999px;
+
+    background: rgb(47 216 245 / 0.12);
+
+    color: var(--color-vc-cyan-soft);
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* --- Caption --------------------------------------------------------------- */
+
+.vc-lifecycle__caption {
+    /* Two lines' worth, so the panel above doesn't shift when the copy wraps. */
+    min-height: 2.9em;
+    margin-top: 14px;
+    padding-inline: 4px;
+
+    color: var(--color-vc-ice-dim);
+    font-size: 0.9rem;
+    line-height: 1.45;
+
+    /* Re-keyed per caption in the component, so this replays on every beat. */
+    animation: vc-lifecycle-caption 400ms ease backwards;
+}
+
+@keyframes vc-lifecycle-caption {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vc-lifecycle__slot,
+    .vc-lifecycle__member,
+    .vc-lifecycle__member-inner,
+    .vc-lifecycle__channel {
+        transition: none;
+    }
+
+    .vc-lifecycle__caption {
+        animation: none;
+    }
+}

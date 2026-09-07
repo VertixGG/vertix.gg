@@ -54,11 +54,11 @@ const NavbarDropdown: React.FC<{
                 onClick={ toggleDropdown }
             >
                 { title }
-                <span className="pl-1 text-[10px] text-vc-cyan">▼</span>
+                <span className="pl-1 text-[10px] text-vc-ice-dim">▼</span>
             </span>
 
             <ul className={ `${ isDropdownOpen ? "block" : "hidden" } list-none overflow-hidden rounded-2xl pl-0
-                border border-vc-cyan/20 bg-vc-space-lighter/95 shadow-[0_18px_44px_rgb(1_3_11/0.85)]
+                border border-vc-hairline bg-vc-space-lighter/95 shadow-[0_18px_44px_rgb(6_7_10/0.6)]
                 backdrop-blur-lg nav:absolute nav:left-0 nav:top-full nav:z-50 nav:min-w-56` }
             >
                 {
@@ -66,7 +66,7 @@ const NavbarDropdown: React.FC<{
                         <li key={ number }>
                             <a
                                 className={ `block px-4 py-2 font-body text-base transition-colors
-                                    hover:bg-vc-cyan/10 hover:text-vc-cyan ${
+                                    hover:bg-vc-surface hover:text-vc-starlight ${
         location.pathname === item.href
             ? "text-vc-cyan"
             : "text-vc-ice" }` }
@@ -112,11 +112,10 @@ export default function Header() {
                     <button
                         type="button"
                         className="flex items-center self-center rounded-xl border
-                            border-vc-cyan/35 bg-vc-space/60 px-3 py-2 text-vc-cyan
-                            shadow-[0_0_16px_rgb(47_216_245/0.15)] transition-all
-                            hover:border-vc-cyan/70 hover:shadow-[0_0_24px_rgb(47_216_245/0.35)]
+                            border-vc-hairline-bright bg-vc-surface px-3 py-2 text-vc-ice
+                            transition-colors hover:border-vc-ice-dim hover:text-vc-starlight
                             focus-visible:outline-none focus-visible:ring-3
-                            focus-visible:ring-vc-cyan/20 nav:hidden"
+                            focus-visible:ring-vc-cyan/25 nav:hidden"
                         aria-controls="navbar-menu"
                         aria-expanded={ isNavbarOpen }
                         aria-label="Toggle navigation"
@@ -132,8 +131,8 @@ export default function Header() {
                     <div
                         id="navbar-menu"
                         className={ `${ isNavbarOpen ? "block" : "hidden" } order-last w-full
-                            rounded-3xl border border-vc-cyan/15 bg-vc-space-lighter/90 p-5
-                            shadow-[0_24px_60px_rgb(1_3_11/0.8)] backdrop-blur-lg
+                            rounded-2xl border border-vc-hairline bg-vc-space-lighter/95 p-5
+                            shadow-[0_24px_60px_rgb(6_7_10/0.6)] backdrop-blur-lg
                             mt-3 mb-5
                             nav:order-none nav:mt-0 nav:mb-0 nav:flex nav:w-auto nav:flex-1
                             nav:items-center nav:justify-between nav:rounded-none nav:border-0
@@ -161,16 +160,16 @@ export default function Header() {
 
                         <div className="mt-4 flex flex-col gap-3 nav:mt-0 nav:flex-row nav:gap-4">
                             <button id="add-to-server" onClick={ () => onAddToServerClick() }
-                                className="vc-btn vc-btn-crimson vc-btn-effect w-full nav:w-auto">
+                                className="vc-btn vc-btn-primary vc-btn-effect w-full nav:w-auto">
                                 Invite
                             </button>
                             <button id="dashboard"
                                 onClick={ () => window.open( import.meta.env.VITE_DASHBOARD_URL || "https://dashboard.voicechannels.online" ) }
-                                className="vc-btn vc-btn-cyan vc-btn-effect w-full nav:w-auto">
+                                className="vc-btn w-full nav:w-auto">
                                 Dashboard
                             </button>
                             <button id="support" onClick={ () => window.open( "https://discord.gg/dEwKeQefUU" ) }
-                                className="vc-btn vc-btn-mint vc-btn-effect w-full nav:w-auto">
+                                className="vc-btn w-full nav:w-auto">
                                 Support
                             </button>
                         </div>

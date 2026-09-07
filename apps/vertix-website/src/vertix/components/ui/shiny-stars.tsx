@@ -12,10 +12,13 @@ interface StarLayer {
 const FIELD_WIDTH = 2560,
     FIELD_HEIGHT = 1600;
 
+/* Roughly half the old star count at a third of the old alpha. The backdrop
+ * behind them is no longer near-black, so the field that used to read as depth
+ * reads as speckle unless it stays well under the content. */
 const LAYERS: StarLayer[] = [
-    { name: "far", count: 520, size: 1, color: "255, 255, 255", minAlpha: 0.25 },
-    { name: "mid", count: 150, size: 2, color: "155, 238, 253", minAlpha: 0.3 },
-    { name: "near", count: 34, size: 3, color: "255, 255, 255", minAlpha: 0.6 },
+    { name: "far", count: 260, size: 1, color: "255, 255, 255", minAlpha: 0.08 },
+    { name: "mid", count: 80, size: 2, color: "155, 238, 253", minAlpha: 0.1 },
+    { name: "near", count: 18, size: 3, color: "255, 255, 255", minAlpha: 0.18 },
 ];
 
 /**

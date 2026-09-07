@@ -43,6 +43,10 @@ body::before {
     inset: 0;
     z-index: -2;
 
+    /* Second knob on top of the per-star alphas, so the whole field can be
+     * pulled back without regenerating the box-shadow lists. */
+    opacity: 0.55;
+
     pointer-events: none;
     overflow: hidden;
 }

@@ -1,158 +1,270 @@
-import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
-
-import "../components/discord/discord-chat-container.css";
+import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 
-import DiscordDynamicChannelV2 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v2";
+import ChannelLifecycle from "@vertix.gg/website/src/vertix/components/landing/channel-lifecycle";
 import DiscordDynamicChannelV3 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v3";
 
-import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
+/** One place for the ramp the explainer cards and feature grid walk through. */
+const CRIMSON = "var(--color-vc-crimson)",
+    AZURE = "var(--color-vc-azure)",
+    CYAN = "var(--color-vc-cyan)",
+    MINT = "var(--color-vc-mint)";
+
+const LIFECYCLE_STEPS = [
+    {
+        accent: CRIMSON,
+        mark: "1",
+        title: "You create one generator",
+        body: "A single voice channel — call it whatever you like. It's the only "
+            + "one that stays in your list permanently.",
+    },
+    {
+        accent: AZURE,
+        mark: "2",
+        title: "Members get a room of their own",
+        body: "Anyone who joins the generator is moved straight into a fresh "
+            + "channel, named after them, with them in charge of it.",
+    },
+    {
+        accent: MINT,
+        mark: "3",
+        title: "Empty rooms disappear",
+        body: "The moment the last person leaves, the channel is deleted. Your "
+            + "server never collects abandoned voice channels again.",
+    },
+] as const;
+
+const OWNER_CONTROLS = [
+    { icon: "✏️", title: "Rename", body: "Give the room a name that fits what's happening in it." },
+    { icon: "✋", title: "Limit", body: "Cap how many people can squeeze in." },
+    { icon: "🚫", title: "Privacy", body: "Flip between public and invite-only." },
+    { icon: "🙈", title: "Visibility", body: "Hide the channel from everyone who isn't in it." },
+    { icon: "👥", title: "Access", body: "Allow or block individual members." },
+    { icon: "🔀", title: "Transfer", body: "Hand the room over to someone else." },
+] as const;
+
+const PLATFORM = [
+    {
+        accent: CYAN,
+        mark: "⌘",
+        title: "One-command setup",
+        body: "Run /setup and pick your options. Every feature and every piece of "
+            + "the interface stays editable from the same command.",
+        href: "/posts/how-to-setup",
+        linkText: "How to set it up",
+    },
+    {
+        accent: AZURE,
+        mark: "⧉",
+        title: "Auto-scaling channels",
+        body: "Keep a pool of channels that grows and shrinks with demand, so busy "
+            + "servers never run out of room and quiet ones stay tidy.",
+        href: "/features/auto-scaling",
+        linkText: "See auto-scaling",
+    },
+    {
+        accent: MINT,
+        mark: "❯❯",
+        title: "Activity logs",
+        body: "Point each generator at a log channel and watch channels being "
+            + "created, renamed, claimed and removed.",
+        href: "/posts/how-to-setup-logs-channel",
+        linkText: "Enable logs",
+    },
+    {
+        accent: CRIMSON,
+        mark: "▨",
+        title: "Web dashboard",
+        body: "Edit embeds, buttons and every string the bot says — per language — "
+            + "without touching a single command.",
+        href: DASHBOARD_URL,
+        linkText: "Open the dashboard",
+        external: true,
+    },
+] as const;
+
+const goToInvite = () => {
+    window.location.href = "/invite-vertix";
+};
 
 export default function Home() {
     return (
         <>
-            <div className="vc-container vc-page-panel">
-                <div className="grid grid-cols-12 text-center pt-2 select-none">
-                    <div className="col-span-12 md:col-span-6 lg:col-span-3">
-                        <span className="block text-[clamp(54px,12vw,100px)] font-bold leading-none
-                            text-vc-crimson drop-shadow-[0_0_28px_var(--vc-glow-crimson)]">
-                            ⫸
-                        </span>
+            { /* --- Hero ------------------------------------------------------ */ }
+            <section className="vc-shell vc-band-hero">
+                <div className="flex flex-col gap-14 lg:flex-row lg:items-center lg:gap-16">
+                    <div className="flex-1">
+                        <h1 className="vc-display mb-5">
+                            Voice channels that<br className="hidden sm:block"/>
+                            { " " }clean up after themselves
+                        </h1>
 
-                        <h2 className="font-normal">Auto Save</h2>
-                        <p className="text-vc-ice">You can disable or enable autosave for temporary voice channels for
-                            each voice channels generator</p>
+                        <p className="vc-lede mb-8">
+                            VoiceChannels makes a room the moment someone needs one, hands them the
+                            controls, and deletes it once they&rsquo;re done. Your channel list stops
+                            filling up with empties.
+                        </p>
+
+                        <div className="flex flex-wrap gap-3">
+                            <button id="add-to-server" onClick={ goToInvite }
+                                className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
+                                Add to Discord
+                            </button>
+                            <button onClick={ () => window.open( DASHBOARD_URL ) }
+                                className="vc-btn vc-btn-lg">
+                                Open Dashboard
+                            </button>
+                        </div>
+
+                        <p className="vc-eyebrow mt-6 mb-0">
+                            Free to add · Set up with one command
+                        </p>
                     </div>
 
-                    <div className="col-span-12 md:col-span-6 lg:col-span-3">
-                        <span className="block text-[clamp(54px,12vw,100px)] font-bold leading-none
-                            text-vc-cyan drop-shadow-[0_0_28px_var(--vc-glow-cyan)]">
-                            ❯❯
-                        </span>
-
-                        <h2 className="font-normal">Logs</h2>
-                        <p className="text-vc-ice">Select <code>#log-channel</code> to monitor channels activity,
-                            support's log channel per voice channels generator</p>
-                    </div>
-
-                    <div className="col-span-12 md:col-span-6 lg:col-span-3">
-                        <span className="block text-[clamp(54px,12vw,100px)] font-bold leading-none
-                            text-vc-mint drop-shadow-[0_0_28px_var(--vc-glow-mint)]">
-                            ⌘
-                        </span>
-
-                        <h2 className="font-normal">Configuration</h2>
-                        <p className="text-vc-ice">Configuration of the features & interface, always available
-                            via <code>/setup</code> command</p>
-                    </div>
-
-                    <div className="col-span-12 md:col-span-6 lg:col-span-3">
-                        <span className="block text-[clamp(54px,12vw,100px)] font-bold leading-none
-                            text-vc-azure drop-shadow-[0_0_28px_var(--vc-glow-azure)]">
-                            ⧉
-                        </span>
-
-                        <h2 className="font-normal">Dashboard</h2>
-                        <p className="text-vc-ice">Full UI customization, edit embeds, buttons and texts per language
-                            from your <a href={ DASHBOARD_URL } target="_blank" rel="noreferrer">dashboard</a></p>
+                    <div className="flex shrink-0 justify-center lg:justify-end">
+                        <ChannelLifecycle/>
                     </div>
                 </div>
+            </section>
 
-                <hr className="mb-12"/>
+            { /* --- What is a temporary channel -------------------------------- */ }
+            <section className="vc-shell vc-band">
+                <h2 className="vc-section-title mb-3">What&rsquo;s a temporary channel?</h2>
+                <p className="vc-lede mb-10">
+                    Three moving parts, and you only ever set up the first one.
+                </p>
 
-                <h3 className="mb-4">Who is <b>VoiceChannels</b>?</h3>
-
-                <p className="text-h5">is an exceptional Discord bot designed to revolutionize your server experience.</p>
-                <p className="text-h5">Sets a new standard in Discord bots.</p>
-                <p className="text-h5">With a focus on providing best user satisfaction, as well as offering convenient
-                    temporary voice channels
-                    and comprehensive owner management tools.</p>
-                <p className="text-h5">Operated on a dedicated server, <b>VoiceChannels</b> guarantees an impressive uptime of
-                    99%,
-                    ensuring reliable
-                    performance and uninterrupted access for your server members.</p>
-
-                <br/>
-
-                <div className="hidden xl:block mb-12">
-                    <h3 className="mb-6 text-center">Experience the evolution of VoiceChannels</h3>
-                    <div className="mt-6">
-                        <div className="mb-12">
-                            <h4 className="mb-4 text-vc-ice-dim text-center">UI V2 (Classic)</h4>
-                            <DiscordDynamicChannelV2/>
+                <div className="grid gap-5 md:grid-cols-3">
+                    { LIFECYCLE_STEPS.map( ( step ) => (
+                        <div key={ step.mark } className="vc-card">
+                            <span className="vc-card-mark"
+                                style={ { "--vc-card-accent": step.accent } as React.CSSProperties }>
+                                { step.mark }
+                            </span>
+                            <h3 className="mb-2 text-h5 font-semibold">{ step.title }</h3>
+                            <p className="mb-0 text-vc-ice-dim">{ step.body }</p>
                         </div>
+                    ) ) }
+                </div>
+            </section>
+
+            { /* --- Members moderate themselves -------------------------------- */ }
+            <section className="vc-shell vc-band">
+                <h2 className="vc-section-title mb-3">Members moderate themselves</h2>
+                <p className="vc-lede mb-10">
+                    Whoever creates a channel owns it. They get a control panel in the channel
+                    itself &mdash; no moderator, no commands, no waiting for you.
+                </p>
+
+                { /* The real V3 panel, not a mock-up of one. It carries its own
+                    width, so it gets the full measure rather than a column
+                    beside the copy — squeezed into half, the control grid
+                    inside it wraps into an unreadable stack. */ }
+                <div className="vc-landing-chat mb-12 hidden justify-center lg:flex">
+                    <DiscordDynamicChannelV3/>
+                </div>
+
+                <div className="grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+                    { OWNER_CONTROLS.map( ( control ) => (
+                        <div key={ control.title }>
+                            <h3 className="mb-1 text-h6 font-semibold">
+                                <span aria-hidden="true" className="mr-2">{ control.icon }</span>
+                                { control.title }
+                            </h3>
+                            <p className="mb-0 text-vc-ice-dim">{ control.body }</p>
+                        </div>
+                    ) ) }
+                </div>
+            </section>
+
+            { /* --- Platform --------------------------------------------------- */ }
+            <section className="vc-shell vc-band">
+                <h2 className="vc-section-title mb-3">And the rest of it</h2>
+                <p className="vc-lede mb-10">
+                    Everything around the channels themselves.
+                </p>
+
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    { PLATFORM.map( ( item ) => (
+                        <div key={ item.title } className="vc-card flex flex-col">
+                            <span className="vc-card-mark"
+                                style={ { "--vc-card-accent": item.accent } as React.CSSProperties }>
+                                { item.mark }
+                            </span>
+                            <h3 className="mb-2 text-h5 font-semibold">{ item.title }</h3>
+                            <p className="mb-4 text-vc-ice-dim">{ item.body }</p>
+                            <a className="mt-auto text-fine"
+                                href={ item.href }
+                                { ...( "external" in item && item.external
+                                    ? { target: "_blank", rel: "noreferrer" }
+                                    : {} ) }>
+                                { item.linkText } →
+                            </a>
+                        </div>
+                    ) ) }
+                </div>
+            </section>
+
+            { /* --- Note from the maker ---------------------------------------- */ }
+            <section className="vc-shell vc-band-wide">
+                <div className="mx-auto max-w-[1000px]">
+                    <div className="flex flex-col gap-6 sm:flex-row sm:gap-8">
+                        <img src={ OwnerAvatar } alt=""
+                            width="72" height="72"
+                            className="h-18 w-18 shrink-0 rounded-full border border-vc-hairline-bright
+                                object-cover"/>
 
                         <div>
-                            <h4 className="mb-4 text-vc-azure-soft text-center">UI V3 (Modern)</h4>
-                            <DiscordDynamicChannelV3/>
+                            <div className="mb-3 flex items-center gap-3">
+                                <span className="font-semibold text-vc-starlight">Leonid Vinikov</span>
+                                <span className="vc-eyebrow">Maker</span>
+                            </div>
+
+                            <p className="text-vc-ice">
+                                Thanks for taking a look at VoiceChannels. Most of what&rsquo;s in the bot
+                                today started as somebody&rsquo;s suggestion &mdash; I read every one, and a
+                                good number of them ship.
+                            </p>
+                            <p className="mb-0 text-vc-ice">
+                                If something is missing or in your way,{ " " }
+                                <a href="mailto:leonidvinikov@gmail.com">tell me about it</a> or come say so
+                                in{ " " }
+                                <a href="https://discord.gg/dEwKeQefUU" target="_blank" rel="noreferrer">
+                                    the support server
+                                </a>.
+                            </p>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <h3 className="mb-4">Why should you choose <b>VoiceChannels</b>?</h3>
+            { /* --- Closing CTA ------------------------------------------------ */ }
+            <section className="vc-shell vc-band">
+                <div className="vc-card flex flex-col items-center gap-6 px-6 py-12 text-center">
+                    <img src={ VertixAvatar } alt="" width="56" height="56"
+                        className="h-14 w-14 rounded-2xl object-cover"/>
 
-                <p className="text-h5">Developed by a team of experienced developers, we have crafted this bot with utmost
-                    dedication to ensure
-                    an exceptional user experience.</p>
-                <p className="text-h5">We value your input and actively review each <a
-                    href="mailto:leonidvinikov@gmail.com">suggestion</a> and customization request
-                    you provide.</p>
-                <p className="text-h5">Most of the features in <b>VoiceChannels</b> are based on suggestions from our community.
-                </p>
-                <p className="text-h5">
-                    We are dedicated to providing the best user experience with <b>VoiceChannels</b>, and we are excited to
-                    incorporate your ideas and suggestions into our platform.
-                    Your input is invaluable to us, and we appreciate your contribution to making <b>VoiceChannels</b> even
-                    better.
-                </p>
-                <br/>
-                <p className="text-h5">We have an extensive backlog of
-                    exciting features in
-                    the pipeline, including:</p>
-                <ul>
-                    <li>Fully customizable text elements to personalize your server's appearance.</li>
-                    <li>A user-friendly dashboard for easy configuration and management.</li>
-                    <li>Support for multiple languages to cater to diverse communities</li>
-                    <li>Server logs to keep track of important activities and events.</li>
-                    <li>And many more exciting features on the horizon!</li>
-                </ul>
-                <br/>
-                <p className="text-h5">To get started with <b>VoiceChannels</b>, use <code>/setup</code> command and follow our
-                    simple <a href="/posts/how-to-setup">step-by-step</a> guide.</p>
-                <br/>
-
-                <div className="hidden xl:block mb-12">
-                    <div className="discord-chat-container vc-frame-box m-0">
-                        <DiscordUIComponentMessage
-                            author="VoiceChannels"
-                            avatar={ VertixAvatar }
-                            timestamp="12:12"
-                            mentionUsername="iNewLegend"
-                            interactionUser="iNewLegend"
-                            interactionCommand="/setup"
-                            ephemeral={ true }
-                            componentName="VertixBot/UI-General/SetupComponent"
-                            variables={ {
-                                ...SETUP_EMPTY_VARIABLES,
-                                badwordsMessage: "`bla`"
-                            } }
-                            elementOverrides={ {
-                                "VertixBot/UI-General/SetupMasterEditSelectMenu": { hidden: true },
-                                "VertixBot/UI-General/SetupMasterCreateSelectMenu": { highlighted: false }
-                            } }
-                        />
+                    <div>
+                        <h2 className="vc-section-title mb-3">Set it up in a minute</h2>
+                        <p className="vc-lede mx-auto mb-0">
+                            Add the bot, run <code>/setup</code>, pick a generator channel. That&rsquo;s
+                            the whole thing.
+                        </p>
                     </div>
-                    <br/>
-                </div>
 
-                <p className="text-h5">Thank you for considering <b>VoiceChannels</b>, and we look forward to enhancing your
-                    Discord
-                    server experience</p>
-                <p className="text-h5">Best regards,</p>
-                <p className="text-h5"><b>VoiceChannels</b> team.</p>
-            </div>
+                    <div className="flex flex-wrap justify-center gap-3">
+                        <button onClick={ goToInvite }
+                            className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
+                            Add to Discord
+                        </button>
+                        <a href="/posts/how-to-setup" className="vc-btn vc-btn-lg">
+                            Read the setup guide
+                        </a>
+                    </div>
+                </div>
+            </section>
         </>
     );
 }

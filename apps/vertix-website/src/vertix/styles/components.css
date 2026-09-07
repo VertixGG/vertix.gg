@@ -373,6 +373,123 @@
         background: rgb(30 33 42 / 0.45);
     }
 
+    /* --- Landing ------------------------------------------------------------ */
+
+    /* Narrower and flatter than `.vc-container`: a landing page reads better at
+     * one fixed measure than at six stepped ones. */
+    .vc-shell {
+        width: 100%;
+        max-width: 1212px;
+        margin-inline: auto;
+        padding-inline: 20px;
+    }
+
+    @media (width >= theme(--breakpoint-md)) {
+        .vc-shell { padding-inline: 32px; }
+    }
+
+    /* Vertical rhythm. One class per band so the spacing lives in one place
+     * instead of being re-guessed per section. */
+    .vc-band {
+        padding-block: 40px;
+    }
+
+    .vc-band-hero {
+        padding-block: 48px 64px;
+    }
+
+    .vc-band-wide {
+        padding-block: 56px;
+    }
+
+    @media (width >= theme(--breakpoint-lg)) {
+        .vc-band { padding-block: 50px; }
+        .vc-band-hero { padding-block: 100px 130px; }
+        .vc-band-wide { padding-block: 100px; }
+    }
+
+    /* Display type. Deliberately outside the global h1-h6 ramp — those sizes
+     * are tuned for the doc pages and would look undersized here. */
+    .vc-display {
+        color: var(--color-vc-starlight);
+        font-size: clamp(2.25rem, 6vw, 3.75rem);
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+    }
+
+    .vc-section-title {
+        color: var(--color-vc-starlight);
+        font-size: clamp(1.75rem, 4vw, 2.25rem);
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+    }
+
+    .vc-lede {
+        max-width: 46ch;
+        color: var(--color-vc-ice);
+        font-size: clamp(1.05rem, 2vw, 1.25rem);
+        line-height: 1.6;
+    }
+
+    /* Small caps label above a heading. */
+    .vc-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        color: var(--color-vc-ice-dim);
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    /* A quiet card. The landing leans on these instead of the glass panels. */
+    .vc-card {
+        padding: 22px;
+
+        border: 1px solid var(--color-vc-hairline);
+        border-radius: var(--radius-vc-lg);
+
+        background: rgb(24 27 35 / 0.6);
+
+        transition: border-color 250ms ease, background-color 250ms ease;
+    }
+
+    .vc-card:hover {
+        border-color: var(--color-vc-hairline-bright);
+        background: rgb(30 33 42 / 0.7);
+    }
+
+    /* The step number / glyph on an explainer card. Its colour is passed in as
+     * `--vc-card-accent` so a row of cards can walk the brand ramp. */
+    .vc-card-mark {
+        display: grid;
+        place-items: center;
+
+        width: 38px;
+        height: 38px;
+        margin-bottom: 14px;
+
+        border-radius: 10px;
+        box-shadow: inset 0 0 0 1px var(--vc-card-accent, var(--color-vc-hairline-bright));
+
+        background: color-mix(in srgb, var(--vc-card-accent, transparent) 10%, transparent);
+
+        color: var(--vc-card-accent, var(--color-vc-ice));
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    /* The chat mock-up sits inside a landing band rather than a doc page, so
+     * it drops the 1.25 zoom and the outer margin the article pages want. */
+    .vc-landing-chat .discord-chat-container {
+        --discord-ui-scale: 1;
+        margin: 0;
+    }
+
     /* --- Changelog ---------------------------------------------------------- */
     .changelog h1:first-child {
         margin-bottom: 15px;

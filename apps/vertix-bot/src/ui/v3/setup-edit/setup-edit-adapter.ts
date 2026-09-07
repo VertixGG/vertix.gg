@@ -14,6 +14,8 @@ import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group
 import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
+import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+
 import { warnOnMissingLogsChannelPermissions } from "@vertix.gg/bot/src/ui/general/logs-channel/logs-channel-utils";
 
 import {
@@ -1040,7 +1042,7 @@ async function onButtonsSelected(
 
         await dynamicChannelService
             .refreshControlPanel( interaction.guild, masterChannelDB )
-            .catch( () => undefined );
+            .catch( ( error ) => GlobalLogger.$.error( onButtonsSelected, error ) );
     }
 
     await context.editReplyWithStep( interaction, BUTTONS_STEP );

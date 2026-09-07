@@ -10,6 +10,8 @@ import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions"
 
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
+import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+
 import { warnOnMissingLogsChannelPermissions } from "@vertix.gg/bot/src/ui/general/logs-channel/logs-channel-utils";
 import { warnOnUnassignableVoiceRole } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-utils";
 
@@ -354,7 +356,7 @@ async function onButtonsSelected(
 
         await dynamicChannelService
             .refreshControlPanel( interaction.guild, masterChannelDB )
-            .catch( () => undefined );
+            .catch( ( error ) => GlobalLogger.$.error( onButtonsSelected, error ) );
     }
 
     await context.editReplyWithStep( interaction, BUTTONS_STEP );

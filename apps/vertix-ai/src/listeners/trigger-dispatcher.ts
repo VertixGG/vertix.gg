@@ -112,6 +112,15 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
         return;
     }
 
+    // The tool already put its message in this channel; a second one restating
+    // it is noise. This loses the usage footer for that turn - an extra message
+    // carrying only a footer would be the same noise in smaller type.
+    if ( reply.postedToChannel ) {
+        GlobalLogger.$.debug( handleMessage, "Suppressed the text reply - a tool already posted here" );
+
+        return;
+    }
+
     await sendChunked( message.channel, reply, message );
 }
 

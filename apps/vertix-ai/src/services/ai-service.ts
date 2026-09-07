@@ -77,6 +77,19 @@ const DECISION_SCHEMA = {
     required: [ "respond", "reason" ]
 };
 
+/**
+ * Tools that put a message in a channel themselves.
+ *
+ * When one of these targets the channel the request came from, the model's
+ * text reply is a second message describing the first - so the user gets the
+ * panel, then "Done! I created a panel". Only the posted message is wanted.
+ */
+const CHANNEL_POSTING_TOOLS = new Set( [
+    "send_interactive_message",
+    "discord_send_message",
+    "discord_send_webhook_message"
+] );
+
 export type ReplyUsage = {
     /** Tokens the model read: prompt, history, tool schemas and tool results. */
     promptTokens: number;
@@ -91,6 +104,8 @@ export type ReplyUsage = {
 export type AIReply = {
     content: string;
     usage: ReplyUsage;
+    /** True when a tool already posted into the triggering channel. */
+    postedToChannel?: boolean;
 };
 
 export type TriggerContext = {
@@ -374,6 +389,7 @@ export class AIService extends InitializeBase {
         // is exactly when the model tends to claim it did.
         let blockedCalls = 0;
         let nudged = false;
+        let postedToChannel = false;
 
         // A proposal open at the start of the turn means the model was handed an
         // explicit "call this tool now" instruction. If it then calls nothing,
@@ -479,6 +495,7 @@ export class AIService extends InitializeBase {
 
                 return {
                     content,
+                    postedToChannel,
                     usage: {
                         promptTokens,
                         outputTokens,
@@ -493,6 +510,11 @@ export class AIService extends InitializeBase {
             conversation.push( response.message );
 
             for ( const call of toolCalls ) {
+                if ( CHANNEL_POSTING_TOOLS.has( call.function.name )
+                    && call.function.arguments.channelId === context.location.channelId ) {
+                    postedToChannel = true;
+                }
+
                 const result = await this.executeTool( call.function.name, call.function.arguments, context );
 
                 if ( result.startsWith( "NOT EXECUTED" ) ) {

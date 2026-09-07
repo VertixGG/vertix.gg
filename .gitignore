@@ -41,3 +41,5 @@ packages/**/dist/**/*.js.map
 .tmp/
 
 temp/
+
+apps/vertix-api/ui-hash-tables.json

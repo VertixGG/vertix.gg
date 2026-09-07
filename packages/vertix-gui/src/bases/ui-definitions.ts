@@ -18,7 +18,7 @@ export enum UIInstancesTypes {
 
 // TODO: Check if required, and when.
 export const UI_ELEMENTS_DEPTH = 2,
-    UI_ELEMENTS_DEFAULT_MAX_PER_ROW = 5; // TODO REMOVE
+    UI_ELEMENTS_DEFAULT_MAX_PER_ROW = 4; // TODO REMOVE
 
 export const UI_CUSTOM_ID_SEPARATOR = ":";
 

@@ -1,6 +1,6 @@
-People currently in this conversation. To mention one so it links and notifies
-them, write their exact tag from the list below - a plain "@name" is only text
-and does not link or notify anyone.
+People currently in this conversation. To mention someone, write "@" then their
+exact name from this list - it becomes a real, clickable mention that notifies
+them. Refer to people only by these names.
 
 {roster}
 

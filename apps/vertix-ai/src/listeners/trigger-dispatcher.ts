@@ -247,8 +247,12 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
 
     // The speaker is not in the fetched history (that is strictly older messages),
     // so add them to the roster - most recent first, deduped by id.
-    const roster = [
-        { id: message.author.id, name: message.member?.displayName ?? message.author.displayName },
+    const roster: Participant[] = [
+        {
+            id: message.author.id,
+            name: message.member?.displayName ?? message.author.displayName,
+            aliases: nameAliases( message )
+        },
         ...participants
     ].filter( ( person, index, all ) => index === all.findIndex( ( other ) => other.id === person.id ) );
 
@@ -303,7 +307,12 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
         return;
     }
 
-    await sendChunked( message.channel, reply, message );
+    // Convert any plain "@name" the model typed into a real, linking mention.
+    await sendChunked(
+        message.channel,
+        { ...reply, content: linkifyPlainMentions( reply.content, roster ) },
+        message
+    );
 }
 
 async function handleMemberJoin( member: GuildMember ): Promise<void> {
@@ -362,23 +371,67 @@ const DISCORD_FETCH_PAGE_SIZE = 100;
  * `user` turns prefixed with the speaker, since Discord is many-to-many and the
  * model otherwise cannot tell who said what.
  */
-type Participant = { id: string; name: string };
+type Participant = { id: string; name: string; aliases: string[] };
 
 /** Enough to cover the recent speakers without bloating the prompt. */
 const MAX_PARTICIPANTS = 12;
+
+/** Every name form a person can be addressed by - nick, global name, username. */
+function nameAliases( message: Message ): string[] {
+    const forms = [
+        message.member?.nickname,
+        message.member?.displayName,
+        message.author.globalName,
+        message.author.displayName,
+        message.author.username
+    ];
+
+    return [ ...new Set( forms.filter( ( form ): form is string => Boolean( form && form.trim().length ) ) ) ];
+}
+
+/**
+ * Turns a plain "@name" the model typed as text into a real `<@id>` mention.
+ *
+ * The model copies "@SuperBot" from its own past replies (a components-v2 bot's
+ * nickname), and a plain "@name" neither links nor notifies. Rewriting every
+ * known alias - nick, global name, username - is what makes the mention work,
+ * without the model having to reproduce an 18-digit id.
+ */
+function linkifyPlainMentions( content: string, participants: Participant[] ): string {
+    if ( !content.includes( "@" ) ) {
+        return content;
+    }
+
+    const aliases = participants
+        .flatMap( ( person ) => person.aliases.map( ( alias ) => ( { alias, id: person.id } ) ) )
+        .filter( ( entry ) => entry.alias.trim().length )
+        // Longest first so "@Superuser" is never half-matched by a shorter alias.
+        .sort( ( a, b ) => b.alias.length - a.alias.length );
+
+    let out = content;
+
+    for ( const { alias, id } of aliases ) {
+        const escaped = alias.replace( /[.*+?^${}()|[\]\\]/g, "\\$&" );
+
+        // Skip when a word char or "#" follows, so "@SuperBot" matches but
+        // "@SuperBotFoo" and an old-style "@name#1234" do not.
+        out = out.replace( new RegExp( `@${ escaped }(?![\\w#])`, "gi" ), `<@${ id }>` );
+    }
+
+    return out;
+}
 
 async function fetchHistory( client: Client, message: Message ): Promise<{ messages: OllamaMessage[]; participants: Participant[] }> {
     const maxMessages = AIConfig.$.getHistoryLimit();
     const maxChars = AIConfig.$.getHistoryMaxChars();
 
     const collected: OllamaMessage[] = [];
-    const speakers = new Map<string, string>();
+    const speakers = new Map<string, Participant>();
 
     let before = message.id;
     let usedChars = 0;
 
-    const roster = (): Participant[] =>
-        [ ...speakers.entries() ].slice( 0, MAX_PARTICIPANTS ).map( ( [ id, name ] ) => ( { id, name } ) );
+    const roster = (): Participant[] => [ ...speakers.values() ].slice( 0, MAX_PARTICIPANTS );
 
     while ( collected.length < maxMessages ) {
         const remaining = Math.min( DISCORD_FETCH_PAGE_SIZE, maxMessages - collected.length );
@@ -401,7 +454,11 @@ async function fetchHistory( client: Client, message: Message ): Promise<{ messa
             // The roster comes from every author - even a components-v2 bot whose
             // `content` is empty - so the model can still mention them by tag.
             if ( !isSelf && !speakers.has( entry.author.id ) ) {
-                speakers.set( entry.author.id, entry.member?.displayName ?? entry.author.displayName );
+                speakers.set( entry.author.id, {
+                    id: entry.author.id,
+                    name: entry.member?.displayName ?? entry.author.displayName,
+                    aliases: nameAliases( entry )
+                } );
             }
 
             if ( !entry.content.trim().length ) {

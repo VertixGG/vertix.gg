@@ -963,7 +963,7 @@ export class AIService extends InitializeBase {
         }
 
         const roster = participants
-            .map( ( person ) => `- ${ person.name }: <@${ person.id }>` )
+            .map( ( person ) => `- ${ person.name }` )
             .join( "\n" );
 
         return [ {

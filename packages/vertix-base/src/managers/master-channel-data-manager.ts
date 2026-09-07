@@ -84,6 +84,21 @@ export class MasterChannelDataManager extends InitializeBase {
             ?.dynamicChannelButtonsTemplate;
     }
 
+    /**
+     * Function getChannelButtonsTemplateOverrides() :: Every role that carries a button set.
+     *
+     * Resolving a panel means walking the owner's roles in order, so the whole map is read once
+     * rather than asked about one role at a time.
+     */
+    public async getChannelButtonsTemplateOverrides(
+        masterChannelDB: ChannelExtended,
+        cache = true
+    ): Promise<Record<string, string[]>> {
+        const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, true );
+
+        return settings?.dynamicChannelButtonsTemplateByRole ?? {};
+    }
+
     public async getChannelButtonsTemplateByRole(
         masterChannelDB: ChannelExtended,
         roleId: string,

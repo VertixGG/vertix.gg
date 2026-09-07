@@ -3054,6 +3054,35 @@
                 "items": [
                     [
                         {
+                            "element": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🎚 Editing",
+                                "selectOptions": [
+                                    {
+                                        "label": "Default buttons — everyone",
+                                        "value": "default",
+                                        "emoji": "🌐"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+                                "elementType": "role-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "➕ Give a role its own buttons"
+                            }
+                        }
+                    ],
+                    [
+                        {
                             "element": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
                             "definition": {
                                 "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
@@ -3112,100 +3141,35 @@
                     ],
                     [
                         {
-                            "element": "VertixBot/UI-General/DoneButton",
+                            "element": "VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
                             "definition": {
-                                "name": "VertixBot/UI-General/DoneButton",
+                                "name": "VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
-                                "label": "✓ Done",
-                                "style": "success"
-                            }
-                        }
-                    ]
-                ]
-            },
-            {
-                "name": "VertixBot/UI-V2/SetupEditButtonsEffectElementsGroup",
-                "items": [
-                    [
-                        {
-                            "element": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                            "definition": {
-                                "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                                "elementType": "select-menu",
-                                "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons",
-                                "selectOptions": [
-                                    {
-                                        "label": "Rename",
-                                        "value": "0",
-                                        "emoji": "✏️"
-                                    },
-                                    {
-                                        "label": "Limit",
-                                        "value": "1",
-                                        "emoji": "✋"
-                                    },
-                                    {
-                                        "label": "Clear Chat",
-                                        "value": "2",
-                                        "emoji": "🧹"
-                                    },
-                                    {
-                                        "label": "Public/Private",
-                                        "value": "3",
-                                        "emoji": "🚫"
-                                    },
-                                    {
-                                        "label": "Shown/Hidden",
-                                        "value": "4",
-                                        "emoji": "🐵"
-                                    },
-                                    {
-                                        "label": "Access",
-                                        "value": "5",
-                                        "emoji": "👥"
-                                    },
-                                    {
-                                        "label": "Reset",
-                                        "value": "6",
-                                        "emoji": "🔃"
-                                    },
-                                    {
-                                        "label": "Transfer",
-                                        "value": "12",
-                                        "emoji": "🔀"
-                                    },
-                                    {
-                                        "label": "Claim",
-                                        "value": "7",
-                                        "emoji": "😈"
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    [
-                        {
-                            "element": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
-                            "definition": {
-                                "name": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "label": "Immediately",
-                                "style": "primary",
-                                "emoji": "🌟"
+                                "label": "Use The Default For This Role",
+                                "style": "secondary",
+                                "emoji": "↩️"
                             }
                         },
                         {
-                            "element": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+                            "element": "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
                             "definition": {
-                                "name": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+                                "name": "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
-                                "label": "Apply Only",
-                                "style": "success",
-                                "emoji": "💾"
+                                "label": "Update Existing Channels",
+                                "style": "primary",
+                                "emoji": "🔄"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/WizardBackButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "◀ Back",
+                                "style": "primary"
                             }
                         }
                     ]
@@ -3589,38 +3553,87 @@
                         "embed": "VertixBot/UI-V2/SetupEditButtonsEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "🎚  Edit Buttons Of Master Channel #{index}",
-                            "description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n",
-                            "footer": "Current enabled buttons at the menu below",
+                            "title": "🎚  Buttons Of Master Channel #{index}",
+                            "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+                            "footer": "Every pick is saved straight away. Channels that are already open keep their buttons until you press Update Existing Channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
-                            "vars": {
-                                "index": "{index}"
+                            "options": {
+                                "buttonsNone": "> - *None. Owners would see a panel with no buttons on it.*",
+                                "rosterHeading": "**Roles with buttons of their own**",
+                                "rosterButtonsWord": "Buttons",
+                                "rosterMore": "> - *… and {rosterMoreCount} more. Every one of them is in the top menu.*",
+                                "scopeDisplay": {
+                                    "{scopeDefault}": "**You are editing the default buttons of <#{masterChannelId}>.**\nWhoever owns a channel created here sees these buttons — unless they have one of the roles listed further down, which replaces this set for them.",
+                                    "{scopeRoleOwn}": "**You are editing the buttons for <@&{roleId}>.**\nAn owner who has this role sees these buttons **instead of** the default set. Every other owner keeps the default set, and it is not changed.",
+                                    "{scopeRoleNew}": "**<@&{roleId}> has no buttons of its own yet.**\nIts owners follow the default set, which is what is ticked in the button menu right now. Tick or untick anything and this role gets a set of its own from that moment on — the default set stays exactly as it is.",
+                                    "{scopeRoleMissing}": "**This role no longer exists on this server.**\nNobody can have it, so its saved buttons never reach anyone. Press **Use The Default For This Role** to clear it away."
+                                },
+                                "listHeadingDisplay": {
+                                    "{listDefault}": "**On every panel**",
+                                    "{listRoleOwn}": "**On the panel of an owner who has this role**",
+                                    "{listRoleNew}": "**The default set — change it here to turn it into this role's own set**"
+                                },
+                                "rosterDisplay": {
+                                    "{rosterNone}": "> - *None yet. Every owner gets the default set.*\n> - *For example: let one role claim and reset channels while everyone else can only rename.*",
+                                    "{rosterOne}": "{rosterList}",
+                                    "{rosterMany}": "{rosterList}\nAn owner who has two of these roles gets the set of whichever role sits higher in **Server Settings → Roles**."
+                                },
+                                "hintDisplay": {
+                                    "{hintDefault}": "To give one role a different set, pick it in **➕ Give a role its own buttons**.",
+                                    "{hintRoleOwn}": "**Use The Default For This Role** deletes this set and puts its owners back on the default one.",
+                                    "{hintRoleNew}": "Nothing is saved for this role until you change a button.",
+                                    "{hintEveryone}": "⚠️ **@everyone** cannot have a set of its own — every member has that role, so its set would replace the default one for every single owner. Edit the default set instead, or pick a narrower role.",
+                                    "{hintPushed}": "✅ Sent to every channel this master channel has open. Each one now shows the set its own owner should get."
+                                }
                             },
-                            "defaultVars": {
-                                "index": "1"
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                "name": "VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup",
-                "items": [
-                    {
-                        "embed": "VertixBot/UI-V2/SetupEditButtonsEffectEmbed",
-                        "definition": {
-                            "instanceType": "Dynamic",
-                            "title": "🎚  Edit Buttons Of Master Channel #{index}",
-                            "description": "Editing buttons will impact the dynamic channels created by __Master Channel #{index}__.\n\nThere are have two options:\n\n- Affect changes immediately to all channels\n- Apply changes only to newly created _Dynamic Channels_.",
-                            "footer": "Current enabled buttons at the menu below",
-                            "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 3369963,
-                            "vars": {
-                                "index": "{index}"
+                            "arrayOptions": {
+                                "buttonsList": {
+                                    "format": "> - {value}{separator}",
+                                    "separator": "\n",
+                                    "options": {
+                                        "0": "✏️ ∙ **Rename**",
+                                        "1": "✋ ∙ **User Limit**",
+                                        "2": "🧹 ∙ **Clear Chat**",
+                                        "3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
+                                        "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
+                                        "5": "👥 ∙ **Access**",
+                                        "6": "🔃 ∙ **Reset**",
+                                        "7": "😈 ∙ **Claim**",
+                                        "12": "🔀 ∙ **Transfer**"
+                                    }
+                                }
                             },
-                            "defaultVars": {
-                                "index": "1"
+                            "vars": {
+                                "index": "{index}",
+                                "masterChannelId": "{masterChannelId}",
+                                "roleId": "{roleId}",
+                                "scopeDisplay": "{scopeDisplay}",
+                                "scopeDefault": "{scopeDefault}",
+                                "scopeRoleOwn": "{scopeRoleOwn}",
+                                "scopeRoleNew": "{scopeRoleNew}",
+                                "scopeRoleMissing": "{scopeRoleMissing}",
+                                "listHeadingDisplay": "{listHeadingDisplay}",
+                                "listDefault": "{listDefault}",
+                                "listRoleOwn": "{listRoleOwn}",
+                                "listRoleNew": "{listRoleNew}",
+                                "buttonsList": "{buttonsList}",
+                                "buttonsNone": "{buttonsNone}",
+                                "rosterHeading": "{rosterHeading}",
+                                "rosterButtonsWord": "{rosterButtonsWord}",
+                                "rosterDisplay": "{rosterDisplay}",
+                                "rosterNone": "{rosterNone}",
+                                "rosterOne": "{rosterOne}",
+                                "rosterMany": "{rosterMany}",
+                                "rosterList": "{rosterList}",
+                                "rosterMore": "{rosterMore}",
+                                "rosterMoreCount": "{rosterMoreCount}",
+                                "hintDisplay": "{hintDisplay}",
+                                "hintDefault": "{hintDefault}",
+                                "hintRoleOwn": "{hintRoleOwn}",
+                                "hintRoleNew": "{hintRoleNew}",
+                                "hintEveryone": "{hintEveryone}",
+                                "hintPushed": "{hintPushed}"
                             }
                         }
                     }
@@ -3828,8 +3841,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 8,
-                "withDefinition": 8,
+                "total": 7,
+                "withDefinition": 7,
                 "missingDefinition": 0
             }
         }
@@ -7859,36 +7872,30 @@
                 "items": [
                     [
                         {
-                            "element": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
+                            "element": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
                             "definition": {
-                                "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
-                                "elementType": "role-select",
+                                "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+                                "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "Select role (optional)"
+                                "placeholder": "🎚 Editing",
+                                "selectOptions": [
+                                    {
+                                        "label": "Default buttons — everyone",
+                                        "value": "default",
+                                        "emoji": "🌐"
+                                    }
+                                ]
                             }
                         }
                     ],
                     [
                         {
-                            "element": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
+                            "element": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
                             "definition": {
-                                "name": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
-                                "elementType": "button",
+                                "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
+                                "elementType": "role-select",
                                 "instanceType": "Dynamic",
-                                "label": "Edit Default Buttons",
-                                "style": "secondary",
-                                "emoji": "⬅️"
-                            }
-                        },
-                        {
-                            "element": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
-                            "definition": {
-                                "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "label": "Clear role override",
-                                "style": "secondary",
-                                "emoji": "🧹"
+                                "placeholder": "➕ Give a role its own buttons"
                             }
                         }
                     ],
@@ -7962,145 +7969,35 @@
                     ],
                     [
                         {
-                            "element": "VertixBot/UI-General/DoneButton",
-                            "definition": {
-                                "name": "VertixBot/UI-General/DoneButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "label": "✓ Done",
-                                "style": "success"
-                            }
-                        }
-                    ]
-                ]
-            },
-            {
-                "name": "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup",
-                "items": [
-                    [
-                        {
-                            "element": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
-                            "definition": {
-                                "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
-                                "elementType": "role-select",
-                                "instanceType": "Dynamic",
-                                "placeholder": "Select role (optional)"
-                            }
-                        }
-                    ],
-                    [
-                        {
-                            "element": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
-                            "definition": {
-                                "name": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "label": "Edit Default Buttons",
-                                "style": "secondary",
-                                "emoji": "⬅️"
-                            }
-                        },
-                        {
                             "element": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
                             "definition": {
                                 "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
-                                "label": "Clear role override",
+                                "label": "Use The Default For This Role",
                                 "style": "secondary",
-                                "emoji": "🧹"
+                                "emoji": "↩️"
                             }
-                        }
-                    ],
-                    [
+                        },
                         {
-                            "element": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
+                            "element": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
                             "definition": {
-                                "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
-                                "elementType": "select-menu",
-                                "instanceType": "Dynamic",
-                                "placeholder": "🎚 Select Buttons",
-                                "selectOptions": [
-                                    {
-                                        "label": "Rename",
-                                        "value": "rename",
-                                        "emoji": "<emoji name='ChannelRename'>"
-                                    },
-                                    {
-                                        "label": "Limit",
-                                        "value": "limit",
-                                        "emoji": "<emoji name='UserLimit'>"
-                                    },
-                                    {
-                                        "label": "Access",
-                                        "value": "access",
-                                        "emoji": "<emoji name='ChannelPermissions'>"
-                                    },
-                                    {
-                                        "label": "Privacy",
-                                        "value": "privacy",
-                                        "emoji": "<emoji name='ChannelPrivacy'>"
-                                    },
-                                    {
-                                        "label": "Region",
-                                        "value": "region",
-                                        "emoji": "<emoji name='ChannelRegion'>"
-                                    },
-                                    {
-                                        "label": "Edit Primary Message",
-                                        "value": "edit-primary-message",
-                                        "emoji": "<emoji name='EditChannelMessage'>"
-                                    },
-                                    {
-                                        "label": "Clear Chat",
-                                        "value": "clear-chat",
-                                        "emoji": "<emoji name='ClearChat'>"
-                                    },
-                                    {
-                                        "label": "Reset",
-                                        "value": "rest-channel",
-                                        "emoji": "<emoji name='ResetChannel'>"
-                                    },
-                                    {
-                                        "label": "Transfer",
-                                        "value": "transfer",
-                                        "emoji": "<emoji name='TransferChannel'>"
-                                    },
-                                    {
-                                        "label": "Templates",
-                                        "value": "templates",
-                                        "emoji": "<emoji name='ChannelTemplates'>"
-                                    },
-                                    {
-                                        "label": "Claim",
-                                        "value": "claim-button",
-                                        "emoji": "<emoji name='ClaimChannel'>"
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    [
-                        {
-                            "element": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-                            "definition": {
-                                "name": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
+                                "name": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
-                                "label": "Immediately",
+                                "label": "Update Existing Channels",
                                 "style": "primary",
-                                "emoji": "🌟"
+                                "emoji": "🔄"
                             }
                         },
                         {
-                            "element": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
+                            "element": "VertixBot/UI-General/WizardBackButton",
                             "definition": {
-                                "name": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
+                                "name": "VertixBot/UI-General/WizardBackButton",
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
-                                "label": "Apply Only",
-                                "style": "success",
-                                "emoji": "💾"
+                                "label": "◀ Back",
+                                "style": "primary"
                             }
                         }
                     ]
@@ -8476,14 +8373,43 @@
                         "embed": "VertixBot/UI-V3/SetupEditButtonsEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "🎚  Edit Buttons Of Master Channel #{index}",
-                            "description": "Select which buttons you wish to be visible for your members.\n\nOnly selected buttons will be enabled/visible at\n_Dynamic Channels_ that created by this master channel.\n\n",
-                            "footer": "Current enabled buttons at the menu below",
+                            "title": "🎚  Buttons Of Master Channel #{index}",
+                            "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+                            "footer": "Every pick is saved straight away. Channels that are already open keep their buttons until you press Update Existing Channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
+                            "options": {
+                                "buttonsNone": "> - *None. Owners would see a panel with no buttons on it.*",
+                                "rosterHeading": "**Roles with buttons of their own**",
+                                "rosterButtonsWord": "Buttons",
+                                "rosterMore": "> - *… and {rosterMoreCount} more. Every one of them is in the top menu.*",
+                                "scopeDisplay": {
+                                    "{scopeDefault}": "**You are editing the default buttons of <#{masterChannelId}>.**\nWhoever owns a channel created here sees these buttons — unless they have one of the roles listed further down, which replaces this set for them.",
+                                    "{scopeRoleOwn}": "**You are editing the buttons for <@&{roleId}>.**\nAn owner who has this role sees these buttons **instead of** the default set. Every other owner keeps the default set, and it is not changed.",
+                                    "{scopeRoleNew}": "**<@&{roleId}> has no buttons of its own yet.**\nIts owners follow the default set, which is what is ticked in the button menu right now. Tick or untick anything and this role gets a set of its own from that moment on — the default set stays exactly as it is.",
+                                    "{scopeRoleMissing}": "**This role no longer exists on this server.**\nNobody can have it, so its saved buttons never reach anyone. Press **Use The Default For This Role** to clear it away."
+                                },
+                                "listHeadingDisplay": {
+                                    "{listDefault}": "**On every panel**",
+                                    "{listRoleOwn}": "**On the panel of an owner who has this role**",
+                                    "{listRoleNew}": "**The default set — change it here to turn it into this role's own set**"
+                                },
+                                "rosterDisplay": {
+                                    "{rosterNone}": "> - *None yet. Every owner gets the default set.*\n> - *For example: let one role claim and reset channels while everyone else can only rename.*",
+                                    "{rosterOne}": "{rosterList}",
+                                    "{rosterMany}": "{rosterList}\nAn owner who has two of these roles gets the set of whichever role sits higher in **Server Settings → Roles**."
+                                },
+                                "hintDisplay": {
+                                    "{hintDefault}": "To give one role a different set, pick it in **➕ Give a role its own buttons**.",
+                                    "{hintRoleOwn}": "**Use The Default For This Role** deletes this set and puts its owners back on the default one.",
+                                    "{hintRoleNew}": "Nothing is saved for this role until you change a button.",
+                                    "{hintEveryone}": "⚠️ **@everyone** cannot have a set of its own — every member has that role, so its set would replace the default one for every single owner. Edit the default set instead, or pick a narrower role.",
+                                    "{hintPushed}": "✅ Sent to every channel this master channel has open. Each one now shows the set its own owner should get."
+                                }
+                            },
                             "arrayOptions": {
-                                "dynamicChannelButtonsTemplate": {
-                                    "format": "- ( {value} ){separator}",
+                                "buttonsList": {
+                                    "format": "> - {value}{separator}",
                                     "separator": "\n",
                                     "options": {
                                         "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
@@ -8495,34 +8421,41 @@
                                         "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
                                         "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
                                         "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+                                        "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
                                         "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
                                     }
                                 }
                             },
                             "vars": {
-                                "separator": "{separator}",
-                                "value": "{value}",
                                 "index": "{index}",
-                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                "name": "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup",
-                "items": [
-                    {
-                        "embed": "VertixBot/UI-V3/SetupEditButtonsEffectEmbed",
-                        "definition": {
-                            "instanceType": "Dynamic",
-                            "title": "🎚  Edit Buttons Of Master Channel #{index}",
-                            "description": "Editing buttons will impact the dynamic channels created by __Master Channel #{index}__.\n\nThere are have two options:\n\n- Affect changes immediately to all channels\n- Apply changes only to newly created _Dynamic Channels_.",
-                            "footer": "Current enabled buttons at the menu below",
-                            "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 3369963,
-                            "vars": {
-                                "index": "{index}"
+                                "masterChannelId": "{masterChannelId}",
+                                "roleId": "{roleId}",
+                                "scopeDisplay": "{scopeDisplay}",
+                                "scopeDefault": "{scopeDefault}",
+                                "scopeRoleOwn": "{scopeRoleOwn}",
+                                "scopeRoleNew": "{scopeRoleNew}",
+                                "scopeRoleMissing": "{scopeRoleMissing}",
+                                "listHeadingDisplay": "{listHeadingDisplay}",
+                                "listDefault": "{listDefault}",
+                                "listRoleOwn": "{listRoleOwn}",
+                                "listRoleNew": "{listRoleNew}",
+                                "buttonsList": "{buttonsList}",
+                                "buttonsNone": "{buttonsNone}",
+                                "rosterHeading": "{rosterHeading}",
+                                "rosterButtonsWord": "{rosterButtonsWord}",
+                                "rosterDisplay": "{rosterDisplay}",
+                                "rosterNone": "{rosterNone}",
+                                "rosterOne": "{rosterOne}",
+                                "rosterMany": "{rosterMany}",
+                                "rosterList": "{rosterList}",
+                                "rosterMore": "{rosterMore}",
+                                "rosterMoreCount": "{rosterMoreCount}",
+                                "hintDisplay": "{hintDisplay}",
+                                "hintDefault": "{hintDefault}",
+                                "hintRoleOwn": "{hintRoleOwn}",
+                                "hintRoleNew": "{hintRoleNew}",
+                                "hintEveryone": "{hintEveryone}",
+                                "hintPushed": "{hintPushed}"
                             }
                         }
                     }
@@ -8722,8 +8655,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 8,
-                "withDefinition": 8,
+                "total": 7,
+                "withDefinition": 7,
                 "missingDefinition": 0
             }
         }

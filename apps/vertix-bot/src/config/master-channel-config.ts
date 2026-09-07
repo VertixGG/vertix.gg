@@ -45,6 +45,8 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
 
                 dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( ( i ) => i.getId().toString() ),
 
+                dynamicChannelButtonsTemplateByRole: {},
+
                 dynamicChannelControlChannelId: null,
 
                 dynamicChannelLogsChannelId: null,

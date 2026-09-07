@@ -885,13 +885,6 @@
                 "hooks": []
             },
             {
-                "key": "VertixBot/UI-V2/SetupEditButtonsEffect",
-                "elementsGroup": "VertixBot/UI-V2/SetupEditButtonsEffectElementsGroup",
-                "embedsGroup": "VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
                 "key": "VertixBot/UI-V2/SetupEditVerifiedRoles",
                 "elementsGroup": "VertixBot/UI-V2/SetupEditVerifiedRolesElementsGroup",
                 "embedsGroup": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbedGroup",
@@ -1836,13 +1829,6 @@
                 "key": "VertixBot/UI-V3/SetupEditButtons",
                 "elementsGroup": "VertixBot/UI-V3/SetupEditButtonsElementsGroup",
                 "embedsGroup": "VertixBot/UI-V3/SetupEditButtonsEmbedGroup",
-                "markdownGroup": null,
-                "hooks": []
-            },
-            {
-                "key": "VertixBot/UI-V3/SetupEditButtonsEffect",
-                "elementsGroup": "VertixBot/UI-V3/SetupEditButtonsEffectElementsGroup",
-                "embedsGroup": "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },

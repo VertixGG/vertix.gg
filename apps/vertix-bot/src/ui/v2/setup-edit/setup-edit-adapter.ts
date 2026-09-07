@@ -22,6 +22,7 @@ import { SetupMasterEditButton } from "@vertix.gg/bot/src/ui/general/setup/eleme
 import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
+import { SCOPE_DEFAULT_VALUE } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-buttons/setup-edit-buttons-scope-select-menu";
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit-component";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
@@ -75,9 +76,39 @@ async function onSetupMasterEditButtonClicked(
     }
 
     args.dynamicChannelControlChannelAutoCreate = !!args.dynamicChannelControlChannelId;
+
+    // The buttons screen keeps its saved sets apart from the set being looked at, and this is the
+    // only place they can be seeded: the component is static, so the framework never calls
+    // `getReplyArgs()` and nothing else ever puts them on args.
+    //
+    // Both are rebuilt rather than referenced - `getAllSettings()` hands back the config defaults
+    // themselves when a master channel has none of its own, so the empty by-role object is one
+    // instance shared by every such channel in the process.
+    args.guildId = interaction.guildId;
+
+    const storedTemplate = args.dynamicChannelButtonsTemplate;
+
+    args.dynamicChannelButtonsTemplateDefault = sortButtonIds(
+        Array.isArray( storedTemplate ) ? storedTemplate.map( ( id ) => String( id ) ) : []
+    );
+
+    const storedByRole = args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined,
+        byRole: Record<string, string[]> = {};
+
+    Object.entries( storedByRole ?? {} ).forEach( ( [ roleId, buttons ] ) => {
+        byRole[ roleId ] = sortButtonIds( Array.isArray( buttons ) ? buttons.map( ( id ) => String( id ) ) : [] );
+    } );
+
+    args.dynamicChannelButtonsTemplateByRole = byRole;
+    args.dynamicChannelButtonsTemplate = [ ...( args.dynamicChannelButtonsTemplateDefault as string[] ) ];
+    args.dynamicChannelButtonsRoleId = null;
+    args.dynamicChannelButtonsNotice = null;
+
     args._wizardIsFinishButtonAvailable = true;
 
     context.setArgs( interaction, args );
+
+    syncButtonsRoleMeta( context, interaction );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 }
@@ -93,20 +124,19 @@ async function onSelectEditOptionSelected(
             break;
 
         case "edit-dynamic-channel-buttons":
-            const currentArgs = context.getArgs( interaction );
+            // Opened on the default set every time. Args are merged per key and never cleared, so
+            // without this the screen resumes on whichever role was open earlier in the session.
+            context.setArgs( interaction, {
+                dynamicChannelButtonsRoleId: null,
+                dynamicChannelButtonsTemplate: [
+                    ...( ( context.getArgs( interaction ).dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [] )
+                ],
+                dynamicChannelButtonsNotice: null
+            } );
 
-            if ( currentArgs.dynamicChannelButtonsTemplate ) {
-                if ( Array.isArray( currentArgs.dynamicChannelButtonsTemplate ) ) {
-                    currentArgs.dynamicChannelButtonsTemplate =
-                        currentArgs.dynamicChannelButtonsTemplate.map( ( btn ) =>
-                            typeof btn === "number" ? btn : Number( btn )
-                        );
-                }
-            }
+            syncButtonsRoleMeta( context, interaction );
 
-            context.setArgs( interaction, currentArgs );
-
-            await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditButtons" );
+            await context.editReplyWithStep( interaction, BUTTONS_STEP );
             break;
 
         case "edit-dynamic-channel-verified-roles":
@@ -161,86 +191,235 @@ async function onTemplateEditModalSubmitted(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 }
 
+const BUTTONS_STEP = "VertixBot/UI-V2/SetupEditButtons";
+
+/**
+ * Function sortButtonIds() :: Orders a stored button list and drops ids this version does not know.
+ *
+ * V2 identifies a button by a number but stores the list as strings, so the conversion has to
+ * happen at the edge rather than leaking either form into the screen.
+ */
+function sortButtonIds( ids: string[] ): string[] {
+    return DynamicChannelElementsGroup.sortIds( ids.map( ( id ) => Number( id ) ) ).map( ( id ) => id.toString() );
+}
+
+/**
+ * Function syncButtonsRoleMeta() :: Refreshes the names of the roles that own a button set.
+ *
+ * Elements hold no guild handle, so the names have to be read here and put on args. Rebuilt on
+ * every render rather than kept, so a role deleted since the last look falls out of the map on its
+ * own - and that absence is what the screen reports back to the admin.
+ */
+function syncButtonsRoleMeta(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: Interactions
+) {
+    const args = context.getArgs( interaction ),
+        byRole = ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {},
+        roleId = args.dynamicChannelButtonsRoleId as string | null | undefined;
+
+    const ids = new Set( Object.keys( byRole ) );
+
+    if ( roleId ) {
+        ids.add( roleId );
+    }
+
+    const meta: { id: string; name: string; position: number }[] = [];
+
+    ids.forEach( ( id ) => {
+        const role = interaction.guild?.roles.cache.get( id );
+
+        if ( role ) {
+            meta.push( { id, name: role.name, position: role.position } );
+        }
+    } );
+
+    context.setArgs( interaction, { dynamicChannelButtonsRoleMeta: meta } );
+}
+
+function readButtonsScope( context: IExecutionAdapterContext<Interactions>, interaction: Interactions ) {
+    syncButtonsRoleMeta( context, interaction );
+
+    const args = context.getArgs( interaction );
+
+    return {
+        args,
+        roleId: ( args.dynamicChannelButtonsRoleId as string | null | undefined ) ?? null,
+        byRole: ( args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined ) ?? {},
+        templateDefault: ( args.dynamicChannelButtonsTemplateDefault as string[] | undefined ) ?? [],
+        masterChannelDB: {
+            id: args.ChannelDBId,
+            version: VERSION_UI_V2
+        } as ChannelExtended
+    };
+}
+
+/**
+ * Function scopeTemplate() :: The set a scope should show.
+ *
+ * A role with nothing of its own opens on the default set, so giving it one extra button is a
+ * single tick rather than rebuilding the list. Copied, because `sortIds()` sorts in place and args
+ * share their nested arrays with the stored bag.
+ */
+function scopeTemplate( byRole: Record<string, string[]>, templateDefault: string[], roleId: string | null ) {
+    const source = roleId && byRole[ roleId ]?.length ? byRole[ roleId ] : templateDefault;
+
+    return sortButtonIds( [ ...source ] );
+}
+
+async function onButtonsScopeSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+) {
+    const { byRole, templateDefault } = readButtonsScope( context, interaction ),
+        selected = interaction.values.at( 0 ) ?? SCOPE_DEFAULT_VALUE,
+        roleId = SCOPE_DEFAULT_VALUE === selected ? null : selected;
+
+    // Nothing is written - looking at another scope has to be free, otherwise the roster stops
+    // being something an admin will browse.
+    context.setArgs( interaction, {
+        dynamicChannelButtonsRoleId: roleId,
+        dynamicChannelButtonsTemplate: scopeTemplate( byRole, templateDefault, roleId ),
+        dynamicChannelButtonsNotice: null
+    } );
+
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
+}
+
+async function onButtonsRoleSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    const { args, byRole, templateDefault } = readButtonsScope( context, interaction ),
+        roleId = interaction.values.at( 0 ) ?? null;
+
+    if ( ! roleId ) {
+        context.setArgs( interaction, { dynamicChannelButtonsNotice: null } );
+
+        await context.editReplyWithStep( interaction, BUTTONS_STEP );
+
+        return;
+    }
+
+    // Discord seeds every member's roles with @everyone under the guild id, so a set stored there
+    // would match every owner alive and leave the default set unreachable.
+    if ( roleId === args.guildId ) {
+        context.setArgs( interaction, { dynamicChannelButtonsNotice: "everyone" } );
+
+        await context.editReplyWithStep( interaction, BUTTONS_STEP );
+
+        return;
+    }
+
+    context.setArgs( interaction, {
+        dynamicChannelButtonsRoleId: roleId,
+        dynamicChannelButtonsTemplate: scopeTemplate( byRole, templateDefault, roleId ),
+        dynamicChannelButtonsNotice: null
+    } );
+
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
+}
+
 async function onButtonsSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
+    const { byRole, roleId, masterChannelDB } = readButtonsScope( context, interaction );
+
+    const buttons = sortButtonIds( interaction.values );
+
+    // Saved on the pick. There is no pending state to lose and nothing to press afterwards to make
+    // it count.
+    if ( roleId ) {
+        await MasterChannelDataManager.$.setChannelButtonsTemplateForRole( masterChannelDB, roleId, buttons );
+    } else {
+        await MasterChannelDataManager.$.setChannelButtonsTemplate( masterChannelDB, buttons );
+    }
+
+    // A fresh map rather than an assignment into the old one - `getArgs()` hands back a shallow
+    // copy, so writing through a nested object reaches the stored bag whether or not the write
+    // above succeeded.
     context.setArgs( interaction, {
-        dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.sortIds(
-            interaction.values.map( ( v ) => parseInt( v, 10 ) )
-        )
+        dynamicChannelButtonsTemplate: buttons,
+        dynamicChannelButtonsNotice: null,
+        ...( roleId
+            ? { dynamicChannelButtonsTemplateByRole: { ...byRole, [ roleId ]: buttons } }
+            : { dynamicChannelButtonsTemplateDefault: buttons } )
     } );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditButtonsEffect" );
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
 }
 
-async function onButtonsEffectImmediatelyButtonsClicked(
+async function onClearButtonsRoleOverrideClicked(
     context: IExecutionAdapterContext<Interactions>,
-    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+    interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    const args = context.getArgs( interaction );
-    const buttons = DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
+    const { byRole, roleId, templateDefault, masterChannelDB } = readButtonsScope( context, interaction );
 
-    const masterChannelDB = {
-        id: args.ChannelDBId,
-        version: VERSION_UI_V2
-    } as ChannelExtended;
+    if ( ! roleId ) {
+        await context.editReplyWithStep( interaction, BUTTONS_STEP );
 
-    await MasterChannelDataManager.$.setChannelButtonsTemplate(
-        masterChannelDB,
-        buttons.map( ( b ) => b.toString() )
-    );
+        return;
+    }
+
+    await MasterChannelDataManager.$.removeChannelButtonsTemplateForRole( masterChannelDB, roleId );
+
+    context.setArgs( interaction, {
+        dynamicChannelButtonsTemplateByRole: { ...byRole, [ roleId ]: [] },
+        dynamicChannelButtonsRoleId: null,
+        dynamicChannelButtonsTemplate: scopeTemplate( byRole, templateDefault, null ),
+        dynamicChannelButtonsNotice: null
+    } );
+
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
+}
+
+/**
+ * Function onButtonsUpdateExistingClicked() :: Refreshes the channels that are already open.
+ *
+ * One press covers both scopes, because each channel is rebuilt through its own owner - so every
+ * panel ends up with whichever set that owner should be getting, not with the set on screen.
+ */
+async function onButtonsUpdateExistingClicked(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    const { args } = readButtonsScope( context, interaction );
 
     const claimChannelButtonId = DynamicChannelElementsGroup.getByName(
         "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton"
     )?.getId();
 
-    if ( claimChannelButtonId && buttons.includes( claimChannelButtonId ) ) {
-        setTimeout( async() => {
-            const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
+    const buttons = ( args.dynamicChannelButtonsTemplate as string[] | undefined ) ?? [];
 
-            const appService = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" );
-            const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+    setTimeout( async() => {
+        const channels = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, args.masterChannelId );
 
-            for ( const channelDB of channels ) {
-                const channel = appService.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
+        const appService = ServiceLocator.$.get<AppService>( "VertixBot/Services/App" );
+        const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
-                if ( !channel ) {
-                    console.warn( `Channel ${ channelDB.channelId } not found.` );
-                }
+        for ( const channelDB of channels ) {
+            const channel = appService.getClient().channels.cache.get( channelDB.channelId ) as VoiceChannel;
 
-                dynamicChannelService.editPrimaryMessageDebounce( channel );
+            if ( ! channel ) {
+                continue;
             }
 
+            dynamicChannelService.editPrimaryMessageDebounce( channel );
+        }
+
+        if ( undefined !== claimChannelButtonId && buttons.includes( claimChannelButtonId.toString() ) ) {
             DynamicChannelClaimManager.get( "VertixBot/UI-V2/DynamicChannelClaimManager" )
                 .handleAbandonedChannels( appService.getClient(), [], channels )
                 .catch( ( e ) => {
                     throw e;
                 } );
-        } );
-    }
+        }
+    } );
 
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
-}
+    context.setArgs( interaction, { dynamicChannelButtonsNotice: "pushed" } );
 
-async function onButtonsEffectNewlyButtonClicked(
-    context: IExecutionAdapterContext<Interactions>,
-    interaction: UIDefaultStringSelectMenuChannelTextInteraction
-) {
-    const args = context.getArgs( interaction );
-    const buttons = DynamicChannelElementsGroup.sortIds( args.dynamicChannelButtonsTemplate );
-
-    const masterChannelDB = {
-        id: args.ChannelDBId,
-        version: VERSION_UI_V2
-    } as ChannelExtended;
-
-    await MasterChannelDataManager.$.setChannelButtonsTemplate(
-        masterChannelDB,
-        buttons.map( ( b ) => b.toString() )
-    );
-
-    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
+    await context.editReplyWithStep( interaction, BUTTONS_STEP );
 }
 
 async function onDoneButtonClicked(
@@ -584,8 +763,12 @@ async function onBackButtonClicked(
 
     const currentStep = context.getCurrentExecutionStep( interaction )?.name;
 
+    // Everything below the guards falls through to the verified roles case and writes them back
+    // from the database, so a step that shares this button has to claim itself here or leaving it
+    // quietly rewrites settings it never touched.
     if ( "VertixBot/UI-V2/SetupEditDefaultPrivacy" === currentStep
-        || "VertixBot/UI-V2/SetupEditDefaultUserLimit" === currentStep ) {
+        || "VertixBot/UI-V2/SetupEditDefaultUserLimit" === currentStep
+        || BUTTONS_STEP === currentStep ) {
         await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 
         return;
@@ -668,15 +851,20 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             } )
             .addState( "Buttons", {
                 executionStep: "VertixBot/UI-V2/SetupEditButtons",
-                previewDefaultVars: { view: "Button configuration" },
+                previewDefaultVars: {
+                    view: "Button configuration",
+                    index: "1",
+                    masterChannelId: "0",
+                    roleId: "0",
+                    scopeDisplay: "**Default buttons**",
+                    listHeadingDisplay: "**On every panel**",
+                    buttonsList: "> - *None*",
+                    rosterHeading: "**Roles with buttons of their own**",
+                    rosterDisplay: "> - *None yet*",
+                    hintDisplay: "Pick a role to give it a set of its own."
+                },
                 elementsGroup: "VertixBot/UI-V2/SetupEditButtonsElementsGroup",
                 embedsGroup: "VertixBot/UI-V2/SetupEditButtonsEmbedGroup"
-            } )
-            .addState( "ButtonsEffect", {
-                executionStep: "VertixBot/UI-V2/SetupEditButtonsEffect",
-                previewDefaultVars: { view: "Apply button changes" },
-                elementsGroup: "VertixBot/UI-V2/SetupEditButtonsEffectElementsGroup",
-                embedsGroup: "VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup"
             } )
             .addState( "VerifiedRoles", {
                 executionStep: "VertixBot/UI-V2/SetupEditVerifiedRoles",
@@ -722,9 +910,11 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "LogChannelUpdated", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "DeleteConfirmed", { from: "MasterOverview", to: "SelectMaster" } )
             .addTransition( "Done", { from: "MasterOverview", to: "SelectMaster" } )
-            .addTransition( "ShowButtonsEffect", { from: "Buttons", to: "ButtonsEffect" } )
-            .addTransition( "ButtonsImmediateApplied", { from: "ButtonsEffect", to: "MasterOverview" } )
-            .addTransition( "ButtonsNewApplied", { from: "ButtonsEffect", to: "MasterOverview" } )
+            .addTransition( "ButtonsSelected", { from: "Buttons", to: "Buttons" } )
+            .addTransition( "ButtonsScopeSelected", { from: "Buttons", to: "Buttons" } )
+            .addTransition( "ButtonsRoleSelected", { from: "Buttons", to: "Buttons" } )
+            .addTransition( "ClearRoleOverride", { from: "Buttons", to: "Buttons" } )
+            .addTransition( "UpdateExistingChannels", { from: "Buttons", to: "Buttons" } )
             .addTransition( "BackFromButtons", { from: "Buttons", to: "MasterOverview" } )
             .addTransition( "VerifiedRolesUpdated", { from: "VerifiedRoles", to: "VerifiedRoles" } )
             .addTransition( "VerifiedRolesEveryoneToggled", { from: "VerifiedRoles", to: "VerifiedRoles" } )
@@ -758,18 +948,28 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
                 "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
-                "ShowButtonsEffect",
+                "ButtonsSelected",
                 onButtonsSelected
             )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-                "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
-                "ButtonsImmediateApplied",
-                onButtonsEffectImmediatelyButtonsClicked
+                "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+                "ButtonsScopeSelected",
+                onButtonsScopeSelected
             )
-            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
-                "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
-                "ButtonsNewApplied",
-                onButtonsEffectNewlyButtonClicked
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+                "ButtonsRoleSelected",
+                onButtonsRoleSelected
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
+                "ClearRoleOverride",
+                onClearButtonsRoleOverrideClicked
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
+                "UpdateExistingChannels",
+                onButtonsUpdateExistingClicked
             )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
                 "VertixBot/UI-General/ConfigExtrasSelectMenu",

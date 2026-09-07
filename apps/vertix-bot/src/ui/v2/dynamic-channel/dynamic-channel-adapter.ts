@@ -16,6 +16,7 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 import type { BaseMessageOptions, Message } from "discord.js";
 
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
 import type {
     UIAdapterStartContext,
@@ -56,7 +57,49 @@ async function resolveChannelFromContext(
     return null;
 }
 
-async function getAllArgs( channel: VoiceChannel ) {
+/**
+ * Function resolveButtonsTemplate() :: The button set a channel's panel should carry.
+ *
+ * The owner's roles arrive highest first and the first one carrying a set wins, so a role set
+ * replaces the default rather than adding to it. An empty entry is a removed set, not a set of no
+ * buttons, so it falls through, and the guild id is skipped because discord seeds every member's
+ * roles with @everyone under it - a set stored there would match every owner alive.
+ */
+/**
+ * Function readOwnerRoleIds() :: The owner's roles, as the service resolved them.
+ *
+ * Never the roles of whoever triggered the render - the panel is one message the whole channel
+ * reads, so the set it carries belongs to its owner.
+ */
+function readOwnerRoleIds( args?: UIArgs ): string[] {
+    const ownerRoleIds = args?.ownerRoleIds;
+
+    return Array.isArray( ownerRoleIds ) ? ownerRoleIds as string[] : [];
+}
+
+async function resolveButtonsTemplate(
+    masterChannelDB: ChannelExtended,
+    guildId: string,
+    ownerRoleIds: string[]
+): Promise<string[]> {
+    const byRole = await MasterChannelDataManager.$.getChannelButtonsTemplateOverrides( masterChannelDB );
+
+    for ( const roleId of ownerRoleIds ) {
+        if ( roleId === guildId ) {
+            continue;
+        }
+
+        const override = byRole[ roleId ];
+
+        if ( Array.isArray( override ) && override.length ) {
+            return override;
+        }
+    }
+
+    return ( await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, true ) ) ?? [];
+}
+
+async function getAllArgs( channel: VoiceChannel, ownerRoleIds: string[] = [] ) {
     const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
     const args: UIArgs = {
@@ -73,8 +116,11 @@ async function getAllArgs( channel: VoiceChannel ) {
         masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
     if ( masterChannelDB ) {
-        args.dynamicChannelButtonsTemplate =
-            await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB );
+        args.dynamicChannelButtonsTemplate = await resolveButtonsTemplate(
+            masterChannelDB,
+            channel.guild.id,
+            ownerRoleIds
+        );
     }
 
     return args;
@@ -220,7 +266,7 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             return {};
         }
 
-        return getAllArgs( resolvedChannel );
+        return getAllArgs( resolvedChannel, readOwnerRoleIds( argsFromManager ) );
     } )
     .getReplyArgs( async( context, interaction ) => {
         const resolvedChannel = await resolveChannelFromContext(
@@ -232,7 +278,7 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             return {};
         }
 
-        return getAllArgs( resolvedChannel );
+        return getAllArgs( resolvedChannel, readOwnerRoleIds( context.getArgs( interaction ) ) );
     } )
     .getEditMessageArgs( async( context, message, argsFromManager ) => {
         if ( !message ) {
@@ -248,7 +294,7 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             return {};
         }
 
-        return getAllArgs( resolvedChannel );
+        return getAllArgs( resolvedChannel, readOwnerRoleIds( argsFromManager || context.getArgs( message ) ) );
     } )
     .build();
 

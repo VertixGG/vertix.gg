@@ -2054,7 +2054,11 @@
             {
                 "key": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
                 "transitions": [
-                    "VertixBot/UI-V2/SetupEditFlow/Transitions/ShowButtonsEffect",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/ButtonsSelected",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/ButtonsScopeSelected",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/ButtonsRoleSelected",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/ClearRoleOverride",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/UpdateExistingChannels",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromButtons"
                 ],
                 "hooks": [],
@@ -2062,25 +2066,18 @@
                     "executionStep": "VertixBot/UI-V2/SetupEditButtons",
                     "component": "VertixBot/UI-V2/ConfigComponent",
                     "previewDefaultVars": {
-                        "view": "Button configuration"
+                        "view": "Button configuration",
+                        "index": "1",
+                        "masterChannelId": "0",
+                        "roleId": "0",
+                        "scopeDisplay": "**Default buttons**",
+                        "listHeadingDisplay": "**On every panel**",
+                        "buttonsList": "> - *None*",
+                        "rosterHeading": "**Roles with buttons of their own**",
+                        "rosterDisplay": "> - *None yet*",
+                        "hintDisplay": "Pick a role to give it a set of its own."
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditButtonsEmbedGroup"
-                }
-            },
-            {
-                "key": "VertixBot/UI-V2/SetupEditFlow/States/ButtonsEffect",
-                "transitions": [
-                    "VertixBot/UI-V2/SetupEditFlow/Transitions/ButtonsImmediateApplied",
-                    "VertixBot/UI-V2/SetupEditFlow/Transitions/ButtonsNewApplied"
-                ],
-                "hooks": [],
-                "options": {
-                    "executionStep": "VertixBot/UI-V2/SetupEditButtonsEffect",
-                    "component": "VertixBot/UI-V2/ConfigComponent",
-                    "previewDefaultVars": {
-                        "view": "Apply button changes"
-                    },
-                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditButtonsEffectEmbedGroup"
                 }
             },
             {
@@ -2289,45 +2286,75 @@
             },
             {
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/ButtonsEffect",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
                 "triggeredBy": [
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
                         "sourceEntity": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
                         "handlerKind": "string-select",
                         "navigation": {
-                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/ButtonsEffect",
-                            "executionStep": "VertixBot/UI-V2/SetupEditButtonsEffect"
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                            "executionStep": "VertixBot/UI-V2/SetupEditButtons"
                         }
                     }
                 ]
             },
             {
-                "from": "VertixBot/UI-V2/SetupEditFlow/States/ButtonsEffect",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
                 "triggeredBy": [
                     {
-                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
-                        "sourceEntity": "VertixBot/UI-V2/SetupEditButtonsEffectImmediatelyButton",
-                        "handlerKind": "button",
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
+                        "handlerKind": "string-select",
                         "navigation": {
-                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                            "executionStep": "VertixBot/UI-V2/SetupEditButtons"
                         }
                     }
                 ]
             },
             {
-                "from": "VertixBot/UI-V2/SetupEditFlow/States/ButtonsEffect",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
                 "triggeredBy": [
                     {
-                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
-                        "sourceEntity": "VertixBot/UI-V2/SetupEditButtonsEffectNewlyButton",
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                            "executionStep": "VertixBot/UI-V2/SetupEditButtons"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditButtonsClearRoleOverrideButton",
                         "handlerKind": "button",
                         "navigation": {
-                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                            "executionStep": "VertixBot/UI-V2/SetupEditButtons"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditButtonsUpdateExistingButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
+                            "executionStep": "VertixBot/UI-V2/SetupEditButtons"
                         }
                     }
                 ]
@@ -5136,35 +5163,28 @@
                 "key": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
                 "transitions": [
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/ButtonsSelected",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/ButtonsScopeSelected",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/ButtonsRoleSelected",
-                    "VertixBot/UI-V3/SetupEditFlow/Transitions/EditDefaultButtons",
                     "VertixBot/UI-V3/SetupEditFlow/Transitions/ClearRoleOverride",
-                    "VertixBot/UI-V3/SetupEditFlow/Transitions/ButtonsDone"
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/UpdateExistingChannels",
+                    "VertixBot/UI-V3/SetupEditFlow/Transitions/ButtonsBack"
                 ],
                 "hooks": [],
                 "options": {
                     "executionStep": "VertixBot/UI-V3/SetupEditButtons",
                     "component": "VertixBot/UI-V3/ConfigComponent",
                     "previewDefaultVars": {
-                        "index": "1"
+                        "index": "1",
+                        "masterChannelId": "0",
+                        "roleId": "0",
+                        "scopeDisplay": "**Default buttons**",
+                        "listHeadingDisplay": "**On every panel**",
+                        "buttonsList": "> - *None*",
+                        "rosterHeading": "**Roles with buttons of their own**",
+                        "rosterDisplay": "> - *None yet*",
+                        "hintDisplay": "Pick a role to give it a set of its own."
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditButtonsEmbedGroup"
-                }
-            },
-            {
-                "key": "VertixBot/UI-V3/SetupEditFlow/States/EditButtonsEffect",
-                "transitions": [
-                    "VertixBot/UI-V3/SetupEditFlow/Transitions/ApplyImmediately",
-                    "VertixBot/UI-V3/SetupEditFlow/Transitions/ApplyNewly"
-                ],
-                "hooks": [],
-                "options": {
-                    "executionStep": "VertixBot/UI-V3/SetupEditButtonsEffect",
-                    "component": "VertixBot/UI-V3/ConfigComponent",
-                    "previewDefaultVars": {
-                        "index": "1"
-                    },
-                    "previewEmbedsGroup": "VertixBot/UI-V3/SetupEditButtonsEffectEmbedGroup"
                 }
             },
             {
@@ -5434,15 +5454,30 @@
             },
             {
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditButtonsEffect",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
                 "triggeredBy": [
                     {
                         "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
                         "sourceEntity": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
                         "handlerKind": "string-select",
                         "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditButtonsEffect",
-                            "executionStep": "VertixBot/UI-V3/SetupEditButtonsEffect"
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
+                            "executionStep": "VertixBot/UI-V3/SetupEditButtons"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
+                            "executionStep": "VertixBot/UI-V3/SetupEditButtons"
                         }
                     }
                 ]
@@ -5467,21 +5502,6 @@
                 "to": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
                 "triggeredBy": [
                     {
-                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
-                        "sourceEntity": "VertixBot/UI-V3/SetupEditButtonsEditDefaultButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                            "executionStep": "VertixBot/UI-V3/SetupEditButtons"
-                        }
-                    }
-                ]
-            },
-            {
-                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                "triggeredBy": [
-                    {
                         "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
                         "sourceEntity": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
                         "handlerKind": "button",
@@ -5494,37 +5514,22 @@
             },
             {
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
+                        "sourceEntity": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
+                            "executionStep": "VertixBot/UI-V3/SetupEditButtons"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
                 "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
-            },
-            {
-                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditButtonsEffect",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-                        "sourceEntity": "VertixBot/UI-V3/SetupEditButtonsEffectImmediatelyButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                            "executionStep": "VertixBot/UI-V3/SetupEditButtons"
-                        }
-                    }
-                ]
-            },
-            {
-                "from": "VertixBot/UI-V3/SetupEditFlow/States/EditButtonsEffect",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-                        "sourceEntity": "VertixBot/UI-V3/SetupEditButtonsEffectNewlyButton",
-                        "handlerKind": "button",
-                        "navigation": {
-                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                            "executionStep": "VertixBot/UI-V3/SetupEditButtons"
-                        }
-                    }
-                ]
             },
             {
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditVerifiedRoles",

@@ -1,4 +1,12 @@
+import path from "path";
+
+import { fileURLToPath } from "url";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
+const __dirname = path.dirname( fileURLToPath( import.meta.url ) );
+
+const REPO_ROOT = path.resolve( __dirname, "../../../../" );
 
 const DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434";
 const DEFAULT_OLLAMA_MODEL = "qwen3.5:35b-a3b-int4";
@@ -49,6 +57,11 @@ const DEFAULT_DESTRUCTIVE_CONFIRM_WINDOW_MS = 900000;
  */
 const DEFAULT_TOOL_RESULT_MAX_CHARS = 28000;
 const VERTIX_MCP_ENTRYPOINT = "apps/vertix-mcp/src/index.ts";
+
+/** A command that has not returned by then is killed; the bot must not hang on it. */
+const DEFAULT_SHELL_TIMEOUT_MS = 30000;
+/** Enough for a directory listing or a log tail; anything larger is clipped. */
+const DEFAULT_SHELL_MAX_OUTPUT_CHARS = 8000;
 
 /**
  * Every value the app reads from the environment lives here, so nothing else
@@ -102,6 +115,23 @@ export class AIConfig extends InitializeBase {
      */
     public isMemberIntentEnabled(): boolean {
         return "true" === process.env.VERTIX_AI_ENABLE_MEMBER_INTENT?.trim();
+    }
+
+    /**
+     * The bot owner's Discord user id, from `OWNERD_ID`.
+     *
+     * That is the repo's existing variable (misspelling included) - reused so a
+     * single value serves every app, rather than a second correctly-spelt one
+     * that would drift out of sync with it.
+     */
+    public getOwnerId(): string | null {
+        return process.env.OWNERD_ID?.trim() || null;
+    }
+
+    public isOwner( userId: string ): boolean {
+        const ownerId = this.getOwnerId();
+
+        return null !== ownerId && ownerId === userId;
     }
 
     public getOllamaBaseUrl(): string {
@@ -225,6 +255,27 @@ export class AIConfig extends InitializeBase {
             .split( "," )
             .map( ( prefix ) => prefix.trim() )
             .filter( ( prefix ) => prefix.length );
+    }
+
+    /**
+     * Shell access for the owner. On by default because it was asked for;
+     * `VERTIX_AI_SHELL_ENABLED=false` is the kill switch.
+     */
+    public isShellEnabled(): boolean {
+        return "false" !== process.env.VERTIX_AI_SHELL_ENABLED?.trim();
+    }
+
+    public getShellTimeoutMs(): number {
+        return this.readPositiveInteger( process.env.VERTIX_AI_SHELL_TIMEOUT_MS, DEFAULT_SHELL_TIMEOUT_MS );
+    }
+
+    public getShellMaxOutputChars(): number {
+        return this.readPositiveInteger( process.env.VERTIX_AI_SHELL_MAX_OUTPUT_CHARS, DEFAULT_SHELL_MAX_OUTPUT_CHARS );
+    }
+
+    /** Where commands run. The repo root, unless pointed elsewhere. */
+    public getShellCwd(): string {
+        return process.env.VERTIX_AI_SHELL_CWD?.trim() || REPO_ROOT;
     }
 
     public getMcpCommand(): string {

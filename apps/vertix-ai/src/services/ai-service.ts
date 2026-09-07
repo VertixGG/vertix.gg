@@ -26,6 +26,9 @@ import type { E_AI_TRIGGER_EVENT } from "@vertix.gg/prisma/._ai-client-internal"
 /** Discord rejects anything longer, so replies are split rather than truncated. */
 const DISCORD_MESSAGE_LIMIT = 2000;
 
+/** A subtext line reporting token usage - `-# 12k/64k tok · 1 tool`. */
+const USAGE_FOOTER_PATTERN = /^-#\s.*\btok\b.*$/gm;
+
 /**
  * Sentinel returned when the model narrated an action twice instead of calling
  * a tool. Not shown to anyone - it triggers one retry with history removed.
@@ -48,18 +51,38 @@ const DECISION_HISTORY_TURNS = 6;
  * it. Reading is free and reversible, so an offer is never the right answer.
  */
 /**
- * Phrasings that assert an action is under way or finished.
+ * Words in a user's message that mean they asked for something to be done.
  *
- * If the model writes one of these without having called a tool, nothing
- * happened - it described the action instead of taking it, which reads to the
- * user as the bot lying.
+ * The unbacked-claim check only runs when this matches. A reply to "what is
+ * the time" has no tool it could possibly call, so judging it for not calling
+ * one is guaranteed to produce a false failure.
+ */
+const ACTION_REQUEST_PATTERN =
+    /\b(delete|remove|purge|clear|wipe|ban|kick|timeout|mute|rename|edit|change|create|make|send|post|add|move|set)\b/i;
+
+/**
+ * First-person claims that a destructive action is being or has been done.
+ *
+ * Deliberately narrow: a verb alone was far too loose - "proceed" and "clear"
+ * appear in ordinary sentences - so a claim needs a subject, a destructive
+ * verb, AND a concrete object, or one of the specific "doing it now" phrasings
+ * the model has actually produced.
  */
 const UNBACKED_ACTION_PATTERNS = [
-    /\bi'?\s*(ll|m|am|will|ve|have)\b[^.!?]{0,40}\b(proceed|delet|remov|purg|clear|ban|kick|renam|edit)/i,
-    /\bproceed(ing)?\b/i,
-    /\b(deleting|removing|purging|clearing|banning|kicking)\b/i,
-    /\b(done|completed|executed)\b[^.!?]{0,25}(deletion|removal|purge|cleanup)/i
+    /\bi(?:'ll| will|'m| am|'ve| have)\b[^.!?\n]{0,30}\b(?:delet|remov|purg|bann|kick|wip)(?:e|ed|es|ing)?\b[^.!?\n]{0,60}\b(?:messages?|channels?|members?|users?|roles?|them|those|these|it|everything|all)\b/i,
+    /\bproceeding (?:now|immediately|with the)\b/i,
+    /\bhere goes\b/i,
+    /\b(?:done|completed|finished)\b[^.!?\n]{0,25}\b(?:deletion|removal|purge|cleanup)\b/i
 ];
+
+/**
+ * The owner asking to run something on the host.
+ *
+ * If they ask and the model produces no `run_shell_command` call, it fabricated
+ * the output - it once printed a fake `ps aux` for a Linux box that is not even
+ * this host. This is the tell that forces the real call.
+ */
+const SHELL_REQUEST_PATTERN = /\b(run|exec|execute|bash|shell|terminal|zsh|command)\b/i;
 
 const UNFULFILLED_OFFER_PATTERNS = [
     /would you like me to/i,
@@ -237,6 +260,16 @@ export class AIService extends InitializeBase {
         }
 
         if ( !confirmed ) {
+            // They said something that is not an agreement, so the offer is off
+            // the table. Leaving it armed meant a later stray "yes" could fire it,
+            // and every reply until then was judged as if it should have run it.
+            await DestructiveActionManager.$.clear( context.guildId, userId );
+
+            this.logger.log(
+                this.executeConfirmedAction,
+                `Abandoned '${ pending.length }' pending action(s) - the reply was not a confirmation`
+            );
+
             return null;
         }
 
@@ -293,11 +326,18 @@ export class AIService extends InitializeBase {
     }
 
     public async respondTo( context: TriggerContext ): Promise<AIReply | null> {
+        // Resolve any open proposal BEFORE the prompt is assembled. A confirmation
+        // runs it; anything else abandons it. Previously the model was handed
+        // "you proposed 9 actions - run them if the user agreed" and then judged
+        // for not running them, which turned "what is the time" into a failure.
+        const executed = await this.executeConfirmedAction( context );
+
         const systemPrompt = await AIGuildDataManager.$.getSystemPrompt( context.guildId );
 
         const messages: OllamaMessage[] = [
             { role: "system", content: `${ PromptManager.$.get( PROMPT_NAMES.IdentityPreamble, { botName: context.botName } ) }\n\n${ systemPrompt }` },
             { role: "system", content: this.buildLocationBlock( context ) },
+            ...this.buildOwnerBlock( context ),
             ...( context.history ?? [] ),
             ...( context.history?.length
                 ? [ { role: "system" as const, content: PromptManager.$.get( PROMPT_NAMES.GroundingReminder, { botName: context.botName } ) } ]
@@ -308,12 +348,6 @@ export class AIService extends InitializeBase {
             ...await this.buildPendingActionBlock( context ),
             { role: "user", content: this.buildUserContent( context ) }
         ];
-
-        // If a proposal is open and the person plainly agreed, run it here rather
-        // than asking the model to restate the call. It has proved unable to
-        // reproduce identical arguments, which left confirmations looping
-        // forever - and the exact tool and arguments are already stored.
-        const executed = await this.executeConfirmedAction( context );
 
         if ( executed ) {
             messages.push( { role: "system", content: executed } );
@@ -379,9 +413,12 @@ export class AIService extends InitializeBase {
 
         // Local tools first: where both offer a way to do something, the model
         // should reach for the one-step version.
+        // Owner-only tools reach the list only when the owner is speaking.
+        const isOwner = AIConfig.$.isOwner( context.location.userId );
+
         const tools = AIConfig.$.isMcpEnabled()
-            ? [ ...LocalToolsProvider.$.getTools(), ...MCPProvider.$.getTools() ]
-            : LocalToolsProvider.$.getTools();
+            ? [ ...LocalToolsProvider.$.getTools( isOwner ), ...MCPProvider.$.getTools() ]
+            : LocalToolsProvider.$.getTools( isOwner );
         const maxIterations = AIConfig.$.getMaxToolIterations();
 
         const conversation = [ ...messages ];
@@ -397,14 +434,18 @@ export class AIService extends InitializeBase {
         let blockedCalls = 0;
         let nudged = false;
         let postedToChannel = false;
+        let shellCalled = false;
 
         // A proposal open at the start of the turn means the model was handed an
         // explicit "call this tool now" instruction. If it then calls nothing,
         // it narrated - regardless of how it phrased that.
-        const hadPendingAction = null !== await DestructiveActionManager.$.getPending(
+        // `getPending` returns an array. The previous `null !==` check was true
+        // for an EMPTY array too, which made every reply without a tool call -
+        // "what is the time" included - look like narration and get replaced.
+        const hadPendingAction = ( await DestructiveActionManager.$.getPending(
             context.guildId,
             context.location.userId
-        );
+        ) ).length > 0;
 
         for ( let iteration = 0; iteration < maxIterations; iteration++ ) {
             const response = await OllamaProvider.$.chat( {
@@ -443,6 +484,27 @@ export class AIService extends InitializeBase {
                     continue;
                 }
 
+                // The owner asked to run something and the model produced no
+                // shell call: it invented the output. Force the real command.
+                if ( !nudged && isOwner && AIConfig.$.isShellEnabled() && !shellCalled
+                    && SHELL_REQUEST_PATTERN.test( context.rawMessage ?? "" ) ) {
+                    nudged = true;
+
+                    this.logger.warn( this.runToolLoop, "Owner asked to run a command but no shell call was made; forcing it" );
+
+                    conversation.push( response.message );
+                    conversation.push( {
+                        role: "system",
+                        content: [
+                            "You did NOT call run_shell_command, so nothing ran and you have no real output.",
+                            "The text you just wrote is invented - never present made-up terminal output.",
+                            "Call run_shell_command now with the exact command the owner asked for, and report only what it returns."
+                        ].join( " " )
+                    } );
+
+                    continue;
+                }
+
                 // Claiming an action without having called a tool is the worst
                 // failure here: the user believes it happened and it did not.
                 //
@@ -459,7 +521,7 @@ export class AIService extends InitializeBase {
                 const justProposed = blockedCalls > 0;
 
                 const claimedWithoutActing = !performedSomething && !justProposed
-                    && ( hadPendingAction || UNBACKED_ACTION_PATTERNS.some( ( p ) => p.test( content ) ) );
+                    && ( hadPendingAction || this.isUnbackedActionClaim( context.rawMessage ?? "", content ) );
 
                 // The nudge already happened and it still called nothing. Never
                 // send the claim: the user would believe it was done. Replace it
@@ -520,6 +582,10 @@ export class AIService extends InitializeBase {
                 if ( CHANNEL_POSTING_TOOLS.has( call.function.name )
                     && call.function.arguments.channelId === context.location.channelId ) {
                     postedToChannel = true;
+                }
+
+                if ( "run_shell_command" === call.function.name ) {
+                    shellCalled = true;
                 }
 
                 const result = await this.executeTool( call.function.name, call.function.arguments, context, turnId );
@@ -640,10 +706,32 @@ export class AIService extends InitializeBase {
     ): Promise<string> {
         this.logger.log( this.executeTool, `Tool call: '${ name }' args: '${ JSON.stringify( args ) }'` );
 
+        // Owner-only tools are withheld from everyone else's tool list, but the
+        // list is not the boundary - this is. Re-checked at execution so nothing
+        // replayed or leaked into a conversation can reach the host.
+        if ( LocalToolsProvider.$.isOwnerOnly( name ) && !AIConfig.$.isOwner( context.location.userId ) ) {
+            this.logger.warn(
+                this.executeTool,
+                `Refused owner-only tool '${ name }' for user '${ context.location.userId }'`
+            );
+
+            return `NOT EXECUTED - '${ name }' is only available to the bot owner. Tell the user you cannot do that.`;
+        }
+
         if ( isDestructiveTool( name ) ) {
             const userId = context.location.userId;
 
-            const approved = await DestructiveActionManager.$.consumeApproval( context.guildId, userId, name, args );
+            // The gate exists because the model misreads OTHER people's "yes".
+            // The owner is trusted to mean what they say, so their calls run at
+            // once: nothing is proposed and nothing waits for a confirmation.
+            const isOwner = AIConfig.$.isOwner( userId );
+
+            if ( isOwner ) {
+                this.logger.log( this.executeTool, `Owner bypass: '${ name }' runs without confirmation` );
+            }
+
+            const approved = isOwner
+                || await DestructiveActionManager.$.consumeApproval( context.guildId, userId, name, args );
 
             if ( !approved ) {
                 await DestructiveActionManager.$.propose( context.guildId, userId, turnId, name, args );
@@ -710,6 +798,18 @@ export class AIService extends InitializeBase {
      * 1024-based on purpose: the context limit is 65536, and rendering that as
      * "66k" next to a number everyone reads as 64k looks like a bug.
      */
+    /**
+     * Removes any usage-footer line, whether ours or one the model imitated.
+     *
+     * The bot's own replies come back through history with the footer attached,
+     * and the model copies what it sees - so it started writing its own footer,
+     * and the real one landed under it. History is scrubbed on the way in, and
+     * the reply on the way out, so the format never reaches the model at all.
+     */
+    public stripUsageFooter( text: string ): string {
+        return text.replace( USAGE_FOOTER_PATTERN, "" ).replace( /\n{3,}/g, "\n\n" ).trim();
+    }
+
     private formatTokens( count: number ): string {
         return count >= 1024 ? `${ Math.round( count / 1024 ) }k` : String( count );
     }
@@ -751,13 +851,27 @@ export class AIService extends InitializeBase {
      * fails.
      */
     /**
+     * True only when the user asked for an action AND the reply claims to be
+     * doing one. Pure, so it can be tested without a model.
+     */
+    public isUnbackedActionClaim( userMessage: string, reply: string ): boolean {
+        if ( !ACTION_REQUEST_PATTERN.test( userMessage ) ) {
+            return false;
+        }
+
+        return UNBACKED_ACTION_PATTERNS.some( ( pattern ) => pattern.test( reply ) );
+    }
+
+    /**
      * True when the reply is an offer to read rather than the answer.
      *
      * Deliberately narrow: a pending destructive proposal is *supposed* to end
      * in a question, so those are excluded and only read offers are retried.
      */
     private async isUnfulfilledReadOffer( content: string, context: TriggerContext ): Promise<boolean> {
-        if ( await DestructiveActionManager.$.getPending( context.guildId, context.location.userId ) ) {
+        // Array, so check length - a bare truthiness test was always true and
+        // silently disabled this check entirely.
+        if ( ( await DestructiveActionManager.$.getPending( context.guildId, context.location.userId ) ).length ) {
             return false;
         }
 
@@ -795,6 +909,24 @@ export class AIService extends InitializeBase {
                 "",
                 "If they said something else, treat the proposal as abandoned."
             ].join( "\n" )
+        } ];
+    }
+
+    /**
+     * Tells the model the speaker is the owner, so it acts instead of asking.
+     *
+     * The code alone is not enough: the ASK/ACT rule in the guild prompt still
+     * makes the model request confirmation first, so the gate would let the
+     * call through but the model would never make it.
+     */
+    private buildOwnerBlock( context: TriggerContext ): OllamaMessage[] {
+        if ( !AIConfig.$.isOwner( context.location.userId ) ) {
+            return [];
+        }
+
+        return [ {
+            role: "system",
+            content: PromptManager.$.get( PROMPT_NAMES.OwnerContext, { userName: context.location.userName } )
         } ];
     }
 

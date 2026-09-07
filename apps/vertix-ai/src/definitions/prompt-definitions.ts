@@ -25,7 +25,9 @@ export const PROMPT_NAMES = {
     /** Decides whether a message deserves a reply at all. */
     Decision: "decision",
     /** The real Discord ids, so tool arguments are not guessed. */
-    LocationContext: "location-context"
+    LocationContext: "location-context",
+    /** Injected only when the speaker is the bot owner: act, do not ask. */
+    OwnerContext: "owner-context"
 } as const;
 
 export type PromptName = ( typeof PROMPT_NAMES )[ keyof typeof PROMPT_NAMES ];

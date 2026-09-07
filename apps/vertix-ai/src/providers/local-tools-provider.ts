@@ -1,4 +1,8 @@
+import { spawn } from "child_process";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
+import { AIConfig } from "@vertix.gg/ai/src/config/ai-config";
 
 import { MCPProvider } from "@vertix.gg/ai/src/providers/mcp-provider";
 
@@ -13,6 +17,8 @@ type LocalToolHandler = ( args: JsonObject ) => Promise<string>;
 type LocalTool = {
     definition: OllamaToolDefinition;
     handler: LocalToolHandler;
+    /** Withheld from everyone but the bot owner - never even listed to others. */
+    ownerOnly?: boolean;
 };
 
 /**
@@ -47,8 +53,18 @@ export class LocalToolsProvider extends InitializeBase {
         return LocalToolsProvider.getInstance();
     }
 
-    public getTools(): OllamaToolDefinition[] {
-        return [ ...this.tools.values() ].map( ( tool ) => tool.definition );
+    /**
+     * Owner-only tools are left out unless asked for, so nobody else's model
+     * even sees them - and nobody else pays tokens for their schemas.
+     */
+    public getTools( includeOwnerOnly = false ): OllamaToolDefinition[] {
+        return [ ...this.tools.values() ]
+            .filter( ( tool ) => includeOwnerOnly || !tool.ownerOnly )
+            .map( ( tool ) => tool.definition );
+    }
+
+    public isOwnerOnly( name: string ): boolean {
+        return true === this.tools.get( name )?.ownerOnly;
     }
 
     public has( name: string ): boolean {
@@ -144,6 +160,152 @@ export class LocalToolsProvider extends InitializeBase {
                 }
             },
             handler: ( args ) => this.sendInteractiveMessage( args )
+        } );
+
+        if ( AIConfig.$.isShellEnabled() ) {
+            this.tools.set( "run_shell_command", {
+                ownerOnly: true,
+                definition: {
+                    type: "function",
+                    function: {
+                        name: "run_shell_command",
+                        description:
+                            "Run a shell command on the machine hosting this bot and return its " +
+                            "output. Only the bot owner has this. A command is killed after a " +
+                            "timeout and long output is clipped, so prefer targeted commands " +
+                            "over ones that stream, page, or wait for input.",
+                        parameters: {
+                            type: "object",
+                            properties: {
+                                command: {
+                                    type: "string",
+                                    description: "The command line, exactly as it would be typed in a terminal"
+                                }
+                            },
+                            required: [ "command" ]
+                        }
+                    }
+                },
+                handler: ( args ) => this.runShellCommand( args )
+            } );
+        }
+    }
+
+    /**
+     * Runs the owner's command in a child that is killed on timeout, with the
+     * output clipped both while it streams and when it is returned.
+     *
+     * The child gets a minimal environment on purpose. Inheriting this process's
+     * would hand the shell every value in .env - a plain `env` would print the
+     * Discord token straight into the channel.
+     */
+    private runShellCommand( args: JsonObject ): Promise<string> {
+        const command = args.command;
+
+        if ( "string" !== typeof command || !command.trim().length ) {
+            return Promise.resolve( "Tool error: command is required and must be a non-empty string." );
+        }
+
+        const timeoutMs = AIConfig.$.getShellTimeoutMs();
+        const maxChars = AIConfig.$.getShellMaxOutputChars();
+        const cwd = AIConfig.$.getShellCwd();
+
+        this.logger.log( this.runShellCommand, `Running for the owner in '${ cwd }': ${ command }` );
+
+        return new Promise( ( resolve ) => {
+            const child = spawn( "/bin/zsh", [ "-c", command ], {
+                cwd,
+                env: {
+                    PATH: process.env.PATH ?? "/usr/bin:/bin",
+                    HOME: process.env.HOME ?? "",
+                    USER: process.env.USER ?? "",
+                    SHELL: "/bin/zsh",
+                    LANG: process.env.LANG ?? "en_US.UTF-8",
+                    TERM: "dumb"
+                }
+            } );
+
+            let output = "";
+            let settled = false;
+
+            const terminate = () => {
+                // ONLY ever signal the spawned child, and only when its pid is a
+                // real, distinct process. `ps aux` (large output -> overflow ->
+                // terminate) once took the whole bot down with SIGKILL: an
+                // earlier version killed by a raw parent-pid via `pkill -P`,
+                // which under `bun --watch` reached this process itself. No raw
+                // pid arithmetic here, and never a pid that is this process.
+                if ( !child.pid || child.pid <= 1 || child.pid === process.pid ) {
+                    return;
+                }
+
+                try {
+                    child.kill( "SIGKILL" );
+                } catch {
+                    // already gone
+                }
+            };
+
+            /**
+             * Resolves exactly once. Called by the timeout and overflow directly
+             * rather than waiting for `close`: a child still holding the stdout
+             * pipe (a backgrounded `sleep`) can keep `close` from firing long
+             * after the command should have been abandoned.
+             *
+             * `kill` is true only for those forced paths - a clean `close` has
+             * nothing left to kill, and running the synchronous tree-walk from
+             * inside the close handler stalls the event loop.
+             */
+            const settle = ( status: string, kill: boolean ) => {
+                if ( settled ) {
+                    return;
+                }
+
+                settled = true;
+                clearTimeout( timer );
+
+                if ( kill ) {
+                    terminate();
+                }
+
+                const clipped = output.length > maxChars
+                    ? `${ output.slice( 0, maxChars ) }\n\n[output clipped: ${ output.length }+ chars, showing the first ${ maxChars }]`
+                    : output;
+
+                resolve( `$ ${ command }\n${ clipped.trim() }\n\n(${ status })` );
+            };
+
+            const append = ( chunk: Buffer ) => {
+                if ( settled ) {
+                    return;
+                }
+
+                output += chunk.toString();
+
+                // Stop well before the clip point: a runaway `yes` would fill
+                // memory for the whole timeout otherwise.
+                if ( output.length > maxChars * 2 ) {
+                    settle( "killed: output exceeded the limit", true );
+                }
+            };
+
+            child.stdout?.on( "data", append );
+            child.stderr?.on( "data", append );
+
+            const timer = setTimeout( () => settle( `killed after the ${ timeoutMs }ms timeout`, true ), timeoutMs );
+
+            child.on( "error", ( error ) => {
+                if ( settled ) {
+                    return;
+                }
+
+                settled = true;
+                clearTimeout( timer );
+
+                resolve( `Tool error: could not start the command - ${ error.message }` );
+            } );
+
+            child.on( "close", ( code ) => settle( `exit code ${ code ?? "unknown" }`, false ) );
         } );
     }
 

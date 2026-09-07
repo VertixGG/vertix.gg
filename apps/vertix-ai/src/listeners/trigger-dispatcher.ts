@@ -210,7 +210,11 @@ async function fetchHistory( client: Client, message: Message ): Promise<OllamaM
             }
 
             const isSelf = entry.author.id === client.user?.id;
-            const content = isSelf ? entry.content : `${ entry.author.username }: ${ entry.content }`;
+            // Our own replies carry a usage footer; the model must never see it or
+            // it will start writing its own.
+            const content = isSelf
+                ? AIService.$.stripUsageFooter( entry.content )
+                : `${ entry.author.username }: ${ entry.content }`;
 
             if ( usedChars + content.length > maxChars ) {
                 GlobalLogger.$.debug(
@@ -253,7 +257,7 @@ function keepTyping( channel: SendableChannels ): () => void {
 }
 
 async function sendChunked( channel: SendableChannels, reply: AIReply, replyTo?: Message ): Promise<void> {
-    const chunks = AIService.$.splitForDiscord( reply.content );
+    const chunks = AIService.$.splitForDiscord( AIService.$.stripUsageFooter( reply.content ) );
 
     // The usage line goes on the last chunk only, so a split reply does not
     // repeat it - and it is measured for the whole reply, not per chunk.

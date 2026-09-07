@@ -30,6 +30,9 @@ export interface UIEmbedOverride {
 }
 
 export interface ExpandedSelectMenuOption {
+    // Set when the icon has already been resolved to an asset - `buildOptionIcon()` returns one or
+    // the other, never both, so an option carrying this must not be resolved a second time.
+    icon?: string;
     iconEmoji?: string;
     label: string;
     description?: string;
@@ -441,7 +444,9 @@ function renderElement(
                     <DiscordSelectMenuDropdown
                         absolute={ true }
                         options={ dropdownOptions.map( ( opt ) => ( {
-                            ...buildOptionIcon( opt.iconEmoji, context.emojiIconSrcByUnicode ),
+                            ...( opt.icon
+                                ? { icon: opt.icon }
+                                : buildOptionIcon( opt.iconEmoji, context.emojiIconSrcByUnicode ) ),
                             label: opt.label,
                             description: opt.description,
                             selected: opt.selected,

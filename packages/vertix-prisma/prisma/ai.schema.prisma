@@ -61,22 +61,22 @@ model AIGuildSettings {
   updatedAt         DateTime             @updatedAt
 }
 
-/// A destructive action the model proposed, waiting for the person to agree.
+/// The destructive actions the model proposed in one turn, awaiting agreement.
 ///
-/// Persisted rather than held in memory so a restart between "shall I?" and
-/// "yes" does not silently drop the approval - which reads to the user as the
-/// bot ignoring them.
+/// A batch, not a single action: asking to delete ten channels produces ten
+/// tool calls in one turn, and confirming them one at a time is unusable.
+/// Persisted so a restart between "shall I?" and "yes" cannot drop it.
 model AIPendingAction {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
   guildId     String
   userId      String
+  /// Identifies the turn that proposed these, so calls from one turn group
+  /// together and a later turn replaces them instead of appending.
+  turnId      String
   // ---
-  toolName    String
-  /// Hash of the normalised arguments; the retry must match it exactly.
-  fingerprint String
-  /// The arguments verbatim, replayed so the model can reproduce them.
-  argsJson    String
+  /// JSON array of { toolName, fingerprint, argsJson }.
+  actionsJson String
   // ---
   expiresAt   DateTime
   createdAt   DateTime @default(now())

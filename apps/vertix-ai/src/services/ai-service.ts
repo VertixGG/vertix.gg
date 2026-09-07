@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { AIGuildDataManager } from "@vertix.gg/ai/src/managers/ai-guild-data-manager";
@@ -219,15 +221,9 @@ export class AIService extends InitializeBase {
 
         const confirmed = isExplicitConfirmation( context.rawMessage ?? "" );
 
-        if ( !pending ) {
+        if ( !pending.length ) {
             if ( confirmed ) {
-                // They agreed to something that is no longer on offer - expired,
-                // already run, or proposed before a restart. Saying so beats
-                // letting the model invent what it thinks was agreed.
-                this.logger.warn(
-                    this.executeConfirmedAction,
-                    "Confirmation received with no pending action"
-                );
+                this.logger.warn( this.executeConfirmedAction, "Confirmation received with no pending action" );
 
                 return [
                     "The user just confirmed, but there is NO pending action - it expired or was already done.",
@@ -244,26 +240,33 @@ export class AIService extends InitializeBase {
             return null;
         }
 
-        const args = this.parseArgs( pending.argsJson );
-
-        if ( !args ) {
-            return null;
-        }
-
-        await DestructiveActionManager.$.clear( context.guildId, userId );
+        const actions = await DestructiveActionManager.$.consumeAll( context.guildId, userId );
 
         this.logger.log(
             this.executeConfirmedAction,
-            `Confirmation accepted - executing '${ pending.toolName }' directly`
+            `Confirmation accepted - executing '${ actions.length }' action(s) directly`
         );
 
-        const result = await this.callTool( pending.toolName, args );
+        const results: string[] = [];
+
+        for ( const action of actions ) {
+            const args = this.parseArgs( action.argsJson );
+
+            if ( !args ) {
+                results.push( `${ action.toolName }: skipped, arguments could not be read` );
+
+                continue;
+            }
+
+            results.push( `${ action.toolName }: ${ await this.callTool( action.toolName, args ) }` );
+        }
 
         return [
-            `The user confirmed, so '${ pending.toolName }' has ALREADY BEEN EXECUTED.`,
-            `Result: ${ result }`,
+            `The user confirmed, so ${ actions.length } action(s) have ALREADY BEEN EXECUTED.`,
             "",
-            "Report this result to them. Do not call the tool again and do not ask for confirmation."
+            ...results,
+            "",
+            "Report these results to them. Do not call these tools again and do not ask for confirmation."
         ].join( "\n" );
     }
 
@@ -370,6 +373,10 @@ export class AIService extends InitializeBase {
     }
 
     private async runToolLoop( messages: OllamaMessage[], context: TriggerContext ): Promise<AIReply> {
+        // Groups every destructive call made during this turn into one proposal,
+        // so "delete ten channels" is confirmed once rather than ten times.
+        const turnId = crypto.randomUUID();
+
         // Local tools first: where both offer a way to do something, the model
         // should reach for the one-step version.
         const tools = AIConfig.$.isMcpEnabled()
@@ -515,7 +522,7 @@ export class AIService extends InitializeBase {
                     postedToChannel = true;
                 }
 
-                const result = await this.executeTool( call.function.name, call.function.arguments, context );
+                const result = await this.executeTool( call.function.name, call.function.arguments, context, turnId );
 
                 if ( result.startsWith( "NOT EXECUTED" ) ) {
                     blockedCalls++;
@@ -625,7 +632,12 @@ export class AIService extends InitializeBase {
      * records a proposal and returns a refusal; only an identical call, made
      * after the same person has confirmed, is allowed through.
      */
-    private async executeTool( name: string, args: JsonObject, context: TriggerContext ): Promise<string> {
+    private async executeTool(
+        name: string,
+        args: JsonObject,
+        context: TriggerContext,
+        turnId: string
+    ): Promise<string> {
         this.logger.log( this.executeTool, `Tool call: '${ name }' args: '${ JSON.stringify( args ) }'` );
 
         if ( isDestructiveTool( name ) ) {
@@ -634,16 +646,22 @@ export class AIService extends InitializeBase {
             const approved = await DestructiveActionManager.$.consumeApproval( context.guildId, userId, name, args );
 
             if ( !approved ) {
-                const description = await DestructiveActionManager.$.propose( context.guildId, userId, name, args );
+                await DestructiveActionManager.$.propose( context.guildId, userId, turnId, name, args );
 
                 this.logger.warn( this.executeTool, `Blocked unconfirmed destructive call: '${ name }'` );
 
                 return [
-                    "NOT EXECUTED - this action needs confirmation and has not been performed.",
-                    `Proposed: ${ description }`,
+                    "NOT EXECUTED - queued for confirmation. Nothing has been performed.",
+                    `Queued: ${ name } with ${ JSON.stringify( args ) }`,
                     "",
-                    "Tell the user exactly what this will do and ask them to confirm.",
-                    "Do not claim it is done. If they confirm, call this tool again with identical arguments."
+                    "IMPORTANT: if this is one of several things you intend to do, call the tool",
+                    "for EVERY remaining item NOW, in this same turn. Each call is queued the same",
+                    "way and nothing runs until the user agrees. Writing a list in prose does NOT",
+                    "queue anything - only tool calls do, and only queued calls will ever run.",
+                    "",
+                    "When you have called the tool for everything, describe the whole queue in one",
+                    "message and ask once. A single yes releases all of it.",
+                    "Do not claim anything is done."
                 ].join( "\n" );
             }
         }
@@ -756,26 +774,24 @@ export class AIService extends InitializeBase {
     private async buildPendingActionBlock( context: TriggerContext ): Promise<OllamaMessage[]> {
         const pending = await DestructiveActionManager.$.getPending( context.guildId, context.location.userId );
 
-        if ( !pending ) {
+        if ( !pending.length ) {
             return [];
         }
 
         this.logger.log(
             this.buildPendingActionBlock,
-            `Replaying pending '${ pending.toolName }' into this turn for confirmation`
+            `Replaying '${ pending.length }' pending action(s) into this turn for confirmation`
         );
 
         return [ {
             role: "system",
             content: [
-                "You previously proposed this action and it has NOT been performed:",
-                `  tool: ${ pending.toolName }`,
-                `  arguments: ${ pending.argsJson }`,
+                `You proposed ${ pending.length } action(s) and NONE have been performed:`,
+                ...pending.map( ( action ) => `  - ${ action.toolName } ${ action.argsJson }` ),
                 "",
                 `If ${ context.location.userName } has just agreed - "yes", "confirm", "do it",`,
-                "\"go ahead\", \"please delete them\" - call that tool NOW with exactly those",
-                "arguments. Do not describe it, do not say you are proceeding, do not ask again.",
-                "Calling the tool is the only thing that performs it.",
+                "\"go ahead\" - ALL of them run together. One agreement covers the whole list;",
+                "never ask about them one at a time.",
                 "",
                 "If they said something else, treat the proposal as abandoned."
             ].join( "\n" )

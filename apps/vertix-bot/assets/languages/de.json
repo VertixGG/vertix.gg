@@ -686,7 +686,7 @@
           "placeholder": "🎚 In Bearbeitung",
           "selectOptions": [
             {
-              "label": "Standard-Buttons — alle",
+              "label": "Standard-Buttons",
               "value": "default"
             }
           ]
@@ -888,7 +888,7 @@
           "placeholder": "🎚 In Bearbeitung",
           "selectOptions": [
             {
-              "label": "Standard-Buttons — alle",
+              "label": "Standard-Buttons",
               "value": "default"
             }
           ]
@@ -1797,11 +1797,13 @@
           "buttonsNone": "> - *Keine. Besitzer sähen ein Panel ganz ohne Buttons.*",
           "rosterHeading": "**Rollen mit eigenen Buttons**",
           "rosterButtonsWord": "Buttons",
+          "panelNote": "Rollen-Sätze gelten nur für das Panel im Sprachkanal selbst. Ein **control-panel**-Kanal zeigt immer den Standardsatz.",
           "rosterMore": "> - *… und {rosterMoreCount} weitere. Alle stehen im oberen Menü.*",
           "scopeDisplay": {
             "{scopeDefault}": "**Du bearbeitest die Standard-Buttons von <#{masterChannelId}>.**\nWer einen hier erstellten Kanal besitzt, sieht diese Buttons — außer er hat eine der weiter unten aufgeführten Rollen, die diesen Satz für ihn ersetzt.",
-            "{scopeRoleOwn}": "**Du bearbeitest die Buttons von <@&{roleId}>.**\nEin Besitzer mit dieser Rolle sieht diese Buttons **statt** des Standardsatzes. Alle anderen Besitzer behalten den Standardsatz, und er bleibt unverändert.",
-            "{scopeRoleNew}": "**<@&{roleId}> hat noch keine eigenen Buttons.**\nIhre Besitzer folgen dem Standardsatz, der gerade im Button-Menü angehakt ist. Hake irgendetwas an oder ab, und diese Rolle bekommt ab diesem Moment einen eigenen Satz — der Standardsatz bleibt genau so, wie er ist.",
+            "{scopeDefaultVerified}": "**Du bearbeitest die Standard-Buttons von <#{masterChannelId}>.**\nNur {verifiedRolesList} können hier einen Kanal öffnen, das sind also die Buttons, die deren Besitzer sehen — außer sie haben zusätzlich eine der weiter unten aufgeführten Rollen, die diesen Satz für sie ersetzt.",
+            "{scopeRoleOwn}": "**Du bearbeitest die Buttons von <@&{roleId}>.**\nEin Besitzer mit dieser Rolle sieht diese Buttons **statt** des Standardsatzes. Alle anderen Besitzer behalten den Standardsatz, und er bleibt unverändert.\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> hat noch keine eigenen Buttons.**\nIhre Besitzer folgen dem Standardsatz, der gerade im Button-Menü angehakt ist. Hake irgendetwas an oder ab, und diese Rolle bekommt ab diesem Moment einen eigenen Satz — der Standardsatz bleibt genau so, wie er ist.\n{panelNote}",
             "{scopeRoleMissing}": "**Diese Rolle existiert auf diesem Server nicht mehr.**\nNiemand kann sie haben, also erreichen ihre gespeicherten Buttons niemanden. Drücke **Standard für diese Rolle verwenden**, um sie zu entfernen."
           },
           "listHeadingDisplay": {
@@ -1827,17 +1829,15 @@
             "format": "> - {value}{separator}",
             "separator": "\n",
             "options": {
-              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
-              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
-              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
-              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
-              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
-              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
-              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
-              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
-              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
-              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "0": "✏️ ∙ **Umbenennen**",
+              "1": "✋ ∙ **Nutzerlimit**",
+              "2": "🧹 ∙ **Chat leeren**",
+              "3": "🚫 ∙ **Privat** / 🌐 ∙ **Öffentlich**",
+              "4": "🙈 ∙ **Versteckt** / 🐵 ∙ **Sichtbar**",
+              "5": "👥 ∙ **Zugriff**",
+              "6": "🔃 ∙ **Zurücksetzen**",
+              "7": "😈 ∙ **Beanspruchen**",
+              "12": "🔀 ∙ **Übertragen**"
             }
           }
         }
@@ -2538,11 +2538,13 @@
           "buttonsNone": "> - *Keine. Besitzer sähen ein Panel ganz ohne Buttons.*",
           "rosterHeading": "**Rollen mit eigenen Buttons**",
           "rosterButtonsWord": "Buttons",
+          "panelNote": "Rollen-Sätze gelten nur für das Panel im Sprachkanal selbst. Ein **control-panel**-Kanal zeigt immer den Standardsatz.",
           "rosterMore": "> - *… und {rosterMoreCount} weitere. Alle stehen im oberen Menü.*",
           "scopeDisplay": {
             "{scopeDefault}": "**Du bearbeitest die Standard-Buttons von <#{masterChannelId}>.**\nWer einen hier erstellten Kanal besitzt, sieht diese Buttons — außer er hat eine der weiter unten aufgeführten Rollen, die diesen Satz für ihn ersetzt.",
-            "{scopeRoleOwn}": "**Du bearbeitest die Buttons von <@&{roleId}>.**\nEin Besitzer mit dieser Rolle sieht diese Buttons **statt** des Standardsatzes. Alle anderen Besitzer behalten den Standardsatz, und er bleibt unverändert.",
-            "{scopeRoleNew}": "**<@&{roleId}> hat noch keine eigenen Buttons.**\nIhre Besitzer folgen dem Standardsatz, der gerade im Button-Menü angehakt ist. Hake irgendetwas an oder ab, und diese Rolle bekommt ab diesem Moment einen eigenen Satz — der Standardsatz bleibt genau so, wie er ist.",
+            "{scopeDefaultVerified}": "**Du bearbeitest die Standard-Buttons von <#{masterChannelId}>.**\nNur {verifiedRolesList} können hier einen Kanal öffnen, das sind also die Buttons, die deren Besitzer sehen — außer sie haben zusätzlich eine der weiter unten aufgeführten Rollen, die diesen Satz für sie ersetzt.",
+            "{scopeRoleOwn}": "**Du bearbeitest die Buttons von <@&{roleId}>.**\nEin Besitzer mit dieser Rolle sieht diese Buttons **statt** des Standardsatzes. Alle anderen Besitzer behalten den Standardsatz, und er bleibt unverändert.\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> hat noch keine eigenen Buttons.**\nIhre Besitzer folgen dem Standardsatz, der gerade im Button-Menü angehakt ist. Hake irgendetwas an oder ab, und diese Rolle bekommt ab diesem Moment einen eigenen Satz — der Standardsatz bleibt genau so, wie er ist.\n{panelNote}",
             "{scopeRoleMissing}": "**Diese Rolle existiert auf diesem Server nicht mehr.**\nNiemand kann sie haben, also erreichen ihre gespeicherten Buttons niemanden. Drücke **Standard für diese Rolle verwenden**, um sie zu entfernen."
           },
           "listHeadingDisplay": {

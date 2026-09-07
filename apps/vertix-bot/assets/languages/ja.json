@@ -686,7 +686,7 @@
           "placeholder": "🎚 編集中",
           "selectOptions": [
             {
-              "label": "既定のボタン — 全員",
+              "label": "既定のボタン",
               "value": "default"
             }
           ]
@@ -888,7 +888,7 @@
           "placeholder": "🎚 編集中",
           "selectOptions": [
             {
-              "label": "既定のボタン — 全員",
+              "label": "既定のボタン",
               "value": "default"
             }
           ]
@@ -1291,11 +1291,13 @@
           "buttonsNone": "> - *なし。所有者にはボタンのないパネルが表示されます。*",
           "rosterHeading": "**専用のボタンを持つロール**",
           "rosterButtonsWord": "ボタン",
+          "panelNote": "ロールごとの構成が届くのはボイスチャンネル内のパネルだけです。**control-panel** チャンネルには常に既定の構成が表示されます。",
           "rosterMore": "> - *… ほか {rosterMoreCount} 件。すべて上のメニューにあります。*",
           "scopeDisplay": {
             "{scopeDefault}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここで作られたチャンネルの所有者にはこのボタンが表示されます。ただし下に並んでいるロールを持つ場合は、そのロールの構成に置き換わります。",
-            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。",
-            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。",
+            "{scopeDefaultVerified}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここでチャンネルを開けるのは {verifiedRolesList} だけなので、これはその所有者に表示されるボタンです。ただし下に並んでいるロールも持つ場合は、そのロールの構成に置き換わります。",
+            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。\n{panelNote}",
             "{scopeRoleMissing}": "**このロールはこのサーバーにもう存在しません。**\n誰も持てないため、保存されたボタンは誰にも届きません。**このロールに既定を使う** を押して削除してください。"
           },
           "listHeadingDisplay": {
@@ -1321,17 +1323,15 @@
             "format": "> - {value}{separator}",
             "separator": "\n",
             "options": {
-              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
-              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
-              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
-              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
-              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
-              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
-              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
-              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
-              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
-              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "0": "✏️ ∙ **名前を変更**",
+              "1": "✋ ∙ **人数制限**",
+              "2": "🧹 ∙ **チャットを消去**",
+              "3": "🚫 ∙ **非公開** / 🌐 ∙ **公開**",
+              "4": "🙈 ∙ **非表示** / 🐵 ∙ **表示**",
+              "5": "👥 ∙ **アクセス**",
+              "6": "🔃 ∙ **リセット**",
+              "7": "😈 ∙ **引き継ぐ**",
+              "12": "🔀 ∙ **譲渡**"
             }
           }
         }
@@ -1500,11 +1500,13 @@
           "buttonsNone": "> - *なし。所有者にはボタンのないパネルが表示されます。*",
           "rosterHeading": "**専用のボタンを持つロール**",
           "rosterButtonsWord": "ボタン",
+          "panelNote": "ロールごとの構成が届くのはボイスチャンネル内のパネルだけです。**control-panel** チャンネルには常に既定の構成が表示されます。",
           "rosterMore": "> - *… ほか {rosterMoreCount} 件。すべて上のメニューにあります。*",
           "scopeDisplay": {
             "{scopeDefault}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここで作られたチャンネルの所有者にはこのボタンが表示されます。ただし下に並んでいるロールを持つ場合は、そのロールの構成に置き換わります。",
-            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。",
-            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。",
+            "{scopeDefaultVerified}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここでチャンネルを開けるのは {verifiedRolesList} だけなので、これはその所有者に表示されるボタンです。ただし下に並んでいるロールも持つ場合は、そのロールの構成に置き換わります。",
+            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。\n{panelNote}",
             "{scopeRoleMissing}": "**このロールはこのサーバーにもう存在しません。**\n誰も持てないため、保存されたボタンは誰にも届きません。**このロールに既定を使う** を押して削除してください。"
           },
           "listHeadingDisplay": {

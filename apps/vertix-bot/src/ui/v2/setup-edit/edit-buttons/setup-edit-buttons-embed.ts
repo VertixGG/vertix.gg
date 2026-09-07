@@ -18,9 +18,12 @@ const vars = {
 
     scopeDisplay: uiUtilsWrapAsTemplate( "scopeDisplay" ),
     scopeDefault: uiUtilsWrapAsTemplate( "scopeDefault" ),
+    scopeDefaultVerified: uiUtilsWrapAsTemplate( "scopeDefaultVerified" ),
+    verifiedRolesList: uiUtilsWrapAsTemplate( "verifiedRolesList" ),
     scopeRoleOwn: uiUtilsWrapAsTemplate( "scopeRoleOwn" ),
     scopeRoleNew: uiUtilsWrapAsTemplate( "scopeRoleNew" ),
     scopeRoleMissing: uiUtilsWrapAsTemplate( "scopeRoleMissing" ),
+    panelNote: uiUtilsWrapAsTemplate( "panelNote" ),
 
     listHeadingDisplay: uiUtilsWrapAsTemplate( "listHeadingDisplay" ),
     listDefault: uiUtilsWrapAsTemplate( "listDefault" ),
@@ -71,6 +74,8 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/
 
         rosterButtonsWord: "Buttons",
 
+        panelNote: "Role sets reach only the panel inside the voice channel. A **control-panel** channel always shows the default set.",
+
         rosterMore: `> - *… and ${ v.rosterMoreCount } more. Every one of them is in the top menu.*`,
 
         scopeDisplay: {
@@ -78,15 +83,22 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/
                 `**You are editing the default buttons of <#${ v.masterChannelId }>.**\n` +
                 "Whoever owns a channel created here sees these buttons — unless they have one of " +
                 "the roles listed further down, which replaces this set for them.",
+            [ v.scopeDefaultVerified ]:
+                `**You are editing the default buttons of <#${ v.masterChannelId }>.**\n` +
+                `Only ${ v.verifiedRolesList } can open a channel here, so these are the buttons ` +
+                "their owners see — unless they also have one of the roles listed further down, " +
+                "which replaces this set for them.",
             [ v.scopeRoleOwn ]:
                 `**You are editing the buttons for <@&${ v.roleId }>.**\n` +
                 "An owner who has this role sees these buttons **instead of** the default set. " +
-                "Every other owner keeps the default set, and it is not changed.",
+                "Every other owner keeps the default set, and it is not changed.\n" +
+                v.panelNote,
             [ v.scopeRoleNew ]:
                 `**<@&${ v.roleId }> has no buttons of its own yet.**\n` +
                 "Its owners follow the default set, which is what is ticked in the button menu " +
                 "right now. Tick or untick anything and this role gets a set of its own from that " +
-                "moment on — the default set stays exactly as it is.",
+                "moment on — the default set stays exactly as it is.\n" +
+                v.panelNote,
             [ v.scopeRoleMissing ]:
                 "**This role no longer exists on this server.**\n" +
                 "Nobody can have it, so its saved buttons never reach anyone. Press " +
@@ -181,7 +193,12 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/
             rosterLines.push( v.rosterMore );
         }
 
-        let scopeDisplay: string = v.scopeDefault,
+        // Only the verified roles can open a channel here, so "everyone" would be a lie whenever
+        // the audience is narrower than the server.
+        const verifiedRoles = ( args.dynamicChannelVerifiedRoles as string[] | undefined ) ?? [],
+            isEveryoneAudience = Boolean( args.dynamicChannelIncludeEveryoneRole ) || ! verifiedRoles.length;
+
+        let scopeDisplay: string = isEveryoneAudience ? v.scopeDefault : v.scopeDefaultVerified,
             listHeadingDisplay: string = v.listDefault,
             hintDisplay: string = v.hintDefault;
 
@@ -212,6 +229,7 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/
             masterChannelId: ( args.masterChannelId as string | undefined ) ?? "",
             roleId: roleId ?? "",
             scopeDisplay,
+            verifiedRolesList: verifiedRoles.map( ( id ) => `<@&${ id }>` ).join( ", " ),
             listHeadingDisplay,
             // The array form lets the translated button names apply. An empty one would render as
             // a blank line, so the guard sentence is passed as a plain string instead.

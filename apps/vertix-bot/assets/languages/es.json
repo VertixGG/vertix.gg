@@ -686,7 +686,7 @@
           "placeholder": "🎚 Editando",
           "selectOptions": [
             {
-              "label": "Botones por defecto — todos",
+              "label": "Botones por defecto",
               "value": "default"
             }
           ]
@@ -888,7 +888,7 @@
           "placeholder": "🎚 Editando",
           "selectOptions": [
             {
-              "label": "Botones por defecto — todos",
+              "label": "Botones por defecto",
               "value": "default"
             }
           ]
@@ -1620,11 +1620,13 @@
           "buttonsNone": "> - *Ninguno. Los propietarios verían un panel sin ningún botón.*",
           "rosterHeading": "**Roles con botones propios**",
           "rosterButtonsWord": "Botones",
+          "panelNote": "Los conjuntos por rol solo llegan al panel dentro del canal de voz. Un canal **control-panel** siempre muestra el conjunto por defecto.",
           "rosterMore": "> - *… y {rosterMoreCount} más. Todos están en el menú de arriba.*",
           "scopeDisplay": {
             "{scopeDefault}": "**Estás editando los botones por defecto de <#{masterChannelId}>.**\nQuien posea un canal creado aquí ve estos botones — salvo que tenga uno de los roles listados más abajo, que sustituye este conjunto para él.",
-            "{scopeRoleOwn}": "**Estás editando los botones de <@&{roleId}>.**\nUn propietario con este rol ve estos botones **en lugar del** conjunto por defecto. Los demás propietarios conservan el conjunto por defecto, y no se modifica.",
-            "{scopeRoleNew}": "**<@&{roleId}> aún no tiene botones propios.**\nSus propietarios siguen el conjunto por defecto, que es lo que está marcado ahora mismo en el menú de botones. Marca o desmarca cualquier cosa y este rol tendrá su propio conjunto desde ese momento — el conjunto por defecto se queda exactamente igual.",
+            "{scopeDefaultVerified}": "**Estás editando los botones por defecto de <#{masterChannelId}>.**\nSolo {verifiedRolesList} pueden abrir un canal aquí, así que estos son los botones que ven sus propietarios — salvo que además tengan uno de los roles listados más abajo, que sustituye este conjunto para ellos.",
+            "{scopeRoleOwn}": "**Estás editando los botones de <@&{roleId}>.**\nUn propietario con este rol ve estos botones **en lugar del** conjunto por defecto. Los demás propietarios conservan el conjunto por defecto, y no se modifica.\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> aún no tiene botones propios.**\nSus propietarios siguen el conjunto por defecto, que es lo que está marcado ahora mismo en el menú de botones. Marca o desmarca cualquier cosa y este rol tendrá su propio conjunto desde ese momento — el conjunto por defecto se queda exactamente igual.\n{panelNote}",
             "{scopeRoleMissing}": "**Este rol ya no existe en este servidor.**\nNadie puede tenerlo, así que sus botones guardados no llegan a nadie. Pulsa **Usar El Conjunto Por Defecto** para eliminarlo."
           },
           "listHeadingDisplay": {
@@ -2228,11 +2230,13 @@
           "buttonsNone": "> - *Ninguno. Los propietarios verían un panel sin ningún botón.*",
           "rosterHeading": "**Roles con botones propios**",
           "rosterButtonsWord": "Botones",
+          "panelNote": "Los conjuntos por rol solo llegan al panel dentro del canal de voz. Un canal **control-panel** siempre muestra el conjunto por defecto.",
           "rosterMore": "> - *… y {rosterMoreCount} más. Todos están en el menú de arriba.*",
           "scopeDisplay": {
             "{scopeDefault}": "**Estás editando los botones por defecto de <#{masterChannelId}>.**\nQuien posea un canal creado aquí ve estos botones — salvo que tenga uno de los roles listados más abajo, que sustituye este conjunto para él.",
-            "{scopeRoleOwn}": "**Estás editando los botones de <@&{roleId}>.**\nUn propietario con este rol ve estos botones **en lugar del** conjunto por defecto. Los demás propietarios conservan el conjunto por defecto, y no se modifica.",
-            "{scopeRoleNew}": "**<@&{roleId}> aún no tiene botones propios.**\nSus propietarios siguen el conjunto por defecto, que es lo que está marcado ahora mismo en el menú de botones. Marca o desmarca cualquier cosa y este rol tendrá su propio conjunto desde ese momento — el conjunto por defecto se queda exactamente igual.",
+            "{scopeDefaultVerified}": "**Estás editando los botones por defecto de <#{masterChannelId}>.**\nSolo {verifiedRolesList} pueden abrir un canal aquí, así que estos son los botones que ven sus propietarios — salvo que además tengan uno de los roles listados más abajo, que sustituye este conjunto para ellos.",
+            "{scopeRoleOwn}": "**Estás editando los botones de <@&{roleId}>.**\nUn propietario con este rol ve estos botones **en lugar del** conjunto por defecto. Los demás propietarios conservan el conjunto por defecto, y no se modifica.\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> aún no tiene botones propios.**\nSus propietarios siguen el conjunto por defecto, que es lo que está marcado ahora mismo en el menú de botones. Marca o desmarca cualquier cosa y este rol tendrá su propio conjunto desde ese momento — el conjunto por defecto se queda exactamente igual.\n{panelNote}",
             "{scopeRoleMissing}": "**Este rol ya no existe en este servidor.**\nNadie puede tenerlo, así que sus botones guardados no llegan a nadie. Pulsa **Usar El Conjunto Por Defecto** para eliminarlo."
           },
           "listHeadingDisplay": {
@@ -2258,17 +2262,15 @@
             "format": "> - {value}{separator}",
             "separator": "\n",
             "options": {
-              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
-              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
-              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
-              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
-              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
-              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
-              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
-              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
-              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
-              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "0": "✏️ ∙ **Renombrar**",
+              "1": "✋ ∙ **Límite de usuarios**",
+              "2": "🧹 ∙ **Limpiar chat**",
+              "3": "🚫 ∙ **Privado** / 🌐 ∙ **Público**",
+              "4": "🙈 ∙ **Oculto** / 🐵 ∙ **Visible**",
+              "5": "👥 ∙ **Acceso**",
+              "6": "🔃 ∙ **Restablecer**",
+              "7": "😈 ∙ **Reclamar**",
+              "12": "🔀 ∙ **Transferir**"
             }
           }
         }

@@ -52,7 +52,7 @@ export class SetupEditButtonsScopeSelectMenu extends UIElementStringSelectMenu {
         // Always index 0. Translated options are matched by value and fall back to position, and
         // the language file holds exactly this one entry - moved, it would rename a role instead.
         const options: APISelectMenuOption[] = [ {
-            label: "Default buttons — everyone",
+            label: "Default buttons",
             value: SCOPE_DEFAULT_VALUE,
             emoji: { name: "🌐" },
             default: ! selectedRoleId

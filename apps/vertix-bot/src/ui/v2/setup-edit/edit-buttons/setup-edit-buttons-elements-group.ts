@@ -22,7 +22,7 @@ const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V2
             [ SetupEditButtonsScopeSelectMenu ],
             [ SetupEditButtonsRoleSelectMenu ],
             [ ChannelButtonsTemplateSelectMenu ],
-            [ SetupEditButtonsClearRoleOverrideButton, SetupEditButtonsUpdateExistingButton, WizardBackButton ]
+            [ WizardBackButton, SetupEditButtonsClearRoleOverrideButton, SetupEditButtonsUpdateExistingButton ]
         ];
     } )
     .build();

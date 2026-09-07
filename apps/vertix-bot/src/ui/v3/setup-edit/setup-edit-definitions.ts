@@ -7,9 +7,12 @@ export const SETUP_EDIT_BUTTONS_EMBED_VARS = {
 
     scopeDisplay: uiUtilsWrapAsTemplate( "scopeDisplay" ),
     scopeDefault: uiUtilsWrapAsTemplate( "scopeDefault" ),
+    scopeDefaultVerified: uiUtilsWrapAsTemplate( "scopeDefaultVerified" ),
+    verifiedRolesList: uiUtilsWrapAsTemplate( "verifiedRolesList" ),
     scopeRoleOwn: uiUtilsWrapAsTemplate( "scopeRoleOwn" ),
     scopeRoleNew: uiUtilsWrapAsTemplate( "scopeRoleNew" ),
     scopeRoleMissing: uiUtilsWrapAsTemplate( "scopeRoleMissing" ),
+    panelNote: uiUtilsWrapAsTemplate( "panelNote" ),
 
     listHeadingDisplay: uiUtilsWrapAsTemplate( "listHeadingDisplay" ),
     listDefault: uiUtilsWrapAsTemplate( "listDefault" ),

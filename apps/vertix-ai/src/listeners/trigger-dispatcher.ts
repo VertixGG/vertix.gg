@@ -8,10 +8,29 @@ import { AIService } from "@vertix.gg/ai/src/services/ai-service";
 
 import GlobalLogger from "@vertix.gg/ai/src/global-logger";
 
-import type { Client, GuildMember, Message, SendableChannels, TextBasedChannel } from "discord.js";
+import type { Client, GuildMember, Message, PartialMessage, SendableChannels, TextBasedChannel } from "discord.js";
 import type { OllamaMessage } from "@vertix.gg/ai/src/definitions/ollama-definitions";
 import type { AIReply } from "@vertix.gg/ai/src/services/ai-service";
 import type { E_AI_TRIGGER_EVENT } from "@vertix.gg/prisma/._ai-client-internal";
+
+/** A message asking the bot to run something on the host. */
+const COMMAND_REQUEST_PATTERN = /\b(run|exec|execute)\b/i;
+
+const NON_OWNER_COMMAND_REFUSAL =
+    "I can only run commands for my owner - I'm not able to run commands on anyone else's request.";
+
+/** Message ids already refused, so one message is refused once across its edits. */
+const refusedMessageIds = new Set<string>();
+const REFUSED_IDS_MAX = 1000;
+
+function rememberRefused( id: string ): void {
+    // Refusals are rare; a periodic wipe is enough to bound this without an LRU.
+    if ( refusedMessageIds.size >= REFUSED_IDS_MAX ) {
+        refusedMessageIds.clear();
+    }
+
+    refusedMessageIds.add( id );
+}
 
 /**
  * Routes Discord events to the model, but only the ones a guild has switched on
@@ -24,6 +43,15 @@ export function registerTriggerDispatcher( client: Client ): void {
         } );
     } );
 
+    // Streaming bots post a placeholder and edit the real text in, so a command
+    // request often only exists on the edit. The refusal is the only thing that
+    // runs on edits - the full trigger flow stays on create.
+    client.on( Events.MessageUpdate, ( _oldMessage, newMessage ) => {
+        void handleMessageEdit( client, newMessage ).catch( ( error: unknown ) => {
+            GlobalLogger.$.error( registerTriggerDispatcher, "MessageUpdate trigger failed", error );
+        } );
+    } );
+
     client.on( Events.GuildMemberAdd, ( member ) => {
         void handleMemberJoin( member ).catch( ( error: unknown ) => {
             GlobalLogger.$.error( registerTriggerDispatcher, "GuildMemberAdd trigger failed", error );
@@ -31,8 +59,98 @@ export function registerTriggerDispatcher( client: Client ): void {
     } );
 }
 
+async function handleMessageEdit( client: Client, message: Message | PartialMessage ): Promise<void> {
+    // This handler exists only to refuse a non-owner's command request that
+    // lands as an edit. A streaming bot keeps firing edit events after the text
+    // is complete, so skip anything already refused before spending a fetch.
+    if ( refusedMessageIds.has( message.id ) ) {
+        return;
+    }
+
+    // The edit event delivers empty content for a streamed bot edit even when it
+    // is not flagged partial (and an uncached edit is partial), so a forced REST
+    // fetch is the only way to see the real author and text.
+    let full: Message;
+
+    if ( message.partial || !message.content?.trim().length ) {
+        const fetched = await message.fetch( true ).catch( () => null );
+
+        if ( !fetched ) {
+            return;
+        }
+
+        full = fetched;
+    } else {
+        full = message;
+    }
+
+    await maybeRefuseCommandRequest( client, full );
+}
+
+/**
+ * Replies with a refusal when a non-owner asks this bot to run a command.
+ *
+ * Shared by message create and edit, and deduped by message id so a message is
+ * refused once however many times it is edited. Returns true when it refused,
+ * so the create path can stop.
+ */
+async function maybeRefuseCommandRequest( client: Client, message: Message ): Promise<boolean> {
+    if ( refusedMessageIds.has( message.id ) ) {
+        return true;
+    }
+
+    if ( !message.inGuild() || !message.content.trim().length ) {
+        return false;
+    }
+
+    const isMention = Boolean( client.user && message.mentions.users.has( client.user.id ) );
+
+    // A bot addresses this one by name in text, not by a Discord mention.
+    const namesBot = isMention
+        || Boolean( client.user && message.content.toLowerCase().includes( client.user.username.toLowerCase() ) );
+
+    if ( !namesBot || AIConfig.$.isOwner( message.author.id ) ) {
+        return false;
+    }
+
+    const content = client.user
+        ? message.content.replaceAll( `<@${ client.user.id }>`, "" ).trim()
+        : message.content.trim();
+
+    if ( !COMMAND_REQUEST_PATTERN.test( content ) || !message.channel.isSendable() ) {
+        return false;
+    }
+
+    const settings = await AIGuildDataManager.$.getTriggerSettings( message.guildId );
+
+    // Scoped to a mention or watched channel so it does not answer command talk
+    // in every channel it can see.
+    if ( !isMention && !settings.channelIds.includes( message.channelId ) ) {
+        return false;
+    }
+
+    rememberRefused( message.id );
+
+    GlobalLogger.$.log( maybeRefuseCommandRequest, `Refusing command request from non-owner '${ message.author.id }'` );
+
+    await message.reply( NON_OWNER_COMMAND_REFUSAL );
+
+    return true;
+}
+
 async function handleMessage( client: Client, message: Message ): Promise<void> {
-    if ( message.author.bot || !message.inGuild() || !message.content.trim().length ) {
+    // A non-owner (another bot included) asking to run a command is refused here
+    // rather than ignored. Everything below is for real triggers only.
+    if ( await maybeRefuseCommandRequest( client, message ) ) {
+        return;
+    }
+
+    // Otherwise, other bots are ignored entirely.
+    if ( message.author.bot ) {
+        return;
+    }
+
+    if ( !message.inGuild() || !message.content.trim().length ) {
         return;
     }
 
@@ -44,6 +162,10 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
 
     const isMention = Boolean( client.user && message.mentions.users.has( client.user.id ) );
     const isWatchedChannel = settings.channelIds.includes( message.channelId );
+
+    const content = client.user
+        ? message.content.replaceAll( `<@${ client.user.id }>`, "" ).trim()
+        : message.content.trim();
 
     // A mention inside a watched channel is one event, not two.
     let event: E_AI_TRIGGER_EVENT | null = null;
@@ -62,10 +184,6 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
         handleMessage,
         `Trigger '${ event }' - guildId: '${ message.guildId }' channelId: '${ message.channelId }'`
     );
-
-    const content = client.user
-        ? message.content.replaceAll( `<@${ client.user.id }>`, "" ).trim()
-        : message.content.trim();
 
     if ( !message.channel.isSendable() ) {
         return;

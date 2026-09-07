@@ -447,20 +447,31 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         );
     }
 
+    /**
+     * Function getMemberRoleIds() :: The member's roles, highest first.
+     *
+     * The order is the contract - a role's button set replaces the default rather than adding to
+     * it, so the first role that carries one decides what the channel shows, and an admin can
+     * predict that from the role list they already know.
+     */
     private async getMemberRoleIds( channel: VoiceChannel, userId: string ): Promise<string[]> {
         const cached = channel.guild.members.cache.get( userId );
 
         if ( cached ) {
-            return Array.from( cached.roles.cache.keys() );
+            return DynamicChannelService.sortRoleIdsByPosition( cached );
         }
 
         const fetched = await channel.guild.members.fetch( userId ).catch( () => null );
 
         if ( fetched ) {
-            return Array.from( fetched.roles.cache.keys() );
+            return DynamicChannelService.sortRoleIdsByPosition( fetched );
         }
 
         return [];
+    }
+
+    private static sortRoleIdsByPosition( member: GuildMember ) {
+        return Array.from( member.roles.cache.sort( ( a, b ) => b.position - a.position ).keys() );
     }
 
     public async onOwnerLeaveDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {

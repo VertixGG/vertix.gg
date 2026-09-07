@@ -125,23 +125,42 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
             const templateButtons = masterChannelSettings?.dynamicChannelButtonsTemplate;
             const templateButtonsByRole = masterChannelSettings?.dynamicChannelButtonsTemplateByRole ?? {};
 
-            const matchedButtons = new Set<string>();
+            // The owner's roles arrive highest first and the first one carrying a set wins, so a
+            // role set replaces the default instead of adding to it. Unioning them meant an
+            // override could only ever grant buttons, and an owner holding two of them got the sum
+            // of both, which is not a rule an admin can predict from their role list.
+            //
+            // An empty entry is a removed set, not a set of no buttons, so it falls through. The
+            // guild id is skipped because discord.js seeds every member's role cache with
+            // @everyone under it - a set stored there would match every owner alive and make the
+            // default unreachable.
             const ownerRoleIds = identifier.ownerRoleIds ?? [];
 
+            let roleButtons: string[] | undefined;
+
             for ( const roleId of ownerRoleIds ) {
+                if ( roleId === guildId ) {
+                    continue;
+                }
+
                 const override = templateButtonsByRole[ roleId ];
-                if ( Array.isArray( override ) ) {
-                    for ( const buttonId of override ) {
-                        matchedButtons.add( buttonId );
-                    }
+
+                if ( Array.isArray( override ) && override.length ) {
+                    roleButtons = override;
+                    break;
                 }
             }
 
-            const resolvedButtons = matchedButtons.size
-                ? Array.from( matchedButtons )
-                : ( templateButtons?.length ? templateButtons : [] );
+            const resolvedButtons = roleButtons
+                ?? ( templateButtons?.length ? templateButtons : configV3.settings.dynamicChannelButtonsTemplate );
 
-            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds( resolvedButtons );
+            // Copied before sorting - `sortIds()` sorts in place and this array can be the one
+            // living inside the cached settings row.
+            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds(
+                [ ...resolvedButtons ].filter(
+                    ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
+                )
+            );
             args.masterChannelId = masterChannelDB.channelId;
             args.dynamicChannelNameTemplate = masterChannelSettings?.dynamicChannelNameTemplate
                 ?? configV3.settings.dynamicChannelNameTemplate;

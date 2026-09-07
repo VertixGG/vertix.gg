@@ -83,3 +83,25 @@ model AIPendingAction {
 
   @@unique([guildId, userId])
 }
+
+/// A button this bot posted, and what it replies when clicked.
+///
+/// Buttons created at runtime have no compiled adapter behind them, so the
+/// response has to be stored. Persisted rather than held in memory because a
+/// button lives in the channel long after the process that sent it.
+model AIInteractiveButton {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  /// The value placed in the Discord custom id.
+  token     String   @unique
+  guildId   String
+  channelId String
+  // ---
+  label     String
+  /// Replied ephemerally when the button is pressed.
+  response  String
+  // ---
+  createdAt DateTime @default(now())
+
+  @@index([guildId])
+}

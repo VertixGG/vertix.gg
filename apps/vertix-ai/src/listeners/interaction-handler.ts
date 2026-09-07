@@ -4,6 +4,8 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { Commands } from "@vertix.gg/ai/src/commands";
 
+import { AI_BUTTON_PREFIX, InteractiveMessageManager } from "@vertix.gg/ai/src/managers/interactive-message-manager";
+
 import GlobalLogger from "@vertix.gg/ai/src/global-logger";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
@@ -18,6 +20,23 @@ import type { Client, CommandInteraction, Interaction } from "discord.js";
  */
 export function registerInteractionHandler( client: Client ): void {
     client.on( Events.InteractionCreate, async( interaction: Interaction ) => {
+        // Buttons this bot created at runtime have no registered adapter, so they
+        // are resolved from storage before the adapter lookup would fail on them.
+        if ( interaction.isButton() && interaction.customId.startsWith( AI_BUTTON_PREFIX ) ) {
+            const response = await InteractiveMessageManager.$.resolveButton( interaction ).catch( ( error: unknown ) => {
+                GlobalLogger.$.error( registerInteractionHandler, "Failed resolving an AI button", error );
+
+                return null;
+            } );
+
+            await interaction.reply( {
+                content: response ?? "That button is no longer active.",
+                ephemeral: true
+            } );
+
+            return;
+        }
+
         if ( interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction ) {
             const customId = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent(
                 interaction.customId

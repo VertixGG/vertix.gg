@@ -2,6 +2,8 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { MCPProvider } from "@vertix.gg/ai/src/providers/mcp-provider";
 
+import { InteractiveMessageManager } from "@vertix.gg/ai/src/managers/interactive-message-manager";
+
 import type { JsonObject, OllamaToolDefinition } from "@vertix.gg/ai/src/definitions/ollama-definitions";
 
 const MAX_PURGE_COUNT = 100;
@@ -90,6 +92,96 @@ export class LocalToolsProvider extends InitializeBase {
             },
             handler: ( args ) => this.purgeChannelMessages( args )
         } );
+
+        this.tools.set( "send_interactive_message", {
+            definition: {
+                type: "function",
+                function: {
+                    name: "send_interactive_message",
+                    description:
+                        "Post an embed with working buttons, as this bot. Use this whenever " +
+                        "someone asks for a UI, a panel, buttons, or an interactive message. " +
+                        "Each button needs the text to reply with when it is clicked; that " +
+                        "reply is shown only to the person who clicked. Maximum 5 buttons.",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            channelId: { type: "string", description: "Discord Channel ID" },
+                            title: { type: "string", description: "Embed title" },
+                            description: { type: "string", description: "Embed body" },
+                            color: { type: "number", description: "Embed colour as a decimal integer" },
+                            footer: { type: "string", description: "Small text under the embed" },
+                            fields: {
+                                type: "array",
+                                description: "Named sections inside the embed",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        name: { type: "string" },
+                                        value: { type: "string" },
+                                        inline: { type: "boolean" }
+                                    },
+                                    required: [ "name", "value" ]
+                                }
+                            },
+                            buttons: {
+                                type: "array",
+                                description: "Up to 5 buttons",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        label: { type: "string", description: "Button text" },
+                                        response: { type: "string", description: "Reply shown when clicked" },
+                                        style: { type: "string", enum: [ "primary", "secondary", "success", "danger" ] },
+                                        emoji: { type: "string" }
+                                    },
+                                    required: [ "label", "response" ]
+                                }
+                            }
+                        },
+                        required: [ "channelId", "description" ]
+                    }
+                }
+            },
+            handler: ( args ) => this.sendInteractiveMessage( args )
+        } );
+    }
+
+    private async sendInteractiveMessage( args: JsonObject ): Promise<string> {
+        const channelId = args.channelId;
+
+        if ( "string" !== typeof channelId ) {
+            return "Tool error: channelId is required and must be a string.";
+        }
+
+        const buttons = Array.isArray( args.buttons )
+            ? args.buttons.flatMap( ( entry ) =>
+                entry && "object" === typeof entry && !Array.isArray( entry )
+                    && "string" === typeof entry.label && "string" === typeof entry.response
+                    ? [ {
+                        label: entry.label,
+                        response: entry.response,
+                        style: "string" === typeof entry.style ? entry.style : undefined,
+                        emoji: "string" === typeof entry.emoji ? entry.emoji : undefined
+                    } ]
+                    : [] )
+            : [];
+
+        const fields = Array.isArray( args.fields )
+            ? args.fields.flatMap( ( entry ) =>
+                entry && "object" === typeof entry && !Array.isArray( entry )
+                    && "string" === typeof entry.name && "string" === typeof entry.value
+                    ? [ { name: entry.name, value: entry.value, inline: true === entry.inline } ]
+                    : [] )
+            : [];
+
+        return await InteractiveMessageManager.$.send( channelId, {
+            title: "string" === typeof args.title ? args.title : undefined,
+            description: "string" === typeof args.description ? args.description : undefined,
+            color: "number" === typeof args.color ? args.color : undefined,
+            footer: "string" === typeof args.footer ? args.footer : undefined,
+            fields
+        }, buttons );
     }
 
     private async purgeChannelMessages( args: JsonObject ): Promise<string> {

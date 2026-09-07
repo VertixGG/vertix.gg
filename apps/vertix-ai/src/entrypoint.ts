@@ -22,6 +22,7 @@ import { OllamaProvider } from "@vertix.gg/ai/src/providers/ollama-provider";
 import { MCPProvider } from "@vertix.gg/ai/src/providers/mcp-provider";
 
 import { PromptManager } from "@vertix.gg/ai/src/managers/prompt-manager";
+import { InteractiveMessageManager } from "@vertix.gg/ai/src/managers/interactive-message-manager";
 
 import { registerPromptUploadListener } from "@vertix.gg/ai/src/listeners/prompt-upload-listener";
 
@@ -115,6 +116,8 @@ async function onClientReady( client: Client<true> ): Promise<void> {
         onClientReady,
         `Logged in as '${ client.user.tag }' - model: '${ AIConfig.$.getOllamaModel() }', num_ctx: '${ AIConfig.$.getOllamaNumCtx() }'`
     );
+
+    InteractiveMessageManager.$.setClient( client );
 
     // UI first: an interaction can arrive the moment the commands are live, and
     // the adapters must already be resolvable when it does.

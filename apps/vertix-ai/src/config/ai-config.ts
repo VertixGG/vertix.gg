@@ -15,6 +15,16 @@ const DEFAULT_HISTORY_LIMIT = 1000;
 const DEFAULT_HISTORY_MAX_CHARS = 120000;
 
 const DEFAULT_MCP_COMMAND = "bun";
+
+/**
+ * Tool name prefixes withheld from the model.
+ *
+ * `ui_*` drives Vertix's own UI runtime over IPC, so calling one makes a
+ * DIFFERENT bot render and post - this app reached across and made
+ * VoiceChannels AI publish its welcome embeds. Those tools belong to the bot
+ * that owns that runtime, not to this one.
+ */
+const DEFAULT_EXCLUDED_TOOL_PREFIXES = "ui_";
 const DEFAULT_MAX_TOOL_ITERATIONS = 6;
 
 /**
@@ -205,6 +215,16 @@ export class AIConfig extends InitializeBase {
             process.env.VERTIX_AI_DESTRUCTIVE_CONFIRM_WINDOW_MS,
             DEFAULT_DESTRUCTIVE_CONFIRM_WINDOW_MS
         );
+    }
+
+    /** Comma-separated prefixes; empty string disables the filter. */
+    public getExcludedToolPrefixes(): string[] {
+        const configured = process.env.VERTIX_AI_EXCLUDED_TOOL_PREFIXES ?? DEFAULT_EXCLUDED_TOOL_PREFIXES;
+
+        return configured
+            .split( "," )
+            .map( ( prefix ) => prefix.trim() )
+            .filter( ( prefix ) => prefix.length );
     }
 
     public getMcpCommand(): string {

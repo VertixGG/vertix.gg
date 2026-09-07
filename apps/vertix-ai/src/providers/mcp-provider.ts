@@ -197,7 +197,20 @@ export class MCPProvider extends InitializeBase {
     private async loadTools( client: Client ): Promise<OllamaToolDefinition[]> {
         const listed = await client.listTools();
 
-        return listed.tools.map( ( tool ) => ( {
+        const excluded = AIConfig.$.getExcludedToolPrefixes();
+
+        const allowed = listed.tools.filter(
+            ( tool ) => !excluded.some( ( prefix ) => tool.name.startsWith( prefix ) )
+        );
+
+        if ( allowed.length < listed.tools.length ) {
+            this.logger.log(
+                this.loadTools,
+                `Withheld '${ listed.tools.length - allowed.length }' tool(s) matching: ${ excluded.join( ", " ) }`
+            );
+        }
+
+        return allowed.map( ( tool ) => ( {
             type: "function" as const,
             function: {
                 name: tool.name,

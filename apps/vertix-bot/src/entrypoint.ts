@@ -36,7 +36,7 @@ import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
-import { initWorker, CleanupWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
+import { CleanupWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
@@ -460,7 +460,8 @@ async function registerUIVersionStrategies() {
 
 async function createCleanupWorker() {
     try {
-        await initWorker();
+        // not run in development
+        // await initWorker();
         GlobalLogger.$.admin( createCleanupWorker, "Cleanup worker finished" );
     } catch( error ) {
         GlobalLogger.$.error( createCleanupWorker, "", error );

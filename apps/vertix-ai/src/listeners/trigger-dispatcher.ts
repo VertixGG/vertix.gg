@@ -243,12 +243,22 @@ async function handleMessage( client: Client, message: Message ): Promise<void> 
         return;
     }
 
+    const { messages: history, participants } = await fetchHistory( client, message );
+
+    // The speaker is not in the fetched history (that is strictly older messages),
+    // so add them to the roster - most recent first, deduped by id.
+    const roster = [
+        { id: message.author.id, name: message.member?.displayName ?? message.author.displayName },
+        ...participants
+    ].filter( ( person, index, all ) => index === all.findIndex( ( other ) => other.id === person.id ) );
+
     const triggerContext = {
         guildId: message.guildId,
         event,
         botName: client.user?.username ?? "the bot",
         rawMessage: content,
-        history: await fetchHistory( client, message ),
+        history,
+        participants: roster,
         location: {
             guildName: message.guild?.name ?? "unknown",
             channelId: message.channelId,
@@ -352,14 +362,23 @@ const DISCORD_FETCH_PAGE_SIZE = 100;
  * `user` turns prefixed with the speaker, since Discord is many-to-many and the
  * model otherwise cannot tell who said what.
  */
-async function fetchHistory( client: Client, message: Message ): Promise<OllamaMessage[]> {
+type Participant = { id: string; name: string };
+
+/** Enough to cover the recent speakers without bloating the prompt. */
+const MAX_PARTICIPANTS = 12;
+
+async function fetchHistory( client: Client, message: Message ): Promise<{ messages: OllamaMessage[]; participants: Participant[] }> {
     const maxMessages = AIConfig.$.getHistoryLimit();
     const maxChars = AIConfig.$.getHistoryMaxChars();
 
     const collected: OllamaMessage[] = [];
+    const speakers = new Map<string, string>();
 
     let before = message.id;
     let usedChars = 0;
+
+    const roster = (): Participant[] =>
+        [ ...speakers.entries() ].slice( 0, MAX_PARTICIPANTS ).map( ( [ id, name ] ) => ( { id, name } ) );
 
     while ( collected.length < maxMessages ) {
         const remaining = Math.min( DISCORD_FETCH_PAGE_SIZE, maxMessages - collected.length );
@@ -377,11 +396,18 @@ async function fetchHistory( client: Client, message: Message ): Promise<OllamaM
         for ( const entry of page.values() ) {
             before = entry.id;
 
+            const isSelf = entry.author.id === client.user?.id;
+
+            // The roster comes from every author - even a components-v2 bot whose
+            // `content` is empty - so the model can still mention them by tag.
+            if ( !isSelf && !speakers.has( entry.author.id ) ) {
+                speakers.set( entry.author.id, entry.member?.displayName ?? entry.author.displayName );
+            }
+
             if ( !entry.content.trim().length ) {
                 continue;
             }
 
-            const isSelf = entry.author.id === client.user?.id;
             // Our own replies carry a usage footer; the model must never see it or
             // it will start writing its own.
             const content = isSelf
@@ -394,7 +420,7 @@ async function fetchHistory( client: Client, message: Message ): Promise<OllamaM
                     `History budget reached at '${ collected.length }' messages ('${ usedChars }' chars)`
                 );
 
-                return collected.reverse();
+                return { messages: collected.reverse(), participants: roster() };
             }
 
             usedChars += content.length;
@@ -412,7 +438,7 @@ async function fetchHistory( client: Client, message: Message ): Promise<OllamaM
 
     GlobalLogger.$.debug( fetchHistory, `Replaying '${ collected.length }' messages ('${ usedChars }' chars)` );
 
-    return collected.reverse();
+    return { messages: collected.reverse(), participants: roster() };
 }
 
 const TYPING_REFRESH_MS = 8000;

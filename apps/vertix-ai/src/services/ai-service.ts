@@ -146,6 +146,11 @@ export type TriggerContext = {
     /** Prior channel messages, oldest first. Empty for events with no channel. */
     history?: OllamaMessage[];
     /**
+     * Recent speakers in this channel, so the model can mention them with a real
+     * `<@id>` tag instead of a plain `@name` that does not link. Excludes the bot.
+     */
+    participants?: Array<{ id: string; name: string }>;
+    /**
      * Where this happened. Every Discord tool takes ids, and the model cannot
      * infer them from a channel name - without these it invents them.
      */
@@ -338,6 +343,7 @@ export class AIService extends InitializeBase {
         const messages: OllamaMessage[] = [
             { role: "system", content: `${ PromptManager.$.get( PROMPT_NAMES.IdentityPreamble, { botName: context.botName } ) }\n\n${ systemPrompt }` },
             { role: "system", content: this.buildLocationBlock( context ) },
+            ...this.buildParticipantsBlock( context ),
             ...this.buildOwnerBlock( context ),
             ...( context.history ?? [] ),
             ...( context.history?.length
@@ -946,6 +952,23 @@ export class AIService extends InitializeBase {
         return [ {
             role: "system",
             content: PromptManager.$.get( PROMPT_NAMES.OwnerContext, { userName: context.location.userName } )
+        } ];
+    }
+
+    private buildParticipantsBlock( context: TriggerContext ): OllamaMessage[] {
+        const participants = context.participants ?? [];
+
+        if ( !participants.length ) {
+            return [];
+        }
+
+        const roster = participants
+            .map( ( person ) => `- ${ person.name }: <@${ person.id }>` )
+            .join( "\n" );
+
+        return [ {
+            role: "system",
+            content: PromptManager.$.get( PROMPT_NAMES.Participants, { roster } )
         } ];
     }
 

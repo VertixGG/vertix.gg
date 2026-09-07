@@ -26,6 +26,8 @@ export const PROMPT_NAMES = {
     Decision: "decision",
     /** The real Discord ids, so tool arguments are not guessed. */
     LocationContext: "location-context",
+    /** Recent speakers with their `<@id>` tags, so mentions actually link. */
+    Participants: "participants",
     /** Injected only when the speaker is the bot owner: act, do not ask. */
     OwnerContext: "owner-context"
 } as const;

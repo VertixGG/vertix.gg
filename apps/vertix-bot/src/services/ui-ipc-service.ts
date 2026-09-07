@@ -271,10 +271,13 @@ export class UIIPCService extends ServiceWithDependenciesBase<{
             return client;
         }
 
+        // A non-main identity must post as its own bot. If that client is not
+        // registered - its bot never logged in - fail instead of silently posting
+        // as the main Vertix bot and misattributing the message.
         if ( identity !== UI_PEER_IDENTITIES.MAIN ) {
-            this.logger.warn(
-                this.getClient,
-                `Identity '${ identity }' is not available - acting as the main Vertix bot. Set AI_CHAT_DISCORD_TOKEN.`
+            throw new Error(
+                `The '${ identity }' bot is not connected - it cannot post. `
+                + `Set AI_CHAT_DISCORD_TOKEN for the bot process and make sure that bot has joined the server.`
             );
         }
 
@@ -282,7 +285,15 @@ export class UIIPCService extends ServiceWithDependenciesBase<{
     }
 
     private describeActingBot( identity: UIPeerIdentity ): UIActingBot {
-        const client = this.getClient( identity );
+        // Looks up the client directly - unlike getClient, this must not throw: it
+        // also runs when a peer registers, before that identity's bot is up.
+        const client = identity === UI_PEER_IDENTITIES.MAIN
+            ? this.services.uiService.getClient()
+            : this.clients.get( identity );
+
+        if ( ! client ) {
+            return { id: "", username: identity, identity };
+        }
 
         return {
             id: client.user.id,

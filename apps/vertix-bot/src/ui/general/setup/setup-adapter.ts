@@ -105,13 +105,17 @@ async function onSelectEditMasterChannel(
 
     const masterChannelValue = interaction.values.at( 0 );
 
-    let masterChannelId, masterChannelIndex;
+    let masterChannelId: string | undefined,
+        // The value arrives as text, and every screen that shows this renders `index + 1` - which
+        // concatenates rather than adds unless it is a number, so master channel 1 announces itself
+        // as #11.
+        masterChannelIndex = 0;
 
     if ( masterChannelValue ) {
-        [
-            masterChannelId,
-            masterChannelIndex
-        ] = masterChannelValue.split( UI_CUSTOM_ID_SEPARATOR, 2 );
+        const [ selectedId, selectedIndex ] = masterChannelValue.split( UI_CUSTOM_ID_SEPARATOR, 2 );
+
+        masterChannelId = selectedId;
+        masterChannelIndex = Number( selectedIndex ) || 0;
     }
 
     const masterChannelDB = await ChannelModel.$.getByChannelId( masterChannelId! );

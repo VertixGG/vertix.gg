@@ -517,14 +517,19 @@ export class AgentManager extends InitializeBase {
         return value ? this.isEnabled( value ) : true;
     }
 
-    // Discord credentials are intentionally left out: the server inherits them from this process,
-    // so they never end up in the command line where `ps` would expose them.
+    // The AI Chat bot token is handed to vertix-mcp explicitly: the MCP host spawns
+    // the server with a stripped env, so it is NOT inherited from this process. This
+    // config is written to a 0600 temp file (see writeClaudeMcpConfigFile), not
+    // passed inline, so the token still never reaches the command line where `ps`
+    // would expose it.
     private buildClaudeMcpConfig( readOnly: boolean ): string {
         const configured = this.getConfiguredValue( [ "AI_CHAT_CLAUDE_MCP_CONFIG" ] );
 
         if ( configured ) {
             return configured;
         }
+
+        const aiChatToken = process.env.AI_CHAT_DISCORD_TOKEN;
 
         return JSON.stringify( {
             mcpServers: {
@@ -533,15 +538,35 @@ export class AgentManager extends InitializeBase {
                     args: [ "run", "--bun", path.join( REPO_ROOT, VERTIX_MCP_ENTRYPOINT ) ],
                     env: {
                         LOGGER_DISABLED: "true",
-                        VERTIX_MCP_READONLY: readOnly ? "true" : "false"
+                        VERTIX_MCP_READONLY: readOnly ? "true" : "false",
+                        // Makes vertix-mcp's Discord tools act as the AI Chat bot, the
+                        // same way vertix-ai's MCPProvider passes it.
+                        ... ( aiChatToken ? { AI_CHAT_DISCORD_TOKEN: aiChatToken } : {} )
                     }
                 }
             }
         } );
     }
 
-    private getClaudeMcpArgs( readOnly: boolean ): string[] {
-        if ( ! this.isClaudeMcpEnabled() ) {
+    // Writes the MCP config to a 0600 temp file and returns its path, so the token
+    // it carries stays out of `ps`. Returns null (MCP simply off for the run) if the
+    // write fails, rather than taking the whole reply down.
+    private writeClaudeMcpConfigFile( readOnly: boolean ): string | null {
+        try {
+            const filePath = path.join( os.tmpdir(), `vertix-mcp-config-${ crypto.randomUUID() }.json` );
+
+            fsNative.writeFileSync( filePath, this.buildClaudeMcpConfig( readOnly ), { mode: 0o600 } );
+
+            return filePath;
+        } catch ( error ) {
+            this.logger.error( this.writeClaudeMcpConfigFile, "Failed to write MCP config file", error );
+
+            return null;
+        }
+    }
+
+    private getClaudeMcpArgs( configPath: string | null ): string[] {
+        if ( ! configPath ) {
             return [];
         }
 
@@ -549,7 +574,7 @@ export class AgentManager extends InitializeBase {
 
         return [
             // Strict, so the bot never inherits the developer's personal MCP servers.
-            "--mcp-config", this.buildClaudeMcpConfig( readOnly ),
+            "--mcp-config", configPath,
             "--strict-mcp-config",
             "--allowedTools", allowedTools
         ];
@@ -685,13 +710,17 @@ export class AgentManager extends InitializeBase {
             };
         }
 
+        // Written to a 0600 temp file (so its token never reaches `ps`) and removed
+        // when the run settles.
+        const mcpConfigPath = this.isClaudeMcpEnabled() ? this.writeClaudeMcpConfigFile( readOnly ) : null;
+
         const baseArgs = [
             "--print",
             "--output-format", "json",
             "--model", model,
             "--effort", this.getClaudeEffort( reasoningEffort ),
             "--tools", this.getClaudeTools(),
-            ...this.getClaudeMcpArgs( readOnly ),
+            ...this.getClaudeMcpArgs( mcpConfigPath ),
             ...this.getClaudeDirectoryArgs( attachments )
         ];
 
@@ -738,6 +767,11 @@ export class AgentManager extends InitializeBase {
 
                 settled = true;
                 clearTimeout( timeout );
+
+                // Remove the temp MCP config (and the token in it) as soon as the run ends.
+                if ( mcpConfigPath ) {
+                    void fs.rm( mcpConfigPath, { force: true } ).catch( () => undefined );
+                }
 
                 const logs = includeLogs
                     ? Buffer.from( `${ stdoutChunks.join( "" ) }\n${ stderr }` )

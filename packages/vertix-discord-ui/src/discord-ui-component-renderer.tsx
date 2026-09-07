@@ -238,6 +238,9 @@ function resolveEmbedDefinition(
 
     const resolvedTitle = applyVariables( title, variables );
     const resolvedDescription = applyVariables( description, variables );
+    // The footer is written the same way the rest of the embed is and can carry variables of its
+    // own, so it is resolved too rather than handed over as it was authored.
+    const resolvedFooter = applyVariables( footer, variables );
 
     return {
         title: resolvedTitle,
@@ -245,7 +248,7 @@ function resolveEmbedDefinition(
         color,
         image,
         thumbnail,
-        footer,
+        footer: resolvedFooter,
     };
 }
 

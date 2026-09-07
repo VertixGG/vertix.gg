@@ -8,6 +8,49 @@ const NAV_LINK_BASE =
     "relative block px-4 py-2 font-body text-lg text-vc-ice transition-colors " +
     "hover:text-vc-cyan focus:text-vc-cyan";
 
+const DROPDOWN_CLOSE_DELAY_MS = 200;
+
+const HOVER_CAPABLE_MEDIA_QUERY = "(hover: hover)";
+
+const useHoverCapability = () => {
+    const [ isHoverCapable, setHoverCapable ] = React.useState(
+        () => window.matchMedia( HOVER_CAPABLE_MEDIA_QUERY ).matches
+    );
+
+    React.useEffect( () => {
+        const mediaQuery = window.matchMedia( HOVER_CAPABLE_MEDIA_QUERY ),
+            onCapabilityChange = ( event: MediaQueryListEvent ) => setHoverCapable( event.matches );
+
+        mediaQuery.addEventListener( "change", onCapabilityChange );
+
+        return () => mediaQuery.removeEventListener( "change", onCapabilityChange );
+    }, [] );
+
+    return isHoverCapable;
+};
+
+type OpenDropdownState = string | null;
+
+const NavbarDropdownGroupContext = React.createContext<{
+    openDropdown: OpenDropdownState,
+    setOpenDropdown: React.Dispatch<React.SetStateAction<OpenDropdownState>>
+}>( {
+    openDropdown: null,
+    setOpenDropdown: () => undefined,
+} );
+
+const NavbarDropdownGroup: React.FC<{ children: React.ReactNode }> = ( { children } ) => {
+    const [ openDropdown, setOpenDropdown ] = React.useState<OpenDropdownState>( null );
+
+    const group = React.useMemo( () => ( { openDropdown, setOpenDropdown } ), [ openDropdown ] );
+
+    return (
+        <NavbarDropdownGroupContext.Provider value={ group }>
+            { children }
+        </NavbarDropdownGroupContext.Provider>
+    );
+};
+
 const NavbarItem: React.FC<{ title: string, href: string }> = ( { title, href } ) => {
     const location = useLocation(),
         isActive = location.pathname === href;
@@ -30,28 +73,38 @@ const NavbarDropdown: React.FC<{
     items: { title?: string, href?: string, divider?: boolean }[]
 }> = (
     { title, items } ) => {
-    let dropdownTimeout: ReturnType<typeof setTimeout>;
+    const { openDropdown, setOpenDropdown } = React.useContext( NavbarDropdownGroupContext ),
+        isHoverCapable = useHoverCapability(),
+        closeTimeout = React.useRef<ReturnType<typeof setTimeout> | undefined>( undefined );
 
-    const [ isDropdownOpen, setDropdownState ] = React.useState( false ),
-        toggleDropdown = () => setDropdownState( ! isDropdownOpen ),
-        openAndClearTimeout = () => {
-            clearTimeout( dropdownTimeout );
-            setDropdownState( true );
-        };
+    const location = useLocation(),
+        isDropdownOpen = openDropdown === title;
 
-    const location = useLocation();
+    const openNow = () => {
+            clearTimeout( closeTimeout.current );
+            setOpenDropdown( title );
+        },
+        scheduleClose = () => {
+            clearTimeout( closeTimeout.current );
+            closeTimeout.current = setTimeout(
+                () => setOpenDropdown( ( current ) => current === title ? null : current ),
+                DROPDOWN_CLOSE_DELAY_MS
+            );
+        },
+        toggleDropdown = () => setOpenDropdown( ( current ) => current === title ? null : title );
+
+    React.useEffect( () => () => clearTimeout( closeTimeout.current ), [] );
 
     return (
-        <li className="relative">
+        <li className="relative"
+            onMouseEnter={ isHoverCapable ? openNow : undefined }
+            onMouseLeave={ isHoverCapable ? scheduleClose : undefined }
+        >
             <span className={ `${ NAV_LINK_BASE } cursor-pointer` }
                 role="button"
+                aria-haspopup="true"
                 aria-expanded={ isDropdownOpen }
-                onMouseEnter={ () => {
-                    clearTimeout( dropdownTimeout );
-                    setDropdownState( true );
-                } }
-                onMouseLeave={ () => dropdownTimeout = setTimeout( () => setDropdownState( false ), 200 ) }
-                onClick={ toggleDropdown }
+                onClick={ isHoverCapable ? undefined : toggleDropdown }
             >
                 { title }
                 <span className="pl-1 text-[10px] text-vc-ice-dim">▼</span>
@@ -71,8 +124,6 @@ const NavbarDropdown: React.FC<{
             ? "text-vc-cyan"
             : "text-vc-ice" }` }
                                 href={ item.href }
-                                onMouseEnter={ () => openAndClearTimeout() }
-                                onMouseLeave={ () => setDropdownState( false ) }
                             >
                                 { item.title }
                             </a>
@@ -138,25 +189,27 @@ export default function Header() {
                             nav:items-center nav:justify-between nav:rounded-none nav:border-0
                             nav:bg-transparent nav:p-0 nav:shadow-none nav:backdrop-blur-none` }
                     >
-                        <ul className="flex list-none flex-col gap-1 pl-0
-                            nav:flex-row nav:items-center nav:gap-2">
-                            <NavbarItem title="Home" href="/"/>
+                        <NavbarDropdownGroup>
+                            <ul className="flex list-none flex-col gap-1 pl-0
+                                nav:flex-row nav:items-center nav:gap-2">
+                                <NavbarItem title="Home" href="/"/>
 
-                            <NavbarDropdown title="Features" items={ [
-                                { title: "Dynamic Channels v2", href: "/features/dynamic-channel-v2" },
-                                { title: "Dynamic Channels v3", href: "/features/dynamic-channel-v3" },
-                                { title: "Auto-Scaling Channels", href: "/features/auto-scaling" },
-                            ] }/>
+                                <NavbarDropdown title="Features" items={ [
+                                    { title: "Dynamic Channels v2", href: "/features/dynamic-channel-v2" },
+                                    { title: "Dynamic Channels v3", href: "/features/dynamic-channel-v3" },
+                                    { title: "Auto-Scaling Channels", href: "/features/auto-scaling" },
+                                ] }/>
 
-                            <NavbarDropdown title="How to" items={ [
-                                { title: "Setup", href: "/posts/how-to-setup" },
-                                { title: "Enable Logs", href: "/posts/how-to-setup-logs-channel" },
-                                { title: "Enable Features", href: "/posts/enable-features" },
-                                { title: "Name Placeholders", href: "/posts/channel-name-placeholders" },
-                            ] }/>
+                                <NavbarDropdown title="How to" items={ [
+                                    { title: "Setup", href: "/posts/how-to-setup" },
+                                    { title: "Enable Logs", href: "/posts/how-to-setup-logs-channel" },
+                                    { title: "Enable Features", href: "/posts/enable-features" },
+                                    { title: "Name Placeholders", href: "/posts/channel-name-placeholders" },
+                                ] }/>
 
-                            <NavbarItem title="Change log" href="/changelog"/>
-                        </ul>
+                                <NavbarItem title="Change log" href="/changelog"/>
+                            </ul>
+                        </NavbarDropdownGroup>
 
                         <div className="mt-4 flex flex-col gap-3 nav:mt-0 nav:flex-row nav:gap-4">
                             <button id="add-to-server" onClick={ () => onAddToServerClick() }

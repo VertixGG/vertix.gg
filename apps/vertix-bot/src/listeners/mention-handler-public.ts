@@ -14,7 +14,7 @@ import type { Client, Message, TextBasedChannel, TextChannel } from "discord.js"
 const DEFAULT_TYPING_INTERVAL_MS = 8000;
 const CONTEXT_MESSAGE_COUNT = 10;
 
-const PUBLIC_SYSTEM_PROMPT = `You are Vertix, a Discord bot that helps manage dynamic voice channels. You are responding to a user who @mentioned you.
+const buildPublicSystemPrompt = ( botName: string ) => `You are ${ botName }, the AI assistant for Vertix - a Discord bot that helps manage dynamic voice channels. You are responding to a user who @mentioned you. Always refer to yourself as "${ botName }", never as "Vertix" (that is the product you help with, not your name).
 
 You have access to the vertix-mcp tools for reading Discord information (guilds, channels, members, messages, roles, etc.). These tools are READ-ONLY - you can view information but NOT modify anything.
 
@@ -115,7 +115,7 @@ export function mentionHandlerPublic( client: Client ) {
 
                 const isNewSession = ! session.conversationId;
                 const fullPrompt = isNewSession
-                    ? `${ PUBLIC_SYSTEM_PROMPT }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
+                    ? `${ buildPublicSystemPrompt( message.client.user?.username ?? "an AI assistant" ) }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
                     : userMessage;
 
                 const { response, conversationId } = await AgentManager.$.runChat( fullPrompt, {

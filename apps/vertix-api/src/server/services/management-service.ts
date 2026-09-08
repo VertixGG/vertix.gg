@@ -15,7 +15,11 @@ import type { DiscordService } from "./discord-service";
 
 import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
 
-import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
+import type {
+    IPCDiscordChannelInfo,
+    GetGuildOptionsRequest,
+    GetGuildOptionsResponse
+} from "@vertix.gg/definitions/src/ipc-definitions";
 
 import type { ChannelPrivacyStateDefault } from "@vertix.gg/base/src/interfaces/master-channel-config";
 
@@ -728,6 +732,23 @@ export class ManagementService extends ServiceWithDependenciesBase<{
      * into fields to set a log channel or a verified role.
      */
     public async getGuildDiscordOptions( guildId: string ): Promise<GuildDiscordOptions> {
+        // The bot is the process that is actually in the guild - the api's own token may belong to
+        // an application that was never invited there, so it answers only when the bot cannot.
+        if ( this.services.ipcService.isReady() ) {
+            try {
+                return await this.services.ipcService.request<GetGuildOptionsRequest, GetGuildOptionsResponse>(
+                    IPC_CHANNELS.MANAGEMENT_REQUEST,
+                    IPC_CHANNELS.MANAGEMENT_RESPONSE,
+                    {
+                        action: IPC_REQUEST_ACTIONS.GET_GUILD_OPTIONS,
+                        guildId
+                    }
+                );
+            } catch( error ) {
+                this.logger.warn( this.getGuildDiscordOptions, "Failed to fetch guild options via IPC, falling back to REST", error );
+            }
+        }
+
         const [ roles, channels ] = await Promise.all( [
             this.services.discordService.fetchGuildRoles( guildId ),
             this.services.discordService.fetchGuildChannels( guildId )

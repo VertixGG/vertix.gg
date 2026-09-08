@@ -163,7 +163,13 @@ exports.Prisma.GuildDataScalarFieldEnum = {
 exports.Prisma.GuildCustomizationScalarFieldEnum = {
   id: 'id',
   guildId: 'guildId',
-  components: 'components',
+  component: 'component',
+  state: 'state',
+  language: 'language',
+  embedOverrides: 'embedOverrides',
+  elementOverrides: 'elementOverrides',
+  modalOverrides: 'modalOverrides',
+  variables: 'variables',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

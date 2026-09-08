@@ -100,15 +100,34 @@ model GuildData {
   @@unique([ownerId, key, version])
 }
 
+/// One override target: a component, optionally narrowed to a state and a language.
+///
+/// A row rather than a key inside a per-guild blob, so the four things that identify an override
+/// are four fields - nothing has to encode them into a string, and a writer cannot disagree with a
+/// reader about how that string is spelled.
 model GuildCustomization {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  guildId    String   @unique
+  /// The guild the override belongs to; `__default__` is the base layer under every guild.
+  guildId          String
+  /// The component's own name, as `getName()` returns it - "VertixBot/UI-V3/DynamicChannel".
+  /// Never shortened: `UI-V2/DynamicChannel` and `UI-V3/DynamicChannel` are different components.
+  component        String
+  /// The state the override is narrowed to, or null for every state of the component.
+  state            String?
+  /// The language the override is narrowed to, or null for every language.
+  language         String?
   // ---
-  components Json // All component customizations: { [componentName]: { variables: {...} } }
+  embedOverrides   Json?
+  elementOverrides Json?
+  modalOverrides   Json?
+  variables        Json?
   // ---
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([guildId, component, state, language])
+  @@index([guildId, component])
 }
 
 model Channel {

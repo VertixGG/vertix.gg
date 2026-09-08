@@ -7,9 +7,16 @@ import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ip
 
 import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
+import { ChannelType } from "discord.js";
+
+import type { NewsChannel, TextChannel } from "discord.js";
+
 import type { IPCService, IPCMessage, IPCRequest } from "@vertix.gg/base/src/modules/ipc";
 
-import type { IPCManagementRequestPayload } from "@vertix.gg/definitions/src/ipc-definitions";
+import type {
+    IPCManagementRequestPayload,
+    GetGuildOptionsResponse
+} from "@vertix.gg/definitions/src/ipc-definitions";
 
 import type { GetScalingChannelInfoResponse } from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
 
@@ -18,6 +25,7 @@ import type {
     DynamicChannelIPCManagementPayload
 } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
@@ -30,6 +38,7 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
  */
 export class ManagementIPCService extends ServiceWithDependenciesBase<{
     ipcService: IPCService;
+    appService: AppService;
     scalingChannelService: ScalingChannelService;
     dynamicChannelService: DynamicChannelService;
 }> {
@@ -48,6 +57,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
     public getDependencies() {
         return {
             ipcService: "VertixBase/Modules/IPCService",
+            appService: "VertixBot/Services/App",
             scalingChannelService: "VertixBot/Services/ScalingChannel",
             dynamicChannelService: "VertixBot/Services/DynamicChannel"
         };
@@ -76,7 +86,10 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             );
 
             // Register request handler for channel info queries
-            await this.services.ipcService.onRequest<IPCManagementRequestPayload, GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse>(
+            await this.services.ipcService.onRequest<
+                IPCManagementRequestPayload,
+                GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
+            >(
                 IPC_CHANNELS.MANAGEMENT_REQUEST,
                 IPC_CHANNELS.MANAGEMENT_RESPONSE,
                 this.handleIPCRequest.bind( this )
@@ -166,8 +179,9 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 } ) ),
 
             textChannels: guild.channels.cache
-                .filter( ( channel ) => ChannelType.GuildText === channel.type || ChannelType.GuildAnnouncement === channel.type )
-                .sort( ( a, b ) => ( "position" in a ? a.position : 0 ) - ( "position" in b ? b.position : 0 ) )
+                .filter( ( channel ): channel is TextChannel | NewsChannel =>
+                    ChannelType.GuildText === channel.type || ChannelType.GuildAnnouncement === channel.type )
+                .sort( ( a, b ) => a.position - b.position )
                 .map( ( channel ) => ( {
                     id: channel.id,
                     name: channel.name
@@ -177,7 +191,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
 
     private async handleIPCRequest(
         request: IPCRequest<IPCManagementRequestPayload>
-    ): Promise<GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse> {
+    ): Promise<GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse> {
         const { payload } = request;
 
         this.logger.log( this.handleIPCRequest, `Received IPC request: ${ payload.action }` );

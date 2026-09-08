@@ -35,7 +35,11 @@ export type Guild = $Result.DefaultSelection<Prisma.$GuildPayload>
 export type GuildData = $Result.DefaultSelection<Prisma.$GuildDataPayload>
 /**
  * Model GuildCustomization
+ * One override target: a component, optionally narrowed to a state and a language.
  * 
+ * A row rather than a key inside a per-guild blob, so the four things that identify an override
+ * are four fields - nothing has to encode them into a string, and a writer cannot disagree with a
+ * reader about how that string is spelled.
  */
 export type GuildCustomization = $Result.DefaultSelection<Prisma.$GuildCustomizationPayload>
 /**
@@ -5799,6 +5803,9 @@ export namespace Prisma {
   export type GuildCustomizationMinAggregateOutputType = {
     id: string | null
     guildId: string | null
+    component: string | null
+    state: string | null
+    language: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5806,6 +5813,9 @@ export namespace Prisma {
   export type GuildCustomizationMaxAggregateOutputType = {
     id: string | null
     guildId: string | null
+    component: string | null
+    state: string | null
+    language: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5813,7 +5823,13 @@ export namespace Prisma {
   export type GuildCustomizationCountAggregateOutputType = {
     id: number
     guildId: number
-    components: number
+    component: number
+    state: number
+    language: number
+    embedOverrides: number
+    elementOverrides: number
+    modalOverrides: number
+    variables: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5823,6 +5839,9 @@ export namespace Prisma {
   export type GuildCustomizationMinAggregateInputType = {
     id?: true
     guildId?: true
+    component?: true
+    state?: true
+    language?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5830,6 +5849,9 @@ export namespace Prisma {
   export type GuildCustomizationMaxAggregateInputType = {
     id?: true
     guildId?: true
+    component?: true
+    state?: true
+    language?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5837,7 +5859,13 @@ export namespace Prisma {
   export type GuildCustomizationCountAggregateInputType = {
     id?: true
     guildId?: true
-    components?: true
+    component?: true
+    state?: true
+    language?: true
+    embedOverrides?: true
+    elementOverrides?: true
+    modalOverrides?: true
+    variables?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5918,7 +5946,13 @@ export namespace Prisma {
   export type GuildCustomizationGroupByOutputType = {
     id: string
     guildId: string
-    components: JsonValue
+    component: string
+    state: string | null
+    language: string | null
+    embedOverrides: JsonValue | null
+    elementOverrides: JsonValue | null
+    modalOverrides: JsonValue | null
+    variables: JsonValue | null
     createdAt: Date
     updatedAt: Date
     _count: GuildCustomizationCountAggregateOutputType | null
@@ -5943,7 +5977,13 @@ export namespace Prisma {
   export type GuildCustomizationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     guildId?: boolean
-    components?: boolean
+    component?: boolean
+    state?: boolean
+    language?: boolean
+    embedOverrides?: boolean
+    elementOverrides?: boolean
+    modalOverrides?: boolean
+    variables?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["guildCustomization"]>
@@ -5953,20 +5993,45 @@ export namespace Prisma {
   export type GuildCustomizationSelectScalar = {
     id?: boolean
     guildId?: boolean
-    components?: boolean
+    component?: boolean
+    state?: boolean
+    language?: boolean
+    embedOverrides?: boolean
+    elementOverrides?: boolean
+    modalOverrides?: boolean
+    variables?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type GuildCustomizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "components" | "createdAt" | "updatedAt", ExtArgs["result"]["guildCustomization"]>
+  export type GuildCustomizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "component" | "state" | "language" | "embedOverrides" | "elementOverrides" | "modalOverrides" | "variables" | "createdAt" | "updatedAt", ExtArgs["result"]["guildCustomization"]>
 
   export type $GuildCustomizationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GuildCustomization"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      /**
+       * The guild the override belongs to; `__default__` is the base layer under every guild.
+       */
       guildId: string
-      components: Prisma.JsonValue
+      /**
+       * The component's own name, as `getName()` returns it - "VertixBot/UI-V3/DynamicChannel".
+       * Never shortened: `UI-V2/DynamicChannel` and `UI-V3/DynamicChannel` are different components.
+       */
+      component: string
+      /**
+       * The state the override is narrowed to, or null for every state of the component.
+       */
+      state: string | null
+      /**
+       * The language the override is narrowed to, or null for every language.
+       */
+      language: string | null
+      embedOverrides: Prisma.JsonValue | null
+      elementOverrides: Prisma.JsonValue | null
+      modalOverrides: Prisma.JsonValue | null
+      variables: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["guildCustomization"]>
@@ -6363,7 +6428,13 @@ export namespace Prisma {
   interface GuildCustomizationFieldRefs {
     readonly id: FieldRef<"GuildCustomization", 'String'>
     readonly guildId: FieldRef<"GuildCustomization", 'String'>
-    readonly components: FieldRef<"GuildCustomization", 'Json'>
+    readonly component: FieldRef<"GuildCustomization", 'String'>
+    readonly state: FieldRef<"GuildCustomization", 'String'>
+    readonly language: FieldRef<"GuildCustomization", 'String'>
+    readonly embedOverrides: FieldRef<"GuildCustomization", 'Json'>
+    readonly elementOverrides: FieldRef<"GuildCustomization", 'Json'>
+    readonly modalOverrides: FieldRef<"GuildCustomization", 'Json'>
+    readonly variables: FieldRef<"GuildCustomization", 'Json'>
     readonly createdAt: FieldRef<"GuildCustomization", 'DateTime'>
     readonly updatedAt: FieldRef<"GuildCustomization", 'DateTime'>
   }
@@ -12006,7 +12077,13 @@ export namespace Prisma {
   export const GuildCustomizationScalarFieldEnum: {
     id: 'id',
     guildId: 'guildId',
-    components: 'components',
+    component: 'component',
+    state: 'state',
+    language: 'language',
+    embedOverrides: 'embedOverrides',
+    elementOverrides: 'elementOverrides',
+    modalOverrides: 'modalOverrides',
+    variables: 'variables',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -12507,7 +12584,13 @@ export namespace Prisma {
     NOT?: GuildCustomizationWhereInput | GuildCustomizationWhereInput[]
     id?: StringFilter<"GuildCustomization"> | string
     guildId?: StringFilter<"GuildCustomization"> | string
-    components?: JsonFilter<"GuildCustomization">
+    component?: StringFilter<"GuildCustomization"> | string
+    state?: StringNullableFilter<"GuildCustomization"> | string | null
+    language?: StringNullableFilter<"GuildCustomization"> | string | null
+    embedOverrides?: JsonNullableFilter<"GuildCustomization">
+    elementOverrides?: JsonNullableFilter<"GuildCustomization">
+    modalOverrides?: JsonNullableFilter<"GuildCustomization">
+    variables?: JsonNullableFilter<"GuildCustomization">
     createdAt?: DateTimeFilter<"GuildCustomization"> | Date | string
     updatedAt?: DateTimeFilter<"GuildCustomization"> | Date | string
   }
@@ -12515,26 +12598,45 @@ export namespace Prisma {
   export type GuildCustomizationOrderByWithRelationInput = {
     id?: SortOrder
     guildId?: SortOrder
-    components?: SortOrder
+    component?: SortOrder
+    state?: SortOrder
+    language?: SortOrder
+    embedOverrides?: SortOrder
+    elementOverrides?: SortOrder
+    modalOverrides?: SortOrder
+    variables?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type GuildCustomizationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    guildId?: string
+    guildId_component_state_language?: GuildCustomizationGuildIdComponentStateLanguageCompoundUniqueInput
     AND?: GuildCustomizationWhereInput | GuildCustomizationWhereInput[]
     OR?: GuildCustomizationWhereInput[]
     NOT?: GuildCustomizationWhereInput | GuildCustomizationWhereInput[]
-    components?: JsonFilter<"GuildCustomization">
+    guildId?: StringFilter<"GuildCustomization"> | string
+    component?: StringFilter<"GuildCustomization"> | string
+    state?: StringNullableFilter<"GuildCustomization"> | string | null
+    language?: StringNullableFilter<"GuildCustomization"> | string | null
+    embedOverrides?: JsonNullableFilter<"GuildCustomization">
+    elementOverrides?: JsonNullableFilter<"GuildCustomization">
+    modalOverrides?: JsonNullableFilter<"GuildCustomization">
+    variables?: JsonNullableFilter<"GuildCustomization">
     createdAt?: DateTimeFilter<"GuildCustomization"> | Date | string
     updatedAt?: DateTimeFilter<"GuildCustomization"> | Date | string
-  }, "id" | "guildId">
+  }, "id" | "guildId_component_state_language">
 
   export type GuildCustomizationOrderByWithAggregationInput = {
     id?: SortOrder
     guildId?: SortOrder
-    components?: SortOrder
+    component?: SortOrder
+    state?: SortOrder
+    language?: SortOrder
+    embedOverrides?: SortOrder
+    elementOverrides?: SortOrder
+    modalOverrides?: SortOrder
+    variables?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: GuildCustomizationCountOrderByAggregateInput
@@ -12548,7 +12650,13 @@ export namespace Prisma {
     NOT?: GuildCustomizationScalarWhereWithAggregatesInput | GuildCustomizationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"GuildCustomization"> | string
     guildId?: StringWithAggregatesFilter<"GuildCustomization"> | string
-    components?: JsonWithAggregatesFilter<"GuildCustomization">
+    component?: StringWithAggregatesFilter<"GuildCustomization"> | string
+    state?: StringNullableWithAggregatesFilter<"GuildCustomization"> | string | null
+    language?: StringNullableWithAggregatesFilter<"GuildCustomization"> | string | null
+    embedOverrides?: JsonNullableWithAggregatesFilter<"GuildCustomization">
+    elementOverrides?: JsonNullableWithAggregatesFilter<"GuildCustomization">
+    modalOverrides?: JsonNullableWithAggregatesFilter<"GuildCustomization">
+    variables?: JsonNullableWithAggregatesFilter<"GuildCustomization">
     createdAt?: DateTimeWithAggregatesFilter<"GuildCustomization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"GuildCustomization"> | Date | string
   }
@@ -13258,7 +13366,13 @@ export namespace Prisma {
   export type GuildCustomizationCreateInput = {
     id?: string
     guildId: string
-    components: InputJsonValue
+    component: string
+    state?: string | null
+    language?: string | null
+    embedOverrides?: InputJsonValue | null
+    elementOverrides?: InputJsonValue | null
+    modalOverrides?: InputJsonValue | null
+    variables?: InputJsonValue | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -13266,21 +13380,39 @@ export namespace Prisma {
   export type GuildCustomizationUncheckedCreateInput = {
     id?: string
     guildId: string
-    components: InputJsonValue
+    component: string
+    state?: string | null
+    language?: string | null
+    embedOverrides?: InputJsonValue | null
+    elementOverrides?: InputJsonValue | null
+    modalOverrides?: InputJsonValue | null
+    variables?: InputJsonValue | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type GuildCustomizationUpdateInput = {
     guildId?: StringFieldUpdateOperationsInput | string
-    components?: InputJsonValue | InputJsonValue
+    component?: StringFieldUpdateOperationsInput | string
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: NullableStringFieldUpdateOperationsInput | string | null
+    embedOverrides?: InputJsonValue | InputJsonValue | null
+    elementOverrides?: InputJsonValue | InputJsonValue | null
+    modalOverrides?: InputJsonValue | InputJsonValue | null
+    variables?: InputJsonValue | InputJsonValue | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildCustomizationUncheckedUpdateInput = {
     guildId?: StringFieldUpdateOperationsInput | string
-    components?: InputJsonValue | InputJsonValue
+    component?: StringFieldUpdateOperationsInput | string
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: NullableStringFieldUpdateOperationsInput | string | null
+    embedOverrides?: InputJsonValue | InputJsonValue | null
+    elementOverrides?: InputJsonValue | InputJsonValue | null
+    modalOverrides?: InputJsonValue | InputJsonValue | null
+    variables?: InputJsonValue | InputJsonValue | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13288,21 +13420,39 @@ export namespace Prisma {
   export type GuildCustomizationCreateManyInput = {
     id?: string
     guildId: string
-    components: InputJsonValue
+    component: string
+    state?: string | null
+    language?: string | null
+    embedOverrides?: InputJsonValue | null
+    elementOverrides?: InputJsonValue | null
+    modalOverrides?: InputJsonValue | null
+    variables?: InputJsonValue | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type GuildCustomizationUpdateManyMutationInput = {
     guildId?: StringFieldUpdateOperationsInput | string
-    components?: InputJsonValue | InputJsonValue
+    component?: StringFieldUpdateOperationsInput | string
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: NullableStringFieldUpdateOperationsInput | string | null
+    embedOverrides?: InputJsonValue | InputJsonValue | null
+    elementOverrides?: InputJsonValue | InputJsonValue | null
+    modalOverrides?: InputJsonValue | InputJsonValue | null
+    variables?: InputJsonValue | InputJsonValue | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuildCustomizationUncheckedUpdateManyInput = {
     guildId?: StringFieldUpdateOperationsInput | string
-    components?: InputJsonValue | InputJsonValue
+    component?: StringFieldUpdateOperationsInput | string
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: NullableStringFieldUpdateOperationsInput | string | null
+    embedOverrides?: InputJsonValue | InputJsonValue | null
+    elementOverrides?: InputJsonValue | InputJsonValue | null
+    modalOverrides?: InputJsonValue | InputJsonValue | null
+    variables?: InputJsonValue | InputJsonValue | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14105,22 +14255,24 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
-  export type JsonFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
 
-  export type JsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+  export type GuildCustomizationGuildIdComponentStateLanguageCompoundUniqueInput = {
+    guildId: string
+    component: string
+    state: string
+    language: string
   }
 
   export type GuildCustomizationCountOrderByAggregateInput = {
     id?: SortOrder
     guildId?: SortOrder
-    components?: SortOrder
+    component?: SortOrder
+    state?: SortOrder
+    language?: SortOrder
+    embedOverrides?: SortOrder
+    elementOverrides?: SortOrder
+    modalOverrides?: SortOrder
+    variables?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14128,6 +14280,9 @@ export namespace Prisma {
   export type GuildCustomizationMaxOrderByAggregateInput = {
     id?: SortOrder
     guildId?: SortOrder
+    component?: SortOrder
+    state?: SortOrder
+    language?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14135,22 +14290,11 @@ export namespace Prisma {
   export type GuildCustomizationMinOrderByAggregateInput = {
     id?: SortOrder
     guildId?: SortOrder
+    component?: SortOrder
+    state?: SortOrder
+    language?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-  export type JsonWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedJsonFilter<$PrismaModel>
-    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type EnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel = never> = {
@@ -14924,17 +15068,6 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
     isSet?: boolean
-  }
-  export type NestedJsonFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
   }
 
   export type NestedEnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel = never> = {

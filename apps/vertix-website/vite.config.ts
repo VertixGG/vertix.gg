@@ -158,6 +158,7 @@ export default defineConfig( ( { mode } ) => {
             },
         },
         server: {
+            host: "0.0.0.0",
             fs: {
                 allow: [
                     path.resolve( __dirname ),

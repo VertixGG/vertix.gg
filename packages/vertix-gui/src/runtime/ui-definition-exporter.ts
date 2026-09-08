@@ -14,6 +14,10 @@ import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { VirtualFlowGenerator } from "@vertix.gg/gui/src/runtime/virtual-flow-generator";
 
+import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
+
+import { UI_ELEMENTS_DEFAULT_MAX_PER_ROW } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import {
     UI_LANGUAGES_INITIAL_CODE,
     UI_LANGUAGES_INITIAL_FILE_PATH
@@ -878,9 +882,37 @@ export class UIDefinitionExporter extends UIBase {
         return {
             name,
             resolver: undefined,
-            items: rows,
+            items: this.bakeRowLayout( rows ),
             options: undefined
         };
+    }
+
+    /**
+     * Function `bakeRowLayout()`: Bakes the bot's runtime row layout into the exported schema.
+     *
+     * A component such as the dynamic-channel primary message hands its elements group over as a
+     * single flat row and only wraps it into rows at render time, via
+     * `uiUtilsDynamicElementsRearrange( elements, UI_ELEMENTS_DEFAULT_MAX_PER_ROW )` (see the v2/v3
+     * `DynamicChannelComponent.getSchemaInternal()`). Without reproducing that here the export would
+     * ship one over-wide row and every consumer - the website preview included - would have to guess
+     * the wrapping, which is exactly how the preview drifted out of sync with Discord.
+     *
+     * This makes the exported schema the single source of truth for placement by applying the same
+     * wrap with the same shared constant. Only a single authored row wider than the max is wrapped;
+     * groups that already author their own rows (e.g. a select menu on its own line) are left exactly
+     * as authored, so intentional multi-row layouts are never flattened.
+     */
+    private bakeRowLayout(
+        rows: Array<Array<{ element: string; definition?: ElementDefinition }>>
+    ): Array<Array<{ element: string; definition?: ElementDefinition }>> {
+        if ( rows.length !== 1 || rows[ 0 ].length <= UI_ELEMENTS_DEFAULT_MAX_PER_ROW ) {
+            return rows;
+        }
+
+        return uiUtilsDynamicElementsRearrange(
+            rows as unknown as [][],
+            UI_ELEMENTS_DEFAULT_MAX_PER_ROW
+        ) as unknown as Array<Array<{ element: string; definition?: ElementDefinition }>>;
     }
 
     private async serializeElementDefinition( element: unknown ): Promise<ElementDefinition | undefined> {

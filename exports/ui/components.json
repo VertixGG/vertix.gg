@@ -1440,7 +1440,9 @@
                                 "style": "secondary",
                                 "emoji": "🚫"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
                             "definition": {
@@ -1484,7 +1486,9 @@
                                 "style": "secondary",
                                 "emoji": "🔀"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
                             "definition": {
@@ -2059,7 +2063,9 @@
                                 "style": "secondary",
                                 "emoji": "🚫"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton",
                             "definition": {
@@ -2103,7 +2109,9 @@
                                 "style": "secondary",
                                 "emoji": "🔀"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
                             "definition": {
@@ -5177,7 +5185,9 @@
                                 "style": "secondary",
                                 "emoji": "<emoji name='ChannelPrivacy'>"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V3/DynamicChannelRegionButton",
                             "definition": {
@@ -5221,7 +5231,9 @@
                                 "style": "secondary",
                                 "emoji": "<emoji name='ResetChannel'>"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
                             "definition": {
@@ -5602,7 +5614,9 @@
                                 "style": "secondary",
                                 "emoji": "<emoji name='ChannelPrivacy'>"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V3/DynamicChannelRegionButton",
                             "definition": {
@@ -5646,7 +5660,9 @@
                                 "style": "secondary",
                                 "emoji": "<emoji name='ResetChannel'>"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
                             "definition": {

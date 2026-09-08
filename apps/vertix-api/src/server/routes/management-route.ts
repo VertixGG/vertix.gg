@@ -45,6 +45,10 @@ interface UpdateDynamicSettingsBody {
     dynamicChannelMentionable?: boolean;
     dynamicChannelDefaultPrivacyState?: "public" | "private" | "hidden";
     dynamicChannelDefaultUserLimit?: number | null;
+    dynamicChannelVerifiedRoles?: string[];
+    dynamicChannelStaffRoles?: string[];
+    dynamicChannelVoiceRoleId?: string | null;
+    dynamicChannelLogsChannelId?: string | null;
 }
 
 /**
@@ -250,6 +254,19 @@ export class ManagementRoute extends RouteBase {
         }
     }
 
+    public async handleGetGuildDiscordOptions(
+        request: FastifyRequest<{ Params: GuildParams }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId } = request.params;
+
+            return await this.getService().getGuildDiscordOptions( guildId );
+        } catch( error ) {
+            handleError( this.handleGetGuildDiscordOptions, error, reply, "Failed to fetch guild options" );
+        }
+    }
+
     public async handleUpdateDynamicSettings(
         request: FastifyRequest<{ Params: DynamicMasterParams; Body: UpdateDynamicSettingsBody }>,
         reply: FastifyReply
@@ -325,6 +342,11 @@ export class ManagementRoute extends RouteBase {
         fastify.get<{ Params: GuildParams }>(
             "/management/guild/:guildId",
             this.handleGetGuildManagement.bind( this )
+        );
+
+        fastify.get<{ Params: GuildParams }>(
+            "/management/guild/:guildId/discord-options",
+            this.handleGetGuildDiscordOptions.bind( this )
         );
 
         fastify.post<{ Params: GuildParams; Body: CreateScalingSetupBody }>(

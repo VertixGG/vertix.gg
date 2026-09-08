@@ -36,7 +36,7 @@ import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
-import { CleanupWorker, initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
+import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
@@ -921,7 +921,7 @@ export async function entryPoint( options: {
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 
     // TODO: Dont run in dev mode
-    CleanupWorker.$.handle( client ).catch( ( error ) => {
-        GlobalLogger.$.error( entryPoint, "Startup channel cleanup failed", error );
-    } );
+    // CleanupWorker.$.handle( client ).catch( ( error ) => {
+    //     GlobalLogger.$.error( entryPoint, "Startup channel cleanup failed", error );
+    // } );
 }

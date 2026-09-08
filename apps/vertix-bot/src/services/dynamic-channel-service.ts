@@ -246,6 +246,37 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 );
             }
 
+            if ( settings.dynamicChannelVerifiedRoles !== undefined ) {
+                await MasterChannelDataManager.$.setChannelVerifiedRoles(
+                    masterChannelDB,
+                    guildId,
+                    settings.dynamicChannelVerifiedRoles
+                );
+            }
+
+            if ( settings.dynamicChannelStaffRoles !== undefined ) {
+                await MasterChannelDataManager.$.setChannelStaffRoles(
+                    masterChannelDB,
+                    guildId,
+                    settings.dynamicChannelStaffRoles
+                );
+            }
+
+            if ( settings.dynamicChannelVoiceRoleId !== undefined ) {
+                await MasterChannelDataManager.$.setChannelVoiceRoleId(
+                    masterChannelDB,
+                    guildId,
+                    settings.dynamicChannelVoiceRoleId
+                );
+            }
+
+            if ( settings.dynamicChannelLogsChannelId !== undefined ) {
+                await MasterChannelDataManager.$.setChannelLogsChannel(
+                    masterChannelDB,
+                    settings.dynamicChannelLogsChannelId
+                );
+            }
+
             this.logger.log(
                 this.handleUpdateDynamicSettings,
                 `Successfully updated dynamic settings for master ${ masterChannelId }`

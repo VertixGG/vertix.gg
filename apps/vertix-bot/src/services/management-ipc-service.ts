@@ -138,6 +138,43 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         }
     }
 
+    /**
+     * Function getGuildOptions() :: The roles and text channels of a guild the bot is in.
+     *
+     * Read from the cache the client already keeps, so the dashboard's pickers cost nothing and
+     * work regardless of which application the api's own token belongs to.
+     */
+    private async getGuildOptions( guildId: string ): Promise<GetGuildOptionsResponse> {
+        const guild = this.services.appService.getClient()?.guilds.cache.get( guildId );
+
+        if ( !guild ) {
+            this.logger.warn( this.getGuildOptions, `Guild not found: ${ guildId }` );
+
+            return { roles: [], textChannels: [] };
+        }
+
+        return {
+            // `@everyone` carries the guild's own id and is the default verified role, so it stays;
+            // a role an integration owns cannot be handed out, so it does not.
+            roles: guild.roles.cache
+                .filter( ( role ) => !role.managed )
+                .sort( ( a, b ) => b.position - a.position )
+                .map( ( role ) => ( {
+                    id: role.id,
+                    name: role.id === guildId ? "@everyone" : role.name,
+                    color: role.color
+                } ) ),
+
+            textChannels: guild.channels.cache
+                .filter( ( channel ) => ChannelType.GuildText === channel.type || ChannelType.GuildAnnouncement === channel.type )
+                .sort( ( a, b ) => ( "position" in a ? a.position : 0 ) - ( "position" in b ? b.position : 0 ) )
+                .map( ( channel ) => ( {
+                    id: channel.id,
+                    name: channel.name
+                } ) )
+        };
+    }
+
     private async handleIPCRequest(
         request: IPCRequest<IPCManagementRequestPayload>
     ): Promise<GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse> {
@@ -159,6 +196,9 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                     payload.masterChannelId,
                     payload.dynamicChannelIds
                 );
+
+            case IPC_REQUEST_ACTIONS.GET_GUILD_OPTIONS:
+                return this.getGuildOptions( payload.guildId );
 
             default:
                 throw new Error( `Unknown request action: ${ ( payload as IPCManagementRequestPayload ).action }` );

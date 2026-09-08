@@ -10,6 +10,14 @@ export interface DiscordAPIChannel {
     parent_id: string | null;
 }
 
+export interface DiscordAPIRole {
+    id: string;
+    name: string;
+    color: number;
+    position: number;
+    managed: boolean;
+}
+
 export interface DiscordAPIGuild {
     id: string;
     name: string;
@@ -82,6 +90,26 @@ export class DiscordService extends ServiceBase {
             return await response.json() as DiscordAPIChannel[];
         } catch( error ) {
             this.logger.error( this.fetchGuildChannels, `Error fetching channels for guild ${ guildId }`, error );
+            return [];
+        }
+    }
+
+    public async fetchGuildRoles( guildId: string ): Promise<DiscordAPIRole[]> {
+        try {
+            const response = await fetch( `${ DISCORD_API_BASE }/guilds/${ guildId }/roles`, {
+                headers: {
+                    Authorization: `Bot ${ this.botToken }`
+                }
+            } );
+
+            if ( !response.ok ) {
+                this.logger.warn( this.fetchGuildRoles, `Failed to fetch roles for guild ${ guildId }: ${ response.status }` );
+                return [];
+            }
+
+            return await response.json() as DiscordAPIRole[];
+        } catch( error ) {
+            this.logger.error( this.fetchGuildRoles, `Error fetching roles for guild ${ guildId }`, error );
             return [];
         }
     }

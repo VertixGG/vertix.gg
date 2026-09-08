@@ -53,6 +53,8 @@ const DYNAMIC_SETTINGS_BY_VERSION = {
     }
 } as const;
 
+const DISCORD_TEXT_CHANNEL_TYPES = [ 0, 5 ];
+
 const DYNAMIC_SETTINGS_KEYS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.key );
 const DYNAMIC_SETTINGS_VERSIONS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.version );
 
@@ -89,7 +91,10 @@ function readDynamicSettings( settingsData: Record<string, unknown> ): DynamicSe
         dynamicChannelDefaultPrivacyState:
             ( settingsData.dynamicChannelDefaultPrivacyState as ChannelPrivacyStateDefault ) ?? "public",
         dynamicChannelDefaultUserLimit: ( settingsData.dynamicChannelDefaultUserLimit as number | null ) ?? null,
-        dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || []
+        dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || [],
+        dynamicChannelStaffRoles: ( settingsData.dynamicChannelStaffRoles as string[] ) || [],
+        dynamicChannelVoiceRoleId: ( settingsData.dynamicChannelVoiceRoleId as string | null ) ?? null,
+        dynamicChannelLogsChannelId: ( settingsData.dynamicChannelLogsChannelId as string | null ) ?? null
     };
 }
 
@@ -101,6 +106,9 @@ export interface DynamicSettings {
     dynamicChannelDefaultPrivacyState: ChannelPrivacyStateDefault;
     dynamicChannelDefaultUserLimit: number | null;
     dynamicChannelVerifiedRoles: string[];
+    dynamicChannelStaffRoles: string[];
+    dynamicChannelVoiceRoleId: string | null;
+    dynamicChannelLogsChannelId: string | null;
 }
 
 export interface ScalingMasterChannelInfo {
@@ -149,6 +157,22 @@ export interface DynamicMasterDetails {
     };
 }
 
+export interface GuildDiscordRole {
+    id: string;
+    name: string;
+    color: number;
+}
+
+export interface GuildDiscordChannel {
+    id: string;
+    name: string;
+}
+
+export interface GuildDiscordOptions {
+    roles: GuildDiscordRole[];
+    textChannels: GuildDiscordChannel[];
+}
+
 export interface UpdateDynamicSettingsInput {
     dynamicChannelNameTemplate?: string;
     dynamicChannelAutoSave?: boolean;
@@ -156,6 +180,10 @@ export interface UpdateDynamicSettingsInput {
     dynamicChannelMentionable?: boolean;
     dynamicChannelDefaultPrivacyState?: ChannelPrivacyStateDefault;
     dynamicChannelDefaultUserLimit?: number | null;
+    dynamicChannelVerifiedRoles?: string[];
+    dynamicChannelStaffRoles?: string[];
+    dynamicChannelVoiceRoleId?: string | null;
+    dynamicChannelLogsChannelId?: string | null;
 }
 
 export interface ScalingChannelInfo {
@@ -690,6 +718,41 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         } );
 
         return true;
+    }
+
+    /**
+     * Function getGuildDiscordOptions() :: The roles and text channels a generator's settings can
+     * point at.
+     *
+     * Without this a form has nowhere to get names from, and an admin would be pasting snowflakes
+     * into fields to set a log channel or a verified role.
+     */
+    public async getGuildDiscordOptions( guildId: string ): Promise<GuildDiscordOptions> {
+        const [ roles, channels ] = await Promise.all( [
+            this.services.discordService.fetchGuildRoles( guildId ),
+            this.services.discordService.fetchGuildChannels( guildId )
+        ] );
+
+        return {
+            // `@everyone` carries the guild's own id and is the default verified role, so it stays
+            // in; roles a bot or an integration owns cannot be handed out, so they do not.
+            roles: roles
+                .filter( ( role ) => !role.managed )
+                .sort( ( a, b ) => b.position - a.position )
+                .map( ( role ) => ( {
+                    id: role.id,
+                    name: role.id === guildId ? "@everyone" : role.name,
+                    color: role.color
+                } ) ),
+
+            textChannels: channels
+                .filter( ( channel ) => DISCORD_TEXT_CHANNEL_TYPES.includes( channel.type ) )
+                .sort( ( a, b ) => a.position - b.position )
+                .map( ( channel ) => ( {
+                    id: channel.id,
+                    name: channel.name
+                } ) )
+        };
     }
 
     public async updateDynamicSettings(

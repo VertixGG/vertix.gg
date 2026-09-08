@@ -1,4 +1,4 @@
-import { fetchUIComponents } from "@vertix.gg/discord-ui";
+import { fetchUIComponents, loadEmojiManifest } from "@vertix.gg/discord-ui";
 
 import { BUTTONS_MENU_ELEMENT, tilesFromSelectOptions } from "@vertix.gg/utils/src/button-sheet-svg";
 
@@ -87,7 +87,9 @@ export function serialiseSheetConfig( config: SheetConfig ): Record<string, stri
  * buttons the bot ships, in the order it sorts them, and gains a button the moment the bot does.
  */
 export async function fetchSheetTiles(): Promise<ReadonlyArray<SheetTile>> {
-    const components = await fetchUIComponents();
+    // The artwork is resolved from Discord, so make sure the manifest is in hand before `iconSource`
+    // is asked for any icon.
+    const [ components ] = await Promise.all( [ fetchUIComponents(), loadEmojiManifest() ] );
 
     for ( const component of components ) {
         for ( const group of component.elementsGroups ) {

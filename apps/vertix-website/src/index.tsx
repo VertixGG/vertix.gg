@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 
 import { BrowserRouter } from "react-router-dom";
 
+import { EmojiManifestProvider } from "@vertix.gg/discord-ui";
+
 import VoiceChannels from "@vertix.gg/website/src/vertix/index";
 
 // import reportWebVitals from './reportWebVitals';
@@ -13,9 +15,11 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <VoiceChannels/>
-        </BrowserRouter>
+        <EmojiManifestProvider>
+            <BrowserRouter>
+                <VoiceChannels/>
+            </BrowserRouter>
+        </EmojiManifestProvider>
     </React.StrictMode>
 );
 

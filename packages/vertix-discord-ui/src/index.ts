@@ -3,6 +3,7 @@ export * from "./discord-button";
 export * from "./discord-message";
 export * from "./discord-modal";
 export * from "./discord-emojis";
+export * from "./emoji-manifest";
 export * from "./discord-select-menu";
 export * from "./discord-select-menu-dropdown";
 export * from "./discord-command-suggestion";

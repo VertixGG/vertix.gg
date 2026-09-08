@@ -23,11 +23,6 @@ declare module "*.webp" {
     export default content;
 }
 
-declare module "@vertix.gg/assets/*.svg" {
-    const content: string;
-    export default content;
-}
-
 declare module "@vertix.gg/assets/*.png" {
     const content: string;
     export default content;

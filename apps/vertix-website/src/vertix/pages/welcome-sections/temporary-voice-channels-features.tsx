@@ -80,10 +80,10 @@ export default function TemporaryVoiceChannelsFeatures() {
                             limit: "Unlimited",
                             state: "🌐 Public",
                             region: "Automatic",
-                            renameEmoji: "<:ChannelRename:1272447740034682952>",
-                            limitEmoji: "<:UserLimit:1269654650206818316>",
-                            privacyEmoji: "<:ChannelPrivacy:1269655669984985158>",
-                            regionEmoji: "<:ChannelRegion:1272451511322017804>",
+                            renameEmoji: "<emoji name='ChannelRename'>",
+                            limitEmoji: "<emoji name='UserLimit'>",
+                            privacyEmoji: "<emoji name='ChannelPrivacy'>",
+                            regionEmoji: "<emoji name='ChannelRegion'>",
                         } }
                         elementOverrides={ {
                             "VertixBot/UI-V3/DynamicChannelClaimChannelButton": { disabled: true },

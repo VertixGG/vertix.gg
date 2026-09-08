@@ -2,29 +2,7 @@ import * as React from "react";
 
 import { getEmojiTokenName, replaceEmojiTokens } from "@vertix.gg/utils/src/emoji-token";
 
-import ChannelRenameEmoji from "@vertix.gg/assets/svg/ChannelRename.svg";
-
-import UserLimitEmoji from "@vertix.gg/assets/svg/UserLimit.svg";
-
-import ChannelPermissionsEmoji from "@vertix.gg/assets/svg/ChannelPermissions.svg";
-
-import ChannelPrivacyEmoji from "@vertix.gg/assets/svg/ChannelPrivacy.svg";
-
-import ChannelRegionEmoji from "@vertix.gg/assets/svg/ChannelRegion.svg";
-
-import EditChannelMessageEmoji from "@vertix.gg/assets/svg/EditChannelMessage.svg";
-
-import ClearChatEmoji from "@vertix.gg/assets/svg/ClearChat.svg";
-
-import ResetChannelEmoji from "@vertix.gg/assets/svg/ResetChannel.svg";
-
-import TransferChannelEmoji from "@vertix.gg/assets/svg/TransferChannel.svg";
-
-import ClaimChannelEmoji from "@vertix.gg/assets/svg/ClaimChannel.svg";
-
-import ChannelTemplatesEmoji from "@vertix.gg/assets/svg/ChannelTemplates.svg";
-
-import CaptureEmoji from "@vertix.gg/assets/svg/Capture.svg";
+import { getCustomEmojiSrc } from "./emoji-manifest";
 
 import ArrowsClockwiseEmoji from "./assets/emojis/arrows-clockwise.svg";
 import BroomEmoji from "./assets/emojis/broom.svg";
@@ -53,23 +31,6 @@ export const DISCORD_EMOJI_ICON_SRC_BY_UNICODE: Readonly<Record<string, string>>
     "🌐": GlobeEmoji,
     "🌍": EarthEmoji,
     "👍": ThumbsUpEmoji,
-};
-
-export const DISCORD_EMOJI_ICON_SRC_BY_NAME: Readonly<Record<string, string>> = {
-    "ChannelRename": ChannelRenameEmoji,
-    "UserLimit": UserLimitEmoji,
-    "ChannelPermissions": ChannelPermissionsEmoji,
-    "ChannelPrivacy": ChannelPrivacyEmoji,
-    "ChannelRegion": ChannelRegionEmoji,
-    "EditChannelMessage": EditChannelMessageEmoji,
-    "ClearChat": ClearChatEmoji,
-    "ResetChannel": ResetChannelEmoji,
-    "TransferChannel": TransferChannelEmoji,
-    "ClaimChannel": ClaimChannelEmoji,
-    // The exported bot UI names this emoji `ChannelTemplates`; the site's own
-    // hand-written constant still uses `Templates`, so both resolve.
-    "ChannelTemplates": ChannelTemplatesEmoji,
-    "Capture": CaptureEmoji,
 };
 
 /**
@@ -101,13 +62,13 @@ export function getDiscordEmojiIconSrc(
     const markdownName = emoji.match( /<:([^:]+):(\d+)>/ )?.[ 1 ];
 
     if ( markdownName ) {
-        return DISCORD_EMOJI_ICON_SRC_BY_NAME[ markdownName ];
+        return getCustomEmojiSrc( markdownName );
     }
 
     const tokenName = getEmojiTokenName( emoji );
 
     if ( tokenName ) {
-        return DISCORD_EMOJI_ICON_SRC_BY_NAME[ tokenName ];
+        return getCustomEmojiSrc( tokenName );
     }
 
     return undefined;
@@ -142,7 +103,7 @@ export function replaceEmojisWithIcons( text: string, overrides?: Readonly<Recor
 
     // Handle custom Discord emojis <:Name:ID>
     result = result.replace( /<:([^:]+):(\d+)>/g, ( match, name, _id ) => {
-        const src = DISCORD_EMOJI_ICON_SRC_BY_NAME[ name ] || ( overrides ? overrides[ match ] : undefined );
+        const src = getCustomEmojiSrc( name ) || ( overrides ? overrides[ match ] : undefined );
         if ( src ) {
             return `<img src="${ src }" alt="${ name }" class="emoji" draggable="false">`;
         }
@@ -151,7 +112,7 @@ export function replaceEmojisWithIcons( text: string, overrides?: Readonly<Recor
 
     // Handle the `<emoji name='Name'>` token used by the exported UI definitions.
     result = replaceEmojiTokens( result, ( name ) => {
-        const src = DISCORD_EMOJI_ICON_SRC_BY_NAME[ name ];
+        const src = getCustomEmojiSrc( name );
 
         return src ? `<img src="${ src }" alt="${ name }" class="emoji" draggable="false">` : undefined;
     } );

@@ -1,15 +1,15 @@
 export const DYNAMIC_CHANNEL_V3_EMOJIS = {
-    rename: "<:ChannelRename:1272447740034682952>",
-    limit: "<:UserLimit:1269654650206818316>",
-    permissions: "<:ChannelPermissions:1269649241207210125>",
-    privacy: "<:ChannelPrivacy:1269655669984985158>",
-    region: "<:ChannelRegion:1272451511322017804>",
-    editPrimaryMessage: "<:EditChannelMessage:1264200057981243415>",
-    clearChat: "<:ClearChat:1269552009753919550>",
-    resetChannel: "<:ResetChannel:1269639351558606959>",
-    transferChannel: "<:TransferChannel:1269643178856939581>",
-    claimChannel: "<:ClaimChannel:1272450707542245386>",
-    templates: "<:Templates:1455157166615826432>",
+    rename: "<emoji name='ChannelRename'>",
+    limit: "<emoji name='UserLimit'>",
+    permissions: "<emoji name='ChannelPermissions'>",
+    privacy: "<emoji name='ChannelPrivacy'>",
+    region: "<emoji name='ChannelRegion'>",
+    editPrimaryMessage: "<emoji name='EditChannelMessage'>",
+    clearChat: "<emoji name='ClearChat'>",
+    resetChannel: "<emoji name='ResetChannel'>",
+    transferChannel: "<emoji name='TransferChannel'>",
+    claimChannel: "<emoji name='ClaimChannel'>",
+    templates: "<emoji name='Templates'>",
 };
 
 export const DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES = {

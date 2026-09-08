@@ -18,7 +18,9 @@ import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/li
 import { LAYOUT_OPTIONS, VIEWPORT_CONFIG, MINIMAP_COLORS, BACKGROUND_CONFIG, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
 import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
 
-import type { GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
+
+import type { CustomizationData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
 import type { Viewport, Node, Edge, ReactFlowInstance } from "@xyflow/react";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
@@ -50,7 +52,7 @@ export function FlowViewer() {
     const translations = useLanguageStore( ( state ) => state.translations );
 
     // Load customizations for the guild
-    const [ customization, setCustomization ] = useState<GuildCustomizationData | null>( null );
+    const [ customization, setCustomization ] = useState<CustomizationData | null>( null );
     const [ customizationRefreshKey, setCustomizationRefreshKey ] = useState( 0 );
 
     // Expose a refresh function globally for the save command to call
@@ -73,7 +75,7 @@ export function FlowViewer() {
         // Fetch customizations when guild changes or when refresh is triggered
         const queryModule = getQueryModule( CustomizationQuery );
         const isDefault = guildId === "__default__";
-        queryModule.request<GuildCustomizationData>(
+        queryModule.request<CustomizationData>(
             isDefault ? "Dashboard/Customization/GetDefault" : "Dashboard/Customization/GetGuild",
             isDefault ? {} : { guildId }
         )
@@ -201,10 +203,13 @@ export function FlowViewer() {
             }
 
             // Apply customization overrides on top
-            const customizationKey = node.data?.customizationKey as string | undefined;
-            if ( customizationKey && customization?.components ) {
-                const langKey = `${ customizationKey }::${ selectedLanguage }`;
-                const componentCustomization = customization.components[ langKey ] ?? customization.components[ customizationKey ];
+            const component = node.data?.component as string | undefined;
+            if ( component && customization ) {
+                const componentCustomization = resolveCustomization( customization, {
+                    component,
+                    state: ( node.data?.state as string | null ) ?? null,
+                    language: selectedLanguage
+                } );
 
                 if ( componentCustomization?.embedOverrides ) {
                     const currentEmbed = ( updatedData.embed ?? node.data?.embed ) as Record<string, unknown> | undefined;

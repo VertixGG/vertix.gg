@@ -12,6 +12,7 @@ export interface ElementData {
 
 export interface ComponentPreview {
     name: string;
+    fullName: string;
     embedName?: string;
     embed?: {
         title?: string;
@@ -293,7 +294,10 @@ export function extractComponentPreview(
     } );
 
     return {
+        // Shortened for the label only; `fullName` is what an override is stored against, since
+        // `UI-V2/DynamicChannel` and `UI-V3/DynamicChannel` share a last segment.
         name: component.name.split( "/" ).pop() ?? component.name,
+        fullName: component.name,
         embedName: firstEmbed?.embed,
         embed: definition ? {
             title: definition.title,

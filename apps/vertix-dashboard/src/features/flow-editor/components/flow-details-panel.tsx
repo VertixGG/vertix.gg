@@ -308,18 +308,21 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
     }
 
     const componentLabel = nodeData?.label as string;
-    const customizationKey = nodeData?.customizationKey as string;
+    const target = {
+        component: nodeData?.component as string,
+        state: ( nodeData?.state as string | null ) ?? null
+    };
 
-    logger.debug( EditModeDetailsView, "Rendering", { componentLabel, customizationKey } );
+    logger.debug( EditModeDetailsView, "Rendering", { componentLabel, ...target } );
 
     // Get the embed definition for the current state (stored when node was created)
     const embedDefinition = nodeData?.embedDefinition as UIExportEmbedDefinition | undefined;
 
     // Get current customization for this component/state
-    const currentCustomization = getComponentCustomization( customizationKey );
+    const currentCustomization = getComponentCustomization( target );
     const customizedVars = currentCustomization?.variables ?? {};
 
-    logger.debug( EditModeDetailsView, "Current customization", { customizationKey, hasCustomization: !!currentCustomization } );
+    logger.debug( EditModeDetailsView, "Current customization", { ...target, hasCustomization: !!currentCustomization } );
 
     // Collect variables from the current state's embed definition
     const allVars = new Map<string, { defaultValue?: string; options?: Record<string, string> }>();
@@ -363,8 +366,10 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
 
     const varEntries = Array.from( allVars.entries() ).sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) );
 
-    const hasPendingChanges = !!pendingChanges[ customizationKey ];
-    logger.debug( EditModeDetailsView, "Pending changes check", { customizationKey, hasPendingChanges } );
+    // The editor files a pending change under a key of its own; any entry for this component
+    // counts as unsaved work on it.
+    const hasPendingChanges = Object.keys( pendingChanges ).some( ( key ) => key.startsWith( `${ target.component }\u0000` ) );
+    logger.debug( EditModeDetailsView, "Pending changes check", { ...target, hasPendingChanges } );
 
     const handleVariableChange = ( varName: string, value: string ) => {
         const existingVars = currentCustomization?.variables ?? {};
@@ -372,8 +377,8 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
             ...currentCustomization,
             variables: { ...existingVars, [ varName ]: value }
         };
-        logger.debug( EditModeDetailsView, "Variable changed", { customizationKey, varName, value } );
-        setComponentChange( customizationKey, newCustomization );
+        logger.debug( EditModeDetailsView, "Variable changed", { ...target, varName, value } );
+        setComponentChange( target, newCustomization );
     };
 
     const handleSave = async() => {
@@ -381,7 +386,7 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
         setSaveError( null );
 
         try {
-            await saveComponentCustomization( customizationKey );
+            await saveComponentCustomization( target );
         } catch( error ) {
             setSaveError( error instanceof Error ? error.message : "Failed to save" );
         } finally {

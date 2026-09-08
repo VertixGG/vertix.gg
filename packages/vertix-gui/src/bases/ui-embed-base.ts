@@ -148,23 +148,28 @@ export abstract class UIEmbedBase extends UITemplateBase {
 
     /**
      * Fetches guild-specific customization for this embed.
-     * Uses _guildId and _customizationKey from uiArgs.
+     * Uses _guildId, _customizationComponent and _customizationState from uiArgs.
      */
     private async fetchCustomization() {
         const guildId = this.uiArgs?._guildId as string | undefined;
-        const customizationKey = this.uiArgs?._customizationKey as string | undefined;
+        const component = this.uiArgs?._customizationComponent as string | undefined;
+        const state = this.uiArgs?._customizationState as string | undefined;
         const languageCode = this.uiArgs?._language as string | undefined;
 
-        UIEmbedBase.$debugger.log( this.fetchCustomization, "Fetching customization", { guildId, customizationKey, languageCode } );
+        UIEmbedBase.$debugger.log( this.fetchCustomization, "Fetching customization", { guildId, component, state, languageCode } );
 
-        if ( !guildId || !customizationKey ) {
-            UIEmbedBase.$debugger.log( this.fetchCustomization, "Missing guildId or customizationKey, skipping" );
+        if ( !guildId || !component ) {
+            UIEmbedBase.$debugger.log( this.fetchCustomization, "Missing guildId or component, skipping" );
             return null;
         }
 
         try {
             const provider = this.uiService.getCustomizationProvider();
-            const result = await provider.getComponentCustomization( guildId, customizationKey, languageCode );
+            const result = await provider.getComponentCustomization( guildId, {
+                component,
+                state: state ?? null,
+                language: languageCode ?? null
+            } );
 
             UIEmbedBase.$debugger.log( this.fetchCustomization, "Customization result", { hasResult: !!result, result } );
 

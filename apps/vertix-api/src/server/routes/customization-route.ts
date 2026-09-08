@@ -8,7 +8,6 @@ import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/s
 import {
     DEFAULT_GUILD_ID,
     getGuildCustomization,
-    updateGuildCustomization,
     updateComponentCustomization,
     deleteComponentCustomization
 } from "@vertix.gg/api/src/server/services/customization-service";
@@ -25,18 +24,19 @@ interface GuildParams {
 }
 
 interface ComponentBody {
-    customizationKey: string;
+    /** The component's own name, as `getName()` returns it. */
+    component: string;
+    /** The state it is narrowed to, or null/absent for every state. */
+    state?: string | null;
+    /** The language it is narrowed to, or null/absent for every language. */
+    language?: string | null;
     customization: ComponentCustomization;
-    languageCode?: string;
-}
-
-interface UpdateCustomizationBody {
-    components: Record<string, ComponentCustomization>;
 }
 
 interface DeleteComponentBody {
-    customizationKey: string;
-    languageCode?: string;
+    component: string;
+    state?: string | null;
+    language?: string | null;
 }
 
 /**
@@ -105,39 +105,9 @@ async function handleGetGuildCustomization(
 ) {
     try {
         const { guildId } = request.params;
-        const customization = await getGuildCustomization( guildId );
-
-        // Return empty components if no customization exists yet
-        return customization ?? { guildId, components: {} };
+        return { guildId, rows: await getGuildCustomization( guildId ) };
     } catch( error ) {
         handleError( handleGetGuildCustomization, error, reply, "Failed to fetch guild customization" );
-    }
-}
-
-/**
- * PUT /customization/guild/:guildId
- * Update all customizations for a guild.
- */
-async function handleUpdateGuildCustomization(
-    request: FastifyRequest<{ Params: GuildParams; Body: UpdateCustomizationBody }>,
-    reply: FastifyReply
-) {
-    try {
-        const { guildId } = request.params;
-        const { components } = request.body;
-
-        if ( !components || typeof components !== "object" ) {
-            return reply.status( 400 ).send( { error: "Invalid request", message: "components object is required" } );
-        }
-
-        const customization = await updateGuildCustomization( guildId, components );
-
-        // Notify bot to refresh active sessions with updated customization
-        notifyBotCustomizationRefresh( guildId );
-
-        return customization;
-    } catch( error ) {
-        handleError( handleUpdateGuildCustomization, error, reply, "Failed to update guild customization" );
     }
 }
 
@@ -152,17 +122,17 @@ async function handleUpdateComponentCustomization(
 ) {
     try {
         const { guildId } = request.params;
-        const { customizationKey, customization, languageCode } = request.body;
+        const { component, state, language, customization } = request.body;
 
-        if ( !customizationKey || typeof customizationKey !== "string" ) {
-            return reply.status( 400 ).send( { error: "Invalid request", message: "customizationKey is required" } );
+        if ( !component || typeof component !== "string" ) {
+            return reply.status( 400 ).send( { error: "Invalid request", message: "component is required" } );
         }
 
         if ( !customization || typeof customization !== "object" ) {
             return reply.status( 400 ).send( { error: "Invalid request", message: "customization object is required" } );
         }
 
-        const result = await updateComponentCustomization( guildId, customizationKey, customization, languageCode );
+        const result = await updateComponentCustomization( guildId, { component, state, language }, customization );
 
         // Notify bot to refresh active sessions with updated customization
         notifyBotCustomizationRefresh( guildId );
@@ -184,13 +154,13 @@ async function handleDeleteComponentCustomization(
 ) {
     try {
         const { guildId } = request.params;
-        const { customizationKey, languageCode } = request.body;
+        const { component, state, language } = request.body;
 
-        if ( !customizationKey || typeof customizationKey !== "string" ) {
-            return reply.status( 400 ).send( { error: "Invalid request", message: "customizationKey is required" } );
+        if ( !component || typeof component !== "string" ) {
+            return reply.status( 400 ).send( { error: "Invalid request", message: "component is required" } );
         }
 
-        const result = await deleteComponentCustomization( guildId, customizationKey, languageCode );
+        const result = await deleteComponentCustomization( guildId, { component, state, language } );
 
         if ( !result ) {
             return reply.status( 404 ).send( { error: "Not found", message: "No customization found for this guild" } );
@@ -214,7 +184,7 @@ async function handleGetDefaultCustomization(
 ) {
     try {
         const customization = await getGuildCustomization( DEFAULT_GUILD_ID );
-        return customization ?? { guildId: DEFAULT_GUILD_ID, components: {} };
+        return { guildId: DEFAULT_GUILD_ID, rows: customization };
     } catch( error ) {
         handleError( handleGetDefaultCustomization, error, reply, "Failed to fetch default customization" );
     }
@@ -229,17 +199,17 @@ async function handleUpdateDefaultComponentCustomization(
     reply: FastifyReply
 ) {
     try {
-        const { customizationKey, customization, languageCode } = request.body;
+        const { component, state, language, customization } = request.body;
 
-        if ( !customizationKey || typeof customizationKey !== "string" ) {
-            return reply.status( 400 ).send( { error: "Invalid request", message: "customizationKey is required" } );
+        if ( !component || typeof component !== "string" ) {
+            return reply.status( 400 ).send( { error: "Invalid request", message: "component is required" } );
         }
 
         if ( !customization || typeof customization !== "object" ) {
             return reply.status( 400 ).send( { error: "Invalid request", message: "customization object is required" } );
         }
 
-        const result = await updateComponentCustomization( DEFAULT_GUILD_ID, customizationKey, customization, languageCode );
+        const result = await updateComponentCustomization( DEFAULT_GUILD_ID, { component, state, language }, customization );
 
         // Notify bot to refresh — __default__ affects all guilds
         notifyBotCustomizationRefresh( DEFAULT_GUILD_ID );
@@ -259,13 +229,13 @@ async function handleDeleteDefaultComponentCustomization(
     reply: FastifyReply
 ) {
     try {
-        const { customizationKey, languageCode } = request.body;
+        const { component, state, language } = request.body;
 
-        if ( !customizationKey || typeof customizationKey !== "string" ) {
-            return reply.status( 400 ).send( { error: "Invalid request", message: "customizationKey is required" } );
+        if ( !component || typeof component !== "string" ) {
+            return reply.status( 400 ).send( { error: "Invalid request", message: "component is required" } );
         }
 
-        const result = await deleteComponentCustomization( DEFAULT_GUILD_ID, customizationKey, languageCode );
+        const result = await deleteComponentCustomization( DEFAULT_GUILD_ID, { component, state, language } );
 
         if ( !result ) {
             return reply.status( 404 ).send( { error: "Not found", message: "No default customization found" } );
@@ -286,12 +256,6 @@ const customizationRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInst
         guildRoutes.get<{ Params: GuildParams }>(
             "/customization/guild/:guildId",
             handleGetGuildCustomization
-        );
-
-        // Update all customizations for a guild
-        guildRoutes.put<{ Params: GuildParams; Body: UpdateCustomizationBody }>(
-            "/customization/guild/:guildId",
-            handleUpdateGuildCustomization
         );
 
         // Update a single component's customization

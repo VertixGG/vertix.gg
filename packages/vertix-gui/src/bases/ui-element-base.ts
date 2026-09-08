@@ -35,16 +35,21 @@ export abstract class UIElementBase<T extends APIBaseComponent<ComponentType>> e
 
     protected async fetchElementOverride(): Promise<ElementOverride | null> {
         const guildId = this.uiArgs?._guildId as string | undefined;
-        const customizationKey = this.uiArgs?._customizationKey as string | undefined;
+        const component = this.uiArgs?._customizationComponent as string | undefined;
+        const state = this.uiArgs?._customizationState as string | undefined;
         const languageCode = this.uiArgs?._language as string | undefined;
 
-        if ( !guildId || !customizationKey ) {
+        if ( !guildId || !component ) {
             return null;
         }
 
         try {
             const provider = this.uiService.getCustomizationProvider();
-            const customization = await provider.getComponentCustomization( guildId, customizationKey, languageCode );
+            const customization = await provider.getComponentCustomization( guildId, {
+                component,
+                state: state ?? null,
+                language: languageCode ?? null
+            } );
 
             if ( !customization?.elementOverrides ) {
                 return null;

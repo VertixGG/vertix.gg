@@ -1,140 +1,117 @@
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
-import type { ComponentCustomization, GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
-export type { EmbedOverrides, ComponentCustomization, GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import type {
+    ComponentCustomization,
+    CustomizationTarget,
+    GuildCustomizationRow
+} from "@vertix.gg/definitions/src/ui-customization-definitions";
 
-export const DEFAULT_GUILD_ID = "__default__";
+export type {
+    EmbedOverrides,
+    ComponentCustomization,
+    CustomizationTarget,
+    GuildCustomizationRow
+} from "@vertix.gg/definitions/src/ui-customization-definitions";
+
+export const DEFAULT_GUILD_ID = DEFAULT_CUSTOMIZATION_GUILD_ID;
 
 const client = PrismaBotClient.$.getClient();
 
+type CustomizationRecord = {
+    guildId: string;
+    component: string;
+    state: string | null;
+    language: string | null;
+    embedOverrides: unknown;
+    elementOverrides: unknown;
+    modalOverrides: unknown;
+    variables: unknown;
+};
+
+function toRow( record: CustomizationRecord ): GuildCustomizationRow {
+    return {
+        guildId: record.guildId,
+        component: record.component,
+        state: record.state,
+        language: record.language,
+        embedOverrides: ( record.embedOverrides ?? undefined ) as GuildCustomizationRow[ "embedOverrides" ],
+        elementOverrides: ( record.elementOverrides ?? undefined ) as GuildCustomizationRow[ "elementOverrides" ],
+        modalOverrides: ( record.modalOverrides ?? undefined ) as GuildCustomizationRow[ "modalOverrides" ],
+        variables: ( record.variables ?? undefined ) as GuildCustomizationRow[ "variables" ]
+    };
+}
+
 /**
- * Fetch raw customization record from DB (no merging).
+ * Function getGuildCustomization() :: Every override that applies to a guild.
+ *
+ * The default guild's rows come with it, since they are the base layer the bot renders under the
+ * guild's own - the dashboard shows the same thing the member will see.
  */
-async function fetchRawCustomization( guildId: string ): Promise<GuildCustomizationData | null> {
-    const customization = await client.guildCustomization.findUnique( {
-        where: { guildId }
+export async function getGuildCustomization( guildId: string ): Promise<GuildCustomizationRow[]> {
+    const guildIds = DEFAULT_GUILD_ID === guildId
+        ? [ DEFAULT_GUILD_ID ]
+        : [ DEFAULT_GUILD_ID, guildId ];
+
+    const records = await client.guildCustomization.findMany( {
+        where: { guildId: { in: guildIds } }
     } );
 
-    if ( !customization ) {
-        return null;
-    }
-
-    return {
-        guildId: customization.guildId,
-        components: customization.components as Record<string, ComponentCustomization>,
-        createdAt: customization.createdAt,
-        updatedAt: customization.updatedAt
-    };
+    return records.map( toRow );
 }
 
 /**
- * Get all customizations for a guild.
- * For regular guilds, merges __default__ customizations as base with guild-specific on top.
- * For __default__ guildId, returns only the default record.
- */
-export async function getGuildCustomization( guildId: string ): Promise<GuildCustomizationData | null> {
-    if ( guildId === DEFAULT_GUILD_ID ) {
-        return fetchRawCustomization( DEFAULT_GUILD_ID );
-    }
-
-    // Merge: defaults as base, guild-specific on top
-    const [ defaultData, guildData ] = await Promise.all( [
-        fetchRawCustomization( DEFAULT_GUILD_ID ),
-        fetchRawCustomization( guildId )
-    ] );
-
-    if ( !defaultData && !guildData ) {
-        return null;
-    }
-
-    return {
-        guildId,
-        components: {
-            ...( defaultData?.components ?? {} ),
-            ...( guildData?.components ?? {} )
-        },
-        createdAt: guildData?.createdAt ?? defaultData?.createdAt,
-        updatedAt: guildData?.updatedAt ?? defaultData?.updatedAt
-    };
-}
-
-/**
- * Update customizations for a guild.
- * Uses upsert to create if doesn't exist.
- */
-export async function updateGuildCustomization(
-    guildId: string,
-    components: Record<string, ComponentCustomization>
-): Promise<GuildCustomizationData> {
-    const customization = await client.guildCustomization.upsert( {
-        where: { guildId },
-        update: { components },
-        create: { guildId, components }
-    } );
-
-    return {
-        guildId: customization.guildId,
-        components: customization.components as Record<string, ComponentCustomization>,
-        createdAt: customization.createdAt,
-        updatedAt: customization.updatedAt
-    };
-}
-
-/**
- * Compose a storage key for component customization.
- * When languageCode is provided, produces "componentName::languageCode" (e.g., "SetupNewEmbed::en").
- * Without languageCode, returns the plain componentName (backward-compatible).
- */
-function composeComponentKey( componentName: string, languageCode?: string ): string {
-    return languageCode ? `${ componentName }::${ languageCode }` : componentName;
-}
-
-/**
- * Update a single component's customization.
- * Merges with existing customizations.
- * Uses raw fetch to avoid merge with defaults when updating a specific guild.
- * When languageCode is provided, stores under "componentName::languageCode" key.
+ * Function updateComponentCustomization() :: Write one override.
+ *
+ * Addressed by what it applies to rather than by a composed key, so a save cannot land under a
+ * name the bot never looks up. Merges into the row that is already there.
  */
 export async function updateComponentCustomization(
     guildId: string,
-    componentName: string,
-    customization: ComponentCustomization,
-    languageCode?: string
-): Promise<GuildCustomizationData> {
-    // Get existing raw customizations (not merged) so we don't persist defaults into guild record
-    const existing = await fetchRawCustomization( guildId );
-    const components = existing?.components ?? {};
-
-    const storageKey = composeComponentKey( componentName, languageCode );
-
-    // Merge the new customization
-    components[ storageKey ] = {
-        ...components[ storageKey ],
-        ...customization
+    target: CustomizationTarget,
+    customization: ComponentCustomization
+): Promise<GuildCustomizationRow> {
+    const where = {
+        guildId,
+        component: target.component,
+        state: target.state ?? null,
+        language: target.language ?? null
     };
 
-    return updateGuildCustomization( guildId, components );
+    // Addressed by the four fields rather than by `whereUnique`: the compound carries nullable
+    // members, which the mongo connector will not accept as a unique selector.
+    const existing = await client.guildCustomization.findFirst( { where } );
+
+    const merged = {
+        embedOverrides: { ...( existing?.embedOverrides as object ?? {} ), ...customization.embedOverrides },
+        elementOverrides: { ...( existing?.elementOverrides as object ?? {} ), ...customization.elementOverrides },
+        modalOverrides: { ...( existing?.modalOverrides as object ?? {} ), ...customization.modalOverrides },
+        variables: { ...( existing?.variables as object ?? {} ), ...customization.variables }
+    };
+
+    const record = existing
+        ? await client.guildCustomization.update( { where: { id: existing.id }, data: merged } )
+        : await client.guildCustomization.create( { data: { ...where, ...merged } } );
+
+    return toRow( record );
 }
 
 /**
- * Delete a component's customization.
- * When languageCode is provided, deletes the "componentName::languageCode" key.
+ * Function deleteComponentCustomization() :: Drop one override entirely.
  */
 export async function deleteComponentCustomization(
     guildId: string,
-    componentName: string,
-    languageCode?: string
-): Promise<GuildCustomizationData | null> {
-    const existing = await fetchRawCustomization( guildId );
+    target: CustomizationTarget
+): Promise<boolean> {
+    const result = await client.guildCustomization.deleteMany( {
+        where: {
+            guildId,
+            component: target.component,
+            state: target.state ?? null,
+            language: target.language ?? null
+        }
+    } );
 
-    if ( !existing ) {
-        return null;
-    }
-
-    const storageKey = composeComponentKey( componentName, languageCode );
-    const components = { ...existing.components };
-    delete components[ storageKey ];
-
-    return updateGuildCustomization( guildId, components );
+    return result.count > 0;
 }

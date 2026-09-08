@@ -269,13 +269,13 @@ export class ExecutionAdapterBuilder<
                     return;
                 }
 
-                // Set state-specific customization key so each state can have its own customization
-                // Format: "ComponentName:StateName" (matches dashboard customizationKey format)
+                // Each state can carry its own customization, so the target follows the transition.
                 if ( resolved.targetState ) {
-                    const componentShortName = this.getComponent().getName().split( "/" ).pop() ?? this.getComponent().getName();
-                    const stateShortName = resolved.targetState.split( "/" ).pop() ?? resolved.targetState;
                     const mergedArgs = ( args ?? {} ) as Record<string, unknown>;
-                    mergedArgs._customizationKey = `${ componentShortName }:${ stateShortName }`;
+
+                    mergedArgs._customizationComponent = this.getComponent().getName();
+                    mergedArgs._customizationState = resolved.targetState;
+
                     args = mergedArgs as TArgs;
                 }
 

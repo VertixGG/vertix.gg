@@ -257,29 +257,21 @@ export abstract class UIAdapterBase<
         if ( ownerId && ownerId !== "direct-message" ) {
             args._guildId = ownerId;
 
-            // Set _customizationKey if not already provided
-            // Format: "ComponentName" or "ComponentName:StateName" for adapters with transactions
-            if ( !args._customizationKey ) {
-                // Extract just the last segment of the component name to match dashboard format
-                // e.g., "VertixBot/UI/SetupAdapter" -> "SetupAdapter"
-                const fullName = this.getComponent().getName();
-                let customizationKey = fullName.split( "/" ).pop() ?? fullName;
+            // What the overrides apply to: the component's own name, and the state being rendered.
+            // Neither is shortened - `UI-V2/DynamicChannel` and `UI-V3/DynamicChannel` are
+            // different components, and a name trimmed to its last segment cannot say which.
+            if ( !args._customizationComponent ) {
+                args._customizationComponent = this.getComponent().getName();
 
-                // For adapters with transactions, append the initial state name
-                // so it matches the dashboard format "ComponentName:StateName"
                 const staticClass = this.constructor as Partial<TAdapterStaticContract>;
-                if ( typeof staticClass.getTransactions === "function" ) {
+
+                if ( !args._customizationState && typeof staticClass.getTransactions === "function" ) {
                     const transactions = staticClass.getTransactions();
+
                     if ( transactions ) {
-                        const initialState = transactions.getInitialState();
-                        const stateShortName = initialState.split( "/" ).pop() ?? initialState;
-                        if ( stateShortName ) {
-                            customizationKey = `${ customizationKey }:${ stateShortName }`;
-                        }
+                        args._customizationState = transactions.getInitialState();
                     }
                 }
-
-                args._customizationKey = customizationKey;
             }
         }
 
@@ -409,10 +401,11 @@ export abstract class UIAdapterBase<
 
             if ( resolvedArgs ) {
                 // Preserve system-internal args from newArgs that getArgsInternal may not return
-                // (e.g., _customizationKey set by triggerTransition, _step set by editReplyWithStep)
+                // (e.g., the customization target set by triggerTransition, _step set by editReplyWithStep)
                 if ( newArgs ) {
-                    if ( newArgs._customizationKey ) {
-                        resolvedArgs._customizationKey = newArgs._customizationKey;
+                    if ( newArgs._customizationComponent ) {
+                        resolvedArgs._customizationComponent = newArgs._customizationComponent;
+                        resolvedArgs._customizationState = newArgs._customizationState;
                     }
                     if ( newArgs._step ) {
                         resolvedArgs._step = newArgs._step;
@@ -567,10 +560,11 @@ export abstract class UIAdapterBase<
             caller = this.ephemeral.name;
 
         // Preserve system-internal args from sendArgs that getArgsInternal may not return
-        // (e.g., _customizationKey set by triggerTransition, _step set by ephemeralWithStep)
+        // (e.g., the customization target set by triggerTransition, _step set by ephemeralWithStep)
         if ( sendArgs ) {
-            if ( sendArgs._customizationKey ) {
-                args._customizationKey = sendArgs._customizationKey;
+            if ( sendArgs._customizationComponent ) {
+                args._customizationComponent = sendArgs._customizationComponent;
+                args._customizationState = sendArgs._customizationState;
             }
             if ( sendArgs._step ) {
                 args._step = sendArgs._step;

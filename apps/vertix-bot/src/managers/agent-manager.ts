@@ -559,7 +559,7 @@ export class AgentManager extends InitializeBase {
             fsNative.writeFileSync( filePath, this.buildClaudeMcpConfig( readOnly ), { mode: 0o600 } );
 
             return filePath;
-        } catch ( error ) {
+        } catch( error ) {
             this.logger.error( this.writeClaudeMcpConfigFile, "Failed to write MCP config file", error );
 
             return null;

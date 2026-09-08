@@ -12,6 +12,8 @@ import { SELECT_MENU_ELEMENT_TYPES, BUTTON_ELEMENT_TYPES } from "@vertix.gg/defi
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 
+import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
+
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 import type { ElementData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/component-helpers";
 import type { UIExportEmbedDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
@@ -789,14 +791,16 @@ export function FlowEditSidebar() {
 
     // Apply language translations + saved customizations to node data when customization/translations are loaded
     useEffect( () => {
-        const customizationKey = selectedNode?.data?.customizationKey as string | undefined;
+        const component = selectedNode?.data?.component as string | undefined;
+        const state = ( selectedNode?.data?.state as string | null ) ?? null;
         const embedName = selectedNode?.data?.embedName as string | undefined;
 
         logger.debug( FlowEditSidebar, "Customization effect running", {
             isLoadingCustomization,
             hasCustomization: !!customization,
             hasSelectedNode: !!selectedNode,
-            customizationKey,
+            component,
+            state,
             selectedLanguage
         } );
 
@@ -810,9 +814,8 @@ export function FlowEditSidebar() {
 
         // Only apply once per node+language+translation combination to avoid infinite loops
         const translationKey = translations ? JSON.stringify( translations.embeds[ embedName ?? "" ] ?? null ) : "null";
-        const langKey = customizationKey ? `${ customizationKey }::${ selectedLanguage }` : undefined;
-        const componentCustomization = ( customization && customizationKey && langKey )
-            ? ( customization.components[ langKey ] ?? customization.components[ customizationKey ] )
+        const componentCustomization = ( customization && component )
+            ? resolveCustomization( customization, { component, state, language: selectedLanguage } ) ?? undefined
             : undefined;
 
         const appliedKey = `${ selectedNode.id }-${ selectedLanguage }-${ translationKey }-${ JSON.stringify( componentCustomization ) }`;
@@ -835,7 +838,7 @@ export function FlowEditSidebar() {
 
         // Then apply customization overrides on top
         if ( componentCustomization?.embedOverrides ) {
-            logger.debug( FlowEditSidebar, "Applying saved customization to node", { customizationKey, langKey, embedOverrides: componentCustomization.embedOverrides } );
+            logger.debug( FlowEditSidebar, "Applying saved customization to node", { component, state, embedOverrides: componentCustomization.embedOverrides } );
 
             const { color, title, description } = componentCustomization.embedOverrides;
 

@@ -277,7 +277,7 @@ export class UIIPCService extends ServiceWithDependenciesBase<{
         if ( identity !== UI_PEER_IDENTITIES.MAIN ) {
             throw new Error(
                 `The '${ identity }' bot is not connected - it cannot post. `
-                + `Set AI_CHAT_DISCORD_TOKEN for the bot process and make sure that bot has joined the server.`
+                + "Set AI_CHAT_DISCORD_TOKEN for the bot process and make sure that bot has joined the server."
             );
         }
 

@@ -13,7 +13,8 @@ import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-edito
 import type { Node } from "@xyflow/react";
 import type { ModuleInfo, ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { EntityType } from "@vertix.gg/dashboard/src/features/flow-editor/components/entity-list";
-import type { GuildCustomizationData, ElementOverride } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import type { CustomizationTarget, ElementOverride } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import type { CustomizationData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
 const logger = zCore.modules.createLogger( "flow-editor-commands" );
 
@@ -319,16 +320,22 @@ export class RestoreNodeDataCommand extends CommandBase<FlowEditorState> {
 
 /**
  * Extract customization overrides from a node by comparing against its original data.
- * Returns null if the node has no customizationKey.
+ * Returns null when the node says nothing about what an override would apply to.
  */
 function extractNodeCustomization(
     nodeData: Record<string, unknown>,
     originalNodeData: Record<string, unknown>
-): { customizationKey: string; customization: Record<string, unknown> } | null {
-    const customizationKey = nodeData.customizationKey as string | undefined;
-    if ( !customizationKey ) {
+): { target: CustomizationTarget; customization: Record<string, unknown> } | null {
+    const component = nodeData.component as string | undefined;
+
+    if ( !component ) {
         return null;
     }
+
+    const target: CustomizationTarget = {
+        component,
+        state: ( nodeData.state as string | null ) ?? null
+    };
 
     // Extract customization data from node
     const embed = nodeData.embed as Record<string, unknown> | undefined;
@@ -523,7 +530,7 @@ function extractNodeCustomization(
         customization.modalOverrides = modalOverrides;
     }
 
-    return { customizationKey, customization };
+    return { target, customization };
 }
 
 export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
@@ -583,27 +590,29 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
                 const extracted = extractNodeCustomization( nodeData, originalData );
 
                 if ( !extracted ) {
-                    logger.warn( this.apply, `Skipping node ${ nodeId } — no customizationKey` );
+                    logger.warn( this.apply, `Skipping node ${ nodeId } — nothing to attach an override to` );
                     continue;
                 }
 
-                const { customizationKey, customization } = extracted;
+                const { target, customization } = extracted;
 
-                logger.debug( this.apply, "Saving customization", { guildId, customizationKey, customization, languageCode: selectedLanguage } );
+                logger.debug( this.apply, "Saving customization", { guildId, ...target, customization, languageCode: selectedLanguage } );
 
-                await queryModule.request<GuildCustomizationData>(
+                await queryModule.request<CustomizationData>(
                     isDefault ? "Dashboard/Customization/UpdateDefaultComponent" : "Dashboard/Customization/UpdateComponent",
                     isDefault
                         ? {
-                            customizationKey,
-                            customization,
-                            languageCode: selectedLanguage
+                            component: target.component,
+                            state: target.state ?? null,
+                            language: selectedLanguage,
+                            customization
                         }
                         : {
                             guildId,
-                            customizationKey,
-                            customization,
-                            languageCode: selectedLanguage
+                            component: target.component,
+                            state: target.state ?? null,
+                            language: selectedLanguage,
+                            customization
                         }
                 );
             }

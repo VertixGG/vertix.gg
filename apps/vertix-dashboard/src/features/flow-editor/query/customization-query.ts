@@ -2,12 +2,13 @@ import { QueryModuleBase } from "@zenflux/react-commander/query/module-base";
 
 import type { DCommandFunctionComponent, DCommandSingleComponentContext } from "@zenflux/react-commander/definitions";
 import type { QueryClient } from "@zenflux/react-commander/query/client";
-import type { GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import type { CustomizationData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
-export type { GuildCustomizationData, ComponentCustomization, EmbedOverrides } from "@vertix.gg/definitions/src/ui-customization-definitions";
+export type { ComponentCustomization, EmbedOverrides } from "@vertix.gg/definitions/src/ui-customization-definitions";
+export type { CustomizationData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
 export interface CustomizationState {
-    customization: GuildCustomizationData | null;
+    customization: CustomizationData | null;
     isLoadingCustomization: boolean;
     customizationError: string | null;
 }
@@ -18,7 +19,7 @@ export const CUSTOMIZATION_INITIAL_STATE: CustomizationState = {
     customizationError: null
 };
 
-export class CustomizationQuery extends QueryModuleBase<GuildCustomizationData> {
+export class CustomizationQuery extends QueryModuleBase<CustomizationData> {
 
     public constructor( client: QueryClient ) {
         super( client );
@@ -34,7 +35,7 @@ export class CustomizationQuery extends QueryModuleBase<GuildCustomizationData> 
 
     protected registerEndpoints(): void {
         // GET guild customization
-        this.defineEndpoint<GuildCustomizationData, GuildCustomizationData>( "Dashboard/Customization/GetGuild", {
+        this.defineEndpoint<CustomizationData, CustomizationData>( "Dashboard/Customization/GetGuild", {
             method: "GET",
             path: "customization/guild/:guildId",
             prepareData: ( response ) => response
@@ -52,7 +53,7 @@ export class CustomizationQuery extends QueryModuleBase<GuildCustomizationData> 
         // --- Default customization endpoints (owner only) ---
 
         // GET default customization
-        this.defineEndpoint<GuildCustomizationData, GuildCustomizationData>( "Dashboard/Customization/GetDefault", {
+        this.defineEndpoint<CustomizationData, CustomizationData>( "Dashboard/Customization/GetDefault", {
             method: "GET",
             path: "customization/default",
             prepareData: ( response ) => response
@@ -69,7 +70,7 @@ export class CustomizationQuery extends QueryModuleBase<GuildCustomizationData> 
         return request;
     }
 
-    protected async responseHandler( _element: DCommandFunctionComponent, response: Response ): Promise<GuildCustomizationData> {
+    protected async responseHandler( _element: DCommandFunctionComponent, response: Response ): Promise<CustomizationData> {
         if ( !response.ok ) {
             if ( response.status === 403 ) {
                 throw new Error( "Access denied" );
@@ -82,7 +83,7 @@ export class CustomizationQuery extends QueryModuleBase<GuildCustomizationData> 
         return await response.json();
     }
 
-    protected onMount( context: DCommandSingleComponentContext, resource?: GuildCustomizationData ) {
+    protected onMount( context: DCommandSingleComponentContext, resource?: CustomizationData ) {
         context.setState( {
             ...context.getState<CustomizationState>(),
             customization: resource ?? null,

@@ -76,7 +76,11 @@ export function createComponentNode(
         data: {
             label: label ?? compPreview.name,
             type: "component",
-            customizationKey: stateKey ? `${ compPreview.name }:${ stateKey.split( "/" ).pop() ?? stateKey }` : compPreview.name,
+            // What an override written here applies to. The component keeps its own name and the
+            // state is stored as the transitions name it - nothing is composed into a string that
+            // the bot would then have to spell the same way.
+            component: compPreview.fullName,
+            state: stateKey ?? null,
             embedName: compPreview.embedName,
             embed: compPreview.embed,
             embedDefinition: compPreview.embedDefinition,
@@ -100,7 +104,6 @@ export function createModalNode(
     stateKey?: string
 ): Node {
     const modalShortName = modalName.split( "/" ).pop()?.replace( /Modal$/, "" ) ?? modalName;
-    const modalNameForKey = modalName.split( "/" ).pop() ?? modalName;
 
     return {
         id: modalId,
@@ -113,9 +116,8 @@ export function createModalNode(
             inputs: modalDef?.inputs,
             flowName,
             modalName,
-            customizationKey: stateKey
-                ? `${ modalNameForKey }:${ stateKey.split( "/" ).pop() ?? stateKey }`
-                : modalNameForKey
+            component: modalName,
+            state: stateKey ?? null
         }
     };
 }

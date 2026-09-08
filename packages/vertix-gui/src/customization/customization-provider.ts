@@ -1,6 +1,15 @@
-import type { ComponentCustomization } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import type {
+    ComponentCustomization,
+    CustomizationTarget,
+    GuildCustomizationRow
+} from "@vertix.gg/definitions/src/ui-customization-definitions";
 
-export type { EmbedOverrides, ComponentCustomization, GuildCustomizationData } from "@vertix.gg/definitions/src/ui-customization-definitions";
+export type {
+    EmbedOverrides,
+    ComponentCustomization,
+    CustomizationTarget,
+    GuildCustomizationRow
+} from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 /**
  * Interface for customization provider.
@@ -8,25 +17,21 @@ export type { EmbedOverrides, ComponentCustomization, GuildCustomizationData } f
  */
 export interface ICustomizationProvider {
     /**
-     * Get customization for a specific component/state in a guild.
-     * @param guildId - The guild ID
-     * @param customizationKey - The component/state key (e.g., "ComponentName/StateKey")
-     * @returns Component customization or null if none exists
+     * Function getComponentCustomization() :: What a guild changed about one component.
+     *
+     * The target says which component, and how narrowly - a state and a language when the caller
+     * is rendering one, null when it is not. The provider resolves the overrides that apply,
+     * broadest first, so a guild-wide change and a state-specific one both land.
      */
     getComponentCustomization(
         guildId: string,
-        customizationKey: string,
-        languageCode?: string
+        target: CustomizationTarget
     ): Promise<ComponentCustomization | null>;
 
     /**
-     * Get all customizations for a guild (for preloading/caching).
-     * @param guildId - The guild ID
-     * @returns Map of customizationKey to ComponentCustomization
+     * Function getGuildCustomizations() :: Every override a guild holds, for preloading.
      */
-    getGuildCustomizations(
-        guildId: string
-    ): Promise<Record<string, ComponentCustomization> | null>;
+    getGuildCustomizations( guildId: string ): Promise<GuildCustomizationRow[]>;
 }
 
 /**
@@ -38,7 +43,7 @@ export class NoOpCustomizationProvider implements ICustomizationProvider {
         return null;
     }
 
-    public async getGuildCustomizations(): Promise<Record<string, ComponentCustomization> | null> {
-        return null;
+    public async getGuildCustomizations(): Promise<GuildCustomizationRow[]> {
+        return [];
     }
 }

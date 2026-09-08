@@ -3,7 +3,6 @@
  * Allows overriding embed properties like color, title, description per guild.
  */
 export interface EmbedOverrides {
-    readonly [ key: string ]: string | number | undefined;
     title?: string;
     description?: string;
     color?: number;
@@ -67,7 +66,6 @@ export const MODAL_INPUT_OVERRIDE_FIELDS = [ "label", "placeholder" ] as const;
  * Contains embed overrides, variable overrides, element overrides, and modal overrides.
  */
 export interface ComponentCustomization {
-    readonly [ key: string ]: EmbedOverrides | Record<string, string> | Record<string, ElementOverride> | ModalOverrides | undefined;
     embedOverrides?: EmbedOverrides;
     variables?: Record<string, string>;
     elementOverrides?: Record<string, ElementOverride>;
@@ -75,12 +73,26 @@ export interface ComponentCustomization {
 }
 
 /**
- * Interface for guild customization data.
- * Contains all customizations for a specific guild.
+ * What an override applies to.
+ *
+ * The component is its own name, as `getName()` returns it - never shortened, since
+ * `UI-V2/DynamicChannel` and `UI-V3/DynamicChannel` are different components that would otherwise
+ * collapse into one. A null state or language means "every one of them".
  */
-export interface GuildCustomizationData {
-    guildId: string;
-    components: Record<string, ComponentCustomization>;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
+export interface CustomizationTarget {
+    component: string;
+    state?: string | null;
+    language?: string | null;
 }
+
+/**
+ * One stored override: what it applies to, and what it changes.
+ */
+export interface GuildCustomizationRow extends CustomizationTarget, ComponentCustomization {
+    guildId: string;
+}
+
+/**
+ * The guild whose overrides are the base layer under every other guild's.
+ */
+export const DEFAULT_CUSTOMIZATION_GUILD_ID = "__default__";

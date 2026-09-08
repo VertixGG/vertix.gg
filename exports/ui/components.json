@@ -1486,6 +1486,17 @@
                             }
                         },
                         {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Status",
+                                "style": "secondary",
+                                "emoji": "📣"
+                            }
+                        },
+                        {
                             "element": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
                             "definition": {
                                 "name": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
@@ -1893,6 +1904,107 @@
         }
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🙅  Failed to set your channel's status",
+                            "description": "The word `{badword}` has been classified as inappropriate by the server administrator.",
+                            "color": 16738560,
+                            "vars": {
+                                "badword": "{badword}"
+                            },
+                            "defaultVars": {
+                                "badword": "example"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "📣  Your channel's status is automatic again",
+                            "description": "It now shows '{channelStatus}' and updates itself as the channel changes.",
+                            "color": 3369963,
+                            "vars": {
+                                "channelStatus": "{channelStatus}"
+                            },
+                            "defaultVars": {
+                                "channelStatus": "Valorant · 3/5"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "📣  Your channel's status is now '{channelStatus}'",
+                            "description": "It stays until you clear it, submit an empty status to go back to automatic.",
+                            "color": 16766720,
+                            "vars": {
+                                "channelStatus": "{channelStatus}"
+                            },
+                            "defaultVars": {
+                                "channelStatus": "Ranked grind, need two"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [
+            "VertixBot/UI-V2/DynamicChannelMetaStatusModal"
+        ],
+        "modalDefinitions": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+                "title": "Set dynamic channel status",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusInput",
+                        "label": "WHAT IS HAPPENING IN YOUR CHANNEL",
+                        "placeholder": "",
+                        "style": "short",
+                        "minLength": 0,
+                        "maxLength": 128
+                    }
+                ]
+            }
+        ],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 3,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelPanel",
         "type": "component",
         "instanceType": "Dynamic",
@@ -1990,6 +2102,17 @@
                                 "label": "Transfer",
                                 "style": "secondary",
                                 "emoji": "🔀"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Status",
+                                "style": "secondary",
+                                "emoji": "📣"
                             }
                         },
                         {
@@ -3112,6 +3235,11 @@
                                         "emoji": "🔀"
                                     },
                                     {
+                                        "label": "Status",
+                                        "value": "13",
+                                        "emoji": "📣"
+                                    },
+                                    {
                                         "label": "Claim",
                                         "value": "7",
                                         "emoji": "😈"
@@ -3472,7 +3600,8 @@
                                         "5": "👥 ∙ **Access**",
                                         "6": "🔃 ∙ **Reset**",
                                         "7": "😈 ∙ **Claim**",
-                                        "12": "🔀 ∙ **Transfer**"
+                                        "12": "🔀 ∙ **Transfer**",
+                                        "13": "📣 ∙ **Status**"
                                     }
                                 },
                                 "verifiedRoles": {
@@ -3583,7 +3712,8 @@
                                         "5": "👥 ∙ **Access**",
                                         "6": "🔃 ∙ **Reset**",
                                         "7": "😈 ∙ **Claim**",
-                                        "12": "🔀 ∙ **Transfer**"
+                                        "12": "🔀 ∙ **Transfer**",
+                                        "13": "📣 ∙ **Status**"
                                     }
                                 }
                             },
@@ -3944,6 +4074,11 @@
                                         "emoji": "🔀"
                                     },
                                     {
+                                        "label": "Status",
+                                        "value": "13",
+                                        "emoji": "📣"
+                                    },
+                                    {
                                         "label": "Claim",
                                         "value": "7",
                                         "emoji": "😈"
@@ -4116,7 +4251,8 @@
                                         "5": "👥 ∙ **Access**",
                                         "6": "🔃 ∙ **Reset**",
                                         "7": "😈 ∙ **Claim**",
-                                        "12": "🔀 ∙ **Transfer**"
+                                        "12": "🔀 ∙ **Transfer**",
+                                        "13": "📣 ∙ **Status**"
                                     }
                                 }
                             },
@@ -4368,6 +4504,11 @@
                                         "emoji": "🔀"
                                     },
                                     {
+                                        "label": "Status",
+                                        "value": "13",
+                                        "emoji": "📣"
+                                    },
+                                    {
                                         "label": "Claim",
                                         "value": "7",
                                         "emoji": "😈"
@@ -4425,7 +4566,8 @@
                                         "5": "👥 ∙ **Access**",
                                         "6": "🔃 ∙ **Reset**",
                                         "7": "😈 ∙ **Claim**",
-                                        "12": "🔀 ∙ **Transfer**"
+                                        "12": "🔀 ∙ **Transfer**",
+                                        "13": "📣 ∙ **Status**"
                                     }
                                 }
                             },
@@ -5103,6 +5245,17 @@
                             }
                         },
                         {
+                            "element": "VertixBot/UI-V3/DynamicChannelStatusButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<emoji name='Megaphone'>"
+                            }
+                        },
+                        {
                             "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
                             "definition": {
                                 "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
@@ -5127,7 +5280,7 @@
                             "instanceType": "Dynamic",
                             "title": "{title}",
                             "description": "{description}\n\n{renameEmoji} ・ Name: **{name}**\n\n{limitEmoji} ・ User Limit: **{limit}**\n\n{privacyEmoji} ・ Privacy State: **{state}**\n\n{regionEmoji} ・ Region:  **{region}**\n",
-                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items={dynamicChannelButtonSheetItems}",
                             "color": 3369963,
                             "options": {
                                 "limit": {
@@ -5159,7 +5312,8 @@
                                 "regionEmoji": "{regionEmoji}",
                                 "regionAutomatic": "{regionAutomatic}",
                                 "title": "{title}",
-                                "description": "{description}"
+                                "description": "{description}",
+                                "dynamicChannelButtonSheetItems": "{dynamicChannelButtonSheetItems}"
                             },
                             "defaultVars": {
                                 "renameEmoji": "<emoji name='ChannelRename'>",
@@ -5507,6 +5661,17 @@
                             }
                         },
                         {
+                            "element": "VertixBot/UI-V3/DynamicChannelStatusButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<emoji name='Megaphone'>"
+                            }
+                        },
+                        {
                             "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
                             "definition": {
                                 "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
@@ -5531,12 +5696,12 @@
                             "instanceType": "Dynamic",
                             "title": "༄ Manage your Dynamic Channel",
                             "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n",
-                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items={dynamicChannelButtonSheetItems}",
                             "color": 3369963,
                             "vars": {
                                 "separator": "{separator}",
                                 "value": "{value}",
-                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                                "dynamicChannelButtonSheetItems": "{dynamicChannelButtonSheetItems}"
                             }
                         }
                     }
@@ -7046,6 +7211,107 @@
         }
     },
     {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Failed to set your channel's status",
+                            "description": "The word `{badword}` has been classified as inappropriate by the server administrator.",
+                            "color": 16738560,
+                            "vars": {
+                                "badword": "{badword}"
+                            },
+                            "defaultVars": {
+                                "badword": "example"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Your channel's status is automatic again",
+                            "description": "It now shows '{channelStatus}' and updates itself as the channel changes.",
+                            "color": 3369963,
+                            "vars": {
+                                "channelStatus": "{channelStatus}"
+                            },
+                            "defaultVars": {
+                                "channelStatus": "Valorant · 3/5"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "Your channel's status is now '{channelStatus}'",
+                            "description": "It stays until you clear it, submit an empty status to go back to automatic.",
+                            "color": 16766720,
+                            "vars": {
+                                "channelStatus": "{channelStatus}"
+                            },
+                            "defaultVars": {
+                                "channelStatus": "Ranked grind, need two"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [
+            "VertixBot/UI-V3/DynamicChannelStatusModal"
+        ],
+        "modalDefinitions": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelStatusModal",
+                "title": "Set dynamic channel status",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-V3/DynamicChannelStatusInput",
+                        "label": "WHAT IS HAPPENING IN YOUR CHANNEL",
+                        "placeholder": "",
+                        "style": "short",
+                        "minLength": 0,
+                        "maxLength": 128
+                    }
+                ]
+            }
+        ],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 3,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
         "name": "VertixBot/UI-V3/DynamicChannelTemplatesComponent",
         "type": "component",
         "instanceType": "Dynamic",
@@ -7911,6 +8177,11 @@
                                         "emoji": "<emoji name='ChannelTemplates'>"
                                     },
                                     {
+                                        "label": "Status",
+                                        "value": "status",
+                                        "emoji": "<emoji name='Megaphone'>"
+                                    },
+                                    {
                                         "label": "Claim",
                                         "value": "claim-button",
                                         "emoji": "<emoji name='ClaimChannel'>"
@@ -8376,6 +8647,7 @@
                                         "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
                                         "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
                                         "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+                                        "status": "<emoji name='Megaphone'> ∙ **Status**",
                                         "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
                                     }
                                 }
@@ -8739,6 +9011,11 @@
                                         "emoji": "<emoji name='ChannelTemplates'>"
                                     },
                                     {
+                                        "label": "Status",
+                                        "value": "status",
+                                        "emoji": "<emoji name='Megaphone'>"
+                                    },
+                                    {
                                         "label": "Claim",
                                         "value": "claim-button",
                                         "emoji": "<emoji name='ClaimChannel'>"
@@ -8941,6 +9218,7 @@
                                         "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
                                         "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
                                         "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+                                        "status": "<emoji name='Megaphone'> ∙ **Status**",
                                         "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
                                     }
                                 }
@@ -9213,6 +9491,11 @@
                                         "emoji": "<emoji name='ChannelTemplates'>"
                                     },
                                     {
+                                        "label": "Status",
+                                        "value": "status",
+                                        "emoji": "<emoji name='Megaphone'>"
+                                    },
+                                    {
                                         "label": "Claim",
                                         "value": "claim-button",
                                         "emoji": "<emoji name='ClaimChannel'>"
@@ -9300,6 +9583,7 @@
                                         "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
                                         "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
                                         "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+                                        "status": "<emoji name='Megaphone'> ∙ **Status**",
                                         "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
                                     }
                                 }

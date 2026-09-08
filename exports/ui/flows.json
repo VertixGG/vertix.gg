@@ -1384,6 +1384,103 @@
         }
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow",
+        "module": "VertixBot/UI-V2/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Default",
+                "transitions": [
+                    "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/Transitions/SubmitSuccess",
+                    "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/Transitions/SubmitCleared",
+                    "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/Transitions/SubmitBadword"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-V2/DynamicChannelMetaStatusComponent",
+                    "previewDefaultVars": {
+                        "defaultChannelStatus": "Valorant · 3/5"
+                    }
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Success",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccess",
+                    "component": "VertixBot/UI-V2/DynamicChannelMetaStatusComponent",
+                    "previewDefaultVars": {
+                        "channelStatus": "Ranked grind, need two"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Cleared",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelMetaStatusCleared",
+                    "component": "VertixBot/UI-V2/DynamicChannelMetaStatusComponent",
+                    "previewDefaultVars": {
+                        "channelStatus": "Valorant · 3/5"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Badword",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelMetaStatusBadword",
+                    "component": "VertixBot/UI-V2/DynamicChannelMetaStatusComponent",
+                    "previewDefaultVars": {
+                        "badword": "example"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbedGroup"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "from": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Success",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/Handlers/VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+                        "sourceEntity": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Success",
+                            "executionStep": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccess"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Cleared"
+            },
+            {
+                "from": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Badword"
+            }
+        ],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsFlow",
         "module": "VertixBot/UI-V2/Module",
         "flowKind": "virtual",
@@ -4445,6 +4542,103 @@
             {
                 "from": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Default",
                 "to": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Error"
+            }
+        ],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusFlow",
+        "module": "VertixBot/UI-V3/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Default",
+                "transitions": [
+                    "VertixBot/UI-V3/DynamicChannelStatusFlow/Transitions/SubmitSuccess",
+                    "VertixBot/UI-V3/DynamicChannelStatusFlow/Transitions/SubmitCleared",
+                    "VertixBot/UI-V3/DynamicChannelStatusFlow/Transitions/SubmitBadword"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-V3/DynamicChannelStatusComponent",
+                    "previewDefaultVars": {
+                        "defaultChannelStatus": "Valorant · 3/5"
+                    }
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Success",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/DynamicChannelStatusSuccess",
+                    "component": "VertixBot/UI-V3/DynamicChannelStatusComponent",
+                    "previewDefaultVars": {
+                        "channelStatus": "Ranked grind, need two"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Cleared",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/DynamicChannelStatusCleared",
+                    "component": "VertixBot/UI-V3/DynamicChannelStatusComponent",
+                    "previewDefaultVars": {
+                        "channelStatus": "Valorant · 3/5"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Badword",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/DynamicChannelStatusBadword",
+                    "component": "VertixBot/UI-V3/DynamicChannelStatusComponent",
+                    "previewDefaultVars": {
+                        "badword": "example"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbedGroup"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "from": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Default",
+                "to": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Success",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelStatusFlow/Handlers/VertixBot/UI-V3/DynamicChannelStatusModal",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelStatusModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Success",
+                            "executionStep": "VertixBot/UI-V3/DynamicChannelStatusSuccess"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Default",
+                "to": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Cleared"
+            },
+            {
+                "from": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Default",
+                "to": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Badword"
             }
         ],
         "requiredData": [],

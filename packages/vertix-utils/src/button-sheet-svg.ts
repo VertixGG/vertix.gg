@@ -196,15 +196,17 @@ export function buildSheetSvg(
 
     const visible = tiles.filter( ( tile ) => ! config.omit.includes( tile.id ) );
 
-    // `items` both selects and re-arranges: when given, only those ids are shown,
-    // in that sequence. Empty keeps the source order (minus `omit`).
+    // `items` both selects and re-arranges: only those ids are shown, in that
+    // sequence.
     const items = config.items ?? [];
 
-    const shown = items.length
-        ? items
-            .map( ( id ) => visible.find( ( tile ) => tile.id === id ) )
-            .filter( ( tile ): tile is SheetTile => Boolean( tile ) )
-        : visible;
+    const selected = items
+        .map( ( id ) => visible.find( ( tile ) => tile.id === id ) )
+        .filter( ( tile ): tile is SheetTile => Boolean( tile ) );
+
+    // Fall back to all visible tiles when `items` is empty or matches nothing, so a
+    // stale, unresolved or all-unknown list never renders a blank sheet.
+    const shown = selected.length ? selected : visible;
 
     const columns = Math.max( 1, config.cols ),
         rows = Math.max( 1, Math.ceil( shown.length / columns ) );

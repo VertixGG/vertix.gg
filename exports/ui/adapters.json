@@ -588,6 +588,59 @@
         ]
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V2/DynamicChannelMetaStatusComponent",
+        "module": "VertixBot/UI-V2/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccess",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelMetaStatusCleared",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelMetaStatusBadword",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V2/DynamicChannelMetaStatusAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V2/DynamicChannelMetaStatusAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelPanelAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V2/DynamicChannelPanel",
@@ -1609,6 +1662,59 @@
             {
                 "hook": "getReplyArgs",
                 "handler": "VertixBot/UI-V3/DynamicChannelResetChannelAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V3/DynamicChannelStatusComponent",
+        "module": "VertixBot/UI-V3/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelStatusSuccess",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelStatusCleared",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelStatusBadword",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelStatusAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelStatusAdapter/Hooks/GetReplyArgs"
             }
         ]
     },

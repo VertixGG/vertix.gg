@@ -46,7 +46,9 @@ const vars = {
     title: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_TITLE_VARS.title,
     description: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.description,
 
-    dynamicChannelButtonSheetItems: uiUtilsWrapAsTemplate( "dynamicChannelButtonSheetItems" )
+    value: uiUtilsWrapAsTemplate( "value" ),
+    separator: uiUtilsWrapAsTemplate( "separator" ),
+    dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
 };
 
 const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
@@ -55,7 +57,7 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => `https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items=${ vars.dynamicChannelButtonSheetItems }` )
+    .setImage( () => `https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items=${ vars.dynamicChannelButtonsTemplate }` )
     .setTitle( () => vars.title )
     .setDescription( () => (
         `${ vars.description }\n\n` +
@@ -93,7 +95,8 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             title: args.title || configV3.data.constants.dynamicChannelPrimaryMessageTitle,
             description: args.description || configV3.data.constants.dynamicChannelPrimaryMessageDescription,
             region: args.region || vars.regionAutomatic,
-            regionEmoji: DynamicChannelRegionButton.getEmoji()
+            regionEmoji: DynamicChannelRegionButton.getEmoji(),
+            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
         };
 
         switch ( args.state ) {
@@ -133,6 +136,15 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             description: configV3.data.constants.dynamicChannelPrimaryMessageDescription,
         };
     } )
+    // Renders the buttons-template array as a comma-joined id list for the image
+    // `items=` param. Empty `options` means `{value}` is the raw id.
+    .setArrayOptions( () => ( {
+        dynamicChannelButtonsTemplate: {
+            format: `${ vars.value }${ vars.separator }`,
+            separator: ",",
+            options: {}
+        }
+    } ) )
     .build();
 
 export { DynamicChannelPrimaryMessageEmbed };

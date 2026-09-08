@@ -103,10 +103,9 @@ export abstract class UIEmbedBase extends UITemplateBase {
         }
 
         if ( image.length ) {
-            attributes.image = {
-                ...this.getImageData(),
-                url: image
-            };
+            // Kept as a top-level string so its {vars} are substituted like the
+            // description; wrapped back into the image object after composeTemplate.
+            attributes.image = image;
         }
 
         // Fetch customization BEFORE template generation so variables are available during rendering
@@ -134,6 +133,13 @@ export abstract class UIEmbedBase extends UITemplateBase {
         if ( template.footer?.length ) {
             template.footer = {
                 text: template.footer
+            };
+        }
+
+        if ( template.image?.length ) {
+            template.image = {
+                ...this.getImageData(),
+                url: template.image
             };
         }
 

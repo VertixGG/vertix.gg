@@ -12,7 +12,7 @@ const vars = {
     separator: uiUtilsWrapAsTemplate( "separator" ),
     value: uiUtilsWrapAsTemplate( "value" ),
 
-    dynamicChannelButtonSheetItems: uiUtilsWrapAsTemplate( "dynamicChannelButtonSheetItems" )
+    dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
 };
 
 const DynamicChannelPanelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
@@ -21,13 +21,25 @@ const DynamicChannelPanelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => `https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items=${ vars.dynamicChannelButtonSheetItems }` )
+    .setImage( () => `https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items=${ vars.dynamicChannelButtonsTemplate }` )
     .setTitle( () => "༄ Manage your Dynamic Channel" )
     .setDescription( () =>
         "Embrace the responsibility of overseeing your dynamic channel, " +
         "diligently customizing it according to your discerning preferences.\n\n" +
         "**Available Features:**\n\n"
     )
+    .setLogic( ( args: UIArgs ) => ( {
+        dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
+    } ) )
+    // Renders the buttons-template array as a comma-joined id list for the image
+    // `items=` param. Empty `options` means `{value}` is the raw id.
+    .setArrayOptions( () => ( {
+        dynamicChannelButtonsTemplate: {
+            format: `${ vars.value }${ vars.separator }`,
+            separator: ",",
+            options: {}
+        }
+    } ) )
     .build();
 
 export { DynamicChannelPanelEmbed };

@@ -106,19 +106,19 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
 
     return (
         <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-zinc-700">
+            <div className="p-4 border-b border-border">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                            <Radio className="w-5 h-5 text-blue-500" />
+                        <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
+                            <Radio className="w-5 h-5 text-text-accent" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-semibold text-white">
+                            <h2 className="text-lg font-semibold text-text-primary">
                                 { details.discord?.masterChannel?.name || "Dynamic Master" }
                             </h2>
-                            <p className="text-sm text-zinc-400">
+                            <p className="text-sm text-text-secondary">
                                 { details.discord?.category?.name ? (
-                                    <span>in <span className="text-zinc-300">{ details.discord.category.name }</span></span>
+                                    <span>in <span className="text-text-primary">{ details.discord.category.name }</span></span>
                                 ) : (
                                     <span className="truncate" title={ master.channelId }>{ master.channelId }</span>
                                 ) }
@@ -126,13 +126,13 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-xs text-zinc-500">
+                        <span className="text-xs text-text-muted">
                             { isRefreshing ? "Refreshing..." : formatLastRefresh( lastRefreshTime ) }
                         </span>
                         <button
                             onClick={ handleRefresh }
                             disabled={ isRefreshing || isSaving }
-                            className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-700 rounded-lg transition-colors disabled:opacity-50"
+                            className="p-2 text-text-secondary hover:text-text-primary hover:bg-surface-elevated rounded-lg transition-colors disabled:opacity-50"
                             title="Refresh"
                         >
                             <RefreshCw className={ `w-5 h-5 ${ isRefreshing ? "animate-spin" : "" }` } />
@@ -141,50 +141,50 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 mt-4">
-                    <div className="bg-zinc-800 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-white">{ dynamicChannels.length }</div>
-                        <div className="text-xs text-zinc-400">Active Channels</div>
+                    <div className="bg-surface rounded-lg p-3">
+                        <div className="text-2xl font-bold text-text-primary">{ dynamicChannels.length }</div>
+                        <div className="text-xs text-text-secondary">Active Channels</div>
                     </div>
-                    <div className="bg-zinc-800 rounded-lg p-3">
+                    <div className="bg-surface rounded-lg p-3">
                         <div className="flex items-center gap-2">
                             { master.settings?.dynamicChannelAutoSave ? (
-                                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                                <CheckCircle className="w-5 h-5 text-success" />
                             ) : (
-                                <XCircle className="w-5 h-5 text-zinc-500" />
+                                <XCircle className="w-5 h-5 text-text-muted" />
                             ) }
-                            <span className="text-sm font-medium text-white">
+                            <span className="text-sm font-medium text-text-primary">
                                 { master.settings?.dynamicChannelAutoSave ? "On" : "Off" }
                             </span>
                         </div>
-                        <div className="text-xs text-zinc-400">Auto-Save</div>
+                        <div className="text-xs text-text-secondary">Auto-Save</div>
                     </div>
-                    <div className="bg-zinc-800 rounded-lg p-3">
+                    <div className="bg-surface rounded-lg p-3">
                         <div className="flex items-center gap-2">
                             { master.settings?.dynamicChannelMentionable ? (
-                                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                                <CheckCircle className="w-5 h-5 text-success" />
                             ) : (
-                                <XCircle className="w-5 h-5 text-zinc-500" />
+                                <XCircle className="w-5 h-5 text-text-muted" />
                             ) }
-                            <span className="text-sm font-medium text-white">
+                            <span className="text-sm font-medium text-text-primary">
                                 { master.settings?.dynamicChannelMentionable ? "On" : "Off" }
                             </span>
                         </div>
-                        <div className="text-xs text-zinc-400">Mentionable</div>
+                        <div className="text-xs text-text-secondary">Mentionable</div>
                     </div>
                 </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                <div className="bg-zinc-800/50 rounded-lg p-4">
+                <div className="bg-surface/50 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                        <h3 className="text-sm font-medium text-text-primary flex items-center gap-2">
                             <Settings className="w-4 h-4" />
                             Configuration
                         </h3>
                         { !state.isEditing && (
                             <button
                                 onClick={ handleStartEditing }
-                                className="text-xs text-blue-500 hover:text-blue-400"
+                                className="text-xs text-text-accent hover:text-text-accent"
                             >
                                 Edit
                             </button>
@@ -200,20 +200,20 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                     ) : (
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
-                                <span className="text-zinc-400">Name Template:</span>
-                                <span className="text-white font-mono">
+                                <span className="text-text-secondary">Name Template:</span>
+                                <span className="text-text-primary font-mono">
                                     { master.settings?.dynamicChannelNameTemplate || "{user}'s Channel" }
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-zinc-400">Auto-Save:</span>
-                                <span className="text-white">
+                                <span className="text-text-secondary">Auto-Save:</span>
+                                <span className="text-text-primary">
                                     { master.settings?.dynamicChannelAutoSave ? "Enabled" : "Disabled" }
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-zinc-400">Mentionable:</span>
-                                <span className="text-white">
+                                <span className="text-text-secondary">Mentionable:</span>
+                                <span className="text-text-primary">
                                     { master.settings?.dynamicChannelMentionable ? "Enabled" : "Disabled" }
                                 </span>
                             </div>
@@ -222,13 +222,13 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                 </div>
 
                 <div>
-                    <h3 className="text-sm font-medium text-white flex items-center gap-2 mb-3">
+                    <h3 className="text-sm font-medium text-text-primary flex items-center gap-2 mb-3">
                         <Hash className="w-4 h-4" />
                         Active Dynamic Channels ({ dynamicChannels.length })
                     </h3>
 
                     { dynamicChannels.length === 0 ? (
-                        <div className="bg-zinc-800/50 rounded-lg p-4 text-center text-zinc-500 text-sm">
+                        <div className="bg-surface/50 rounded-lg p-4 text-center text-text-muted text-sm">
                             No active dynamic channels. Users can create channels by joining the master channel.
                         </div>
                     ) : (
@@ -243,12 +243,12 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                     ) }
                 </div>
 
-                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-                    <h3 className="text-sm font-medium text-red-400 flex items-center gap-2 mb-2">
+                <div className="bg-error/10 border border-error/30 rounded-lg p-4">
+                    <h3 className="text-sm font-medium text-error flex items-center gap-2 mb-2">
                         <AlertTriangle className="w-4 h-4" />
                         Danger Zone
                     </h3>
-                    <p className="text-xs text-zinc-400 mb-3">
+                    <p className="text-xs text-text-secondary mb-3">
                         Deleting this setup will remove the master channel and all associated dynamic channels from Discord.
                     </p>
 
@@ -257,14 +257,14 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                             <button
                                 onClick={ handleDelete }
                                 disabled={ isSaving }
-                                className="flex items-center gap-2 px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded text-sm font-medium transition-colors"
+                                className="flex items-center gap-2 px-3 py-1.5 bg-error/15 hover:bg-error/25 disabled:opacity-50 text-text-primary rounded text-sm font-medium transition-colors"
                             >
                                 Yes, Delete Everything
                             </button>
                             <button
                                 onClick={ handleHideDeleteConfirm }
                                 disabled={ isSaving }
-                                className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-white rounded text-sm transition-colors"
+                                className="px-3 py-1.5 bg-surface-elevated hover:bg-surface-hover text-text-primary rounded text-sm transition-colors"
                             >
                                 Cancel
                             </button>
@@ -272,7 +272,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                     ) : (
                         <button
                             onClick={ handleShowDeleteConfirm }
-                            className="flex items-center gap-2 px-3 py-1.5 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded text-sm transition-colors"
+                            className="flex items-center gap-2 px-3 py-1.5 bg-error/20 hover:bg-error/15/30 text-error rounded text-sm transition-colors"
                         >
                             <Trash2 className="w-4 h-4" />
                             Delete Dynamic Setup

@@ -79,7 +79,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     return (
         <div className="space-y-4">
             <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1">
+                <label className="block text-sm font-medium text-text-primary mb-1">
                     Channel Name Template
                 </label>
                 <input
@@ -87,12 +87,12 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                     value={ state.nameTemplate }
                     onChange={ ( e ) => handleUpdateNameTemplate( e.target.value ) }
                     placeholder="{user}'s Channel"
-                    className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
+                    className="w-full px-3 py-2 bg-background border border-border rounded text-text-primary placeholder-text-muted focus:outline-none focus:border-border-accent"
                     disabled={ isSaving }
                 />
                 <div className="flex items-start gap-1 mt-1">
-                    <Info className="w-3 h-3 text-zinc-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-xs text-zinc-500">
+                    <Info className="w-3 h-3 text-text-muted mt-0.5 flex-shrink-0" />
+                    <span className="text-xs text-text-muted">
                         Use { "{user}" } as a placeholder for the channel owner's name
                     </span>
                 </div>
@@ -104,12 +104,12 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                         type="checkbox"
                         checked={ state.autoSave }
                         onChange={ ( e ) => handleUpdateAutoSave( e.target.checked ) }
-                        className="w-4 h-4 rounded border-zinc-600 bg-zinc-900 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-800"
+                        className="w-4 h-4 rounded border-border bg-background text-text-accent focus:ring-accent focus:ring-offset-surface"
                         disabled={ isSaving }
                     />
                     <div>
-                        <span className="text-sm font-medium text-zinc-300">Auto-Save Settings</span>
-                        <p className="text-xs text-zinc-500">
+                        <span className="text-sm font-medium text-text-primary">Auto-Save Settings</span>
+                        <p className="text-xs text-text-muted">
                             Remember channel settings when the owner leaves
                         </p>
                     </div>
@@ -122,12 +122,12 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                         type="checkbox"
                         checked={ state.mentionable }
                         onChange={ ( e ) => handleUpdateMentionable( e.target.checked ) }
-                        className="w-4 h-4 rounded border-zinc-600 bg-zinc-900 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-800"
+                        className="w-4 h-4 rounded border-border bg-background text-text-accent focus:ring-accent focus:ring-offset-surface"
                         disabled={ isSaving }
                     />
                     <div>
-                        <span className="text-sm font-medium text-zinc-300">Mentionable</span>
-                        <p className="text-xs text-zinc-500">
+                        <span className="text-sm font-medium text-text-primary">Mentionable</span>
+                        <p className="text-xs text-text-muted">
                             Allow users to @mention dynamic channels
                         </p>
                     </div>
@@ -138,7 +138,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 <button
                     onClick={ handleSave }
                     disabled={ !hasChanges || isSaving }
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white rounded text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-accent/15 hover:bg-accent/25 disabled:bg-surface-elevated disabled:cursor-not-allowed text-text-primary rounded text-sm font-medium transition-colors"
                 >
                     <Save className="w-4 h-4" />
                     { isSaving ? "Saving..." : "Save Changes" }
@@ -146,7 +146,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 <button
                     onClick={ handleCancel }
                     disabled={ isSaving }
-                    className="flex items-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-800 disabled:cursor-not-allowed text-white rounded text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-surface-elevated hover:bg-surface-hover disabled:bg-surface disabled:cursor-not-allowed text-text-primary rounded text-sm font-medium transition-colors"
                 >
                     <X className="w-4 h-4" />
                     Cancel

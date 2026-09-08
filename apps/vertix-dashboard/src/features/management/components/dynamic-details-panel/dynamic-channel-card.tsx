@@ -12,10 +12,10 @@ export function DynamicChannelCard( { channel }: DynamicChannelCardProps ) {
 
     const getStatusColor = () => {
         if ( memberCount === 0 ) {
-            return "bg-zinc-600";
+            return "bg-surface-hover";
         }
 
-        return "bg-blue-500";
+        return "bg-accent/15";
     };
 
     const getStatusText = () => {
@@ -27,21 +27,21 @@ export function DynamicChannelCard( { channel }: DynamicChannelCardProps ) {
     };
 
     return (
-        <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-3">
+        <div className="bg-surface border border-border rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                    <Hash className="w-4 h-4 text-zinc-400" />
-                    <span className="text-sm font-medium text-white">
+                    <Hash className="w-4 h-4 text-text-secondary" />
+                    <span className="text-sm font-medium text-text-primary">
                         { channelName || "Dynamic Channel" }
                     </span>
                 </div>
-                <div className={ `px-2 py-0.5 rounded text-xs font-medium ${ getStatusColor() } text-white` }>
+                <div className={ `px-2 py-0.5 rounded text-xs font-medium ${ getStatusColor() } text-text-primary` }>
                     { getStatusText() }
                 </div>
             </div>
 
             { channel.userOwnerId && (
-                <div className="flex items-center gap-1 text-xs text-zinc-400 mb-2">
+                <div className="flex items-center gap-1 text-xs text-text-secondary mb-2">
                     <User className="w-3 h-3" />
                     <span className="truncate" title={ channel.userOwnerId }>
                         Owner: { channel.userOwnerId }
@@ -49,7 +49,7 @@ export function DynamicChannelCard( { channel }: DynamicChannelCardProps ) {
                 </div>
             ) }
 
-            <div className="text-xs text-zinc-500 truncate" title={ channel.channelId }>
+            <div className="text-xs text-text-muted truncate" title={ channel.channelId }>
                 ID: { channel.channelId }
             </div>
         </div>

@@ -16,14 +16,14 @@ export function ScalingChannelCard( { channel, index, maxMembers = 0 }: ScalingC
 
     const getStatusColor = () => {
         if ( memberCount === 0 ) {
-            return "bg-zinc-600";
+            return "bg-surface-hover";
         }
 
         if ( isUnlimited || memberCount < maxMembers ) {
-            return "bg-emerald-500";
+            return "bg-success";
         }
 
-        return "bg-amber-500";
+        return "bg-warning";
     };
 
     const getStatusText = () => {
@@ -43,27 +43,27 @@ export function ScalingChannelCard( { channel, index, maxMembers = 0 }: ScalingC
     };
 
     return (
-        <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-3">
+        <div className="bg-surface border border-border rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                    <Hash className="w-4 h-4 text-zinc-400" />
-                    <span className="text-sm font-medium text-white">
+                    <Hash className="w-4 h-4 text-text-secondary" />
+                    <span className="text-sm font-medium text-text-primary">
                         { channelName || `Channel #${ index + 1 }` }
                     </span>
                 </div>
-                <div className={ `px-2 py-0.5 rounded text-xs font-medium ${ getStatusColor() } text-white` }>
+                <div className={ `px-2 py-0.5 rounded text-xs font-medium ${ getStatusColor() } text-text-primary` }>
                     { getStatusText() }
                 </div>
             </div>
 
-            <div className="text-xs text-zinc-500 mb-2 truncate" title={ channel.channelId }>
+            <div className="text-xs text-text-muted mb-2 truncate" title={ channel.channelId }>
                 ID: { channel.channelId }
             </div>
 
             { !isUnlimited && (
-                <div className="h-1.5 bg-zinc-700 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-surface-elevated rounded-full overflow-hidden">
                     <div
-                        className={ `h-full transition-all ${ memberCount >= maxMembers ? "bg-amber-500" : "bg-emerald-500" }` }
+                        className={ `h-full transition-all ${ memberCount >= maxMembers ? "bg-warning" : "bg-success" }` }
                         style={ { width: `${ fillPercentage }%` } }
                     />
                 </div>

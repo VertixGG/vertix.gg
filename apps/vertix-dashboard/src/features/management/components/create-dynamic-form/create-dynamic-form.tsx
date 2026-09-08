@@ -67,13 +67,13 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-zinc-800 rounded-lg shadow-xl w-full max-w-md mx-4">
-                <div className="flex items-center justify-between p-4 border-b border-zinc-700">
-                    <h2 className="text-lg font-semibold text-white">Create Dynamic Channel Setup</h2>
+            <div className="bg-surface rounded-lg shadow-xl w-full max-w-md mx-4">
+                <div className="flex items-center justify-between p-4 border-b border-border">
+                    <h2 className="text-lg font-semibold text-text-primary">Create Dynamic Channel Setup</h2>
                     <button
                         onClick={ handleCancel }
                         disabled={ isCreating }
-                        className="p-1 text-zinc-400 hover:text-white rounded disabled:opacity-50"
+                        className="p-1 text-text-secondary hover:text-text-primary rounded disabled:opacity-50"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -81,7 +81,7 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
 
                 <form onSubmit={ handleSubmit } className="p-4 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300 mb-2">
+                        <label className="block text-sm font-medium text-text-primary mb-2">
                             UI Version
                         </label>
                         <div className="flex gap-3">
@@ -91,8 +91,8 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                                 disabled={ isCreating }
                                 className={ `flex-1 px-3 py-2 rounded border transition-colors disabled:opacity-50 ${
                                     state.version === "v3"
-                                        ? "bg-blue-600 border-blue-500 text-white"
-                                        : "bg-zinc-700 border-zinc-600 text-zinc-300 hover:border-zinc-500"
+                                        ? "bg-accent/15 border-border-accent text-text-primary"
+                                        : "bg-surface-elevated border-border text-text-primary hover:border-border-accent"
                                 }` }
                             >
                                 <div className="font-medium">V3 (Recommended)</div>
@@ -104,8 +104,8 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                                 disabled={ isCreating }
                                 className={ `flex-1 px-3 py-2 rounded border transition-colors disabled:opacity-50 ${
                                     state.version === "v2"
-                                        ? "bg-blue-600 border-blue-500 text-white"
-                                        : "bg-zinc-700 border-zinc-600 text-zinc-300 hover:border-zinc-500"
+                                        ? "bg-accent/15 border-border-accent text-text-primary"
+                                        : "bg-surface-elevated border-border text-text-primary hover:border-border-accent"
                                 }` }
                             >
                                 <div className="font-medium">V2 (Legacy)</div>
@@ -115,7 +115,7 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300 mb-1">
+                        <label className="block text-sm font-medium text-text-primary mb-1">
                             Channel Name Template
                         </label>
                         <input
@@ -124,19 +124,19 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                             onChange={ ( e ) => handleUpdateNameTemplate( e.target.value ) }
                             disabled={ isCreating }
                             placeholder="{user}'s Channel"
-                            className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded text-white placeholder-zinc-400 focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                            className="w-full px-3 py-2 bg-surface-elevated border border-border rounded text-text-primary placeholder-text-muted focus:outline-none focus:border-border-accent disabled:opacity-50"
                         />
-                        <p className="mt-1 text-xs text-zinc-500">
+                        <p className="mt-1 text-xs text-text-muted">
                             Available placeholders: { "{user}" }, { "{game}" }, { "{index}" }, { "{state}" }
                         </p>
                     </div>
 
                     <div className="flex items-center justify-between">
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="block text-sm font-medium text-text-primary">
                                 Auto-Save Channel Settings
                             </label>
-                            <p className="text-xs text-zinc-500">
+                            <p className="text-xs text-text-muted">
                                 Save user preferences for future channels
                             </p>
                         </div>
@@ -145,7 +145,7 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                             onClick={ () => handleUpdateAutoSave( !state.autoSave ) }
                             disabled={ isCreating }
                             className={ `relative w-11 h-6 rounded-full transition-colors disabled:opacity-50 ${
-                                state.autoSave ? "bg-blue-600" : "bg-zinc-600"
+                                state.autoSave ? "bg-accent/15" : "bg-surface-hover"
                             }` }
                         >
                             <span
@@ -158,10 +158,10 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
 
                     <div className="flex items-center justify-between">
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300">
+                            <label className="block text-sm font-medium text-text-primary">
                                 Mentionable Channels
                             </label>
-                            <p className="text-xs text-zinc-500">
+                            <p className="text-xs text-text-muted">
                                 Allow channels to be mentioned by users
                             </p>
                         </div>
@@ -170,7 +170,7 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                             onClick={ () => handleUpdateMentionable( !state.mentionable ) }
                             disabled={ isCreating }
                             className={ `relative w-11 h-6 rounded-full transition-colors disabled:opacity-50 ${
-                                state.mentionable ? "bg-blue-600" : "bg-zinc-600"
+                                state.mentionable ? "bg-accent/15" : "bg-surface-hover"
                             }` }
                         >
                             <span
@@ -186,14 +186,14 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                             type="button"
                             onClick={ handleCancel }
                             disabled={ isCreating }
-                            className="flex-1 px-4 py-2 bg-zinc-700 text-white rounded hover:bg-zinc-600 disabled:opacity-50 transition-colors"
+                            className="flex-1 px-4 py-2 bg-surface-elevated text-text-primary rounded hover:bg-surface-hover disabled:opacity-50 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={ isCreating }
-                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-2 bg-accent/15 text-text-accent border border-border-accent rounded hover:bg-accent/25 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
                         >
                             { isCreating ? (
                                 <>

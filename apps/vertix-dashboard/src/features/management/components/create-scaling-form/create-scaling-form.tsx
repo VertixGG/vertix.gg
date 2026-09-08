@@ -49,13 +49,13 @@ const CreateScalingFormComponent: DCommandFunctionComponent<CreateScalingFormPro
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-zinc-800 rounded-lg shadow-xl w-full max-w-md mx-4">
-                <div className="flex items-center justify-between p-4 border-b border-zinc-700">
-                    <h2 className="text-lg font-semibold text-white">Create Auto-Scaling Setup</h2>
+            <div className="bg-surface rounded-lg shadow-xl w-full max-w-md mx-4">
+                <div className="flex items-center justify-between p-4 border-b border-border">
+                    <h2 className="text-lg font-semibold text-text-primary">Create Auto-Scaling Setup</h2>
                     <button
                         onClick={ handleCancel }
                         disabled={ isCreating }
-                        className="p-1 text-zinc-400 hover:text-white rounded disabled:opacity-50"
+                        className="p-1 text-text-secondary hover:text-text-primary rounded disabled:opacity-50"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -63,7 +63,7 @@ const CreateScalingFormComponent: DCommandFunctionComponent<CreateScalingFormPro
 
                 <form onSubmit={ handleSubmit } className="p-4 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300 mb-1">
+                        <label className="block text-sm font-medium text-text-primary mb-1">
                             Channel Prefix
                         </label>
                         <input
@@ -72,15 +72,15 @@ const CreateScalingFormComponent: DCommandFunctionComponent<CreateScalingFormPro
                             onChange={ ( e ) => handleUpdatePrefix( e.target.value ) }
                             disabled={ isCreating }
                             placeholder="### Room - {index} ###"
-                            className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded text-white placeholder-zinc-400 focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                            className="w-full px-3 py-2 bg-surface-elevated border border-border rounded text-text-primary placeholder-text-muted focus:outline-none focus:border-border-accent disabled:opacity-50"
                         />
-                        <p className="mt-1 text-xs text-zinc-500">
+                        <p className="mt-1 text-xs text-text-muted">
                             Use { "{index}" } as placeholder for channel number
                         </p>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-zinc-300 mb-1">
+                        <label className="block text-sm font-medium text-text-primary mb-1">
                             Max Members per Channel
                         </label>
                         <input
@@ -90,9 +90,9 @@ const CreateScalingFormComponent: DCommandFunctionComponent<CreateScalingFormPro
                             disabled={ isCreating }
                             min={ 0 }
                             max={ 99 }
-                            className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded text-white focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                            className="w-full px-3 py-2 bg-surface-elevated border border-border rounded text-text-primary focus:outline-none focus:border-border-accent disabled:opacity-50"
                         />
-                        <p className="mt-1 text-xs text-zinc-500">
+                        <p className="mt-1 text-xs text-text-muted">
                             Set to 0 for unlimited members
                         </p>
                     </div>
@@ -102,14 +102,14 @@ const CreateScalingFormComponent: DCommandFunctionComponent<CreateScalingFormPro
                             type="button"
                             onClick={ handleCancel }
                             disabled={ isCreating }
-                            className="flex-1 px-4 py-2 bg-zinc-700 text-white rounded hover:bg-zinc-600 disabled:opacity-50 transition-colors"
+                            className="flex-1 px-4 py-2 bg-surface-elevated text-text-primary rounded hover:bg-surface-hover disabled:opacity-50 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={ isCreating }
-                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-2 bg-accent/15 text-text-accent border border-border-accent rounded hover:bg-accent/25 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
                         >
                             { isCreating ? (
                                 <>

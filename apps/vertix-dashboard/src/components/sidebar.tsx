@@ -26,15 +26,15 @@ const navItems: NavItem[] = [
         hideForDefault: true
     },
     {
-        label: "Interface Editor",
-        path: "/interface-editor",
-        icon: <Boxes className="w-5 h-5" />
-    },
-    {
         label: "Management",
         path: "/management",
         icon: <Settings className="w-5 h-5" />,
         hideForDefault: true
+    },
+    {
+        label: "Interface Editor",
+        path: "/interface-editor",
+        icon: <Boxes className="w-5 h-5" />
     }
 ];
 

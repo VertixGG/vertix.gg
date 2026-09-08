@@ -13,6 +13,7 @@ import Privacy from "@vertix.gg/website/src/vertix/pages/features/dynamic-channe
 import Region from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/region";
 import PrimaryMessageEdit from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/primary-message-edit";
 import Templates from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/templates";
+import Status from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/status";
 import ResetChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/reset-channel";
 import TransferChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/transfer-channel";
 import ClaimChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/claim-channel";
@@ -28,6 +29,7 @@ const FEATURE_OPTIONS = [
     { label: "🌍 Region", value: "region" },
     { label: "📝 Edit Primary Message", value: "edit-primary-message" },
     { label: "📂 Channel Templates", value: "templates" },
+    { label: "📢 Channel Status", value: "status" },
     { label: "🔃 Reset Channel", value: "reset-channel" },
     { label: "🔀 Transfer Channel", value: "transfer-channel" },
     { label: "😈 Claim Channel", value: "claim-channel" },
@@ -43,6 +45,7 @@ const FEATURE_COMPONENTS: Record<string, JSX.Element> = {
     "region": <Region />,
     "edit-primary-message": <PrimaryMessageEdit />,
     "templates": <Templates />,
+    "status": <Status />,
     "reset-channel": <ResetChannel />,
     "transfer-channel": <TransferChannel />,
     "claim-channel": <ClaimChannel />,
@@ -90,6 +93,9 @@ export default function DynamicChannelV3Page() {
                     <hr />
 
                     <Templates />
+                    <hr />
+
+                    <Status />
                     <hr />
 
                     <ResetChannel />

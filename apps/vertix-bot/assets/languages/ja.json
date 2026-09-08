@@ -143,6 +143,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+        "content": {
+          "label": "ステータス"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
         "content": {
           "label": "アクセス"
@@ -274,6 +280,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameButton",
         "content": {
           "label": "名前変更"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
+        "content": {
+          "label": "ステータス"
         }
       },
       {
@@ -434,6 +446,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusInput",
+        "content": {
+          "label": "チャンネルの状況"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
           "label": "ユーザー制限を設定（0で無制限）",
@@ -456,6 +474,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
         "content": {
           "label": "チャンネル名を選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusInput",
+        "content": {
+          "label": "チャンネルの状況"
         }
       },
       {
@@ -503,7 +527,8 @@
             },
             "dynamicChannelMentionableLabel": "@ ∙ メインメッセージでユーザーをメンション",
             "dynamicChannelAutoSaveLabel": "⫸ ∙ ダイナミックチャンネルを自動保存",
-            "dynamicChannelLogsChannelLabel": "❯❯ ∙ カスタムチャンネルにログを送信"
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ カスタムチャンネルにログを送信",
+            "dynamicChannelControlChannelAutoCreateLabel": "▥ ∙ コントロールパネルチャンネルを自動作成"
           }
         }
       },
@@ -625,6 +650,9 @@
             },
             {
               "label": "転送"
+            },
+            {
+              "label": "ステータス"
             },
             {
               "label": "取得"
@@ -765,6 +793,10 @@
             {
               "label": "テンプレート",
               "value": "templates"
+            },
+            {
+              "label": "ステータス",
+              "value": "status"
             },
             {
               "label": "取得",
@@ -1163,6 +1195,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **ステータス**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           },
@@ -1434,7 +1467,8 @@
               "5": "👥 ∙ **Access**",
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
-              "12": "🔀 ∙ **Transfer**"
+              "12": "🔀 ∙ **Transfer**",
+              "13": "📣 ∙ **ステータス**"
             }
           },
           "verifiedRoles": {
@@ -1654,6 +1688,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **ステータス**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
@@ -1801,7 +1836,8 @@
               "5": "👥 ∙ **Access**",
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
-              "12": "🔀 ∙ **Transfer**"
+              "12": "🔀 ∙ **Transfer**",
+              "13": "📣 ∙ **ステータス**"
             }
           }
         }
@@ -1839,6 +1875,27 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed",
       "content": {
         "title": "✏️  チャンネル名が「{channelName}」に変更されました"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
+      "content": {
+        "title": "チャンネルのステータスを設定できませんでした",
+        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
+      "content": {
+        "title": "チャンネルのステータスが自動に戻りました",
+        "description": "現在は「{channelStatus}」と表示され、チャンネルの変化に応じて更新されます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
+      "content": {
+        "title": "チャンネルのステータスが「{channelStatus}」になりました",
+        "description": "消すまで保持されます。空のステータスを送信すると自動に戻ります。"
       }
     },
     {
@@ -2801,6 +2858,27 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
+      "content": {
+        "title": "🙅  チャンネルのステータスを設定できませんでした",
+        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
+      "content": {
+        "title": "📣  チャンネルのステータスが自動に戻りました",
+        "description": "現在は「{channelStatus}」と表示され、チャンネルの変化に応じて更新されます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
+      "content": {
+        "title": "📣  チャンネルのステータスが「{channelStatus}」になりました",
+        "description": "消すまで保持されます。空のステータスを送信すると自動に戻ります。"
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed",
       "content": {
         "title": "{clearEmoji}  削除できるメッセージがありません",
@@ -2948,6 +3026,12 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+      "content": {
+        "title": "ダイナミックチャンネルのステータスを設定"
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/DynamicChannelLimitModal",
       "content": {
         "title": "ユーザー制限を設定"
@@ -2969,6 +3053,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "ダイナミックチャンネル名を変更"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusModal",
+      "content": {
+        "title": "ダイナミックチャンネルのステータスを設定"
       }
     },
     {

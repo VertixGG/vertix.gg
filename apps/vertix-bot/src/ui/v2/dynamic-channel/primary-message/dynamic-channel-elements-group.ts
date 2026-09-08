@@ -5,6 +5,7 @@ import { DynamicChannelMetaClearChatButton } from "@vertix.gg/bot/src/ui/v2/dyna
 import { DynamicChannelMetaLimitButton } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/limit/dynamic-channel-meta-limit-button";
 
 import { DynamicChannelMetaRenameButton } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-button";
+import { DynamicChannelMetaStatusButton } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/status/dynamic-channel-meta-status-button";
 import {
     DynamicChannelPermissionsAccessButton,
     DynamicChannelPermissionsStateButton,
@@ -45,14 +46,21 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
         } );
     }
 
+    private static getSortIdByName( name: string ) {
+        return this.allButtonsByName[ name ]?.getSortId() ?? 0;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public static getItems( args?: UIArgs ) {
         // TODO: Called 3 times on startup, fix this.
-        // @note: This has no visual effect, it used to define the items that will be used in the UI.
-        return [
+        // @note: The order below is registration order, grouped by concern. What the user sees is
+        // ordered by `getSortId()` in the sort at the end, the same way UI-V3 does it, so adding a
+        // button here can never silently reorder the rendered row.
+        const items = [
             DynamicChannelMetaRenameButton,
             DynamicChannelMetaLimitButton,
             DynamicChannelMetaClearChatButton,
+            DynamicChannelMetaStatusButton,
 
             DynamicChannelPermissionsStateButton,
             DynamicChannelPermissionsVisibilityButton,
@@ -62,6 +70,16 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
             DynamicChannelTransferOwnerButton,
             DynamicChannelPremiumClaimChannelButton
         ];
+
+        // `populate()` is the single caller that runs before the instances exist, and it sorts the
+        // instances it creates, so handing it registration order is safe.
+        if ( !this.allButtons.length ) {
+            return items;
+        }
+
+        return items.sort(
+            ( a, b ) => this.getSortIdByName( a.getName() ) - this.getSortIdByName( b.getName() )
+        );
     }
 
     /**

@@ -180,7 +180,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             this.onOwnerJoinDynamicChannel,
             this.onOwnerLeaveDynamicChannel,
             this.onLeaveDynamicChannelEmpty,
-            this.updateChannelOwnership
+            this.updateChannelOwnership,
+
+            // Consumed by `DynamicChannelStatusService` to refresh the voice channel status.
+            this.editUserLimit,
+            this.editChannelState,
+            this.editChannelVisibilityState,
+            this.editChannelPrivacyState,
+            this.resetChannel
         ] );
     }
 

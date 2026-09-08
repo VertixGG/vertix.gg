@@ -225,6 +225,7 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_BUTTONS
                 "rest-channel": EmojiManager.getToken( "ResetChannel" ) + "  ∙ **Reset**",
                 "transfer": EmojiManager.getToken( "TransferChannel" ) + " ∙ **Transfer**",
                 "templates": EmojiManager.getToken( "ChannelTemplates" ) + " ∙ **Templates**",
+                "status": EmojiManager.getToken( "Megaphone" ) + " ∙ **Status**",
                 "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**"
             }
         }

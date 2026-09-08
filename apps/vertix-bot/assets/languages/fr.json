@@ -143,6 +143,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+        "content": {
+          "label": "Statut"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
         "content": {
           "label": "Accès"
@@ -274,6 +280,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameButton",
         "content": {
           "label": "Renommer"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
+        "content": {
+          "label": "Statut"
         }
       },
       {
@@ -434,6 +446,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusInput",
+        "content": {
+          "label": "CE QUI SE PASSE DANS VOTRE SALON"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
           "label": "DÉFINIR LA LIMITE D'UTILISATEURS (0 POUR ILLIMITÉ)",
@@ -456,6 +474,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
         "content": {
           "label": "CHOISISSEZ UN NOM POUR VOTRE CANAL"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusInput",
+        "content": {
+          "label": "CE QUI SE PASSE DANS VOTRE SALON"
         }
       },
       {
@@ -503,7 +527,8 @@
             },
             "dynamicChannelMentionableLabel": "@ ∙ Mentionner l'utilisateur dans le message principal",
             "dynamicChannelAutoSaveLabel": "⫸ ∙ Sauvegarde automatique du canal dynamique",
-            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Envoyer les logs vers un canal personnalisé"
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Envoyer les logs vers un canal personnalisé",
+            "dynamicChannelControlChannelAutoCreateLabel": "▥ ∙ Créer automatiquement le salon du panneau de configuration"
           }
         }
       },
@@ -625,6 +650,9 @@
             },
             {
               "label": "Transférer"
+            },
+            {
+              "label": "Statut"
             },
             {
               "label": "Réclamer"
@@ -765,6 +793,10 @@
             {
               "label": "Modèles",
               "value": "templates"
+            },
+            {
+              "label": "Statut",
+              "value": "status"
             },
             {
               "label": "Réclamer",
@@ -1224,6 +1256,27 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
+      "content": {
+        "title": "🙅  Impossible de définir le statut de votre salon",
+        "description": "Le mot `{badword}` a été classé comme inapproprié par l'administrateur du serveur."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
+      "content": {
+        "title": "📣  Le statut de votre salon est de nouveau automatique",
+        "description": "Il affiche désormais « {channelStatus} » et se met à jour au fil des changements du salon."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
+      "content": {
+        "title": "📣  Le statut de votre salon est maintenant « {channelStatus} »",
+        "description": "Il reste jusqu'à ce que vous l'effaciez : envoyez un statut vide pour revenir au mode automatique."
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
       "content": {
         "title": "👢  Utilisateur expulsé",
@@ -1443,7 +1496,8 @@
               "5": "👥 ∙ **Access**",
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
-              "12": "🔀 ∙ **Transfer**"
+              "12": "🔀 ∙ **Transfer**",
+              "13": "📣 ∙ **Statut**"
             }
           }
         }
@@ -1886,7 +1940,8 @@
               "5": "👥 ∙ **Access**",
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
-              "12": "🔀 ∙ **Transfer**"
+              "12": "🔀 ∙ **Transfer**",
+              "13": "📣 ∙ **Statut**"
             }
           },
           "verifiedRoles": {
@@ -1945,6 +2000,27 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed",
       "content": {
         "title": "✏️  Le nom de votre canal est devenu « {channelName} »"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
+      "content": {
+        "title": "Impossible de définir le statut de votre salon",
+        "description": "Le mot `{badword}` a été classé comme inapproprié par l'administrateur du serveur."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
+      "content": {
+        "title": "Le statut de votre salon est de nouveau automatique",
+        "description": "Il affiche désormais « {channelStatus} » et se met à jour au fil des changements du salon."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
+      "content": {
+        "title": "Le statut de votre salon est maintenant « {channelStatus} »",
+        "description": "Il reste jusqu'à ce que vous l'effaciez : envoyez un statut vide pour revenir au mode automatique."
       }
     },
     {
@@ -2279,6 +2355,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **Statut**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
@@ -2859,6 +2936,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **Statut**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           },
@@ -2948,6 +3026,12 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+      "content": {
+        "title": "Définir le statut du salon dynamique"
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/DynamicChannelLimitModal",
       "content": {
         "title": "Définir la limite d'utilisateurs"
@@ -2969,6 +3053,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "Renommer le canal dynamique"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusModal",
+      "content": {
+        "title": "Définir le statut du salon dynamique"
       }
     },
     {

@@ -143,6 +143,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+        "content": {
+          "label": "Статус"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
         "content": {
           "label": "Доступ"
@@ -274,6 +280,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameButton",
         "content": {
           "label": "Переименовать"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
+        "content": {
+          "label": "Статус"
         }
       },
       {
@@ -434,6 +446,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusInput",
+        "content": {
+          "label": "ЧТО ПРОИСХОДИТ В ВАШЕМ КАНАЛЕ"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
           "label": "УСТАНОВИТЕ ЛИМИТ ПОЛЬЗОВАТЕЛЕЙ (0 ДЛЯ БЕЗЛИМИТА)",
@@ -456,6 +474,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
         "content": {
           "label": "ВЫБЕРИТЕ НАЗВАНИЕ ДЛЯ ВАШЕГО КАНАЛА"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusInput",
+        "content": {
+          "label": "ЧТО ПРОИСХОДИТ В ВАШЕМ КАНАЛЕ"
         }
       },
       {
@@ -503,7 +527,8 @@
             },
             "dynamicChannelMentionableLabel": "@ ∙ Упоминать пользователя в главном сообщении",
             "dynamicChannelAutoSaveLabel": "⫸ ∙ Автосохранение динамического канала",
-            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Отправлять логи в другой канал"
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Отправлять логи в другой канал",
+            "dynamicChannelControlChannelAutoCreateLabel": "▥ ∙ Автосоздание канала панели управления"
           }
         }
       },
@@ -625,6 +650,9 @@
             },
             {
               "label": "Передать"
+            },
+            {
+              "label": "Статус"
             },
             {
               "label": "Забрать"
@@ -765,6 +793,10 @@
             {
               "label": "Шаблоны",
               "value": "templates"
+            },
+            {
+              "label": "Статус",
+              "value": "status"
             },
             {
               "label": "Забрать",
@@ -1332,6 +1364,27 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
+      "content": {
+        "title": "🙅  Не удалось установить статус канала",
+        "description": "Слово `{badword}` классифицировано как неприемлемое администратором сервера."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
+      "content": {
+        "title": "📣  Статус вашего канала снова автоматический",
+        "description": "Сейчас он показывает «{channelStatus}» и обновляется вместе с каналом."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
+      "content": {
+        "title": "📣  Статус вашего канала теперь «{channelStatus}»",
+        "description": "Он останется, пока вы его не очистите — отправьте пустой статус, чтобы вернуться к автоматическому."
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
       "content": {
         "title": "🙅 Вы переименовываете канал слишком быстро!",
@@ -1771,7 +1824,8 @@
               "5": "👥 ∙ **Доступ**",
               "6": "🔃 ∙ **Сбросить**",
               "7": "😈 ∙ **Забрать**",
-              "12": "🔀 ∙ **Передать**"
+              "12": "🔀 ∙ **Передать**",
+              "13": "📣 ∙ **Статус**"
             }
           },
           "verifiedRoles": {
@@ -1914,7 +1968,8 @@
               "5": "👥 ∙ **Доступ**",
               "6": "🔃 ∙ **Сбросить**",
               "7": "😈 ∙ **Забрать**",
-              "12": "🔀 ∙ **Передать**"
+              "12": "🔀 ∙ **Передать**",
+              "13": "📣 ∙ **Статус**"
             }
           }
         }
@@ -2542,6 +2597,27 @@
       }
     },
     {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
+      "content": {
+        "title": "Не удалось установить статус канала",
+        "description": "Слово `{badword}` классифицировано как неприемлемое администратором сервера."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
+      "content": {
+        "title": "Статус вашего канала снова автоматический",
+        "description": "Сейчас он показывает «{channelStatus}» и обновляется вместе с каналом."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
+      "content": {
+        "title": "Статус вашего канала теперь «{channelStatus}»",
+        "description": "Он останется, пока вы его не очистите — отправьте пустой статус, чтобы вернуться к автоматическому."
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/DynamicChannelResetChannelEmbed",
       "content": {
         "title": "{resetEmoji}  Динамический канал сброшен к настройкам по умолчанию! ",
@@ -2730,6 +2806,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Сбросить**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
+              "status": "<emoji name='Megaphone'> ∙ **Статус**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           },
@@ -2875,6 +2952,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Сбросить**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
+              "status": "<emoji name='Megaphone'> ∙ **Статус**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           }
@@ -2948,6 +3026,12 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+      "content": {
+        "title": "Установить статус динамического канала"
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/DynamicChannelLimitModal",
       "content": {
         "title": "Установить лимит пользователей"
@@ -2969,6 +3053,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "Переименовать динамический канал"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusModal",
+      "content": {
+        "title": "Установить статус динамического канала"
       }
     },
     {

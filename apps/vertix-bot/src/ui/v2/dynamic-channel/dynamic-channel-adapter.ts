@@ -136,6 +136,16 @@ async function onRenameButtonClicked(
         ?.showModal( "VertixBot/UI-V2/DynamicChannelMetaRenameModal", interaction );
 }
 
+async function onStatusButtonClicked(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
+    interaction: UIDefaultButtonChannelVoiceInteraction
+) {
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+    await uiService
+        .get( "VertixBot/UI-V2/DynamicChannelMetaStatusAdapter" )
+        ?.showModal( "VertixBot/UI-V2/DynamicChannelMetaStatusModal", interaction );
+}
+
 async function onClearChatButtonClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
     interaction: UIDefaultButtonChannelVoiceInteraction
@@ -241,6 +251,7 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
                 previewDefaultVars: { channelName: "My Channel", ownerId: "123456789" }
             } )
             .addTransition( "OpenRename", { from: "Default", to: "Default" } )
+            .addTransition( "OpenStatus", { from: "Default", to: "Default" } )
             .addTransition( "OpenLimit", { from: "Default", to: "Default" } )
             .addTransition( "OpenPermissions", { from: "Default", to: "Default" } )
             .addTransition( "ToggleState", { from: "Default", to: "Default" } )
@@ -250,6 +261,7 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             .addTransition( "ClaimChannel", { from: "Default", to: "Default" } )
             .addTransition( "TransferOwner", { from: "Default", to: "Default" } )
             .bindButton( "VertixBot/UI-V2/DynamicChannelMetaRenameButton", "OpenRename", onRenameButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelMetaStatusButton", "OpenStatus", onStatusButtonClicked )
             .bindButton( "VertixBot/UI-V2/DynamicChannelMetaLimitButton", "OpenLimit", onLimitButtonClicked )
             .bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton", "OpenPermissions", onAccessButtonClicked )
             .bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsStateButton", "ToggleState", onToggleStateButtonClicked )

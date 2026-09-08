@@ -161,6 +161,8 @@ export default async function Main( { enableListeners }: {
             "GuildPresences",
             "Guilds",
             "GuildVoiceStates",
+            // Privileged: drives the game name shown in the dynamic channel status.
+            "GuildPresences",
             "DirectMessages"
         ],
         partials: [ Partials.Channel ],

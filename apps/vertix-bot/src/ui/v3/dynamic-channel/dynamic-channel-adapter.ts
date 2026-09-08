@@ -33,6 +33,7 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             } )
             // All button clicks stay in Default state but open other adapters
             .addTransition( "OpenRename", { from: "Default", to: "Default" } )
+            .addTransition( "OpenStatus", { from: "Default", to: "Default" } )
             .addTransition( "OpenLimit", { from: "Default", to: "Default" } )
             .addTransition( "OpenPermissions", { from: "Default", to: "Default" } )
             .addTransition( "OpenPrivacy", { from: "Default", to: "Default" } )
@@ -44,6 +45,16 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             .addTransition( "TransferOwner", { from: "Default", to: "Default" } )
             .addTransition( "OpenTemplates", { from: "Default", to: "Default" } )
             // Handler bindings (combines element-to-transition binding with handler)
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelStatusButton",
+                "OpenStatus",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService
+                        .get( "VertixBot/UI-V3/DynamicChannelStatusAdapter" )
+                        ?.showModal( "VertixBot/UI-V3/DynamicChannelStatusModal", interaction );
+                }
+            )
             .bindButton(
                 "VertixBot/UI-V3/DynamicChannelRenameButton",
                 "OpenRename",

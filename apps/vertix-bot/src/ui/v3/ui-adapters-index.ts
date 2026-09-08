@@ -7,6 +7,7 @@ export { DynamicChannelPanelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 export { DynamicChannelLimitAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-adapter";
 export { DynamicChannelClearChatAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/clear-chat/dynamic-channel-clear-chat-adapter";
 export { DynamicChannelRenameAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-adapter";
+export { DynamicChannelStatusAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/status/dynamic-channel-status-adapter";
 export { DynamicChannelPermissionsAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-adapter";
 export { DynamicChannelTransferOwnerAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/transfer-ownership/dynamic-channel-transfer-owner-adapter";
 export { DynamicChannelPrimaryMessageEditAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-adapter";

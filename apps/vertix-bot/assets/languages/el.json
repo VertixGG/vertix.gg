@@ -143,6 +143,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+        "content": {
+          "label": "Κατάσταση"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
         "content": {
           "label": "Πρόσβαση"
@@ -274,6 +280,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameButton",
         "content": {
           "label": "Μετονομασία"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
+        "content": {
+          "label": "Κατάσταση"
         }
       },
       {
@@ -434,6 +446,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusInput",
+        "content": {
+          "label": "ΤΙ ΣΥΜΒΑΙΝΕΙ ΣΤΟ ΚΑΝΑΛΙ ΣΑΣ"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
           "label": "ΟΡΙΣΜΟΣ ΟΡΙΟΥ ΧΡΗΣΤΩΝ (0 ΓΙΑ ΑΠΕΡΙΟΡΙΣΤΟ)",
@@ -456,6 +474,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
         "content": {
           "label": "ΕΠΙΛΕΞΤΕ ΟΝΟΜΑ ΓΙΑ ΤΟ ΚΑΝΑΛΙ ΣΑΣ"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusInput",
+        "content": {
+          "label": "ΤΙ ΣΥΜΒΑΙΝΕΙ ΣΤΟ ΚΑΝΑΛΙ ΣΑΣ"
         }
       },
       {
@@ -503,7 +527,8 @@
             },
             "dynamicChannelMentionableLabel": "@ ∙ Αναφορά χρήστη στο κύριο μήνυμα",
             "dynamicChannelAutoSaveLabel": "⫸ ∙ Αυτόματη αποθήκευση δυναμικού καναλιού",
-            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Αποστολή αρχείων σε προσαρμοσμένο κανάλι"
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Αποστολή αρχείων σε προσαρμοσμένο κανάλι",
+            "dynamicChannelControlChannelAutoCreateLabel": "▥ ∙ Αυτόματη δημιουργία καναλιού πίνακα ελέγχου"
           }
         }
       },
@@ -625,6 +650,9 @@
             },
             {
               "label": "Μεταφορά"
+            },
+            {
+              "label": "Κατάσταση"
             },
             {
               "label": "Διεκδίκηση"
@@ -765,6 +793,10 @@
             {
               "label": "Πρότυπα",
               "value": "templates"
+            },
+            {
+              "label": "Κατάσταση",
+              "value": "status"
             },
             {
               "label": "Διεκδίκηση",
@@ -1332,6 +1364,27 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
+      "content": {
+        "title": "🙅  Απέτυχε ο ορισμός της κατάστασης του καναλιού σας",
+        "description": "Η λέξη `{badword}` έχει ταξινομηθεί ως ακατάλληλη από τον διαχειριστή του διακομιστή."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
+      "content": {
+        "title": "📣  Η κατάσταση του καναλιού σας είναι ξανά αυτόματη",
+        "description": "Τώρα δείχνει «{channelStatus}» και ενημερώνεται καθώς αλλάζει το κανάλι."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
+      "content": {
+        "title": "📣  Η κατάσταση του καναλιού σας είναι τώρα «{channelStatus}»",
+        "description": "Παραμένει μέχρι να την καθαρίσετε — υποβάλετε κενή κατάσταση για επιστροφή στην αυτόματη."
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
       "content": {
         "title": "🙅 Μετονομάσατε το κανάλι σας πολύ γρήγορα!",
@@ -1771,7 +1824,8 @@
               "5": "👥 ∙ **Πρόσβαση**",
               "6": "🔃 ∙ **Επαναφορά**",
               "7": "😈 ∙ **Διεκδίκηση**",
-              "12": "🔀 ∙ **Μεταφορά**"
+              "12": "🔀 ∙ **Μεταφορά**",
+              "13": "📣 ∙ **Κατάσταση**"
             }
           },
           "verifiedRoles": {
@@ -1914,7 +1968,8 @@
               "5": "👥 ∙ **Πρόσβαση**",
               "6": "🔃 ∙ **Επαναφορά**",
               "7": "😈 ∙ **Διεκδίκηση**",
-              "12": "🔀 ∙ **Μεταφορά**"
+              "12": "🔀 ∙ **Μεταφορά**",
+              "13": "📣 ∙ **Κατάσταση**"
             }
           }
         }
@@ -2176,6 +2231,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           },
@@ -2627,6 +2683,27 @@
       }
     },
     {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
+      "content": {
+        "title": "Απέτυχε ο ορισμός της κατάστασης του καναλιού σας",
+        "description": "Η λέξη `{badword}` έχει ταξινομηθεί ως ακατάλληλη από τον διαχειριστή του διακομιστή."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
+      "content": {
+        "title": "Η κατάσταση του καναλιού σας είναι ξανά αυτόματη",
+        "description": "Τώρα δείχνει «{channelStatus}» και ενημερώνεται καθώς αλλάζει το κανάλι."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
+      "content": {
+        "title": "Η κατάσταση του καναλιού σας είναι τώρα «{channelStatus}»",
+        "description": "Παραμένει μέχρι να την καθαρίσετε — υποβάλετε κενή κατάσταση για επιστροφή στην αυτόματη."
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/SetupNewStep3Embed",
       "content": {
         "title": "Βήμα 3 - Επιλογή επαληθευμένων ρόλων",
@@ -2766,6 +2843,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
@@ -2948,6 +3026,12 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+      "content": {
+        "title": "Ορισμός κατάστασης δυναμικού καναλιού"
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/DynamicChannelLimitModal",
       "content": {
         "title": "Ορισμός ορίου χρηστών"
@@ -2969,6 +3053,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "Μετονομασία δυναμικού καναλιού"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusModal",
+      "content": {
+        "title": "Ορισμός κατάστασης δυναμικού καναλιού"
       }
     },
     {

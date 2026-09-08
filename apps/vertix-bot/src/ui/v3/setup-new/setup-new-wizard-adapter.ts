@@ -258,6 +258,7 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
                 "rest-channel": EmojiManager.getToken( "ResetChannel" ) + "  ∙ **Reset**",
                 "transfer": EmojiManager.getToken( "TransferChannel" ) + " ∙ **Transfer**",
                 "templates": EmojiManager.getToken( "ChannelTemplates" ) + " ∙ **Templates**",
+                "status": EmojiManager.getToken( "Megaphone" ) + " ∙ **Status**",
                 "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**"
             }
         }
@@ -482,6 +483,20 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
                     args.dynamicChannelControlChannelAutoCreate = true;
                     context.setArgs( interaction, {
                         dynamicChannelControlChannelAutoCreate: true
+                    } );
+                }
+
+                if ( !args.dynamicChannelButtonsTemplate?.length && interaction ) {
+                    // Every button is enabled by default, seeding it here makes the step show what
+                    // the master channel will actually be created with, Status included.
+                    const defaultButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds(
+                        DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( item ) => item.getId() )
+                    );
+
+                    args.dynamicChannelButtonsTemplate = defaultButtonsTemplate;
+
+                    context.setArgs( interaction, {
+                        dynamicChannelButtonsTemplate: defaultButtonsTemplate
                     } );
                 }
                 break;

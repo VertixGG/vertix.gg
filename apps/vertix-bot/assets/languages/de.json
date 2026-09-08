@@ -143,6 +143,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
+        "content": {
+          "label": "Status"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton",
         "content": {
           "label": "Zugriff"
@@ -274,6 +280,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameButton",
         "content": {
           "label": "Umbenennen"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
+        "content": {
+          "label": "Status"
         }
       },
       {
@@ -434,6 +446,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelMetaStatusInput",
+        "content": {
+          "label": "WAS IN DEINEM KANAL PASSIERT"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelLimitInput",
         "content": {
           "label": "BENUTZERLIMIT FESTLEGEN (0 FÜR UNBEGRENZT)",
@@ -456,6 +474,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelRenameInput",
         "content": {
           "label": "WÄHLE EINEN NAMEN FÜR DEINEN KANAL"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelStatusInput",
+        "content": {
+          "label": "WAS IN DEINEM KANAL PASSIERT"
         }
       },
       {
@@ -503,7 +527,8 @@
             },
             "dynamicChannelMentionableLabel": "@ ∙ Benutzer in Hauptnachricht erwähnen",
             "dynamicChannelAutoSaveLabel": "⫸ ∙ Automatische Speicherung des dynamischen Kanals",
-            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Logs an benutzerdefinierten Kanal senden"
+            "dynamicChannelLogsChannelLabel": "❯❯ ∙ Logs an benutzerdefinierten Kanal senden",
+            "dynamicChannelControlChannelAutoCreateLabel": "▥ ∙ Steuerungskanal automatisch erstellen"
           }
         }
       },
@@ -625,6 +650,9 @@
             },
             {
               "label": "Übertragen"
+            },
+            {
+              "label": "Status"
             },
             {
               "label": "Beanspruchen"
@@ -765,6 +793,10 @@
             {
               "label": "Vorlagen",
               "value": "templates"
+            },
+            {
+              "label": "Status",
+              "value": "status"
             },
             {
               "label": "Beanspruchen",
@@ -1460,7 +1492,8 @@
               "5": "👥 ∙ **Access**",
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
-              "12": "🔀 ∙ **Transfer**"
+              "12": "🔀 ∙ **Transfer**",
+              "13": "📣 ∙ **Status**"
             }
           },
           "verifiedRoles": {
@@ -1478,6 +1511,27 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed",
       "content": {
         "title": "✏️  Der Name deines Kanals wurde zu '{channelName}' geändert"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
+      "content": {
+        "title": "Der Status deines Kanals konnte nicht gesetzt werden",
+        "description": "Das Wort `{badword}` wurde vom Server-Administrator als unangemessen eingestuft."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
+      "content": {
+        "title": "Der Status deines Kanals ist wieder automatisch",
+        "description": "Er zeigt jetzt „{channelStatus}“ und aktualisiert sich, während sich der Kanal ändert."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
+      "content": {
+        "title": "Der Status deines Kanals ist jetzt „{channelStatus}“",
+        "description": "Er bleibt, bis du ihn löschst – sende einen leeren Status, um zum automatischen zurückzukehren."
       }
     },
     {
@@ -1905,6 +1959,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **Status**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           },
@@ -2012,6 +2067,27 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
+      "content": {
+        "title": "🙅  Der Status deines Kanals konnte nicht gesetzt werden",
+        "description": "Das Wort `{badword}` wurde vom Server-Administrator als unangemessen eingestuft."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
+      "content": {
+        "title": "📣  Der Status deines Kanals ist wieder automatisch",
+        "description": "Er zeigt jetzt „{channelStatus}“ und aktualisiert sich, während sich der Kanal ändert."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
+      "content": {
+        "title": "📣  Der Status deines Kanals ist jetzt „{channelStatus}“",
+        "description": "Er bleibt, bis du ihn löschst – sende einen leeren Status, um zum automatischen zurückzukehren."
+      }
+    },
+    {
       "name": "VertixBot/UI-V2/ClaimResultVotedSameEmbed",
       "content": {
         "title": "🗳️  Du hast bereits für {userDisplayName} gestimmt",
@@ -2086,7 +2162,8 @@
               "5": "👥 ∙ **Access**",
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
-              "12": "🔀 ∙ **Transfer**"
+              "12": "🔀 ∙ **Transfer**",
+              "13": "📣 ∙ **Status**"
             }
           }
         }
@@ -2133,6 +2210,7 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **Status**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
@@ -2948,6 +3026,12 @@
       }
     },
     {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
+      "content": {
+        "title": "Status des dynamischen Kanals festlegen"
+      }
+    },
+    {
       "name": "VertixBot/UI-V3/DynamicChannelLimitModal",
       "content": {
         "title": "Benutzerlimit festlegen"
@@ -2969,6 +3053,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelRenameModal",
       "content": {
         "title": "Dynamischen Kanal umbenennen"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusModal",
+      "content": {
+        "title": "Status des dynamischen Kanals festlegen"
       }
     },
     {

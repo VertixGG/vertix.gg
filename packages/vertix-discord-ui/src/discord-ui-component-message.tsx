@@ -10,6 +10,7 @@ export interface DiscordUIComponentMessageProps {
     timestamp?: string;
     mentionUsername?: string;
     componentName: string;
+    onElementClick?: ( elementName: string ) => void;
     variables?: Readonly<Record<string, string>>;
     elementOverrides?: Readonly<Record<string, UIElementOverride>>;
     embedOverrides?: Readonly<Record<string, UIEmbedOverride>>;
@@ -30,6 +31,7 @@ export function DiscordUIComponentMessage( {
     timestamp,
     mentionUsername,
     componentName,
+    onElementClick,
     variables,
     elementOverrides,
     embedOverrides,
@@ -63,6 +65,7 @@ export function DiscordUIComponentMessage( {
 
             <DiscordUIComponentRenderer
                 componentName={ componentName }
+                onElementClick={ onElementClick }
                 variables={ variables }
                 elementOverrides={ elementOverrides }
                 embedOverrides={ embedOverrides }

@@ -49,6 +49,11 @@ export interface ExpandedSelectMenuConfig {
 
 export interface DiscordUIComponentRendererProps {
     componentName: string;
+    /**
+     * Called with the element's name when one of the rendered buttons is pressed. Without it the
+     * buttons are inert, the way a screenshot of Discord is.
+     */
+    onElementClick?: ( elementName: string ) => void;
     elementOverrides?: Readonly<Record<string, UIElementOverride>>;
     embedOverrides?: Readonly<Record<string, UIEmbedOverride>>;
     variables?: Readonly<Record<string, string>>;
@@ -70,6 +75,7 @@ interface ResolvedEmbedDefinition {
 
 export function DiscordUIComponentRenderer( {
     componentName,
+    onElementClick,
     elementOverrides,
     embedOverrides,
     variables,
@@ -181,6 +187,7 @@ export function DiscordUIComponentRenderer( {
                     { renderElementRows( elementsGroup.items, {
                         variables: variables,
                         elementOverrides: elementOverrides,
+                        onElementClick,
                         emojiIconSrcByUnicode,
                         expandedSelectMenu,
                         expandedElementName,
@@ -301,6 +308,7 @@ function renderElementRows(
         expandedSelectMenu: ExpandedSelectMenuConfig | undefined;
         expandedElementName: string | null;
         onToggleExpand: ( elementName: string ) => void;
+        onElementClick?: ( elementName: string ) => void;
     },
 ): React.ReactNode {
     const result: Array<React.ReactNode> = [];
@@ -368,6 +376,7 @@ function renderElement(
         expandedSelectMenu: ExpandedSelectMenuConfig | undefined;
         expandedElementName: string | null;
         onToggleExpand: ( elementName: string ) => void;
+        onElementClick?: ( elementName: string ) => void;
     },
 ): React.ReactNode {
     const override = context.elementOverrides?.[ item.element ];
@@ -384,6 +393,8 @@ function renderElement(
         const icon = buildEmojiIcon( override?.emoji ?? definition.emoji, context.emojiIconSrcByUnicode );
         const emoji = icon ? undefined : ( override?.emoji ?? definition.emoji );
 
+        const onElementClick = context.onElementClick;
+
         return (
             <DiscordButton
                 key={ item.element }
@@ -393,6 +404,7 @@ function renderElement(
                 variant={ variant }
                 disabled={ disabled }
                 highlighted={ highlighted }
+                onClick={ onElementClick ? () => onElementClick( item.element ) : undefined }
             />
         );
     }

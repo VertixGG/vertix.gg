@@ -25,7 +25,8 @@ const SHEET_DEFAULTS: SheetConfig = {
     scale: 3,
     title: false,
     note: "",
-    omit: []
+    omit: [],
+    items: []
 };
 
 const MAX_PIXELS = 8000 * 8000;
@@ -36,6 +37,32 @@ interface SheetQuery {
     title?: string;
     note?: string;
     omit?: string;
+    items?: string;
+}
+
+function parseIdList( raw: string | undefined ): string[] {
+    return ( raw ?? "" ).split( "," ).map( ( id ) => id.trim() ).filter( ( id ) => id.length > 0 );
+}
+
+// `items` may arrive as a plain "a,b" list, or - when the bot builds it from its
+// buttons-template array arg, which the UI framework serialises as JSON - as
+// `["a","b"]`. Accept both.
+function parseItems( raw: string | undefined ): string[] {
+    const value = ( raw ?? "" ).trim();
+
+    if ( value.startsWith( "[" ) ) {
+        try {
+            const parsed: unknown = JSON.parse( value );
+
+            if ( Array.isArray( parsed ) ) {
+                return parsed.map( ( id ) => String( id ).trim() ).filter( ( id ) => id.length > 0 );
+            }
+        } catch {
+            // Fall through to the comma parser.
+        }
+    }
+
+    return parseIdList( value );
 }
 
 function clamp( value: number, min: number, max: number, fallback: number ): number {
@@ -56,7 +83,8 @@ function parseQuery( query: SheetQuery ): SheetConfig {
         scale: clamp( readNumber( query.scale ), 1, 4, SHEET_DEFAULTS.scale ),
         title: "on" === query.title,
         note: ( query.note ?? "" ).slice( 0, 120 ),
-        omit: ( query.omit ?? "" ).split( "," ).map( ( id ) => id.trim() ).filter( ( id ) => id.length > 0 )
+        omit: parseIdList( query.omit ),
+        items: parseItems( query.items )
     };
 }
 

@@ -44,7 +44,9 @@ const vars = {
     regionAutomatic: uiUtilsWrapAsTemplate( "regionAutomatic" ),
 
     title: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_TITLE_VARS.title,
-    description: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.description
+    description: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.description,
+
+    dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
 };
 
 const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
@@ -53,7 +55,7 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&version=1" )
+    .setImage( () => `https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items=${ vars.dynamicChannelButtonsTemplate }` )
     .setTitle( () => vars.title )
     .setDescription( () => (
         `${ vars.description }\n\n` +

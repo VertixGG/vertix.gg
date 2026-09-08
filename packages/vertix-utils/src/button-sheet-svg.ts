@@ -10,6 +10,9 @@ export interface SheetConfig {
     title: boolean;
     note: string;
     omit: ReadonlyArray<string>;
+    // The buttons to print, in print order (the list order is the order). Omitted/empty
+    // keeps the source order.
+    items?: ReadonlyArray<string>;
 }
 
 export interface SheetSvg {
@@ -191,7 +194,17 @@ export function buildSheetSvg(
         tileHeight = EM.tileHeight * fontSize,
         iconSize = EM.icon * fontSize;
 
-    const shown = tiles.filter( ( tile ) => ! config.omit.includes( tile.id ) );
+    const visible = tiles.filter( ( tile ) => ! config.omit.includes( tile.id ) );
+
+    // `items` both selects and re-arranges: when given, only those ids are shown,
+    // in that sequence. Empty keeps the source order (minus `omit`).
+    const items = config.items ?? [];
+
+    const shown = items.length
+        ? items
+            .map( ( id ) => visible.find( ( tile ) => tile.id === id ) )
+            .filter( ( tile ): tile is SheetTile => Boolean( tile ) )
+        : visible;
 
     const columns = Math.max( 1, config.cols ),
         rows = Math.max( 1, Math.ceil( shown.length / columns ) );

@@ -1,10 +1,14 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
-import { DYNAMIC_CHANNEL_V3_EMOJIS, DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES, DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
-import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-emoji";
+import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES, useOpenDynamicChannelV3Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
+import { DYNAMIC_CHANNEL_V3_EMOJIS, DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
+import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
 
 export default function ClearChat() {
+    const openFeature = useOpenDynamicChannelV3Feature();
+
     const ownerDisplayName = "iNewLegend";
 
     return (
@@ -34,12 +38,10 @@ export default function ClearChat() {
                                 timestamp="Today at 1:00 PM"
                                 mentionUsername="iNewLegend"
                                 componentName="VertixBot/UI-V3/DynamicChannel"
+                                onElementClick={ openFeature }
                                 variables={ {
                                     ...DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES,
                                     name: "iNewLegend's Channel"
-                                } }
-                                elementOverrides={ {
-                                    "VertixBot/UI-V3/DynamicChannelClaimChannelButton": { disabled: true }
                                 } }
                             />
                             <DiscordUIComponentMessage

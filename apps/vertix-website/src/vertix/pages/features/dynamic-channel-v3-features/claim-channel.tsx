@@ -1,10 +1,14 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
-import { DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES, DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
-import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-emoji";
+import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES, useOpenDynamicChannelV3Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
+import { DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
+import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
 
 export default function ClaimChannel() {
+    const openFeature = useOpenDynamicChannelV3Feature();
+
     return (
         <div className="mb-12">
             <div className="flex items-center mb-4">
@@ -31,6 +35,7 @@ export default function ClaimChannel() {
                             timestamp="Today at 4:16 PM"
                             mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V3/DynamicChannel"
+                            onElementClick={ openFeature }
                             variables={ DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES }
                         />
                         <DiscordUIComponentMessage

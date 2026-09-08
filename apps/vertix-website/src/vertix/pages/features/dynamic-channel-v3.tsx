@@ -4,8 +4,9 @@ import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.
 
 import SearchableSelect from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
 
-import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
-import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-emoji";
+import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
+
+import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
 import ButtonsInterface from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/buttons-interface";
 import RenameChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/rename-channel";

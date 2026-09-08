@@ -13,24 +13,6 @@ export const DYNAMIC_CHANNEL_V3_EMOJIS = {
     status: "<emoji name='Megaphone'>",
 };
 
-/**
- * The emoji names the buttons carry, for looking the artwork up in the manifest.
- */
-export const DYNAMIC_CHANNEL_V3_EMOJI_NAMES = {
-    rename: "ChannelRename",
-    limit: "UserLimit",
-    permissions: "ChannelPermissions",
-    privacy: "ChannelPrivacy",
-    region: "ChannelRegion",
-    editPrimaryMessage: "EditChannelMessage",
-    clearChat: "ClearChat",
-    resetChannel: "ResetChannel",
-    transferChannel: "TransferChannel",
-    claimChannel: "ClaimChannel",
-    templates: "ChannelTemplates",
-    status: "Megaphone",
-};
-
 export const DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES = {
     title: "༄ Manage your Dynamic Channel",
     description:

@@ -1,9 +1,13 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
+import { useOpenDynamicChannelV3Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
 import { DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
 
 export default function ButtonsInterface() {
+    const openFeature = useOpenDynamicChannelV3Feature();
+
     return (
         <div className="mb-12">
             <div className="flex items-center mb-4">
@@ -21,15 +25,14 @@ export default function ButtonsInterface() {
                                 mentionUsername="iNewLegend"
                                 componentName="VertixBot/UI-V3/DynamicChannel"
                                 variables={ DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES }
-                                elementOverrides={ {
-                                    "VertixBot/UI-V3/DynamicChannelClaimChannelButton": { disabled: true }
-                                } }
+                                onElementClick={ openFeature }
                             />
                         </div>
                     </div>
                     <div className="text-h5 text-vc-ice-dim">
                         <ul className="text-left inline-block">
                             <li><strong>The buttons interface is located inside the dynamic channel.</strong></li>
+                            <li>Press a button above to read what it does.</li>
                             <li>You can access it by opening the chat box of the dynamic channel.</li>
                             <li>You can modify the buttons using <code>/setup</code> command.</li>
                         </ul>
@@ -39,4 +42,3 @@ export default function ButtonsInterface() {
         </div>
     );
 }
-

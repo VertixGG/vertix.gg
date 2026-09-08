@@ -4,7 +4,11 @@ import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 import "./discord-chat-container.css";
 
+import { useOpenDynamicChannelV3Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
 export default function DiscordDynamicChannelV3() {
+    const openFeature = useOpenDynamicChannelV3Feature();
+
     return (
         <div className="discord-chat-container vc-frame-box">
             <DiscordUIComponentMessage
@@ -25,9 +29,7 @@ export default function DiscordDynamicChannelV3() {
                     privacyEmoji: "<emoji name='ChannelPrivacy'>",
                     regionEmoji: "<emoji name='ChannelRegion'>",
                 } }
-                elementOverrides={ {
-                    "VertixBot/UI-V3/DynamicChannelClaimChannelButton": { disabled: true },
-                } }
+                onElementClick={ openFeature }
             />
         </div>
     );

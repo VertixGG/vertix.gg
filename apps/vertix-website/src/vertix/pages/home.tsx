@@ -2,9 +2,11 @@ import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
+import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
 import ChannelLifecycle from "@vertix.gg/website/src/vertix/components/landing/channel-lifecycle";
 import DiscordDynamicChannelV3 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v3";
+import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
 
 /** One place for the ramp the explainer cards and feature grid walk through. */
 const CRIMSON = "var(--color-vc-crimson)",
@@ -36,13 +38,83 @@ const LIFECYCLE_STEPS = [
     },
 ] as const;
 
+/**
+ * The panel above, spelled out: one entry per button it carries, in the order they sit in the
+ * interface, each with the artwork that button really has in Discord.
+ */
 const OWNER_CONTROLS = [
-    { icon: "✏️", title: "Rename", body: "Give the room a name that fits what's happening in it." },
-    { icon: "✋", title: "Limit", body: "Cap how many people can squeeze in." },
-    { icon: "🚫", title: "Privacy", body: "Flip between public and invite-only." },
-    { icon: "🙈", title: "Visibility", body: "Hide the channel from everyone who isn't in it." },
-    { icon: "👥", title: "Access", body: "Allow or block individual members." },
-    { icon: "🔀", title: "Transfer", body: "Hand the room over to someone else." },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.rename,
+        fallback: "✏️",
+        title: "Rename",
+        body: "Give the room a name that fits what's happening in it.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.limit,
+        fallback: "✋",
+        title: "User Limit",
+        body: "Cap how many people can squeeze in.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.permissions,
+        fallback: "👥",
+        title: "Access",
+        body: "Allow or block individual members.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.privacy,
+        fallback: "🚫",
+        title: "Privacy",
+        body: "Switch between public, private and hidden.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.region,
+        fallback: "🌍",
+        title: "Region",
+        body: "Pick the voice server the channel runs on.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.editPrimaryMessage,
+        fallback: "📝",
+        title: "Edit Primary Message",
+        body: "Reword the control panel that sits in the channel.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.clearChat,
+        fallback: "🧹",
+        title: "Clear Chat",
+        body: "Wipe the channel's messages in one press.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.resetChannel,
+        fallback: "🔃",
+        title: "Reset",
+        body: "Put every setting back the way it started.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.transferChannel,
+        fallback: "🔀",
+        title: "Transfer",
+        body: "Hand the room over to someone else.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.templates,
+        fallback: "📂",
+        title: "Templates",
+        body: "Save a setup and apply it to the next channel.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.status,
+        fallback: "📢",
+        title: "Status",
+        body: "Say what is happening, under the channel's name.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.claimChannel,
+        fallback: "😈",
+        title: "Claim",
+        body: "Take over a room the owner walked away from.",
+    },
 ] as const;
 
 const PLATFORM = [
@@ -169,8 +241,13 @@ export default function Home() {
                 <div className="grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
                     { OWNER_CONTROLS.map( ( control ) => (
                         <div key={ control.title }>
-                            <h3 className="mb-1 text-h6 font-semibold">
-                                <span aria-hidden="true" className="mr-2">{ control.icon }</span>
+                            <h3 className="mb-1 flex items-center text-h6 font-semibold">
+                                <DynamicChannelV3Emoji
+                                    name={ control.emoji }
+                                    alt={ control.title }
+                                    fallback={ control.fallback }
+                                    className="mr-2 inline-flex items-center"
+                                />
                                 { control.title }
                             </h3>
                             <p className="mb-0 text-vc-ice-dim">{ control.body }</p>

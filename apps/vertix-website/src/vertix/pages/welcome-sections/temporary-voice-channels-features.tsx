@@ -5,7 +5,11 @@ import V3DataModels from "./v3-user-data-model";
 
 import "../../components/discord/discord-chat-container.css";
 
+import { useOpenDynamicChannelV3Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
 export default function TemporaryVoiceChannelsFeatures() {
+    const openFeature = useOpenDynamicChannelV3Feature();
+
     return (
         <div className="mb-12">
             <h4 id="temporary-voice-channels-features">Temporary Voice Channels V2 Features</h4>
@@ -85,9 +89,7 @@ export default function TemporaryVoiceChannelsFeatures() {
                             privacyEmoji: "<emoji name='ChannelPrivacy'>",
                             regionEmoji: "<emoji name='ChannelRegion'>",
                         } }
-                        elementOverrides={ {
-                            "VertixBot/UI-V3/DynamicChannelClaimChannelButton": { disabled: true },
-                        } }
+                        onElementClick={ openFeature }
                     />
                 </div>
             </div>

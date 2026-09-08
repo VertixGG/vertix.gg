@@ -7,7 +7,11 @@ import * as React from "react";
  * the bot token - so the site and dashboard cannot reach Discord directly. The api resolves the
  * artwork and serves it as `name -> data uri` at `/tools/button-emojis.json`; this module fetches
  * that once and hands it to the emoji renderer. Empty until the fetch lands, so a consumer that
- * renders before then simply shows no icon and repaints when the manifest arrives.
+ * renders before then simply shows no icon.
+ *
+ * The artwork is module state read through plain functions, which React cannot see changing, so
+ * the module doubles as a store: `useEmojiManifest()` subscribes a component to it and repaints
+ * that component itself when the fetch lands.
  */
 
 const DEFAULT_API_BASE_URL = "https://api.voicechannels.online/api";
@@ -18,8 +22,33 @@ let sourceByName: Readonly<Record<string, string>> = {};
 
 let manifestPromise: Promise<void> | null = null;
 
+const listeners = new Set<() => void>();
+
+/**
+ * Bumped on every manifest write, so a subscriber has a snapshot that changes when the artwork
+ * does. The manifest object itself cannot serve as one - the functions that read it are keyed by
+ * emoji name, not by identity.
+ */
+let version = 0;
+
 export function setEmojiManifest( manifest: Readonly<Record<string, string>> ): void {
     sourceByName = { ...manifest };
+
+    version++;
+
+    listeners.forEach( ( listener ) => listener() );
+}
+
+function subscribeToEmojiManifest( listener: () => void ): () => void {
+    listeners.add( listener );
+
+    return () => {
+        listeners.delete( listener );
+    };
+}
+
+function getEmojiManifestVersion(): number {
+    return version;
 }
 
 /**
@@ -91,31 +120,51 @@ export function loadEmojiManifest( baseUrl?: string ): Promise<void> {
 }
 
 /**
- * Function EmojiManifestProvider() :: Loads the manifest once and repaints its subtree when it
- * lands.
+ * Function useEmojiManifest() :: Subscribes a component to the artwork, and starts the one fetch.
  *
- * The emoji renderer is a set of plain string functions, not hooks, so there is no per-emoji place
- * to subscribe. Instead this one wrapper - placed at the app root, above every consumer - flips a
- * state when the manifest resolves, and the single repaint reruns them all with the artwork in
- * hand. Children render immediately, so the fetch never blocks first paint.
+ * Any component that resolves emojis - `getCustomEmojiSrc()`, `replaceEmojisWithIcons()`, or the
+ * icon components built on them - calls this once, and rerenders by itself when the manifest
+ * lands. The returned version is only a snapshot; there is nothing useful to read from it.
+ *
+ * Subscribing per component rather than repainting from a root wrapper is what makes a cold load
+ * work: a provider hands its children down by reference, React bails out of that subtree, and its
+ * repaint never reaches the components that rendered before the fetch resolved.
+ */
+export function useEmojiManifest( baseUrl?: string ): number {
+    React.useEffect( () => {
+        void loadEmojiManifest( baseUrl );
+    }, [ baseUrl ] );
+
+    return React.useSyncExternalStore(
+        subscribeToEmojiManifest,
+        getEmojiManifestVersion,
+        getEmojiManifestVersion
+    );
+}
+
+/**
+ * Function useCustomEmojiSrc() :: The artwork for one custom emoji, kept current.
+ *
+ * `getCustomEmojiSrc()` with the subscription that makes it repaint, for the common case of a
+ * component that needs a single icon.
+ */
+export function useCustomEmojiSrc( name: string ): string | undefined {
+    useEmojiManifest();
+
+    return getCustomEmojiSrc( name );
+}
+
+/**
+ * Function EmojiManifestProvider() :: Starts the manifest fetch as early as the app root renders.
+ *
+ * A head start, not a subscription - consumers repaint through `useEmojiManifest()`, so an app
+ * that leaves this out still gets its artwork, just one fetch later.
  */
 export function EmojiManifestProvider(
     props: { children: React.ReactNode; baseUrl?: string }
 ): React.ReactElement {
-    const [ , setLoaded ] = React.useState( false );
-
     React.useEffect( () => {
-        let alive = true;
-
-        void loadEmojiManifest( props.baseUrl ).then( () => {
-            if ( alive ) {
-                setLoaded( true );
-            }
-        } );
-
-        return () => {
-            alive = false;
-        };
+        void loadEmojiManifest( props.baseUrl );
     }, [ props.baseUrl ] );
 
     return <>{ props.children }</>;

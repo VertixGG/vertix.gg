@@ -1,11 +1,11 @@
-import { getCustomEmojiSrc } from "@vertix.gg/discord-ui";
+import { useCustomEmojiSrc } from "@vertix.gg/discord-ui";
 
 // The button artwork is resolved from Discord (see `loadEmojiManifest`), so each icon is looked up
-// by its emoji name rather than imported from the repo. The `EmojiManifestProvider` at the app root
-// repaints this list once the manifest lands, so an icon that is not resolved yet just renders
-// nothing until then.
+// by its emoji name rather than imported from the repo. `useCustomEmojiSrc()` subscribes the icon
+// to the manifest and repaints it once the artwork lands, so an icon that is not resolved yet just
+// renders nothing until then.
 const DiscordEmoji: React.FC<{ name: string; alt: string }> = ( { name, alt } ) => {
-    const src = getCustomEmojiSrc( name );
+    const src = useCustomEmojiSrc( name );
 
     if ( ! src ) {
         return null;

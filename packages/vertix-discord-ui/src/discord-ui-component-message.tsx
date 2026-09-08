@@ -1,5 +1,6 @@
 import { DiscordMessage } from "./discord-message";
 import { DiscordUIComponentRenderer } from "./discord-ui-component-renderer";
+import { useEmojiManifest } from "./emoji-manifest";
 
 import type { UIElementOverride, UIEmbedOverride, ExpandedSelectMenuConfig } from "./discord-ui-component-renderer";
 
@@ -42,6 +43,9 @@ export function DiscordUIComponentMessage( {
     interactionCommand,
     expandedSelectMenu,
 }: DiscordUIComponentMessageProps ) {
+    // The emojis below are resolved through the manifest module, which React cannot see changing.
+    useEmojiManifest();
+
     return (
         <DiscordMessage
             author={ author }

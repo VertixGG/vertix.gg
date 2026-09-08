@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
 import { replaceEmojisWithIcons } from "./discord-emojis";
+import { useEmojiManifest } from "./emoji-manifest";
 import { replaceMentionsWithPills } from "./discord-mentions";
 
 import "./styles/discord-embed.css";
@@ -122,6 +123,9 @@ export function DiscordEmbed( {
     children,
     ...props
 }: DiscordEmbedProps ) {
+    // The title and description are run through the emoji renderer, which reads module state.
+    useEmojiManifest();
+
     const Comp = asChild ? Slot : "div";
 
     const colorStyle = React.useMemo( () => {

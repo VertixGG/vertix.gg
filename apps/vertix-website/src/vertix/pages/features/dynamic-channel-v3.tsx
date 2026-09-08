@@ -4,6 +4,9 @@ import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.
 
 import SearchableSelect from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
 
+import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
+import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-emoji";
+
 import ButtonsInterface from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/buttons-interface";
 import RenameChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/rename-channel";
 import UserLimit from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/user-limit";
@@ -18,22 +21,38 @@ import ResetChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-c
 import TransferChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/transfer-channel";
 import ClaimChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/claim-channel";
 
-const FEATURE_OPTIONS = [
-    { label: "📋 All Features", value: "all" },
-    { label: "🎚️ Buttons Interface", value: "buttons-interface" },
-    { label: "✏️ Rename Channel", value: "rename-channel" },
-    { label: "✋ User Limit", value: "user-limit" },
-    { label: "🧹 Clear Chat", value: "clear-chat" },
-    { label: "👥 Permissions", value: "permissions" },
-    { label: "🚫 Privacy State", value: "privacy-state" },
-    { label: "🌍 Region", value: "region" },
-    { label: "📝 Edit Primary Message", value: "edit-primary-message" },
-    { label: "📂 Channel Templates", value: "templates" },
-    { label: "📢 Channel Status", value: "status" },
-    { label: "🔃 Reset Channel", value: "reset-channel" },
-    { label: "🔀 Transfer Channel", value: "transfer-channel" },
-    { label: "😈 Claim Channel", value: "claim-channel" },
-];
+import type { SearchableSelectOption } from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
+
+/**
+ * The features, each carrying the artwork its button really has in Discord.
+ *
+ * Built per render rather than once at module load: the emoji manifest arrives from the api after
+ * first paint, and the icons resolve on the repaint it triggers.
+ */
+function getFeatureOptions(): SearchableSelectOption[] {
+    const icon = ( name: string, alt: string, fallback: string ) => (
+        <DynamicChannelV3Emoji name={ name } alt={ alt } fallback={ fallback } className="inline-flex items-center" />
+    );
+
+    const { rename, limit, clearChat, permissions, privacy, region, editPrimaryMessage, templates, resetChannel, transferChannel, claimChannel, status } = DYNAMIC_CHANNEL_V3_EMOJI_NAMES;
+
+    return [
+        { label: "📋 All Features", value: "all" },
+        { label: "🎚️ Buttons Interface", value: "buttons-interface" },
+        { label: "Rename Channel", value: "rename-channel", icon: icon( rename, "Rename", "✏️" ) },
+        { label: "User Limit", value: "user-limit", icon: icon( limit, "User Limit", "✋" ) },
+        { label: "Clear Chat", value: "clear-chat", icon: icon( clearChat, "Clear Chat", "🧹" ) },
+        { label: "Permissions", value: "permissions", icon: icon( permissions, "Permissions", "👥" ) },
+        { label: "Privacy State", value: "privacy-state", icon: icon( privacy, "Privacy", "🚫" ) },
+        { label: "Region", value: "region", icon: icon( region, "Region", "🌍" ) },
+        { label: "Edit Primary Message", value: "edit-primary-message", icon: icon( editPrimaryMessage, "Edit Primary Message", "📝" ) },
+        { label: "Channel Templates", value: "templates", icon: icon( templates, "Templates", "📂" ) },
+        { label: "Channel Status", value: "status", icon: icon( status, "Status", "📢" ) },
+        { label: "Reset Channel", value: "reset-channel", icon: icon( resetChannel, "Reset", "🔃" ) },
+        { label: "Transfer Channel", value: "transfer-channel", icon: icon( transferChannel, "Transfer", "🔀" ) },
+        { label: "Claim Channel", value: "claim-channel", icon: icon( claimChannel, "Claim", "😈" ) },
+    ];
+}
 
 const FEATURE_COMPONENTS: Record<string, JSX.Element> = {
     "buttons-interface": <ButtonsInterface />,
@@ -118,7 +137,7 @@ export default function DynamicChannelV3Page() {
             <hr/>
 
             <SearchableSelect
-                options={ FEATURE_OPTIONS }
+                options={ getFeatureOptions() }
                 value={ selectedFeature }
                 onSelect={ handleFeatureSelect }
                 placeholder="Select Feature"

@@ -21,6 +21,11 @@ function SearchIcon( props: React.ComponentProps<"svg"> ) {
 export interface SearchableSelectOption {
     label: string;
     value: string;
+    /**
+     * Rendered before the label. Lets a caller show the artwork the option really stands for - a
+     * Discord button emoji, for instance - instead of a unicode look-alike in the label.
+     */
+    icon?: React.ReactNode;
 }
 
 export interface SearchableSelectProps {
@@ -68,7 +73,8 @@ export default function SearchableSelect( {
                     transition-colors hover:border-vc-cyan/50"
                 onClick={ () => setIsOpen( !isOpen ) }
             >
-                <span className={ `px-4 ${ showPlaceholder ? "text-vc-ice-dim" : "text-vc-starlight" }` }>
+                <span className={ `flex items-center gap-2 px-4 ${ showPlaceholder ? "text-vc-ice-dim" : "text-vc-starlight" }` }>
+                    { !showPlaceholder && selectedOption?.icon }
                     { showPlaceholder ? placeholder : selectedOption?.label }
                 </span>
                 <div className="px-4">
@@ -100,14 +106,15 @@ export default function SearchableSelect( {
                             filteredOptions.map( ( option ) => (
                                 <div
                                     key={ option.value }
-                                    className="cursor-pointer px-4 py-2 text-h5 text-vc-ice
-                                        transition-colors hover:bg-vc-cyan/10 hover:text-vc-cyan"
+                                    className="flex cursor-pointer items-center gap-2 px-4 py-2 text-h5
+                                        text-vc-ice transition-colors hover:bg-vc-cyan/10 hover:text-vc-cyan"
                                     onClick={ () => {
                                         onSelect( option.value );
                                         setIsOpen( false );
                                         setSearchTerm( "" );
                                     } }
                                 >
+                                    { option.icon }
                                     { option.label }
                                 </div>
                             ) )

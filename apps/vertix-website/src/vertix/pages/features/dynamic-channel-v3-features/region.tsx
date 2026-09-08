@@ -1,13 +1,19 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
-import { DYNAMIC_CHANNEL_V3_EMOJIS } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
+import { DYNAMIC_CHANNEL_V3_EMOJIS, DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
+import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-emoji";
 
 export default function Region() {
     return (
         <div className="mb-12">
             <div className="flex items-center mb-4">
-                <span className="text-h2 mr-4">🌍</span>
+                <DynamicChannelV3Emoji
+                    name={ DYNAMIC_CHANNEL_V3_EMOJI_NAMES.region }
+                    alt="Region"
+                    fallback="🌍"
+                    className="text-h2 mr-4"
+                />
                 <h3 className="mb-0">Region</h3>
             </div>
             <div className="grid grid-cols-12 gap-12">

@@ -539,9 +539,10 @@ export class AgentManager extends InitializeBase {
                     env: {
                         LOGGER_DISABLED: "true",
                         VERTIX_MCP_READONLY: readOnly ? "true" : "false",
-                        // Makes vertix-mcp's Discord tools act as the AI Chat bot, the
-                        // same way vertix-ai's MCPProvider passes it.
-                        ... ( aiChatToken ? { AI_CHAT_DISCORD_TOKEN: aiChatToken } : {} )
+                        // vertix-mcp acts as whatever token it is handed in
+                        // DISCORD_TEST_TOKEN; hand it the AI Chat bot's token so its
+                        // tools post as the AI Chat bot.
+                        ... ( aiChatToken ? { DISCORD_TEST_TOKEN: aiChatToken } : {} )
                     }
                 }
             }

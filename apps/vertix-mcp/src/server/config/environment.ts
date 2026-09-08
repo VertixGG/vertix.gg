@@ -14,27 +14,24 @@ class Environment {
         return process.env.VERTIX_MCP_READONLY === "true";
     }
 
+    // This server acts as whatever bot the process that spawns it hands down in
+    // DISCORD_TEST_TOKEN. It is deliberately unaware of any specific bot's token:
+    // the parent process decides which identity this server runs as.
     public getDiscordToken(): string {
-        const isReadOnly = this.isReadOnlyMode();
-
-        const token = isReadOnly
-            ? process.env.DISCORD_TEST_TOKEN
-            : process.env.AI_CHAT_DISCORD_TOKEN;
+        const token = process.env.DISCORD_TEST_TOKEN;
 
         if ( ! token ) {
-            const envVar = isReadOnly ? "DISCORD_TEST_TOKEN" : "AI_CHAT_DISCORD_TOKEN";
-            throw new Error( `${ envVar } environment variable is required for ${ isReadOnly ? "read-only" : "full" } mode` );
+            throw new Error(
+                "DISCORD_TEST_TOKEN is not set. The process that spawns this MCP server must pass, in "
+                + "DISCORD_TEST_TOKEN, the Discord bot token this server should act as."
+            );
         }
 
         return token;
     }
 
     public hasDiscordToken(): boolean {
-        const isReadOnly = this.isReadOnlyMode();
-
-        return isReadOnly
-            ? !! process.env.DISCORD_TEST_TOKEN
-            : !! process.env.AI_CHAT_DISCORD_TOKEN;
+        return Boolean( process.env.DISCORD_TEST_TOKEN );
     }
 }
 

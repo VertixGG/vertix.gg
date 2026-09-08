@@ -10,6 +10,7 @@ import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-edito
 import { LanguageQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/language-query";
 import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/global-stats-query";
 import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-stats-query";
+import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-details-query";
 import { GuildManagementQuery } from "@vertix.gg/dashboard/src/features/management/query/guild-management-query";
 
 import { AuthProvider, ProtectedRoute, LoginPage, ServerSelectionPage } from "@vertix.gg/dashboard/src/features/auth";
@@ -31,6 +32,7 @@ client.registerModule( CustomizationQuery );
 client.registerModule( LanguageQuery );
 client.registerModule( GlobalStatsQuery );
 client.registerModule( GuildStatsQuery );
+client.registerModule( GuildDetailsQuery );
 client.registerModule( GuildManagementQuery );
 
 export function App() {

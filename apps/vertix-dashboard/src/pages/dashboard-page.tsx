@@ -3,16 +3,21 @@ import { withCommands } from "@zenflux/react-commander/with-commands";
 import { QueryComponent } from "@zenflux/react-commander/query/component";
 import { Navigate } from "react-router-dom";
 
-import { Server, Users, Radio, Layers, Activity, Hash } from "lucide-react";
+import { Server, Users, Radio, Layers, Activity, Hash, Gauge } from "lucide-react";
 
 import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/global-stats-query";
 import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-stats-query";
+import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-details-query";
 import { StatCard } from "@vertix.gg/dashboard/src/features/dashboard/components/stat-card";
+import { GuildHeader } from "@vertix.gg/dashboard/src/features/dashboard/components/guild-header";
+import { GeneratorsPanel } from "@vertix.gg/dashboard/src/features/dashboard/components/generators-panel";
+import { QuickActions } from "@vertix.gg/dashboard/src/features/dashboard/components/quick-actions";
+import { formatCount, formatShare } from "@vertix.gg/dashboard/src/features/dashboard/lib/format";
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 import type { SelectedGuild } from "@vertix.gg/dashboard/src/features/auth/types";
-import type { GlobalStats, GuildStats } from "@vertix.gg/dashboard/src/features/dashboard/types";
+import type { GlobalStats, GuildStats, GuildDetails } from "@vertix.gg/dashboard/src/features/dashboard/types";
 
 interface AuthSelectedState {
     selectedGuild: AuthState[ "selectedGuild" ];
@@ -27,6 +32,25 @@ function LoadingSkeleton( { count }: { count: number } ) {
                     <div className="h-8 bg-surface-elevated rounded w-1/3" />
                 </div>
             ) ) }
+        </div>
+    );
+}
+
+function PanelSkeleton() {
+    return (
+        <div className="bg-surface border border-border rounded-lg p-4 animate-pulse">
+            <div className="h-4 bg-surface-elevated rounded w-1/3 mb-3" />
+            <div className="h-1.5 bg-surface-elevated rounded w-full mb-3" />
+            <div className="h-3 bg-surface-elevated rounded w-2/3" />
+        </div>
+    );
+}
+
+function SectionTitle( { title, hint }: { title: string; hint?: string } ) {
+    return (
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
+            <h2 className="text-lg font-semibold text-text-secondary mb-0">{ title }</h2>
+            { hint && <span className="text-xs text-text-muted">{ hint }</span> }
         </div>
     );
 }
@@ -61,14 +85,46 @@ const GlobalStatsDisplayComponent: DCommandFunctionComponent<GlobalStatsDisplayP
         );
     }
 
+    const stats = state.globalStats;
+
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <StatCard title="Total Guilds" value={ state.globalStats.totalGuilds } icon={ Server } />
-            <StatCard title="Active Guilds" value={ state.globalStats.activeGuilds } icon={ Activity } />
-            <StatCard title="Total Users" value={ state.globalStats.totalUsers } icon={ Users } />
-            <StatCard title="Total Channels" value={ state.globalStats.totalChannels } icon={ Hash } />
-            <StatCard title="Master Channels" value={ state.globalStats.totalMasterChannels } icon={ Radio } />
-            <StatCard title="Dynamic Channels" value={ state.globalStats.totalDynamicChannels } icon={ Layers } />
+            <StatCard
+                title="Total Guilds"
+                value={ formatCount( stats.totalGuilds ) }
+                icon={ Server }
+                description="Servers that have Vertix set up"
+            />
+            <StatCard
+                title="Active Guilds"
+                value={ formatCount( stats.activeGuilds ) }
+                icon={ Activity }
+                description={ `${ formatShare( stats.activeGuilds, stats.totalGuilds ) }% of all servers` }
+            />
+            <StatCard
+                title="Total Users"
+                value={ formatCount( stats.totalUsers ) }
+                icon={ Users }
+                description="People who have owned a channel"
+            />
+            <StatCard
+                title="Total Channels"
+                value={ formatCount( stats.totalChannels ) }
+                icon={ Hash }
+                description="Every channel Vertix keeps track of"
+            />
+            <StatCard
+                title="Master Channels"
+                value={ formatCount( stats.totalMasterChannels ) }
+                icon={ Radio }
+                description="Generators across every server"
+            />
+            <StatCard
+                title="Dynamic Channels"
+                value={ formatCount( stats.totalDynamicChannels ) }
+                icon={ Layers }
+                description="Live across the network right now"
+            />
         </div>
     );
 };
@@ -123,12 +179,49 @@ const GuildStatsDisplayComponent: DCommandFunctionComponent<GuildStatsDisplayPro
         );
     }
 
+    const stats = state.guildStats;
+
+    // How many channels a generator carries on average - the number that says whether the server
+    // needs a second generator or is fine with the one it has.
+    const perGenerator = stats.masterChannels > 0
+        ? ( stats.dynamicChannels / stats.masterChannels ).toFixed( 1 )
+        : "0";
+
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <StatCard title="Total Channels" value={ state.guildStats.totalChannels } icon={ Hash } />
-            <StatCard title="Master Channels" value={ state.guildStats.masterChannels } icon={ Radio } />
-            <StatCard title="Dynamic Channels" value={ state.guildStats.dynamicChannels } icon={ Layers } />
-        </div>
+        <>
+            <GuildHeader stats={ stats } />
+
+            <section className="mb-8">
+                <SectionTitle title="This server" hint="Live figures, straight from the bot" />
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <StatCard
+                        title="Live Channels"
+                        value={ formatCount( stats.dynamicChannels ) }
+                        icon={ Layers }
+                        description="Channels members are in right now"
+                    />
+                    <StatCard
+                        title="Generators"
+                        value={ formatCount( stats.masterChannels ) }
+                        icon={ Radio }
+                        description="Channels that spawn the rest"
+                    />
+                    <StatCard
+                        title="Per Generator"
+                        value={ perGenerator }
+                        icon={ Gauge }
+                        description="Live channels each one carries"
+                    />
+                    <StatCard
+                        title="Tracked Channels"
+                        value={ formatCount( stats.totalChannels ) }
+                        icon={ Hash }
+                        description="Everything Vertix owns here"
+                    />
+                </div>
+            </section>
+        </>
     );
 };
 
@@ -139,11 +232,53 @@ const GuildStatsDisplay = withCommands<GuildStatsDisplayProps, GuildStatsDisplay
     []
 );
 
-interface GuildStatsSectionProps {
+interface GuildDetailsDisplayProps {
+    guildId: string;
+}
+
+interface GuildDetailsDisplayState {
+    guildDetails: GuildDetails | null;
+}
+
+interface GuildDetailsSelectedState {
+    guildDetails: GuildDetailsDisplayState[ "guildDetails" ];
+}
+
+const GUILD_DETAILS_INITIAL_STATE: GuildDetailsDisplayState = {
+    guildDetails: null
+};
+
+const GuildDetailsDisplayComponent: DCommandFunctionComponent<GuildDetailsDisplayProps, GuildDetailsDisplayState> = () => {
+    const [ state ] = useCommandState<GuildDetailsDisplayState, GuildDetailsSelectedState>(
+        "Dashboard/GuildDetails",
+        ( state: GuildDetailsDisplayState ): GuildDetailsSelectedState => ( {
+            guildDetails: state.guildDetails
+        } )
+    );
+
+    if ( !state.guildDetails ) {
+        return (
+            <div className="text-text-muted text-center py-8">
+                Failed to load this server's generators
+            </div>
+        );
+    }
+
+    return <GeneratorsPanel masterChannels={ state.guildDetails.masterChannels } />;
+};
+
+const GuildDetailsDisplay = withCommands<GuildDetailsDisplayProps, GuildDetailsDisplayState>(
+    "Dashboard/GuildDetails",
+    GuildDetailsDisplayComponent,
+    GUILD_DETAILS_INITIAL_STATE,
+    []
+);
+
+interface GuildSectionProps {
     selectedGuild: SelectedGuild | null;
 }
 
-function GuildStatsSection( { selectedGuild }: GuildStatsSectionProps ) {
+function GuildStatsSection( { selectedGuild }: GuildSectionProps ) {
     if ( !selectedGuild ) {
         return (
             <div className="text-text-muted text-center py-8">
@@ -154,9 +289,24 @@ function GuildStatsSection( { selectedGuild }: GuildStatsSectionProps ) {
 
     return (
         <QueryComponent<GuildStats, GuildStatsDisplayProps, GuildStats, GuildStatsDisplayState>
-            fallback={ <LoadingSkeleton count={ 3 } /> }
+            fallback={ <LoadingSkeleton count={ 4 } /> }
             module={ GuildStatsQuery }
             component={ GuildStatsDisplay }
+            props={ { guildId: selectedGuild.id } }
+        />
+    );
+}
+
+function GeneratorsSection( { selectedGuild }: GuildSectionProps ) {
+    if ( !selectedGuild ) {
+        return null;
+    }
+
+    return (
+        <QueryComponent<GuildDetails, GuildDetailsDisplayProps, GuildDetails, GuildDetailsDisplayState>
+            fallback={ <PanelSkeleton /> }
+            module={ GuildDetailsQuery }
+            component={ GuildDetailsDisplay }
             props={ { guildId: selectedGuild.id } }
         />
     );
@@ -176,15 +326,20 @@ export function DashboardPage() {
 
     return (
         <div className="flex-1 p-6 overflow-auto">
-            <h1 className="text-2xl font-bold text-text-accent mb-6">Dashboard</h1>
+            <GuildStatsSection selectedGuild={ authState.selectedGuild } />
 
             <section className="mb-8">
-                <h2 className="text-lg font-semibold text-text-secondary mb-4">Guild Data</h2>
-                <GuildStatsSection selectedGuild={ authState.selectedGuild } />
+                <SectionTitle title="Generators" hint="Busiest first" />
+                <GeneratorsSection selectedGuild={ authState.selectedGuild } />
+            </section>
+
+            <section className="mb-8">
+                <SectionTitle title="Where to go next" />
+                <QuickActions />
             </section>
 
             <section>
-                <h2 className="text-lg font-semibold text-text-secondary mb-4">Global Data</h2>
+                <SectionTitle title="Across every server" hint="How the bot is doing overall" />
                 <GlobalStatsSection />
             </section>
         </div>

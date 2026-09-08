@@ -78,7 +78,7 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
     // Update the "X ago" display every 10 seconds
     useEffect( () => {
         const intervalId = setInterval( () => {
-            panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/Tick" );
+            panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/Tick", {} );
         }, 10000 );
 
         return () => clearInterval( intervalId );
@@ -107,11 +107,11 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
     };
 
     const handleShowDeleteConfirm = () => {
-        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/ShowDeleteConfirm" );
+        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/ShowDeleteConfirm", {} );
     };
 
     const handleHideDeleteConfirm = () => {
-        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/HideDeleteConfirm" );
+        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/HideDeleteConfirm", {} );
     };
 
     return (

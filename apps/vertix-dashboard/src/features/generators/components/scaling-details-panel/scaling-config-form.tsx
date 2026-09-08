@@ -35,7 +35,9 @@ const ScalingConfigFormComponent: DCommandFunctionComponent<ScalingConfigFormPro
     );
 
     const formCommands = useComponent( "Dashboard/Generators/ScalingConfigForm" );
-    const panelCommands = useComponent( "Dashboard/Generators/ScalingDetailsPanel" );
+    // `useComponent()` only hands back the context the caller is in, so a form cannot reach
+    // the panel around it that way; the command resolves by name instead.
+    const stopEditing = useCommand( "Dashboard/Generators/ScalingDetailsPanel/StopEditing" );
     const updateScalingSettings = useCommand( "Dashboard/Generators/UpdateScalingSettings" );
 
     // Initialize form with settings when mounted
@@ -57,11 +59,11 @@ const ScalingConfigFormComponent: DCommandFunctionComponent<ScalingConfigFormPro
                 scalingChannelMinAvailableChannels: state.minAvailable
             }
         } );
-        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/StopEditing" );
+        stopEditing.run( {} );
     };
 
     const handleCancel = () => {
-        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/StopEditing" );
+        stopEditing.run( {} );
     };
 
     const handleUpdatePrefix = ( value: string ) => {

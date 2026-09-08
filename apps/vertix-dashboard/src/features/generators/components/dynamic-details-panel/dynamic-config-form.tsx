@@ -70,7 +70,9 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     );
 
     const formCommands = useComponent( "Dashboard/Generators/DynamicConfigForm" );
-    const panelCommands = useComponent( "Dashboard/Generators/DynamicDetailsPanel" );
+    // `useComponent()` only hands back the context the caller is in, so a form cannot reach
+    // the panel around it that way; the command resolves by name instead.
+    const stopEditing = useCommand( "Dashboard/Generators/DynamicDetailsPanel/StopEditing" );
     const updateDynamicSettings = useCommand( "Dashboard/Generators/UpdateDynamicSettings" );
 
     // Initialize form with settings when mounted
@@ -98,11 +100,11 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 dynamicChannelDefaultUserLimit: state.defaultUserLimit
             }
         } );
-        panelCommands.run( "Dashboard/Generators/DynamicDetailsPanel/StopEditing", {} );
+        stopEditing.run( {} );
     };
 
     const handleCancel = () => {
-        panelCommands.run( "Dashboard/Generators/DynamicDetailsPanel/StopEditing", {} );
+        stopEditing.run( {} );
     };
 
     const handleUpdateNameTemplate = ( value: string ) => {

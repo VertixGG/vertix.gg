@@ -3119,6 +3119,10 @@
                                         "value": "dynamicChannelAutoSave:1"
                                     },
                                     {
+                                        "label": "{dynamicChannelAutoStatusLabel} {state}",
+                                        "value": "dynamicChannelAutoStatus:0"
+                                    },
+                                    {
                                         "label": "{dynamicChannelLogsChannelLabel} {state}",
                                         "value": "dynamicChannelLogsChannel:0"
                                     }
@@ -3558,7 +3562,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
                             "footer": "Note: Changing user mention will not affect already created dynamic channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
@@ -3576,6 +3580,10 @@
                                 "configAutoSave": {
                                     "{configAutoSaveEnabled}": "{on}",
                                     "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "configAutoStatus": {
+                                    "{configAutoStatusEnabled}": "{on}",
+                                    "{configAutoStatusDisabled}": "{off}"
                                 },
                                 "configLogs": {
                                     "{configLogsEnabled}": "{on}",
@@ -3634,6 +3642,9 @@
                                 "configAutoSave": "{configAutoSave}",
                                 "configAutoSaveEnabled": "{configAutoSaveEnabled}",
                                 "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "configAutoStatus": "{configAutoStatus}",
+                                "configAutoStatusEnabled": "{configAutoStatusEnabled}",
+                                "configAutoStatusDisabled": "{configAutoStatusDisabled}",
                                 "configLogs": "{configLogs}",
                                 "configLogsEnabled": "{configLogsEnabled}",
                                 "configLogsDisabled": "{configLogsDisabled}",
@@ -4113,6 +4124,10 @@
                                         "value": "dynamicChannelAutoSave:1"
                                     },
                                     {
+                                        "label": "{dynamicChannelAutoStatusLabel} {state}",
+                                        "value": "dynamicChannelAutoStatus:0"
+                                    },
+                                    {
                                         "label": "{dynamicChannelLogsChannelLabel} {state}",
                                         "value": "dynamicChannelLogsChannel:0"
                                     }
@@ -4245,7 +4260,7 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupStep2Embed",
                         "definition": {
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -4543,6 +4558,10 @@
                                         "value": "dynamicChannelAutoSave:1"
                                     },
                                     {
+                                        "label": "{dynamicChannelAutoStatusLabel} {state}",
+                                        "value": "dynamicChannelAutoStatus:0"
+                                    },
+                                    {
                                         "label": "{dynamicChannelLogsChannelLabel} {state}",
                                         "value": "dynamicChannelLogsChannel:0"
                                     }
@@ -4560,7 +4579,7 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupStep2Embed",
                         "definition": {
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -8075,6 +8094,10 @@
                                         "value": "dynamicChannelAutoSave:1"
                                     },
                                     {
+                                        "label": "{dynamicChannelAutoStatusLabel} {state}",
+                                        "value": "dynamicChannelAutoStatus:0"
+                                    },
+                                    {
                                         "label": "{dynamicChannelLogsChannelLabel} {state}",
                                         "value": "dynamicChannelLogsChannel:0"
                                     }
@@ -8524,7 +8547,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -8541,6 +8564,10 @@
                                 "configAutoSave": {
                                     "{configAutoSaveEnabled}": "{on}",
                                     "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "configAutoStatus": {
+                                    "{configAutoStatusEnabled}": "{on}",
+                                    "{configAutoStatusDisabled}": "{off}"
                                 },
                                 "configLogs": {
                                     "{configLogsEnabled}": "{on}",
@@ -8583,6 +8610,9 @@
                                 "configAutoSave": "{configAutoSave}",
                                 "configAutoSaveEnabled": "{configAutoSaveEnabled}",
                                 "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "configAutoStatus": "{configAutoStatus}",
+                                "configAutoStatusEnabled": "{configAutoStatusEnabled}",
+                                "configAutoStatusDisabled": "{configAutoStatusDisabled}",
                                 "configLogs": "{configLogs}",
                                 "configLogsEnabled": "{configLogsEnabled}",
                                 "configLogsDisabled": "{configLogsDisabled}",
@@ -9074,6 +9104,10 @@
                                         "value": "dynamicChannelAutoSave:1"
                                     },
                                     {
+                                        "label": "{dynamicChannelAutoStatusLabel} {state}",
+                                        "value": "dynamicChannelAutoStatus:0"
+                                    },
+                                    {
                                         "label": "{dynamicChannelLogsChannelLabel} {state}",
                                         "value": "dynamicChannelLogsChannel:0"
                                     }
@@ -9208,7 +9242,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -9225,6 +9259,10 @@
                                 "configAutoSave": {
                                     "{configAutoSaveEnabled}": "{on}",
                                     "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "configAutoStatus": {
+                                    "{configAutoStatusEnabled}": "{on}",
+                                    "{configAutoStatusDisabled}": "{off}"
                                 },
                                 "configControlChannelAutoCreate": {
                                     "{configControlChannelAutoCreateEnabled}": "{on}",
@@ -9267,6 +9305,9 @@
                                 "configAutoSave": "{configAutoSave}",
                                 "configAutoSaveEnabled": "{configAutoSaveEnabled}",
                                 "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "configAutoStatus": "{configAutoStatus}",
+                                "configAutoStatusEnabled": "{configAutoStatusEnabled}",
+                                "configAutoStatusDisabled": "{configAutoStatusDisabled}",
                                 "configControlChannelAutoCreate": "{configControlChannelAutoCreate}",
                                 "configControlChannelAutoCreateEnabled": "{configControlChannelAutoCreateEnabled}",
                                 "configControlChannelAutoCreateDisabled": "{configControlChannelAutoCreateDisabled}",
@@ -9554,6 +9595,10 @@
                                         "value": "dynamicChannelAutoSave:1"
                                     },
                                     {
+                                        "label": "{dynamicChannelAutoStatusLabel} {state}",
+                                        "value": "dynamicChannelAutoStatus:0"
+                                    },
+                                    {
                                         "label": "{dynamicChannelLogsChannelLabel} {state}",
                                         "value": "dynamicChannelLogsChannel:0"
                                     }
@@ -9573,7 +9618,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -9590,6 +9635,10 @@
                                 "configAutoSave": {
                                     "{configAutoSaveEnabled}": "{on}",
                                     "{configAutoSaveDisabled}": "{off}"
+                                },
+                                "configAutoStatus": {
+                                    "{configAutoStatusEnabled}": "{on}",
+                                    "{configAutoStatusDisabled}": "{off}"
                                 },
                                 "configControlChannelAutoCreate": {
                                     "{configControlChannelAutoCreateEnabled}": "{on}",
@@ -9632,6 +9681,9 @@
                                 "configAutoSave": "{configAutoSave}",
                                 "configAutoSaveEnabled": "{configAutoSaveEnabled}",
                                 "configAutoSaveDisabled": "{configAutoSaveDisabled}",
+                                "configAutoStatus": "{configAutoStatus}",
+                                "configAutoStatusEnabled": "{configAutoStatusEnabled}",
+                                "configAutoStatusDisabled": "{configAutoStatusDisabled}",
                                 "configControlChannelAutoCreate": "{configControlChannelAutoCreate}",
                                 "configControlChannelAutoCreateEnabled": "{configControlChannelAutoCreateEnabled}",
                                 "configControlChannelAutoCreateDisabled": "{configControlChannelAutoCreateDisabled}",

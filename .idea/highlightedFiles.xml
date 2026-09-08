@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectTreeColorHighlighter">
     <files>
+      <node color="3" path="$PROJECT_DIR$/apps/vertix-api" />
+      <node color="4" path="$PROJECT_DIR$/apps/vertix-bot" />
       <node color="12" path="$PROJECT_DIR$/apps/vertix-dashboard" />
       <node color="99" path="$PROJECT_DIR$/apps/vertix-website" />
       <node color="3" path="$PROJECT_DIR$/package.json" />

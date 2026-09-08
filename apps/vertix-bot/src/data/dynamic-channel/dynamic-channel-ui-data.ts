@@ -50,6 +50,10 @@ export interface DynamicChannelUIDataResult {
     channelId: string;
     region: string | null;
     dynamicChannelButtonsTemplate: string[];
+    // The template as a comma-joined string for the button-sheet image URL. The array
+    // itself can't go in the URL - the UI framework serialises arrays as JSON
+    // (`["a","b"]`), whose brackets/quotes break Discord's image-proxy fetch.
+    dynamicChannelButtonSheetItems: string;
     title?: string;
     description?: string;
     masterChannelId?: string;
@@ -103,7 +107,8 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
             state,
             channelId: channelId ?? "unknown",
             region: channel?.rtcRegion ?? identifier.region ?? null,
-            dynamicChannelButtonsTemplate: []
+            dynamicChannelButtonsTemplate: [],
+            dynamicChannelButtonSheetItems: ""
         };
 
         let masterChannelDB: ChannelExtended | null = null;
@@ -161,6 +166,8 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
                     ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
                 )
             );
+
+            args.dynamicChannelButtonSheetItems = args.dynamicChannelButtonsTemplate.join( "," );
             args.masterChannelId = masterChannelDB.channelId;
             args.dynamicChannelNameTemplate = masterChannelSettings?.dynamicChannelNameTemplate
                 ?? configV3.settings.dynamicChannelNameTemplate;

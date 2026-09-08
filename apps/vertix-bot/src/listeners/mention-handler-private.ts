@@ -14,6 +14,9 @@ import type { DynamicUIInteraction } from "@vertix.gg/definitions/src/ui-ipc-def
 const TARGET_GUILD_ID = process.env.AI_CHAT_GUILD_ID;
 const TARGET_CHANNEL_ID = process.env.AI_CHAT_CHANNEL_ID;
 
+// The bot owner gets full access in every channel, not only the admin channel.
+const OWNER_ID = process.env.OWNERD_ID;
+
 const DEFAULT_TYPING_INTERVAL_MS = 8000;
 const _CONTEXT_MESSAGE_COUNT = 10;
 
@@ -59,7 +62,12 @@ export function mentionHandlerPrivate( client: Client ) {
                 return;
             }
 
-            if ( message.guildId !== TARGET_GUILD_ID || message.channelId !== TARGET_CHANNEL_ID ) {
+            const isAdminChannel = message.guildId === TARGET_GUILD_ID && message.channelId === TARGET_CHANNEL_ID;
+            const isOwner = Boolean( OWNER_ID && message.author.id === OWNER_ID );
+
+            // Full access for the admin channel, or the owner anywhere. Everyone
+            // else in other channels is served read-only by mentionHandlerPublic.
+            if ( ! isAdminChannel && ! isOwner ) {
                 return;
             }
 

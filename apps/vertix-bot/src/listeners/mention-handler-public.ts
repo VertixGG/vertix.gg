@@ -47,6 +47,14 @@ const SESSION_TIMEOUT_MS = 300000;
 const PRIVATE_GUILD_ID = process.env.AI_CHAT_GUILD_ID;
 const PRIVATE_CHANNEL_ID = process.env.AI_CHAT_CHANNEL_ID;
 
+// The owner is served full-access by mentionHandlerPrivate in every channel - but
+// only when that handler is actually active (same config it needs to register);
+// otherwise the owner would fall through to no handler at all.
+const OWNER_ID = process.env.OWNERD_ID;
+const PRIVATE_HANDLER_CONFIGURED = Boolean(
+    process.env.AI_CHAT_GUILD_ID && process.env.AI_CHAT_CHANNEL_ID && process.env.AI_CHAT_PRIVATE_SYSTEM_PROMPT?.trim()
+);
+
 export function mentionHandlerPublic( client: Client ) {
     client.on( Events.MessageCreate, async( message ) => {
         try {
@@ -60,6 +68,11 @@ export function mentionHandlerPublic( client: Client ) {
 
             // Skip private channel - handled by mentionHandlerPrivate
             if ( message.guildId === PRIVATE_GUILD_ID && message.channelId === PRIVATE_CHANNEL_ID ) {
+                return;
+            }
+
+            // The owner runs full-access via mentionHandlerPrivate in every channel.
+            if ( OWNER_ID && PRIVATE_HANDLER_CONFIGURED && message.author.id === OWNER_ID ) {
                 return;
             }
 

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { withCommands } from "@zenflux/react-commander/with-commands";
 import { QueryProvider } from "@zenflux/react-commander/query/provider";
@@ -56,7 +56,11 @@ export function App() {
                         }>
                             <Route path="/" element={ <DashboardPage /> } />
                             <Route path="/interface-editor" element={ <InterfaceEditorPage /> } />
-                            <Route path="/management" element={ <ManagementPage /> } />
+                            <Route path="/generators" element={ <ManagementPage /> } />
+
+                            { /* The page was called Management until it was named after what it
+                                 actually holds. */ }
+                            <Route path="/management" element={ <Navigate to="/generators" replace /> } />
                         </Route>
                     </Routes>
                 </AuthProvider>

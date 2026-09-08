@@ -20,7 +20,7 @@ function EmptyState() {
                 one here, or run <code className="text-text-secondary">/setup</code> in Discord.
             </p>
             <Link
-                to="/management"
+                to="/generators"
                 className="inline-flex items-center gap-2 bg-surface-elevated hover:bg-surface-hover
                     border border-border hover:border-border-accent text-text-accent text-sm
                     rounded-md px-4 py-2 transition-colors"
@@ -87,7 +87,7 @@ export function GeneratorsPanel( { masterChannels }: GeneratorsPanelProps ) {
 
             <div className="p-3 text-right">
                 <Link
-                    to="/management"
+                    to="/generators"
                     className="inline-flex items-center gap-1 text-sm text-text-accent hover:text-accent-hover
                         transition-colors"
                 >

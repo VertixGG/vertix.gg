@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
-import { LayoutDashboard, Boxes, Settings, LogOut, User, ChevronUp } from "lucide-react";
+import { LayoutDashboard, Boxes, Radio, LogOut, User, ChevronUp } from "lucide-react";
 
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
@@ -26,9 +26,9 @@ const navItems: NavItem[] = [
         hideForDefault: true
     },
     {
-        label: "Management",
-        path: "/management",
-        icon: <Settings className="w-5 h-5" />,
+        label: "Generators",
+        path: "/generators",
+        icon: <Radio className="w-5 h-5" />,
         hideForDefault: true
     },
     {

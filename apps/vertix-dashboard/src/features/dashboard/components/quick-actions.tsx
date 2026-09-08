@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { Boxes, Settings, BookOpen, MessageSquare } from "lucide-react";
+import { Boxes, Radio, BookOpen, MessageSquare } from "lucide-react";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -20,10 +20,10 @@ const QUICK_ACTIONS: QuickAction[] = [
         to: "/interface-editor"
     },
     {
-        icon: Settings,
-        title: "Management",
+        icon: Radio,
+        title: "Generators",
         body: "Create generators, set defaults, and tune each one of them.",
-        to: "/management"
+        to: "/generators"
     },
     {
         icon: BookOpen,

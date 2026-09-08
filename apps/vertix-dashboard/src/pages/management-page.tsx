@@ -177,7 +177,7 @@ const ManagementContentComponent: DCommandFunctionComponent<ManagementContentPro
             <>
                 <div className="flex-1 flex items-center justify-center p-8">
                     <div className="max-w-2xl w-full">
-                        <h1 className="text-2xl font-bold text-text-primary mb-2 text-center">Management</h1>
+                        <h1 className="text-2xl font-bold text-text-primary mb-2 text-center">Generators</h1>
                         <p className="text-text-muted text-center mb-8">
                             Nothing is set up in this server yet. Pick the kind of setup you want, or run
                             <code className="text-text-secondary"> /setup </code>
@@ -231,7 +231,7 @@ const ManagementContentComponent: DCommandFunctionComponent<ManagementContentPro
             <div className="flex-1 flex flex-col overflow-hidden">
                 <div className="px-6 py-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl font-bold text-text-primary mb-1">Management</h1>
+                        <h1 className="text-2xl font-bold text-text-primary mb-1">Generators</h1>
                         <p className="text-sm text-text-muted mb-0">
                             { dynamicCount } dynamic
                             { 1 === dynamicCount ? " setup" : " setups" }

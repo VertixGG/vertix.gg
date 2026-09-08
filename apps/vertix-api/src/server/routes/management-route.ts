@@ -41,7 +41,10 @@ interface UpdateScalingSettingsBody {
 interface UpdateDynamicSettingsBody {
     dynamicChannelNameTemplate?: string;
     dynamicChannelAutoSave?: boolean;
+    dynamicChannelAutoStatus?: boolean;
     dynamicChannelMentionable?: boolean;
+    dynamicChannelDefaultPrivacyState?: "public" | "private" | "hidden";
+    dynamicChannelDefaultUserLimit?: number | null;
 }
 
 /**

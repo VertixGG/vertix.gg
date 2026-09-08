@@ -50,6 +50,26 @@ function formatLastRefresh( date: Date | null ): string {
     return date.toLocaleTimeString();
 }
 
+const PRIVACY_STATE_LABELS: Record<string, string> = {
+    public: "🌐 Public",
+    private: "🚫 Private",
+    hidden: "🙈 Hidden"
+};
+
+/**
+ * Function formatUserLimit() :: The limit a new channel starts with, in words.
+ *
+ * Null and zero are different answers - null copies the generator's own limit, zero is Discord's
+ * own way of saying there is no limit at all.
+ */
+function formatUserLimit( limit: number | null ): string {
+    if ( null === limit ) {
+        return "Copied from the generator";
+    }
+
+    return 0 === limit ? "No limit" : `${ limit } users`;
+}
+
 const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPanelProps, DynamicDetailsPanelState> = ( {
     details,
     isSaving,
@@ -199,19 +219,37 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                         />
                     ) : (
                         <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
+                            <div className="flex justify-between gap-4">
                                 <span className="text-text-secondary">Name Template:</span>
-                                <span className="text-text-primary font-mono">
+                                <span className="text-text-primary font-mono text-right">
                                     { master.settings?.dynamicChannelNameTemplate || "{user}'s Channel" }
                                 </span>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="flex justify-between gap-4">
+                                <span className="text-text-secondary">New Channel Privacy:</span>
+                                <span className="text-text-primary text-right">
+                                    { PRIVACY_STATE_LABELS[ master.settings?.dynamicChannelDefaultPrivacyState ?? "public" ] }
+                                </span>
+                            </div>
+                            <div className="flex justify-between gap-4">
+                                <span className="text-text-secondary">New Channel Limit:</span>
+                                <span className="text-text-primary text-right">
+                                    { formatUserLimit( master.settings?.dynamicChannelDefaultUserLimit ?? null ) }
+                                </span>
+                            </div>
+                            <div className="flex justify-between gap-4">
                                 <span className="text-text-secondary">Auto-Save:</span>
                                 <span className="text-text-primary">
                                     { master.settings?.dynamicChannelAutoSave ? "Enabled" : "Disabled" }
                                 </span>
                             </div>
-                            <div className="flex justify-between">
+                            <div className="flex justify-between gap-4">
+                                <span className="text-text-secondary">Automatic Status:</span>
+                                <span className="text-text-primary">
+                                    { ( master.settings?.dynamicChannelAutoStatus ?? true ) ? "Enabled" : "Disabled" }
+                                </span>
+                            </div>
+                            <div className="flex justify-between gap-4">
                                 <span className="text-text-secondary">Mentionable:</span>
                                 <span className="text-text-primary">
                                     { master.settings?.dynamicChannelMentionable ? "Enabled" : "Disabled" }

@@ -20,10 +20,16 @@ export interface ScalingMasterChannelInfo {
     };
 }
 
+export type ChannelPrivacyState = "public" | "private" | "hidden";
+
 export interface DynamicSettings {
     dynamicChannelNameTemplate: string;
     dynamicChannelAutoSave: boolean;
+    dynamicChannelAutoStatus: boolean;
     dynamicChannelMentionable: boolean;
+    dynamicChannelDefaultPrivacyState: ChannelPrivacyState;
+    /** Null copies the generator's own limit, which is what a channel did before the setting. */
+    dynamicChannelDefaultUserLimit: number | null;
     dynamicChannelVerifiedRoles: string[];
 }
 
@@ -63,7 +69,10 @@ export interface DynamicMasterDetails {
 export interface UpdateDynamicSettingsInput {
     dynamicChannelNameTemplate?: string;
     dynamicChannelAutoSave?: boolean;
+    dynamicChannelAutoStatus?: boolean;
     dynamicChannelMentionable?: boolean;
+    dynamicChannelDefaultPrivacyState?: ChannelPrivacyState;
+    dynamicChannelDefaultUserLimit?: number | null;
 }
 
 export interface DiscordChannelInfo {

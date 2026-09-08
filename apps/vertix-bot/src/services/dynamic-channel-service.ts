@@ -128,7 +128,10 @@ import type { ChannelService } from "@vertix.gg/bot/src/services/channel-service
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 
-import type { GetDynamicChannelInfoResponse } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
+import type {
+    GetDynamicChannelInfoResponse,
+    UpdateDynamicSettingsPayload
+} from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
 import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
 
@@ -194,15 +197,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     /**
      * Handle update dynamic settings IPC action (called by ManagementIPCService)
      */
-    public async handleUpdateDynamicSettings( data: {
-        guildId: string;
-        masterChannelId: string;
-        settings: {
-            dynamicChannelNameTemplate?: string;
-            dynamicChannelAutoSave?: boolean;
-            dynamicChannelMentionable?: boolean;
-        };
-    } ) {
+    public async handleUpdateDynamicSettings( data: UpdateDynamicSettingsPayload ) {
         const { guildId, masterChannelId, settings } = data;
 
         this.logger.log(
@@ -229,6 +224,26 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             if ( settings.dynamicChannelMentionable !== undefined ) {
                 await MasterChannelDataManager.$.setChannelMentionable( masterChannelDB, settings.dynamicChannelMentionable );
+            }
+
+            if ( settings.dynamicChannelAutoStatus !== undefined ) {
+                await MasterChannelDataManager.$.setChannelAutoStatus( masterChannelDB, settings.dynamicChannelAutoStatus );
+            }
+
+            if ( settings.dynamicChannelDefaultPrivacyState !== undefined ) {
+                await MasterChannelDataManager.$.setChannelDefaultPrivacyState(
+                    masterChannelDB,
+                    guildId,
+                    settings.dynamicChannelDefaultPrivacyState
+                );
+            }
+
+            if ( settings.dynamicChannelDefaultUserLimit !== undefined ) {
+                await MasterChannelDataManager.$.setChannelDefaultUserLimit(
+                    masterChannelDB,
+                    guildId,
+                    settings.dynamicChannelDefaultUserLimit
+                );
             }
 
             this.logger.log(

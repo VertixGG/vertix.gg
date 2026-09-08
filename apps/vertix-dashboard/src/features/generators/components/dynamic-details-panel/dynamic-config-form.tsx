@@ -12,7 +12,7 @@ import {
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
 import type { DynamicConfigFormState } from "@vertix.gg/dashboard/src/features/generators/commands/dynamic-details-panel/dynamic-config-form-commands";
-import type { DynamicSettings } from "@vertix.gg/dashboard/src/features/generators/types";
+import type { ChannelPrivacyState, DynamicSettings } from "@vertix.gg/dashboard/src/features/generators/types";
 
 export interface DynamicConfigFormProps {
     masterChannelId: string;
@@ -20,17 +20,52 @@ export interface DynamicConfigFormProps {
     isSaving: boolean;
 }
 
+const PRIVACY_STATES: ReadonlyArray<{ value: ChannelPrivacyState; label: string; hint: string }> = [
+    { value: "public", label: "🌐 Public", hint: "Anyone who can see the category can join" },
+    { value: "private", label: "🚫 Private", hint: "Visible, but only the people the owner lets in" },
+    { value: "hidden", label: "🙈 Hidden", hint: "Neither visible nor joinable until the owner allows it" }
+];
+
+interface ToggleFieldProps {
+    checked: boolean;
+    disabled: boolean;
+    title: string;
+    body: string;
+    onChange: ( value: boolean ) => void;
+}
+
+function ToggleField( { checked, disabled, title, body, onChange }: ToggleFieldProps ) {
+    return (
+        <label className="flex items-center gap-3 cursor-pointer">
+            <input
+                type="checkbox"
+                checked={ checked }
+                onChange={ ( e ) => onChange( e.target.checked ) }
+                className="w-4 h-4 rounded border-border bg-background text-text-accent focus:ring-accent focus:ring-offset-surface"
+                disabled={ disabled }
+            />
+            <div>
+                <span className="text-sm font-medium text-text-primary">{ title }</span>
+                <p className="text-xs text-text-muted">{ body }</p>
+            </div>
+        </label>
+    );
+}
+
 const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormProps, DynamicConfigFormState> = ( {
     masterChannelId,
     settings,
     isSaving
 } ) => {
-    const [ state ] = useCommandState<DynamicConfigFormState, Pick<DynamicConfigFormState, "nameTemplate" | "autoSave" | "mentionable">>(
+    const [ state ] = useCommandState<DynamicConfigFormState, DynamicConfigFormState>(
         "Dashboard/Generators/DynamicConfigForm",
         ( state ) => ( {
             nameTemplate: state.nameTemplate,
             autoSave: state.autoSave,
-            mentionable: state.mentionable
+            autoStatus: state.autoStatus,
+            mentionable: state.mentionable,
+            defaultPrivacyState: state.defaultPrivacyState,
+            defaultUserLimit: state.defaultUserLimit
         } )
     );
 
@@ -46,7 +81,10 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     const hasChanges =
         state.nameTemplate !== ( settings?.dynamicChannelNameTemplate || "{user}'s Channel" ) ||
         state.autoSave !== ( settings?.dynamicChannelAutoSave ?? true ) ||
-        state.mentionable !== ( settings?.dynamicChannelMentionable ?? false );
+        state.autoStatus !== ( settings?.dynamicChannelAutoStatus ?? true ) ||
+        state.mentionable !== ( settings?.dynamicChannelMentionable ?? false ) ||
+        state.defaultPrivacyState !== ( settings?.dynamicChannelDefaultPrivacyState ?? "public" ) ||
+        state.defaultUserLimit !== ( settings?.dynamicChannelDefaultUserLimit ?? null );
 
     const handleSave = () => {
         updateDynamicSettings.run( {
@@ -54,7 +92,10 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
             settings: {
                 dynamicChannelNameTemplate: state.nameTemplate,
                 dynamicChannelAutoSave: state.autoSave,
-                dynamicChannelMentionable: state.mentionable
+                dynamicChannelAutoStatus: state.autoStatus,
+                dynamicChannelMentionable: state.mentionable,
+                dynamicChannelDefaultPrivacyState: state.defaultPrivacyState,
+                dynamicChannelDefaultUserLimit: state.defaultUserLimit
             }
         } );
         panelCommands.run( "Dashboard/Generators/DynamicDetailsPanel/StopEditing", {} );
@@ -72,8 +113,27 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateAutoSave", { value } );
     };
 
+    const handleUpdateAutoStatus = ( value: boolean ) => {
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateAutoStatus", { value } );
+    };
+
     const handleUpdateMentionable = ( value: boolean ) => {
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateMentionable", { value } );
+    };
+
+    const handleUpdateDefaultPrivacyState = ( value: ChannelPrivacyState ) => {
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateDefaultPrivacyState", { value } );
+    };
+
+    // An empty field is "copy the generator's own limit", which is not the same as a limit of
+    // zero - zero is Discord's own word for no limit at all.
+    const handleUpdateDefaultUserLimit = ( value: string ) => {
+        const trimmed = value.trim();
+        const parsed = Number( trimmed );
+
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateDefaultUserLimit", {
+            value: !trimmed.length || Number.isNaN( parsed ) ? null : Math.min( Math.max( parsed, 0 ), 99 )
+        } );
     };
 
     return (
@@ -99,40 +159,72 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
             </div>
 
             <div>
-                <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={ state.autoSave }
-                        onChange={ ( e ) => handleUpdateAutoSave( e.target.checked ) }
-                        className="w-4 h-4 rounded border-border bg-background text-text-accent focus:ring-accent focus:ring-offset-surface"
-                        disabled={ isSaving }
-                    />
-                    <div>
-                        <span className="text-sm font-medium text-text-primary">Auto-Save Settings</span>
-                        <p className="text-xs text-text-muted">
-                            Remember channel settings when the owner leaves
-                        </p>
-                    </div>
+                <label className="block text-sm font-medium text-text-primary mb-1">
+                    Default Privacy State
                 </label>
+                <select
+                    value={ state.defaultPrivacyState }
+                    onChange={ ( e ) => handleUpdateDefaultPrivacyState( e.target.value as ChannelPrivacyState ) }
+                    className="w-full px-3 py-2 bg-background border border-border rounded text-text-primary focus:outline-none focus:border-border-accent"
+                    disabled={ isSaving }
+                >
+                    { PRIVACY_STATES.map( ( option ) => (
+                        <option key={ option.value } value={ option.value }>{ option.label }</option>
+                    ) ) }
+                </select>
+                <div className="flex items-start gap-1 mt-1">
+                    <Info className="w-3 h-3 text-text-muted mt-0.5 flex-shrink-0" />
+                    <span className="text-xs text-text-muted">
+                        { PRIVACY_STATES.find( ( option ) => option.value === state.defaultPrivacyState )?.hint }
+                    </span>
+                </div>
             </div>
 
             <div>
-                <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={ state.mentionable }
-                        onChange={ ( e ) => handleUpdateMentionable( e.target.checked ) }
-                        className="w-4 h-4 rounded border-border bg-background text-text-accent focus:ring-accent focus:ring-offset-surface"
-                        disabled={ isSaving }
-                    />
-                    <div>
-                        <span className="text-sm font-medium text-text-primary">Mentionable</span>
-                        <p className="text-xs text-text-muted">
-                            Allow users to @mention dynamic channels
-                        </p>
-                    </div>
+                <label className="block text-sm font-medium text-text-primary mb-1">
+                    Default User Limit
                 </label>
+                <input
+                    type="number"
+                    min={ 0 }
+                    max={ 99 }
+                    value={ null === state.defaultUserLimit ? "" : state.defaultUserLimit }
+                    onChange={ ( e ) => handleUpdateDefaultUserLimit( e.target.value ) }
+                    placeholder="Copied from the generator channel"
+                    className="w-full px-3 py-2 bg-background border border-border rounded text-text-primary placeholder-text-muted focus:outline-none focus:border-border-accent"
+                    disabled={ isSaving }
+                />
+                <div className="flex items-start gap-1 mt-1">
+                    <Info className="w-3 h-3 text-text-muted mt-0.5 flex-shrink-0" />
+                    <span className="text-xs text-text-muted">
+                        Leave empty to copy the generator's own limit; 0 means no limit
+                    </span>
+                </div>
             </div>
+
+            <ToggleField
+                checked={ state.autoSave }
+                disabled={ isSaving }
+                title="Auto-Save Settings"
+                body="Remember channel settings when the owner leaves"
+                onChange={ handleUpdateAutoSave }
+            />
+
+            <ToggleField
+                checked={ state.autoStatus }
+                disabled={ isSaving }
+                title="Automatic Channel Status"
+                body="Write the status line under the channel name from what the channel is doing"
+                onChange={ handleUpdateAutoStatus }
+            />
+
+            <ToggleField
+                checked={ state.mentionable }
+                disabled={ isSaving }
+                title="Mentionable"
+                body="Mention the owner in the channel's primary message"
+                onChange={ handleUpdateMentionable }
+            />
 
             <div className="flex items-center gap-2 pt-2">
                 <button

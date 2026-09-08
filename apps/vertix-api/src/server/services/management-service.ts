@@ -17,6 +17,8 @@ import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
 
 import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
 
+import type { ChannelPrivacyStateDefault } from "@vertix.gg/base/src/interfaces/master-channel-config";
+
 import type {
     GetScalingChannelInfoRequest,
     GetScalingChannelInfoResponse
@@ -71,6 +73,36 @@ function getDynamicSettingsObject(
     return ( row?.object as Record<string, unknown> | undefined ) ?? null;
 }
 
+/**
+ * Function readDynamicSettings() :: The settings of a generator, with the defaults filled in.
+ *
+ * A key absent from the stored row means the setting predates it, so the default the bot itself
+ * falls back to is what the dashboard must show - otherwise a form would save a value the admin
+ * never chose.
+ */
+function readDynamicSettings( settingsData: Record<string, unknown> ): DynamicSettings {
+    return {
+        dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{user}'s Channel",
+        dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
+        dynamicChannelAutoStatus: ( settingsData.dynamicChannelAutoStatus as boolean ) ?? true,
+        dynamicChannelMentionable: ( settingsData.dynamicChannelMentionable as boolean ) ?? false,
+        dynamicChannelDefaultPrivacyState:
+            ( settingsData.dynamicChannelDefaultPrivacyState as ChannelPrivacyStateDefault ) ?? "public",
+        dynamicChannelDefaultUserLimit: ( settingsData.dynamicChannelDefaultUserLimit as number | null ) ?? null,
+        dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || []
+    };
+}
+
+export interface DynamicSettings {
+    dynamicChannelNameTemplate: string;
+    dynamicChannelAutoSave: boolean;
+    dynamicChannelAutoStatus: boolean;
+    dynamicChannelMentionable: boolean;
+    dynamicChannelDefaultPrivacyState: ChannelPrivacyStateDefault;
+    dynamicChannelDefaultUserLimit: number | null;
+    dynamicChannelVerifiedRoles: string[];
+}
+
 export interface ScalingMasterChannelInfo {
     id: string;
     channelId: string;
@@ -120,7 +152,10 @@ export interface DynamicMasterDetails {
 export interface UpdateDynamicSettingsInput {
     dynamicChannelNameTemplate?: string;
     dynamicChannelAutoSave?: boolean;
+    dynamicChannelAutoStatus?: boolean;
     dynamicChannelMentionable?: boolean;
+    dynamicChannelDefaultPrivacyState?: ChannelPrivacyStateDefault;
+    dynamicChannelDefaultUserLimit?: number | null;
 }
 
 export interface ScalingChannelInfo {
@@ -276,12 +311,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     createdAt: master.createdAt,
                     dynamicChannelsCount,
                     version: master.version || "0.0.0.3",
-                    settings: settingsData ? {
-                        dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{user}'s Channel",
-                        dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
-                        dynamicChannelMentionable: ( settingsData.dynamicChannelMentionable as boolean ) ?? false,
-                        dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || []
-                    } : null
+                    settings: settingsData ? readDynamicSettings( settingsData ) : null
                 };
             } )
         );
@@ -502,12 +532,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 createdAt: master.createdAt,
                 dynamicChannelsCount: dynamicChannels.length,
                 version: master.version || "0.0.0.3",
-                settings: settingsData ? {
-                    dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{user}'s Channel",
-                    dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
-                    dynamicChannelMentionable: ( settingsData.dynamicChannelMentionable as boolean ) ?? false,
-                    dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || []
-                } : null
+                settings: settingsData ? readDynamicSettings( settingsData ) : null
             },
             dynamicChannels: dynamicChannels.map( ( channel ) => ( {
                 id: channel.id,

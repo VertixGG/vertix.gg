@@ -1,17 +1,28 @@
 import { CommandBase } from "@zenflux/react-commander/command-base";
 
-import type { DynamicSettings } from "@vertix.gg/dashboard/src/features/generators/types";
+import type { ChannelPrivacyState, DynamicSettings } from "@vertix.gg/dashboard/src/features/generators/types";
 
 export interface DynamicConfigFormState {
     nameTemplate: string;
     autoSave: boolean;
+    autoStatus: boolean;
     mentionable: boolean;
+    defaultPrivacyState: ChannelPrivacyState;
+    /** Null is "copy the generator's own limit"; the field is empty for it. */
+    defaultUserLimit: number | null;
 }
 
+/**
+ * What a generator's settings are when the stored row says nothing - the same defaults the bot
+ * falls back to, so an untouched form saves what the channel already does.
+ */
 export const DYNAMIC_CONFIG_FORM_INITIAL_STATE: DynamicConfigFormState = {
     nameTemplate: "{user}'s Channel",
     autoSave: true,
-    mentionable: false
+    autoStatus: true,
+    mentionable: false,
+    defaultPrivacyState: "public",
+    defaultUserLimit: null
 };
 
 export class InitializeCommand extends CommandBase<DynamicConfigFormState, { settings: DynamicSettings | null }> {
@@ -23,7 +34,10 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
         return this.setState( {
             nameTemplate: args.settings?.dynamicChannelNameTemplate || "{user}'s Channel",
             autoSave: args.settings?.dynamicChannelAutoSave ?? true,
-            mentionable: args.settings?.dynamicChannelMentionable ?? false
+            autoStatus: args.settings?.dynamicChannelAutoStatus ?? true,
+            mentionable: args.settings?.dynamicChannelMentionable ?? false,
+            defaultPrivacyState: args.settings?.dynamicChannelDefaultPrivacyState ?? "public",
+            defaultUserLimit: args.settings?.dynamicChannelDefaultUserLimit ?? null
         } );
     }
 }
@@ -48,6 +62,16 @@ export class UpdateAutoSaveCommand extends CommandBase<DynamicConfigFormState, {
     }
 }
 
+export class UpdateAutoStatusCommand extends CommandBase<DynamicConfigFormState, { value: boolean }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateAutoStatus";
+    }
+
+    public apply( args: { value: boolean } ) {
+        return this.setState( { autoStatus: args.value } );
+    }
+}
+
 export class UpdateMentionableCommand extends CommandBase<DynamicConfigFormState, { value: boolean }> {
     public static getName() {
         return "Dashboard/Generators/DynamicConfigForm/UpdateMentionable";
@@ -58,9 +82,32 @@ export class UpdateMentionableCommand extends CommandBase<DynamicConfigFormState
     }
 }
 
+export class UpdateDefaultPrivacyStateCommand extends CommandBase<DynamicConfigFormState, { value: ChannelPrivacyState }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateDefaultPrivacyState";
+    }
+
+    public apply( args: { value: ChannelPrivacyState } ) {
+        return this.setState( { defaultPrivacyState: args.value } );
+    }
+}
+
+export class UpdateDefaultUserLimitCommand extends CommandBase<DynamicConfigFormState, { value: number | null }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateDefaultUserLimit";
+    }
+
+    public apply( args: { value: number | null } ) {
+        return this.setState( { defaultUserLimit: args.value } );
+    }
+}
+
 export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     InitializeCommand,
     UpdateNameTemplateCommand,
     UpdateAutoSaveCommand,
-    UpdateMentionableCommand
+    UpdateAutoStatusCommand,
+    UpdateMentionableCommand,
+    UpdateDefaultPrivacyStateCommand,
+    UpdateDefaultUserLimitCommand
 ] as const;

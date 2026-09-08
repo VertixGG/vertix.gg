@@ -32,10 +32,17 @@ export interface CreateDynamicSetupPayload {
 export interface UpdateDynamicSettingsPayload {
     guildId: string;
     masterChannelId: string;
+    /**
+     * What the dashboard can change about a generator, keyed the way the master channel settings
+     * are. Every key is optional - only what was edited is sent, and the bot applies exactly that.
+     */
     settings: {
         dynamicChannelNameTemplate?: string;
         dynamicChannelAutoSave?: boolean;
+        dynamicChannelAutoStatus?: boolean;
         dynamicChannelMentionable?: boolean;
+        dynamicChannelDefaultPrivacyState?: "public" | "private" | "hidden";
+        dynamicChannelDefaultUserLimit?: number | null;
     };
 }
 

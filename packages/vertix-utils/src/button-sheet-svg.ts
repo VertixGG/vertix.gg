@@ -47,6 +47,24 @@ export interface SheetSourceOption {
     emoji?: string | null;
 }
 
+/** Pixel box of a Discord custom emoji as fetched from the cdn (`?size=96`). */
+const EMOJI_ICON_SIZE = 96;
+
+/**
+ * Function iconSvgFromImage() :: Presents a raster emoji as an inlineable icon svg.
+ *
+ * The sheet inlines every icon as svg markup rather than referencing it (see `inlineIcon`), so an
+ * emoji fetched from Discord is wrapped in a one-node svg pointing at its data uri. The api hands
+ * this to resvg and the website inlines the identical string into both its dom preview and its
+ * canvas export, so no draw path fetches anything and none of them can drift.
+ */
+export function iconSvgFromImage( dataUri: string ): string {
+    return "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
+        ` viewBox="0 0 ${ EMOJI_ICON_SIZE } ${ EMOJI_ICON_SIZE }">` +
+        `<image width="${ EMOJI_ICON_SIZE }" height="${ EMOJI_ICON_SIZE }"` +
+        ` preserveAspectRatio="xMidYMid meet" xlink:href="${ dataUri }"/></svg>`;
+}
+
 /**
  * Function tilesFromSelectOptions() :: The buttons the bot ships, as sheet tiles.
  *

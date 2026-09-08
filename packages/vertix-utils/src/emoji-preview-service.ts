@@ -32,10 +32,13 @@ class EmojiPreviewService {
     }
 
     private async fetchAndCache() {
-        const token = process.env.FLOW_EMOJI_TOKEN ?? process.env.DISCORD_TEST_TOKEN;
+        const token = process.env.FLOW_EMOJI_TOKEN
+            ?? process.env.DISCORD_TEST_TOKEN
+            ?? process.env.DISCORD_BOT_TOKEN
+            ?? process.env.DISCORD_TOKEN;
 
         if ( !token ) {
-            console.warn( "[EmojiPreviewService] Missing FLOW_EMOJI_TOKEN/DISCORD_TEST_TOKEN; previews will use placeholders." );
+            console.warn( "[EmojiPreviewService] Missing FLOW_EMOJI_TOKEN/DISCORD_TEST_TOKEN/DISCORD_BOT_TOKEN/DISCORD_TOKEN; previews will use placeholders." );
             return;
         }
 

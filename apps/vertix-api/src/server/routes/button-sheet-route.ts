@@ -1,24 +1,18 @@
-import { readFileSync } from "fs";
 import { join } from "path";
 
 import { Resvg } from "@resvg/resvg-js";
 
-import {
-    BUTTONS_MENU_ELEMENT,
-    buildSheetSvg,
-    tilesFromSelectOptions
-} from "@vertix.gg/utils/src/button-sheet-svg";
+import { buildSheetSvg } from "@vertix.gg/utils/src/button-sheet-svg";
 
 import { API_ROUTES, HTTP_STATUS } from "@vertix.gg/api/src/server/constants";
+import { getButtonSheetTiles } from "@vertix.gg/api/src/server/services/button-emoji-source";
 
-import type { SheetConfig, SheetSourceOption, SheetTile } from "@vertix.gg/utils/src/button-sheet-svg";
+import type { SheetConfig, SheetTile } from "@vertix.gg/utils/src/button-sheet-svg";
 import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 const REPO_ROOT = join( import.meta.dirname, "..", "..", "..", "..", ".." );
 
-const COMPONENTS_PATH = join( REPO_ROOT, "exports", "ui", "components.json" ),
-    ICONS_DIR = join( REPO_ROOT, "assets", "svg" ),
-    FONT_PATH = join( REPO_ROOT, "assets", "fonts", "RedHatDisplay-Bold.ttf" );
+const FONT_PATH = join( REPO_ROOT, "assets", "fonts", "RedHatDisplay-Bold.ttf" );
 
 const SHEET_DEFAULTS: SheetConfig = {
     cols: 4,
@@ -88,72 +82,6 @@ function parseQuery( query: SheetQuery ): SheetConfig {
     };
 }
 
-const iconCache = new Map<string, string | null>();
-
-function loadIcon( baseName: string ): string | null {
-    if ( ! baseName || ! /^[A-Za-z0-9_-]+$/.test( baseName ) ) {
-        return null;
-    }
-
-    if ( ! iconCache.has( baseName ) ) {
-        try {
-            iconCache.set( baseName, readFileSync( join( ICONS_DIR, `${ baseName }.svg` ), "utf-8" ) );
-        } catch {
-            iconCache.set( baseName, null );
-        }
-    }
-
-    return iconCache.get( baseName ) ?? null;
-}
-
-let cachedTiles: ReadonlyArray<SheetTile> | null = null;
-
-/**
- * Function loadTiles() :: The buttons, read off the bot's own ui export.
- *
- * The page reaches the same export over http; here it is a file on disk. What each option becomes
- * is decided by `tilesFromSelectOptions`, shared with the website, so the two cannot disagree about
- * a label.
- */
-function loadTiles(): ReadonlyArray<SheetTile> {
-    if ( cachedTiles ) {
-        return cachedTiles;
-    }
-
-    const parsed: unknown = JSON.parse( readFileSync( COMPONENTS_PATH, "utf-8" ) );
-
-    for ( const component of asArray( parsed ) ) {
-        for ( const group of asArray( property( component, "elementsGroups" ) ) ) {
-            for ( const row of asArray( property( group, "items" ) ) ) {
-                for ( const item of asArray( row ) ) {
-                    if ( property( item, "element" ) !== BUTTONS_MENU_ELEMENT ) {
-                        continue;
-                    }
-
-                    const options = property( property( item, "definition" ), "selectOptions" );
-
-                    cachedTiles = tilesFromSelectOptions(
-                        asArray( options ) as ReadonlyArray<SheetSourceOption>,
-                        loadIcon
-                    );
-
-                    return cachedTiles;
-                }
-            }
-        }
-    }
-
-    throw new Error( `Could not find '${ BUTTONS_MENU_ELEMENT }' in the UI export` );
-}
-
-function asArray( value: unknown ): ReadonlyArray<unknown> {
-    return Array.isArray( value ) ? value : [];
-}
-
-function property( value: unknown, key: string ): unknown {
-    return value && "object" === typeof value ? ( value as Record<string, unknown> )[ key ] : undefined;
-}
-
 const buttonSheetRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance ): Promise<void> => {
     fastify.get<{ Querystring: SheetQuery }>( API_ROUTES.BUTTON_SHEET, async( request, reply ) => {
         const config = parseQuery( request.query );
@@ -161,7 +89,7 @@ const buttonSheetRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstan
         let tiles: ReadonlyArray<SheetTile>;
 
         try {
-            tiles = loadTiles();
+            tiles = await getButtonSheetTiles();
         } catch( error ) {
             fastify.log.error( error );
 

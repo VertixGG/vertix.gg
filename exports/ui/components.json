@@ -5280,7 +5280,7 @@
                             "instanceType": "Dynamic",
                             "title": "{title}",
                             "description": "{description}\n\n{renameEmoji} ・ Name: **{name}**\n\n{limitEmoji} ・ User Limit: **{limit}**\n\n{privacyEmoji} ・ Privacy State: **{state}**\n\n{regionEmoji} ・ Region:  **{region}**\n",
-                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items={dynamicChannelButtonSheetItems}",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items={dynamicChannelButtonsTemplate}",
                             "color": 3369963,
                             "options": {
                                 "limit": {
@@ -5292,6 +5292,13 @@
                                     "{statePrivate}": "🚫 Private",
                                     "{stateShown}": "🐵 Shown",
                                     "{stateHidden}": "🙈 Hidden"
+                                }
+                            },
+                            "arrayOptions": {
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "{value}{separator}",
+                                    "separator": ",",
+                                    "options": {}
                                 }
                             },
                             "vars": {
@@ -5313,7 +5320,9 @@
                                 "regionAutomatic": "{regionAutomatic}",
                                 "title": "{title}",
                                 "description": "{description}",
-                                "dynamicChannelButtonSheetItems": "{dynamicChannelButtonSheetItems}"
+                                "value": "{value}",
+                                "separator": "{separator}",
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
                             },
                             "defaultVars": {
                                 "renameEmoji": "<emoji name='ChannelRename'>",
@@ -5696,12 +5705,19 @@
                             "instanceType": "Dynamic",
                             "title": "༄ Manage your Dynamic Channel",
                             "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n",
-                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items={dynamicChannelButtonSheetItems}",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items={dynamicChannelButtonsTemplate}",
                             "color": 3369963,
+                            "arrayOptions": {
+                                "dynamicChannelButtonsTemplate": {
+                                    "format": "{value}{separator}",
+                                    "separator": ",",
+                                    "options": {}
+                                }
+                            },
                             "vars": {
                                 "separator": "{separator}",
                                 "value": "{value}",
-                                "dynamicChannelButtonSheetItems": "{dynamicChannelButtonSheetItems}"
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
                             }
                         }
                     }

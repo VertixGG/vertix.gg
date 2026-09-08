@@ -2,6 +2,7 @@ import Fastify from "fastify";
 
 import healthRoutePlugin from "@vertix.gg/api/src/server/routes/health-route";
 import buttonSheetRoutePlugin from "@vertix.gg/api/src/server/routes/button-sheet-route";
+import buttonEmojisRoutePlugin from "@vertix.gg/api/src/server/routes/button-emojis-route";
 import modulesRoutePlugin from "@vertix.gg/api/src/server/routes/modules-route";
 import flowsRoutePlugin from "@vertix.gg/api/src/server/routes/flows-route";
 import authRoutePlugin from "@vertix.gg/api/src/server/routes/auth-route";
@@ -22,8 +23,21 @@ const LOGGER_LEVEL = "info";
 const FRONTEND_URL = process.env.DASHBOARD_URL || "http://localhost:3020";
 const DASHBOARD_PROD_URL = process.env.DASHBOARD_PROD_URL || "https://dashboard.voicechannnels.gg";
 
+// The public marketing site reads the emoji manifest (`/tools/button-emojis.json`) so it too can
+// draw button artwork straight from Discord. It is a static, first-party origin that never sends
+// credentials, so allowing it to read is safe.
+const WEBSITE_URL = process.env.WEBSITE_URL || "https://voicechannels.online";
+const WEBSITE_WWW_URL = process.env.WEBSITE_WWW_URL || "https://www.voicechannels.online";
+
 const CORS_CONFIG = {
-    origin: [ FRONTEND_URL, DASHBOARD_PROD_URL, "http://localhost:3020" ],
+    origin: [
+        FRONTEND_URL,
+        DASHBOARD_PROD_URL,
+        WEBSITE_URL,
+        WEBSITE_WWW_URL,
+        "http://localhost:3020",
+        "http://localhost:5173"
+    ],
     credentials: true,
     methods: [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
     allowedHeaders: [ "Content-Type", "Authorization" ]
@@ -59,6 +73,8 @@ export async function createApp(): Promise<FastifyInstance> {
     await fastify.register( healthRoutePlugin, { prefix: API_PREFIX } );
 
     await fastify.register( buttonSheetRoutePlugin, { prefix: API_PREFIX } );
+
+    await fastify.register( buttonEmojisRoutePlugin, { prefix: API_PREFIX } );
 
     await fastify.register( async( protectedRoutes ) => {
         protectedRoutes.addHook( "preHandler", requireAuth );

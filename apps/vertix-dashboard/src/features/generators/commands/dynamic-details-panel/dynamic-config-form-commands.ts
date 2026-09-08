@@ -10,6 +10,11 @@ export interface DynamicConfigFormState {
     defaultPrivacyState: ChannelPrivacyState;
     /** Null is "copy the generator's own limit"; the field is empty for it. */
     defaultUserLimit: number | null;
+    verifiedRoles: string[];
+    staffRoles: string[];
+    /** Null defers to the guild wide voice role. */
+    voiceRoleId: string | null;
+    logsChannelId: string | null;
 }
 
 /**
@@ -22,7 +27,11 @@ export const DYNAMIC_CONFIG_FORM_INITIAL_STATE: DynamicConfigFormState = {
     autoStatus: true,
     mentionable: false,
     defaultPrivacyState: "public",
-    defaultUserLimit: null
+    defaultUserLimit: null,
+    verifiedRoles: [],
+    staffRoles: [],
+    voiceRoleId: null,
+    logsChannelId: null
 };
 
 export class InitializeCommand extends CommandBase<DynamicConfigFormState, { settings: DynamicSettings | null }> {
@@ -37,7 +46,11 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
             autoStatus: args.settings?.dynamicChannelAutoStatus ?? true,
             mentionable: args.settings?.dynamicChannelMentionable ?? false,
             defaultPrivacyState: args.settings?.dynamicChannelDefaultPrivacyState ?? "public",
-            defaultUserLimit: args.settings?.dynamicChannelDefaultUserLimit ?? null
+            defaultUserLimit: args.settings?.dynamicChannelDefaultUserLimit ?? null,
+            verifiedRoles: args.settings?.dynamicChannelVerifiedRoles ?? [],
+            staffRoles: args.settings?.dynamicChannelStaffRoles ?? [],
+            voiceRoleId: args.settings?.dynamicChannelVoiceRoleId ?? null,
+            logsChannelId: args.settings?.dynamicChannelLogsChannelId ?? null
         } );
     }
 }
@@ -102,6 +115,46 @@ export class UpdateDefaultUserLimitCommand extends CommandBase<DynamicConfigForm
     }
 }
 
+export class UpdateVerifiedRolesCommand extends CommandBase<DynamicConfigFormState, { value: string[] }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateVerifiedRoles";
+    }
+
+    public apply( args: { value: string[] } ) {
+        return this.setState( { verifiedRoles: args.value } );
+    }
+}
+
+export class UpdateStaffRolesCommand extends CommandBase<DynamicConfigFormState, { value: string[] }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateStaffRoles";
+    }
+
+    public apply( args: { value: string[] } ) {
+        return this.setState( { staffRoles: args.value } );
+    }
+}
+
+export class UpdateVoiceRoleCommand extends CommandBase<DynamicConfigFormState, { value: string | null }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateVoiceRole";
+    }
+
+    public apply( args: { value: string | null } ) {
+        return this.setState( { voiceRoleId: args.value } );
+    }
+}
+
+export class UpdateLogsChannelCommand extends CommandBase<DynamicConfigFormState, { value: string | null }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateLogsChannel";
+    }
+
+    public apply( args: { value: string | null } ) {
+        return this.setState( { logsChannelId: args.value } );
+    }
+}
+
 export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     InitializeCommand,
     UpdateNameTemplateCommand,
@@ -109,5 +162,9 @@ export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     UpdateAutoStatusCommand,
     UpdateMentionableCommand,
     UpdateDefaultPrivacyStateCommand,
-    UpdateDefaultUserLimitCommand
+    UpdateDefaultUserLimitCommand,
+    UpdateVerifiedRolesCommand,
+    UpdateStaffRolesCommand,
+    UpdateVoiceRoleCommand,
+    UpdateLogsChannelCommand
 ] as const;

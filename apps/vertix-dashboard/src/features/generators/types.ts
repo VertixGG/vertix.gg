@@ -31,6 +31,30 @@ export interface DynamicSettings {
     /** Null copies the generator's own limit, which is what a channel did before the setting. */
     dynamicChannelDefaultUserLimit: number | null;
     dynamicChannelVerifiedRoles: string[];
+    dynamicChannelStaffRoles: string[];
+    /** Null defers to the guild wide voice role. */
+    dynamicChannelVoiceRoleId: string | null;
+    dynamicChannelLogsChannelId: string | null;
+}
+
+export interface GuildDiscordRole {
+    id: string;
+    name: string;
+    color: number;
+}
+
+export interface GuildDiscordChannel {
+    id: string;
+    name: string;
+}
+
+/**
+ * What a generator's settings can point at - fetched from Discord, so the forms offer names
+ * rather than asking for ids.
+ */
+export interface GuildDiscordOptions {
+    roles: GuildDiscordRole[];
+    textChannels: GuildDiscordChannel[];
 }
 
 export interface DynamicMasterChannelInfo {
@@ -73,6 +97,10 @@ export interface UpdateDynamicSettingsInput {
     dynamicChannelMentionable?: boolean;
     dynamicChannelDefaultPrivacyState?: ChannelPrivacyState;
     dynamicChannelDefaultUserLimit?: number | null;
+    dynamicChannelVerifiedRoles?: string[];
+    dynamicChannelStaffRoles?: string[];
+    dynamicChannelVoiceRoleId?: string | null;
+    dynamicChannelLogsChannelId?: string | null;
 }
 
 export interface DiscordChannelInfo {

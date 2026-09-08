@@ -5,6 +5,7 @@ import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generato
 
 import type {
     GuildGeneratorsDetails,
+    GuildDiscordOptions,
     MasterChannelType
 } from "@vertix.gg/dashboard/src/features/generators/types";
 
@@ -13,6 +14,8 @@ export type CreateModalType = "scaling" | "dynamic" | null;
 export interface GeneratorsState {
     guildId: string | null;
     generatorsDetails: GuildGeneratorsDetails | null;
+    /** The roles and channels the settings forms offer; null until the guild is loaded. */
+    discordOptions: GuildDiscordOptions | null;
     selectedMasterChannelId: string | null;
     selectedMasterChannelType: MasterChannelType | null;
     isSaving: boolean;
@@ -27,6 +30,7 @@ export interface GeneratorsState {
 export const GENERATORS_INITIAL_STATE: GeneratorsState = {
     guildId: null,
     generatorsDetails: null,
+    discordOptions: null,
     selectedMasterChannelId: null,
     selectedMasterChannelType: null,
     isSaving: false,

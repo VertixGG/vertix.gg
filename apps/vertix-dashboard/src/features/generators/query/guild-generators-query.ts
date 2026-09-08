@@ -4,6 +4,7 @@ import type { DCommandFunctionComponent, DCommandSingleComponentContext } from "
 import type { QueryClient } from "@zenflux/react-commander/query/client";
 import type {
     GuildGeneratorsDetails,
+    GuildDiscordOptions,
     ScalingMasterDetails,
     DynamicMasterDetails
 } from "@vertix.gg/dashboard/src/features/generators/types";
@@ -40,6 +41,12 @@ export class GuildGeneratorsQuery extends QueryModuleBase<GuildGeneratorsDetails
         this.defineEndpoint<DynamicMasterDetails, DynamicMasterDetails>( "Dashboard/Generators/GetDynamicDetails", {
             method: "GET",
             path: "management/guild/:guildId/dynamic/:masterChannelId",
+            prepareData: ( response ) => response
+        } );
+
+        this.defineEndpoint<GuildDiscordOptions, GuildDiscordOptions>( "Dashboard/Generators/GetDiscordOptions", {
+            method: "GET",
+            path: "management/guild/:guildId/discord-options",
             prepareData: ( response ) => response
         } );
 

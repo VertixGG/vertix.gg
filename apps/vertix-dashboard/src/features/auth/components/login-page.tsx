@@ -15,7 +15,7 @@ export function LoginPage() {
     const error = searchParams.get( "error" );
 
     useEffect( () => {
-        document.title = "Login - Vertix Dashboard";
+        document.title = "Login - VoiceChannels Dashboard";
     }, [] );
 
     const handleLogin = () => {

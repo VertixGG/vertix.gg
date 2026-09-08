@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { withCommands } from "@zenflux/react-commander/with-commands";
 import { useCommandState, useComponent, useCommand } from "@zenflux/react-commander/hooks";
 
-import { Layers, RefreshCw, Trash2, Settings, Hash, AlertTriangle } from "lucide-react";
+import { Layers, RefreshCw, Trash2, Settings, Hash, AlertTriangle, Pencil } from "lucide-react";
 
 import { ScalingChannelCard } from "./scaling-channel-card";
 import ScalingConfigForm from "./scaling-config-form";
@@ -12,6 +12,8 @@ import {
     SCALING_DETAILS_PANEL_INITIAL_STATE,
     SCALING_DETAILS_PANEL_COMMANDS
 } from "../../commands/scaling-details-panel/scaling-details-panel-commands";
+
+import { SettingRow, SettingsGroup } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
 import type { ScalingDetailsPanelState } from "../../commands/scaling-details-panel/scaling-details-panel-commands";
@@ -114,28 +116,34 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
         panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/HideDeleteConfirm", {} );
     };
 
+    const settings = master.settings;
+
     return (
         <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-border">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
+            <div className="border-b border-border">
+                <div className="max-w-4xl w-full px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center shrink-0">
                             <Layers className="w-5 h-5 text-success" />
                         </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-text-primary">
+                        <div className="min-w-0">
+                            <h2 className="text-lg font-semibold text-text-primary truncate">
                                 { details.discord?.masterChannel?.name || "Auto-Scaling Master" }
                             </h2>
-                            <p className="text-sm text-text-secondary">
+                            <p className="text-sm text-text-secondary mb-0 truncate">
                                 { details.discord?.category?.name ? (
                                     <span>in <span className="text-text-primary">{ details.discord.category.name }</span></span>
                                 ) : (
-                                    <span className="truncate" title={ master.channelId }>{ master.channelId }</span>
+                                    <span title={ master.channelId }>{ master.channelId }</span>
                                 ) }
+                                { " · " }
+                                { scalingChannels.length }
+                                { 1 === scalingChannels.length ? " channel" : " channels" }
                             </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
+
+                    <div className="flex items-center gap-2 shrink-0">
                         <span className="text-xs text-text-muted">
                             { isRefreshing ? "Refreshing..." : formatLastRefresh( lastRefreshTime ) }
                         </span>
@@ -149,155 +157,148 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
                         </button>
                     </div>
                 </div>
-
-                <div className="grid grid-cols-3 gap-4 mt-4">
-                    <div className="bg-surface rounded-lg p-3">
-                        <div className="text-2xl font-bold text-text-primary">{ scalingChannels.length }</div>
-                        <div className="text-xs text-text-secondary">Scaling Channels</div>
-                    </div>
-                    <div className="bg-surface rounded-lg p-3">
-                        <div className="text-2xl font-bold text-text-primary">
-                            { master.settings?.scalingChannelMaxMembersPerChannel || "Unlimited" }
-                        </div>
-                        <div className="text-xs text-text-secondary">Max Members/Channel</div>
-                    </div>
-                    <div className="bg-surface rounded-lg p-3">
-                        <div className="text-2xl font-bold text-text-primary">
-                            { master.settings?.scalingChannelMinAvailableChannels || 1 }
-                        </div>
-                        <div className="text-xs text-text-secondary">Min Available</div>
-                    </div>
-                </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                <div className="bg-surface/50 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-text-primary flex items-center gap-2">
-                            <Settings className="w-4 h-4" />
-                            Configuration
-                        </h3>
-                        { !state.isEditing && (
-                            <button
-                                onClick={ handleStartEditing }
-                                className="text-xs text-success hover:text-success"
-                            >
-                                Edit
-                            </button>
-                        ) }
-                    </div>
+            <div className="flex-1 overflow-y-auto">
+                <div className="max-w-4xl w-full px-6 py-6 space-y-6">
+                    <section className="bg-surface border border-border rounded-lg">
+                        <header className="flex items-center justify-between gap-3 px-4 py-3 border-b border-border">
+                            <h3 className="text-sm font-medium text-text-primary flex items-center gap-2 mb-0">
+                                <Settings className="w-4 h-4 text-accent-muted" />
+                                Configuration
+                            </h3>
+                            { !state.isEditing && (
+                                <button
+                                    onClick={ handleStartEditing }
+                                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-success bg-success/15
+                                        hover:bg-success/25 border border-success/40 rounded-md transition-colors"
+                                >
+                                    <Pencil className="w-3.5 h-3.5" />
+                                    Edit
+                                </button>
+                            ) }
+                        </header>
 
-                    { state.isEditing ? (
-                        <ScalingConfigForm
-                            masterChannelId={ master.id }
-                            settings={ master.settings }
-                            isSaving={ isSaving }
-                        />
-                    ) : (
-                        <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                                <span className="text-text-secondary">Prefix:</span>
-                                <span className="text-text-primary font-mono">
-                                    { master.settings?.scalingChannelPrefix || "Not set" }
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-text-secondary">Max Members:</span>
-                                <span className="text-text-primary">
-                                    { master.settings?.scalingChannelMaxMembersPerChannel || "Unlimited" }
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-text-secondary">Min Available:</span>
-                                <span className="text-text-primary">
-                                    { master.settings?.scalingChannelMinAvailableChannels || 1 }
-                                </span>
-                            </div>
-                        </div>
-                    ) }
-                </div>
-
-                <div>
-                    <h3 className="text-sm font-medium text-text-primary flex items-center gap-2 mb-3">
-                        <Hash className="w-4 h-4" />
-                        Scaling Channels ({ scalingChannels.length })
-                    </h3>
-
-                    { scalingChannels.length === 0 ? (
-                        <div className="bg-surface/50 rounded-lg p-4 text-center text-text-muted text-sm">
-                            No scaling channels created yet
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 gap-3">
-                            { scalingChannels.map( ( channel, index ) => (
-                                <ScalingChannelCard
-                                    key={ channel.id }
-                                    channel={ channel }
-                                    index={ index }
-                                    maxMembers={ master.settings?.scalingChannelMaxMembersPerChannel }
+                        <div className="p-4">
+                            { state.isEditing ? (
+                                <ScalingConfigForm
+                                    masterChannelId={ master.id }
+                                    settings={ settings }
+                                    isSaving={ isSaving }
                                 />
-                            ) ) }
+                            ) : (
+                                <SettingsGroup title="Channel pool">
+                                    <SettingRow
+                                        label="Prefix"
+                                        value={ settings?.scalingChannelPrefix || "Not set" }
+                                        mono
+                                    />
+                                    <SettingRow
+                                        label="Max members"
+                                        value={ String( settings?.scalingChannelMaxMembersPerChannel || "Unlimited" ) }
+                                    />
+                                    <SettingRow
+                                        label="Min available"
+                                        value={ String( settings?.scalingChannelMinAvailableChannels || 1 ) }
+                                    />
+                                </SettingsGroup>
+                            ) }
                         </div>
-                    ) }
-                </div>
+                    </section>
 
-                <div className="bg-surface/50 rounded-lg p-4">
-                    <h3 className="text-sm font-medium text-text-primary mb-3">Actions</h3>
-                    <div className="flex flex-wrap gap-2">
-                        <button
-                            onClick={ handleReindex }
-                            disabled={ isSaving }
-                            className="flex items-center gap-2 px-3 py-1.5 bg-surface-elevated hover:bg-surface-hover disabled:opacity-50 text-text-primary rounded text-sm transition-colors"
-                        >
-                            <RefreshCw className="w-4 h-4" />
-                            Reindex Channels
-                        </button>
-                        <button
-                            onClick={ handleCleanup }
-                            disabled={ isSaving }
-                            className="flex items-center gap-2 px-3 py-1.5 bg-surface-elevated hover:bg-surface-hover disabled:opacity-50 text-text-primary rounded text-sm transition-colors"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                            Cleanup Empty
-                        </button>
-                    </div>
-                </div>
+                    <section>
+                        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                            <h3 className="text-sm font-medium text-text-primary flex items-center gap-2 mb-0">
+                                <Hash className="w-4 h-4 text-accent-muted" />
+                                Channels ({ scalingChannels.length })
+                            </h3>
 
-                <div className="bg-error/10 border border-error/30 rounded-lg p-4">
-                    <h3 className="text-sm font-medium text-error flex items-center gap-2 mb-2">
-                        <AlertTriangle className="w-4 h-4" />
-                        Danger Zone
-                    </h3>
-                    <p className="text-xs text-text-secondary mb-3">
-                        Deleting this setup will remove the master channel and all associated scaling channels from Discord.
-                    </p>
-
-                    { state.showDeleteConfirm ? (
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={ handleDelete }
-                                disabled={ isSaving }
-                                className="flex items-center gap-2 px-3 py-1.5 bg-error/15 hover:bg-error/25 disabled:opacity-50 text-text-primary rounded text-sm font-medium transition-colors"
-                            >
-                                Yes, Delete Everything
-                            </button>
-                            <button
-                                onClick={ handleHideDeleteConfirm }
-                                disabled={ isSaving }
-                                className="px-3 py-1.5 bg-surface-elevated hover:bg-surface-hover text-text-primary rounded text-sm transition-colors"
-                            >
-                                Cancel
-                            </button>
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    onClick={ handleReindex }
+                                    disabled={ isSaving }
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-surface hover:bg-surface-hover
+                                        border border-border disabled:opacity-50 text-text-secondary hover:text-text-primary
+                                        rounded-md text-sm transition-colors"
+                                >
+                                    <RefreshCw className="w-4 h-4" />
+                                    Reindex
+                                </button>
+                                <button
+                                    onClick={ handleCleanup }
+                                    disabled={ isSaving }
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-surface hover:bg-surface-hover
+                                        border border-border disabled:opacity-50 text-text-secondary hover:text-text-primary
+                                        rounded-md text-sm transition-colors"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Cleanup empty
+                                </button>
+                            </div>
                         </div>
-                    ) : (
-                        <button
-                            onClick={ handleShowDeleteConfirm }
-                            className="flex items-center gap-2 px-3 py-1.5 bg-error/20 hover:bg-error/15/30 text-error rounded text-sm transition-colors"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                            Delete Scaling Setup
-                        </button>
-                    ) }
+
+                        { scalingChannels.length === 0 ? (
+                            <p className="text-sm text-text-muted mb-0">
+                                None yet. The pool fills itself as members arrive.
+                            </p>
+                        ) : (
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                { scalingChannels.map( ( channel, index ) => (
+                                    <ScalingChannelCard
+                                        key={ channel.id }
+                                        channel={ channel }
+                                        index={ index }
+                                        maxMembers={ settings?.scalingChannelMaxMembersPerChannel }
+                                    />
+                                ) ) }
+                            </div>
+                        ) }
+                    </section>
+
+                    <section className="border border-error/30 rounded-lg px-4 py-3">
+                        { state.showDeleteConfirm ? (
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                                <div className="flex items-start gap-2 min-w-0">
+                                    <AlertTriangle className="w-4 h-4 text-error shrink-0 mt-0.5" />
+                                    <p className="text-sm text-text-secondary mb-0">
+                                        This removes the generator and every channel under it from Discord.
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <button
+                                        onClick={ handleDelete }
+                                        disabled={ isSaving }
+                                        className="px-3 py-1.5 bg-error/20 hover:bg-error/30 disabled:opacity-50
+                                            text-error rounded-md text-sm font-medium transition-colors"
+                                    >
+                                        Delete everything
+                                    </button>
+                                    <button
+                                        onClick={ handleHideDeleteConfirm }
+                                        disabled={ isSaving }
+                                        className="px-3 py-1.5 bg-surface-elevated hover:bg-surface-hover
+                                            text-text-primary rounded-md text-sm transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                                <span className="text-sm text-text-muted">
+                                    Deleting the setup removes the generator and its channels from Discord.
+                                </span>
+                                <button
+                                    onClick={ handleShowDeleteConfirm }
+                                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-error
+                                        hover:bg-error/15 rounded-md transition-colors shrink-0"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Delete setup
+                                </button>
+                            </div>
+                        ) }
+                    </section>
                 </div>
             </div>
         </div>

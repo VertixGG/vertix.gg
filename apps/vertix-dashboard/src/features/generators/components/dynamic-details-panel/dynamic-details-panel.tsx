@@ -3,10 +3,12 @@ import { useEffect } from "react";
 import { withCommands } from "@zenflux/react-commander/with-commands";
 import { useCommandState, useComponent, useCommand } from "@zenflux/react-commander/hooks";
 
-import { Radio, RefreshCw, Trash2, Settings, Hash, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { Radio, RefreshCw, Trash2, Settings, Hash, AlertTriangle, Pencil } from "lucide-react";
 
 import { DynamicChannelCard } from "./dynamic-channel-card";
 import DynamicConfigForm from "./dynamic-config-form";
+
+import { SettingRow, SettingsGroup } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
 import {
     DYNAMIC_DETAILS_PANEL_INITIAL_STATE,
@@ -15,10 +17,14 @@ import {
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
 import type { DynamicDetailsPanelState } from "@vertix.gg/dashboard/src/features/generators/commands/dynamic-details-panel/dynamic-details-panel-commands";
-import type { DynamicMasterDetails } from "@vertix.gg/dashboard/src/features/generators/types";
+import type {
+    DynamicMasterDetails,
+    GuildDiscordOptions
+} from "@vertix.gg/dashboard/src/features/generators/types";
 
 export interface DynamicDetailsPanelProps {
     details: DynamicMasterDetails;
+    discordOptions: GuildDiscordOptions | null;
     isSaving: boolean;
     isRefreshing: boolean;
     lastRefreshTime: Date | null;
@@ -70,8 +76,40 @@ function formatUserLimit( limit: number | null ): string {
     return 0 === limit ? "No limit" : `${ limit } users`;
 }
 
+/**
+ * Function formatRoles() :: The names of the roles a setting points at.
+ */
+function formatRoles( ids: string[], options: GuildDiscordOptions | null ): string {
+    if ( !ids.length ) {
+        return "None";
+    }
+
+    return ids
+        .map( ( id ) => options?.roles?.find( ( role ) => role.id === id )?.name ?? id )
+        .join( ", " );
+}
+
+function formatRole( id: string | null, options: GuildDiscordOptions | null, fallback: string ): string {
+    if ( !id ) {
+        return fallback;
+    }
+
+    return options?.roles?.find( ( role ) => role.id === id )?.name ?? id;
+}
+
+function formatChannel( id: string | null, options: GuildDiscordOptions | null ): string {
+    if ( !id ) {
+        return "None";
+    }
+
+    const name = options?.textChannels?.find( ( channel ) => channel.id === id )?.name;
+
+    return name ? `#${ name }` : id;
+}
+
 const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPanelProps, DynamicDetailsPanelState> = ( {
     details,
+    discordOptions,
     isSaving,
     isRefreshing,
     lastRefreshTime
@@ -124,28 +162,34 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
         panelCommands.run( "Dashboard/Generators/DynamicDetailsPanel/HideDeleteConfirm", {} );
     };
 
+    const settings = master.settings;
+
     return (
         <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-border">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
+            <div className="border-b border-border">
+                <div className="max-w-4xl w-full px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center shrink-0">
                             <Radio className="w-5 h-5 text-text-accent" />
                         </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-text-primary">
+                        <div className="min-w-0">
+                            <h2 className="text-lg font-semibold text-text-primary truncate">
                                 { details.discord?.masterChannel?.name || "Dynamic Master" }
                             </h2>
-                            <p className="text-sm text-text-secondary">
+                            <p className="text-sm text-text-secondary mb-0 truncate">
                                 { details.discord?.category?.name ? (
                                     <span>in <span className="text-text-primary">{ details.discord.category.name }</span></span>
                                 ) : (
-                                    <span className="truncate" title={ master.channelId }>{ master.channelId }</span>
+                                    <span title={ master.channelId }>{ master.channelId }</span>
                                 ) }
+                                { " · " }
+                                { dynamicChannels.length } active
+                                { 1 === dynamicChannels.length ? " channel" : " channels" }
                             </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
+
+                    <div className="flex items-center gap-2 shrink-0">
                         <span className="text-xs text-text-muted">
                             { isRefreshing ? "Refreshing..." : formatLastRefresh( lastRefreshTime ) }
                         </span>
@@ -159,163 +203,162 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                         </button>
                     </div>
                 </div>
-
-                <div className="grid grid-cols-3 gap-4 mt-4">
-                    <div className="bg-surface rounded-lg p-3">
-                        <div className="text-2xl font-bold text-text-primary">{ dynamicChannels.length }</div>
-                        <div className="text-xs text-text-secondary">Active Channels</div>
-                    </div>
-                    <div className="bg-surface rounded-lg p-3">
-                        <div className="flex items-center gap-2">
-                            { master.settings?.dynamicChannelAutoSave ? (
-                                <CheckCircle className="w-5 h-5 text-success" />
-                            ) : (
-                                <XCircle className="w-5 h-5 text-text-muted" />
-                            ) }
-                            <span className="text-sm font-medium text-text-primary">
-                                { master.settings?.dynamicChannelAutoSave ? "On" : "Off" }
-                            </span>
-                        </div>
-                        <div className="text-xs text-text-secondary">Auto-Save</div>
-                    </div>
-                    <div className="bg-surface rounded-lg p-3">
-                        <div className="flex items-center gap-2">
-                            { master.settings?.dynamicChannelMentionable ? (
-                                <CheckCircle className="w-5 h-5 text-success" />
-                            ) : (
-                                <XCircle className="w-5 h-5 text-text-muted" />
-                            ) }
-                            <span className="text-sm font-medium text-text-primary">
-                                { master.settings?.dynamicChannelMentionable ? "On" : "Off" }
-                            </span>
-                        </div>
-                        <div className="text-xs text-text-secondary">Mentionable</div>
-                    </div>
-                </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                <div className="bg-surface/50 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-text-primary flex items-center gap-2">
-                            <Settings className="w-4 h-4" />
-                            Configuration
-                        </h3>
-                        { !state.isEditing && (
-                            <button
-                                onClick={ handleStartEditing }
-                                className="text-xs text-text-accent hover:text-text-accent"
-                            >
-                                Edit
-                            </button>
-                        ) }
-                    </div>
+            <div className="flex-1 overflow-y-auto">
+                <div className="max-w-4xl w-full px-6 py-6 space-y-6">
+                    <section className="bg-surface border border-border rounded-lg">
+                        <header className="flex items-center justify-between gap-3 px-4 py-3 border-b border-border">
+                            <h3 className="text-sm font-medium text-text-primary flex items-center gap-2 mb-0">
+                                <Settings className="w-4 h-4 text-accent-muted" />
+                                Configuration
+                            </h3>
+                            { !state.isEditing && (
+                                <button
+                                    onClick={ handleStartEditing }
+                                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-accent bg-accent/15
+                                        hover:bg-accent/25 border border-border-accent rounded-md transition-colors"
+                                >
+                                    <Pencil className="w-3.5 h-3.5" />
+                                    Edit
+                                </button>
+                            ) }
+                        </header>
 
-                    { state.isEditing ? (
-                        <DynamicConfigForm
-                            masterChannelId={ master.id }
-                            settings={ master.settings }
-                            isSaving={ isSaving }
-                        />
-                    ) : (
-                        <div className="space-y-2 text-sm">
-                            <div className="flex justify-between gap-4">
-                                <span className="text-text-secondary">Name Template:</span>
-                                <span className="text-text-primary font-mono text-right">
-                                    { master.settings?.dynamicChannelNameTemplate || "{user}'s Channel" }
-                                </span>
-                            </div>
-                            <div className="flex justify-between gap-4">
-                                <span className="text-text-secondary">New Channel Privacy:</span>
-                                <span className="text-text-primary text-right">
-                                    { PRIVACY_STATE_LABELS[ master.settings?.dynamicChannelDefaultPrivacyState ?? "public" ] }
-                                </span>
-                            </div>
-                            <div className="flex justify-between gap-4">
-                                <span className="text-text-secondary">New Channel Limit:</span>
-                                <span className="text-text-primary text-right">
-                                    { formatUserLimit( master.settings?.dynamicChannelDefaultUserLimit ?? null ) }
-                                </span>
-                            </div>
-                            <div className="flex justify-between gap-4">
-                                <span className="text-text-secondary">Auto-Save:</span>
-                                <span className="text-text-primary">
-                                    { master.settings?.dynamicChannelAutoSave ? "Enabled" : "Disabled" }
-                                </span>
-                            </div>
-                            <div className="flex justify-between gap-4">
-                                <span className="text-text-secondary">Automatic Status:</span>
-                                <span className="text-text-primary">
-                                    { ( master.settings?.dynamicChannelAutoStatus ?? true ) ? "Enabled" : "Disabled" }
-                                </span>
-                            </div>
-                            <div className="flex justify-between gap-4">
-                                <span className="text-text-secondary">Mentionable:</span>
-                                <span className="text-text-primary">
-                                    { master.settings?.dynamicChannelMentionable ? "Enabled" : "Disabled" }
-                                </span>
-                            </div>
-                        </div>
-                    ) }
-                </div>
-
-                <div>
-                    <h3 className="text-sm font-medium text-text-primary flex items-center gap-2 mb-3">
-                        <Hash className="w-4 h-4" />
-                        Active Dynamic Channels ({ dynamicChannels.length })
-                    </h3>
-
-                    { dynamicChannels.length === 0 ? (
-                        <div className="bg-surface/50 rounded-lg p-4 text-center text-text-muted text-sm">
-                            No active dynamic channels. Users can create channels by joining the master channel.
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 gap-3">
-                            { dynamicChannels.map( ( channel ) => (
-                                <DynamicChannelCard
-                                    key={ channel.id }
-                                    channel={ channel }
+                        <div className="p-4">
+                            { state.isEditing ? (
+                                <DynamicConfigForm
+                                    masterChannelId={ master.id }
+                                    settings={ settings }
+                                    discordOptions={ discordOptions }
+                                    isSaving={ isSaving }
                                 />
-                            ) ) }
-                        </div>
-                    ) }
-                </div>
+                            ) : (
+                                <div className="grid gap-6 md:grid-cols-2">
+                                    <SettingsGroup title="New channels">
+                                        <SettingRow
+                                            label="Name template"
+                                            value={ settings?.dynamicChannelNameTemplate || "{user}'s Channel" }
+                                            mono
+                                        />
+                                        <SettingRow
+                                            label="Privacy"
+                                            value={ PRIVACY_STATE_LABELS[ settings?.dynamicChannelDefaultPrivacyState ?? "public" ] }
+                                        />
+                                        <SettingRow
+                                            label="User limit"
+                                            value={ formatUserLimit( settings?.dynamicChannelDefaultUserLimit ?? null ) }
+                                        />
+                                    </SettingsGroup>
 
-                <div className="bg-error/10 border border-error/30 rounded-lg p-4">
-                    <h3 className="text-sm font-medium text-error flex items-center gap-2 mb-2">
-                        <AlertTriangle className="w-4 h-4" />
-                        Danger Zone
-                    </h3>
-                    <p className="text-xs text-text-secondary mb-3">
-                        Deleting this setup will remove the master channel and all associated dynamic channels from Discord.
-                    </p>
+                                    <SettingsGroup title="Behaviour">
+                                        <SettingRow
+                                            label="Auto-save"
+                                            value={ settings?.dynamicChannelAutoSave ? "Enabled" : "Disabled" }
+                                        />
+                                        <SettingRow
+                                            label="Automatic status"
+                                            value={ ( settings?.dynamicChannelAutoStatus ?? true ) ? "Enabled" : "Disabled" }
+                                        />
+                                        <SettingRow
+                                            label="Mentionable"
+                                            value={ settings?.dynamicChannelMentionable ? "Enabled" : "Disabled" }
+                                        />
+                                    </SettingsGroup>
 
-                    { state.showDeleteConfirm ? (
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={ handleDelete }
-                                disabled={ isSaving }
-                                className="flex items-center gap-2 px-3 py-1.5 bg-error/15 hover:bg-error/25 disabled:opacity-50 text-text-primary rounded text-sm font-medium transition-colors"
-                            >
-                                Yes, Delete Everything
-                            </button>
-                            <button
-                                onClick={ handleHideDeleteConfirm }
-                                disabled={ isSaving }
-                                className="px-3 py-1.5 bg-surface-elevated hover:bg-surface-hover text-text-primary rounded text-sm transition-colors"
-                            >
-                                Cancel
-                            </button>
+                                    <SettingsGroup title="Access">
+                                        <SettingRow
+                                            label="Verified roles"
+                                            value={ formatRoles( settings?.dynamicChannelVerifiedRoles ?? [], discordOptions ) }
+                                        />
+                                        <SettingRow
+                                            label="Staff roles"
+                                            value={ formatRoles( settings?.dynamicChannelStaffRoles ?? [], discordOptions ) }
+                                        />
+                                        <SettingRow
+                                            label="Voice role"
+                                            value={ formatRole(
+                                                settings?.dynamicChannelVoiceRoleId ?? null,
+                                                discordOptions,
+                                                "From the server options"
+                                            ) }
+                                        />
+                                        <SettingRow
+                                            label="Logs channel"
+                                            value={ formatChannel( settings?.dynamicChannelLogsChannelId ?? null, discordOptions ) }
+                                        />
+                                    </SettingsGroup>
+                                </div>
+                            ) }
                         </div>
-                    ) : (
-                        <button
-                            onClick={ handleShowDeleteConfirm }
-                            className="flex items-center gap-2 px-3 py-1.5 bg-error/20 hover:bg-error/15/30 text-error rounded text-sm transition-colors"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                            Delete Dynamic Setup
-                        </button>
-                    ) }
+                    </section>
+
+                    <section>
+                        <h3 className="text-sm font-medium text-text-primary flex items-center gap-2 mb-3">
+                            <Hash className="w-4 h-4 text-accent-muted" />
+                            Active channels ({ dynamicChannels.length })
+                        </h3>
+
+                        { dynamicChannels.length === 0 ? (
+                            <p className="text-sm text-text-muted mb-0">
+                                None right now. One appears here as soon as a member joins the generator.
+                            </p>
+                        ) : (
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                { dynamicChannels.map( ( channel ) => (
+                                    <DynamicChannelCard
+                                        key={ channel.id }
+                                        channel={ channel }
+                                    />
+                                ) ) }
+                            </div>
+                        ) }
+                    </section>
+
+                    <section className="border border-error/30 rounded-lg px-4 py-3">
+                        { state.showDeleteConfirm ? (
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                                <div className="flex items-start gap-2 min-w-0">
+                                    <AlertTriangle className="w-4 h-4 text-error shrink-0 mt-0.5" />
+                                    <p className="text-sm text-text-secondary mb-0">
+                                        This removes the generator and every channel under it from Discord.
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <button
+                                        onClick={ handleDelete }
+                                        disabled={ isSaving }
+                                        className="px-3 py-1.5 bg-error/20 hover:bg-error/30 disabled:opacity-50
+                                            text-error rounded-md text-sm font-medium transition-colors"
+                                    >
+                                        Delete everything
+                                    </button>
+                                    <button
+                                        onClick={ handleHideDeleteConfirm }
+                                        disabled={ isSaving }
+                                        className="px-3 py-1.5 bg-surface-elevated hover:bg-surface-hover
+                                            text-text-primary rounded-md text-sm transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                                <span className="text-sm text-text-muted">
+                                    Deleting the setup removes the generator and its channels from Discord.
+                                </span>
+                                <button
+                                    onClick={ handleShowDeleteConfirm }
+                                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-error
+                                        hover:bg-error/15 rounded-md transition-colors shrink-0"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Delete setup
+                                </button>
+                            </div>
+                        ) }
+                    </section>
                 </div>
             </div>
         </div>

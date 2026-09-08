@@ -30,6 +30,7 @@ interface AuthSelectedState {
 
 interface GeneratorsSelectedState {
     generatorsDetails: GeneratorsState[ "generatorsDetails" ];
+    discordOptions: GeneratorsState[ "discordOptions" ];
     selectedMasterChannelId: GeneratorsState[ "selectedMasterChannelId" ];
     selectedMasterChannelType: GeneratorsState[ "selectedMasterChannelType" ];
     isSaving: GeneratorsState[ "isSaving" ];
@@ -50,6 +51,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
         "Dashboard/Generators",
         ( state: GeneratorsState ): GeneratorsSelectedState => ( {
             generatorsDetails: state.generatorsDetails,
+            discordOptions: state.discordOptions,
             selectedMasterChannelId: state.selectedMasterChannelId,
             selectedMasterChannelType: state.selectedMasterChannelType,
             isSaving: state.isSaving,
@@ -340,6 +342,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                             />
                         ) : selectedMasterChannelType === "dynamic" && selectedDynamicMaster?.dynamicChannels ? (
                             <DynamicDetailsPanel
+                                discordOptions={ state.discordOptions }
                                 details={ {
                                     master: selectedDynamicMaster,
                                     dynamicChannels: selectedDynamicMaster.dynamicChannels,

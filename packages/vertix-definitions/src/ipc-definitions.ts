@@ -9,8 +9,37 @@ export const IPC_CHANNELS = {
 
 export const IPC_REQUEST_ACTIONS = {
     GET_SCALING_CHANNEL_INFO: "get_scaling_channel_info",
-    GET_DYNAMIC_CHANNEL_INFO: "get_dynamic_channel_info"
+    GET_DYNAMIC_CHANNEL_INFO: "get_dynamic_channel_info",
+    GET_GUILD_OPTIONS: "get_guild_options"
 } as const;
+
+/**
+ * The roles and channels a guild's settings can point at.
+ *
+ * Asked of the bot rather than fetched over rest: the bot is the process that is actually in the
+ * guild and already holds them, while the api's own token may belong to an application that was
+ * never invited there.
+ */
+export interface GetGuildOptionsRequest {
+    action: typeof IPC_REQUEST_ACTIONS.GET_GUILD_OPTIONS;
+    guildId: string;
+}
+
+export interface IPCGuildRole {
+    id: string;
+    name: string;
+    color: number;
+}
+
+export interface IPCGuildChannel {
+    id: string;
+    name: string;
+}
+
+export interface GetGuildOptionsResponse {
+    roles: IPCGuildRole[];
+    textChannels: IPCGuildChannel[];
+}
 
 export interface IPCDiscordChannelInfo {
     id: string;
@@ -19,4 +48,7 @@ export interface IPCDiscordChannelInfo {
     position: number;
 }
 
-export type IPCManagementRequestPayload = GetScalingChannelInfoRequest | GetDynamicChannelInfoRequest;
+export type IPCManagementRequestPayload =
+    | GetScalingChannelInfoRequest
+    | GetDynamicChannelInfoRequest
+    | GetGuildOptionsRequest;

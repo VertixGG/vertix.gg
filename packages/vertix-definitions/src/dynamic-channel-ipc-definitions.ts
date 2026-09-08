@@ -43,6 +43,10 @@ export interface UpdateDynamicSettingsPayload {
         dynamicChannelMentionable?: boolean;
         dynamicChannelDefaultPrivacyState?: "public" | "private" | "hidden";
         dynamicChannelDefaultUserLimit?: number | null;
+        dynamicChannelVerifiedRoles?: string[];
+        dynamicChannelStaffRoles?: string[];
+        dynamicChannelVoiceRoleId?: string | null;
+        dynamicChannelLogsChannelId?: string | null;
     };
 }
 

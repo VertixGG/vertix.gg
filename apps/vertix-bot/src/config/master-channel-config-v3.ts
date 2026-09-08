@@ -26,6 +26,8 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
             settings: {
                 dynamicChannelAutoSave: false,
 
+                dynamicChannelAutoStatus: true,
+
                 dynamicChannelDefaultPrivacyState: "public",
 
                 dynamicChannelDefaultUserLimit: null,

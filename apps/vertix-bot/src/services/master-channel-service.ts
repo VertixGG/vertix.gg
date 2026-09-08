@@ -928,6 +928,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 typeof args.dynamicChannelAutoSave === "boolean"
                     ? args.dynamicChannelAutoSave
                     : settings.dynamicChannelAutoSave,
+            newAutoStatus =
+                typeof args.dynamicChannelAutoStatus === "boolean"
+                    ? args.dynamicChannelAutoStatus
+                    : settings.dynamicChannelAutoStatus,
             newControlChannelId = settings.dynamicChannelControlChannelId,
             newVerifiedRoles = args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ];
 
@@ -1006,6 +1010,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         await MasterChannelDataManager.$.setAllSettings( masterChannelDB, {
             dynamicChannelAutoSave: newAutoSave,
+            dynamicChannelAutoStatus: newAutoStatus,
             dynamicChannelButtonsTemplate: newButtons,
             dynamicChannelControlChannelId: controlChannelId,
             // Since `LogsChannelId` not defined in the creation process but later via configuration.

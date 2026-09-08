@@ -125,6 +125,10 @@ async function onConfigExtrasSelected(
                 args.dynamicChannelAutoSave = !!parseInt( parted[ 1 ] );
                 break;
 
+            case "dynamicChannelAutoStatus":
+                args.dynamicChannelAutoStatus = !!parseInt( parted[ 1 ] );
+                break;
+
         }
     } );
 
@@ -211,6 +215,9 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
         "> ⫸ ∙ Auto save dynamic channels: " +
         vars.configAutoSave +
         "\n" +
+        "> 📢 ∙ Automatic channel status: " +
+        vars.configAutoStatus +
+        "\n" +
         "> ▥ ∙ Auto create panel channel: " +
         vars.configControlChannelAutoCreate +
         "\n" +
@@ -233,6 +240,10 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
         configAutoSave: {
             [ vars.configAutoSaveEnabled ]: vars.on,
             [ vars.configAutoSaveDisabled ]: vars.off
+        },
+        configAutoStatus: {
+            [ vars.configAutoStatusEnabled ]: vars.on,
+            [ vars.configAutoStatusDisabled ]: vars.off
         },
         configControlChannelAutoCreate: {
             [ vars.configControlChannelAutoCreateEnabled ]: vars.on,
@@ -272,6 +283,10 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
 
             configAutoSave: args.dynamicChannelAutoSave ?
                 vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,
+
+            // Unset means on, the automatic status is what the channels have always had.
+            configAutoStatus: false !== args.dynamicChannelAutoStatus ?
+                vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,
 
             configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ?
                 vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,
@@ -526,6 +541,8 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             );
         const mentionable: boolean = args.dynamicChannelMentionable || false;
         const autosave: boolean = args.dynamicChannelAutoSave || false;
+        // Unset means on, matching the config default the setup screen starts from.
+        const autoStatus: boolean = false !== args.dynamicChannelAutoStatus;
         const verifiedRoles: string[] = args.dynamicChannelVerifiedRoles || [ interaction.guildId ];
         const controlChannelAutoCreate = !!args.dynamicChannelControlChannelAutoCreate;
 
@@ -536,6 +553,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             dynamicChannelButtonsTemplate: templateButtons,
             dynamicChannelMentionable: mentionable,
             dynamicChannelAutoSave: autosave,
+            dynamicChannelAutoStatus: autoStatus,
             dynamicChannelControlChannelAutoCreate: controlChannelAutoCreate,
             dynamicChannelVerifiedRoles: verifiedRoles,
             version: VERSION_UI_V3

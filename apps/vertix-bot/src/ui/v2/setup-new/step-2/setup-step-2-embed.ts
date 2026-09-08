@@ -25,6 +25,10 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
         configAutoSaveEnabled: uiUtilsWrapAsTemplate( "configAutoSaveEnabled" ),
         configAutoSaveDisabled: uiUtilsWrapAsTemplate( "configAutoSaveDisabled" ),
 
+        configAutoStatus: uiUtilsWrapAsTemplate( "configAutoStatus" ),
+        configAutoStatusEnabled: uiUtilsWrapAsTemplate( "configAutoStatusEnabled" ),
+        configAutoStatusDisabled: uiUtilsWrapAsTemplate( "configAutoStatusDisabled" ),
+
         configControlChannelAutoCreate: uiUtilsWrapAsTemplate( "configControlChannelAutoCreate" ),
         configControlChannelAutoCreateEnabled: uiUtilsWrapAsTemplate( "configControlChannelAutoCreateEnabled" ),
         configControlChannelAutoCreateDisabled: uiUtilsWrapAsTemplate( "configControlChannelAutoCreateDisabled" ),
@@ -67,6 +71,9 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             "> ⫸ ∙ Auto save dynamic channels: " +
             SetupStep2Embed.vars.configAutoSave +
             "\n" +
+            "> 📢 ∙ Automatic channel status: " +
+            SetupStep2Embed.vars.configAutoStatus +
+            "\n" +
             "> ▥ ∙ Auto create panel channel: " +
             SetupStep2Embed.vars.configControlChannelAutoCreate +
             "\n" +
@@ -95,6 +102,9 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             configAutoSaveEnabled,
             configAutoSaveDisabled,
 
+            configAutoStatusEnabled,
+            configAutoStatusDisabled,
+
             configControlChannelAutoCreateEnabled,
             configControlChannelAutoCreateDisabled,
 
@@ -121,6 +131,11 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
                 [ configAutoSaveDisabled ]: off
             },
 
+            configAutoStatus: {
+                [ configAutoStatusEnabled ]: on,
+                [ configAutoStatusDisabled ]: off
+            },
+
             configControlChannelAutoCreate: {
                 [ configControlChannelAutoCreateEnabled ]: on,
                 [ configControlChannelAutoCreateDisabled ]: off
@@ -145,6 +160,11 @@ export class SetupStep2Embed extends ChannelButtonsTemplateEmbed {
             configAutoSave: args.dynamicChannelAutoSave
                 ? SetupStep2Embed.vars.configAutoSaveEnabled
                 : SetupStep2Embed.vars.configAutoSaveDisabled,
+
+            // Unset means on, the automatic status is what the channels have always had.
+            configAutoStatus: false !== args.dynamicChannelAutoStatus
+                ? SetupStep2Embed.vars.configAutoStatusEnabled
+                : SetupStep2Embed.vars.configAutoStatusDisabled,
             configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate
                 ? SetupStep2Embed.vars.configControlChannelAutoCreateEnabled
                 : SetupStep2Embed.vars.configControlChannelAutoCreateDisabled,

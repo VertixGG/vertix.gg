@@ -402,6 +402,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         "**_⚙️ Configuration_**\n\n" +
         `@ ∙ Mention user in primary message: ${ v.configUserMention }\n` +
         `⫸ ∙ Auto save dynamic channels: ${ v.configAutoSave }\n` +
+        `📢 ∙ Automatic channel status: ${ v.configAutoStatus }\n` +
         `❯❯ ∙ Send logs to custom channel: ${ v.configLogs }\n` +
         `▥ ∙ Auto create control panel channel: ${ v.configControlChannelAutoCreate }\n\n`
     )
@@ -419,6 +420,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         configAutoSave: {
             [ v.configAutoSaveEnabled ]: v.on,
             [ v.configAutoSaveDisabled ]: v.off
+        },
+        configAutoStatus: {
+            [ v.configAutoStatusEnabled ]: v.on,
+            [ v.configAutoStatusDisabled ]: v.off
         },
         configLogs: {
             [ v.configLogsEnabled ]: v.on,
@@ -511,6 +516,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
                 : ( guildVoiceRoleId ? v.voiceRoleGuild : v.voiceRoleNone ),
             configUserMention: args.dynamicChannelMentionable ? v.configUserMentionEnabled : v.configUserMentionDisabled,
             configAutoSave: args.dynamicChannelAutoSave ? v.configAutoSaveEnabled : v.configAutoSaveDisabled,
+            // Unset means on, the automatic status is what the channels have always had.
+            configAutoStatus: false !== args.dynamicChannelAutoStatus
+                ? v.configAutoStatusEnabled
+                : v.configAutoStatusDisabled,
             configLogs: processedLogsChannelId ? v.configLogsEnabled : v.configLogsDisabled,
             configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ?
                 v.configControlChannelAutoCreateEnabled :
@@ -1216,6 +1225,11 @@ async function onConfigExtrasSelected(
                 await MasterChannelDataManager.$.setChannelAutoSave( masterChannelDB, args.dynamicChannelAutoSave );
                 break;
 
+            case "dynamicChannelAutoStatus":
+                args.dynamicChannelAutoStatus = !!parseInt( parted[ 1 ] );
+                await MasterChannelDataManager.$.setChannelAutoStatus( masterChannelDB, args.dynamicChannelAutoStatus );
+                break;
+
             case "dynamicChannelLogsChannel":
                 args.dynamicChannelLogsChannelId = null;
                 await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, args.dynamicChannelLogsChannelId );
@@ -1845,6 +1859,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelNameTemplate,
                 masterChannelKeys.dynamicChannelButtonsTemplate,
                 masterChannelKeys.dynamicChannelMentionable,
+                masterChannelKeys.dynamicChannelAutoStatus,
                 masterChannelKeys.dynamicChannelVerifiedRoles,
                 masterChannelKeys.dynamicChannelStaffRoles,
                 masterChannelKeys.dynamicChannelVoiceRoleId,

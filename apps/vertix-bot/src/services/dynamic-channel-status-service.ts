@@ -4,6 +4,7 @@ import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
 import { DynamicChannelStatusModel } from "@vertix.gg/base/src/models/channel/dynamic-channel-status-model";
 
 import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -36,6 +37,9 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
  *
  * The status is composed from the channel state on every change, unless the owner pinned a custom
  * one, in which case the automatic writer stands down until the custom status is cleared.
+ *
+ * The composing half is a master channel setting, so an admin can leave the status line to the
+ * owners alone. A pinned status is written either way - it is the owner asking for it.
  */
 export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
     dynamicChannelService: DynamicChannelService;
@@ -90,7 +94,28 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
     public async getStatus( channel: VoiceChannel ): Promise<string | null> {
         const customStatus = await this.getCustomStatus( channel );
 
-        return customStatus ?? ( await this.getComposedStatus( channel ) );
+        if ( null !== customStatus ) {
+            return customStatus;
+        }
+
+        if ( !( await this.isAutoStatusEnabled( channel ) ) ) {
+            return null;
+        }
+
+        return this.getComposedStatus( channel );
+    }
+
+    /**
+     * Function `isAutoStatusEnabled()` - Whether the master channel lets the bot compose the status.
+     */
+    public async isAutoStatusEnabled( channel: VoiceChannel ): Promise<boolean> {
+        const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
+
+        if ( !masterChannelDB ) {
+            return false;
+        }
+
+        return MasterChannelDataManager.$.getChannelAutoStatus( masterChannelDB );
     }
 
     /**
@@ -121,6 +146,8 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
 
         const status = await this.getStatus( channel );
 
+        // Nothing to say: no pinned status, and the automatic writer is switched off for this
+        // master channel. A status set through Discord's own UI is left where it is.
         if ( null === status ) {
             return;
         }
@@ -227,7 +254,13 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
 
         await DynamicChannelStatusModel.$.removeCustomStatus( channelDB.id );
 
-        await this.apply( channel );
+        if ( await this.isAutoStatusEnabled( channel ) ) {
+            await this.apply( channel );
+        } else {
+            // Nothing takes the place of the status that was just dropped, so what the bot wrote
+            // has to come off the channel, or the cleared status stays up forever.
+            await this.write( channel, "" );
+        }
 
         this.logger.info(
             this.clearCustomStatus,

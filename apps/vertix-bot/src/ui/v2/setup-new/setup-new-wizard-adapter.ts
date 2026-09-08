@@ -125,6 +125,10 @@ async function onConfigExtrasSelected(
                 argsToSet.dynamicChannelAutoSave = !!parseInt( parted[ 1 ] );
                 break;
 
+            case "dynamicChannelAutoStatus":
+                argsToSet.dynamicChannelAutoStatus = !!parseInt( parted[ 1 ] );
+                break;
+
         }
     } );
 
@@ -331,6 +335,8 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         const templateButtons: string[] = args.dynamicChannelButtonsTemplate;
         const mentionable: boolean = args.dynamicChannelMentionable;
         const autosave: boolean = args.dynamicChannelAutoSave;
+        // Unset means on, matching the config default the setup screen starts from.
+        const autoStatus: boolean = false !== args.dynamicChannelAutoStatus;
         const verifiedRoles: string[] = args.dynamicChannelVerifiedRoles;
         const controlChannelAutoCreate = !!args.dynamicChannelControlChannelAutoCreate;
 
@@ -345,6 +351,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
 
             dynamicChannelMentionable: mentionable,
             dynamicChannelAutoSave: autosave,
+            dynamicChannelAutoStatus: autoStatus,
             dynamicChannelControlChannelAutoCreate: controlChannelAutoCreate,
 
             dynamicChannelVerifiedRoles: verifiedRoles,

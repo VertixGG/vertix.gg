@@ -527,6 +527,12 @@ async function onConfigExtrasSelected(
                 await MasterChannelDataManager.$.setChannelAutoSave( masterChannelDB, args.dynamicChannelAutoSave );
                 break;
 
+            case "dynamicChannelAutoStatus":
+                args.dynamicChannelAutoStatus = !!parseInt( parted[ 1 ], 10 );
+
+                await MasterChannelDataManager.$.setChannelAutoStatus( masterChannelDB, args.dynamicChannelAutoStatus );
+                break;
+
             case "dynamicChannelLogsChannel":
                 args.dynamicChannelLogsChannelId = null;
 
@@ -1091,6 +1097,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelNameTemplate,
                 masterChannelKeys.dynamicChannelButtonsTemplate,
                 masterChannelKeys.dynamicChannelMentionable,
+                masterChannelKeys.dynamicChannelAutoStatus,
                 masterChannelKeys.dynamicChannelVerifiedRoles,
                 masterChannelKeys.dynamicChannelStaffRoles,
                 masterChannelKeys.dynamicChannelVoiceRoleId,

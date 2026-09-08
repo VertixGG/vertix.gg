@@ -242,6 +242,7 @@ async function onCreateMasterChannelClicked<TInteraction extends SetupMessageCom
 
         dynamicChannelMentionable: settings.dynamicChannelMentionable,
         dynamicChannelAutoSave: settings.dynamicChannelAutoSave,
+        dynamicChannelAutoStatus: settings.dynamicChannelAutoStatus,
 
         dynamicChannelIncludeEveryoneRole: true,
         dynamicChannelVerifiedRoles: [ interaction.guild.roles.everyone.id ]

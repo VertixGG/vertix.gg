@@ -517,6 +517,9 @@
               "label": "{dynamicChannelAutoSaveLabel} {state}"
             },
             {
+              "label": "{dynamicChannelAutoStatusLabel} {state}"
+            },
+            {
               "label": "{dynamicChannelLogsChannelLabel} {state}"
             }
           ],
@@ -527,6 +530,7 @@
             },
             "dynamicChannelMentionableLabel": "@ ∙ Benutzer in Hauptnachricht erwähnen",
             "dynamicChannelAutoSaveLabel": "⫸ ∙ Automatische Speicherung des dynamischen Kanals",
+            "dynamicChannelAutoStatusLabel": "📢 ∙ Automatischer Kanalstatus",
             "dynamicChannelLogsChannelLabel": "❯❯ ∙ Logs an benutzerdefinierten Kanal senden",
             "dynamicChannelControlChannelAutoCreateLabel": "▥ ∙ Steuerungskanal automatisch erstellen"
           }
@@ -1448,7 +1452,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Master-Kanal #{index} konfigurieren",
-        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Privatsphäre neuer Kanäle: {newChannelPrivacy}\n➤ ∙ Limit neuer Kanäle: {newChannelLimit}\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Sprachrolle_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
+        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Privatsphäre neuer Kanäle: {newChannelPrivacy}\n➤ ∙ Limit neuer Kanäle: {newChannelLimit}\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Sprachrolle_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
         "footer": "Hinweis: Das Ändern der Benutzererwähnung wirkt sich nicht auf bereits erstellte dynamische Kanäle aus.",
         "options": {
           "on": "`🟢∙An`",
@@ -1464,6 +1468,10 @@
           "configAutoSave": {
             "{configAutoSaveEnabled}": "{on}",
             "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
           },
           "configLogs": {
             "{configLogsEnabled}": "{on}",
@@ -1913,7 +1921,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Master-Kanal #{index} konfigurieren",
-        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Privatsphäre neuer Kanäle: {newChannelPrivacy}\n➤ ∙ Limit neuer Kanäle: {newChannelLimit}\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Sprachrolle_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
+        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Privatsphäre neuer Kanäle: {newChannelPrivacy}\n➤ ∙ Limit neuer Kanäle: {newChannelLimit}\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Sprachrolle_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
         "footer": "Hinweis: Das Ändern der Benutzererwähnung wirkt sich nicht auf bereits erstellte dynamische Kanäle aus.",
         "options": {
           "on": "`🟢∙An`",
@@ -1929,6 +1937,10 @@
           "configAutoSave": {
             "{configAutoSaveEnabled}": "{on}",
             "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
           },
           "configLogs": {
             "{configLogsEnabled}": "{on}",
@@ -2127,7 +2139,7 @@
       "name": "VertixBot/UI-V2/SetupStep2Embed",
       "content": {
         "title": "Schritt 2 – Einrichtung dynamischer Kanäle",
-        "description": "Richte die Verwaltungsoberfläche für dynamische Kanäle ein.\n\n**_🎚 Button-Oberfläche_**\n\n{message}\n**_⚙️ Konfiguration_**\n\n> @ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n> ⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `Next ▶` )** klickst.\n\nNicht sicher, was die Buttons tun? Sieh dir die [Erklärung](https://voicechannels.online/features/dynamic-channels-showcase) an.",
+        "description": "Richte die Verwaltungsoberfläche für dynamische Kanäle ein.\n\n**_🎚 Button-Oberfläche_**\n\n{message}\n**_⚙️ Konfiguration_**\n\n> @ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n> ⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n> 📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `Next ▶` )** klickst.\n\nNicht sicher, was die Buttons tun? Sieh dir die [Erklärung](https://voicechannels.online/features/dynamic-channels-showcase) an.",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙An`",
@@ -2143,6 +2155,10 @@
           "configAutoSave": {
             "{configAutoSaveEnabled}": "{on}",
             "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
           },
           "footer": {
             "{defaultFooter}": "Neu über diesen Master-Kanal erstellte dynamische Kanäle werden von der gewählten Konfiguration beeinflusst.",
@@ -2173,7 +2189,7 @@
       "name": "VertixBot/UI-V3/SetupNewStep2Embed",
       "content": {
         "title": "Schritt 2 – Einrichtung dynamischer Kanäle",
-        "description": "Richte die Verwaltungsoberfläche für dynamische Kanäle ein.\n\n**_🎚 Button-Oberfläche_**\n\n{message}\n**_⚙️ Konfiguration_**\n\n> @ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n> ⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `Next ▶` )** klickst.\n\nNicht sicher, was die Buttons tun? Sieh dir die [Erklärung](https://voicechannels.online/features/dynamic-channels-showcase) an.",
+        "description": "Richte die Verwaltungsoberfläche für dynamische Kanäle ein.\n\n**_🎚 Button-Oberfläche_**\n\n{message}\n**_⚙️ Konfiguration_**\n\n> @ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n> ⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n> 📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `Next ▶` )** klickst.\n\nNicht sicher, was die Buttons tun? Sieh dir die [Erklärung](https://voicechannels.online/features/dynamic-channels-showcase) an.",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙An`",
@@ -2189,6 +2205,10 @@
           "configAutoSave": {
             "{configAutoSaveEnabled}": "{on}",
             "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
           },
           "footer": {
             "{defaultFooter}": "Neu über diesen Master-Kanal erstellte dynamische Kanäle werden von der gewählten Konfiguration beeinflusst.",

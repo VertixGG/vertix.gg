@@ -517,6 +517,9 @@
               "label": "{dynamicChannelAutoSaveLabel} {state}"
             },
             {
+              "label": "{dynamicChannelAutoStatusLabel} {state}"
+            },
+            {
               "label": "{dynamicChannelLogsChannelLabel} {state}"
             }
           ],
@@ -527,6 +530,7 @@
             },
             "dynamicChannelMentionableLabel": "@ ∙ メインメッセージでユーザーをメンション",
             "dynamicChannelAutoSaveLabel": "⫸ ∙ ダイナミックチャンネルを自動保存",
+            "dynamicChannelAutoStatusLabel": "📢 ∙ チャンネルステータスの自動更新",
             "dynamicChannelLogsChannelLabel": "❯❯ ∙ カスタムチャンネルにログを送信",
             "dynamicChannelControlChannelAutoCreateLabel": "▥ ∙ コントロールパネルチャンネルを自動作成"
           }
@@ -1149,7 +1153,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1165,6 +1169,10 @@
           "configAutoSave": {
             "{configAutoSaveEnabled}": "{on}",
             "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
           },
           "configLogs": {
             "{configLogsEnabled}": "{on}",
@@ -1423,7 +1431,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1439,6 +1447,10 @@
           "configAutoSave": {
             "{configAutoSaveEnabled}": "{on}",
             "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
           },
           "configLogs": {
             "{configLogsEnabled}": "{on}",
@@ -1651,7 +1663,7 @@
       "name": "VertixBot/UI-V3/SetupNewStep2Embed",
       "content": {
         "title": "ステップ 2 - ダイナミックチャンネルの設定",
-        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channels-showcase)をご覧ください。",
+        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n> 📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channels-showcase)をご覧ください。",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙オン`",
@@ -1667,6 +1679,10 @@
           "configAutoSave": {
             "{configAutoSaveEnabled}": "{on}",
             "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
           },
           "footer": {
             "{defaultFooter}": "このマスターチャンネルから新しく作成されるダイナミックチャンネルは、選択した設定の影響を受けます。",
@@ -1801,7 +1817,7 @@
       "name": "VertixBot/UI-V2/SetupStep2Embed",
       "content": {
         "title": "ステップ 2 - ダイナミックチャンネルの設定",
-        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channels-showcase)をご覧ください。",
+        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n> 📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channels-showcase)をご覧ください。",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙オン`",
@@ -1817,6 +1833,10 @@
           "configAutoSave": {
             "{configAutoSaveEnabled}": "{on}",
             "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
           },
           "footer": {
             "{defaultFooter}": "このマスターチャンネルから新しく作成されるダイナミックチャンネルは、選択した設定の影響を受けます。",

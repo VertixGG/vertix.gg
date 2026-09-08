@@ -186,6 +186,21 @@ export class MasterChannelDataManager extends InitializeBase {
             ?.dynamicChannelAutoSave;
     }
 
+    /**
+     * Function getChannelAutoStatus() :: Whether the bot writes the voice channel status by itself.
+     *
+     * Falls back to the default, since the setting postdates the master channels that were set up
+     * before it and their stored settings simply have no such key.
+     */
+    public async getChannelAutoStatus( masterChannelDB: ChannelExtended, cache = true ): Promise<boolean> {
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+
+        return result?.dynamicChannelAutoStatus ?? defaults.dynamicChannelAutoStatus;
+    }
+
     public async getChannelVerifiedRoles( masterChannelDB: ChannelExtended, guildId: string, cache = true ): Promise<string[]> {
         const defaults = this.config.defaults.settings;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
@@ -420,6 +435,24 @@ export class MasterChannelDataManager extends InitializeBase {
 
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
             dynamicChannelAutoSave: autoSave
+        } );
+    }
+
+    public async setChannelAutoStatus( masterChannelDB: ChannelExtended, autoStatus: boolean, shouldAdminLog = true ) {
+        this.logger.log(
+            this.setChannelAutoStatus,
+            `Master channel id: '${ masterChannelDB.id }' - Setting channel auto status: '${ autoStatus }'`
+        );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setChannelAutoStatus,
+                `📢  Dynamic Channel auto status modified - masterChannelId: "${ masterChannelDB.id }", "${ autoStatus }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelAutoStatus: autoStatus
         } );
     }
 

@@ -8,6 +8,13 @@ export type ChannelPrivacyStateDefault = "public" | "private" | "hidden";
 
 export interface MasterChannelSettingsInterface {
     dynamicChannelAutoSave: boolean;
+    /**
+     * Whether the bot composes the voice channel status out of the channel state on its own.
+     *
+     * Off leaves the status to the owner alone, through the status button, and the bot writes
+     * nothing of its own.
+     */
+    dynamicChannelAutoStatus: boolean;
     dynamicChannelDefaultPrivacyState: ChannelPrivacyStateDefault;
     dynamicChannelDefaultUserLimit: number | null;
     dynamicChannelButtonsTemplate: string[];

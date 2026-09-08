@@ -116,7 +116,11 @@ const DynamicChannelStatusAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                     "VertixBot/Services/DynamicChannelStatus"
                 );
 
-                args.defaultChannelStatus = await dynamicChannelStatusService.getComposedStatus( interaction.channel );
+                // The placeholder is what the channel falls back to once the custom status is cleared,
+                // which is nothing at all when the master channel has the automatic status switched off.
+                args.defaultChannelStatus = ( await dynamicChannelStatusService.isAutoStatusEnabled( interaction.channel ) )
+                    ? await dynamicChannelStatusService.getComposedStatus( interaction.channel )
+                    : "";
                 args.channelStatus = ( await dynamicChannelStatusService.getCustomStatus( interaction.channel ) ) ?? "";
                 break;
             }

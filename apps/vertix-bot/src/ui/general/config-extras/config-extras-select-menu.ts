@@ -11,6 +11,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
         dynamicChannelMentionableLabel: uiUtilsWrapAsTemplate( "dynamicChannelMentionableLabel" ),
         dynamicChannelLogsChannelLabel: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelLabel" ),
         dynamicChannelAutoSaveLabel: uiUtilsWrapAsTemplate( "dynamicChannelAutoSaveLabel" ),
+        dynamicChannelAutoStatusLabel: uiUtilsWrapAsTemplate( "dynamicChannelAutoStatusLabel" ),
 
         state: uiUtilsWrapAsTemplate( "state" ),
         stateOn: uiUtilsWrapAsTemplate( "stateOn" ),
@@ -38,6 +39,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
             dynamicChannelMentionableLabel,
             dynamicChannelLogsChannelLabel,
             dynamicChannelAutoSaveLabel,
+            dynamicChannelAutoStatusLabel,
 
             state
         } = ConfigExtrasSelectMenu.vars;
@@ -57,6 +59,14 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
                     "dynamicChannelAutoSave" +
                     UI_CUSTOM_ID_SEPARATOR +
                     ( this.uiArgs?.dynamicChannelAutoSave ? "0" : "1" )
+            },
+            {
+                label: dynamicChannelAutoStatusLabel + " " + state,
+                value:
+                    "dynamicChannelAutoStatus" +
+                    UI_CUSTOM_ID_SEPARATOR +
+                    // Unset means on, the automatic status is what the channels have always had.
+                    ( false === this.uiArgs?.dynamicChannelAutoStatus ? "1" : "0" )
             }
         ];
 
@@ -81,6 +91,7 @@ export class ConfigExtrasSelectMenu extends UIElementStringSelectMenu {
 
             dynamicChannelMentionableLabel: "@ ∙ Mention user in primary message",
             dynamicChannelAutoSaveLabel: "⫸ ∙ Auto save dynamic channel",
+            dynamicChannelAutoStatusLabel: "📢 ∙ Automatic channel status",
             dynamicChannelLogsChannelLabel: "❯❯ ∙ Send logs to custom channel"
         };
     }

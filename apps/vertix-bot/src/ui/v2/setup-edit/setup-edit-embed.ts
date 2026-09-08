@@ -27,6 +27,10 @@ const vars = {
     configAutoSaveEnabled: uiUtilsWrapAsTemplate( "configAutoSaveEnabled" ),
     configAutoSaveDisabled: uiUtilsWrapAsTemplate( "configAutoSaveDisabled" ),
 
+    configAutoStatus: uiUtilsWrapAsTemplate( "configAutoStatus" ),
+    configAutoStatusEnabled: uiUtilsWrapAsTemplate( "configAutoStatusEnabled" ),
+    configAutoStatusDisabled: uiUtilsWrapAsTemplate( "configAutoStatusDisabled" ),
+
     configLogs: uiUtilsWrapAsTemplate( "configLogs" ),
     configLogsEnabled: uiUtilsWrapAsTemplate( "configLogsEnabled" ),
     configLogsDisabled: uiUtilsWrapAsTemplate( "configLogsDisabled" ),
@@ -95,6 +99,9 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         "⫸ ∙ Auto save dynamic channels: " +
         vars.configAutoSave +
         "\n" +
+        "📢 ∙ Automatic channel status: " +
+        vars.configAutoStatus +
+        "\n" +
         "❯❯ ∙ Send logs to custom channel: " +
         vars.configLogs +
         "\n" +
@@ -120,6 +127,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         configAutoSave: {
             [ vars.configAutoSaveEnabled ]: vars.on,
             [ vars.configAutoSaveDisabled ]: vars.off
+        },
+
+        configAutoStatus: {
+            [ vars.configAutoStatusEnabled ]: vars.on,
+            [ vars.configAutoStatusDisabled ]: vars.off
         },
 
         configLogs: {
@@ -218,6 +230,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             configAutoSave: args.dynamicChannelAutoSave
                 ? vars.configAutoSaveEnabled
                 : vars.configAutoSaveDisabled,
+
+            // Unset means on, the automatic status is what the channels have always had.
+            configAutoStatus: false !== args.dynamicChannelAutoStatus
+                ? vars.configAutoStatusEnabled
+                : vars.configAutoStatusDisabled,
 
             configLogs: processedLogsChannelId
                 ? vars.configLogsEnabled

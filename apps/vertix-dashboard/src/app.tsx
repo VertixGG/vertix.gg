@@ -8,17 +8,17 @@ import { AuthenticatedQueryClient } from "@vertix.gg/dashboard/src/lib/query-cli
 import { ModulesQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/modules-query";
 import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
 import { LanguageQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/language-query";
-import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/global-stats-query";
-import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-stats-query";
-import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/dashboard/query/guild-details-query";
-import { GuildManagementQuery } from "@vertix.gg/dashboard/src/features/management/query/guild-management-query";
+import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/global-stats-query";
+import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-stats-query";
+import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-details-query";
+import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generators/query/guild-generators-query";
 
 import { AuthProvider, ProtectedRoute, LoginPage, ServerSelectionPage } from "@vertix.gg/dashboard/src/features/auth";
 
 import { AppLayout } from "@vertix.gg/dashboard/src/components/app-layout";
-import { DashboardPage } from "@vertix.gg/dashboard/src/pages/dashboard-page";
+import { HomePage } from "@vertix.gg/dashboard/src/pages/home-page";
 import { InterfaceEditorPage } from "@vertix.gg/dashboard/src/pages/interface-editor-page";
-import { ManagementPage } from "@vertix.gg/dashboard/src/pages/management-page";
+import { GeneratorsPage } from "@vertix.gg/dashboard/src/pages/generators-page";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
@@ -33,7 +33,7 @@ client.registerModule( LanguageQuery );
 client.registerModule( GlobalStatsQuery );
 client.registerModule( GuildStatsQuery );
 client.registerModule( GuildDetailsQuery );
-client.registerModule( GuildManagementQuery );
+client.registerModule( GuildGeneratorsQuery );
 
 export function App() {
     return (
@@ -54,9 +54,9 @@ export function App() {
                                 <AppLayout />
                             </ProtectedRoute>
                         }>
-                            <Route path="/" element={ <DashboardPage /> } />
+                            <Route path="/" element={ <HomePage /> } />
                             <Route path="/interface-editor" element={ <InterfaceEditorPage /> } />
-                            <Route path="/generators" element={ <ManagementPage /> } />
+                            <Route path="/generators" element={ <GeneratorsPage /> } />
 
                             { /* The page was called Management until it was named after what it
                                  actually holds. */ }

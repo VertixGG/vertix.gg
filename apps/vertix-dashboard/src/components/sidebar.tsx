@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
-import { LayoutDashboard, Boxes, Radio, LogOut, User, ChevronUp } from "lucide-react";
+import { Home, Boxes, Radio, Settings, LogOut, User, ChevronUp } from "lucide-react";
 
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
@@ -20,9 +20,9 @@ interface SidebarSelectedState {
 
 const navItems: NavItem[] = [
     {
-        label: "Dashboard",
+        label: "Home",
         path: "/",
-        icon: <LayoutDashboard className="w-5 h-5" />,
+        icon: <Home className="w-5 h-5" />,
         hideForDefault: true
     },
     {

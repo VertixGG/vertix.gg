@@ -39,7 +39,7 @@ export function isPressedFromControlPanel( interaction: UIAdapterReplyContext ):
     return ChannelType.GuildVoice !== interaction.guild.channels.cache.get( pressedChannelId )?.type;
 }
 
-async function resolveMasterChannelId( interaction: UIAdapterReplyContext ): Promise<string | null> {
+export async function resolveMasterChannelId( interaction: UIAdapterReplyContext ): Promise<string | null> {
     const pressedChannelId = getPressedChannelId( interaction );
 
     if ( ! pressedChannelId ) {

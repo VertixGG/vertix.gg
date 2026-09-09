@@ -3187,13 +3187,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
-      "content": {
-        "title": "{inviteEmoji}  ここにはチャンネルがありません",
-        "description": "まだ誰かを招待できる場所がありません。\n\nジェネレーターに入ってチャンネルを開き、それから好きな人を招待してください。"
-      }
-    },
-    {
       "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
       "content": {
         "title": "{inviteEmoji}  どのチャンネルですか？",

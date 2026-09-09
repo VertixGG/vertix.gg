@@ -17,6 +17,13 @@
 - Default indent is 4 spaces; stylistic rules expect padded braces (`{ value }`), spaced arrays, and no space before function parentheses (`handler()`).
 - Name files by feature (`emoji-manager.spec.ts`, `ui-language-definitions.ts`); services/classes stay PascalCase, functions camelCase, env constants UPPER_SNAKE.
 
+## UI Copy & Translations
+- Any user-facing string in a UI entity (embed title/description/options, button label, select-menu placeholder) is snapshotted into `apps/vertix-bot/assets/languages/*.json` — **the snapshot wins at runtime**, so editing the code alone changes nothing users see.
+- Changing such a string is three edits, not one: the code, the seven language files, then re-run the export.
+- Export with the enforced command: `bun run vertix:bot:bun:start:dev --export-ui=<repo>/exports/ui`. It exits without connecting the bot. The website and dashboard render from `exports/ui`, so a stale export shows stale copy — and the exporter resolves through the language manager, so a wrong translation gets baked in too.
+- Verify with `bun run vertix:languages:check`. It only checks that entity *names* exist in every locale — it will not catch a stale inner shape, a missing `options` branch, or a `selectOptions` entry whose `value` is absent. Select-menu options are matched by `value` and **fall back to position**, so inserting an option mid-list silently mislabels it.
+- Emoji in translatable content use `EmojiManager.getToken()`, never `getMarkdown()`: an emoji id belongs to the application that exported it, and language files outlive any one application. In an embed, put the emoji in a template var resolved through `setDefaultVars()`.
+
 ## Testing Guidelines
 - Jest with `@swc/jest` powers unit/integration tests; specs live under `packages/*/test` and must keep the `*.spec.ts` suffix enforced by each `jest.config.ts`.
 - Reuse `test/__setup__.ts`, reset ServiceLocator state, and lean on `vertix-test-utils` or `ts-mockito` for doubles.

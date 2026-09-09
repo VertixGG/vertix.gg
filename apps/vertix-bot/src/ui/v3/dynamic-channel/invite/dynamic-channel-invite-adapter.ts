@@ -6,7 +6,10 @@ import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic
 
 import { DynamicChannelInviteComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/invite/dynamic-channel-invite-component";
 import { DynamicChannelInviteButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/invite/dynamic-channel-invite-button";
-import { getOwnedChannels } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-channel-lists";
+import {
+    getOwnedChannels,
+    resolveMasterChannelId
+} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-channel-lists";
 
 import type {
     UIDefaultButtonChannelVoiceInteraction,
@@ -65,7 +68,8 @@ const DynamicChannelInviteAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             .addState( "NoChannel", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelInviteNoChannel",
                 navigationType: "ephemeral",
-                embedsGroup: "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbedGroup"
+                previewDefaultVars: { masterChannelId: "123456789" },
+                embedsGroup: "VertixBot/UI-General/NoActiveDynamicChannelEmbedGroup"
             } )
             .addState( "SelectUser", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelInviteSelectUser",
@@ -91,7 +95,11 @@ const DynamicChannelInviteAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             } )
             .addTransition( "Open", { from: "Default", to: "SelectUser" } )
             .addTransition( "OpenChannels", { from: "Default", to: "SelectChannel" } )
-            .addTransition( "NoChannel", { from: "Default", to: "NoChannel" } )
+            .addTransition( "NoChannel", {
+                from: "Default",
+                to: "NoChannel",
+                mutations: [ { type: "set", path: [ "masterChannelId" ] } ]
+            } )
             .addTransition( "ChannelSelected", { from: "SelectChannel", to: "SelectUser" } )
             .addTransition( "Sent", {
                 from: "SelectUser",
@@ -107,7 +115,13 @@ const DynamicChannelInviteAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                     const owned = await getOwnedChannels( interaction, interaction.member );
 
                     if ( ! owned.length ) {
-                        await context.triggerTransition( "NoChannel", interaction );
+                        // The generator is the answer to having no channel, so name it rather than
+                        // describing it - this is what every other screen says in the same spot.
+                        const masterChannelId = await resolveMasterChannelId( interaction );
+
+                        context.setArgs( interaction, { masterChannelId } );
+
+                        await context.triggerTransition( "NoChannel", interaction, { masterChannelId } );
                         return;
                     }
 

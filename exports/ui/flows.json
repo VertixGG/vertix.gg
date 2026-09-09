@@ -3691,7 +3691,10 @@
                 "options": {
                     "executionStep": "VertixBot/UI-V3/DynamicChannelInviteNoChannel",
                     "component": "VertixBot/UI-V3/DynamicChannelInviteComponent",
-                    "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbedGroup"
+                    "previewDefaultVars": {
+                        "masterChannelId": "123456789"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-General/NoActiveDynamicChannelEmbedGroup"
                 }
             },
             {

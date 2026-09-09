@@ -3187,13 +3187,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
-      "content": {
-        "title": "{inviteEmoji}  У вас здесь нет канала",
-        "description": "Пока некуда никого приглашать.\n\nЗайдите в генератор, чтобы открыть канал, а затем приглашайте кого угодно."
-      }
-    },
-    {
       "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
       "content": {
         "title": "{inviteEmoji}  Какой канал?",

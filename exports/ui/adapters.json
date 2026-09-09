@@ -1314,7 +1314,7 @@
             {
                 "key": "VertixBot/UI-V3/DynamicChannelInviteNoChannel",
                 "elementsGroup": null,
-                "embedsGroup": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbedGroup",
+                "embedsGroup": "VertixBot/UI-General/NoActiveDynamicChannelEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },

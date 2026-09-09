@@ -5704,20 +5704,17 @@
                 ]
             },
             {
-                "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbedGroup",
+                "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbedGroup",
                 "items": [
                     {
-                        "embed": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
+                        "embed": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "{inviteEmoji}  You have no channel here",
-                            "description": "There is nothing to invite anyone into yet.\n\nJoin the generator to open a channel, then invite whoever you want.",
-                            "color": 9807270,
+                            "title": "⛔  No active dynamic channel",
+                            "description": "You don't own an active dynamic channel.\n\nJoin <#{masterChannelId}> to create your own channel first.",
+                            "color": 16732674,
                             "vars": {
-                                "inviteEmoji": "{inviteEmoji}"
-                            },
-                            "defaultVars": {
-                                "inviteEmoji": "<emoji name='InviteChannel'>"
+                                "masterChannelId": "{masterChannelId}"
                             }
                         }
                     }

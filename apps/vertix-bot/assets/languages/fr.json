@@ -3187,13 +3187,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
-      "content": {
-        "title": "{inviteEmoji}  Vous n'avez aucun salon ici",
-        "description": "Il n'y a encore nulle part où inviter qui que ce soit.\n\nRejoignez le générateur pour ouvrir un salon, puis invitez qui vous voulez."
-      }
-    },
-    {
       "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
       "content": {
         "title": "{inviteEmoji}  Quel salon ?",

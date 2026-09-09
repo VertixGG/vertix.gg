@@ -3187,13 +3187,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
-      "content": {
-        "title": "{inviteEmoji}  Δεν έχετε κανάλι εδώ",
-        "description": "Δεν υπάρχει ακόμη πουθενά να προσκαλέσετε κάποιον.\n\nΜπείτε στη γεννήτρια για να ανοίξετε ένα κανάλι και μετά προσκαλέστε όποιον θέλετε."
-      }
-    },
-    {
       "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
       "content": {
         "title": "{inviteEmoji}  Ποιο κανάλι;",

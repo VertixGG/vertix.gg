@@ -3187,13 +3187,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
-      "content": {
-        "title": "{inviteEmoji}  Du hast hier keinen Kanal",
-        "description": "Es gibt noch nichts, wohin du jemanden einladen könntest.\n\nBetritt den Generator, um einen Kanal zu öffnen, und lade dann ein, wen du willst."
-      }
-    },
-    {
       "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
       "content": {
         "title": "{inviteEmoji}  Welcher Kanal?",

@@ -38,6 +38,7 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
         return {
             "VertixBot/UI-V3/DynamicChannelFlow/States/Default": [
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenRename",
+                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenStatus",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenLimit",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenPermissions",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenPrivacy",
@@ -55,6 +56,7 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
     public static getNextStates(): Record<string, string> {
         return {
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenRename": "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Initial",
+            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenStatus": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenLimit": "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenPermissions": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenPrivacy": "VertixBot/UI-V3/DynamicChannelPrivacyFlow/States/Default",
@@ -122,6 +124,11 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 triggeringElementId: "VertixBot/UI-V3/DynamicChannelRenameButton",
                 transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenRename",
                 targetFlowName: "VertixBot/UI-V3/DynamicChannelRenameFlow"
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/DynamicChannelStatusButton",
+                transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenStatus",
+                targetFlowName: "VertixBot/UI-V3/DynamicChannelStatusFlow"
             },
             {
                 triggeringElementId: "VertixBot/UI-V3/DynamicChannelLimitMetaButton",

@@ -83,6 +83,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "⚡ Пересоздать"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WizardBackButton",
         "content": {
           "label": "◀ Назад"

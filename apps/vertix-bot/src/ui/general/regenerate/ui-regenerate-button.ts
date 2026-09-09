@@ -4,7 +4,7 @@ import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions
 
 export class UIRegenerateButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-GeneralUIRegenerateButton";
+        return "VertixBot/UI-General/RegenerateButton";
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {

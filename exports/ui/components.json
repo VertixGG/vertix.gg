@@ -3974,7 +3974,7 @@
                             "color": 3369963,
                             "options": {
                                 "userLimitDisplay": {
-                                    "{userLimitInherit}": "**Copied from the generator channel** ({masterChannelUserLimitDisplay})",
+                                    "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
                                     "{userLimitUnlimited}": "**No limit**",
                                     "{userLimitValue}": "**{userLimit} users**"
                                 }
@@ -8963,7 +8963,7 @@
                             "color": 3369963,
                             "options": {
                                 "userLimitDisplay": {
-                                    "{userLimitInherit}": "**Copied from the generator channel** ({masterChannelUserLimitDisplay})",
+                                    "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
                                     "{userLimitUnlimited}": "**No limit**",
                                     "{userLimitValue}": "**{userLimit} users**"
                                 }

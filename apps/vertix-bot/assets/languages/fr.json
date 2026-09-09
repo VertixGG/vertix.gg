@@ -83,6 +83,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "⚡ Régénérer"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WizardBackButton",
         "content": {
           "label": "◀ Retour"

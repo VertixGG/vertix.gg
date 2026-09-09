@@ -83,6 +83,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "⚡ Neu erstellen"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WizardBackButton",
         "content": {
           "label": "◀ Zurück"

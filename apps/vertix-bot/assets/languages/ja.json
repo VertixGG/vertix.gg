@@ -83,6 +83,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "⚡ 再生成"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/WizardBackButton",
         "content": {
           "label": "◀ 戻る"

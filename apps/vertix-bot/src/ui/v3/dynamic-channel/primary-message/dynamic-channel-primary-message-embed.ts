@@ -13,6 +13,8 @@ import { DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_TITLE_VARS } from "@vertix.gg/bot/
 import { DYNAMIC_CHANNEL_REGION_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-embed";
 import { DYNAMIC_CHANNEL_PRIVACY_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-embed";
 
+import { DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/dynamic-channel-component";
+
 import { DynamicChannelLimitMetaButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-meta-button";
 import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-button";
 import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
@@ -57,7 +59,11 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => `https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items=${ vars.dynamicChannelButtonsTemplate }` )
+    // The sheet is the legend for the buttons drawn underneath it, so it is laid out at the
+    // width they are - asked of the component rather than repeated here, since a legend that
+    // wraps differently to the thing it explains is worse than none.
+    .setImage( () => "https://api.voicechannels.online/api/tools/button-sheet.png"
+        + `?cols=${ DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW }&scale=3&items=${ vars.dynamicChannelButtonsTemplate }` )
     .setTitle( () => vars.title )
     .setDescription( () => (
         `${ vars.description }\n\n` +

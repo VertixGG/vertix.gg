@@ -5415,7 +5415,7 @@
                             "instanceType": "Dynamic",
                             "title": "{title}",
                             "description": "{description}\n\n{renameEmoji} ・ Name: **{name}**\n\n{limitEmoji} ・ User Limit: **{limit}**\n\n{privacyEmoji} ・ Privacy State: **{state}**\n\n{regionEmoji} ・ Region:  **{region}**\n",
-                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items={dynamicChannelButtonsTemplate}",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=5&scale=3&items={dynamicChannelButtonsTemplate}",
                             "color": 3369963,
                             "options": {
                                 "limit": {

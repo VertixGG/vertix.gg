@@ -10,7 +10,7 @@ import {
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 import { DynamicChannelPrimaryMessageEmbedsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-embeds-group";
 
-const DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW = 5;
+export const DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW = 5;
 
 export class DynamicChannelComponent extends UIComponentBase {
     public static getName() {

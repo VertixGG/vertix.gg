@@ -1,5 +1,3 @@
-import crypto from "node:crypto";
-
 import { diff } from "jest-diff";
 
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
@@ -7,8 +5,6 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
-
-import { ErrorWithMetadata } from "@vertix.gg/base/src/errors";
 
 import { DataVersioningModelFactory } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
 
@@ -49,7 +45,8 @@ interface ConfigBaseInterface<
 
 /**
  * Class `ConfigBase` - An abstract class serving as a base for configuration management across different models.
- * Handles initialization, checksum validation, and access to configuration data, defaults, and metadata.
+ * Handles initialization, keeping the stored row in step with the defaults, and access to configuration
+ * data, defaults, and metadata.
  */
 export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends InitializeBase {
     protected static configModel = new ( DataVersioningModelFactory<PrismaBot.Config, PrismaBot.Prisma.ConfigDelegate>(
@@ -84,15 +81,18 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
 
         if ( !currentConfig ) {
             await this.model.create<TConfig[ "defaults" ]>( { key, version }, defaults );
+        } else if ( await this.syncWithDefaults( { key, version }, defaults, currentConfig ) ) {
+            // Rewritten, so what is in hand is the row as it was rather than as it is now.
+            currentConfig = null;
+        }
 
+        if ( !currentConfig ) {
             currentConfig = await this.model.get<TConfig>( { key, version } );
 
             if ( !currentConfig ) {
                 throw new Error( `Failed to initialize: '${ this.$$.getName() }'` );
             }
         }
-
-        this.validateChecksum( defaults, currentConfig );
 
         this.config.data = currentConfig;
         this.config.defaults = defaults;
@@ -148,55 +148,94 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
     }
 
     /**
-     * Function `validateChecksum()` - Validates the checksum of defaults and current configuration
+     * Function `syncWithDefaults()` - Brings a stored row back in line with the defaults it mirrors.
      *
-     * The use case of this function is in the development phase.
+     * Nothing writes a config row but this, so a row that differs from `getDefaults()` was left
+     * behind by a release rather than chosen by anyone. A setting added since the row was written
+     * is simply missing from it, and everything reading the stored config sees it as unset - which
+     * is how a button added to the interface never reached the channels created from it.
+     *
+     * The row is rewritten rather than merged for the same reason: the defaults are the whole
+     * truth, so a key they no longer carry is dead weight rather than something to preserve.
+     *
+     * Answers whether it rewrote, so the caller can read back what it now holds.
      */
-    private validateChecksum( objA: Record<string, any>, objB: Record<string, any> ) {
-        if ( !Logger.isDebugEnabled() ) {
-            return;
+    private async syncWithDefaults(
+        keys: { key: string; version: TVersionType },
+        defaults: TConfig[ "defaults" ],
+        stored: TConfig
+    ): Promise<boolean> {
+        const changes = this.compareToDefaults( defaults, stored );
+
+        if ( !changes.length ) {
+            return false;
         }
 
-        // Validate checksum
-        const extractEntries = ( obj: Record<string, any>, prefix = "" ): [string, any][] => {
-            return Object.entries( obj ).flatMap( ( [ key, value ] ) => {
-                const newKey = prefix ? `${ prefix }.${ key }` : key;
-                if ( typeof value === "object" && value !== null ) {
-                    return extractEntries( value, newKey );
-                }
-                return [ [ newKey, value ] ];
-            } );
-        };
+        this.logger.warn(
+            this.syncWithDefaults,
+            `Config '${ keys.key }' version '${ keys.version }' is behind its defaults - ${ changes.join( ", " ) }`
+        );
 
-        if ( process.argv.includes( "--config-skip-checksum" ) ) {
-            return;
+        if ( Logger.isDebugEnabled() ) {
+            console.log( diff( defaults, stored, { contextLines: 0, expand: false, includeChangeCounts: true } ) );
         }
 
-        const checksum = ( obj: Record<string, any> ) => {
-            const entries = extractEntries( obj );
-            const data = Buffer.from( entries.map( ( [ key, value ] ) => `${ key }:${ value }` ).join( ";" ) );
+        // An escape hatch for looking at a row as it was left, rather than as it should be.
+        if ( process.argv.includes( "--config-skip-sync" ) ) {
+            this.logger.warn( this.syncWithDefaults, `Config '${ keys.key }' left as it is - '--config-skip-sync'` );
 
-            return crypto.createHash( "sha256" ).update( data ).digest( "hex" );
-        };
-
-        const checksumA = checksum( objA ),
-            checksumB = checksum( objB );
-
-        if ( checksumA !== checksumB ) {
-            console.log(
-                diff( objA, objB, {
-                    contextLines: 0,
-                    expand: false,
-                    includeChangeCounts: true
-                } )
-            );
-            return;
-            throw new ErrorWithMetadata( `Checksum mismatch for: '${ this.$$.getName() }'`, {
-                checksumA,
-                checksumB
-            } );
+            return false;
         }
+
+        // Dropped and written again rather than updated: `update()` deep merges with what is
+        // there, which would keep a setting the defaults no longer carry for as long as the row
+        // lives. `initialize()` writes it back immediately, and would write it back on the next
+        // boot regardless - the defaults are the only source it has ever been built from.
+        await this.model.delete( keys );
+        await this.model.create<TConfig[ "defaults" ]>( keys, defaults );
+
+        this.logger.info( this.syncWithDefaults, `Config '${ keys.key }' brought up to date` );
+
+        return true;
     }
+
+    /**
+     * Function `compareToDefaults()` - What a stored row is missing, holding differently, or holding
+     * beyond the defaults.
+     *
+     * Leaves are compared rather than whole objects, so an array that gained an entry reads as the
+     * one index that appeared rather than as the whole array having changed.
+     */
+    private compareToDefaults( defaults: Record<string, any>, stored: Record<string, any> ) {
+        const flatten = ( value: Record<string, any>, prefix = "" ): Array<[ string, unknown ]> =>
+            Object.entries( value ).flatMap( ( [ key, entry ] ) => {
+                const path = prefix ? `${ prefix }.${ key }` : key;
+
+                return entry && "object" === typeof entry ? flatten( entry, path ) : [ [ path, entry ] as [ string, unknown ] ];
+            } );
+
+        const expected = new Map( flatten( defaults ) ),
+            actual = new Map( flatten( stored ) );
+
+        const changes: string[] = [];
+
+        expected.forEach( ( value, path ) => {
+            if ( !actual.has( path ) ) {
+                changes.push( `added '${ path }'` );
+            } else if ( actual.get( path ) !== value ) {
+                changes.push( `changed '${ path }'` );
+            }
+        } );
+
+        actual.forEach( ( _value, path ) => {
+            if ( !expected.has( path ) ) {
+                changes.push( `removed '${ path }'` );
+            }
+        } );
+
+        return changes;
+    }
+
 }
 
 export type { ConfigBaseDefaultsInterface, ConfigBaseInterface };

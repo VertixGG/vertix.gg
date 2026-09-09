@@ -13,8 +13,7 @@ const vars = {
     userLimitDisplay: uiUtilsWrapAsTemplate( "userLimitDisplay" ),
     userLimitInherit: uiUtilsWrapAsTemplate( "userLimitInherit" ),
     userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" ),
-    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
-    masterChannelUserLimitDisplay: uiUtilsWrapAsTemplate( "masterChannelUserLimitDisplay" )
+    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" )
 };
 
 const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed", vars )
@@ -33,28 +32,24 @@ const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof vars>( "V
     ) )
     .setOptions( () => ( {
         userLimitDisplay: {
-            [ vars.userLimitInherit ]: `**${ vars.masterChannelUserLimitDisplay }**`,
             [ vars.userLimitUnlimited ]: "**No limit**",
             [ vars.userLimitValue ]: `**${ vars.userLimit } users**`
         }
     } ) )
     .setLogic( ( args: UIArgs ) => {
-        const limit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
+        const own = args.dynamicChannelDefaultUserLimit as number | null | undefined;
 
-        const inheritedUserLimit = Number( args.masterChannelUserLimit ) || 0;
+        // An unset default copies the generator's own limit and both read the same way, so the
+        // number is resolved here and the wording left to the two options, which are translated.
+        const limit = ( null === own || undefined === own ? Number( args.masterChannelUserLimit ) : own ) || 0;
 
         const result: Record<string, string | number> = {
             index: args.index + 1,
-            masterChannelUserLimitDisplay: inheritedUserLimit ? `${ inheritedUserLimit } users` : "no limit"
+            userLimitDisplay: limit ? vars.userLimitValue : vars.userLimitUnlimited
         };
 
-        if ( null === limit || undefined === limit ) {
-            result.userLimitDisplay = vars.userLimitInherit;
-        } else if ( 0 === limit ) {
-            result.userLimitDisplay = vars.userLimitUnlimited;
-        } else {
+        if ( limit ) {
             result.userLimit = String( limit );
-            result.userLimitDisplay = vars.userLimitValue;
         }
 
         return result;

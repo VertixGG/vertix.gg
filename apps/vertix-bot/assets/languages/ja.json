@@ -1116,7 +1116,8 @@
           "staffRolesMessage": {
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**なし**"
-          }
+          },
+          "inherited": "*(サーバー設定より)*"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1213,6 +1214,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "上限なし",
+            "{newChannelLimitValue}": "{newChannelLimitCount} 人"
           }
         },
         "arrayOptions": {
@@ -1496,6 +1501,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "上限なし",
+            "{newChannelLimitValue}": "{newChannelLimitCount} 人"
           }
         },
         "arrayOptions": {
@@ -2237,7 +2246,6 @@
         "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**上限なし**",
             "{userLimitValue}": "**{userLimit} 人**"
           }
@@ -2507,7 +2515,6 @@
         "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**上限なし**",
             "{userLimitValue}": "**{userLimit} 人**"
           }

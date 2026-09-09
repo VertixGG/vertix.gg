@@ -60,7 +60,7 @@ export function App() {
                             <Route path="/" element={ <HomePage /> } />
                             <Route path="/interface-editor" element={ <InterfaceEditorPage /> } />
                             <Route path="/generators" element={ <GeneratorsPage /> } />
-                            <Route path="/server-config" element={ <ServerConfigPage /> } />
+                            <Route path="/server-options" element={ <ServerConfigPage /> } />
 
                             { /* The page was called Management until it was named after what it
                                  actually holds. */ }

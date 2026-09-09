@@ -32,8 +32,8 @@ const navItems: NavItem[] = [
         hideForDefault: true
     },
     {
-        label: "Server Config",
-        path: "/server-config",
+        label: "Server Options",
+        path: "/server-options",
         icon: <SlidersHorizontal className="w-5 h-5" />,
         hideForDefault: true
     },

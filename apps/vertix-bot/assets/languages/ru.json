@@ -1116,7 +1116,8 @@
           "staffRolesMessage": {
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**Нет**"
-          }
+          },
+          "inherited": "*(из настроек сервера)*"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1844,6 +1845,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(из настроек сервера)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "Без лимита",
+            "{newChannelLimitValue}": "{newChannelLimitCount} польз."
           }
         },
         "arrayOptions": {
@@ -1931,7 +1936,6 @@
         "description": "Это лимит пользователей, с которым начинает **вновь созданный** динамический канал. Существующие каналы не затрагиваются, и владелец может изменить его позже.\n\nКопирование канала-генератора — прежнее поведение. Указать число здесь обычно лучше, потому что лимит самого генератора также ограничивает, сколько человек может в нём ждать.\n\nПри включённом автосохранении вернувшийся владелец получает свой прошлый лимит вместо этого.\n\n**_Текущее значение_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Без лимита**",
             "{userLimitValue}": "**{userLimit} польз.**"
           }
@@ -2839,6 +2843,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(из настроек сервера)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "Без лимита",
+            "{newChannelLimitValue}": "{newChannelLimitCount} польз."
           }
         },
         "arrayOptions": {
@@ -2928,7 +2936,6 @@
         "description": "Это лимит пользователей, с которым начинает **вновь созданный** динамический канал. Существующие каналы не затрагиваются, и владелец может изменить его позже.\n\nКопирование канала-генератора — прежнее поведение. Указать число здесь обычно лучше, потому что лимит самого генератора также ограничивает, сколько человек может в нём ждать.\n\nПри включённом автосохранении вернувшийся владелец получает свой прошлый лимит вместо этого.\n\n**_Текущее значение_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Без лимита**",
             "{userLimitValue}": "**{userLimit} польз.**"
           }

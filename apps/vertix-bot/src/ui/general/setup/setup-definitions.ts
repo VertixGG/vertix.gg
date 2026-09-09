@@ -16,6 +16,8 @@ export interface ISetupArgs extends UIArgs {
     voiceRoleId?: string | null;
     verifiedRoleIds?: string[];
     staffRoleIds?: string[];
+    /** Also the `@everyone` role id, which is how a generator that narrowed nothing is spotted. */
+    guildId?: string;
     maxMasterChannels?: number;
     scalingEditMasterChannelId?: string;
     scalingPrefix?: string;
@@ -55,6 +57,7 @@ export const SETUP_EMBED_VARS = {
     staffRolesMessage: uiUtilsWrapAsTemplate( "staffRolesMessage" ),
     staffRolesMessageDefault: uiUtilsWrapAsTemplate( "staffRolesMessageDefault" ),
     none: uiUtilsWrapAsTemplate( "none" ),
+    inherited: uiUtilsWrapAsTemplate( "inherited" ),
 
     // Master channel display labels
     labelName: uiUtilsWrapAsTemplate( "labelName" ),

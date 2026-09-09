@@ -507,7 +507,8 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 [ staffRoleIdsKey ]: staffRoleIds,
                 [ staffRolesMessageDefaultKey ]: "**None**"
             },
-            none: "**None**"
+            none: "**None**",
+            inherited: "*(from the server options)*"
         };
     } )
     .setLogic( async( args, vars ) => {
@@ -561,17 +562,32 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
             const buttonsDisplay = ( emojis.length ? emojis : [ "⚠️ No emojis found" ] ).join( ", " );
 
-            const rolesDisplay = ( data.dynamicChannelVerifiedRoles || [] )
-                .map( ( roleId: string ) => `<@&${ roleId }>` )
-                .join( ", " ) || "@@everyone";
+            // What each list resolves to, and whether the generator is following the server
+            // rather than holding one of its own - `@everyone` alone is the absence of a choice,
+            // which is what every generator made before the guild wide lists existed carries.
+            const guildId = args?.guildId ?? "";
 
-            const staffRolesDisplay = ( data.dynamicChannelStaffRoles || [] )
-                .map( ( roleId: string ) => `<@&${ roleId }>` )
-                .join( ", " ) || vars.none;
+            const storedVerified: string[] = data.dynamicChannelVerifiedRoles || [];
+            const ownVerified = 1 === storedVerified.length && guildId === storedVerified[ 0 ] ? [] : storedVerified;
+            const guildVerified = args?.verifiedRoleIds?.length ? args.verifiedRoleIds : [ guildId ];
 
-            // A master channel without its own voice role defers to the guild wide default.
-            const resolvedVoiceRoleId = data.dynamicChannelVoiceRoleId || args?.voiceRoleId;
-            const voiceRoleDisplay = resolvedVoiceRoleId ? `<@&${ resolvedVoiceRoleId }>` : vars.none;
+            const rolesDisplay = ( ownVerified.length ? ownVerified : guildVerified )
+                .map( ( roleId: string ) => `<@&${ roleId }>` )
+                .join( ", " ) + ( ownVerified.length ? "" : ` ${ vars.inherited }` );
+
+            const ownStaff: string[] = data.dynamicChannelStaffRoles || [];
+            const guildStaff = args?.staffRoleIds ?? [];
+            const resolvedStaff = ownStaff.length ? ownStaff : guildStaff;
+
+            const staffRolesDisplay = ( resolvedStaff.length
+                ? resolvedStaff.map( ( roleId: string ) => `<@&${ roleId }>` ).join( ", " )
+                : vars.none ) + ( ownStaff.length ? "" : ` ${ vars.inherited }` );
+
+            const ownVoiceRoleId = data.dynamicChannelVoiceRoleId;
+            const resolvedVoiceRoleId = ownVoiceRoleId || args?.voiceRoleId;
+
+            const voiceRoleDisplay = ( resolvedVoiceRoleId ? `<@&${ resolvedVoiceRoleId }>` : vars.none )
+                + ( ownVoiceRoleId ? "" : ` ${ vars.inherited }` );
 
             const privacyState = data.dynamicChannelDefaultPrivacyState;
             const privacyDisplay = "private" === privacyState
@@ -716,7 +732,8 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) ),
             voiceRoleId: await GuildDataManager.$.getVoiceRoleId( interaction.guild.id ),
             verifiedRoleIds: await GuildDataManager.$.getVerifiedRoleIds( interaction.guild.id ),
-            staffRoleIds: await GuildDataManager.$.getStaffRoleIds( interaction.guild.id )
+            staffRoleIds: await GuildDataManager.$.getStaffRoleIds( interaction.guild.id ),
+            guildId: interaction.guild.id
         };
 
         if ( argsFromManager?.maxMasterChannels ) {

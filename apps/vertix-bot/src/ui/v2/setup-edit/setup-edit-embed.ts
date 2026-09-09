@@ -62,6 +62,9 @@ const vars = {
 
     newChannelPrivacy: uiUtilsWrapAsTemplate( "newChannelPrivacy" ),
     newChannelLimit: uiUtilsWrapAsTemplate( "newChannelLimit" ),
+    newChannelLimitCount: uiUtilsWrapAsTemplate( "newChannelLimitCount" ),
+    newChannelLimitUnlimited: uiUtilsWrapAsTemplate( "newChannelLimitUnlimited" ),
+    newChannelLimitValue: uiUtilsWrapAsTemplate( "newChannelLimitValue" ),
 
     dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
 };
@@ -158,6 +161,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             [ vars.staffRolesNone ]: "**None** *(from the server options)*"
         },
 
+        newChannelLimit: {
+            [ vars.newChannelLimitUnlimited ]: "No limit",
+            [ vars.newChannelLimitValue ]: `${ vars.newChannelLimitCount } users`
+        },
+
         voiceRoleDisplay: {
             [ vars.voiceRoleId ]: `<@&${ vars.voiceRoleId }>`,
             [ vars.voiceRoleGuild ]: `<@&${ vars.voiceRoleId }> *(from the server options)*`,
@@ -220,14 +228,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             ? "🚫 Private"
             : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
 
-        // Naming the number the generator actually carries, so an unset default is not just a rule.
-        const inheritedUserLimit = Number( args.masterChannelUserLimit ) || 0,
-            inheritedUserLimitDisplay = inheritedUserLimit ? `${ inheritedUserLimit } users` : "no limit";
-
-        const defaultUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
-        const newChannelLimit = null === defaultUserLimit || undefined === defaultUserLimit
-            ? inheritedUserLimitDisplay
-            : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
+        // An unset default copies the generator's own limit, so the number it copies is named
+        // rather than the rule, and the wording is left to the options so it can be translated.
+        const ownUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
+        const newChannelLimitCount =
+            ( null === ownUserLimit || undefined === ownUserLimit ? Number( args.masterChannelUserLimit ) : ownUserLimit ) || 0;
 
         const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,
             guildVoiceRoleId = args.guildVoiceRoleId as string | null,
@@ -241,7 +246,8 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             dynamicChannelLogsChannelId: processedLogsChannelId,
 
             newChannelPrivacy,
-            newChannelLimit,
+            ...( newChannelLimitCount ? { newChannelLimitCount } : {} ),
+            newChannelLimit: newChannelLimitCount ? vars.newChannelLimitValue : vars.newChannelLimitUnlimited,
 
             verifiedRoles: ownVerifiedRoles.length ? ownVerifiedRoles : guildVerifiedRoles,
             verifiedRolesDisplay: ownVerifiedRoles.length ? vars.verifiedRoles : vars.verifiedRolesGuild,

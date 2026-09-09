@@ -81,8 +81,7 @@ export const SETUP_EDIT_DEFAULT_USER_LIMIT_EMBED_VARS = {
     userLimitDisplay: uiUtilsWrapAsTemplate( "userLimitDisplay" ),
     userLimitInherit: uiUtilsWrapAsTemplate( "userLimitInherit" ),
     userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" ),
-    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
-    masterChannelUserLimitDisplay: uiUtilsWrapAsTemplate( "masterChannelUserLimitDisplay" )
+    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" )
 };
 
 export const SETUP_EDIT_EMBED_VARS = {
@@ -126,6 +125,9 @@ export const SETUP_EDIT_EMBED_VARS = {
     voiceRoleNone: uiUtilsWrapAsTemplate( "voiceRoleNone" ),
     newChannelPrivacy: uiUtilsWrapAsTemplate( "newChannelPrivacy" ),
     newChannelLimit: uiUtilsWrapAsTemplate( "newChannelLimit" ),
+    newChannelLimitCount: uiUtilsWrapAsTemplate( "newChannelLimitCount" ),
+    newChannelLimitUnlimited: uiUtilsWrapAsTemplate( "newChannelLimitUnlimited" ),
+    newChannelLimitValue: uiUtilsWrapAsTemplate( "newChannelLimitValue" ),
 
     // Button display labels
     labelDefaultSettings: uiUtilsWrapAsTemplate( "labelDefaultSettings" ),

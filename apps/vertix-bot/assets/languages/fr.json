@@ -1116,7 +1116,8 @@
           "staffRolesMessage": {
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**Aucun**"
-          }
+          },
+          "inherited": "*(depuis les options du serveur)*"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1597,7 +1598,6 @@
         "description": "C'est la limite d'utilisateurs avec laquelle démarre un canal dynamique **nouvellement créé**. Les canaux existants ne sont pas touchés, et le propriétaire peut la modifier ensuite.\n\nCopier le canal générateur est l'ancien comportement. Indiquer un nombre ici vaut généralement mieux, car la limite du générateur restreint aussi le nombre de personnes pouvant y patienter.\n\nAvec la sauvegarde automatique activée, un propriétaire qui revient retrouve sa propre dernière limite à la place.\n\n**_Valeur actuelle_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Aucune limite**",
             "{userLimitValue}": "**{userLimit} utilisateurs**"
           }
@@ -1966,6 +1966,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(depuis les options du serveur)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "Aucune limite",
+            "{newChannelLimitValue}": "{newChannelLimitCount} utilisateurs"
           }
         },
         "arrayOptions": {
@@ -2732,7 +2736,6 @@
         "description": "C'est la limite d'utilisateurs avec laquelle démarre un canal dynamique **nouvellement créé**. Les canaux existants ne sont pas touchés, et le propriétaire peut la modifier ensuite.\n\nCopier le canal générateur est l'ancien comportement. Indiquer un nombre ici vaut généralement mieux, car la limite du générateur restreint aussi le nombre de personnes pouvant y patienter.\n\nAvec la sauvegarde automatique activée, un propriétaire qui revient retrouve sa propre dernière limite à la place.\n\n**_Valeur actuelle_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Aucune limite**",
             "{userLimitValue}": "**{userLimit} utilisateurs**"
           }
@@ -2975,6 +2978,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(depuis les options du serveur)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "Aucune limite",
+            "{newChannelLimitValue}": "{newChannelLimitCount} utilisateurs"
           }
         },
         "arrayOptions": {

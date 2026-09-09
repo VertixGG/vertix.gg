@@ -103,7 +103,7 @@ function formatRole( id: string | null, options: GuildDiscordOptions | null, fal
 const INHERITED_NOTE = (
     <>
         This <strong className="font-semibold">generator</strong> has no list of its own, so it follows
-        the <strong className="font-semibold">Server Config</strong>. Changing it there moves this with it.
+        the <strong className="font-semibold">Server Options</strong>. Changing it there moves this with it.
     </>
 );
 

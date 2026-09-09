@@ -1116,7 +1116,8 @@
           "staffRolesMessage": {
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**Κανένα**"
-          }
+          },
+          "inherited": "*(από τις επιλογές διακομιστή)*"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1844,6 +1845,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(από τις επιλογές διακομιστή)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "Χωρίς όριο",
+            "{newChannelLimitValue}": "{newChannelLimitCount} χρήστες"
           }
         },
         "arrayOptions": {
@@ -1931,7 +1936,6 @@
         "description": "Αυτό είναι το όριο χρηστών με το οποίο ξεκινά ένα **νέο** δυναμικό κανάλι. Δεν επηρεάζει τα υπάρχοντα, και ο ιδιοκτήτης μπορεί να το αλλάξει μετά.\n\nΗ αντιγραφή από το κανάλι-γεννήτρια είναι η παλιά συμπεριφορά. Ένας αριθμός εδώ είναι συνήθως καλύτερος, γιατί το όριο της γεννήτριας περιορίζει και πόσοι μπορούν να περιμένουν μέσα της.\n\nΜε ενεργή την αυτόματη αποθήκευση, ένας ιδιοκτήτης που επιστρέφει παίρνει το δικό του τελευταίο όριο αντί γι' αυτό.\n\n**_Τρέχουσα προεπιλογή_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Χωρίς όριο**",
             "{userLimitValue}": "**{userLimit} χρήστες**"
           }
@@ -2264,6 +2268,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(από τις επιλογές διακομιστή)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "Χωρίς όριο",
+            "{newChannelLimitValue}": "{newChannelLimitCount} χρήστες"
           }
         },
         "arrayOptions": {
@@ -2676,7 +2684,6 @@
         "description": "Αυτό είναι το όριο χρηστών με το οποίο ξεκινά ένα **νέο** δυναμικό κανάλι. Δεν επηρεάζει τα υπάρχοντα, και ο ιδιοκτήτης μπορεί να το αλλάξει μετά.\n\nΗ αντιγραφή από το κανάλι-γεννήτρια είναι η παλιά συμπεριφορά. Ένας αριθμός εδώ είναι συνήθως καλύτερος, γιατί το όριο της γεννήτριας περιορίζει και πόσοι μπορούν να περιμένουν μέσα της.\n\nΜε ενεργή την αυτόματη αποθήκευση, ένας ιδιοκτήτης που επιστρέφει παίρνει το δικό του τελευταίο όριο αντί γι' αυτό.\n\n**_Τρέχουσα προεπιλογή_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Χωρίς όριο**",
             "{userLimitValue}": "**{userLimit} χρήστες**"
           }

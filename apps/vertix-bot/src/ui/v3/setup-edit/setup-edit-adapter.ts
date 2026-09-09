@@ -461,6 +461,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             [ v.staffRolesGuild ]: `${ v.staffRoles } *(from the server options)*`,
             [ v.staffRolesNone ]: "**None** *(from the server options)*"
         },
+        newChannelLimit: {
+            [ v.newChannelLimitUnlimited ]: "No limit",
+            [ v.newChannelLimitValue ]: `${ v.newChannelLimitCount } users`
+        },
         voiceRoleDisplay: {
             [ v.voiceRoleId ]: `<@&${ v.voiceRoleId }>`,
             [ v.voiceRoleGuild ]: `<@&${ v.voiceRoleId }> *(from the server options)*`,
@@ -525,14 +529,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             ? "🚫 Private"
             : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
 
-        // Naming the number the generator actually carries, so an unset default is not just a rule.
-        const inheritedUserLimit = Number( args.masterChannelUserLimit ) || 0,
-            inheritedUserLimitDisplay = inheritedUserLimit ? `${ inheritedUserLimit } users` : "no limit";
-
-        const defaultUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
-        const newChannelLimit = null === defaultUserLimit || undefined === defaultUserLimit
-            ? inheritedUserLimitDisplay
-            : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
+        // An unset default copies the generator's own limit, so the number it copies is named
+        // rather than the rule, and the wording is left to the options so it can be translated.
+        const ownUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
+        const newChannelLimitCount =
+            ( null === ownUserLimit || undefined === ownUserLimit ? Number( args.masterChannelUserLimit ) : ownUserLimit ) || 0;
 
         const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,
             guildVoiceRoleId = args.guildVoiceRoleId as string | null,
@@ -544,7 +545,8 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             dynamicChannelNameTemplate: args.dynamicChannelNameTemplate,
             dynamicChannelLogsChannelId: processedLogsChannelId,
             newChannelPrivacy,
-            newChannelLimit,
+            ...( newChannelLimitCount ? { newChannelLimitCount } : {} ),
+            newChannelLimit: newChannelLimitCount ? v.newChannelLimitValue : v.newChannelLimitUnlimited,
             verifiedRoles: ownVerifiedRoles.length ? ownVerifiedRoles : guildVerifiedRoles,
             verifiedRolesDisplay: ownVerifiedRoles.length ? v.verifiedRoles : v.verifiedRolesGuild,
             ...( staffRoles.length ? { staffRoles } : {} ),
@@ -697,32 +699,22 @@ const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDI
     )
     .setOptions( ( v ) => ( {
         userLimitDisplay: {
-            [ v.userLimitInherit ]: `**${ v.masterChannelUserLimitDisplay }**`,
             [ v.userLimitUnlimited ]: "**No limit**",
             [ v.userLimitValue ]: `**${ v.userLimit } users**`
         }
     } ) )
     .setLogic( ( args, v ) => {
-        const limit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
+        const own = args.dynamicChannelDefaultUserLimit as number | null | undefined;
 
-        const result: Record<string, string | number> = {
-            index: ( args.index || 0 ) + 1
+        // An unset default copies the generator's own limit and both read the same way, so the
+        // number is resolved here and the wording left to the two options, which are translated.
+        const limit = ( null === own || undefined === own ? Number( args.masterChannelUserLimit ) : own ) || 0;
+
+        return {
+            index: ( args.index || 0 ) + 1,
+            ...( limit ? { userLimit: String( limit ) } : {} ),
+            userLimitDisplay: limit ? v.userLimitValue : v.userLimitUnlimited
         };
-
-        const inheritedUserLimit = Number( args.masterChannelUserLimit ) || 0;
-
-        result.masterChannelUserLimitDisplay = inheritedUserLimit ? `${ inheritedUserLimit } users` : "no limit";
-
-        if ( null === limit || undefined === limit ) {
-            result.userLimitDisplay = v.userLimitInherit;
-        } else if ( 0 === limit ) {
-            result.userLimitDisplay = v.userLimitUnlimited;
-        } else {
-            result.userLimit = String( limit );
-            result.userLimitDisplay = v.userLimitValue;
-        }
-
-        return result;
     } )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();

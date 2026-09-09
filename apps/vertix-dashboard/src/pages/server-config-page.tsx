@@ -46,7 +46,7 @@ const ServerConfigContentComponent: DCommandFunctionComponent<ServerConfigConten
     return (
         <div className="flex-1 flex flex-col overflow-hidden">
             <div className="px-6 py-4 border-b border-border">
-                <h1 className="text-2xl font-bold text-text-primary mb-1">Server Config</h1>
+                <h1 className="text-2xl font-bold text-text-primary mb-1">Server Options</h1>
                 <p className="text-sm text-text-muted mb-0">
                     Settings that apply across the whole server
                 </p>

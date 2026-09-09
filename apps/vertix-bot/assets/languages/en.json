@@ -1116,7 +1116,8 @@
           "staffRolesMessage": {
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**None**"
-          }
+          },
+          "inherited": "*(from the server options)*"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1844,6 +1845,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "No limit",
+            "{newChannelLimitValue}": "{newChannelLimitCount} users"
           }
         },
         "arrayOptions": {
@@ -1931,7 +1936,6 @@
         "description": "This is the user limit a **newly created** dynamic channel starts with. It does not touch channels that already exist, and the owner can still change their own channel afterwards.\n\nCopying the generator channel is the old behaviour. Setting a number here is usually better, because the generator's own limit also caps how many people can wait in it at once.\n\nWith auto save on, a returning owner gets their own last limit instead of this.\n\n**_Current Default_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**No limit**",
             "{userLimitValue}": "**{userLimit} users**"
           }
@@ -2839,6 +2843,10 @@
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
             "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "No limit",
+            "{newChannelLimitValue}": "{newChannelLimitCount} users"
           }
         },
         "arrayOptions": {
@@ -2928,7 +2936,6 @@
         "description": "This is the user limit a **newly created** dynamic channel starts with. It does not touch channels that already exist, and the owner can still change their own channel afterwards.\n\nCopying the generator channel is the old behaviour. Setting a number here is usually better, because the generator's own limit also caps how many people can wait in it at once.\n\nWith auto save on, a returning owner gets their own last limit instead of this.\n\n**_Current Default_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**No limit**",
             "{userLimitValue}": "**{userLimit} users**"
           }

@@ -435,7 +435,8 @@
                                     "{staffRoleIds}": "{staffRoleIds}",
                                     "{staffRolesMessageDefault}": "**None**"
                                 },
-                                "none": "**None**"
+                                "none": "**None**",
+                                "inherited": "*(from the server options)*"
                             },
                             "arrayOptions": {
                                 "masterChannels": {
@@ -488,6 +489,7 @@
                                 "staffRolesMessage": "{staffRolesMessage}",
                                 "staffRolesMessageDefault": "{staffRolesMessageDefault}",
                                 "none": "{none}",
+                                "inherited": "{inherited}",
                                 "labelName": "{labelName}",
                                 "labelChannelId": "{labelChannelId}",
                                 "labelDynamicChannelsName": "{labelDynamicChannelsName}",
@@ -3646,6 +3648,10 @@
                                     "{staffRolesGuild}": "{staffRoles} *(from the server options)*",
                                     "{staffRolesNone}": "**None** *(from the server options)*"
                                 },
+                                "newChannelLimit": {
+                                    "{newChannelLimitUnlimited}": "No limit",
+                                    "{newChannelLimitValue}": "{newChannelLimitCount} users"
+                                },
                                 "voiceRoleDisplay": {
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
@@ -3718,6 +3724,9 @@
                                 "voiceRoleNone": "{voiceRoleNone}",
                                 "newChannelPrivacy": "{newChannelPrivacy}",
                                 "newChannelLimit": "{newChannelLimit}",
+                                "newChannelLimitCount": "{newChannelLimitCount}",
+                                "newChannelLimitUnlimited": "{newChannelLimitUnlimited}",
+                                "newChannelLimitValue": "{newChannelLimitValue}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
                             },
                             "defaultVars": {
@@ -3974,7 +3983,6 @@
                             "color": 3369963,
                             "options": {
                                 "userLimitDisplay": {
-                                    "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
                                     "{userLimitUnlimited}": "**No limit**",
                                     "{userLimitValue}": "**{userLimit} users**"
                                 }
@@ -3985,8 +3993,7 @@
                                 "userLimitDisplay": "{userLimitDisplay}",
                                 "userLimitInherit": "{userLimitInherit}",
                                 "userLimitUnlimited": "{userLimitUnlimited}",
-                                "userLimitValue": "{userLimitValue}",
-                                "masterChannelUserLimitDisplay": "{masterChannelUserLimitDisplay}"
+                                "userLimitValue": "{userLimitValue}"
                             }
                         }
                     }
@@ -8643,6 +8650,10 @@
                                     "{staffRolesGuild}": "{staffRoles} *(from the server options)*",
                                     "{staffRolesNone}": "**None** *(from the server options)*"
                                 },
+                                "newChannelLimit": {
+                                    "{newChannelLimitUnlimited}": "No limit",
+                                    "{newChannelLimitValue}": "{newChannelLimitCount} users"
+                                },
                                 "voiceRoleDisplay": {
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
@@ -8700,6 +8711,9 @@
                                 "voiceRoleNone": "{voiceRoleNone}",
                                 "newChannelPrivacy": "{newChannelPrivacy}",
                                 "newChannelLimit": "{newChannelLimit}",
+                                "newChannelLimitCount": "{newChannelLimitCount}",
+                                "newChannelLimitUnlimited": "{newChannelLimitUnlimited}",
+                                "newChannelLimitValue": "{newChannelLimitValue}",
                                 "labelDefaultSettings": "{labelDefaultSettings}",
                                 "labelRoleOverride": "{labelRoleOverride}",
                                 "labelButtonPrefix": "{labelButtonPrefix}",
@@ -8963,7 +8977,6 @@
                             "color": 3369963,
                             "options": {
                                 "userLimitDisplay": {
-                                    "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
                                     "{userLimitUnlimited}": "**No limit**",
                                     "{userLimitValue}": "**{userLimit} users**"
                                 }
@@ -8974,8 +8987,7 @@
                                 "userLimitDisplay": "{userLimitDisplay}",
                                 "userLimitInherit": "{userLimitInherit}",
                                 "userLimitUnlimited": "{userLimitUnlimited}",
-                                "userLimitValue": "{userLimitValue}",
-                                "masterChannelUserLimitDisplay": "{masterChannelUserLimitDisplay}"
+                                "userLimitValue": "{userLimitValue}"
                             }
                         }
                     }

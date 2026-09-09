@@ -882,9 +882,13 @@ export class UIDefinitionExporter extends UIBase {
         return {
             name,
             resolver: undefined,
-            items: this.bakeRowLayout( rows ),
+            items: this.bakeRowLayout( rows, this.resolveMaxElementsPerRow( componentClass ) ),
             options: undefined
         };
+    }
+
+    private resolveMaxElementsPerRow( componentClass: UIComponentTypeConstructor ): number {
+        return this.safeCall( () => componentClass.getMaxElementsPerRow?.() ) ?? UI_ELEMENTS_DEFAULT_MAX_PER_ROW;
     }
 
     /**
@@ -892,26 +896,28 @@ export class UIDefinitionExporter extends UIBase {
      *
      * A component such as the dynamic-channel primary message hands its elements group over as a
      * single flat row and only wraps it into rows at render time, via
-     * `uiUtilsDynamicElementsRearrange( elements, UI_ELEMENTS_DEFAULT_MAX_PER_ROW )` (see the v2/v3
+     * `uiUtilsDynamicElementsRearrange( elements, getMaxElementsPerRow() )` (see the v2/v3
      * `DynamicChannelComponent.getSchemaInternal()`). Without reproducing that here the export would
      * ship one over-wide row and every consumer - the website preview included - would have to guess
      * the wrapping, which is exactly how the preview drifted out of sync with Discord.
      *
      * This makes the exported schema the single source of truth for placement by applying the same
-     * wrap with the same shared constant. Only a single authored row wider than the max is wrapped;
-     * groups that already author their own rows (e.g. a select menu on its own line) are left exactly
-     * as authored, so intentional multi-row layouts are never flattened.
+     * wrap at the width the component itself renders at, which is why the width is asked of the
+     * component rather than read from the shared default. Only a single authored row wider than the
+     * max is wrapped; groups that already author their own rows (e.g. a select menu on its own line)
+     * are left exactly as authored, so intentional multi-row layouts are never flattened.
      */
     private bakeRowLayout(
-        rows: Array<Array<{ element: string; definition?: ElementDefinition }>>
+        rows: Array<Array<{ element: string; definition?: ElementDefinition }>>,
+        maxPerRow: number
     ): Array<Array<{ element: string; definition?: ElementDefinition }>> {
-        if ( rows.length !== 1 || rows[ 0 ].length <= UI_ELEMENTS_DEFAULT_MAX_PER_ROW ) {
+        if ( rows.length !== 1 || rows[ 0 ].length <= maxPerRow ) {
             return rows;
         }
 
         return uiUtilsDynamicElementsRearrange(
             rows as unknown as [][],
-            UI_ELEMENTS_DEFAULT_MAX_PER_ROW
+            maxPerRow
         ) as unknown as Array<Array<{ element: string; definition?: ElementDefinition }>>;
     }
 

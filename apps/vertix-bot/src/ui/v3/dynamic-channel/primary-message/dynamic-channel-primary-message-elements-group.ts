@@ -20,6 +20,8 @@ import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-ch
 import { DynamicChannelPermissionsAccessButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
 import { DynamicChannelTemplatesButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-button";
 import { DynamicChannelStatusButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/status/dynamic-channel-status-button";
+import { DynamicChannelInviteButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/invite/dynamic-channel-invite-button";
+import { DynamicChannelKnockButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-button";
 
 import type { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
@@ -63,6 +65,7 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
             DynamicChannelLimitMetaButton,
             DynamicChannelPrivacyButton,
             DynamicChannelPermissionsAccessButton,
+            DynamicChannelInviteButton,
             DynamicChannelRegionButton,
 
             DynamicChannelPrimaryMessageEditButton,
@@ -72,6 +75,7 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
             DynamicChannelTemplatesButton,
             DynamicChannelStatusButton,
             DynamicChannelClaimChannelButton,
+            DynamicChannelKnockButton,
         ].sort( ( a, b ) => a.getSortId() - b.getSortId() );
     }
 

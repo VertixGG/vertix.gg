@@ -45,6 +45,8 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
             .addTransition( "ResetChannel", { from: "Default", to: "Default" } )
             .addTransition( "ClaimChannel", { from: "Default", to: "Default" } )
             .addTransition( "TransferOwner", { from: "Default", to: "Default" } )
+            .addTransition( "OpenInvite", { from: "Default", to: "Default" } )
+            .addTransition( "OpenKnock", { from: "Default", to: "Default" } )
             .addTransition( "OpenTemplates", { from: "Default", to: "Default" } )
             // Handler bindings (combines element-to-transition binding with handler)
             .bindButton(
@@ -165,6 +167,22 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
                         "onClaimButtonClicked",
                         `Guild id: ${ interaction.guildId }, Channel id: ${ interaction.channelId } - Invalid state: ${ DynamicChannelVoteManager.$.getState( interaction.channelId ) }`
                     );
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelKnockButton",
+                "OpenKnock",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService.get( "VertixBot/UI-V3/DynamicChannelKnockAdapter" )?.runInitial( interaction );
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelInviteButton",
+                "OpenInvite",
+                async( _context, interaction ) => {
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService.get( "VertixBot/UI-V3/DynamicChannelInviteAdapter" )?.runInitial( interaction );
                 }
             )
             .bindButton(

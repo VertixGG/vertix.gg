@@ -218,6 +218,7 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_BUTTONS
                 "rename": EmojiManager.getToken( "ChannelRename" ) + "  ∙ **Rename**",
                 "limit": EmojiManager.getToken( "UserLimit" ) + " ∙ **User Limit**",
                 "access": EmojiManager.getToken( "ChannelPermissions" ) + " ∙ **Access**",
+                "invite": EmojiManager.getToken( "InviteChannel" ) + " ∙ **Invite**",
                 "privacy": EmojiManager.getToken( "ChannelPrivacy" ) + " ∙ **Privacy**",
                 "region": EmojiManager.getToken( "ChannelRegion" ) + " ∙ **Region**",
                 "edit-primary-message": EmojiManager.getToken( "EditChannelMessage" ) + " ∙ **Edit Primary Message**",
@@ -226,7 +227,8 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_BUTTONS
                 "transfer": EmojiManager.getToken( "TransferChannel" ) + " ∙ **Transfer**",
                 "templates": EmojiManager.getToken( "ChannelTemplates" ) + " ∙ **Templates**",
                 "status": EmojiManager.getToken( "Megaphone" ) + " ∙ **Status**",
-                "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**"
+                "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**",
+                "knock": EmojiManager.getToken( "KnockChannel" ) + " ∙ **Knock**"
             }
         }
     } )

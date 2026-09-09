@@ -4,7 +4,14 @@ import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
-import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/_dynamic-channel-requirements";
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+
+import { isSelfGatedEntity } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-self-gated-entities";
+
+import {
+    dynamicChannelBotPermissionsRequirements,
+    dynamicChannelRequirements
+} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/_dynamic-channel-requirements";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
@@ -42,9 +49,29 @@ export abstract class DynamicChannelAdapterExuBase<
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {
+        if ( this.isSelfGatedInteraction( interaction ) ) {
+            return dynamicChannelBotPermissionsRequirements( interaction );
+        }
+
         const channel = await this.resolveTargetChannel( interaction );
 
         return ( await dynamicChannelRequirements( interaction, channel ) ) ?? false;
+    }
+
+    /**
+     * Function isSelfGatedInteraction() :: Whether the pressed entity does its own gating.
+     *
+     * Reads the entity out of the custom id the same way `run()` does, so what is asked about here
+     * is exactly what is about to be dispatched.
+     */
+    private isSelfGatedInteraction( interaction: TInteraction ): boolean {
+        if ( ! ( "customId" in interaction ) ) {
+            return false;
+        }
+
+        const entityName = this.getCustomIdForEntity( interaction.customId ).split( UI_CUSTOM_ID_SEPARATOR )[ 1 ];
+
+        return isSelfGatedEntity( entityName );
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {

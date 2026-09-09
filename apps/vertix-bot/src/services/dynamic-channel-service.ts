@@ -66,6 +66,7 @@ import {
 } from "@vertix.gg/bot/src/definitions/master-channel";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
+import { DynamicChannelKnockManager } from "@vertix.gg/bot/src/managers/dynamic-channel-knock-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
@@ -559,6 +560,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         await this.log( undefined, channel as VoiceChannel, this.onLeaveDynamicChannelEmpty, "", {
             ownerDisplayName: ownerMember?.displayName
         } );
+
+        DynamicChannelKnockManager.$.clearChannel( channel.id );
 
         await this.services.channelService.delete( { guild, channel } );
     }

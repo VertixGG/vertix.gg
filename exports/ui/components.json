@@ -5277,6 +5277,17 @@
                             }
                         },
                         {
+                            "element": "VertixBot/UI-V3/DynamicChannelInviteButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<emoji name='InviteChannel'>"
+                            }
+                        },
+                        {
                             "element": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
                             "definition": {
                                 "name": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
@@ -5332,9 +5343,7 @@
                                 "style": "secondary",
                                 "emoji": "<emoji name='ResetChannel'>"
                             }
-                        }
-                    ],
-                    [
+                        },
                         {
                             "element": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
                             "definition": {
@@ -5345,7 +5354,9 @@
                                 "style": "secondary",
                                 "emoji": "<emoji name='TransferChannel'>"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
                             "definition": {
@@ -5377,6 +5388,17 @@
                                 "labelOmitted": true,
                                 "style": "secondary",
                                 "emoji": "<emoji name='ClaimChannel'>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelKnockButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<emoji name='KnockChannel'>"
                             }
                         }
                     ]
@@ -5565,6 +5587,448 @@
         }
     },
     {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "<emoji name='InviteChannel'> Select User"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "<emoji name='InviteChannel'> Select Channel"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelInviteEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{inviteEmoji}  Invite someone to your channel",
+                            "description": "Select the user you want in, and they can join whatever this channel is set to.\n\nThey are told where to find it, so a private channel does not have to be explained.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "inviteEmoji": "{inviteEmoji}"
+                            },
+                            "defaultVars": {
+                                "inviteEmoji": "<emoji name='InviteChannel'>"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{inviteEmoji}  Invite sent",
+                            "description": "**{invitedDisplayName}** can now join this channel.\n\n{deliveryDisplay}",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "deliveryDisplay": {
+                                    "{deliveryDelivered}": "They have been sent a link to it.",
+                                    "{deliveryBlocked}": "Their direct messages are closed, so tell them yourself - the access is already theirs."
+                                }
+                            },
+                            "vars": {
+                                "inviteEmoji": "{inviteEmoji}",
+                                "invitedDisplayName": "{invitedDisplayName}",
+                                "deliveryDisplay": "{deliveryDisplay}",
+                                "deliveryDelivered": "{deliveryDelivered}",
+                                "deliveryBlocked": "{deliveryBlocked}"
+                            },
+                            "defaultVars": {
+                                "inviteEmoji": "<emoji name='InviteChannel'>",
+                                "invitedDisplayName": "Example User",
+                                "deliveryDisplay": "{deliveryDelivered}"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{inviteEmoji}  Which channel?",
+                            "description": "You have more than one channel open here. Pick the one to invite someone into.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "inviteEmoji": "{inviteEmoji}"
+                            },
+                            "defaultVars": {
+                                "inviteEmoji": "<emoji name='InviteChannel'>"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{inviteEmoji}  You have no channel here",
+                            "description": "There is nothing to invite anyone into yet.\n\nJoin the generator to open a channel, then invite whoever you want.",
+                            "color": 9807270,
+                            "vars": {
+                                "inviteEmoji": "{inviteEmoji}"
+                            },
+                            "defaultVars": {
+                                "inviteEmoji": "<emoji name='InviteChannel'>"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/NothingChangedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/NothingChangedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🤷  Nothing changed",
+                            "description": "This is may occur when you try to change something that is not changeable or is the same as before.",
+                            "color": 15548997
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🤷 Oops, an issue has occurred",
+                            "description": "Something went wrong",
+                            "color": 15548997
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 6,
+                "withDefinition": 6,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "<emoji name='KnockChannel'> Select Channel"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelKnockEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{knockEmoji}  Ask to join a channel",
+                            "description": "Pick the channel you want into and its owner is asked to let you in.\n\nThey decide, and you are told either way.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "knockEmoji": "{knockEmoji}"
+                            },
+                            "defaultVars": {
+                                "knockEmoji": "<emoji name='KnockChannel'>"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{knockEmoji}  Your request was sent",
+                            "description": "The owner of **{knockedChannelName}** has been asked to let you in.\n\nYou are told as soon as they answer.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "knockEmoji": "{knockEmoji}",
+                                "knockedChannelName": "{knockedChannelName}"
+                            },
+                            "defaultVars": {
+                                "knockEmoji": "<emoji name='KnockChannel'>",
+                                "knockedChannelName": "Example Channel"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{knockEmoji}  Nothing to knock on",
+                            "description": "Every channel here is either open to you already or is one of your own.\n\nA channel you cannot see is not listed - if a friend has one, ask them for an invite.",
+                            "color": 9807270,
+                            "vars": {
+                                "knockEmoji": "{knockEmoji}"
+                            },
+                            "defaultVars": {
+                                "knockEmoji": "<emoji name='KnockChannel'>"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{knockEmoji}  You already asked",
+                            "description": "That channel's owner has your request and has not answered it yet.\n\nGive them a few minutes before asking again.",
+                            "color": 9807270,
+                            "vars": {
+                                "knockEmoji": "{knockEmoji}"
+                            },
+                            "defaultVars": {
+                                "knockEmoji": "<emoji name='KnockChannel'>"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🤷 Oops, an issue has occurred",
+                            "description": "Something went wrong",
+                            "color": 15548997
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 5,
+                "withDefinition": 5,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockRequestComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-General/YesNoElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/YesButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/YesButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "👍 Yes",
+                                "style": "primary"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/NoButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/NoButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "👎 No",
+                                "style": "secondary"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{knockEmoji}  Someone wants to join",
+                            "description": "<@{knockerId}> is asking to be let into this channel.\n\nLetting them in grants them access the way the access menu would. Ignoring this is an answer too - the request expires on its own.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "vars": {
+                                "knockEmoji": "{knockEmoji}",
+                                "knockerId": "{knockerId}",
+                                "knockerDisplayName": "{knockerDisplayName}"
+                            },
+                            "defaultVars": {
+                                "knockEmoji": "<emoji name='KnockChannel'>",
+                                "knockerId": "123456789",
+                                "knockerDisplayName": "Example User"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "{knockEmoji}  Request answered",
+                            "description": "{answerDisplay}",
+                            "color": 3369963,
+                            "options": {
+                                "answerDisplay": {
+                                    "{answerAllowed}": "**{knockerDisplayName}** was let in.",
+                                    "{answerDenied}": "**{knockerDisplayName}** was not let in."
+                                }
+                            },
+                            "vars": {
+                                "knockEmoji": "{knockEmoji}",
+                                "knockerDisplayName": "{knockerDisplayName}",
+                                "answerDisplay": "{answerDisplay}",
+                                "answerAllowed": "{answerAllowed}",
+                                "answerDenied": "{answerDenied}"
+                            },
+                            "defaultVars": {
+                                "knockEmoji": "<emoji name='KnockChannel'>",
+                                "knockerDisplayName": "Example User",
+                                "answerDisplay": "{answerAllowed}"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🤷 Oops, an issue has occurred",
+                            "description": "Something went wrong",
+                            "color": 15548997
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": "VertixBot/UI-General/YesNoElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 3,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
         "name": "VertixBot/UI-V3/DynamicChannelLimitComponent",
         "type": "component",
         "instanceType": "Dynamic",
@@ -5706,6 +6170,17 @@
                             }
                         },
                         {
+                            "element": "VertixBot/UI-V3/DynamicChannelInviteButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<emoji name='InviteChannel'>"
+                            }
+                        },
+                        {
                             "element": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
                             "definition": {
                                 "name": "VertixBot/UI-V3/DynamicChannelPrivacyButton",
@@ -5761,9 +6236,7 @@
                                 "style": "secondary",
                                 "emoji": "<emoji name='ResetChannel'>"
                             }
-                        }
-                    ],
-                    [
+                        },
                         {
                             "element": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
                             "definition": {
@@ -5774,7 +6247,9 @@
                                 "style": "secondary",
                                 "emoji": "<emoji name='TransferChannel'>"
                             }
-                        },
+                        }
+                    ],
+                    [
                         {
                             "element": "VertixBot/UI-V3/DynamicChannelTemplatesButton",
                             "definition": {
@@ -5806,6 +6281,17 @@
                                 "labelOmitted": true,
                                 "style": "secondary",
                                 "emoji": "<emoji name='ClaimChannel'>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelKnockButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<emoji name='KnockChannel'>"
                             }
                         }
                     ]
@@ -8280,6 +8766,11 @@
                                     },
                                     {
                                         "label": "Privacy",
+                                        "value": "invite",
+                                        "emoji": "<emoji name='InviteChannel'>"
+                                    },
+                                    {
+                                        "label": "Privacy",
                                         "value": "privacy",
                                         "emoji": "<emoji name='ChannelPrivacy'>"
                                     },
@@ -8322,6 +8813,11 @@
                                         "label": "Claim",
                                         "value": "claim-button",
                                         "emoji": "<emoji name='ClaimChannel'>"
+                                    },
+                                    {
+                                        "label": "Knock",
+                                        "value": "knock",
+                                        "emoji": "<emoji name='KnockChannel'>"
                                     }
                                 ]
                             }
@@ -8807,6 +9303,7 @@
                                         "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
                                         "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
                                         "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+                                        "invite": "<emoji name='InviteChannel'> ∙ **Invite**",
                                         "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
                                         "region": "<emoji name='ChannelRegion'> ∙ **Region**",
                                         "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -8815,7 +9312,8 @@
                                         "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
                                         "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
                                         "status": "<emoji name='Megaphone'> ∙ **Status**",
-                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+                                        "knock": "<emoji name='KnockChannel'> ∙ **Knock**"
                                     }
                                 }
                             },
@@ -9153,6 +9651,11 @@
                                     },
                                     {
                                         "label": "Privacy",
+                                        "value": "invite",
+                                        "emoji": "<emoji name='InviteChannel'>"
+                                    },
+                                    {
+                                        "label": "Privacy",
                                         "value": "privacy",
                                         "emoji": "<emoji name='ChannelPrivacy'>"
                                     },
@@ -9195,6 +9698,11 @@
                                         "label": "Claim",
                                         "value": "claim-button",
                                         "emoji": "<emoji name='ClaimChannel'>"
+                                    },
+                                    {
+                                        "label": "Knock",
+                                        "value": "knock",
+                                        "emoji": "<emoji name='KnockChannel'>"
                                     }
                                 ]
                             }
@@ -9395,6 +9903,7 @@
                                         "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
                                         "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
                                         "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+                                        "invite": "<emoji name='InviteChannel'> ∙ **Invite**",
                                         "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
                                         "region": "<emoji name='ChannelRegion'> ∙ **Region**",
                                         "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -9403,7 +9912,8 @@
                                         "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
                                         "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
                                         "status": "<emoji name='Megaphone'> ∙ **Status**",
-                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+                                        "knock": "<emoji name='KnockChannel'> ∙ **Knock**"
                                     }
                                 }
                             },
@@ -9644,6 +10154,11 @@
                                     },
                                     {
                                         "label": "Privacy",
+                                        "value": "invite",
+                                        "emoji": "<emoji name='InviteChannel'>"
+                                    },
+                                    {
+                                        "label": "Privacy",
                                         "value": "privacy",
                                         "emoji": "<emoji name='ChannelPrivacy'>"
                                     },
@@ -9686,6 +10201,11 @@
                                         "label": "Claim",
                                         "value": "claim-button",
                                         "emoji": "<emoji name='ClaimChannel'>"
+                                    },
+                                    {
+                                        "label": "Knock",
+                                        "value": "knock",
+                                        "emoji": "<emoji name='KnockChannel'>"
                                     }
                                 ]
                             }
@@ -9771,6 +10291,7 @@
                                         "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
                                         "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
                                         "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+                                        "invite": "<emoji name='InviteChannel'> ∙ **Invite**",
                                         "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
                                         "region": "<emoji name='ChannelRegion'> ∙ **Region**",
                                         "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -9779,7 +10300,8 @@
                                         "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
                                         "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
                                         "status": "<emoji name='Megaphone'> ∙ **Status**",
-                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+                                        "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+                                        "knock": "<emoji name='KnockChannel'> ∙ **Knock**"
                                     }
                                 }
                             },

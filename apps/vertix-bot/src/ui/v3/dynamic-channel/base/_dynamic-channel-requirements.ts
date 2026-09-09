@@ -71,6 +71,19 @@ export const dynamicChannelRequirements = async(
         return false;
     }
 
+    return dynamicChannelBotPermissionsRequirements( interaction );
+};
+
+/**
+ * Function dynamicChannelBotPermissionsRequirements() :: Whether the bot itself can act in the
+ * guild at all.
+ *
+ * Split out of `dynamicChannelRequirements()` because an entity that gates itself still has to
+ * clear this - what such an entity does not want is the channel resolution and the owner check
+ * above it, which assume the presser is standing in a channel they own. `Knock` is pressed by
+ * someone who owns nothing, and `Invite` from a panel is pressed by an owner standing nowhere.
+ */
+export const dynamicChannelBotPermissionsRequirements = async( interaction: UIAdapterReplyContext ) => {
     if ( PermissionsManager.$.isSelfAdministratorRole( interaction.guild ) ) {
         return true;
     }
@@ -80,25 +93,27 @@ export const dynamicChannelRequirements = async(
             ...PermissionsManager.$.getMissingPermissions( requiredRolePermissions, interaction.guild )
         ];
 
-    const result = !missingPermissions.length;
+    if ( ! missingPermissions.length ) {
+        return true;
+    }
 
-    if ( missingPermissions.length ) {
-        GlobalLogger.$.admin(
-            dynamicChannelRequirements,
-            `🔐 Dynamic Channel missing permissions - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild.memberCount })`
-        );
+    GlobalLogger.$.admin(
+        dynamicChannelBotPermissionsRequirements,
+        `🔐 Dynamic Channel missing permissions - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild.memberCount })`
+    );
 
-        GlobalLogger.$.log(
-            dynamicChannelRequirements,
-            `Guild id: '${ interaction.guildId }' - Required permissions:`,
-            missingPermissions
-        );
+    GlobalLogger.$.log(
+        dynamicChannelBotPermissionsRequirements,
+        `Guild id: '${ interaction.guildId }' - Required permissions:`,
+        missingPermissions
+    );
 
-        await uiService.get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )?.ephemeral( interaction, {
+    await ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+        .get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )
+        ?.ephemeral( interaction, {
             missingPermissions,
             omitterDisplayName: interaction.guild.client.user.username
         } );
-    }
 
-    return result;
+    return false;
 };

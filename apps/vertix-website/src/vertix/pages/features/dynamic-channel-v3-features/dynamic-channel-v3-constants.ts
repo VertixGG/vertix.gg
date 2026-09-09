@@ -11,6 +11,8 @@ export const DYNAMIC_CHANNEL_V3_EMOJIS = {
     claimChannel: "<emoji name='ClaimChannel'>",
     templates: "<emoji name='Templates'>",
     status: "<emoji name='Megaphone'>",
+    inviteChannel: "<emoji name='InviteChannel'>",
+    knockChannel: "<emoji name='KnockChannel'>",
 };
 
 export const DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES = {

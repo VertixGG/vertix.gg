@@ -60,7 +60,14 @@ export type UIEntityTypes = ( typeof UIEntityBase )[];
 export type UIEntityConstructor = { new (): UIEntityBase }[];
 export type UIEntityTypesConstructor = UIEntityTypes | UIEntityConstructor | ( UIEntityTypes | UIEntityConstructor )[];
 
-export type UIComponentConstructor = { new ( args?: UICreateComponentArgs ): UIComponentBase };
+export type UIComponentConstructor = {
+    new ( args?: UICreateComponentArgs ): UIComponentBase;
+
+    /**
+     * The number of elements a component draws per row, when it is not the shared default.
+     */
+    getMaxElementsPerRow?(): number;
+};
 export type UIComponentTypeConstructor = typeof UIComponentBase & UIComponentConstructor;
 
 export type AbstractConstructor<T> = abstract new ( ...args: never[] ) => T;

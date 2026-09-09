@@ -1286,6 +1286,214 @@
         ]
     },
     {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V3/DynamicChannelInviteComponent",
+        "module": "VertixBot/UI-V3/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelInviteSelectChannel",
+                "elementsGroup": "VertixBot/UI-V3/DynamicChannelInviteChannelMenuGroup",
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelInviteNoChannel",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelInviteSelectUser",
+                "elementsGroup": "VertixBot/UI-V3/DynamicChannelInviteUserMenuGroup",
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelInviteEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelInviteSent",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelInviteSentEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelInviteNothingChanged",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/NothingChangedEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelInviteError",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelInviteAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelInviteAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V3/DynamicChannelKnockComponent",
+        "module": "VertixBot/UI-V3/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockSelectChannel",
+                "elementsGroup": "VertixBot/UI-V3/DynamicChannelKnockChannelMenuGroup",
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelKnockEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockSent",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelKnockSentEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockSentDirect",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelKnockSentEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockNothing",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockWaiting",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockWaitingDirect",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockError",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockErrorDirect",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelKnockAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelKnockAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockRequestAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V3/DynamicChannelKnockRequestComponent",
+        "module": "VertixBot/UI-V3/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": "VertixBot/UI-General/YesNoElementsGroup",
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockAnswered",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelKnockRequestError",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelKnockRequestAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelKnockRequestAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-V3/DynamicChannelLimitAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V3/DynamicChannelLimitComponent",

@@ -10,6 +10,9 @@ export { DynamicChannelRenameAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-ch
 export { DynamicChannelStatusAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/status/dynamic-channel-status-adapter";
 export { DynamicChannelPermissionsAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-adapter";
 export { DynamicChannelTransferOwnerAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/transfer-ownership/dynamic-channel-transfer-owner-adapter";
+export { DynamicChannelInviteAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/invite/dynamic-channel-invite-adapter";
+export { DynamicChannelKnockAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-adapter";
+export { DynamicChannelKnockRequestAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/request/dynamic-channel-knock-request-adapter";
 export { DynamicChannelPrimaryMessageEditAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-adapter";
 export { DynamicChannelResetChannelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-adapter";
 export { DynamicChannelPrivacyAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-adapter";

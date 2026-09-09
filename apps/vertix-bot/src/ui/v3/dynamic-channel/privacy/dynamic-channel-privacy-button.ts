@@ -1,6 +1,6 @@
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
-import { DynamicChannelPermissionsAccessButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
+import { DynamicChannelInviteButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/invite/dynamic-channel-invite-button";
 
 import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
@@ -18,7 +18,7 @@ export class DynamicChannelPrivacyButton extends DynamicChannelButtonBase {
     }
 
     public static getSortId() {
-        return this.getSortIdAfter( DynamicChannelPermissionsAccessButton );
+        return this.getSortIdAfter( DynamicChannelInviteButton );
     }
 
     public getId() {

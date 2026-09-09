@@ -193,12 +193,31 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
         } );
     }
 
-    public async sendToUser( userId: string, message: MessageCreateOptions ) {
+    /**
+     * Function sendToUser() :: Sends a direct message, reporting whether it landed.
+     *
+     * A closed inbox is the ordinary outcome rather than a fault - it is the member's own setting -
+     * so it is answered rather than thrown, leaving the caller to decide whether anything else has
+     * to be said. The fetch is covered too: an id that no longer resolves fails the same way.
+     */
+    public async sendToUser( userId: string, message: MessageCreateOptions ): Promise<boolean> {
         const appService = this.services.appService;
 
-        await ( await appService.getClient().users.fetch( userId ) ).send( message ).catch( () => {
-            this.logger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` );
-        } );
+        const user = await appService.getClient().users.fetch( userId ).catch( () => null );
+
+        if ( ! user ) {
+            this.logger.error( this.sendToUser, `Failed to fetch user, userId: '${ userId }'` );
+
+            return false;
+        }
+
+        return user.send( message )
+            .then( () => true )
+            .catch( () => {
+                this.logger.error( this.sendToUser, `Failed to send message to user, userId: '${ userId }'` );
+
+                return false;
+            } );
     }
 
     private async fetchEmbed( url: string, message: Message ) {

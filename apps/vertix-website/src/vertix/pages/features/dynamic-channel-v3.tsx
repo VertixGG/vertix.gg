@@ -20,6 +20,8 @@ import Templates from "@vertix.gg/website/src/vertix/pages/features/dynamic-chan
 import Status from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/status";
 import ResetChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/reset-channel";
 import TransferChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/transfer-channel";
+import InviteChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/invite-channel";
+import KnockChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/knock-channel";
 import ClaimChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/claim-channel";
 
 import type { SearchableSelectOption } from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
@@ -35,7 +37,7 @@ function getFeatureOptions(): SearchableSelectOption[] {
         <DynamicChannelV3Emoji name={ name } alt={ alt } fallback={ fallback } className="inline-flex items-center" />
     );
 
-    const { rename, limit, clearChat, permissions, privacy, region, editPrimaryMessage, templates, resetChannel, transferChannel, claimChannel, status } = DYNAMIC_CHANNEL_V3_EMOJI_NAMES;
+    const { rename, limit, clearChat, permissions, privacy, region, editPrimaryMessage, templates, resetChannel, transferChannel, claimChannel, status, inviteChannel, knockChannel } = DYNAMIC_CHANNEL_V3_EMOJI_NAMES;
 
     return [
         { label: "📋 All Features", value: "all" },
@@ -44,6 +46,8 @@ function getFeatureOptions(): SearchableSelectOption[] {
         { label: "User Limit", value: "user-limit", icon: icon( limit, "User Limit", "✋" ) },
         { label: "Clear Chat", value: "clear-chat", icon: icon( clearChat, "Clear Chat", "🧹" ) },
         { label: "Permissions", value: "permissions", icon: icon( permissions, "Permissions", "👥" ) },
+        { label: "Invite", value: "invite-channel", icon: icon( inviteChannel, "Invite", "📨" ) },
+        { label: "Knock", value: "knock-channel", icon: icon( knockChannel, "Knock", "🚪" ) },
         { label: "Privacy State", value: "privacy-state", icon: icon( privacy, "Privacy", "🚫" ) },
         { label: "Region", value: "region", icon: icon( region, "Region", "🌍" ) },
         { label: "Edit Primary Message", value: "edit-primary-message", icon: icon( editPrimaryMessage, "Edit Primary Message", "📝" ) },
@@ -61,6 +65,8 @@ const FEATURE_COMPONENTS: Record<string, JSX.Element> = {
     "user-limit": <UserLimit />,
     "clear-chat": <ClearChat />,
     "permissions": <Permissions />,
+    "invite-channel": <InviteChannel />,
+    "knock-channel": <KnockChannel />,
     "privacy-state": <Privacy />,
     "region": <Region />,
     "edit-primary-message": <PrimaryMessageEdit />,

@@ -5,6 +5,8 @@ import { useCommandState, useComponent, useCommand } from "@zenflux/react-comman
 
 import { Layers, RefreshCw, Trash2, Settings, Hash, AlertTriangle, Pencil } from "lucide-react";
 
+import { DiscordButton } from "@vertix.gg/discord-ui/src";
+
 import { ScalingChannelCard } from "./scaling-channel-card";
 import ScalingConfigForm from "./scaling-config-form";
 
@@ -187,14 +189,14 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
                                 Configuration
                             </h3>
                             { !state.isEditing && (
-                                <button
+                                <DiscordButton
+                                    variant="primary"
+                                    size="sm"
                                     onClick={ handleStartEditing }
-                                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-success bg-success/15
-                                        hover:bg-success/25 border border-success/40 rounded-md transition-colors"
+                                    icon={ <Pencil className="w-3.5 h-3.5" /> }
                                 >
-                                    <Pencil className="w-3.5 h-3.5" />
                                     Edit
-                                </button>
+                                </DiscordButton>
                             ) }
                         </header>
 
@@ -234,26 +236,22 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
                             </h3>
 
                             <div className="flex flex-wrap gap-2">
-                                <button
+                                <DiscordButton
+                                    size="sm"
                                     onClick={ handleReindex }
                                     disabled={ isSaving }
-                                    className="flex items-center gap-2 px-3 py-1.5 bg-surface hover:bg-surface-hover
-                                        border border-border disabled:opacity-50 text-text-secondary hover:text-text-primary
-                                        rounded-md text-sm transition-colors"
+                                    icon={ <RefreshCw className="w-4 h-4" /> }
                                 >
-                                    <RefreshCw className="w-4 h-4" />
                                     Reindex
-                                </button>
-                                <button
+                                </DiscordButton>
+                                <DiscordButton
+                                    size="sm"
                                     onClick={ handleCleanup }
                                     disabled={ isSaving }
-                                    className="flex items-center gap-2 px-3 py-1.5 bg-surface hover:bg-surface-hover
-                                        border border-border disabled:opacity-50 text-text-secondary hover:text-text-primary
-                                        rounded-md text-sm transition-colors"
+                                    icon={ <Trash2 className="w-4 h-4" /> }
                                 >
-                                    <Trash2 className="w-4 h-4" />
                                     Cleanup empty
-                                </button>
+                                </DiscordButton>
                             </div>
                         </div>
 
@@ -285,22 +283,21 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
-                                    <button
+                                    <DiscordButton
+                                        variant="danger"
+                                        size="sm"
                                         onClick={ handleDelete }
                                         disabled={ isSaving }
-                                        className="px-3 py-1.5 bg-error/20 hover:bg-error/30 disabled:opacity-50
-                                            text-error rounded-md text-sm font-medium transition-colors"
                                     >
                                         Delete everything
-                                    </button>
-                                    <button
+                                    </DiscordButton>
+                                    <DiscordButton
+                                        size="sm"
                                         onClick={ handleHideDeleteConfirm }
                                         disabled={ isSaving }
-                                        className="px-3 py-1.5 bg-surface-elevated hover:bg-surface-hover
-                                            text-text-primary rounded-md text-sm transition-colors"
                                     >
                                         Cancel
-                                    </button>
+                                    </DiscordButton>
                                 </div>
                             </div>
                         ) : (
@@ -308,14 +305,15 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
                                 <span className="text-sm text-text-muted">
                                     Deleting the setup removes the generator and its channels from Discord.
                                 </span>
-                                <button
+                                <DiscordButton
+                                    variant="danger"
+                                    size="sm"
+                                    className="shrink-0"
                                     onClick={ handleShowDeleteConfirm }
-                                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-error
-                                        hover:bg-error/15 rounded-md transition-colors shrink-0"
+                                    icon={ <Trash2 className="w-4 h-4" /> }
                                 >
-                                    <Trash2 className="w-4 h-4" />
                                     Delete setup
-                                </button>
+                                </DiscordButton>
                             </div>
                         ) }
                     </section>

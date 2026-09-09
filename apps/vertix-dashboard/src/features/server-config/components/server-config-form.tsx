@@ -4,6 +4,7 @@ import { useCommand } from "@zenflux/react-commander/hooks";
 
 import { Plus, Save, ShieldCheck, ShieldX, X } from "lucide-react";
 
+import { DiscordButton } from "@vertix.gg/discord-ui/src";
 import { badwordsIsMatch } from "@vertix.gg/definitions/src/badwords-match";
 
 import { RoleCheckList, RoleRadioList } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
@@ -221,17 +222,15 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                             className={ `${ fieldClassName } font-mono` }
                             disabled={ isSaving }
                         />
-                        <button
+                        <DiscordButton
+                            variant="primary"
+                            className="shrink-0"
                             onClick={ handleAddBadwords }
                             disabled={ isSaving || !draftedBadwords.length }
-                            className="flex items-center gap-1 shrink-0 px-3 py-2 text-sm text-text-accent bg-accent/15
-                                hover:bg-accent/25 border border-border-accent rounded-md transition-colors
-                                disabled:bg-surface-elevated disabled:border-border disabled:text-text-muted
-                                disabled:cursor-not-allowed"
+                            icon={ <Plus className="w-4 h-4" /> }
                         >
-                            <Plus className="w-4 h-4" />
                             Add
-                        </button>
+                        </DiscordButton>
                     </div>
                     <p className="text-xs text-text-muted mt-1 mb-0">
                         A word may use <code>*</code> to stand for any run of characters. Matching ignores case.
@@ -311,16 +310,14 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
             </section>
 
             <div className="flex items-center gap-2">
-                <button
+                <DiscordButton
+                    variant="primary"
                     onClick={ handleSave }
                     disabled={ !hasChanges || isSaving }
-                    className="flex items-center gap-2 px-4 py-2 bg-accent/15 hover:bg-accent/25 border border-border-accent
-                        disabled:bg-surface-elevated disabled:border-border disabled:text-text-muted disabled:cursor-not-allowed
-                        text-text-accent rounded-md text-sm font-medium transition-colors"
+                    icon={ <Save className="w-4 h-4" /> }
                 >
-                    <Save className="w-4 h-4" />
                     { isSaving ? "Saving..." : "Save changes" }
-                </button>
+                </DiscordButton>
             </div>
         </div>
     );

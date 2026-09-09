@@ -5,6 +5,8 @@ import { useCommandState, useComponent, useCommand } from "@zenflux/react-comman
 
 import { Save, X } from "lucide-react";
 
+import { DiscordButton } from "@vertix.gg/discord-ui/src";
+
 import {
     ChannelRadioList,
     RoleCheckList,
@@ -313,25 +315,21 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
             </div>
 
             <div className="flex items-center gap-2 pt-1">
-                <button
+                <DiscordButton
+                    variant="primary"
                     onClick={ handleSave }
                     disabled={ !hasChanges || isSaving }
-                    className="flex items-center gap-2 px-4 py-2 bg-accent/15 hover:bg-accent/25 border border-border-accent
-                        disabled:bg-surface-elevated disabled:border-border disabled:text-text-muted disabled:cursor-not-allowed
-                        text-text-accent rounded-md text-sm font-medium transition-colors"
+                    icon={ <Save className="w-4 h-4" /> }
                 >
-                    <Save className="w-4 h-4" />
                     { isSaving ? "Saving..." : "Save changes" }
-                </button>
-                <button
+                </DiscordButton>
+                <DiscordButton
                     onClick={ handleCancel }
                     disabled={ isSaving }
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-surface-hover disabled:cursor-not-allowed
-                        text-text-secondary hover:text-text-primary rounded-md text-sm transition-colors"
+                    icon={ <X className="w-4 h-4" /> }
                 >
-                    <X className="w-4 h-4" />
                     Cancel
-                </button>
+                </DiscordButton>
             </div>
         </div>
     );

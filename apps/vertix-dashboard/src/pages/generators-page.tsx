@@ -7,6 +7,8 @@ import { withCommands } from "@zenflux/react-commander/with-commands";
 
 import { Layers, Radio, Loader2, Plus, RefreshCw, ChevronDown, AlertTriangle, X } from "lucide-react";
 
+import { DiscordButton } from "@vertix.gg/discord-ui/src";
+
 import {
     GENERATORS_COMMANDS,
     GENERATORS_INITIAL_STATE
@@ -258,29 +260,25 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                         { /* Below the list rather than in the header: both act on the list, and a
                              long one scrolls the header away from them. */ }
                         <div className="shrink-0 p-2 border-t border-border flex items-center gap-2">
-                            <button
+                            <DiscordButton
                                 onClick={ handleRefreshList }
                                 disabled={ state.isLoading }
-                                className="flex items-center justify-center gap-2 px-3 py-2 text-sm text-text-secondary
-                                    hover:text-text-primary bg-surface hover:bg-surface-hover border border-border
-                                    rounded-lg transition-colors disabled:opacity-50"
                                 title="Refresh"
+                                icon={ <RefreshCw className={ `w-4 h-4 ${ state.isLoading ? "animate-spin" : "" }` } /> }
                             >
-                                <RefreshCw className={ `w-4 h-4 ${ state.isLoading ? "animate-spin" : "" }` } />
                                 Refresh
-                            </button>
+                            </DiscordButton>
 
                             <div className="relative flex-1" ref={ createMenuRef }>
-                                <button
+                                <DiscordButton
+                                    variant="primary"
+                                    className="w-full"
                                     onClick={ () => setShowCreateDropdown( !showCreateDropdown ) }
-                                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm
-                                        text-text-accent bg-accent/15 hover:bg-accent/25 border border-border-accent
-                                        rounded-lg transition-colors"
+                                    icon={ <Plus className="w-4 h-4" /> }
+                                    trailingIcon={ <ChevronDown className="w-3 h-3" /> }
                                 >
-                                    <Plus className="w-4 h-4" />
                                     New setup
-                                    <ChevronDown className="w-3 h-3" />
-                                </button>
+                                </DiscordButton>
 
                                 { showCreateDropdown && (
                                     // Opens upward, there is nothing below it to open into.

@@ -3,6 +3,8 @@ import { useCommandState, useComponent, useCommand } from "@zenflux/react-comman
 
 import { Loader2, Plus, X } from "lucide-react";
 
+import { DiscordButton } from "@vertix.gg/discord-ui/src";
+
 import {
     CREATE_DYNAMIC_FORM_INITIAL_STATE,
     CREATE_DYNAMIC_FORM_COMMANDS
@@ -182,18 +184,19 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                     </div>
 
                     <div className="flex gap-3 pt-2">
-                        <button
+                        <DiscordButton
                             type="button"
+                            className="flex-1"
                             onClick={ handleCancel }
                             disabled={ isCreating }
-                            className="flex-1 px-4 py-2 bg-surface-elevated text-text-primary rounded hover:bg-surface-hover disabled:opacity-50 transition-colors"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </DiscordButton>
+                        <DiscordButton
+                            variant="primary"
                             type="submit"
+                            className="flex-1"
                             disabled={ isCreating }
-                            className="flex-1 px-4 py-2 bg-accent/15 text-text-accent border border-border-accent rounded hover:bg-accent/25 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
                         >
                             { isCreating ? (
                                 <>
@@ -206,7 +209,7 @@ const CreateDynamicFormComponent: DCommandFunctionComponent<CreateDynamicFormPro
                                     Create
                                 </>
                             ) }
-                        </button>
+                        </DiscordButton>
                     </div>
                 </form>
             </div>

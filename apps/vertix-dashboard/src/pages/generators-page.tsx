@@ -343,6 +343,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                         ) : selectedMasterChannelType === "dynamic" && selectedDynamicMaster?.dynamicChannels ? (
                             <DynamicDetailsPanel
                                 discordOptions={ state.discordOptions }
+                                guildSettings={ generatorsDetails.settings }
                                 details={ {
                                     master: selectedDynamicMaster,
                                     dynamicChannels: selectedDynamicMaster.dynamicChannels,

@@ -12,6 +12,7 @@ import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/g
 import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-stats-query";
 import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-details-query";
 import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generators/query/guild-generators-query";
+import { ServerConfigQuery } from "@vertix.gg/dashboard/src/features/server-config/query/server-config-query";
 
 import { AuthProvider, ProtectedRoute, LoginPage, ServerSelectionPage } from "@vertix.gg/dashboard/src/features/auth";
 
@@ -19,6 +20,7 @@ import { AppLayout } from "@vertix.gg/dashboard/src/components/app-layout";
 import { HomePage } from "@vertix.gg/dashboard/src/pages/home-page";
 import { InterfaceEditorPage } from "@vertix.gg/dashboard/src/pages/interface-editor-page";
 import { GeneratorsPage } from "@vertix.gg/dashboard/src/pages/generators-page";
+import { ServerConfigPage } from "@vertix.gg/dashboard/src/pages/server-config-page";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
@@ -34,6 +36,7 @@ client.registerModule( GlobalStatsQuery );
 client.registerModule( GuildStatsQuery );
 client.registerModule( GuildDetailsQuery );
 client.registerModule( GuildGeneratorsQuery );
+client.registerModule( ServerConfigQuery );
 
 export function App() {
     return (
@@ -57,6 +60,7 @@ export function App() {
                             <Route path="/" element={ <HomePage /> } />
                             <Route path="/interface-editor" element={ <InterfaceEditorPage /> } />
                             <Route path="/generators" element={ <GeneratorsPage /> } />
+                            <Route path="/server-config" element={ <ServerConfigPage /> } />
 
                             { /* The page was called Management until it was named after what it
                                  actually holds. */ }

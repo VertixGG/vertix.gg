@@ -141,6 +141,10 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 await this.services.dynamicChannelService.handleDeleteDynamicSetup( payload.data );
                 break;
 
+            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_GUILD_SETTINGS:
+                await this.services.dynamicChannelService.handleUpdateGuildSettings( payload.data );
+                break;
+
             // Customization-related actions -> DynamicChannelService
             case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION:
                 await this.services.dynamicChannelService.handleRefreshCustomization( payload.data );

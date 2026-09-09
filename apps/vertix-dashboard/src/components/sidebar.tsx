@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
-import { Home, Boxes, Radio, Settings, LogOut, User, ChevronUp } from "lucide-react";
+import { Home, Boxes, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronUp } from "lucide-react";
 
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
@@ -29,6 +29,12 @@ const navItems: NavItem[] = [
         label: "Generators",
         path: "/generators",
         icon: <Radio className="w-5 h-5" />,
+        hideForDefault: true
+    },
+    {
+        label: "Server Config",
+        path: "/server-config",
+        icon: <SlidersHorizontal className="w-5 h-5" />,
         hideForDefault: true
     },
     {

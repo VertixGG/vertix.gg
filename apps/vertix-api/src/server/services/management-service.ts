@@ -11,6 +11,13 @@ import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ip
 
 import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
+import {
+    DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
+    DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES,
+    DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES,
+    DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE
+} from "@vertix.gg/definitions/src/guild-data-keys";
+
 import type { DiscordService } from "./discord-service";
 
 import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
@@ -200,6 +207,28 @@ export interface ScalingChannelInfo {
 export interface GuildManagementDetails {
     scalingMasterChannels: ScalingMasterChannelInfo[];
     dynamicMasterChannels: DynamicMasterChannelInfo[];
+    settings: GuildSettings;
+}
+
+/**
+ * The guild wide defaults every generator falls back to when it holds none of its own.
+ *
+ * An empty list means unset, which resolves to `@everyone` for the audience and to nobody for the
+ * staff. The dashboard needs that apart from an explicit choice, so it is reported as stored.
+ */
+export interface GuildSettings {
+    voiceRoleId: string | null;
+    verifiedRoleIds: string[];
+    staffRoleIds: string[];
+    /** Empty means the guild never set its own, so the bot's built in list applies. */
+    badwords: string[];
+}
+
+export interface UpdateGuildSettingsInput {
+    voiceRoleId?: string | null;
+    verifiedRoleIds?: string[];
+    staffRoleIds?: string[];
+    badwords?: string[];
 }
 
 export interface ScalingMasterDetails {
@@ -265,6 +294,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         if ( !guild ) {
             return null;
         }
+
+        const settings = await this.readGuildSettings( guild.id );
 
         const [ scalingMasters, dynamicMasters ] = await Promise.all( [
             getClient().channel.findMany( {
@@ -350,8 +381,86 @@ export class ManagementService extends ServiceWithDependenciesBase<{
 
         return {
             scalingMasterChannels,
-            dynamicMasterChannels
+            dynamicMasterChannels,
+            settings
         };
+    }
+
+    /**
+     * Function readGuildSettings() :: The guild wide defaults, straight from the rows the bot writes.
+     *
+     * A row is absent until a guild sets one, and it is deleted again when the list is emptied, so
+     * a missing row is the unset state rather than an error.
+     */
+    private async readGuildSettings( guildOwnerId: string ): Promise<GuildSettings> {
+        const rows = await getClient().guildData.findMany( {
+            where: {
+                ownerId: guildOwnerId,
+                key: {
+                    in: [
+                        DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE,
+                        DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES,
+                        DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES,
+                        DEFAULT_GUILD_SETTINGS_KEY_BADWORDS
+                    ]
+                }
+            }
+        } );
+
+        const valuesOf = ( key: string ) => rows.find( ( row ) => row.key === key )?.values ?? [];
+
+        return {
+            voiceRoleId: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE )[ 0 ] ?? null,
+            verifiedRoleIds: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES ),
+            staffRoleIds: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES ),
+            badwords: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_BADWORDS )
+        };
+    }
+
+    /**
+     * Function getGuildSettings() :: The guild wide defaults on their own.
+     *
+     * The server config screen needs nothing else about the guild, so it does not pay for the
+     * generator listing to read three rows.
+     */
+    public async getGuildSettings( guildId: string ): Promise<GuildSettings | null> {
+        const guild = await getClient().guild.findUnique( {
+            where: { guildId }
+        } );
+
+        if ( !guild ) {
+            return null;
+        }
+
+        return this.readGuildSettings( guild.id );
+    }
+
+    /**
+     * Function updateGuildSettings() :: Hands the guild wide defaults to the bot.
+     *
+     * Unlike the per generator settings this does not write the rows itself. The bot resolves what
+     * every generator applied before and after the change to work out which ones were following the
+     * default, so a write landing here first would erase that difference and leave the existing
+     * channels holding stale permissions.
+     */
+    public async updateGuildSettings( guildId: string, settings: UpdateGuildSettingsInput ): Promise<boolean> {
+        const guild = await getClient().guild.findUnique( {
+            where: { guildId }
+        } );
+
+        if ( !guild ) {
+            return false;
+        }
+
+        await this.publishManagementMessage( {
+            action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_GUILD_SETTINGS,
+            data: {
+                guildId,
+                settings
+            }
+        } );
+
+        return true;
     }
 
     public async getScalingMasterDetails( guildId: string, masterChannelId: string ): Promise<ScalingMasterDetails | null> {

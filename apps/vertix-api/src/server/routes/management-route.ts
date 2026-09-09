@@ -5,7 +5,12 @@ import { RouteBase } from "@vertix.gg/api/src/bases/route-base";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
-import type { ManagementService, UpdateScalingSettingsInput, UpdateDynamicSettingsInput } from "@vertix.gg/api/src/server/services/management-service";
+import type {
+    ManagementService,
+    UpdateScalingSettingsInput,
+    UpdateDynamicSettingsInput,
+    UpdateGuildSettingsInput
+} from "@vertix.gg/api/src/server/services/management-service";
 
 interface GuildParams {
     guildId: string;
@@ -49,6 +54,13 @@ interface UpdateDynamicSettingsBody {
     dynamicChannelStaffRoles?: string[];
     dynamicChannelVoiceRoleId?: string | null;
     dynamicChannelLogsChannelId?: string | null;
+}
+
+interface UpdateGuildSettingsBody {
+    voiceRoleId?: string | null;
+    verifiedRoleIds?: string[];
+    staffRoleIds?: string[];
+    badwords?: string[];
 }
 
 /**
@@ -267,6 +279,45 @@ export class ManagementRoute extends RouteBase {
         }
     }
 
+    public async handleGetGuildSettings(
+        request: FastifyRequest<{ Params: GuildParams }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId } = request.params;
+
+            const settings = await this.getService().getGuildSettings( guildId );
+
+            if ( !settings ) {
+                return reply.status( 404 ).send( { error: "Guild not found" } );
+            }
+
+            return settings;
+        } catch( error ) {
+            handleError( this.handleGetGuildSettings, error, reply, "Failed to fetch guild settings" );
+        }
+    }
+
+    public async handleUpdateGuildSettings(
+        request: FastifyRequest<{ Params: GuildParams; Body: UpdateGuildSettingsBody }>,
+        reply: FastifyReply
+    ) {
+        try {
+            const { guildId } = request.params;
+            const settings = request.body as UpdateGuildSettingsInput;
+
+            const success = await this.getService().updateGuildSettings( guildId, settings );
+
+            if ( !success ) {
+                return reply.status( 404 ).send( { error: "Guild not found" } );
+            }
+
+            return { success: true };
+        } catch( error ) {
+            handleError( this.handleUpdateGuildSettings, error, reply, "Failed to update guild settings" );
+        }
+    }
+
     public async handleUpdateDynamicSettings(
         request: FastifyRequest<{ Params: DynamicMasterParams; Body: UpdateDynamicSettingsBody }>,
         reply: FastifyReply
@@ -347,6 +398,16 @@ export class ManagementRoute extends RouteBase {
         fastify.get<{ Params: GuildParams }>(
             "/management/guild/:guildId/discord-options",
             this.handleGetGuildDiscordOptions.bind( this )
+        );
+
+        fastify.get<{ Params: GuildParams }>(
+            "/management/guild/:guildId/settings",
+            this.handleGetGuildSettings.bind( this )
+        );
+
+        fastify.put<{ Params: GuildParams; Body: UpdateGuildSettingsBody }>(
+            "/management/guild/:guildId/settings",
+            this.handleUpdateGuildSettings.bind( this )
         );
 
         fastify.post<{ Params: GuildParams; Body: CreateScalingSetupBody }>(

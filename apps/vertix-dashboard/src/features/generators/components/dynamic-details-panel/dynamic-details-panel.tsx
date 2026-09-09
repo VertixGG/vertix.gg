@@ -19,12 +19,15 @@ import type { DCommandFunctionComponent } from "@zenflux/react-commander/definit
 import type { DynamicDetailsPanelState } from "@vertix.gg/dashboard/src/features/generators/commands/dynamic-details-panel/dynamic-details-panel-commands";
 import type {
     DynamicMasterDetails,
-    GuildDiscordOptions
+    GuildDiscordOptions,
+    GuildSettings
 } from "@vertix.gg/dashboard/src/features/generators/types";
 
 export interface DynamicDetailsPanelProps {
     details: DynamicMasterDetails;
     discordOptions: GuildDiscordOptions | null;
+    /** What this generator falls back to when it holds no list of its own. */
+    guildSettings: GuildSettings | null;
     isSaving: boolean;
     isRefreshing: boolean;
     lastRefreshTime: Date | null;
@@ -97,6 +100,28 @@ function formatRole( id: string | null, options: GuildDiscordOptions | null, fal
     return options?.roles?.find( ( role ) => role.id === id )?.name ?? id;
 }
 
+const INHERITED_SUFFIX = " (from the server options)";
+
+/**
+ * Function formatInherited() :: What a generator actually applies, and where it came from.
+ *
+ * An empty list of its own is not an empty audience, it is the absence of a choice - the server
+ * wide list decides, and when that is empty too the last resort does. Saying only "None" would
+ * report the opposite of what the channel does.
+ */
+function formatInherited(
+    own: string[],
+    guild: string[],
+    options: GuildDiscordOptions | null,
+    unsetLabel: string
+): string {
+    if ( own.length ) {
+        return formatRoles( own, options );
+    }
+
+    return ( guild.length ? formatRoles( guild, options ) : unsetLabel ) + INHERITED_SUFFIX;
+}
+
 function formatChannel( id: string | null, options: GuildDiscordOptions | null ): string {
     if ( !id ) {
         return "None";
@@ -110,6 +135,7 @@ function formatChannel( id: string | null, options: GuildDiscordOptions | null )
 const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPanelProps, DynamicDetailsPanelState> = ( {
     details,
     discordOptions,
+    guildSettings,
     isSaving,
     isRefreshing,
     lastRefreshTime
@@ -269,19 +295,28 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                     <SettingsGroup title="Access">
                                         <SettingRow
                                             label="Verified roles"
-                                            value={ formatRoles( settings?.dynamicChannelVerifiedRoles ?? [], discordOptions ) }
+                                            value={ formatInherited(
+                                                settings?.dynamicChannelVerifiedRoles ?? [],
+                                                guildSettings?.verifiedRoleIds ?? [],
+                                                discordOptions,
+                                                "@everyone"
+                                            ) }
                                         />
                                         <SettingRow
                                             label="Staff roles"
-                                            value={ formatRoles( settings?.dynamicChannelStaffRoles ?? [], discordOptions ) }
+                                            value={ formatInherited(
+                                                settings?.dynamicChannelStaffRoles ?? [],
+                                                guildSettings?.staffRoleIds ?? [],
+                                                discordOptions,
+                                                "None"
+                                            ) }
                                         />
                                         <SettingRow
                                             label="Voice role"
-                                            value={ formatRole(
-                                                settings?.dynamicChannelVoiceRoleId ?? null,
-                                                discordOptions,
-                                                "From the server options"
-                                            ) }
+                                            value={ settings?.dynamicChannelVoiceRoleId
+                                                ? formatRole( settings.dynamicChannelVoiceRoleId, discordOptions, "None" )
+                                                : formatRole( guildSettings?.voiceRoleId ?? null, discordOptions, "None" ) + INHERITED_SUFFIX
+                                            }
                                         />
                                         <SettingRow
                                             label="Logs channel"

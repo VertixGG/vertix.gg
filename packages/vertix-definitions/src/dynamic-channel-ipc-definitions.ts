@@ -17,6 +17,7 @@ export const DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS = {
     CREATE_DYNAMIC_SETUP: "create_dynamic_setup",
     UPDATE_DYNAMIC_SETTINGS: "update_dynamic_settings",
     DELETE_DYNAMIC_SETUP: "delete_dynamic_setup",
+    UPDATE_GUILD_SETTINGS: "update_guild_settings",
     REFRESH_CUSTOMIZATION: "refresh_customization"
 } as const;
 
@@ -47,6 +48,23 @@ export interface UpdateDynamicSettingsPayload {
         dynamicChannelStaffRoles?: string[];
         dynamicChannelVoiceRoleId?: string | null;
         dynamicChannelLogsChannelId?: string | null;
+    };
+}
+
+export interface UpdateGuildSettingsPayload {
+    guildId: string;
+    /**
+     * The guild wide defaults every generator falls back to when it holds none of its own.
+     *
+     * Every key is optional - only what was edited is sent - and an empty list means unset, which
+     * is `@everyone` for the audience and nobody for the staff.
+     */
+    settings: {
+        voiceRoleId?: string | null;
+        verifiedRoleIds?: string[];
+        staffRoleIds?: string[];
+        /** Empty restores the built in list rather than turning the filter off. */
+        badwords?: string[];
     };
 }
 
@@ -81,4 +99,5 @@ export type DynamicChannelIPCManagementPayload =
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP; data: CreateDynamicSetupPayload }
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS; data: UpdateDynamicSettingsPayload }
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP; data: DeleteDynamicSetupPayload }
+    | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_GUILD_SETTINGS; data: UpdateGuildSettingsPayload }
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION; data: RefreshCustomizationPayload };

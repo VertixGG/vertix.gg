@@ -120,6 +120,20 @@ export interface ScalingChannelInfo {
 export interface GuildGeneratorsDetails {
     scalingMasterChannels: ScalingMasterChannelInfo[];
     dynamicMasterChannels: DynamicMasterChannelInfo[];
+    settings: GuildSettings;
+}
+
+/**
+ * The server wide defaults every generator falls back to when it holds none of its own.
+ *
+ * An empty list is the unset state, not an empty audience - it resolves to `@everyone` for the
+ * verified roles and to nobody for the staff roles. The forms need the two apart to say which of
+ * them a generator is actually following.
+ */
+export interface GuildSettings {
+    voiceRoleId: string | null;
+    verifiedRoleIds: string[];
+    staffRoleIds: string[];
 }
 
 export interface ScalingMasterDetails {

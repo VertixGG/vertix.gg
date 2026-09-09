@@ -130,7 +130,8 @@ import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-
 
 import type {
     GetDynamicChannelInfoResponse,
-    UpdateDynamicSettingsPayload
+    UpdateDynamicSettingsPayload,
+    UpdateGuildSettingsPayload
 } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
 import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
@@ -1188,6 +1189,38 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     ViewChannel: isHidden ? false : null
                 } );
             }
+        }
+    }
+
+    /**
+     * Function handleUpdateGuildSettings() :: Applies the guild wide defaults the dashboard edited.
+     *
+     * Only the keys that were sent are touched, so a screen that edits one list cannot blank the
+     * others by omitting them.
+     */
+    public async handleUpdateGuildSettings( data: UpdateGuildSettingsPayload ) {
+        const { guildId, settings } = data;
+
+        this.logger.log( this.handleUpdateGuildSettings, `Updating guild settings for guild ${ guildId }` );
+
+        try {
+            if ( settings.voiceRoleId !== undefined ) {
+                await GuildDataManager.$.setVoiceRoleId( guildId, settings.voiceRoleId );
+            }
+
+            if ( settings.verifiedRoleIds !== undefined ) {
+                await this.applyGuildVerifiedRoles( guildId, settings.verifiedRoleIds );
+            }
+
+            if ( settings.staffRoleIds !== undefined ) {
+                await this.applyGuildStaffRoles( guildId, settings.staffRoleIds );
+            }
+
+            if ( settings.badwords !== undefined ) {
+                await GuildDataManager.$.setBadwords( guildId, settings.badwords );
+            }
+        } catch( error ) {
+            this.logger.error( this.handleUpdateGuildSettings, `Failed to update guild settings for ${ guildId }`, error );
         }
     }
 

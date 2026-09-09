@@ -2998,6 +2998,83 @@
       "content": {
         "title": "🐵  Το κανάλι είναι πλέον ορατό"
       }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentEmbed",
+      "content": {
+        "title": "Πράκτορας AI",
+        "description": "Επίλεξε ένα κανάλι και πάτησε Αποστολή.\n\nΕπιλεγμένο κανάλι: {selectedChannelDisplay}\n\nΠρος αποστολή:\n{draftContentDisplay}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "Ευχαριστούμε για την εμπειρία σου με το Vertix",
+        "description": "Σε ευχαριστούμε για τον χρόνο και την υπομονή σου.\n\n**Η εμπειρία σου με το Vertix είναι σημαντική για εμάς και θα θέλαμε να ακούσουμε τη γνώμη σου.**\n\nΠροσπαθούμε να προσφέρουμε την καλύτερη δυνατή υπηρεσία και η άποψή σου μας βοηθά σε αυτό.\n\nΑν έχεις προτάσεις, απορίες ή ιδέες για το πώς μπορούμε να βελτιώσουμε το Vertix, μη διστάσεις να μας τις πεις.\n\nΗ γνώμη σου εκτιμάται ιδιαίτερα και θα κάνει το Vertix ακόμη καλύτερο.\n\nΕυχαριστούμε που χρησιμοποιείς το Vertix - ανυπομονούμε να σε ακούσουμε!"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+      "content": {
+        "title": "⛔  Κανένα ενεργό δυναμικό κανάλι",
+        "description": "Δεν έχεις ενεργό δυναμικό κανάλι.\n\nΜπες στο <#{masterChannelId}> για να δημιουργήσεις πρώτα το δικό σου κανάλι."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 Ψήφισέ μας για να ξεκλειδώσεις αυτή τη λειτουργία!",
+        "description": "Είναι premium λειτουργία, αλλά μπορείς να την ξεκλειδώσεις δωρεάν! [**Ψήφισέ μας στο top.gg!**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Διαχειρίσου το δυναμικό σου κανάλι",
+        "description": "Ανάλαβε το δυναμικό σου κανάλι και προσάρμοσέ το προσεκτικά στις προτιμήσεις σου.\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Διαχειρίσου το δυναμικό σου κανάλι",
+        "description": "Ανάλαβε το δυναμικό σου κανάλι και προσάρμοσέ το προσεκτικά στις προτιμήσεις σου.\n\n**Διαθέσιμες λειτουργίες:**\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Πρότυπα καναλιού",
+        "description": "Αποθήκευσε τις τρέχουσες ρυθμίσεις του καναλιού σου ως πρότυπο και εφάρμοσέ το αργότερα με ένα κλικ.\n\n**Πρότυπα**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Το πρότυπο αποθηκεύτηκε!",
+        "description": "Το πρότυπό σου **\"{templateName}\"** αποθηκεύτηκε με επιτυχία!\n\n**Πρότυπα**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# Μπορείς να το εφαρμόσεις όποτε θέλεις με το κουμπί **Εφαρμογή προτύπου**."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Το πρότυπο εφαρμόστηκε!",
+        "description": "Το πρότυπο **\"{templateName}\"** εφαρμόστηκε στο κανάλι σου!\n\n**Ρυθμίσεις που εφαρμόστηκαν:**\n{appliedSettings}\n\n-# Σημείωση: η αλλαγή ονόματος μπορεί να αργήσει λίγο λόγω ορίων ρυθμού."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Διαχείριση προτύπων",
+        "description": "Επίλεξε ένα πρότυπο από το μενού για να το διαγράψεις.\n\n**Πρότυπα**: `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ Η ενέργεια δεν αναιρείται."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  Το πρότυπο διαγράφηκε",
+        "description": "Το πρότυπο **\"{templateName}\"** διαγράφηκε.\n\n**Πρότυπα**: `{templatesCount}/{maxTemplates}`"
+      }
     }
   ],
   "markdowns": [

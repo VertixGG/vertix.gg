@@ -2998,6 +2998,83 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentEmbed",
+      "content": {
+        "title": "AI Agent",
+        "description": "Select a channel, then press Send.\n\nSelected channel: {selectedChannelDisplay}\n\nAbout to send:\n{draftContentDisplay}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "Appreciating your experience with Vertix",
+        "description": "We want to thank you for your time and patience.\n\n**Your experience with Vertix is important to us, and we would love to hear your feedback.**\n\nWe strive to provide the best possible service, and your input can help us achieve that.\n\nIf you have any suggestions, concerns, or ideas on how we can improve Vertix, please don't hesitate to share them with us.\n\nYour feedback is highly appreciated and will contribute to making Vertix even better.\n\nThank you for using Vertix, and we look forward to hearing your thoughts!"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+      "content": {
+        "title": "⛔  No active dynamic channel",
+        "description": "You don't own an active dynamic channel.\n\nJoin <#{masterChannelId}> to create your own channel first."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 Vote for us to unlock this feature!",
+        "description": "This is a premium feature, but you can unlock it for free! [**Vote for us on top.gg!**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Manage your Dynamic Channel",
+        "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Manage your Dynamic Channel",
+        "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Channel Templates",
+        "description": "Save your current channel configuration as a template and apply it later with one click.\n\n**Templates**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Template Saved!",
+        "description": "Your template **\"{templateName}\"** has been saved successfully!\n\n**Templates**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# You can apply this template anytime using the **Apply Template** button."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Template Applied!",
+        "description": "Template **\"{templateName}\"** has been applied to your channel!\n\n**Applied Settings:**\n{appliedSettings}\n\n-# Note: Channel name changes may take a moment due to rate limits."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Manage Templates",
+        "description": "Select a template from the menu below to delete it.\n\n**Templates**: `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ This action cannot be undone."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  Template Deleted",
+        "description": "Template **\"{templateName}\"** has been deleted.\n\n**Templates**: `{templatesCount}/{maxTemplates}`"
+      }
     }
   ],
   "markdowns": [

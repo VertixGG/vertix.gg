@@ -2998,6 +2998,83 @@
         "title": "🗳️  Ya has votado por {userDisplayName}",
         "description": "Tu voto ya se ha emitido a favor de <@{userId}>; puedes votar por otra persona si has cambiado de opinión."
       }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentEmbed",
+      "content": {
+        "title": "Agente de IA",
+        "description": "Selecciona un canal y pulsa Enviar.\n\nCanal seleccionado: {selectedChannelDisplay}\n\nA punto de enviar:\n{draftContentDisplay}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "Gracias por tu experiencia con Vertix",
+        "description": "Queremos agradecerte tu tiempo y tu paciencia.\n\n**Tu experiencia con Vertix nos importa, y nos encantaría conocer tu opinión.**\n\nNos esforzamos por ofrecer el mejor servicio posible, y tu aportación nos ayuda a lograrlo.\n\nSi tienes sugerencias, dudas o ideas sobre cómo mejorar Vertix, no dudes en compartirlas.\n\nTu opinión se agradece mucho y contribuirá a hacer Vertix aún mejor.\n\n¡Gracias por usar Vertix, esperamos leerte!"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+      "content": {
+        "title": "⛔  Sin canal dinámico activo",
+        "description": "No tienes ningún canal dinámico activo.\n\nÚnete a <#{masterChannelId}> para crear primero tu propio canal."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 ¡Vota por nosotros para desbloquear esta función!",
+        "description": "Es una función premium, ¡pero puedes desbloquearla gratis! [**¡Vota por nosotros en top.gg!**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Gestiona tu canal dinámico",
+        "description": "Hazte cargo de tu canal dinámico y personalízalo con cuidado según tus preferencias.\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Gestiona tu canal dinámico",
+        "description": "Hazte cargo de tu canal dinámico y personalízalo con cuidado según tus preferencias.\n\n**Funciones disponibles:**\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Plantillas de canal",
+        "description": "Guarda la configuración actual de tu canal como plantilla y aplícala más tarde con un clic.\n\n**Plantillas**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  ¡Plantilla guardada!",
+        "description": "¡Tu plantilla **\"{templateName}\"** se ha guardado correctamente!\n\n**Plantillas**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# Puedes aplicar esta plantilla cuando quieras con el botón **Aplicar plantilla**."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  ¡Plantilla aplicada!",
+        "description": "¡La plantilla **\"{templateName}\"** se ha aplicado a tu canal!\n\n**Ajustes aplicados:**\n{appliedSettings}\n\n-# Nota: el cambio de nombre puede tardar un momento por los límites de frecuencia."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Gestionar plantillas",
+        "description": "Selecciona una plantilla del menú de abajo para eliminarla.\n\n**Plantillas**: `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ Esta acción no se puede deshacer."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  Plantilla eliminada",
+        "description": "La plantilla **\"{templateName}\"** se ha eliminado.\n\n**Plantillas**: `{templatesCount}/{maxTemplates}`"
+      }
     }
   ],
   "markdowns": [

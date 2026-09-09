@@ -823,16 +823,25 @@ export function FlowEditSidebar() {
             return;
         }
 
-        // Apply base language translations first
+        // Apply base language translations first.
+        //
+        // Every field is written on each pass, falling back to the definition when the language
+        // being switched to says nothing about it. Writing only what a language defines leaves the
+        // previous language's text sitting on the node - the interface then reads as half
+        // translated, in whichever language happened to be selected first.
         if ( translations && embedName ) {
             const embedTranslation = translations.embeds[ embedName ];
-            if ( embedTranslation ) {
-                if ( embedTranslation.title !== undefined ) {
-                    updateNodeData.run( { path: "embed.title", value: embedTranslation.title, isInitialLoad: true } );
-                }
-                if ( embedTranslation.description !== undefined ) {
-                    updateNodeData.run( { path: "embed.description", value: embedTranslation.description, isInitialLoad: true } );
-                }
+            const definition = selectedNode.data?.embedDefinition as { title?: string; description?: string } | undefined;
+
+            const title = embedTranslation?.title ?? definition?.title;
+            const description = embedTranslation?.description ?? definition?.description;
+
+            if ( title !== undefined ) {
+                updateNodeData.run( { path: "embed.title", value: title, isInitialLoad: true } );
+            }
+
+            if ( description !== undefined ) {
+                updateNodeData.run( { path: "embed.description", value: description, isInitialLoad: true } );
             }
         }
 

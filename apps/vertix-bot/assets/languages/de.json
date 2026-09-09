@@ -2998,6 +2998,83 @@
         "title": "👋  {ownerDisplayName} hat seinen Kanal verlassen!",
         "description": "<@{ownerId}> ist seit mehr als {absentMinutes} Minuten abwesend.\nÜbernimmst du das Ruder? Melde dich und beanspruche den Kanal für dich!"
       }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentEmbed",
+      "content": {
+        "title": "KI-Agent",
+        "description": "Wähle einen Kanal und drücke dann Senden.\n\nAusgewählter Kanal: {selectedChannelDisplay}\n\nWird gesendet:\n{draftContentDisplay}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "Danke für deine Erfahrung mit Vertix",
+        "description": "Wir danken dir für deine Zeit und Geduld.\n\n**Deine Erfahrung mit Vertix ist uns wichtig, und wir würden gerne dein Feedback hören.**\n\nWir bemühen uns um den bestmöglichen Service, und dein Beitrag hilft uns dabei.\n\nWenn du Vorschläge, Bedenken oder Ideen hast, wie wir Vertix verbessern können, teile sie uns gerne mit.\n\nDein Feedback wird sehr geschätzt und macht Vertix noch besser.\n\nDanke, dass du Vertix nutzt - wir freuen uns auf deine Gedanken!"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+      "content": {
+        "title": "⛔  Kein aktiver dynamischer Kanal",
+        "description": "Du besitzt keinen aktiven dynamischen Kanal.\n\nTritt <#{masterChannelId}> bei, um zuerst deinen eigenen Kanal zu erstellen."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 Stimme für uns ab, um diese Funktion freizuschalten!",
+        "description": "Das ist eine Premium-Funktion, die du kostenlos freischalten kannst! [**Stimme für uns auf top.gg ab!**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Verwalte deinen dynamischen Kanal",
+        "description": "Übernimm die Verantwortung für deinen dynamischen Kanal und passe ihn sorgfältig nach deinen Vorstellungen an.\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Verwalte deinen dynamischen Kanal",
+        "description": "Übernimm die Verantwortung für deinen dynamischen Kanal und passe ihn sorgfältig nach deinen Vorstellungen an.\n\n**Verfügbare Funktionen:**\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Kanalvorlagen",
+        "description": "Speichere deine aktuelle Kanalkonfiguration als Vorlage und wende sie später mit einem Klick an.\n\n**Vorlagen**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Vorlage gespeichert!",
+        "description": "Deine Vorlage **\"{templateName}\"** wurde gespeichert!\n\n**Vorlagen**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# Du kannst diese Vorlage jederzeit über **Vorlage anwenden** einsetzen."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Vorlage angewendet!",
+        "description": "Die Vorlage **\"{templateName}\"** wurde auf deinen Kanal angewendet!\n\n**Angewendete Einstellungen:**\n{appliedSettings}\n\n-# Hinweis: Namensänderungen können wegen Ratenbegrenzungen einen Moment dauern."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Vorlagen verwalten",
+        "description": "Wähle unten eine Vorlage aus, um sie zu löschen.\n\n**Vorlagen**: `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ Diese Aktion kann nicht rückgängig gemacht werden."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  Vorlage gelöscht",
+        "description": "Die Vorlage **\"{templateName}\"** wurde gelöscht.\n\n**Vorlagen**: `{templatesCount}/{maxTemplates}`"
+      }
     }
   ],
   "markdowns": [

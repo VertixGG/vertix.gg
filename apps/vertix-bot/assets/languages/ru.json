@@ -2998,6 +2998,83 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentEmbed",
+      "content": {
+        "title": "ИИ-агент",
+        "description": "Выберите канал и нажмите «Отправить».\n\nВыбранный канал: {selectedChannelDisplay}\n\nБудет отправлено:\n{draftContentDisplay}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "Спасибо за ваш опыт с Vertix",
+        "description": "Благодарим вас за время и терпение.\n\n**Ваш опыт с Vertix важен для нас, и мы будем рады услышать ваш отзыв.**\n\nМы стремимся предоставлять лучший сервис, и ваше мнение помогает нам в этом.\n\nЕсли у вас есть предложения, замечания или идеи, как улучшить Vertix, поделитесь ими с нами.\n\nМы очень ценим ваш отзыв - он сделает Vertix ещё лучше.\n\nСпасибо, что пользуетесь Vertix, ждём ваших мыслей!"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+      "content": {
+        "title": "⛔  Нет активного динамического канала",
+        "description": "У вас нет активного динамического канала.\n\nЗайдите в <#{masterChannelId}>, чтобы сначала создать свой канал."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 Проголосуйте за нас, чтобы открыть эту функцию!",
+        "description": "Это премиум-функция, но её можно открыть бесплатно! [**Проголосуйте за нас на top.gg!**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Управляйте своим динамическим каналом",
+        "description": "Возьмите на себя управление динамическим каналом и настройте его так, как вам удобно.\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Управляйте своим динамическим каналом",
+        "description": "Возьмите на себя управление динамическим каналом и настройте его так, как вам удобно.\n\n**Доступные функции:**\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Шаблоны канала",
+        "description": "Сохраните текущие настройки канала как шаблон и примените их позже одним нажатием.\n\n**Шаблоны**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Шаблон сохранён!",
+        "description": "Шаблон **\"{templateName}\"** успешно сохранён!\n\n**Шаблоны**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# Применить его можно в любой момент кнопкой **Применить шаблон**."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Шаблон применён!",
+        "description": "Шаблон **\"{templateName}\"** применён к вашему каналу!\n\n**Применённые настройки:**\n{appliedSettings}\n\n-# Примечание: смена названия может занять время из-за ограничений частоты."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Управление шаблонами",
+        "description": "Выберите шаблон в меню ниже, чтобы удалить его.\n\n**Шаблоны**: `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ Это действие нельзя отменить."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  Шаблон удалён",
+        "description": "Шаблон **\"{templateName}\"** удалён.\n\n**Шаблоны**: `{templatesCount}/{maxTemplates}`"
+      }
     }
   ],
   "markdowns": [

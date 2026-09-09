@@ -2998,6 +2998,83 @@
       "content": {
         "title": "🙅  ユーザー数の上限は {minValue} 〜 {maxValue} の範囲で指定してください"
       }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentEmbed",
+      "content": {
+        "title": "AIエージェント",
+        "description": "チャンネルを選んで送信を押してください。\n\n選択中のチャンネル: {selectedChannelDisplay}\n\n送信内容:\n{draftContentDisplay}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "Vertix のご利用ありがとうございます",
+        "description": "お時間とご協力に感謝します。\n\n**Vertix でのあなたの体験は私たちにとって大切です。ぜひご意見をお聞かせください。**\n\n私たちは最高のサービスを目指しており、あなたの声がその助けになります。\n\nVertix をより良くするための提案・懸念・アイデアがあれば、遠慮なくお知らせください。\n\nいただいたご意見は大変ありがたく、Vertix の改善につながります。\n\nVertix をご利用いただきありがとうございます。ご意見をお待ちしています!"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+      "content": {
+        "title": "⛔  アクティブなダイナミックチャンネルがありません",
+        "description": "アクティブなダイナミックチャンネルを所有していません。\n\nまず <#{masterChannelId}> に参加して自分のチャンネルを作成してください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 投票してこの機能をアンロック!",
+        "description": "これはプレミアム機能ですが、無料でアンロックできます! [**top.gg で投票する!**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ ダイナミックチャンネルを管理",
+        "description": "自分のダイナミックチャンネルを、好みに合わせてじっくりカスタマイズしましょう。\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ ダイナミックチャンネルを管理",
+        "description": "自分のダイナミックチャンネルを、好みに合わせてじっくりカスタマイズしましょう。\n\n**利用できる機能:**\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  チャンネルテンプレート",
+        "description": "現在のチャンネル設定をテンプレートとして保存し、後からワンクリックで適用できます。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  テンプレートを保存しました",
+        "description": "テンプレート **\"{templateName}\"** を保存しました。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# **テンプレートを適用** ボタンでいつでも適用できます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  テンプレートを適用しました",
+        "description": "テンプレート **\"{templateName}\"** をチャンネルに適用しました。\n\n**適用した設定:**\n{appliedSettings}\n\n-# 注意: レート制限のため、チャンネル名の変更には少し時間がかかることがあります。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  テンプレートを管理",
+        "description": "下のメニューから削除するテンプレートを選んでください。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ この操作は取り消せません。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  テンプレートを削除しました",
+        "description": "テンプレート **\"{templateName}\"** を削除しました。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`"
+      }
     }
   ],
   "markdowns": [

@@ -2998,6 +2998,83 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/AIAgentEmbed",
+      "content": {
+        "title": "Agent IA",
+        "description": "Sélectionne un canal, puis appuie sur Envoyer.\n\nCanal sélectionné : {selectedChannelDisplay}\n\nÀ envoyer :\n{draftContentDisplay}\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "Merci pour ton expérience avec Vertix",
+        "description": "Merci pour ton temps et ta patience.\n\n**Ton expérience avec Vertix compte pour nous, et nous aimerions connaître ton avis.**\n\nNous cherchons à offrir le meilleur service possible, et ton retour nous y aide.\n\nSi tu as des suggestions, des remarques ou des idées pour améliorer Vertix, n'hésite pas à nous les partager.\n\nTon retour est très apprécié et contribuera à rendre Vertix encore meilleur.\n\nMerci d'utiliser Vertix, nous avons hâte de te lire !"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
+      "content": {
+        "title": "⛔  Aucun canal dynamique actif",
+        "description": "Tu ne possèdes aucun canal dynamique actif.\n\nRejoins <#{masterChannelId}> pour créer d'abord ton propre canal."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 Vote pour nous pour débloquer cette fonctionnalité !",
+        "description": "C'est une fonctionnalité premium, mais tu peux la débloquer gratuitement ! [**Vote pour nous sur top.gg !**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Gère ton canal dynamique",
+        "description": "Prends en main ton canal dynamique et personnalise-le soigneusement selon tes préférences.\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ Gère ton canal dynamique",
+        "description": "Prends en main ton canal dynamique et personnalise-le soigneusement selon tes préférences.\n\n**Fonctionnalités disponibles :**\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Modèles de canal",
+        "description": "Enregistre la configuration actuelle de ton canal comme modèle et applique-la plus tard en un clic.\n\n**Modèles** : `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Modèle enregistré !",
+        "description": "Ton modèle **\"{templateName}\"** a bien été enregistré !\n\n**Modèles** : `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# Tu peux appliquer ce modèle à tout moment avec le bouton **Appliquer le modèle**."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Modèle appliqué !",
+        "description": "Le modèle **\"{templateName}\"** a été appliqué à ton canal !\n\n**Réglages appliqués :**\n{appliedSettings}\n\n-# Note : le changement de nom peut prendre un moment à cause des limites de débit."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  Gérer les modèles",
+        "description": "Sélectionne un modèle dans le menu ci-dessous pour le supprimer.\n\n**Modèles** : `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ Cette action est irréversible."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  Modèle supprimé",
+        "description": "Le modèle **\"{templateName}\"** a été supprimé.\n\n**Modèles** : `{templatesCount}/{maxTemplates}`"
+      }
     }
   ],
   "markdowns": [

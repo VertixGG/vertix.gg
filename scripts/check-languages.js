@@ -21,13 +21,22 @@ const TRANSLATABLE_SUFFIXES = [ "Button", "Input", "SelectMenu", "Menu", "Modal"
 
 // Only entity names are namespaced; a bare "name" also appears inside select
 // options and embed fields ("English", "▹ Name: <#{id}>") and must not count.
+//
+// An entity is not always named under "name": a component references its embeds and its elements
+// by id under "embed" and "element", and almost every embed in the export appears only that way.
+// Reading just "name" left those embeds outside the comparison entirely, so one with no entry in
+// en.json still counted as full coverage.
+const NAME_KEYS = [ "name", "embed", "element" ];
+
 function collectNames( node, acc = new Set() ) {
     if ( Array.isArray( node ) ) {
         node.forEach( ( item ) => collectNames( item, acc ) );
     } else if ( node && typeof node === "object" ) {
-        if ( typeof node.name === "string" && node.name.startsWith( "VertixBot/" ) ) {
-            acc.add( node.name );
-        }
+        NAME_KEYS.forEach( ( key ) => {
+            if ( typeof node[ key ] === "string" && node[ key ].startsWith( "VertixBot/" ) ) {
+                acc.add( node[ key ] );
+            }
+        } );
         Object.values( node ).forEach( ( value ) => collectNames( value, acc ) );
     }
     return acc;

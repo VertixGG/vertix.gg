@@ -4,13 +4,13 @@
 	"icons": [
 		{
 			"src": "vc-naked.ico",
-			"sizes": "128x128",
+			"sizes": "32x32",
 			"type": "image/x-icon"
 		},
 		{
 			"src": "vc-naked.png",
 			"type": "image/png",
-			"sizes": "399x400"
+			"sizes": "500x500"
 		}
 	],
 	"start_url": ".",

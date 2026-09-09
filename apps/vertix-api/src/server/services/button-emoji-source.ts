@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync, statSync } from "fs";
 import { join } from "path";
 
 import {
@@ -40,6 +40,23 @@ const dataUriCache = new Map<string, string>();
 
 let cachedOptions: ReadonlyArray<SheetSourceOption> | null = null;
 let cachedNames: ReadonlyArray<string> | null = null;
+let cachedAtModified = 0;
+
+/**
+ * Function isExportStale() :: Whether the ui export has been written since it was last read.
+ *
+ * The buttons come out of a file on disk that a deploy replaces, and the sheet is what names
+ * them - so a button added to the interface would go on missing from its own legend until
+ * somebody restarted the process. Compared by mtime rather than re-parsed per request: the
+ * file changes on a release, not between two page loads.
+ */
+function isExportStale(): boolean {
+    try {
+        return statSync( COMPONENTS_PATH ).mtimeMs !== cachedAtModified;
+    } catch {
+        return false;
+    }
+}
 
 function asArray( value: unknown ): ReadonlyArray<unknown> {
     return Array.isArray( value ) ? value : [];
@@ -52,12 +69,20 @@ function property( value: unknown, key: string ): unknown {
 /**
  * Function loadOptions() :: The buttons menu options, off the bot's own ui export.
  *
- * Read once - the export only changes when the bot is rebuilt - and shared by the sheet and the
- * name discovery below, so the two cannot disagree about which buttons exist.
+ * Re-read when the file changes and otherwise held, and shared by the sheet and the name
+ * discovery below, so the two cannot disagree about which buttons exist.
  */
 function loadOptions(): ReadonlyArray<SheetSourceOption> {
-    if ( cachedOptions ) {
+    if ( cachedOptions && ! isExportStale() ) {
         return cachedOptions;
+    }
+
+    cachedNames = null;
+
+    try {
+        cachedAtModified = statSync( COMPONENTS_PATH ).mtimeMs;
+    } catch {
+        cachedAtModified = 0;
     }
 
     const parsed: unknown = JSON.parse( readFileSync( COMPONENTS_PATH, "utf-8" ) );

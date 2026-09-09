@@ -71,6 +71,7 @@ const ServerConfigContentComponent: DCommandFunctionComponent<ServerConfigConten
                         <ServerConfigForm
                             config={ state.config }
                             discordOptions={ state.discordOptions }
+                            guildId={ guildId }
                             isSaving={ state.isSaving }
                         />
                     </div>

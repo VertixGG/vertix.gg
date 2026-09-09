@@ -2,35 +2,34 @@ import { useEffect, useState } from "react";
 
 import { useCommand } from "@zenflux/react-commander/hooks";
 
-import { Save } from "lucide-react";
+import { Plus, Save, X } from "lucide-react";
 
-import { RoleCheckList } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
+import { RoleCheckList, RoleRadioList } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
 import type { ServerConfig, GuildDiscordOptions } from "@vertix.gg/dashboard/src/features/server-config/types";
 
 export interface ServerConfigFormProps {
     config: ServerConfig;
     discordOptions: GuildDiscordOptions | null;
+    /** Also the id of the `@everyone` role, which is how an unset audience is shown as selected. */
+    guildId: string;
     isSaving: boolean;
 }
 
 /**
- * Function sameRoles() :: Whether two role selections hold the same roles.
+ * Function sameList() :: Whether two selections hold the same entries.
  *
- * Ticking a box appends, so the saved order and the form's order differ for the same set - a plain
+ * Adding appends, so the saved order and the form's order differ for the same set - a plain
  * comparison would report a change that is not one.
  */
-function sameRoles( a: string[], b: string[] ): boolean {
-    return a.length === b.length && a.every( ( id ) => b.includes( id ) );
+function sameList( a: string[], b: string[] ): boolean {
+    return a.length === b.length && a.every( ( entry ) => b.includes( entry ) );
 }
 
-const BADWORDS_SEPARATOR = ", ";
-
 /**
- * Function parseBadwords() :: The words a comma separated field holds.
+ * Function parseBadwords() :: The words an entry holds.
  *
- * Blank entries are dropped rather than stored, an empty list is what tells the bot to fall back
- * to the one it ships with.
+ * Commas are accepted so a list can be pasted in one go rather than typed a word at a time.
  */
 function parseBadwords( value: string ): string[] {
     return value
@@ -39,28 +38,79 @@ function parseBadwords( value: string ): string[] {
         .filter( ( word ) => word.length > 0 );
 }
 
-export function ServerConfigForm( { config, discordOptions, isSaving }: ServerConfigFormProps ) {
+export function ServerConfigForm( { config, discordOptions, guildId, isSaving }: ServerConfigFormProps ) {
     const updateServerConfig = useCommand( "Dashboard/ServerConfig/Update" );
 
     const [ voiceRoleId, setVoiceRoleId ] = useState( config.voiceRoleId );
     const [ verifiedRoleIds, setVerifiedRoleIds ] = useState( config.verifiedRoleIds );
     const [ staffRoleIds, setStaffRoleIds ] = useState( config.staffRoleIds );
-    const [ badwords, setBadwords ] = useState( config.badwords.join( BADWORDS_SEPARATOR ) );
+    const [ badwords, setBadwords ] = useState( config.badwords );
+    const [ badwordDraft, setBadwordDraft ] = useState( "" );
 
     useEffect( () => {
         setVoiceRoleId( config.voiceRoleId );
         setVerifiedRoleIds( config.verifiedRoleIds );
         setStaffRoleIds( config.staffRoleIds );
-        setBadwords( config.badwords.join( BADWORDS_SEPARATOR ) );
+        setBadwords( config.badwords );
+        setBadwordDraft( "" );
     }, [ config ] );
 
-    const parsedBadwords = parseBadwords( badwords );
+    // An empty list is not an empty audience, it is `@everyone` - whose role id is the guild id -
+    // so the list shows it selected rather than leaving every box unticked for a server that lets
+    // everyone in.
+    const verifiedSelection = verifiedRoleIds.length ? verifiedRoleIds : [ guildId ];
+
+    /**
+     * Function handleVerifiedRolesChange() :: Keeps `@everyone` and a narrower list apart.
+     *
+     * The two are mutually exclusive: `@everyone` already covers every narrower role, so holding
+     * both would widen the audience back to the whole server. Picking `@everyone` therefore clears
+     * the selection, and picking anything else drops `@everyone`.
+     */
+    const handleVerifiedRolesChange = ( value: string[] ) => {
+        if ( ! verifiedSelection.includes( guildId ) && value.includes( guildId ) ) {
+            setVerifiedRoleIds( [] );
+
+            return;
+        }
+
+        setVerifiedRoleIds( value.filter( ( id ) => id !== guildId ) );
+    };
+
+    const draftedBadwords = parseBadwords( badwordDraft );
+
+    /**
+     * Function handleAddBadwords() :: Puts the entry on the list.
+     *
+     * A word already there is dropped rather than repeated - matching ignores case, so two spellings
+     * of the same word would filter identically while reading as two separate rules.
+     */
+    const handleAddBadwords = () => {
+        if ( ! draftedBadwords.length ) {
+            return;
+        }
+
+        const existing = new Set( badwords.map( ( word ) => word.toLowerCase() ) );
+        const added: string[] = [];
+
+        draftedBadwords.forEach( ( word ) => {
+            if ( existing.has( word.toLowerCase() ) ) {
+                return;
+            }
+
+            existing.add( word.toLowerCase() );
+            added.push( word );
+        } );
+
+        setBadwords( [ ...badwords, ...added ] );
+        setBadwordDraft( "" );
+    };
 
     const hasChanges =
         voiceRoleId !== config.voiceRoleId ||
-        !sameRoles( verifiedRoleIds, config.verifiedRoleIds ) ||
-        !sameRoles( staffRoleIds, config.staffRoleIds ) ||
-        parsedBadwords.join( BADWORDS_SEPARATOR ) !== config.badwords.join( BADWORDS_SEPARATOR );
+        !sameList( verifiedRoleIds, config.verifiedRoleIds ) ||
+        !sameList( staffRoleIds, config.staffRoleIds ) ||
+        !sameList( badwords, config.badwords );
 
     const handleSave = () => {
         updateServerConfig.run( {
@@ -68,7 +118,7 @@ export function ServerConfigForm( { config, discordOptions, isSaving }: ServerCo
                 voiceRoleId,
                 verifiedRoleIds,
                 staffRoleIds,
-                badwords: parsedBadwords
+                badwords
             }
         } );
     };
@@ -91,34 +141,25 @@ export function ServerConfigForm( { config, discordOptions, isSaving }: ServerCo
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                        <label className="block text-sm font-medium text-text-primary mb-1">
-                            Voice role
-                        </label>
-                        <select
-                            value={ voiceRoleId ?? "" }
-                            onChange={ ( e ) => setVoiceRoleId( e.target.value || null ) }
-                            className={ fieldClassName }
-                            disabled={ isSaving || !roles.length }
-                        >
-                            <option value="">None</option>
-                            { roles.map( ( role ) => (
-                                <option key={ role.id } value={ role.id }>{ role.name }</option>
-                            ) ) }
-                        </select>
-                        <p className="text-xs text-text-muted mt-1 mb-0">
-                            Held only while a member sits in a dynamic channel
-                        </p>
-                    </div>
+                    <RoleRadioList
+                        label="Voice role"
+                        hint="Held only while a member sits in a dynamic channel"
+                        roles={ roles }
+                        selected={ voiceRoleId }
+                        disabled={ isSaving }
+                        emptyLabel="Roles could not be loaded from Discord"
+                        noneLabel="None"
+                        onChange={ setVoiceRoleId }
+                    />
 
                     <RoleCheckList
                         label="Verified roles"
-                        hint="Empty means @everyone"
+                        hint="@everyone is the whole server, picking a role narrows it"
                         roles={ roles }
-                        selected={ verifiedRoleIds }
+                        selected={ verifiedSelection }
                         disabled={ isSaving }
                         emptyLabel="Roles could not be loaded from Discord"
-                        onChange={ setVerifiedRoleIds }
+                        onChange={ handleVerifiedRolesChange }
                     />
 
                     <RoleCheckList
@@ -142,24 +183,64 @@ export function ServerConfigForm( { config, discordOptions, isSaving }: ServerCo
                 </div>
 
                 <div>
-                    <textarea
-                        value={ badwords }
-                        onChange={ ( e ) => setBadwords( e.target.value ) }
-                        placeholder="word, another word"
-                        rows={ 4 }
-                        className={ `${ fieldClassName } font-mono resize-y` }
-                        disabled={ isSaving }
-                    />
+                    <div className="flex items-start gap-2">
+                        <input
+                            type="text"
+                            value={ badwordDraft }
+                            onChange={ ( e ) => setBadwordDraft( e.target.value ) }
+                            onKeyDown={ ( e ) => {
+                                if ( "Enter" === e.key ) {
+                                    e.preventDefault();
+                                    handleAddBadwords();
+                                }
+                            } }
+                            placeholder="Add a word"
+                            className={ `${ fieldClassName } font-mono` }
+                            disabled={ isSaving }
+                        />
+                        <button
+                            onClick={ handleAddBadwords }
+                            disabled={ isSaving || !draftedBadwords.length }
+                            className="flex items-center gap-1 shrink-0 px-3 py-2 text-sm text-text-accent bg-accent/15
+                                hover:bg-accent/25 border border-border-accent rounded-md transition-colors
+                                disabled:bg-surface-elevated disabled:border-border disabled:text-text-muted
+                                disabled:cursor-not-allowed"
+                        >
+                            <Plus className="w-4 h-4" />
+                            Add
+                        </button>
+                    </div>
                     <p className="text-xs text-text-muted mt-1 mb-0">
-                        Separated by commas. Leaving it empty restores the list the bot ships with,
-                        it does not turn the filter off.
-                    </p>
-                    <p className="text-xs text-text-muted mt-1 mb-0">
-                        { parsedBadwords.length
-                            ? `${ parsedBadwords.length } word${ 1 === parsedBadwords.length ? "" : "s" }`
-                            : "Using the built-in list" }
+                        A word may use <code>*</code> to stand for any run of characters. Matching ignores case.
                     </p>
                 </div>
+
+                { badwords.length ? (
+                    <div className="flex flex-wrap gap-2">
+                        { badwords.map( ( word ) => (
+                            <span
+                                key={ word }
+                                className="inline-flex items-center gap-1 pl-2.5 pr-1 py-1 bg-background border
+                                    border-border rounded-md text-sm text-text-primary font-mono"
+                            >
+                                { word }
+                                <button
+                                    onClick={ () => setBadwords( badwords.filter( ( entry ) => entry !== word ) ) }
+                                    disabled={ isSaving }
+                                    title={ `Remove ${ word }` }
+                                    className="p-0.5 text-text-muted hover:text-error rounded transition-colors
+                                        disabled:cursor-not-allowed"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            </span>
+                        ) ) }
+                    </div>
+                ) : (
+                    <p className="text-sm text-text-muted mb-0">
+                        Using the built-in list. Adding a word here replaces it entirely.
+                    </p>
+                ) }
             </section>
 
             <div className="flex items-center gap-2">

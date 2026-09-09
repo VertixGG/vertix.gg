@@ -8765,7 +8765,7 @@
                                         "emoji": "<emoji name='ChannelPermissions'>"
                                     },
                                     {
-                                        "label": "Privacy",
+                                        "label": "Invite",
                                         "value": "invite",
                                         "emoji": "<emoji name='InviteChannel'>"
                                     },
@@ -9650,7 +9650,7 @@
                                         "emoji": "<emoji name='ChannelPermissions'>"
                                     },
                                     {
-                                        "label": "Privacy",
+                                        "label": "Invite",
                                         "value": "invite",
                                         "emoji": "<emoji name='InviteChannel'>"
                                     },
@@ -10153,7 +10153,7 @@
                                         "emoji": "<emoji name='ChannelPermissions'>"
                                     },
                                     {
-                                        "label": "Privacy",
+                                        "label": "Invite",
                                         "value": "invite",
                                         "emoji": "<emoji name='InviteChannel'>"
                                     },

@@ -5604,7 +5604,7 @@
                                 "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
                                 "elementType": "user-select",
                                 "instanceType": "Dynamic",
-                                "placeholder": "<emoji name='InviteChannel'> Select User"
+                                "placeholder": "📨 Select User"
                             }
                         }
                     ]
@@ -5620,7 +5620,7 @@
                                 "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "<emoji name='InviteChannel'> Select Channel"
+                                "placeholder": "📨 Select Channel"
                             }
                         }
                     ]
@@ -5781,7 +5781,7 @@
                                 "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
-                                "placeholder": "<emoji name='KnockChannel'> Select Channel"
+                                "placeholder": "🚪 Select Channel"
                             }
                         }
                     ]

@@ -23,6 +23,7 @@
 - Export with the enforced command: `bun run vertix:bot:bun:start:dev --export-ui=<repo>/exports/ui`. It exits without connecting the bot. The website and dashboard render from `exports/ui`, so a stale export shows stale copy — and the exporter resolves through the language manager, so a wrong translation gets baked in too.
 - Verify with `bun run vertix:languages:check`. It only checks that entity *names* exist in every locale — it will not catch a stale inner shape, a missing `options` branch, or a `selectOptions` entry whose `value` is absent. Select-menu options are matched by `value` and **fall back to position**, so inserting an option mid-list silently mislabels it.
 - Emoji in translatable content use `EmojiManager.getToken()`, never `getMarkdown()`: an emoji id belongs to the application that exported it, and language files outlive any one application. In an embed, put the emoji in a template var resolved through `setDefaultVars()`.
+- **Select-menu placeholders take unicode, not custom emoji.** Discord renders emoji in an embed, a button and a select *option*, but prints a placeholder's markdown verbatim — `<:Name:id> Select User`. The browser preview does render it, so it will look right on the site and wrong in Discord.
 
 ## Testing Guidelines
 - Jest with `@swc/jest` powers unit/integration tests; specs live under `packages/*/test` and must keep the `*.spec.ts` suffix enforced by each `jest.config.ts`.

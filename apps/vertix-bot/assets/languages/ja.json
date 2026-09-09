@@ -1018,19 +1018,19 @@
       {
         "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
         "content": {
-          "placeholder": "<emoji name='InviteChannel'> チャンネルを選択"
+          "placeholder": "📨 チャンネルを選択"
         }
       },
       {
         "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
         "content": {
-          "placeholder": "<emoji name='InviteChannel'> ユーザーを選択"
+          "placeholder": "📨 ユーザーを選択"
         }
       },
       {
         "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
         "content": {
-          "placeholder": "<emoji name='KnockChannel'> チャンネルを選択"
+          "placeholder": "🚪 チャンネルを選択"
         }
       }
     ]

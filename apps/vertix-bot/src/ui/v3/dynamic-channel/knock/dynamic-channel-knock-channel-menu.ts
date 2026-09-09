@@ -1,8 +1,6 @@
 import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
-
 import type { APISelectMenuOption } from "discord.js";
 
 import type { IRequireId } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/require-id";
@@ -27,7 +25,7 @@ export class DynamicChannelKnockChannelMenu extends UIElementStringSelectMenu im
     }
 
     protected async getPlaceholder() {
-        return EmojiManager.getToken( "KnockChannel" ) + " Select Channel";
+        return "🚪 Select Channel";
     }
 
     protected async getSelectOptions(): Promise<APISelectMenuOption[]> {

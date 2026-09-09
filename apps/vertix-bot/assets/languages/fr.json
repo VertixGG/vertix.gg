@@ -1117,7 +1117,12 @@
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**Aucun**"
           },
-          "inherited": "*(depuis les options du serveur)*"
+          "inherited": "*(depuis les options du serveur)*",
+          "privacyPublic": "🌐 Public",
+          "privacyPrivate": "🚫 Privé",
+          "privacyHidden": "🙈 Masqué",
+          "autoSaveOn": "`🟢∙Oui`",
+          "autoSaveOff": "`🔴∙Non`"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1970,6 +1975,11 @@
           "newChannelLimit": {
             "{newChannelLimitUnlimited}": "Aucune limite",
             "{newChannelLimitValue}": "{newChannelLimitCount} utilisateurs"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 Public",
+            "{privacyPrivate}": "🚫 Privé",
+            "{privacyHidden}": "🙈 Masqué"
           }
         },
         "arrayOptions": {
@@ -2982,6 +2992,11 @@
           "newChannelLimit": {
             "{newChannelLimitUnlimited}": "Aucune limite",
             "{newChannelLimitValue}": "{newChannelLimitCount} utilisateurs"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 Public",
+            "{privacyPrivate}": "🚫 Privé",
+            "{privacyHidden}": "🙈 Masqué"
           }
         },
         "arrayOptions": {

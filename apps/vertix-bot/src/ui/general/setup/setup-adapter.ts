@@ -508,7 +508,12 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 [ staffRolesMessageDefaultKey ]: "**None**"
             },
             none: "**None**",
-            inherited: "*(from the server options)*"
+            inherited: "*(from the server options)*",
+            privacyPublic: "🌐 Public",
+            privacyPrivate: "🚫 Private",
+            privacyHidden: "🙈 Hidden",
+            autoSaveOn: "`🟢∙On`",
+            autoSaveOff: "`🔴∙Off`"
         };
     } )
     .setLogic( async( args, vars ) => {
@@ -591,8 +596,8 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
             const privacyState = data.dynamicChannelDefaultPrivacyState;
             const privacyDisplay = "private" === privacyState
-                ? "🚫 Private"
-                : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
+                ? vars.privacyPrivate
+                : ( "hidden" === privacyState ? vars.privacyHidden : vars.privacyPublic );
 
             // An unset default copies the generator's own limit, so the number it copies is what
             // gets named rather than the rule that it copies one.
@@ -601,7 +606,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
             const nameTemplate = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
             const logsDisplay = data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none;
-            const autoSaveDisplay = String( data.dynamicChannelAutoSave ?? "false" );
+            const autoSaveDisplay = data.dynamicChannelAutoSave ? vars.autoSaveOn : vars.autoSaveOff;
 
             return [
                 `**#${ index + 1 }**`,
@@ -615,7 +620,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 `${ vars.labelStaffRoles } ${ staffRolesDisplay }`,
                 `${ vars.labelVoiceRole } ${ voiceRoleDisplay }`,
                 `${ vars.labelLogsChannel } ${ logsDisplay }`,
-                `${ vars.labelAutoSave } \`${ autoSaveDisplay }\``,
+                `${ vars.labelAutoSave } ${ autoSaveDisplay }`,
                 `${ vars.labelVersion } \`${ version }\``
             ];
         } ) );

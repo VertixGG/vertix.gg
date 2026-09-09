@@ -62,6 +62,9 @@ const vars = {
 
     newChannelPrivacy: uiUtilsWrapAsTemplate( "newChannelPrivacy" ),
     newChannelLimit: uiUtilsWrapAsTemplate( "newChannelLimit" ),
+    privacyPublic: uiUtilsWrapAsTemplate( "privacyPublic" ),
+    privacyPrivate: uiUtilsWrapAsTemplate( "privacyPrivate" ),
+    privacyHidden: uiUtilsWrapAsTemplate( "privacyHidden" ),
     newChannelLimitCount: uiUtilsWrapAsTemplate( "newChannelLimitCount" ),
     newChannelLimitUnlimited: uiUtilsWrapAsTemplate( "newChannelLimitUnlimited" ),
     newChannelLimitValue: uiUtilsWrapAsTemplate( "newChannelLimitValue" ),
@@ -166,6 +169,12 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             [ vars.newChannelLimitValue ]: `${ vars.newChannelLimitCount } users`
         },
 
+        newChannelPrivacy: {
+            [ vars.privacyPublic ]: "🌐 Public",
+            [ vars.privacyPrivate ]: "🚫 Private",
+            [ vars.privacyHidden ]: "🙈 Hidden"
+        },
+
         voiceRoleDisplay: {
             [ vars.voiceRoleId ]: `<@&${ vars.voiceRoleId }>`,
             [ vars.voiceRoleGuild ]: `<@&${ vars.voiceRoleId }> *(from the server options)*`,
@@ -225,8 +234,8 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
 
         const privacyState = args.dynamicChannelDefaultPrivacyState as string;
         const newChannelPrivacy = "private" === privacyState
-            ? "🚫 Private"
-            : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
+            ? vars.privacyPrivate
+            : ( "hidden" === privacyState ? vars.privacyHidden : vars.privacyPublic );
 
         // An unset default copies the generator's own limit, so the number it copies is named
         // rather than the rule, and the wording is left to the options so it can be translated.

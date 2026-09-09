@@ -1117,7 +1117,12 @@
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**なし**"
           },
-          "inherited": "*(サーバー設定より)*"
+          "inherited": "*(サーバー設定より)*",
+          "privacyPublic": "🌐 公開",
+          "privacyPrivate": "🚫 プライベート",
+          "privacyHidden": "🙈 非表示",
+          "autoSaveOn": "`🟢∙オン`",
+          "autoSaveOff": "`🔴∙オフ`"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1218,6 +1223,11 @@
           "newChannelLimit": {
             "{newChannelLimitUnlimited}": "上限なし",
             "{newChannelLimitValue}": "{newChannelLimitCount} 人"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 公開",
+            "{privacyPrivate}": "🚫 プライベート",
+            "{privacyHidden}": "🙈 非表示"
           }
         },
         "arrayOptions": {
@@ -1505,6 +1515,11 @@
           "newChannelLimit": {
             "{newChannelLimitUnlimited}": "上限なし",
             "{newChannelLimitValue}": "{newChannelLimitCount} 人"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 公開",
+            "{privacyPrivate}": "🚫 プライベート",
+            "{privacyHidden}": "🙈 非表示"
           }
         },
         "arrayOptions": {

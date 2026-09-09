@@ -1117,7 +1117,12 @@
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**Κανένα**"
           },
-          "inherited": "*(από τις επιλογές διακομιστή)*"
+          "inherited": "*(από τις επιλογές διακομιστή)*",
+          "privacyPublic": "🌐 Δημόσιο",
+          "privacyPrivate": "🚫 Ιδιωτικό",
+          "privacyHidden": "🙈 Κρυφό",
+          "autoSaveOn": "`🟢∙Ναι`",
+          "autoSaveOff": "`🔴∙Όχι`"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1849,6 +1854,11 @@
           "newChannelLimit": {
             "{newChannelLimitUnlimited}": "Χωρίς όριο",
             "{newChannelLimitValue}": "{newChannelLimitCount} χρήστες"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 Δημόσιο",
+            "{privacyPrivate}": "🚫 Ιδιωτικό",
+            "{privacyHidden}": "🙈 Κρυφό"
           }
         },
         "arrayOptions": {
@@ -2272,6 +2282,11 @@
           "newChannelLimit": {
             "{newChannelLimitUnlimited}": "Χωρίς όριο",
             "{newChannelLimitValue}": "{newChannelLimitCount} χρήστες"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 Δημόσιο",
+            "{privacyPrivate}": "🚫 Ιδιωτικό",
+            "{privacyHidden}": "🙈 Κρυφό"
           }
         },
         "arrayOptions": {

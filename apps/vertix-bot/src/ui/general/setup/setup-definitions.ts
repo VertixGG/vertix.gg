@@ -58,6 +58,11 @@ export const SETUP_EMBED_VARS = {
     staffRolesMessageDefault: uiUtilsWrapAsTemplate( "staffRolesMessageDefault" ),
     none: uiUtilsWrapAsTemplate( "none" ),
     inherited: uiUtilsWrapAsTemplate( "inherited" ),
+    privacyPublic: uiUtilsWrapAsTemplate( "privacyPublic" ),
+    privacyPrivate: uiUtilsWrapAsTemplate( "privacyPrivate" ),
+    privacyHidden: uiUtilsWrapAsTemplate( "privacyHidden" ),
+    autoSaveOn: uiUtilsWrapAsTemplate( "autoSaveOn" ),
+    autoSaveOff: uiUtilsWrapAsTemplate( "autoSaveOff" ),
 
     // Master channel display labels
     labelName: uiUtilsWrapAsTemplate( "labelName" ),

@@ -1117,7 +1117,12 @@
             "{staffRoleIds}": "{staffRoleIds}",
             "{staffRolesMessageDefault}": "**Нет**"
           },
-          "inherited": "*(из настроек сервера)*"
+          "inherited": "*(из настроек сервера)*",
+          "privacyPublic": "🌐 Публичный",
+          "privacyPrivate": "🚫 Приватный",
+          "privacyHidden": "🙈 Скрытый",
+          "autoSaveOn": "`🟢∙Вкл`",
+          "autoSaveOff": "`🔴∙Выкл`"
         },
         "arrayOptions": {
           "masterChannels": {
@@ -1849,6 +1854,11 @@
           "newChannelLimit": {
             "{newChannelLimitUnlimited}": "Без лимита",
             "{newChannelLimitValue}": "{newChannelLimitCount} польз."
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 Публичный",
+            "{privacyPrivate}": "🚫 Приватный",
+            "{privacyHidden}": "🙈 Скрытый"
           }
         },
         "arrayOptions": {
@@ -2847,6 +2857,11 @@
           "newChannelLimit": {
             "{newChannelLimitUnlimited}": "Без лимита",
             "{newChannelLimitValue}": "{newChannelLimitCount} польз."
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 Публичный",
+            "{privacyPrivate}": "🚫 Приватный",
+            "{privacyHidden}": "🙈 Скрытый"
           }
         },
         "arrayOptions": {

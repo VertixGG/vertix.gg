@@ -465,6 +465,11 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             [ v.newChannelLimitUnlimited ]: "No limit",
             [ v.newChannelLimitValue ]: `${ v.newChannelLimitCount } users`
         },
+        newChannelPrivacy: {
+            [ v.privacyPublic ]: "🌐 Public",
+            [ v.privacyPrivate ]: "🚫 Private",
+            [ v.privacyHidden ]: "🙈 Hidden"
+        },
         voiceRoleDisplay: {
             [ v.voiceRoleId ]: `<@&${ v.voiceRoleId }>`,
             [ v.voiceRoleGuild ]: `<@&${ v.voiceRoleId }> *(from the server options)*`,
@@ -526,8 +531,8 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         // what actually applies rather than a bare None.
         const privacyState = args.dynamicChannelDefaultPrivacyState as string;
         const newChannelPrivacy = "private" === privacyState
-            ? "🚫 Private"
-            : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
+            ? v.privacyPrivate
+            : ( "hidden" === privacyState ? v.privacyHidden : v.privacyPublic );
 
         // An unset default copies the generator's own limit, so the number it copies is named
         // rather than the rule, and the wording is left to the options so it can be translated.

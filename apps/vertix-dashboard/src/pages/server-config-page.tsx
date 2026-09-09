@@ -38,6 +38,7 @@ const ServerConfigContentComponent: DCommandFunctionComponent<ServerConfigConten
     );
 
     const loadServerConfig = useCommand( "Dashboard/ServerConfig/Load" );
+    const clearError = useCommand( "Dashboard/ServerConfig/ClearError" );
 
     useEffect( () => {
         loadServerConfig.run( { guildId } );
@@ -57,7 +58,13 @@ const ServerConfigContentComponent: DCommandFunctionComponent<ServerConfigConten
                     rounded-lg text-sm text-error">
                     <AlertTriangle className="w-4 h-4 shrink-0" />
                     <span className="flex-1">{ state.error }</span>
-                    <X className="w-4 h-4" />
+                    <button
+                        onClick={ () => clearError.run( {} ) }
+                        className="text-error hover:text-text-primary transition-colors"
+                        title="Dismiss"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
                 </div>
             ) }
 

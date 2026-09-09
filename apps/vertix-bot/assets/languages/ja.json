@@ -617,7 +617,7 @@
       {
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
-          "placeholder": "認証済みロールを選択"
+          "placeholder": "🛡️ ∙ 認証済みロールを選択"
         }
       },
       {
@@ -1088,7 +1088,7 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠   VoiceChannels をセットアップ",
-        "description": "**VoiceChannels**の無限の可能性を発見しましょう！\nサーバーを完璧にカスタマイズして最適化しましょう。\n\n新しいマスターチャンネルを作成するには：\n`(➕ マスターチャンネルを作成)`ボタンをクリックしてください。\n\nマスターチャンネルは、それぞれ独自の設定を持つダイナミックボイスチャンネルジェネレーターです。\n\n禁止ワード機能により、サーバーレベルでダイナミックチャンネル名を制限する設定が可能です。\n\n_**現在のマスターチャンネル**_：\n{masterChannelMessage}\n\n_**サーバーの禁止ワード**_：\n{badwordsMessage}\n\n_**サーバーのボイスロール**_：\n{voiceRoleMessage}\n\n-# 💡 マスターチャンネルを編集することでログチャンネルを設定できます。\n",
+        "description": "**VoiceChannels**の無限の可能性を発見しましょう！\nサーバーを完璧にカスタマイズして最適化しましょう。\n\n新しいマスターチャンネルを作成するには：\n`(➕ マスターチャンネルを作成)`ボタンをクリックしてください。\n\nマスターチャンネルは、それぞれ独自の設定を持つダイナミックボイスチャンネルジェネレーターです。\n\n禁止ワード機能により、サーバーレベルでダイナミックチャンネル名を制限する設定が可能です。\n\n_**現在のマスターチャンネル**_：\n{masterChannelMessage}\n\n_**サーバーの禁止ワード**_：\n{badwordsMessage}\n\n_**サーバーのボイスロール**_：\n{voiceRoleMessage}\n\n_**サーバーの認証済みロール**_：\n{verifiedRolesMessage}\n\n_**サーバーのスタッフロール**_：\n{staffRolesMessage}\n\n-# 💡 マスターチャンネルを編集することでログチャンネルを設定できます。\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -1102,6 +1102,14 @@
           "voiceRoleMessage": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleMessageDefault}": "**なし**"
+          },
+          "verifiedRolesMessage": {
+            "{verifiedRoleIds}": "{verifiedRoleIds}",
+            "{verifiedRolesMessageDefault}": "**@everyone** *(デフォルト)*"
+          },
+          "staffRolesMessage": {
+            "{staffRoleIds}": "{staffRoleIds}",
+            "{staffRolesMessageDefault}": "**なし**"
           }
         },
         "arrayOptions": {
@@ -1123,6 +1131,14 @@
           },
           "badwords": {
             "format": "{value}{separator}",
+            "separator": "、"
+          },
+          "verifiedRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": "、"
+          },
+          "staffRoleIds": {
+            "format": "<@&{value}>{separator}",
             "separator": "、"
           }
         }
@@ -1153,7 +1169,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1180,12 +1196,17 @@
           },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**なし**"
+            "{staffRolesNone}": "**なし** *(サーバー設定より)*",
+            "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
           },
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
-            "{voiceRoleNone}": "**なし**"
+            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
           }
         },
         "arrayOptions": {
@@ -1431,7 +1452,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRoles}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
         "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
         "options": {
           "on": "`🟢∙オン`",
@@ -1458,12 +1479,17 @@
           },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**なし**"
+            "{staffRolesNone}": "**なし** *(サーバー設定より)*",
+            "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
           },
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
-            "{voiceRoleNone}": "**なし**"
+            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
           }
         },
         "arrayOptions": {
@@ -2152,12 +2178,13 @@
       "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
       "content": {
         "title": "🔑  マスターチャンネル #{index} のスタッフロールを編集",
-        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n所有者を迂回できる人を作らない場合は空のままにしてください。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
+        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n空のままにすると、サーバー全体のスタッフロールが使われます。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
         "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
         "options": {
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**なし**"
+            "{staffRolesNone}": "**なし** *(サーバー設定より)*",
+            "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
           }
         },
         "arrayOptions": {
@@ -2178,7 +2205,7 @@
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
-            "{voiceRoleNone}": "**なし**"
+            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
           }
         }
       }
@@ -2204,7 +2231,7 @@
         "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**ジェネレーターチャンネルからコピー**",
+            "{userLimitInherit}": "**ジェネレーターチャンネルからコピー** ({masterChannelUserLimitDisplay})",
             "{userLimitUnlimited}": "**上限なし**",
             "{userLimitValue}": "**{userLimit} 人**"
           }
@@ -2215,12 +2242,13 @@
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
-        "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
+        "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n空のままにすると、サーバー全体の認証済みロールが使われます。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
         "footer": "注意: 変更は編集後に状態が変わるダイナミックチャンネルにのみ適用され、チャンネル内の既存のロールは変更されません。",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**なし**"
+            "{verifiedRolesDefault}": "**なし** *(サーバー設定より)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
           }
         },
         "arrayOptions": {
@@ -2420,12 +2448,13 @@
       "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
       "content": {
         "title": "🔑  マスターチャンネル #{index} のスタッフロールを編集",
-        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n所有者を迂回できる人を作らない場合は空のままにしてください。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
+        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n空のままにすると、サーバー全体のスタッフロールが使われます。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
         "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
         "options": {
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**なし**"
+            "{staffRolesNone}": "**なし** *(サーバー設定より)*",
+            "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
           }
         },
         "arrayOptions": {
@@ -2446,7 +2475,7 @@
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
-            "{voiceRoleNone}": "**なし**"
+            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
           }
         }
       }
@@ -2472,7 +2501,7 @@
         "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**ジェネレーターチャンネルからコピー**",
+            "{userLimitInherit}": "**ジェネレーターチャンネルからコピー** ({masterChannelUserLimitDisplay})",
             "{userLimitUnlimited}": "**上限なし**",
             "{userLimitValue}": "**{userLimit} 人**"
           }
@@ -2483,12 +2512,13 @@
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
-        "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
+        "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n空のままにすると、サーバー全体の認証済みロールが使われます。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
         "footer": "注意: 変更は編集後に状態が変わるダイナミックチャンネルにのみ適用され、チャンネル内の既存のロールは変更されません。",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**なし**"
+            "{verifiedRolesDefault}": "**なし** *(サーバー設定より)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
           }
         },
         "arrayOptions": {

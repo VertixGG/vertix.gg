@@ -13,7 +13,8 @@ const vars = {
     userLimitDisplay: uiUtilsWrapAsTemplate( "userLimitDisplay" ),
     userLimitInherit: uiUtilsWrapAsTemplate( "userLimitInherit" ),
     userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" ),
-    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" )
+    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
+    masterChannelUserLimitDisplay: uiUtilsWrapAsTemplate( "masterChannelUserLimitDisplay" )
 };
 
 const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed", vars )
@@ -32,7 +33,7 @@ const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof vars>( "V
     ) )
     .setOptions( () => ( {
         userLimitDisplay: {
-            [ vars.userLimitInherit ]: "**Copied from the generator channel**",
+            [ vars.userLimitInherit ]: `**Copied from the generator channel** (${ vars.masterChannelUserLimitDisplay })`,
             [ vars.userLimitUnlimited ]: "**No limit**",
             [ vars.userLimitValue ]: `**${ vars.userLimit } users**`
         }
@@ -40,8 +41,11 @@ const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof vars>( "V
     .setLogic( ( args: UIArgs ) => {
         const limit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
 
+        const inheritedUserLimit = Number( args.masterChannelUserLimit ) || 0;
+
         const result: Record<string, string | number> = {
-            index: args.index + 1
+            index: args.index + 1,
+            masterChannelUserLimitDisplay: inheritedUserLimit ? `${ inheritedUserLimit } users` : "no limit"
         };
 
         if ( null === limit || undefined === limit ) {

@@ -213,7 +213,9 @@
                     "previewDefaultVars": {
                         "masterChannelMessage": "**None**",
                         "badwordsMessage": "**None**",
-                        "voiceRoleMessage": "**None**"
+                        "voiceRoleMessage": "**None**",
+                        "verifiedRolesMessage": "**@everyone** *(default)*",
+                        "staffRolesMessage": "**None**"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup"
                 }
@@ -223,6 +225,8 @@
                 "transitions": [
                     "VertixBot/UI-General/SetupFlow/Transitions/SubmitBadwords",
                     "VertixBot/UI-General/SetupFlow/Transitions/VoiceRoleChanged",
+                    "VertixBot/UI-General/SetupFlow/Transitions/GuildVerifiedRolesChanged",
+                    "VertixBot/UI-General/SetupFlow/Transitions/GuildStaffRolesChanged",
                     "VertixBot/UI-General/SetupFlow/Transitions/ServerOptionsDone"
                 ],
                 "hooks": [],
@@ -232,7 +236,9 @@
                     "previewDefaultVars": {
                         "masterChannelMessage": "**None**",
                         "badwordsMessage": "**None**",
-                        "voiceRoleMessage": "**None**"
+                        "voiceRoleMessage": "**None**",
+                        "verifiedRolesMessage": "**@everyone** *(default)*",
+                        "staffRolesMessage": "**None**"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup"
                 }
@@ -359,6 +365,36 @@
                     {
                         "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/VoiceRoleMenu",
                         "sourceEntity": "VertixBot/UI-General/VoiceRoleMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                            "executionStep": "VertixBot/UI-General/SetupServerOptions"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "to": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/VerifiedRolesMenu",
+                        "sourceEntity": "VertixBot/UI-General/VerifiedRolesMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                            "executionStep": "VertixBot/UI-General/SetupServerOptions"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "to": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/StaffRolesMenu",
+                        "sourceEntity": "VertixBot/UI-General/StaffRolesMenu",
                         "handlerKind": "string-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptions",

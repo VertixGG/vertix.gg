@@ -47,9 +47,12 @@ const vars = {
     dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDisplay" ),
 
     verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+    verifiedRolesDisplay: uiUtilsWrapAsTemplate( "verifiedRolesDisplay" ),
+    verifiedRolesGuild: uiUtilsWrapAsTemplate( "verifiedRolesGuild" ),
 
     staffRoles: uiUtilsWrapAsTemplate( "staffRoles" ),
     staffRolesDisplay: uiUtilsWrapAsTemplate( "staffRolesDisplay" ),
+    staffRolesGuild: uiUtilsWrapAsTemplate( "staffRolesGuild" ),
     staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" ),
 
     voiceRoleId: uiUtilsWrapAsTemplate( "voiceRoleId" ),
@@ -82,7 +85,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
         "\n\n" +
         "**_🛡️ Verified Roles_**\n\n" +
         "▹ " +
-        vars.verifiedRoles +
+        vars.verifiedRolesDisplay +
         "\n\n" +
         "**_🔑 Staff Roles_**\n\n" +
         "▹ " +
@@ -144,15 +147,21 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             [ vars.configControlChannelAutoCreateDisabled ]: vars.off
         },
 
+        verifiedRolesDisplay: {
+            [ vars.verifiedRoles ]: vars.verifiedRoles,
+            [ vars.verifiedRolesGuild ]: `${ vars.verifiedRoles } *(from the server options)*`
+        },
+
         staffRolesDisplay: {
             [ vars.staffRoles ]: vars.staffRoles,
-            [ vars.staffRolesNone ]: "**None**"
+            [ vars.staffRolesGuild ]: `${ vars.staffRoles } *(from the server options)*`,
+            [ vars.staffRolesNone ]: "**None** *(from the server options)*"
         },
 
         voiceRoleDisplay: {
             [ vars.voiceRoleId ]: `<@&${ vars.voiceRoleId }>`,
             [ vars.voiceRoleGuild ]: `<@&${ vars.voiceRoleId }> *(from the server options)*`,
-            [ vars.voiceRoleNone ]: "**None**"
+            [ vars.voiceRoleNone ]: "**None** *(from the server options)*"
         }
     } ) )
     .setArrayOptions( () => {
@@ -186,18 +195,38 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             processedLogsChannelId = processedLogsChannelId[ 0 ];
         }
 
-        const staffRoles: string[] = Array.isArray( args.dynamicChannelStaffRoles )
+        // The stored lists, with what they fall back to alongside - a master channel holding none
+        // of its own shows what it inherits rather than an empty line.
+        const ownVerifiedRoles: string[] = Array.isArray( args.dynamicChannelVerifiedRoles )
+            ? args.dynamicChannelVerifiedRoles
+            : [];
+
+        const guildVerifiedRoles: string[] = Array.isArray( args.guildVerifiedRoleIds )
+            ? args.guildVerifiedRoleIds
+            : [];
+
+        const ownStaffRoles: string[] = Array.isArray( args.dynamicChannelStaffRoles )
             ? args.dynamicChannelStaffRoles
             : [];
+
+        const guildStaffRoles: string[] = Array.isArray( args.guildStaffRoleIds )
+            ? args.guildStaffRoleIds
+            : [];
+
+        const staffRoles: string[] = ownStaffRoles.length ? ownStaffRoles : guildStaffRoles;
 
         const privacyState = args.dynamicChannelDefaultPrivacyState as string;
         const newChannelPrivacy = "private" === privacyState
             ? "🚫 Private"
             : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
 
+        // Naming the number the generator actually carries, so an unset default is not just a rule.
+        const inheritedUserLimit = Number( args.masterChannelUserLimit ) || 0,
+            inheritedUserLimitDisplay = inheritedUserLimit ? `${ inheritedUserLimit } users` : "no limit";
+
         const defaultUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
         const newChannelLimit = null === defaultUserLimit || undefined === defaultUserLimit
-            ? "Copied from the generator channel"
+            ? `Copied from the generator channel (${ inheritedUserLimitDisplay })`
             : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
 
         const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,
@@ -214,10 +243,13 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
             newChannelPrivacy,
             newChannelLimit,
 
-            verifiedRoles: args.dynamicChannelVerifiedRoles,
+            verifiedRoles: ownVerifiedRoles.length ? ownVerifiedRoles : guildVerifiedRoles,
+            verifiedRolesDisplay: ownVerifiedRoles.length ? vars.verifiedRoles : vars.verifiedRolesGuild,
 
             ...( staffRoles.length ? { staffRoles } : {} ),
-            staffRolesDisplay: staffRoles.length ? vars.staffRoles : vars.staffRolesNone,
+            staffRolesDisplay: ownStaffRoles.length
+                ? vars.staffRoles
+                : ( guildStaffRoles.length ? vars.staffRolesGuild : vars.staffRolesNone ),
 
             ...( resolvedVoiceRoleId ? { voiceRoleId: resolvedVoiceRoleId } : {} ),
             voiceRoleDisplay: ownVoiceRoleId

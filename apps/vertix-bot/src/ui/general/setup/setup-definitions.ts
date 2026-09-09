@@ -10,6 +10,8 @@ export interface ISetupArgs extends UIArgs {
     masterChannels?: PrismaBot.Channel[];
     badwords?: string[];
     voiceRoleId?: string | null;
+    verifiedRoleIds?: string[];
+    staffRoleIds?: string[];
     maxMasterChannels?: number;
     scalingEditMasterChannelId?: string;
     scalingPrefix?: string;
@@ -42,6 +44,12 @@ export const SETUP_EMBED_VARS = {
     voiceRoleId: uiUtilsWrapAsTemplate( "voiceRoleId" ),
     voiceRoleMessage: uiUtilsWrapAsTemplate( "voiceRoleMessage" ),
     voiceRoleMessageDefault: uiUtilsWrapAsTemplate( "voiceRoleMessageDefault" ),
+    verifiedRoleIds: uiUtilsWrapAsTemplate( "verifiedRoleIds" ),
+    verifiedRolesMessage: uiUtilsWrapAsTemplate( "verifiedRolesMessage" ),
+    verifiedRolesMessageDefault: uiUtilsWrapAsTemplate( "verifiedRolesMessageDefault" ),
+    staffRoleIds: uiUtilsWrapAsTemplate( "staffRoleIds" ),
+    staffRolesMessage: uiUtilsWrapAsTemplate( "staffRolesMessage" ),
+    staffRolesMessageDefault: uiUtilsWrapAsTemplate( "staffRolesMessageDefault" ),
     none: uiUtilsWrapAsTemplate( "none" ),
 
     // Master channel display labels

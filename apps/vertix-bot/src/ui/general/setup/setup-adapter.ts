@@ -84,6 +84,7 @@ import type {
     UIDefaultModalChannelTextInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
+import type DynamicChannelService from "@vertix.gg/bot/src/services/dynamic-channel-service";
 import type MasterChannelService from "@vertix.gg/bot/src/services/master-channel-service";
 import type { BaseGuildTextChannel } from "discord.js";
 import type { IAdapterContext, IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
@@ -347,6 +348,32 @@ async function onVoiceRoleSelected(
     await context.editReplyWithStep( interaction, "VertixBot/UI-General/SetupServerOptions" );
 }
 
+/**
+ * Function onGuildVerifiedRolesSelected() :: The audience every master channel inherits unless it
+ * narrows it down itself.
+ *
+ * Clearing the selection is a valid answer and means `@everyone`, so nothing is forced in.
+ */
+async function onGuildVerifiedRolesSelected(
+    context: IExecutionAdapterContext<UIDefaultStringSelectRolesChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+        .applyGuildVerifiedRoles( interaction.guildId, [ ...interaction.values ].sort() );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-General/SetupServerOptions" );
+}
+
+async function onGuildStaffRolesSelected(
+    context: IExecutionAdapterContext<UIDefaultStringSelectRolesChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+        .applyGuildStaffRoles( interaction.guildId, [ ...interaction.values ].sort() );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-General/SetupServerOptions" );
+}
+
 async function onEditBadwordsClicked(
     context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
@@ -405,6 +432,12 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         "_**Server Voice Role**_:\n" +
         vars.voiceRoleMessage +
         "\n\n" +
+        "_**Server Verified Roles**_:\n" +
+        vars.verifiedRolesMessage +
+        "\n\n" +
+        "_**Server Staff Roles**_:\n" +
+        vars.staffRolesMessage +
+        "\n\n" +
         "-# 💡 You can set logs channel by editing the master channel.\n"
     )
     .setArrayOptions( ( { masterChannelsOptions, value, separator } ) => {
@@ -424,12 +457,21 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             badwords: {
                 format: `${ valueStr }${ separatorStr }`,
                 separator: ", "
+            },
+            verifiedRoleIds: {
+                format: `<@&${ valueStr }>${ separatorStr }`,
+                separator: ", "
+            },
+            staffRoleIds: {
+                format: `<@&${ valueStr }>${ separatorStr }`,
+                separator: ", "
             }
         };
     } )
     .setOptions( ( {
         masterChannels, masterChannelMessageDefault, badwords, badwordsMessageDefault,
-        voiceRoleId, voiceRoleMessageDefault
+        voiceRoleId, voiceRoleMessageDefault,
+        verifiedRoleIds, verifiedRolesMessageDefault, staffRoleIds, staffRolesMessageDefault
     } ) => {
         const masterChannelsKey = String( masterChannels );
         const masterChannelMessageDefaultKey = String( masterChannelMessageDefault );
@@ -437,6 +479,10 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         const badwordsMessageDefaultKey = String( badwordsMessageDefault );
         const voiceRoleIdKey = String( voiceRoleId );
         const voiceRoleMessageDefaultKey = String( voiceRoleMessageDefault );
+        const verifiedRoleIdsKey = String( verifiedRoleIds );
+        const verifiedRolesMessageDefaultKey = String( verifiedRolesMessageDefault );
+        const staffRoleIdsKey = String( staffRoleIds );
+        const staffRolesMessageDefaultKey = String( staffRolesMessageDefault );
 
         return {
             masterChannelMessage: {
@@ -450,6 +496,16 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             voiceRoleMessage: {
                 [ voiceRoleIdKey ]: `<@&${ voiceRoleId }>`,
                 [ voiceRoleMessageDefaultKey ]: "**None**"
+            },
+            // A guild that picked none is not empty, it is the whole server - the audience every
+            // master channel inherits unless it narrows it down itself.
+            verifiedRolesMessage: {
+                [ verifiedRoleIdsKey ]: verifiedRoleIds,
+                [ verifiedRolesMessageDefaultKey ]: "**@everyone** *(default)*"
+            },
+            staffRolesMessage: {
+                [ staffRoleIdsKey ]: staffRoleIds,
+                [ staffRolesMessageDefaultKey ]: "**None**"
             },
             none: "**None**"
         };
@@ -571,6 +627,20 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             result.voiceRoleMessage = vars.voiceRoleMessageDefault;
         }
 
+        if ( args?.verifiedRoleIds?.length ) {
+            result.verifiedRoleIds = args.verifiedRoleIds;
+            result.verifiedRolesMessage = vars.verifiedRoleIds;
+        } else {
+            result.verifiedRolesMessage = vars.verifiedRolesMessageDefault;
+        }
+
+        if ( args?.staffRoleIds?.length ) {
+            result.staffRoleIds = args.staffRoleIds;
+            result.staffRolesMessage = vars.staffRoleIds;
+        } else {
+            result.staffRolesMessage = vars.staffRolesMessageDefault;
+        }
+
         return result;
     } )
     .setDefaultVars( () => ( {
@@ -635,7 +705,9 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
         const args: ISetupArgs = {
             masterChannels: await ChannelModel.$.getMasters( interaction.guild.id, "settings" ),
             badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) ),
-            voiceRoleId: await GuildDataManager.$.getVoiceRoleId( interaction.guild.id )
+            voiceRoleId: await GuildDataManager.$.getVoiceRoleId( interaction.guild.id ),
+            verifiedRoleIds: await GuildDataManager.$.getVerifiedRoleIds( interaction.guild.id ),
+            staffRoleIds: await GuildDataManager.$.getStaffRoleIds( interaction.guild.id )
         };
 
         if ( argsFromManager?.maxMasterChannels ) {
@@ -653,7 +725,9 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 previewDefaultVars: {
                     masterChannelMessage: "**None**",
                     badwordsMessage: "**None**",
-                    voiceRoleMessage: "**None**"
+                    voiceRoleMessage: "**None**",
+                    verifiedRolesMessage: "**@everyone** *(default)*",
+                    staffRolesMessage: "**None**"
                 }
             } )
             .addState( "ServerOptions", {
@@ -663,7 +737,9 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 previewDefaultVars: {
                     masterChannelMessage: "**None**",
                     badwordsMessage: "**None**",
-                    voiceRoleMessage: "**None**"
+                    voiceRoleMessage: "**None**",
+                    verifiedRolesMessage: "**@everyone** *(default)*",
+                    staffRolesMessage: "**None**"
                 }
             } )
             .addState( "MaxMasterChannelsReached", {
@@ -681,6 +757,8 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             .addTransition( "OpenServerOptions", { from: "Initial", to: "ServerOptions" } )
             .addTransition( "SubmitBadwords", { from: [ "Initial", "ServerOptions" ], to: "ServerOptions" } )
             .addTransition( "VoiceRoleChanged", { from: "ServerOptions", to: "ServerOptions" } )
+            .addTransition( "GuildVerifiedRolesChanged", { from: "ServerOptions", to: "ServerOptions" } )
+            .addTransition( "GuildStaffRolesChanged", { from: "ServerOptions", to: "ServerOptions" } )
             .addTransition( "ServerOptionsDone", { from: "ServerOptions", to: "Initial" } )
             .addTransition( "SubmitScalingConfig", { from: "Initial", to: "Initial" } )
             .addEntryPoint( {
@@ -784,6 +862,20 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 "VoiceRoleChanged",
                 async( context, interaction ) => {
                     await onVoiceRoleSelected( context, interaction );
+                }
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/VerifiedRolesMenu",
+                "GuildVerifiedRolesChanged",
+                async( context, interaction ) => {
+                    await onGuildVerifiedRolesSelected( context, interaction );
+                }
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-General/StaffRolesMenu",
+                "GuildStaffRolesChanged",
+                async( context, interaction ) => {
+                    await onGuildStaffRolesSelected( context, interaction );
                 }
             )
             .bindButton<UIDefaultButtonChannelTextInteraction>(

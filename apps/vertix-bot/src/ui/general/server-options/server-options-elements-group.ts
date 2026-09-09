@@ -4,9 +4,13 @@ import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
 
 import { BadwordsEditButton } from "@vertix.gg/bot/src/ui/general/badwords/badwords-edit-button";
 import { VoiceRoleMenu } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-menu";
+import { VerifiedRolesMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-menu";
+import { StaffRolesMenu } from "@vertix.gg/bot/src/ui/general/staff-roles/staff-roles-menu";
 
 const ServerOptionsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/ServerOptionsElementsGroup" )
     .addRow( [ VoiceRoleMenu ] )
+    .addRow( [ VerifiedRolesMenu ] )
+    .addRow( [ StaffRolesMenu ] )
     .addRow( [ BadwordsEditButton, DoneButton ] )
     .build();
 

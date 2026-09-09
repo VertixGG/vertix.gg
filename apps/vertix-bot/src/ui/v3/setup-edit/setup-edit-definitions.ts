@@ -44,7 +44,9 @@ export const SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS = {
     separator: "{separator}",
     value: "{value}",
     index: uiUtilsWrapAsTemplate( "index" ),
-    verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" )
+    verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+    verifiedRolesDisplay: uiUtilsWrapAsTemplate( "verifiedRolesDisplay" ),
+    verifiedRolesGuild: uiUtilsWrapAsTemplate( "verifiedRolesGuild" )
 };
 
 export const SETUP_EDIT_STAFF_ROLES_EMBED_VARS = {
@@ -53,6 +55,7 @@ export const SETUP_EDIT_STAFF_ROLES_EMBED_VARS = {
     index: uiUtilsWrapAsTemplate( "index" ),
     staffRoles: uiUtilsWrapAsTemplate( "staffRoles" ),
     staffRolesDisplay: uiUtilsWrapAsTemplate( "staffRolesDisplay" ),
+    staffRolesGuild: uiUtilsWrapAsTemplate( "staffRolesGuild" ),
     staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" )
 };
 
@@ -78,7 +81,8 @@ export const SETUP_EDIT_DEFAULT_USER_LIMIT_EMBED_VARS = {
     userLimitDisplay: uiUtilsWrapAsTemplate( "userLimitDisplay" ),
     userLimitInherit: uiUtilsWrapAsTemplate( "userLimitInherit" ),
     userLimitUnlimited: uiUtilsWrapAsTemplate( "userLimitUnlimited" ),
-    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" )
+    userLimitValue: uiUtilsWrapAsTemplate( "userLimitValue" ),
+    masterChannelUserLimitDisplay: uiUtilsWrapAsTemplate( "masterChannelUserLimitDisplay" )
 };
 
 export const SETUP_EDIT_EMBED_VARS = {
@@ -110,8 +114,11 @@ export const SETUP_EDIT_EMBED_VARS = {
     dynamicChannelLogsChannelDisplay: uiUtilsWrapAsTemplate( "dynamicChannelLogsChannelDisplay" ),
     dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" ),
     verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
+    verifiedRolesDisplay: uiUtilsWrapAsTemplate( "verifiedRolesDisplay" ),
+    verifiedRolesGuild: uiUtilsWrapAsTemplate( "verifiedRolesGuild" ),
     staffRoles: uiUtilsWrapAsTemplate( "staffRoles" ),
     staffRolesDisplay: uiUtilsWrapAsTemplate( "staffRolesDisplay" ),
+    staffRolesGuild: uiUtilsWrapAsTemplate( "staffRolesGuild" ),
     staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" ),
     voiceRoleId: uiUtilsWrapAsTemplate( "voiceRoleId" ),
     voiceRoleDisplay: uiUtilsWrapAsTemplate( "voiceRoleDisplay" ),

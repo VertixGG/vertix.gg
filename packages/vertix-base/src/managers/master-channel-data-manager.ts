@@ -10,6 +10,8 @@ import { InitializeBase } from "@vertix.gg/base/src/bases";
 
 import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
 
+import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+
 import type { ChannelPrivacyStateDefault, MasterChannelConfigInterface, MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
 import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
 
@@ -201,14 +203,50 @@ export class MasterChannelDataManager extends InitializeBase {
         return result?.dynamicChannelAutoStatus ?? defaults.dynamicChannelAutoStatus;
     }
 
+    /**
+     * Function getChannelVerifiedRoles() :: The audience of a master channel's dynamic channels.
+     *
+     * Its own list wins, and an empty one defers to the guild wide default.
+     */
     public async getChannelVerifiedRoles( masterChannelDB: ChannelExtended, guildId: string, cache = true ): Promise<string[]> {
+        const ownRoleIds = await this.getChannelOwnVerifiedRoles( masterChannelDB, guildId, cache );
+
+        if ( ownRoleIds.length ) {
+            return ownRoleIds;
+        }
+
+        return GuildDataManager.$.resolveVerifiedRoleIds( guildId );
+    }
+
+    /**
+     * Function getChannelOwnVerifiedRoles() :: The list a master channel holds itself, empty when
+     * it defers to the guild wide default.
+     *
+     * The editing screens need the stored answer rather than the resolved one - handing an
+     * inherited list to an editor lets a save write it back as the channel's own and quietly stop
+     * it following the server.
+     *
+     * `@everyone` alone is not a choice, it is the absence of one - the whole server is what an
+     * audience narrows down from - so a channel holding only it is treated as having none of its
+     * own. Every channel created before the guild wide list existed was seeded that way.
+     */
+    public async getChannelOwnVerifiedRoles(
+        masterChannelDB: ChannelExtended,
+        guildId: string,
+        cache = true
+    ): Promise<string[]> {
         const defaults = this.config.defaults.settings;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
-            res?.dynamicChannelVerifiedRoles?.length
-                ? { ...defaults, ...res }
-                : { ...defaults, dynamicChannelVerifiedRoles: [] }
+            res ? { ...defaults, ...res } : defaults
         );
-        return result?.dynamicChannelVerifiedRoles?.length ? result.dynamicChannelVerifiedRoles : [ guildId ];
+
+        const roleIds = result?.dynamicChannelVerifiedRoles ?? [];
+
+        if ( 1 === roleIds.length && guildId === roleIds[ 0 ] ) {
+            return [];
+        }
+
+        return roleIds;
     }
 
     /**
@@ -217,9 +255,26 @@ export class MasterChannelDataManager extends InitializeBase {
      *
      * The mirror of the verified roles: those are the roles the privacy state denies, these are the
      * roles it can never shut out, so a moderator can reach a private or hidden channel without the
-     * owner granting them one at a time. Empty by default - nobody bypasses unless an admin says so.
+     * owner granting them one at a time.
+     *
+     * Its own list wins, an empty one defers to the guild wide default, and a guild that set none
+     * of its own means nobody bypasses the owner.
      */
-    public async getChannelStaffRoles( masterChannelDB: ChannelExtended, cache = true ): Promise<string[]> {
+    public async getChannelStaffRoles( masterChannelDB: ChannelExtended, guildId: string, cache = true ): Promise<string[]> {
+        const ownRoleIds = await this.getChannelOwnStaffRoles( masterChannelDB, cache );
+
+        if ( ownRoleIds.length ) {
+            return ownRoleIds;
+        }
+
+        return GuildDataManager.$.getStaffRoleIds( guildId );
+    }
+
+    /**
+     * Function getChannelOwnStaffRoles() :: The staff roles mirror of
+     * `getChannelOwnVerifiedRoles()`.
+     */
+    public async getChannelOwnStaffRoles( masterChannelDB: ChannelExtended, cache = true ): Promise<string[]> {
         const defaults = this.config.defaults.settings;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
             res ? { ...defaults, ...res } : defaults
@@ -240,7 +295,7 @@ export class MasterChannelDataManager extends InitializeBase {
         );
 
         if ( shouldAdminLog ) {
-            const previousRoles = await this.getChannelStaffRoles( masterChannelDB );
+            const previousRoles = await this.getChannelStaffRoles( masterChannelDB, guildId );
 
             this.logger.admin(
                 this.setChannelStaffRoles,
@@ -466,10 +521,6 @@ export class MasterChannelDataManager extends InitializeBase {
             this.setChannelVerifiedRoles,
             `Guild id:${ guildId }, master channel id: '${ masterChannelDB.id }' - Setting channel verified roles: '${ roles }'`
         );
-
-        if ( !roles.length ) {
-            roles.push( guildId );
-        }
 
         if ( shouldAdminLog ) {
             const previousRoles = await this.getChannelVerifiedRoles( masterChannelDB, guildId );

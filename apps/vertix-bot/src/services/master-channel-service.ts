@@ -694,7 +694,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             name: config.data.constants.dynamicChannelsCategoryName,
             permissionOverwrites: this.getAudiencePermissions(
                 guild,
-                args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ]
+                await this.resolveVerifiedRoles( guild, args.dynamicChannelVerifiedRoles )
             )
         } ).catch( ( e ) => {
             this.logger.error( this.createMasterChannel, "", e );
@@ -764,6 +764,21 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
     /**
      * Function `createMasterChannelInternal()` - Creates a master channel for the guild.
      */
+    /**
+     * Function resolveVerifiedRoles() :: The audience a master channel is created for.
+     *
+     * The admin's own choice wins and anything else defers to the guild wide default - the same
+     * levels `MasterChannelDataManager.getChannelVerifiedRoles()` resolves once it exists, so the
+     * overwrites written here match the audience the bot reads back afterwards.
+     */
+    private async resolveVerifiedRoles( guild: Guild, verifiedRoles?: string[] ) {
+        if ( verifiedRoles?.length ) {
+            return verifiedRoles;
+        }
+
+        return GuildDataManager.$.resolveVerifiedRoleIds( guild.id );
+    }
+
     private async createMasterChannelInternal( args: IMasterChannelCreateInternalArgs ) {
         let result;
 
@@ -801,7 +816,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const { parent, guild } = args;
 
-        const newVerifiedRoles = args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ];
+        const newVerifiedRoles = await this.resolveVerifiedRoles( guild, args.dynamicChannelVerifiedRoles );
 
         // The master channel is a generator, not a place to chat, so its text chat is closed for
         // `@everyone`, the bot is granted what it needs to run the channel, and each verified role
@@ -933,7 +948,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                     ? args.dynamicChannelAutoStatus
                     : settings.dynamicChannelAutoStatus,
             newControlChannelId = settings.dynamicChannelControlChannelId,
-            newVerifiedRoles = args.dynamicChannelVerifiedRoles || [ guild.roles.everyone.id ];
+            newVerifiedRoles = await this.resolveVerifiedRoles( guild, args.dynamicChannelVerifiedRoles );
 
         // The master channel is a generator, not a place to chat, so its text chat is closed for
         // `@everyone`, the bot is granted what it needs to run the channel, and each verified role
@@ -1019,7 +1034,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelNameTemplate: newName,
             // Configured after setup, through the edit screen.
             dynamicChannelStaffRoles: [],
-            dynamicChannelVerifiedRoles: newVerifiedRoles,
+            // The resolved list above is what discord is given, but only a choice of the admin's
+            // own is stored - an empty one leaves the channel deferring to the guild wide default.
+            dynamicChannelVerifiedRoles: args.dynamicChannelVerifiedRoles ?? [],
             // Unset defers to the guild wide voice role.
             dynamicChannelVoiceRoleId: null,
             // Configured after setup, through the edit screen.

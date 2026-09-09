@@ -73,9 +73,31 @@ async function onSetupMasterEditButtonClicked(
         args[ key ] = value;
     } );
 
+    // What a master channel without a list of its own actually applies. The component is static, so
+    // `getReplyArgs()` never runs and this is the only place these can be seeded.
+    args.guildVoiceRoleId = await GuildDataManager.$.getVoiceRoleId( interaction.guildId );
+    args.guildVerifiedRoleIds = await GuildDataManager.$.resolveVerifiedRoleIds( interaction.guildId );
+    args.guildStaffRoleIds = await GuildDataManager.$.getStaffRoleIds( interaction.guildId );
+
+    // Through the manager rather than the settings copied above: `@everyone` alone is what every
+    // channel created before the guild wide lists existed stores, and only the manager knows that
+    // counts as no choice of its own.
+    args[ masterChannelKeys.dynamicChannelVerifiedRoles ] =
+        await MasterChannelDataManager.$.getChannelOwnVerifiedRoles( args.masterChannelDB, interaction.guildId );
+    args[ masterChannelKeys.dynamicChannelStaffRoles ] =
+        await MasterChannelDataManager.$.getChannelOwnStaffRoles( args.masterChannelDB );
+
     if ( args[ masterChannelKeys.dynamicChannelVerifiedRoles ].includes( interaction.guild.roles.everyone.id ) ) {
         args.dynamicChannelIncludeEveryoneRole = true;
     }
+
+    // The generator's own limit is what an unset default copies, so the screens can name the number
+    // rather than only the rule.
+    const masterVoiceChannel = interaction.guild.channels.cache.get( args.masterChannelId as string );
+
+    args.masterChannelUserLimit = masterVoiceChannel && "userLimit" in masterVoiceChannel
+        ? masterVoiceChannel.userLimit
+        : 0;
 
     args.dynamicChannelControlChannelAutoCreate = !!args.dynamicChannelControlChannelId;
 
@@ -707,7 +729,7 @@ async function onStaffRolesSelected(
         version: VERSION_UI_V2
     } as ChannelExtended;
 
-    const previousRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+    const previousRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, interaction.guildId );
 
     await MasterChannelDataManager.$.setChannelStaffRoles( masterChannelDB, interaction.guildId, staffRoles );
 
@@ -799,7 +821,8 @@ async function onBackButtonClicked(
     }
 
     if ( "VertixBot/UI-V2/SetupEditStaffRoles" === context.getCurrentExecutionStep( interaction )?.name ) {
-        args[ keys.dynamicChannelStaffRoles ] = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+        args[ keys.dynamicChannelStaffRoles ] =
+            await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, interaction.guildId );
 
         context.setArgs( interaction, args );
 
@@ -808,12 +831,12 @@ async function onBackButtonClicked(
         return;
     }
 
-    const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles(
-        masterChannelDB,
-        interaction.guild.id
-    );
+    // The stored answer rather than the resolved one. The editor writes whatever it is handed
+    // back, so an inherited list loaded here would be pinned as the channel's own the moment the
+    // screen is finished - even when nothing was touched.
+    const verifiedRoles = await MasterChannelDataManager.$.getChannelOwnVerifiedRoles( masterChannelDB, interaction.guild.id );
 
-    if ( verifiedRoles?.length && verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
+    if ( verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
         args.dynamicChannelIncludeEveryoneRole = true;
     }
 
@@ -843,8 +866,8 @@ async function onFinishButtonClicked(
         args.dynamicChannelVerifiedRoles
     );
 
-    // Read back rather than trusting the args, `setChannelVerifiedRoles()` falls back to the
-    // everyone role when the list is emptied.
+    // Read back rather than trusting the args, an emptied list is stored as is and resolves
+    // through the guild wide default.
     const currentRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, interaction.guildId, false );
 
     await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
@@ -1109,7 +1132,6 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 args[ key ] = masterChannelSettings[ key ];
             } );
 
-            args.guildVoiceRoleId = await GuildDataManager.$.getVoiceRoleId( masterChannelDB.guildId );
         } else {
             const guildId = interaction?.guild?.id || "";
             args.masterChannels = await ChannelModel.$.getMasters( guildId, "settings" );

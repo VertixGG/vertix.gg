@@ -14,6 +14,7 @@ const vars = {
     staffRoles: uiUtilsWrapAsTemplate( "staffRoles" ),
     staffRolesDisplay: uiUtilsWrapAsTemplate( "staffRolesDisplay" ),
     staffRolesNone: uiUtilsWrapAsTemplate( "staffRolesNone" ),
+    staffRolesGuild: uiUtilsWrapAsTemplate( "staffRolesGuild" ),
 
     index: uiUtilsWrapAsTemplate( "index" )
 };
@@ -26,7 +27,7 @@ const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixB
     .setDescription( () => (
         "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\n" +
         `A role selected here keeps access to every dynamic channel of Master Channel #${ vars.index }, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\n` +
-        "Leave it empty if nobody should bypass the owner.\n\n" +
+        "Leaving it empty falls back to the server wide staff roles.\n\n" +
         "**_Current Staff Roles_**\n\n" +
         "> " +
         vars.staffRolesDisplay
@@ -37,7 +38,8 @@ const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixB
     .setOptions( () => ( {
         staffRolesDisplay: {
             [ vars.staffRoles ]: vars.staffRoles,
-            [ vars.staffRolesNone ]: "**None**"
+            [ vars.staffRolesGuild ]: `${ vars.staffRoles } *(from the server options)*`,
+            [ vars.staffRolesNone ]: "**None** *(from the server options)*"
         }
     } ) )
     .setArrayOptions( () => ( {
@@ -51,13 +53,20 @@ const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixB
             index: args.index + 1
         };
 
-        const staffRoles = Array.isArray( args.dynamicChannelStaffRoles )
+        const ownRoles = Array.isArray( args.dynamicChannelStaffRoles )
             ? args.dynamicChannelStaffRoles
             : [];
 
-        if ( staffRoles.length ) {
-            result.staffRoles = staffRoles;
+        const guildRoles = Array.isArray( args.guildStaffRoleIds )
+            ? args.guildStaffRoleIds
+            : [];
+
+        if ( ownRoles.length ) {
+            result.staffRoles = ownRoles;
             result.staffRolesDisplay = vars.staffRoles;
+        } else if ( guildRoles.length ) {
+            result.staffRoles = guildRoles;
+            result.staffRolesDisplay = vars.staffRolesGuild;
         } else {
             result.staffRolesDisplay = vars.staffRolesNone;
         }

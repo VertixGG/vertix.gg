@@ -1192,6 +1192,79 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
+     * Function applyGuildVerifiedRoles() :: Stores the guild wide verified roles and moves every
+     * master channel that was following them.
+     *
+     * The audience is resolved per master channel before and after the write rather than asking
+     * which ones hold a list of their own: one that does resolves to the same thing twice, and
+     * `updateVerifiedRolesPermissions()` returns early when nothing moved.
+     */
+    public async applyGuildVerifiedRoles( guildId: string, roleIds: string[] ) {
+        const mastersDB = await this.getDynamicMasters( guildId ),
+            previousRoles = new Map<string, string[]>();
+
+        for ( const masterChannelDB of mastersDB ) {
+            previousRoles.set(
+                masterChannelDB.channelId,
+                await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, guildId )
+            );
+        }
+
+        await GuildDataManager.$.setVerifiedRoleIds( guildId, roleIds );
+
+        for ( const masterChannelDB of mastersDB ) {
+            await this.updateVerifiedRolesPermissions(
+                guildId,
+                masterChannelDB.channelId,
+                previousRoles.get( masterChannelDB.channelId ) ?? [],
+                await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, guildId, false )
+            );
+        }
+    }
+
+    /**
+     * Function applyGuildStaffRoles() :: The staff roles mirror of `applyGuildVerifiedRoles()`.
+     */
+    public async applyGuildStaffRoles( guildId: string, roleIds: string[] ) {
+        const mastersDB = await this.getDynamicMasters( guildId ),
+            previousRoles = new Map<string, string[]>();
+
+        for ( const masterChannelDB of mastersDB ) {
+            previousRoles.set(
+                masterChannelDB.channelId,
+                await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, guildId )
+            );
+        }
+
+        await GuildDataManager.$.setStaffRoleIds( guildId, roleIds );
+
+        for ( const masterChannelDB of mastersDB ) {
+            await this.updateStaffRolesPermissions(
+                guildId,
+                masterChannelDB.channelId,
+                previousRoles.get( masterChannelDB.channelId ) ?? [],
+                await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, guildId, false )
+            );
+        }
+    }
+
+    /**
+     * Function getDynamicMasters() :: The generator channels of a guild.
+     *
+     * Scaling master channels are left out - they own no dynamic channels and none of the role
+     * lists apply to them, so writing the audience onto one would only touch a channel that never
+     * asked for it.
+     */
+    private async getDynamicMasters( guildId: string ) {
+        const mastersDB = await ChannelModel.$.getMasters( guildId, "settings" );
+
+        return mastersDB.filter(
+            ( masterChannelDB ) =>
+                PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL === masterChannelDB.internalType
+        );
+    }
+
+    /**
      * Function getControlChannel() :: Resolves the control panel of a master channel, if it has one.
      */
     private async getControlChannel( masterChannelId: string ) {
@@ -1433,7 +1506,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         // Staff roles outrank every deny the state writes, so they are granted up front and the
         // saved state below never has to account for them.
-        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, masterChannel.guildId );
 
         staffRoles.forEach( ( roleId ) => {
             permissionOverwrites.push( {
@@ -2733,7 +2806,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return roles;
         }
 
-        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, dynamicChannel.guildId );
 
         if ( ! staffRoles.length ) {
             return roles;
@@ -2757,7 +2830,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return false;
         }
 
-        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+        const staffRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, dynamicChannel.guildId );
 
         return staffRoles.some( ( roleId ) => member.roles.cache.has( roleId ) );
     }

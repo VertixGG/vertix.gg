@@ -5,6 +5,8 @@ import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 import {
     DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
     DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
+    DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES,
+    DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES,
     DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE
 } from "@vertix.gg/definitions/src/guild-data-keys";
 
@@ -159,7 +161,9 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         const previousRoleId = await this.getVoiceRoleId( guildId );
 
         if ( ! roleId ) {
-            await this.deleteData( { ownerId: guildId, key: DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE }, true );
+            if ( previousRoleId ) {
+                await this.deleteData( { ownerId: guildId, key: DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE }, true );
+            }
         } else {
             await this.setData(
                 {
@@ -182,6 +186,53 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         return { previousRoleId, roleId };
     }
 
+    public async getVerifiedRoleIds( guildId: string ): Promise<string[]> {
+        return this.getRoleIds( guildId, DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES );
+    }
+
+    /**
+     * Function resolveVerifiedRoleIds() :: The audience a guild falls back to.
+     *
+     * A guild that configured none of its own means `@everyone`, whose role id is the guild id.
+     * The single statement of that rule - `getVerifiedRoleIds()` stays empty for an unset guild so
+     * the screens can still tell "not configured" apart from "chose `@everyone`".
+     */
+    public async resolveVerifiedRoleIds( guildId: string ): Promise<string[]> {
+        const roleIds = await this.getVerifiedRoleIds( guildId );
+
+        return roleIds.length ? roleIds : [ guildId ];
+    }
+
+    public async setVerifiedRoleIds( guildId: string, roleIds: string[], shouldAdminLog = true ) {
+        const result = await this.setRoleIds( guildId, DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES, roleIds );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setVerifiedRoleIds,
+                `🛡️  Verified roles modified - guildId: "${ guildId }", "${ result.previousRoleIds }" => "${ result.roleIds }"`
+            );
+        }
+
+        return result;
+    }
+
+    public async getStaffRoleIds( guildId: string ): Promise<string[]> {
+        return this.getRoleIds( guildId, DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES );
+    }
+
+    public async setStaffRoleIds( guildId: string, roleIds: string[], shouldAdminLog = true ) {
+        const result = await this.setRoleIds( guildId, DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES, roleIds );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setStaffRoleIds,
+                `🔑  Staff roles modified - guildId: "${ guildId }", "${ result.previousRoleIds }" => "${ result.roleIds }"`
+            );
+        }
+
+        return result;
+    }
+
     public async hasSomeBadword( guildId: string, content: string ) {
         return badwordsSomeUsed( content, await this.getBadwords( guildId ) );
     }
@@ -194,6 +245,56 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         this.logger.debug( this.removeFromCache, `Removing guild data from cache for ownerId: '${ ownerId }'` );
 
         this.deleteCacheWithPrefix( ownerId );
+    }
+
+    /**
+     * Function getRoleIds() :: The role list held under a guild wide settings key, empty when unset.
+     *
+     * `default: null` keeps `getData` from creating the row on a read, so a guild that never set
+     * one stays unset instead of gaining an empty row the first time anything reads it.
+     */
+    private async getRoleIds( guildId: string, key: string ): Promise<string[]> {
+        const result = await this.getData(
+            {
+                ownerId: guildId,
+                key,
+                default: null,
+                cache: true
+            },
+            true
+        );
+
+        return result?.values ?? [];
+    }
+
+    /**
+     * Function setRoleIds() :: Stores a role list, and drops the row when the list empties.
+     *
+     * The row is only deleted when there is one to delete - `deleteData()` reaches prisma directly
+     * and throws on a record that is not there.
+     */
+    private async setRoleIds( guildId: string, key: string, roleIds: string[] ) {
+        const previousRoleIds = await this.getRoleIds( guildId, key );
+
+        if ( ! roleIds.length ) {
+            if ( previousRoleIds.length ) {
+                await this.deleteData( { ownerId: guildId, key }, true );
+            }
+
+            return { previousRoleIds, roleIds };
+        }
+
+        await this.setData(
+            {
+                ownerId: guildId,
+                key,
+                default: roleIds,
+                cache: true
+            },
+            true
+        );
+
+        return { previousRoleIds, roleIds };
     }
 
     protected getSettingsKey() {

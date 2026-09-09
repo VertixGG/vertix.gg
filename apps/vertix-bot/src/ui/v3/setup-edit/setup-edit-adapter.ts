@@ -326,21 +326,34 @@ const SetupEditVerifiedRolesEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEdit
     .setTitle( ( v ) => `🛡️  Edit Verified Roles Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
         `Editing verified roles will impact the dynamic channels created by Master Channel #${ v.index }.\n\n` +
-        `**_Current Verified Roles_**\n\n> ${ v.verifiedRoles }`
+        "Leaving it empty falls back to the server wide verified roles.\n\n" +
+        `**_Current Verified Roles_**\n\n> ${ v.verifiedRolesDisplay }`
     )
     .setFooterText( () =>
         "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged."
     )
+    .setOptions( ( v ) => ( {
+        verifiedRolesDisplay: {
+            [ v.verifiedRoles ]: v.verifiedRoles,
+            [ v.verifiedRolesGuild ]: `${ v.verifiedRoles } *(from the server options)*`
+        }
+    } ) )
     .setArrayOptions( {
         verifiedRoles: {
             format: "<@&{value}>{separator}",
             separator: ", "
         }
     } )
-    .setLogic( ( args: UIArgs ) => ( {
-        index: ( args.index || 0 ) + 1,
-        verifiedRoles: args.dynamicChannelVerifiedRoles || []
-    } ) )
+    .setLogic( ( args, v ) => {
+        const ownRoles = ( args.dynamicChannelVerifiedRoles as string[] ) || [],
+            guildRoles = ( args.guildVerifiedRoleIds as string[] ) || [];
+
+        return {
+            index: ( args.index || 0 ) + 1,
+            verifiedRoles: ownRoles.length ? ownRoles : guildRoles,
+            verifiedRolesDisplay: ownRoles.length ? v.verifiedRoles : v.verifiedRolesGuild
+        };
+    } )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .build();
 
@@ -351,7 +364,7 @@ const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_STAF
     .setDescription( ( v ) =>
         "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\n" +
         `A role selected here keeps access to every dynamic channel of Master Channel #${ v.index }, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\n` +
-        "Leave it empty if nobody should bypass the owner.\n\n" +
+        "Leaving it empty falls back to the server wide staff roles.\n\n" +
         `**_Current Staff Roles_**\n\n> ${ v.staffRolesDisplay }`
     )
     .setFooterText( () =>
@@ -360,7 +373,8 @@ const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_STAF
     .setOptions( ( v ) => ( {
         staffRolesDisplay: {
             [ v.staffRoles ]: v.staffRoles,
-            [ v.staffRolesNone ]: "**None**"
+            [ v.staffRolesGuild ]: `${ v.staffRoles } *(from the server options)*`,
+            [ v.staffRolesNone ]: "**None** *(from the server options)*"
         }
     } ) )
     .setArrayOptions( {
@@ -370,12 +384,17 @@ const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_STAF
         }
     } )
     .setLogic( ( args, v ) => {
-        const staffRoles = ( args.dynamicChannelStaffRoles as string[] ) || [];
+        const ownRoles = ( args.dynamicChannelStaffRoles as string[] ) || [],
+            guildRoles = ( args.guildStaffRoleIds as string[] ) || [];
+
+        const staffRoles = ownRoles.length ? ownRoles : guildRoles;
 
         return {
             index: ( args.index || 0 ) + 1,
             ...( staffRoles.length ? { staffRoles } : {} ),
-            staffRolesDisplay: staffRoles.length ? v.staffRoles : v.staffRolesNone
+            staffRolesDisplay: ownRoles.length
+                ? v.staffRoles
+                : ( guildRoles.length ? v.staffRolesGuild : v.staffRolesNone )
         };
     } )
     .setInstanceType( UIInstancesTypes.Dynamic )
@@ -396,7 +415,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
         `➤ ∙ Logs Channel: ${ v.dynamicChannelLogsChannelDisplay }\n\n` +
         "**_🎚 Buttons Interface_**\n\n" +
         `${ v.dynamicChannelButtonsTemplate }\n\n` +
-        `**_🛡️ Verified Roles_**\n\n▹ ${ v.verifiedRoles }\n\n` +
+        `**_🛡️ Verified Roles_**\n\n▹ ${ v.verifiedRolesDisplay }\n\n` +
         `**_🔑 Staff Roles_**\n\n▹ ${ v.staffRolesDisplay }\n\n` +
         `**_🎙️ Voice Role_**\n\n▹ ${ v.voiceRoleDisplay }\n\n` +
         "**_⚙️ Configuration_**\n\n" +
@@ -433,14 +452,19 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             [ v.configControlChannelAutoCreateEnabled ]: v.on,
             [ v.configControlChannelAutoCreateDisabled ]: v.off
         },
+        verifiedRolesDisplay: {
+            [ v.verifiedRoles ]: v.verifiedRoles,
+            [ v.verifiedRolesGuild ]: `${ v.verifiedRoles } *(from the server options)*`
+        },
         staffRolesDisplay: {
             [ v.staffRoles ]: v.staffRoles,
-            [ v.staffRolesNone ]: "**None**"
+            [ v.staffRolesGuild ]: `${ v.staffRoles } *(from the server options)*`,
+            [ v.staffRolesNone ]: "**None** *(from the server options)*"
         },
         voiceRoleDisplay: {
             [ v.voiceRoleId ]: `<@&${ v.voiceRoleId }>`,
             [ v.voiceRoleGuild ]: `<@&${ v.voiceRoleId }> *(from the server options)*`,
-            [ v.voiceRoleNone ]: "**None**"
+            [ v.voiceRoleNone ]: "**None** *(from the server options)*"
         }
     } ) )
     .setArrayOptions( {
@@ -478,11 +502,21 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             }
         } );
 
-        const staffRoles = ( args.dynamicChannelStaffRoles as string[] ) || [];
+        // The stored lists, with what they fall back to alongside - a master channel holding
+        // none of its own shows what it inherits rather than an empty line.
+        const ownVerifiedRoles = ( args.dynamicChannelVerifiedRoles as string[] ) || [],
+            guildVerifiedRoles = ( args.guildVerifiedRoleIds as string[] ) || [];
+
+        const ownStaffRoles = ( args.dynamicChannelStaffRoles as string[] ) || [],
+            guildStaffRoles = ( args.guildStaffRoleIds as string[] ) || [];
+
+        const staffRoles = ownStaffRoles.length ? ownStaffRoles : guildStaffRoles;
 
         // Mirrors the verified roles embed: the array var is left unset when there is nothing to
         // format, the display var carries the "None" literal instead.
-        const staffRolesDisplay = staffRoles.length ? v.staffRoles : v.staffRolesNone;
+        const staffRolesDisplay = ownStaffRoles.length
+            ? v.staffRoles
+            : ( guildStaffRoles.length ? v.staffRolesGuild : v.staffRolesNone );
 
         // A master channel without its own voice role shows the one it inherits, so an admin sees
         // what actually applies rather than a bare None.
@@ -491,9 +525,13 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             ? "🚫 Private"
             : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
 
+        // Naming the number the generator actually carries, so an unset default is not just a rule.
+        const inheritedUserLimit = Number( args.masterChannelUserLimit ) || 0,
+            inheritedUserLimitDisplay = inheritedUserLimit ? `${ inheritedUserLimit } users` : "no limit";
+
         const defaultUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
         const newChannelLimit = null === defaultUserLimit || undefined === defaultUserLimit
-            ? "Copied from the generator channel"
+            ? `Copied from the generator channel (${ inheritedUserLimitDisplay })`
             : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
 
         const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,
@@ -507,7 +545,8 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             dynamicChannelLogsChannelId: processedLogsChannelId,
             newChannelPrivacy,
             newChannelLimit,
-            verifiedRoles: args.dynamicChannelVerifiedRoles || [],
+            verifiedRoles: ownVerifiedRoles.length ? ownVerifiedRoles : guildVerifiedRoles,
+            verifiedRolesDisplay: ownVerifiedRoles.length ? v.verifiedRoles : v.verifiedRolesGuild,
             ...( staffRoles.length ? { staffRoles } : {} ),
             staffRolesDisplay,
             ...( resolvedVoiceRoleId ? { voiceRoleId: resolvedVoiceRoleId } : {} ),
@@ -587,7 +626,7 @@ const SetupEditVoiceRoleEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_VOICE
         voiceRoleDisplay: {
             [ v.voiceRoleId ]: `<@&${ v.voiceRoleId }>`,
             [ v.voiceRoleGuild ]: `<@&${ v.voiceRoleId }> *(from the server options)*`,
-            [ v.voiceRoleNone ]: "**None**"
+            [ v.voiceRoleNone ]: "**None** *(from the server options)*"
         }
     } ) )
     .setLogic( ( args, v ) => {
@@ -658,7 +697,7 @@ const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDI
     )
     .setOptions( ( v ) => ( {
         userLimitDisplay: {
-            [ v.userLimitInherit ]: "**Copied from the generator channel**",
+            [ v.userLimitInherit ]: `**Copied from the generator channel** (${ v.masterChannelUserLimitDisplay })`,
             [ v.userLimitUnlimited ]: "**No limit**",
             [ v.userLimitValue ]: `**${ v.userLimit } users**`
         }
@@ -669,6 +708,10 @@ const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDI
         const result: Record<string, string | number> = {
             index: ( args.index || 0 ) + 1
         };
+
+        const inheritedUserLimit = Number( args.masterChannelUserLimit ) || 0;
+
+        result.masterChannelUserLimitDisplay = inheritedUserLimit ? `${ inheritedUserLimit } users` : "no limit";
 
         if ( null === limit || undefined === limit ) {
             result.userLimitDisplay = v.userLimitInherit;
@@ -791,15 +834,31 @@ async function onSetupMasterEditSelected(
         ( args )[ key ] = value;
     } );
 
-    const verifiedRoles = Array.isArray( args[ masterChannelKeys.dynamicChannelVerifiedRoles ] )
-        ? args[ masterChannelKeys.dynamicChannelVerifiedRoles ] as string[]
-        : [ interaction.guild.roles.everyone.id ];
+    // What a master channel without a list of its own actually applies. The component is static, so
+    // `getReplyArgs()` never runs and this is the only place these can be seeded.
+    args.guildVoiceRoleId = await GuildDataManager.$.getVoiceRoleId( interaction.guildId );
+    args.guildVerifiedRoleIds = await GuildDataManager.$.resolveVerifiedRoleIds( interaction.guildId );
+    args.guildStaffRoleIds = await GuildDataManager.$.getStaffRoleIds( interaction.guildId );
 
-    args[ masterChannelKeys.dynamicChannelVerifiedRoles ] = verifiedRoles;
+    // Through the manager rather than the settings copied above: `@everyone` alone is what every
+    // channel created before the guild wide lists existed stores, and only the manager knows that
+    // counts as no choice of its own.
+    args[ masterChannelKeys.dynamicChannelVerifiedRoles ] =
+        await MasterChannelDataManager.$.getChannelOwnVerifiedRoles( args.masterChannelDB, interaction.guildId );
+    args[ masterChannelKeys.dynamicChannelStaffRoles ] =
+        await MasterChannelDataManager.$.getChannelOwnStaffRoles( args.masterChannelDB );
 
-    if ( verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
+    if ( ( args[ masterChannelKeys.dynamicChannelVerifiedRoles ] as string[] ).includes( interaction.guild.roles.everyone.id ) ) {
         args.dynamicChannelIncludeEveryoneRole = true;
     }
+
+    // The generator's own limit is what an unset default copies, so the screens can name the number
+    // rather than only the rule.
+    const masterVoiceChannel = interaction.guild.channels.cache.get( args.masterChannelId as string );
+
+    args.masterChannelUserLimit = masterVoiceChannel && "userLimit" in masterVoiceChannel
+        ? masterVoiceChannel.userLimit
+        : 0;
 
     args.dynamicChannelControlChannelAutoCreate = !!args.dynamicChannelControlChannelId;
 
@@ -1290,7 +1349,7 @@ async function onStaffRolesSelected(
         version: VERSION_UI_V3
     };
 
-    const previousRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB );
+    const previousRoles = await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, interaction.guildId );
 
     await MasterChannelDataManager.$.setChannelStaffRoles( masterChannelDB, interaction.guildId, staffRoles );
 
@@ -1502,7 +1561,7 @@ async function onBackButtonClicked(
 
     if ( "VertixBot/UI-V3/SetupEditStaffRoles" === context.getCurrentExecutionStep( interaction )?.name ) {
         ( args as UIArgs )[ keys.dynamicChannelStaffRoles ] =
-            await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB ) as unknown;
+            await MasterChannelDataManager.$.getChannelStaffRoles( masterChannelDB, interaction.guild.id ) as unknown;
 
         context.setArgs( interaction, args );
 
@@ -1511,9 +1570,12 @@ async function onBackButtonClicked(
         return;
     }
 
-    const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, interaction.guild.id );
+    // The stored answer rather than the resolved one. The editor writes whatever it is handed
+    // back, so an inherited list loaded here would be pinned as the channel's own the moment the
+    // screen is finished - even when nothing was touched.
+    const verifiedRoles = await MasterChannelDataManager.$.getChannelOwnVerifiedRoles( masterChannelDB, interaction.guild.id );
 
-    if ( verifiedRoles?.length && verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
+    if ( verifiedRoles.includes( interaction.guild.roles.everyone.id ) ) {
         args.dynamicChannelIncludeEveryoneRole = true;
     }
 
@@ -1545,8 +1607,8 @@ async function onFinishButtonClicked(
 
     await MasterChannelDataManager.$.setChannelVerifiedRoles( masterChannelDB, interaction.guildId, args.dynamicChannelVerifiedRoles );
 
-    // Read back rather than trusting the args, `setChannelVerifiedRoles()` falls back to the
-    // everyone role when the list is emptied.
+    // Read back rather than trusting the args, an emptied list is stored as is and resolves
+    // through the guild wide default.
     const currentRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, interaction.guildId, false );
 
     await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
@@ -1899,8 +1961,6 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "object" === typeof availableArgs.dynamicChannelButtonsTemplateByRole
                 ? ( availableArgs.dynamicChannelButtonsTemplateByRole as Record<string, string[]> )
                 : undefined;
-
-            args.guildVoiceRoleId = await GuildDataManager.$.getVoiceRoleId( masterChannelDB.guildId );
 
             args.dynamicChannelButtonsTemplateByRole = {
                 ...buttonsTemplateByRoleFromDb,

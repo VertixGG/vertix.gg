@@ -12,7 +12,7 @@ export class VerifiedRolesMenu extends UIElementRoleSelectMenu {
     }
 
     protected async getPlaceholder() {
-        return "Select Verified Roles";
+        return "🛡️ ∙ Select Verified Roles";
     }
 
     protected async getMinValues() {

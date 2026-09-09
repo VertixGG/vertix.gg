@@ -356,6 +356,28 @@
                     ],
                     [
                         {
+                            "element": "VertixBot/UI-General/VerifiedRolesMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/VerifiedRolesMenu",
+                                "elementType": "role-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "Select Verified Roles"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/StaffRolesMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/StaffRolesMenu",
+                                "elementType": "role-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🔑 ∙ Select Staff Roles"
+                            }
+                        }
+                    ],
+                    [
+                        {
                             "element": "VertixBot/UI-General/SetupBadwordsEditButton",
                             "definition": {
                                 "name": "VertixBot/UI-General/SetupBadwordsEditButton",
@@ -405,6 +427,14 @@
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleMessageDefault}": "**None**"
                                 },
+                                "verifiedRolesMessage": {
+                                    "{verifiedRoleIds}": "{verifiedRoleIds}",
+                                    "{verifiedRolesMessageDefault}": "**@everyone** *(default)*"
+                                },
+                                "staffRolesMessage": {
+                                    "{staffRoleIds}": "{staffRoleIds}",
+                                    "{staffRolesMessageDefault}": "**None**"
+                                },
                                 "none": "**None**"
                             },
                             "arrayOptions": {
@@ -415,6 +445,14 @@
                                 },
                                 "badwords": {
                                     "format": "{value}{separator}",
+                                    "separator": ", "
+                                },
+                                "verifiedRoleIds": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                },
+                                "staffRoleIds": {
+                                    "format": "<@&{value}>{separator}",
                                     "separator": ", "
                                 }
                             },
@@ -443,6 +481,12 @@
                                 "voiceRoleId": "{voiceRoleId}",
                                 "voiceRoleMessage": "{voiceRoleMessage}",
                                 "voiceRoleMessageDefault": "{voiceRoleMessageDefault}",
+                                "verifiedRoleIds": "{verifiedRoleIds}",
+                                "verifiedRolesMessage": "{verifiedRolesMessage}",
+                                "verifiedRolesMessageDefault": "{verifiedRolesMessageDefault}",
+                                "staffRoleIds": "{staffRoleIds}",
+                                "staffRolesMessage": "{staffRolesMessage}",
+                                "staffRolesMessageDefault": "{staffRolesMessageDefault}",
                                 "none": "{none}",
                                 "labelName": "{labelName}",
                                 "labelChannelId": "{labelChannelId}",

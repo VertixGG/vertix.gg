@@ -13,6 +13,7 @@ const vars = {
     verifiedRoles: uiUtilsWrapAsTemplate( "verifiedRoles" ),
     verifiedRolesDisplay: uiUtilsWrapAsTemplate( "verifiedRolesDisplay" ),
     verifiedRolesDefault: uiUtilsWrapAsTemplate( "verifiedRolesDefault" ),
+    verifiedRolesGuild: uiUtilsWrapAsTemplate( "verifiedRolesGuild" ),
     index: uiUtilsWrapAsTemplate( "index" )
 };
 
@@ -23,6 +24,7 @@ const SetupEditVerifiedRolesEmbed = new EmbedBuilder<UIArgs, typeof vars>( "Vert
     .setTitle( () => `🛡️  Edit Verified Roles Of Master Channel #${ vars.index }` )
     .setDescription( () => (
         `Editing verified roles will impact the dynamic channels created by Master Channel #${ vars.index }.\n\n` +
+        "Leaving it empty falls back to the server wide verified roles.\n\n" +
         "**_Current Verified Roles_**\n\n" +
         "> " +
         vars.verifiedRolesDisplay
@@ -33,7 +35,8 @@ const SetupEditVerifiedRolesEmbed = new EmbedBuilder<UIArgs, typeof vars>( "Vert
     .setOptions( () => ( {
         verifiedRolesDisplay: {
             [ vars.verifiedRoles ]: vars.verifiedRoles,
-            [ vars.verifiedRolesDefault ]: "**None**"
+            [ vars.verifiedRolesGuild ]: `${ vars.verifiedRoles } *(from the server options)*`,
+            [ vars.verifiedRolesDefault ]: "**None** *(from the server options)*"
         }
     } ) )
     .setArrayOptions( () => ( {
@@ -47,13 +50,20 @@ const SetupEditVerifiedRolesEmbed = new EmbedBuilder<UIArgs, typeof vars>( "Vert
             index: args.index + 1
         };
 
-        const verifiedRoles = Array.isArray( args.dynamicChannelVerifiedRoles )
+        const ownRoles = Array.isArray( args.dynamicChannelVerifiedRoles )
             ? args.dynamicChannelVerifiedRoles
             : [];
 
-        if ( verifiedRoles.length ) {
-            result.verifiedRoles = verifiedRoles;
+        const guildRoles = Array.isArray( args.guildVerifiedRoleIds )
+            ? args.guildVerifiedRoleIds
+            : [];
+
+        if ( ownRoles.length ) {
+            result.verifiedRoles = ownRoles;
             result.verifiedRolesDisplay = vars.verifiedRoles;
+        } else if ( guildRoles.length ) {
+            result.verifiedRoles = guildRoles;
+            result.verifiedRolesDisplay = vars.verifiedRolesGuild;
         } else {
             result.verifiedRolesDisplay = vars.verifiedRolesDefault;
         }

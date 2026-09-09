@@ -617,7 +617,7 @@
       {
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
-          "placeholder": "Выберите проверенные роли"
+          "placeholder": "🛡️ ∙ Выберите проверенные роли"
         }
       },
       {
@@ -1088,7 +1088,7 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Настройка VoiceChannels",
-        "description": "Откройте для себя безграничные возможности **VoiceChannels**!\nНастройте и оптимизируйте свой сервер до совершенства.\n\nЧтобы создать новый мастер-канал, просто нажмите:\n`(➕ Создать мастер-канал)` кнопку.\n\nМастер-каналы — это генераторы динамических голосовых каналов, каждый со своей уникальной конфигурацией.\n\nНаша функция запрещённых слов позволяет настраивать ограничения на уровне сервера для названий динамических каналов.\n\n_**Текущие мастер-каналы**_:\n{masterChannelMessage}\n\n_**Запрещённые слова сервера**_:\n{badwordsMessage}\n\n_**Голосовая роль сервера**_:\n{voiceRoleMessage}\n\n-# 💡 Вы можете установить канал логов, редактируя мастер-канал.\n",
+        "description": "Откройте для себя безграничные возможности **VoiceChannels**!\nНастройте и оптимизируйте свой сервер до совершенства.\n\nЧтобы создать новый мастер-канал, просто нажмите:\n`(➕ Создать мастер-канал)` кнопку.\n\nМастер-каналы — это генераторы динамических голосовых каналов, каждый со своей уникальной конфигурацией.\n\nНаша функция запрещённых слов позволяет настраивать ограничения на уровне сервера для названий динамических каналов.\n\n_**Текущие мастер-каналы**_:\n{masterChannelMessage}\n\n_**Запрещённые слова сервера**_:\n{badwordsMessage}\n\n_**Голосовая роль сервера**_:\n{voiceRoleMessage}\n\n_**Проверенные роли сервера**_:\n{verifiedRolesMessage}\n\n_**Роли персонала сервера**_:\n{staffRolesMessage}\n\n-# 💡 Вы можете установить канал логов, редактируя мастер-канал.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -1102,6 +1102,14 @@
           "voiceRoleMessage": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleMessageDefault}": "**Нет**"
+          },
+          "verifiedRolesMessage": {
+            "{verifiedRoleIds}": "{verifiedRoleIds}",
+            "{verifiedRolesMessageDefault}": "**@everyone** *(по умолчанию)*"
+          },
+          "staffRolesMessage": {
+            "{staffRoleIds}": "{staffRoleIds}",
+            "{staffRolesMessageDefault}": "**Нет**"
           }
         },
         "arrayOptions": {
@@ -1123,6 +1131,14 @@
           },
           "badwords": {
             "format": "{value}{separator}",
+            "separator": ", "
+          },
+          "verifiedRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoleIds": {
+            "format": "<@&{value}>{separator}",
             "separator": ", "
           }
         }
@@ -1784,7 +1800,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Приватность новых каналов: {newChannelPrivacy}\n➤ ∙ Лимит новых каналов: {newChannelLimit}\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n📢 ∙ Автоматический статус канала: {configAutoStatus}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Приватность новых каналов: {newChannelPrivacy}\n➤ ∙ Лимит новых каналов: {newChannelLimit}\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n📢 ∙ Автоматический статус канала: {configAutoStatus}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -1811,12 +1827,17 @@
           },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**Нет**"
+            "{staffRolesNone}": "**Нет** *(из настроек сервера)*",
+            "{staffRolesGuild}": "{staffRoles} *(из настроек сервера)*"
           },
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
-            "{voiceRoleNone}": "**Нет**"
+            "{voiceRoleNone}": "**Нет** *(из настроек сервера)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(из настроек сервера)*"
           }
         },
         "arrayOptions": {
@@ -1851,12 +1872,13 @@
       "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
       "content": {
         "title": "🔑  Редактирование ролей персонала мастер-канала #{index}",
-        "description": "Роли персонала — зеркало проверенных ролей: проверенные роли это аудитория, которую канал может закрыть, а роли персонала — те, кого он закрыть не может.\n\nВыбранная здесь роль сохраняет доступ ко всем динамическим каналам мастер-канала #{index} при любом состоянии приватности, которое выберет владелец, так что модератор попадёт в приватный или скрытый канал без отдельного приглашения.\n\nОставьте список пустым, если никто не должен обходить владельца.\n\n**_Текущие роли персонала_**\n\n> {staffRolesDisplay}",
+        "description": "Роли персонала — зеркало проверенных ролей: проверенные роли это аудитория, которую канал может закрыть, а роли персонала — те, кого он закрыть не может.\n\nВыбранная здесь роль сохраняет доступ ко всем динамическим каналам мастер-канала #{index} при любом состоянии приватности, которое выберет владелец, так что модератор попадёт в приватный или скрытый канал без отдельного приглашения.\n\nЕсли оставить пустым, применяются роли персонала всего сервера.\n\n**_Текущие роли персонала_**\n\n> {staffRolesDisplay}",
         "footer": "Примечание: изменения применяются к существующим динамическим каналам сразу.",
         "options": {
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**Нет**"
+            "{staffRolesNone}": "**Нет** *(из настроек сервера)*",
+            "{staffRolesGuild}": "{staffRoles} *(из настроек сервера)*"
           }
         },
         "arrayOptions": {
@@ -1877,7 +1899,7 @@
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
-            "{voiceRoleNone}": "**Нет**"
+            "{voiceRoleNone}": "**Нет** *(из настроек сервера)*"
           }
         }
       }
@@ -1903,7 +1925,7 @@
         "description": "Это лимит пользователей, с которым начинает **вновь созданный** динамический канал. Существующие каналы не затрагиваются, и владелец может изменить его позже.\n\nКопирование канала-генератора — прежнее поведение. Указать число здесь обычно лучше, потому что лимит самого генератора также ограничивает, сколько человек может в нём ждать.\n\nПри включённом автосохранении вернувшийся владелец получает свой прошлый лимит вместо этого.\n\n**_Текущее значение_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Скопировано из канала-генератора**",
+            "{userLimitInherit}": "**Скопировано из канала-генератора** ({masterChannelUserLimitDisplay})",
             "{userLimitUnlimited}": "**Без лимита**",
             "{userLimitValue}": "**{userLimit} польз.**"
           }
@@ -1914,12 +1936,13 @@
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Редактирование проверенных ролей мастер-канала #{index}",
-        "description": "Редактирование проверенных ролей повлияет на динамические каналы, созданные мастер-каналом #{index}.\n\n**_Текущие проверенные роли_**\n\n> {verifiedRolesDisplay}",
+        "description": "Редактирование проверенных ролей повлияет на динамические каналы, созданные мастер-каналом #{index}.\n\nЕсли оставить пустым, применяются проверенные роли всего сервера.\n\n**_Текущие проверенные роли_**\n\n> {verifiedRolesDisplay}",
         "footer": "Примечание: Изменения повлияют только на динамические каналы, которые изменят своё состояние после редактирования, старые роли в канале останутся без изменений.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**Нет**"
+            "{verifiedRolesDefault}": "**Нет** *(из настроек сервера)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(из настроек сервера)*"
           }
         },
         "arrayOptions": {
@@ -2772,7 +2795,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Настройка мастер-канала #{index}",
-        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Приватность новых каналов: {newChannelPrivacy}\n➤ ∙ Лимит новых каналов: {newChannelLimit}\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRoles}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n📢 ∙ Автоматический статус канала: {configAutoStatus}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
+        "description": "Настройте мастер-канал по своим предпочтениям.\n\n**_🎛️ Общее_**\n\n➤ ∙ Название: <#{masterChannelId}>\n➤ ∙ ID канала: `{masterChannelId}`\n➤ ∙ Название динамических каналов: `{dynamicChannelNameTemplate}`\n➤ ∙ Приватность новых каналов: {newChannelPrivacy}\n➤ ∙ Лимит новых каналов: {newChannelLimit}\n➤ ∙ Канал логов: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Интерфейс кнопок_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Проверенные роли_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Роли персонала_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Голосовая роль_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Конфигурация_**\n\n@ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n📢 ∙ Автоматический статус канала: {configAutoStatus}\n❯❯ ∙ Отправлять логи в другой канал: {configLogs}\n\n",
         "footer": "Примечание: Изменение упоминания пользователя не повлияет на уже созданные динамические каналы.",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -2799,12 +2822,17 @@
           },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**Нет**"
+            "{staffRolesNone}": "**Нет** *(из настроек сервера)*",
+            "{staffRolesGuild}": "{staffRoles} *(из настроек сервера)*"
           },
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
-            "{voiceRoleNone}": "**Нет**"
+            "{voiceRoleNone}": "**Нет** *(из настроек сервера)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(из настроек сервера)*"
           }
         },
         "arrayOptions": {
@@ -2841,12 +2869,13 @@
       "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
       "content": {
         "title": "🔑  Редактирование ролей персонала мастер-канала #{index}",
-        "description": "Роли персонала — зеркало проверенных ролей: проверенные роли это аудитория, которую канал может закрыть, а роли персонала — те, кого он закрыть не может.\n\nВыбранная здесь роль сохраняет доступ ко всем динамическим каналам мастер-канала #{index} при любом состоянии приватности, которое выберет владелец, так что модератор попадёт в приватный или скрытый канал без отдельного приглашения.\n\nОставьте список пустым, если никто не должен обходить владельца.\n\n**_Текущие роли персонала_**\n\n> {staffRolesDisplay}",
+        "description": "Роли персонала — зеркало проверенных ролей: проверенные роли это аудитория, которую канал может закрыть, а роли персонала — те, кого он закрыть не может.\n\nВыбранная здесь роль сохраняет доступ ко всем динамическим каналам мастер-канала #{index} при любом состоянии приватности, которое выберет владелец, так что модератор попадёт в приватный или скрытый канал без отдельного приглашения.\n\nЕсли оставить пустым, применяются роли персонала всего сервера.\n\n**_Текущие роли персонала_**\n\n> {staffRolesDisplay}",
         "footer": "Примечание: изменения применяются к существующим динамическим каналам сразу.",
         "options": {
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**Нет**"
+            "{staffRolesNone}": "**Нет** *(из настроек сервера)*",
+            "{staffRolesGuild}": "{staffRoles} *(из настроек сервера)*"
           }
         },
         "arrayOptions": {
@@ -2867,7 +2896,7 @@
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(из настроек сервера)*",
-            "{voiceRoleNone}": "**Нет**"
+            "{voiceRoleNone}": "**Нет** *(из настроек сервера)*"
           }
         }
       }
@@ -2893,7 +2922,7 @@
         "description": "Это лимит пользователей, с которым начинает **вновь созданный** динамический канал. Существующие каналы не затрагиваются, и владелец может изменить его позже.\n\nКопирование канала-генератора — прежнее поведение. Указать число здесь обычно лучше, потому что лимит самого генератора также ограничивает, сколько человек может в нём ждать.\n\nПри включённом автосохранении вернувшийся владелец получает свой прошлый лимит вместо этого.\n\n**_Текущее значение_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Скопировано из канала-генератора**",
+            "{userLimitInherit}": "**Скопировано из канала-генератора** ({masterChannelUserLimitDisplay})",
             "{userLimitUnlimited}": "**Без лимита**",
             "{userLimitValue}": "**{userLimit} польз.**"
           }
@@ -2904,12 +2933,13 @@
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Редактирование проверенных ролей мастер-канала #{index}",
-        "description": "Редактирование проверенных ролей повлияет на динамические каналы, созданные мастер-каналом #{index}.\n\n**_Текущие проверенные роли_**\n\n> {verifiedRolesDisplay}",
+        "description": "Редактирование проверенных ролей повлияет на динамические каналы, созданные мастер-каналом #{index}.\n\nЕсли оставить пустым, применяются проверенные роли всего сервера.\n\n**_Текущие проверенные роли_**\n\n> {verifiedRolesDisplay}",
         "footer": "Примечание: Изменения повлияют только на динамические каналы, которые изменят своё состояние после редактирования, старые роли в канале останутся без изменений.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**Нет**"
+            "{verifiedRolesDefault}": "**Нет** *(из настроек сервера)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(из настроек сервера)*"
           }
         },
         "arrayOptions": {

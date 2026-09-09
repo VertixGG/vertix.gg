@@ -617,7 +617,7 @@
       {
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
-          "placeholder": "Select Verified Roles"
+          "placeholder": "🛡️ ∙ Select Verified Roles"
         }
       },
       {
@@ -1088,7 +1088,7 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Setup VoiceChannels",
-        "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+        "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n_**Server Verified Roles**_:\n{verifiedRolesMessage}\n\n_**Server Staff Roles**_:\n{staffRolesMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -1102,6 +1102,14 @@
           "voiceRoleMessage": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleMessageDefault}": "**None**"
+          },
+          "verifiedRolesMessage": {
+            "{verifiedRoleIds}": "{verifiedRoleIds}",
+            "{verifiedRolesMessageDefault}": "**@everyone** *(default)*"
+          },
+          "staffRolesMessage": {
+            "{staffRoleIds}": "{staffRoleIds}",
+            "{staffRolesMessageDefault}": "**None**"
           }
         },
         "arrayOptions": {
@@ -1123,6 +1131,14 @@
           },
           "badwords": {
             "format": "{value}{separator}",
+            "separator": ", "
+          },
+          "verifiedRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoleIds": {
+            "format": "<@&{value}>{separator}",
             "separator": ", "
           }
         }
@@ -1784,7 +1800,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Configure Master Channel #{index}",
-        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
         "footer": "Note: Changing user mention will not affect already created dynamic channels.",
         "options": {
           "on": "`🟢∙On`",
@@ -1811,12 +1827,17 @@
           },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**None**"
+            "{staffRolesNone}": "**None** *(from the server options)*",
+            "{staffRolesGuild}": "{staffRoles} *(from the server options)*"
           },
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
-            "{voiceRoleNone}": "**None**"
+            "{voiceRoleNone}": "**None** *(from the server options)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
           }
         },
         "arrayOptions": {
@@ -1851,12 +1872,13 @@
       "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
       "content": {
         "title": "🔑  Edit Staff Roles Of Master Channel #{index}",
-        "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeave it empty if nobody should bypass the owner.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
+        "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeaving it empty falls back to the server wide staff roles.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
         "footer": "Note: The changes are applied immediately to the existing dynamic channels.",
         "options": {
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**None**"
+            "{staffRolesNone}": "**None** *(from the server options)*",
+            "{staffRolesGuild}": "{staffRoles} *(from the server options)*"
           }
         },
         "arrayOptions": {
@@ -1877,7 +1899,7 @@
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
-            "{voiceRoleNone}": "**None**"
+            "{voiceRoleNone}": "**None** *(from the server options)*"
           }
         }
       }
@@ -1903,7 +1925,7 @@
         "description": "This is the user limit a **newly created** dynamic channel starts with. It does not touch channels that already exist, and the owner can still change their own channel afterwards.\n\nCopying the generator channel is the old behaviour. Setting a number here is usually better, because the generator's own limit also caps how many people can wait in it at once.\n\nWith auto save on, a returning owner gets their own last limit instead of this.\n\n**_Current Default_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Copied from the generator channel**",
+            "{userLimitInherit}": "**Copied from the generator channel** ({masterChannelUserLimitDisplay})",
             "{userLimitUnlimited}": "**No limit**",
             "{userLimitValue}": "**{userLimit} users**"
           }
@@ -1914,12 +1936,13 @@
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
-        "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
+        "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\nLeaving it empty falls back to the server wide verified roles.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
         "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**None**"
+            "{verifiedRolesDefault}": "**None** *(from the server options)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
           }
         },
         "arrayOptions": {
@@ -2772,7 +2795,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Configure Master Channel #{index}",
-        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+        "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
         "footer": "Note: Changing user mention will not affect already created dynamic channels.",
         "options": {
           "on": "`🟢∙On`",
@@ -2799,12 +2822,17 @@
           },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**None**"
+            "{staffRolesNone}": "**None** *(from the server options)*",
+            "{staffRolesGuild}": "{staffRoles} *(from the server options)*"
           },
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
-            "{voiceRoleNone}": "**None**"
+            "{voiceRoleNone}": "**None** *(from the server options)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
           }
         },
         "arrayOptions": {
@@ -2841,12 +2869,13 @@
       "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
       "content": {
         "title": "🔑  Edit Staff Roles Of Master Channel #{index}",
-        "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeave it empty if nobody should bypass the owner.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
+        "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeaving it empty falls back to the server wide staff roles.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
         "footer": "Note: The changes are applied immediately to the existing dynamic channels.",
         "options": {
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**None**"
+            "{staffRolesNone}": "**None** *(from the server options)*",
+            "{staffRolesGuild}": "{staffRoles} *(from the server options)*"
           }
         },
         "arrayOptions": {
@@ -2867,7 +2896,7 @@
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
-            "{voiceRoleNone}": "**None**"
+            "{voiceRoleNone}": "**None** *(from the server options)*"
           }
         }
       }
@@ -2893,7 +2922,7 @@
         "description": "This is the user limit a **newly created** dynamic channel starts with. It does not touch channels that already exist, and the owner can still change their own channel afterwards.\n\nCopying the generator channel is the old behaviour. Setting a number here is usually better, because the generator's own limit also caps how many people can wait in it at once.\n\nWith auto save on, a returning owner gets their own last limit instead of this.\n\n**_Current Default_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Copied from the generator channel**",
+            "{userLimitInherit}": "**Copied from the generator channel** ({masterChannelUserLimitDisplay})",
             "{userLimitUnlimited}": "**No limit**",
             "{userLimitValue}": "**{userLimit} users**"
           }
@@ -2904,12 +2933,13 @@
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
-        "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
+        "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\nLeaving it empty falls back to the server wide verified roles.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
         "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**None**"
+            "{verifiedRolesDefault}": "**None** *(from the server options)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
           }
         },
         "arrayOptions": {

@@ -617,7 +617,7 @@
       {
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
-          "placeholder": "Verifizierte Rollen auswählen"
+          "placeholder": "🛡️ ∙ Verifizierte Rollen auswählen"
         }
       },
       {
@@ -1088,7 +1088,7 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  VoiceChannels einrichten",
-        "description": "Entdecke die grenzenlosen Möglichkeiten von **VoiceChannels**!\nPasse deinen Server perfekt an und optimiere ihn.\n\nUm einen neuen Masterkanal zu erstellen, klicke einfach auf:\ndie Schaltfläche `(➕ Masterkanal erstellen)`.\n\nMasterkanäle sind Generatoren für dynamische Sprachkanäle, jeder mit seiner eigenen einzigartigen Konfiguration.\n\nUnsere Funktion für verbotene Wörter ermöglicht eine Konfiguration auf Serverebene zur Begrenzung der Namen dynamischer Kanäle.\n\n_**Aktuelle Masterkanäle**_:\n{masterChannelMessage}\n\n_**Server-Verbotene-Wörter**_:\n{badwordsMessage}\n\n_**Server-Sprachrolle**_:\n{voiceRoleMessage}\n\n-# 💡 Du kannst einen Log-Kanal festlegen, indem du den Masterkanal bearbeitest.\n",
+        "description": "Entdecke die grenzenlosen Möglichkeiten von **VoiceChannels**!\nPasse deinen Server perfekt an und optimiere ihn.\n\nUm einen neuen Masterkanal zu erstellen, klicke einfach auf:\ndie Schaltfläche `(➕ Masterkanal erstellen)`.\n\nMasterkanäle sind Generatoren für dynamische Sprachkanäle, jeder mit seiner eigenen einzigartigen Konfiguration.\n\nUnsere Funktion für verbotene Wörter ermöglicht eine Konfiguration auf Serverebene zur Begrenzung der Namen dynamischer Kanäle.\n\n_**Aktuelle Masterkanäle**_:\n{masterChannelMessage}\n\n_**Server-Verbotene-Wörter**_:\n{badwordsMessage}\n\n_**Server-Sprachrolle**_:\n{voiceRoleMessage}\n\n_**Server-Verifizierte-Rollen**_:\n{verifiedRolesMessage}\n\n_**Server-Team-Rollen**_:\n{staffRolesMessage}\n\n-# 💡 Du kannst einen Log-Kanal festlegen, indem du den Masterkanal bearbeitest.\n",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
@@ -1102,6 +1102,14 @@
           "voiceRoleMessage": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleMessageDefault}": "**Keine**"
+          },
+          "verifiedRolesMessage": {
+            "{verifiedRoleIds}": "{verifiedRoleIds}",
+            "{verifiedRolesMessageDefault}": "**@everyone** *(Standard)*"
+          },
+          "staffRolesMessage": {
+            "{staffRoleIds}": "{staffRoleIds}",
+            "{staffRolesMessageDefault}": "**Keine**"
           }
         },
         "arrayOptions": {
@@ -1123,6 +1131,14 @@
           },
           "badwords": {
             "format": "{value}{separator}",
+            "separator": ", "
+          },
+          "verifiedRoleIds": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoleIds": {
+            "format": "<@&{value}>{separator}",
             "separator": ", "
           }
         }
@@ -1369,12 +1385,13 @@
       "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
       "content": {
         "title": "🔑  Team-Rollen von Master-Kanal #{index} bearbeiten",
-        "description": "Team-Rollen sind das Gegenstück zu den verifizierten Rollen: Die verifizierten Rollen sind das Publikum, das ein Kanal aussperren kann, die Team-Rollen sind die, die er nie aussperren kann.\n\nEine hier ausgewählte Rolle behält den Zugriff auf jeden dynamischen Kanal von Master-Kanal #{index}, unabhängig davon, welchen Privatsphäre-Status der Besitzer wählt - so erreicht ein Moderator einen privaten oder versteckten Kanal, ohne einzeln eingelassen zu werden.\n\nLass die Liste leer, wenn niemand den Besitzer umgehen soll.\n\n**_Aktuelle Team-Rollen_**\n\n> {staffRolesDisplay}",
+        "description": "Team-Rollen sind das Gegenstück zu den verifizierten Rollen: Die verifizierten Rollen sind das Publikum, das ein Kanal aussperren kann, die Team-Rollen sind die, die er nie aussperren kann.\n\nEine hier ausgewählte Rolle behält den Zugriff auf jeden dynamischen Kanal von Master-Kanal #{index}, unabhängig davon, welchen Privatsphäre-Status der Besitzer wählt - so erreicht ein Moderator einen privaten oder versteckten Kanal, ohne einzeln eingelassen zu werden.\n\nBleiben sie leer, gelten die serverweiten Team-Rollen.\n\n**_Aktuelle Team-Rollen_**\n\n> {staffRolesDisplay}",
         "footer": "Hinweis: Die Änderungen werden sofort auf die bestehenden dynamischen Kanäle angewendet.",
         "options": {
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**Keine**"
+            "{staffRolesNone}": "**Keine** *(aus den Servereinstellungen)*",
+            "{staffRolesGuild}": "{staffRoles} *(aus den Servereinstellungen)*"
           }
         },
         "arrayOptions": {
@@ -1395,7 +1412,7 @@
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(aus den Servereinstellungen)*",
-            "{voiceRoleNone}": "**Keine**"
+            "{voiceRoleNone}": "**Keine** *(aus den Servereinstellungen)*"
           }
         }
       }
@@ -1421,7 +1438,7 @@
         "description": "Das ist das Benutzerlimit, mit dem ein **neu erstellter** dynamischer Kanal beginnt. Bestehende Kanäle bleiben unberührt, und der Besitzer kann seinen eigenen Kanal weiterhin ändern.\n\nDen Generator-Kanal zu kopieren ist das alte Verhalten. Hier eine Zahl zu setzen ist meist besser, denn das Limit des Generators begrenzt auch, wie viele Leute gleichzeitig darin warten können.\n\nBei aktiviertem automatischem Speichern erhält ein wiederkehrender Besitzer stattdessen sein eigenes letztes Limit.\n\n**_Aktueller Standard_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Vom Generator-Kanal übernommen**",
+            "{userLimitInherit}": "**Vom Generator-Kanal übernommen** ({masterChannelUserLimitDisplay})",
             "{userLimitUnlimited}": "**Kein Limit**",
             "{userLimitValue}": "**{userLimit} Benutzer**"
           }
@@ -1432,12 +1449,13 @@
       "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Verifizierte Rollen von Master-Kanal #{index} bearbeiten",
-        "description": "Das Bearbeiten der verifizierten Rollen wirkt sich auf die dynamischen Kanäle aus, die von Master-Kanal #{index} erstellt wurden.\n\n**_Aktuelle verifizierte Rollen_**\n\n> {verifiedRolesDisplay}",
+        "description": "Das Bearbeiten der verifizierten Rollen wirkt sich auf die dynamischen Kanäle aus, die von Master-Kanal #{index} erstellt wurden.\n\nBleiben sie leer, gelten die serverweiten verifizierten Rollen.\n\n**_Aktuelle verifizierte Rollen_**\n\n> {verifiedRolesDisplay}",
         "footer": "Hinweis: Die Änderungen betreffen nur dynamische Kanäle, die ihren Zustand nach der Bearbeitung ändern. Die bisherigen Rollen im Kanal bleiben unverändert.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**Keine**"
+            "{verifiedRolesDefault}": "**Keine** *(aus den Servereinstellungen)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(aus den Servereinstellungen)*"
           }
         },
         "arrayOptions": {
@@ -1452,7 +1470,7 @@
       "name": "VertixBot/UI-V2/SetupEditEmbed",
       "content": {
         "title": "🔧  Master-Kanal #{index} konfigurieren",
-        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Privatsphäre neuer Kanäle: {newChannelPrivacy}\n➤ ∙ Limit neuer Kanäle: {newChannelLimit}\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Sprachrolle_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
+        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Privatsphäre neuer Kanäle: {newChannelPrivacy}\n➤ ∙ Limit neuer Kanäle: {newChannelLimit}\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Sprachrolle_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
         "footer": "Hinweis: Das Ändern der Benutzererwähnung wirkt sich nicht auf bereits erstellte dynamische Kanäle aus.",
         "options": {
           "on": "`🟢∙An`",
@@ -1479,12 +1497,17 @@
           },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**Keine**"
+            "{staffRolesNone}": "**Keine** *(aus den Servereinstellungen)*",
+            "{staffRolesGuild}": "{staffRoles} *(aus den Servereinstellungen)*"
           },
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(aus den Servereinstellungen)*",
-            "{voiceRoleNone}": "**Keine**"
+            "{voiceRoleNone}": "**Keine** *(aus den Servereinstellungen)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(aus den Servereinstellungen)*"
           }
         },
         "arrayOptions": {
@@ -1921,7 +1944,7 @@
       "name": "VertixBot/UI-V3/SetupEditEmbed",
       "content": {
         "title": "🔧  Master-Kanal #{index} konfigurieren",
-        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Privatsphäre neuer Kanäle: {newChannelPrivacy}\n➤ ∙ Limit neuer Kanäle: {newChannelLimit}\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRoles}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Sprachrolle_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
+        "description": "Konfiguriere den Master-Kanal nach deinen Wünschen.\n\n**_🎛️ Allgemein_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Kanal-ID: `{masterChannelId}`\n➤ ∙ Name dynamischer Kanäle: `{dynamicChannelNameTemplate}`\n➤ ∙ Privatsphäre neuer Kanäle: {newChannelPrivacy}\n➤ ∙ Limit neuer Kanäle: {newChannelLimit}\n➤ ∙ Log-Kanal: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Button-Oberfläche_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verifizierte Rollen_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Team-Rollen_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Sprachrolle_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Konfiguration_**\n\n@ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n❯❯ ∙ Logs an eigenen Kanal senden: {configLogs}\n\n",
         "footer": "Hinweis: Das Ändern der Benutzererwähnung wirkt sich nicht auf bereits erstellte dynamische Kanäle aus.",
         "options": {
           "on": "`🟢∙An`",
@@ -1948,12 +1971,17 @@
           },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**Keine**"
+            "{staffRolesNone}": "**Keine** *(aus den Servereinstellungen)*",
+            "{staffRolesGuild}": "{staffRoles} *(aus den Servereinstellungen)*"
           },
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(aus den Servereinstellungen)*",
-            "{voiceRoleNone}": "**Keine**"
+            "{voiceRoleNone}": "**Keine** *(aus den Servereinstellungen)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(aus den Servereinstellungen)*"
           }
         },
         "arrayOptions": {
@@ -2797,12 +2825,13 @@
       "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
       "content": {
         "title": "🔑  Team-Rollen von Master-Kanal #{index} bearbeiten",
-        "description": "Team-Rollen sind das Gegenstück zu den verifizierten Rollen: Die verifizierten Rollen sind das Publikum, das ein Kanal aussperren kann, die Team-Rollen sind die, die er nie aussperren kann.\n\nEine hier ausgewählte Rolle behält den Zugriff auf jeden dynamischen Kanal von Master-Kanal #{index}, unabhängig davon, welchen Privatsphäre-Status der Besitzer wählt - so erreicht ein Moderator einen privaten oder versteckten Kanal, ohne einzeln eingelassen zu werden.\n\nLass die Liste leer, wenn niemand den Besitzer umgehen soll.\n\n**_Aktuelle Team-Rollen_**\n\n> {staffRolesDisplay}",
+        "description": "Team-Rollen sind das Gegenstück zu den verifizierten Rollen: Die verifizierten Rollen sind das Publikum, das ein Kanal aussperren kann, die Team-Rollen sind die, die er nie aussperren kann.\n\nEine hier ausgewählte Rolle behält den Zugriff auf jeden dynamischen Kanal von Master-Kanal #{index}, unabhängig davon, welchen Privatsphäre-Status der Besitzer wählt - so erreicht ein Moderator einen privaten oder versteckten Kanal, ohne einzeln eingelassen zu werden.\n\nBleiben sie leer, gelten die serverweiten Team-Rollen.\n\n**_Aktuelle Team-Rollen_**\n\n> {staffRolesDisplay}",
         "footer": "Hinweis: Die Änderungen werden sofort auf die bestehenden dynamischen Kanäle angewendet.",
         "options": {
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**Keine**"
+            "{staffRolesNone}": "**Keine** *(aus den Servereinstellungen)*",
+            "{staffRolesGuild}": "{staffRoles} *(aus den Servereinstellungen)*"
           }
         },
         "arrayOptions": {
@@ -2823,7 +2852,7 @@
           "voiceRoleDisplay": {
             "{voiceRoleId}": "<@&{voiceRoleId}>",
             "{voiceRoleGuild}": "<@&{voiceRoleId}> *(aus den Servereinstellungen)*",
-            "{voiceRoleNone}": "**Keine**"
+            "{voiceRoleNone}": "**Keine** *(aus den Servereinstellungen)*"
           }
         }
       }
@@ -2849,7 +2878,7 @@
         "description": "Das ist das Benutzerlimit, mit dem ein **neu erstellter** dynamischer Kanal beginnt. Bestehende Kanäle bleiben unberührt, und der Besitzer kann seinen eigenen Kanal weiterhin ändern.\n\nDen Generator-Kanal zu kopieren ist das alte Verhalten. Hier eine Zahl zu setzen ist meist besser, denn das Limit des Generators begrenzt auch, wie viele Leute gleichzeitig darin warten können.\n\nBei aktiviertem automatischem Speichern erhält ein wiederkehrender Besitzer stattdessen sein eigenes letztes Limit.\n\n**_Aktueller Standard_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Vom Generator-Kanal übernommen**",
+            "{userLimitInherit}": "**Vom Generator-Kanal übernommen** ({masterChannelUserLimitDisplay})",
             "{userLimitUnlimited}": "**Kein Limit**",
             "{userLimitValue}": "**{userLimit} Benutzer**"
           }
@@ -2860,12 +2889,13 @@
       "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
         "title": "🛡️  Verifizierte Rollen von Master-Kanal #{index} bearbeiten",
-        "description": "Das Bearbeiten der verifizierten Rollen wirkt sich auf die dynamischen Kanäle aus, die von Master-Kanal #{index} erstellt wurden.\n\n**_Aktuelle verifizierte Rollen_**\n\n> {verifiedRolesDisplay}",
+        "description": "Das Bearbeiten der verifizierten Rollen wirkt sich auf die dynamischen Kanäle aus, die von Master-Kanal #{index} erstellt wurden.\n\nBleiben sie leer, gelten die serverweiten verifizierten Rollen.\n\n**_Aktuelle verifizierte Rollen_**\n\n> {verifiedRolesDisplay}",
         "footer": "Hinweis: Die Änderungen betreffen nur dynamische Kanäle, die ihren Zustand nach der Bearbeitung ändern. Die bisherigen Rollen im Kanal bleiben unverändert.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**Keine**"
+            "{verifiedRolesDefault}": "**Keine** *(aus den Servereinstellungen)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(aus den Servereinstellungen)*"
           }
         },
         "arrayOptions": {

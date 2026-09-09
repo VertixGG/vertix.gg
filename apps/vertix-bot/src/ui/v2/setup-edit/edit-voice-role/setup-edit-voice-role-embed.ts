@@ -36,7 +36,7 @@ const SetupEditVoiceRoleEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBo
         voiceRoleDisplay: {
             [ vars.voiceRoleId ]: `<@&${ vars.voiceRoleId }>`,
             [ vars.voiceRoleGuild ]: `<@&${ vars.voiceRoleId }> *(from the server options)*`,
-            [ vars.voiceRoleNone ]: "**None**"
+            [ vars.voiceRoleNone ]: "**None** *(from the server options)*"
         }
     } ) )
     .setLogic( ( args: UIArgs ) => {

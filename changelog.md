@@ -1,5 +1,15 @@
 # Changelog
 
+**Version: 0.0.18 ~ 09/09/2026**
+- New Features:
+    - **Knock**: Ask the owner of a private channel to let you in. Press it inside the channel you want and its owner is asked straight away; from the control panel you pick which channel first. Only channels you can see but cannot join are offered - a hidden channel stays hidden. Either answer reaches you, and ignoring a request lets it expire on its own.
+    - **Invite**: Let someone into your channel in one press. They get the access the permissions menu would have given them, and a message telling them where the channel is - so a private channel no longer has to be explained in chat.
+- Improvements:
+    - **Wider Interface**: The buttons are drawn five to a row instead of four, and the legend above them is laid out to match.
+    - **Seven Languages**: Both new screens are translated everywhere the rest of the bot is.
+
+---
+
 **Version: 0.0.17 ~ 07/09/2026**
 - We Are Now VoiceChannels:
     - **New Name**: Vertix is now **VoiceChannels**, with a new look and a new home at [voicechannels.online](https://voicechannels.online). Every master channel, setting and dynamic channel you already have keeps working exactly as it did - there is nothing to redo.

@@ -407,6 +407,18 @@
         "content": {
           "label": "Mettre À Jour Les Salons Existants"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+        "content": {
+          "label": "Inviter"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+        "content": {
+          "label": "Frapper"
+        }
       }
     ],
     "textInputs": [
@@ -993,6 +1005,24 @@
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
           "placeholder": "➕ Donner ses propres boutons à un rôle"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> Choisir un salon"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> Choisir un utilisateur"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='KnockChannel'> Choisir un salon"
         }
       }
     ]
@@ -3132,6 +3162,88 @@
       "content": {
         "title": "🗑️  Modèle supprimé",
         "description": "Le modèle **\"{templateName}\"** a été supprimé.\n\n**Modèles** : `{templatesCount}/{maxTemplates}`"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Invitez quelqu'un dans votre salon",
+        "description": "Choisissez l'utilisateur que vous voulez, il pourra entrer quel que soit l'état du salon.\n\nOn lui indique où le trouver, un salon privé n'a donc pas besoin d'être expliqué."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Vous n'avez aucun salon ici",
+        "description": "Il n'y a encore nulle part où inviter qui que ce soit.\n\nRejoignez le générateur pour ouvrir un salon, puis invitez qui vous voulez."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Quel salon ?",
+        "description": "Vous avez plusieurs salons ouverts ici. Choisissez celui où inviter quelqu'un."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Invitation envoyée",
+        "description": "**{invitedDisplayName}** peut désormais rejoindre ce salon.\n\n{deliveryDisplay}",
+        "options": {
+          "deliveryDisplay": {
+            "{deliveryDelivered}": "Un lien vers le salon lui a été envoyé.",
+            "{deliveryBlocked}": "Ses messages privés sont fermés, dites-le-lui vous-même — l'accès est déjà à lui."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
+      "content": {
+        "title": "{knockEmoji}  Demander à rejoindre un salon",
+        "description": "Choisissez le salon que vous voulez rejoindre et on demandera à son propriétaire de vous laisser entrer.\n\nC'est lui qui décide, et vous êtes prévenu dans tous les cas."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
+      "content": {
+        "title": "{knockEmoji}  Rien où frapper",
+        "description": "Tous les salons ici vous sont déjà ouverts ou sont les vôtres.\n\nUn salon que vous ne voyez pas n'est pas listé — si un ami en a un, demandez-lui une invitation."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
+      "content": {
+        "title": "{knockEmoji}  Vous avez déjà demandé",
+        "description": "Le propriétaire de ce salon a votre demande et n'y a pas encore répondu.\n\nLaissez-lui quelques minutes avant de redemander."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
+      "content": {
+        "title": "{knockEmoji}  Votre demande a été envoyée",
+        "description": "Il a été demandé au propriétaire de **{knockedChannelName}** de vous laisser entrer.\n\nVous serez prévenu dès qu'il répond."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
+      "content": {
+        "title": "{knockEmoji}  Quelqu'un veut entrer",
+        "description": "<@{knockerId}> demande à entrer dans ce salon.\n\nLe laisser entrer lui donne accès comme le ferait le menu d'accès. Ignorer est aussi une réponse : la demande expire d'elle-même."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
+      "content": {
+        "title": "{knockEmoji}  Demande traitée",
+        "description": "{answerDisplay}",
+        "options": {
+          "answerDisplay": {
+            "{answerAllowed}": "**{knockerDisplayName}** a été accepté.",
+            "{answerDenied}": "**{knockerDisplayName}** n'a pas été accepté."
+          }
+        }
       }
     }
   ],

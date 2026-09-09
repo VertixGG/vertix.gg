@@ -407,6 +407,18 @@
         "content": {
           "label": "Обновить существующие каналы"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+        "content": {
+          "label": "Пригласить"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+        "content": {
+          "label": "Постучать"
+        }
       }
     ],
     "textInputs": [
@@ -993,6 +1005,24 @@
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
           "placeholder": "➕ Задать роли собственные кнопки"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> Выберите канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> Выберите пользователя"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='KnockChannel'> Выберите канал"
         }
       }
     ]
@@ -3132,6 +3162,88 @@
       "content": {
         "title": "🗑️  Шаблон удалён",
         "description": "Шаблон **\"{templateName}\"** удалён.\n\n**Шаблоны**: `{templatesCount}/{maxTemplates}`"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Пригласите кого-нибудь в свой канал",
+        "description": "Выберите пользователя, которого хотите впустить, и он сможет зайти независимо от настроек канала.\n\nЕму сообщат, где найти канал, поэтому приватный канал не придётся объяснять."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  У вас здесь нет канала",
+        "description": "Пока некуда никого приглашать.\n\nЗайдите в генератор, чтобы открыть канал, а затем приглашайте кого угодно."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Какой канал?",
+        "description": "У вас здесь открыто несколько каналов. Выберите тот, куда хотите кого-то пригласить."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Приглашение отправлено",
+        "description": "**{invitedDisplayName}** теперь может зайти в этот канал.\n\n{deliveryDisplay}",
+        "options": {
+          "deliveryDisplay": {
+            "{deliveryDelivered}": "Ему отправлена ссылка на канал.",
+            "{deliveryBlocked}": "Личные сообщения закрыты, поэтому скажите ему сами — доступ у него уже есть."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
+      "content": {
+        "title": "{knockEmoji}  Попроситься в канал",
+        "description": "Выберите канал, куда хотите зайти, и его владельца попросят вас впустить.\n\nРешает он, и вам сообщат в любом случае."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
+      "content": {
+        "title": "{knockEmoji}  Стучаться некуда",
+        "description": "Все каналы здесь либо уже открыты для вас, либо ваши собственные.\n\nКанал, который вы не видите, в списке не появится — если он есть у друга, попросите у него приглашение."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
+      "content": {
+        "title": "{knockEmoji}  Вы уже просили",
+        "description": "Владелец канала получил ваш запрос и пока не ответил.\n\nДайте ему несколько минут, прежде чем просить снова."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
+      "content": {
+        "title": "{knockEmoji}  Запрос отправлен",
+        "description": "Владельца канала **{knockedChannelName}** попросили вас впустить.\n\nВам сообщат, как только он ответит."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
+      "content": {
+        "title": "{knockEmoji}  Кто-то хочет зайти",
+        "description": "<@{knockerId}> просит впустить его в этот канал.\n\nЕсли впустить, он получит доступ так же, как через меню доступа. Проигнорировать — тоже ответ: запрос истечёт сам."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
+      "content": {
+        "title": "{knockEmoji}  Запрос обработан",
+        "description": "{answerDisplay}",
+        "options": {
+          "answerDisplay": {
+            "{answerAllowed}": "**{knockerDisplayName}** впущен.",
+            "{answerDenied}": "**{knockerDisplayName}** не впущен."
+          }
+        }
       }
     }
   ],

@@ -407,6 +407,18 @@
         "content": {
           "label": "Actualizar Canales Existentes"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+        "content": {
+          "label": "Invitar"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+        "content": {
+          "label": "Llamar"
+        }
       }
     ],
     "textInputs": [
@@ -993,6 +1005,24 @@
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
           "placeholder": "➕ Dar botones propios a un rol"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> Selecciona un canal"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> Selecciona un usuario"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='KnockChannel'> Selecciona un canal"
         }
       }
     ]
@@ -3132,6 +3162,88 @@
       "content": {
         "title": "🗑️  Plantilla eliminada",
         "description": "La plantilla **\"{templateName}\"** se ha eliminado.\n\n**Plantillas**: `{templatesCount}/{maxTemplates}`"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Invita a alguien a tu canal",
+        "description": "Elige al usuario que quieras dentro y podrá entrar sea cual sea el estado del canal.\n\nSe le indica dónde encontrarlo, así que no hace falta explicar un canal privado."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Aquí no tienes ningún canal",
+        "description": "Todavía no hay ningún sitio al que invitar a nadie.\n\nEntra en el generador para abrir un canal y luego invita a quien quieras."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  ¿Qué canal?",
+        "description": "Tienes más de un canal abierto aquí. Elige aquel al que quieras invitar a alguien."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Invitación enviada",
+        "description": "**{invitedDisplayName}** ya puede entrar en este canal.\n\n{deliveryDisplay}",
+        "options": {
+          "deliveryDisplay": {
+            "{deliveryDelivered}": "Se le ha enviado un enlace al canal.",
+            "{deliveryBlocked}": "Tiene los mensajes directos cerrados, así que díselo tú — el acceso ya es suyo."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
+      "content": {
+        "title": "{knockEmoji}  Pide entrar en un canal",
+        "description": "Elige el canal en el que quieras entrar y se le pedirá a su dueño que te deje pasar.\n\nÉl decide, y te avisamos en cualquier caso."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
+      "content": {
+        "title": "{knockEmoji}  No hay a qué llamar",
+        "description": "Todos los canales de aquí ya están abiertos para ti o son tuyos.\n\nUn canal que no puedes ver no aparece en la lista — si lo tiene un amigo, pídele una invitación."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
+      "content": {
+        "title": "{knockEmoji}  Ya lo has pedido",
+        "description": "El dueño de ese canal tiene tu solicitud y aún no la ha respondido.\n\nDale unos minutos antes de volver a pedirlo."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
+      "content": {
+        "title": "{knockEmoji}  Tu solicitud se ha enviado",
+        "description": "Se ha pedido al dueño de **{knockedChannelName}** que te deje entrar.\n\nTe avisamos en cuanto responda."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
+      "content": {
+        "title": "{knockEmoji}  Alguien quiere entrar",
+        "description": "<@{knockerId}> pide entrar en este canal.\n\nDejarle pasar le da acceso igual que el menú de acceso. Ignorarlo también es una respuesta: la solicitud caduca sola."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
+      "content": {
+        "title": "{knockEmoji}  Solicitud respondida",
+        "description": "{answerDisplay}",
+        "options": {
+          "answerDisplay": {
+            "{answerAllowed}": "**{knockerDisplayName}** ha entrado.",
+            "{answerDenied}": "**{knockerDisplayName}** no ha entrado."
+          }
+        }
       }
     }
   ],

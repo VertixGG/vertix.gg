@@ -407,6 +407,18 @@
         "content": {
           "label": "Update Existing Channels"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+        "content": {
+          "label": "Invite"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+        "content": {
+          "label": "Knock"
+        }
       }
     ],
     "textInputs": [
@@ -993,6 +1005,24 @@
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
           "placeholder": "➕ Give a role its own buttons"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> Select Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> Select User"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='KnockChannel'> Select Channel"
         }
       }
     ]
@@ -3132,6 +3162,88 @@
       "content": {
         "title": "🗑️  Template Deleted",
         "description": "Template **\"{templateName}\"** has been deleted.\n\n**Templates**: `{templatesCount}/{maxTemplates}`"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Invite someone to your channel",
+        "description": "Select the user you want in, and they can join whatever this channel is set to.\n\nThey are told where to find it, so a private channel does not have to be explained."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  You have no channel here",
+        "description": "There is nothing to invite anyone into yet.\n\nJoin the generator to open a channel, then invite whoever you want."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Which channel?",
+        "description": "You have more than one channel open here. Pick the one to invite someone into."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
+      "content": {
+        "title": "{inviteEmoji}  Invite sent",
+        "description": "**{invitedDisplayName}** can now join this channel.\n\n{deliveryDisplay}",
+        "options": {
+          "deliveryDisplay": {
+            "{deliveryDelivered}": "They have been sent a link to it.",
+            "{deliveryBlocked}": "Their direct messages are closed, so tell them yourself - the access is already theirs."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
+      "content": {
+        "title": "{knockEmoji}  Ask to join a channel",
+        "description": "Pick the channel you want into and its owner is asked to let you in.\n\nThey decide, and you are told either way."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
+      "content": {
+        "title": "{knockEmoji}  Nothing to knock on",
+        "description": "Every channel here is either open to you already or is one of your own.\n\nA channel you cannot see is not listed - if a friend has one, ask them for an invite."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
+      "content": {
+        "title": "{knockEmoji}  You already asked",
+        "description": "That channel's owner has your request and has not answered it yet.\n\nGive them a few minutes before asking again."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
+      "content": {
+        "title": "{knockEmoji}  Your request was sent",
+        "description": "The owner of **{knockedChannelName}** has been asked to let you in.\n\nYou are told as soon as they answer."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
+      "content": {
+        "title": "{knockEmoji}  Someone wants to join",
+        "description": "<@{knockerId}> is asking to be let into this channel.\n\nLetting them in grants them access the way the access menu would. Ignoring this is an answer too - the request expires on its own."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
+      "content": {
+        "title": "{knockEmoji}  Request answered",
+        "description": "{answerDisplay}",
+        "options": {
+          "answerDisplay": {
+            "{answerAllowed}": "**{knockerDisplayName}** was let in.",
+            "{answerDenied}": "**{knockerDisplayName}** was not let in."
+          }
+        }
       }
     }
   ],

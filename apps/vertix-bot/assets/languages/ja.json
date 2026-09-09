@@ -407,6 +407,18 @@
         "content": {
           "label": "既存チャンネルを更新"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+        "content": {
+          "label": "招待"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+        "content": {
+          "label": "ノック"
+        }
       }
     ],
     "textInputs": [
@@ -993,6 +1005,24 @@
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
           "placeholder": "➕ ロールに専用のボタンを与える"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> チャンネルを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+        "content": {
+          "placeholder": "<emoji name='InviteChannel'> ユーザーを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+        "content": {
+          "placeholder": "<emoji name='KnockChannel'> チャンネルを選択"
         }
       }
     ]
@@ -3132,6 +3162,88 @@
       "content": {
         "title": "🗑️  テンプレートを削除しました",
         "description": "テンプレート **\"{templateName}\"** を削除しました。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
+      "content": {
+        "title": "{inviteEmoji}  チャンネルに誰かを招待する",
+        "description": "入れたいユーザーを選ぶと、チャンネルの状態にかかわらず参加できるようになります。\n\n場所も伝わるので、プライベートなチャンネルでも説明はいりません。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteNoChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  ここにはチャンネルがありません",
+        "description": "まだ誰かを招待できる場所がありません。\n\nジェネレーターに入ってチャンネルを開き、それから好きな人を招待してください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  どのチャンネルですか？",
+        "description": "ここで複数のチャンネルを開いています。誰かを招待したいチャンネルを選んでください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
+      "content": {
+        "title": "{inviteEmoji}  招待を送信しました",
+        "description": "**{invitedDisplayName}** がこのチャンネルに参加できるようになりました。\n\n{deliveryDisplay}",
+        "options": {
+          "deliveryDisplay": {
+            "{deliveryDelivered}": "チャンネルへのリンクを送りました。",
+            "{deliveryBlocked}": "ダイレクトメッセージが閉じているので、直接伝えてください — アクセス権はすでに渡っています。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
+      "content": {
+        "title": "{knockEmoji}  チャンネルへの参加を頼む",
+        "description": "入りたいチャンネルを選ぶと、その所有者に入れてもらえるよう依頼します。\n\n決めるのは所有者で、結果はどちらでもお知らせします。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
+      "content": {
+        "title": "{knockEmoji}  ノックする先がありません",
+        "description": "ここのチャンネルはすべて、すでに入れるか自分のものです。\n\n見えないチャンネルは一覧に出ません — 友達が持っているなら招待を頼んでください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
+      "content": {
+        "title": "{knockEmoji}  すでに頼んでいます",
+        "description": "そのチャンネルの所有者はリクエストを受け取っており、まだ返事をしていません。\n\n少し待ってから、もう一度頼んでください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
+      "content": {
+        "title": "{knockEmoji}  リクエストを送信しました",
+        "description": "**{knockedChannelName}** の所有者に、あなたを入れてもらうよう依頼しました。\n\n返事があり次第お知らせします。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
+      "content": {
+        "title": "{knockEmoji}  参加したい人がいます",
+        "description": "<@{knockerId}> がこのチャンネルへの参加を求めています。\n\n入れると、アクセスメニューと同じようにアクセス権が渡ります。無視するのも答えです — リクエストは自動的に期限切れになります。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
+      "content": {
+        "title": "{knockEmoji}  リクエストに回答しました",
+        "description": "{answerDisplay}",
+        "options": {
+          "answerDisplay": {
+            "{answerAllowed}": "**{knockerDisplayName}** を入れました。",
+            "{answerDenied}": "**{knockerDisplayName}** は入れませんでした。"
+          }
+        }
       }
     }
   ],

@@ -108,6 +108,8 @@ export interface DiscordChannelInfo {
     name: string;
     memberCount: number;
     position: number;
+    /** The channel's own limit, `0` for none. Absent on anything that is not a voice channel. */
+    userLimit?: number;
 }
 
 export interface ScalingChannelInfo {

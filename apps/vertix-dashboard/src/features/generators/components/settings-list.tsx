@@ -1,10 +1,78 @@
+import { useEffect, useRef, useState } from "react";
+
+import { Info } from "lucide-react";
+
 import type { ReactNode } from "react";
 import type { GuildDiscordRole } from "@vertix.gg/dashboard/src/features/generators/types";
 
 interface SettingRowProps {
     label: string;
     value: string;
+    /** Where the value came from, when it is not the generator's own answer. */
+    note?: ReactNode;
     mono?: boolean;
+}
+
+/**
+ * Where a value came from, behind an icon.
+ *
+ * Inherited values used to say so in the value itself, which made the column of answers hard to
+ * read across - the part that matters is the value, and the part that explains it is only wanted
+ * once.
+ */
+function SettingNote( { note }: { note: ReactNode } ) {
+    const [ isHovered, setIsHovered ] = useState( false );
+    // A click keeps it open, so the note can be read without holding the pointer still - and stays
+    // reachable where there is no pointer to hover with.
+    const [ isPinned, setIsPinned ] = useState( false );
+
+    const containerRef = useRef<HTMLSpanElement>( null );
+
+    useEffect( () => {
+        if ( ! isPinned ) {
+            return;
+        }
+
+        const onPointerDown = ( event: MouseEvent ) => {
+            if ( ! containerRef.current?.contains( event.target as Node ) ) {
+                setIsPinned( false );
+            }
+        };
+
+        document.addEventListener( "mousedown", onPointerDown );
+
+        return () => document.removeEventListener( "mousedown", onPointerDown );
+    }, [ isPinned ] );
+
+    return (
+        <span
+            className="relative inline-flex align-middle"
+            ref={ containerRef }
+            // On the wrapper rather than the icon, so moving the pointer onto the note itself does
+            // not close the note.
+            onMouseEnter={ () => setIsHovered( true ) }
+            onMouseLeave={ () => setIsHovered( false ) }
+        >
+            <button
+                onClick={ () => setIsPinned( !isPinned ) }
+                className="p-0.5 text-text-muted hover:text-text-accent rounded transition-colors"
+            >
+                <Info className="w-3.5 h-3.5" />
+            </button>
+
+            { ( isHovered || isPinned ) && (
+                // Beside the icon rather than under it - a pointer sitting on the icon covers
+                // whatever opens directly below it.
+                <span className="absolute left-full top-0 ml-2 z-20 w-64 px-3 py-2 bg-surface border
+                    border-border rounded-lg shadow-lg text-xs text-text-primary font-normal normal-case">
+                    <span className="block text-[10px] font-medium uppercase tracking-wide text-text-muted mb-1">
+                        Where this comes from
+                    </span>
+                    { note }
+                </span>
+            ) }
+        </span>
+    );
 }
 
 /**
@@ -14,11 +82,14 @@ interface SettingRowProps {
  * panel, a row that spans the whole width leaves the eye to guess which value belongs to which
  * label.
  */
-export function SettingRow( { label, value, mono }: SettingRowProps ) {
+export function SettingRow( { label, value, note, mono }: SettingRowProps ) {
     return (
         <>
             <dt className="text-text-secondary">{ label }</dt>
-            <dd className={ `text-text-primary mb-0 ${ mono ? "font-mono" : "" }` }>{ value }</dd>
+            <dd className={ `text-text-primary mb-0 flex items-start gap-1 ${ mono ? "font-mono" : "" }` }>
+                <span className="min-w-0">{ value }</span>
+                { note && <SettingNote note={ note } /> }
+            </dd>
         </>
     );
 }

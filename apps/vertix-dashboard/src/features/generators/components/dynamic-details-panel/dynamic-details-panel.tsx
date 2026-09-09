@@ -71,11 +71,11 @@ const PRIVACY_STATE_LABELS: Record<string, string> = {
  * Null and zero are different answers - null copies the generator's own limit, zero is Discord's
  * own way of saying there is no limit at all.
  */
-function formatUserLimit( limit: number | null ): string {
-    if ( null === limit ) {
-        return "Copied from the generator";
-    }
+function formatUserLimit( limit: number | null, generatorLimit: number | undefined ): string {
+    return formatLimitValue( ( null === limit ? generatorLimit : limit ) ?? 0 );
+}
 
+function formatLimitValue( limit: number ): string {
     return 0 === limit ? "No limit" : `${ limit } users`;
 }
 
@@ -100,10 +100,22 @@ function formatRole( id: string | null, options: GuildDiscordOptions | null, fal
     return options?.roles?.find( ( role ) => role.id === id )?.name ?? id;
 }
 
-const INHERITED_SUFFIX = " (from the server options)";
+const INHERITED_NOTE = (
+    <>
+        This <strong className="font-semibold">generator</strong> has no list of its own, so it follows
+        the <strong className="font-semibold">Server Config</strong>. Changing it there moves this with it.
+    </>
+);
+
+const COPIED_LIMIT_NOTE = (
+    <>
+        This <strong className="font-semibold">generator</strong> sets no limit of its own, so a new
+        channel copies the <strong className="font-semibold">generator</strong>&apos;s own limit.
+    </>
+);
 
 /**
- * Function formatInherited() :: What a generator actually applies, and where it came from.
+ * Function formatInherited() :: What a generator actually applies.
  *
  * An empty list of its own is not an empty audience, it is the absence of a choice - the server
  * wide list decides, and when that is empty too the last resort does. Saying only "None" would
@@ -119,7 +131,7 @@ function formatInherited(
         return formatRoles( own, options );
     }
 
-    return ( guild.length ? formatRoles( guild, options ) : unsetLabel ) + INHERITED_SUFFIX;
+    return guild.length ? formatRoles( guild, options ) : unsetLabel;
 }
 
 function formatChannel( id: string | null, options: GuildDiscordOptions | null ): string {
@@ -257,6 +269,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                     masterChannelId={ master.id }
                                     settings={ settings }
                                     discordOptions={ discordOptions }
+                                    generatorUserLimit={ details.discord?.masterChannel?.userLimit }
                                     isSaving={ isSaving }
                                 />
                             ) : (
@@ -273,7 +286,13 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                         />
                                         <SettingRow
                                             label="User limit"
-                                            value={ formatUserLimit( settings?.dynamicChannelDefaultUserLimit ?? null ) }
+                                            value={ formatUserLimit(
+                                                settings?.dynamicChannelDefaultUserLimit ?? null,
+                                                details.discord?.masterChannel?.userLimit
+                                            ) }
+                                            note={ null === ( settings?.dynamicChannelDefaultUserLimit ?? null )
+                                                ? COPIED_LIMIT_NOTE
+                                                : undefined }
                                         />
                                     </SettingsGroup>
 
@@ -301,6 +320,9 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                                 discordOptions,
                                                 "@everyone"
                                             ) }
+                                            note={ ( settings?.dynamicChannelVerifiedRoles ?? [] ).length
+                                                ? undefined
+                                                : INHERITED_NOTE }
                                         />
                                         <SettingRow
                                             label="Staff roles"
@@ -310,13 +332,18 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                                 discordOptions,
                                                 "None"
                                             ) }
+                                            note={ ( settings?.dynamicChannelStaffRoles ?? [] ).length
+                                                ? undefined
+                                                : INHERITED_NOTE }
                                         />
                                         <SettingRow
                                             label="Voice role"
-                                            value={ settings?.dynamicChannelVoiceRoleId
-                                                ? formatRole( settings.dynamicChannelVoiceRoleId, discordOptions, "None" )
-                                                : formatRole( guildSettings?.voiceRoleId ?? null, discordOptions, "None" ) + INHERITED_SUFFIX
-                                            }
+                                            value={ formatRole(
+                                                settings?.dynamicChannelVoiceRoleId ?? guildSettings?.voiceRoleId ?? null,
+                                                discordOptions,
+                                                "None"
+                                            ) }
+                                            note={ settings?.dynamicChannelVoiceRoleId ? undefined : INHERITED_NOTE }
                                         />
                                         <SettingRow
                                             label="Logs channel"

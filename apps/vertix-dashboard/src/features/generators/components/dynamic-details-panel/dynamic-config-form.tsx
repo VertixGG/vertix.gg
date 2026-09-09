@@ -24,6 +24,8 @@ export interface DynamicConfigFormProps {
     masterChannelId: string;
     settings: DynamicSettings | null;
     discordOptions: GuildDiscordOptions | null;
+    /** The generator's own limit, which an empty field copies. `0` is Discord's word for none. */
+    generatorUserLimit: number | undefined;
     isSaving: boolean;
 }
 
@@ -47,6 +49,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     masterChannelId,
     settings,
     discordOptions,
+    generatorUserLimit,
     isSaving
 } ) => {
     const [ state ] = useCommandState<DynamicConfigFormState, DynamicConfigFormState>(
@@ -215,7 +218,9 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                         max={ 99 }
                         value={ null === state.defaultUserLimit ? "" : state.defaultUserLimit }
                         onChange={ ( e ) => handleUpdateDefaultUserLimit( e.target.value ) }
-                        placeholder="Copied from the generator"
+                        placeholder={ 0 === ( generatorUserLimit ?? 0 )
+                            ? "Copied from the generator (no limit)"
+                            : `Copied from the generator (${ generatorUserLimit } users)` }
                         className={ fieldClassName }
                         disabled={ isSaving }
                     />

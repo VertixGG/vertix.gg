@@ -46,6 +46,13 @@ export interface IPCDiscordChannelInfo {
     name: string;
     memberCount: number;
     position: number;
+    /**
+     * The channel's own limit, `0` for none. Absent on anything that is not a voice channel.
+     *
+     * A generator hands this to the dynamic channels it makes when they have no default of their
+     * own, so the screens need it to name the number rather than only the rule.
+     */
+    userLimit?: number;
 }
 
 export type IPCManagementRequestPayload =

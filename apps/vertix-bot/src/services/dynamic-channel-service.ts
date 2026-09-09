@@ -438,7 +438,8 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             id: channel.id,
             name: channel.name,
             memberCount: channel.members.size,
-            position: channel.position
+            position: channel.position,
+            userLimit: channel.userLimit
         };
     }
 
@@ -1561,6 +1562,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelVisibilityState: ChannelVisibilityState =
                 "hidden" === defaultPrivacyState ? "hidden" : "shown";
 
+        // Whether the state is a choice being restored rather than the master channel's default.
+        // Only a choice is asserted over the generator - see the flags below.
+        let isStateRestored = false,
+            isVisibilityRestored = false;
+
         if ( savedData ) {
             dynamicChannelName = savedData.dynamicChannelName;
 
@@ -1570,10 +1576,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             if ( "unknown" !== savedData.dynamicChannelState ) {
                 dynamicChannelState = savedData.dynamicChannelState;
+                isStateRestored = true;
             }
 
             if ( "unknown" !== savedData.dynamicChannelVisibilityState ) {
                 dynamicChannelVisibilityState = savedData.dynamicChannelVisibilityState;
+                isVisibilityRestored = true;
             }
 
             if ( savedData.dynamicChannelRegion ) {
@@ -1594,17 +1602,24 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // Restoring a channel has to speak whichever model its master channel does, otherwise a
         // saved V3 channel comes back holding V2 permissions until its privacy button is
         // pressed once.
+        //
+        // The grant is only written for a state being restored, never for the master channel's
+        // default. It replaces the overwrite the channel inherited from the generator rather than
+        // merging with it, so writing it by default would hand `Connect` back to a role an admin
+        // had denied on the generator, and the lockdown would not survive a single channel being
+        // created. A default therefore leaves the inherited overwrite alone and lets the generator
+        // decide, which is what an admin editing it expects.
         const isPrivacyGranted = VERSION_UI_V3 === masterChannelDB.version;
 
         if ( "private" === dynamicChannelState ) {
             verifiedFlagsDeny.push( PermissionsBitField.Flags.Connect );
-        } else if ( isPrivacyGranted && "public" === dynamicChannelState ) {
+        } else if ( isPrivacyGranted && isStateRestored && "public" === dynamicChannelState ) {
             verifiedFlagsAllow.push( PermissionsBitField.Flags.Connect );
         }
 
         if ( "hidden" === dynamicChannelVisibilityState ) {
             verifiedFlagsDeny.push( PermissionsBitField.Flags.ViewChannel );
-        } else if ( isPrivacyGranted && "shown" === dynamicChannelVisibilityState ) {
+        } else if ( isPrivacyGranted && isVisibilityRestored && "shown" === dynamicChannelVisibilityState ) {
             verifiedFlagsAllow.push( PermissionsBitField.Flags.ViewChannel );
         }
 

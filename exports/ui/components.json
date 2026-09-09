@@ -436,7 +436,12 @@
                                     "{staffRolesMessageDefault}": "**None**"
                                 },
                                 "none": "**None**",
-                                "inherited": "*(from the server options)*"
+                                "inherited": "*(from the server options)*",
+                                "privacyPublic": "🌐 Public",
+                                "privacyPrivate": "🚫 Private",
+                                "privacyHidden": "🙈 Hidden",
+                                "autoSaveOn": "`🟢∙On`",
+                                "autoSaveOff": "`🔴∙Off`"
                             },
                             "arrayOptions": {
                                 "masterChannels": {
@@ -490,6 +495,11 @@
                                 "staffRolesMessageDefault": "{staffRolesMessageDefault}",
                                 "none": "{none}",
                                 "inherited": "{inherited}",
+                                "privacyPublic": "{privacyPublic}",
+                                "privacyPrivate": "{privacyPrivate}",
+                                "privacyHidden": "{privacyHidden}",
+                                "autoSaveOn": "{autoSaveOn}",
+                                "autoSaveOff": "{autoSaveOff}",
                                 "labelName": "{labelName}",
                                 "labelChannelId": "{labelChannelId}",
                                 "labelDynamicChannelsName": "{labelDynamicChannelsName}",
@@ -3652,6 +3662,11 @@
                                     "{newChannelLimitUnlimited}": "No limit",
                                     "{newChannelLimitValue}": "{newChannelLimitCount} users"
                                 },
+                                "newChannelPrivacy": {
+                                    "{privacyPublic}": "🌐 Public",
+                                    "{privacyPrivate}": "🚫 Private",
+                                    "{privacyHidden}": "🙈 Hidden"
+                                },
                                 "voiceRoleDisplay": {
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
@@ -3724,6 +3739,9 @@
                                 "voiceRoleNone": "{voiceRoleNone}",
                                 "newChannelPrivacy": "{newChannelPrivacy}",
                                 "newChannelLimit": "{newChannelLimit}",
+                                "privacyPublic": "{privacyPublic}",
+                                "privacyPrivate": "{privacyPrivate}",
+                                "privacyHidden": "{privacyHidden}",
                                 "newChannelLimitCount": "{newChannelLimitCount}",
                                 "newChannelLimitUnlimited": "{newChannelLimitUnlimited}",
                                 "newChannelLimitValue": "{newChannelLimitValue}",
@@ -8654,6 +8672,11 @@
                                     "{newChannelLimitUnlimited}": "No limit",
                                     "{newChannelLimitValue}": "{newChannelLimitCount} users"
                                 },
+                                "newChannelPrivacy": {
+                                    "{privacyPublic}": "🌐 Public",
+                                    "{privacyPrivate}": "🚫 Private",
+                                    "{privacyHidden}": "🙈 Hidden"
+                                },
                                 "voiceRoleDisplay": {
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
@@ -8710,6 +8733,9 @@
                                 "voiceRoleGuild": "{voiceRoleGuild}",
                                 "voiceRoleNone": "{voiceRoleNone}",
                                 "newChannelPrivacy": "{newChannelPrivacy}",
+                                "privacyPublic": "{privacyPublic}",
+                                "privacyPrivate": "{privacyPrivate}",
+                                "privacyHidden": "{privacyHidden}",
                                 "newChannelLimit": "{newChannelLimit}",
                                 "newChannelLimitCount": "{newChannelLimitCount}",
                                 "newChannelLimitUnlimited": "{newChannelLimitUnlimited}",

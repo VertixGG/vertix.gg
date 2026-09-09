@@ -789,6 +789,10 @@
               "value": "access"
             },
             {
+              "label": "Пригласить",
+              "value": "invite"
+            },
+            {
               "label": "Приватность",
               "value": "privacy"
             },
@@ -823,6 +827,10 @@
             {
               "label": "Забрать",
               "value": "claim-button"
+            },
+            {
+              "label": "Постучать",
+              "value": "knock"
             }
           ]
         }
@@ -2828,6 +2836,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Переименовать**",
               "limit": "<emoji name='UserLimit'> ∙ **Лимит пользователей**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Доступ**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Пригласить**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Приватность**",
               "region": "<emoji name='ChannelRegion'> ∙ **Регион**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Редактировать главное сообщение**",
@@ -2835,7 +2844,9 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Сбросить**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
+              "status": "<emoji name='Megaphone'> ∙ **Статус**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**"
             }
           }
         }
@@ -2902,6 +2913,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Переименовать**",
               "limit": "<emoji name='UserLimit'> ∙ **Лимит пользователей**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Доступ**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Пригласить**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Приватность**",
               "region": "<emoji name='ChannelRegion'> ∙ **Регион**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Редактировать главное сообщение**",
@@ -2910,7 +2922,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
               "status": "<emoji name='Megaphone'> ∙ **Статус**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**"
             }
           },
           "verifiedRoles": {
@@ -3053,6 +3066,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Переименовать**",
               "limit": "<emoji name='UserLimit'> ∙ **Лимит пользователей**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Доступ**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Пригласить**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Приватность**",
               "region": "<emoji name='ChannelRegion'> ∙ **Регион**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Редактировать главное сообщение**",
@@ -3061,7 +3075,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
               "status": "<emoji name='Megaphone'> ∙ **Статус**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**"
             }
           }
         }

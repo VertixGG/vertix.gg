@@ -789,6 +789,10 @@
               "value": "access"
             },
             {
+              "label": "Πρόσκληση",
+              "value": "invite"
+            },
+            {
               "label": "Απόρρητο",
               "value": "privacy"
             },
@@ -823,6 +827,10 @@
             {
               "label": "Διεκδίκηση",
               "value": "claim-button"
+            },
+            {
+              "label": "Χτύπα",
+              "value": "knock"
             }
           ]
         }
@@ -2154,6 +2162,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
               "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Πρόσκληση**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
               "region": "<emoji name='ChannelRegion'> ∙ **Region**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -2161,7 +2170,9 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**"
             }
           }
         }
@@ -2327,6 +2338,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
               "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Πρόσκληση**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
               "region": "<emoji name='ChannelRegion'> ∙ **Region**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -2335,7 +2347,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**"
             }
           },
           "verifiedRoles": {
@@ -2944,6 +2957,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
               "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Πρόσκληση**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
               "region": "<emoji name='ChannelRegion'> ∙ **Region**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -2952,7 +2966,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**"
             }
           }
         }

@@ -789,6 +789,10 @@
               "value": "access"
             },
             {
+              "label": "Invite",
+              "value": "invite"
+            },
+            {
               "label": "Privacy",
               "value": "privacy"
             },
@@ -823,6 +827,10 @@
             {
               "label": "Claim",
               "value": "claim-button"
+            },
+            {
+              "label": "Knock",
+              "value": "knock"
             }
           ]
         }
@@ -2828,6 +2836,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
               "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Invite**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
               "region": "<emoji name='ChannelRegion'> ∙ **Region**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -2835,7 +2844,9 @@
               "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "status": "<emoji name='Megaphone'> ∙ **Status**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Knock**"
             }
           }
         }
@@ -2902,6 +2913,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
               "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Invite**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
               "region": "<emoji name='ChannelRegion'> ∙ **Region**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -2910,7 +2922,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Status**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Knock**"
             }
           },
           "verifiedRoles": {
@@ -3053,6 +3066,7 @@
               "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
               "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
               "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "invite": "<emoji name='InviteChannel'> ∙ **Invite**",
               "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
               "region": "<emoji name='ChannelRegion'> ∙ **Region**",
               "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
@@ -3061,7 +3075,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Status**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
+              "knock": "<emoji name='KnockChannel'> ∙ **Knock**"
             }
           }
         }

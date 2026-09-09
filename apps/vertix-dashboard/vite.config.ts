@@ -15,8 +15,7 @@ export default defineConfig( ( { mode } ) => {
 
     const apiPort = env.API_PORT || "3021";
     const apiHost = env.API_HOST || "0.0.0.0";
-    const prodHost = env.API_HOST_PROD || `http://${ apiHost }:${ apiPort }`;
-    const apiBaseUrl = `${ prodHost }/api`;
+    const apiBaseUrl = env.API_PUBLIC_URL || `http://${ apiHost }:${ apiPort }/api`;
 
     const frontendPort = env.DASHBOARD_PORT || "3020";
     const frontendHost = env.DASHBOARD_HOST || "0.0.0.0";
@@ -72,7 +71,7 @@ export default defineConfig( ( { mode } ) => {
             ]
         },
         define: {
-            "import.meta.env.VITE_API_BASE_URL": JSON.stringify( apiBaseUrl ),
+            "import.meta.env.API_PUBLIC_URL": JSON.stringify( apiBaseUrl ),
             "VITE_API_PORT": JSON.stringify( apiPort ),
             "VITE_API_HOST": JSON.stringify( apiHost ),
             "__ZENFLUX_DEBUG__": JSON.stringify( true ),

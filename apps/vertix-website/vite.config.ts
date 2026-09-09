@@ -145,10 +145,15 @@ export default defineConfig( ( { mode } ) => {
 
     const dashboardUrl = env.DASHBOARD_PROD_URL || "https://dashboard.voicechannels.online";
 
+    const apiPort = env.API_PORT || "3021";
+    const apiHost = env.API_HOST || "0.0.0.0";
+    const apiBaseUrl = env.API_PUBLIC_URL || `http://${ apiHost }:${ apiPort }/api`;
+
     return {
         plugins: [ react(), exportsAssetsPlugin(), sitemapPlugin() ],
         define: {
             "import.meta.env.VITE_DASHBOARD_URL": JSON.stringify( dashboardUrl ),
+            "import.meta.env.API_PUBLIC_URL": JSON.stringify( apiBaseUrl ),
         },
         resolve: {
             alias: {

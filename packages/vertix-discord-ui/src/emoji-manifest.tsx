@@ -86,7 +86,7 @@ function resolveBaseUrl( explicit?: string ): string {
 
     const env = ( import.meta as unknown as { env?: Record<string, string | undefined> } ).env;
 
-    return env?.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL;
+    return env?.API_PUBLIC_URL ?? DEFAULT_API_BASE_URL;
 }
 
 async function fetchManifestOnce( baseUrl: string | undefined ): Promise<boolean> {

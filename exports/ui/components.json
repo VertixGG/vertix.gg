@@ -361,7 +361,7 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesMenu",
                                 "elementType": "role-select",
                                 "instanceType": "Dynamic",
-                                "placeholder": "Select Verified Roles"
+                                "placeholder": "🛡️ ∙ Select Verified Roles"
                             }
                         }
                     ],
@@ -411,7 +411,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🛠  Setup VoiceChannels",
-                            "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+                            "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n_**Server Verified Roles**_:\n{verifiedRolesMessage}\n\n_**Server Staff Roles**_:\n{staffRolesMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
                             "image": "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png",
                             "color": 3369963,
                             "options": {
@@ -3350,7 +3350,7 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesMenu",
                                 "elementType": "role-select",
                                 "instanceType": "Dynamic",
-                                "placeholder": "Select Verified Roles"
+                                "placeholder": "🛡️ ∙ Select Verified Roles"
                             }
                         }
                     ],
@@ -3606,7 +3606,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
                             "footer": "Note: Changing user mention will not affect already created dynamic channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
@@ -3637,14 +3637,19 @@
                                     "{configControlChannelAutoCreateEnabled}": "{on}",
                                     "{configControlChannelAutoCreateDisabled}": "{off}"
                                 },
+                                "verifiedRolesDisplay": {
+                                    "{verifiedRoles}": "{verifiedRoles}",
+                                    "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
+                                },
                                 "staffRolesDisplay": {
                                     "{staffRoles}": "{staffRoles}",
-                                    "{staffRolesNone}": "**None**"
+                                    "{staffRolesGuild}": "{staffRoles} *(from the server options)*",
+                                    "{staffRolesNone}": "**None** *(from the server options)*"
                                 },
                                 "voiceRoleDisplay": {
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
-                                    "{voiceRoleNone}": "**None**"
+                                    "{voiceRoleNone}": "**None** *(from the server options)*"
                                 }
                             },
                             "arrayOptions": {
@@ -3701,8 +3706,11 @@
                                 "dynamicChannelLogsChannelSelected": "{dynamicChannelLogsChannelSelected}",
                                 "dynamicChannelLogsChannelDisplay": "{dynamicChannelLogsChannelDisplay}",
                                 "verifiedRoles": "{verifiedRoles}",
+                                "verifiedRolesDisplay": "{verifiedRolesDisplay}",
+                                "verifiedRolesGuild": "{verifiedRolesGuild}",
                                 "staffRoles": "{staffRoles}",
                                 "staffRolesDisplay": "{staffRolesDisplay}",
+                                "staffRolesGuild": "{staffRolesGuild}",
                                 "staffRolesNone": "{staffRolesNone}",
                                 "voiceRoleId": "{voiceRoleId}",
                                 "voiceRoleDisplay": "{voiceRoleDisplay}",
@@ -3826,14 +3834,15 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
-                            "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
+                            "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\nLeaving it empty falls back to the server wide verified roles.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
                             "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
                                 "verifiedRolesDisplay": {
                                     "{verifiedRoles}": "{verifiedRoles}",
-                                    "{verifiedRolesDefault}": "**None**"
+                                    "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*",
+                                    "{verifiedRolesDefault}": "**None** *(from the server options)*"
                                 }
                             },
                             "arrayOptions": {
@@ -3848,6 +3857,7 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesDisplay": "{verifiedRolesDisplay}",
                                 "verifiedRolesDefault": "{verifiedRolesDefault}",
+                                "verifiedRolesGuild": "{verifiedRolesGuild}",
                                 "index": "{index}"
                             }
                         }
@@ -3862,14 +3872,15 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔑  Edit Staff Roles Of Master Channel #{index}",
-                            "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeave it empty if nobody should bypass the owner.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
+                            "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeaving it empty falls back to the server wide staff roles.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
                             "footer": "Note: The changes are applied immediately to the existing dynamic channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
                                 "staffRolesDisplay": {
                                     "{staffRoles}": "{staffRoles}",
-                                    "{staffRolesNone}": "**None**"
+                                    "{staffRolesGuild}": "{staffRoles} *(from the server options)*",
+                                    "{staffRolesNone}": "**None** *(from the server options)*"
                                 }
                             },
                             "arrayOptions": {
@@ -3884,6 +3895,7 @@
                                 "staffRoles": "{staffRoles}",
                                 "staffRolesDisplay": "{staffRolesDisplay}",
                                 "staffRolesNone": "{staffRolesNone}",
+                                "staffRolesGuild": "{staffRolesGuild}",
                                 "index": "{index}"
                             }
                         }
@@ -3906,7 +3918,7 @@
                                 "voiceRoleDisplay": {
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
-                                    "{voiceRoleNone}": "**None**"
+                                    "{voiceRoleNone}": "**None** *(from the server options)*"
                                 }
                             },
                             "vars": {
@@ -3962,7 +3974,7 @@
                             "color": 3369963,
                             "options": {
                                 "userLimitDisplay": {
-                                    "{userLimitInherit}": "**Copied from the generator channel**",
+                                    "{userLimitInherit}": "**Copied from the generator channel** ({masterChannelUserLimitDisplay})",
                                     "{userLimitUnlimited}": "**No limit**",
                                     "{userLimitValue}": "**{userLimit} users**"
                                 }
@@ -3973,7 +3985,8 @@
                                 "userLimitDisplay": "{userLimitDisplay}",
                                 "userLimitInherit": "{userLimitInherit}",
                                 "userLimitUnlimited": "{userLimitUnlimited}",
-                                "userLimitValue": "{userLimitValue}"
+                                "userLimitValue": "{userLimitValue}",
+                                "masterChannelUserLimitDisplay": "{masterChannelUserLimitDisplay}"
                             }
                         }
                     }
@@ -4223,7 +4236,7 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesMenu",
                                 "elementType": "role-select",
                                 "instanceType": "Dynamic",
-                                "placeholder": "Select Verified Roles"
+                                "placeholder": "🛡️ ∙ Select Verified Roles"
                             }
                         }
                     ],
@@ -4689,7 +4702,7 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesMenu",
                                 "elementType": "role-select",
                                 "instanceType": "Dynamic",
-                                "placeholder": "Select Verified Roles"
+                                "placeholder": "🛡️ ∙ Select Verified Roles"
                             }
                         }
                     ],
@@ -8335,7 +8348,7 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesMenu",
                                 "elementType": "role-select",
                                 "instanceType": "Dynamic",
-                                "placeholder": "Select Verified Roles"
+                                "placeholder": "🛡️ ∙ Select Verified Roles"
                             }
                         }
                     ],
@@ -8591,7 +8604,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRoles}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -8621,14 +8634,19 @@
                                     "{configControlChannelAutoCreateEnabled}": "{on}",
                                     "{configControlChannelAutoCreateDisabled}": "{off}"
                                 },
+                                "verifiedRolesDisplay": {
+                                    "{verifiedRoles}": "{verifiedRoles}",
+                                    "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
+                                },
                                 "staffRolesDisplay": {
                                     "{staffRoles}": "{staffRoles}",
-                                    "{staffRolesNone}": "**None**"
+                                    "{staffRolesGuild}": "{staffRoles} *(from the server options)*",
+                                    "{staffRolesNone}": "**None** *(from the server options)*"
                                 },
                                 "voiceRoleDisplay": {
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
-                                    "{voiceRoleNone}": "**None**"
+                                    "{voiceRoleNone}": "**None** *(from the server options)*"
                                 }
                             },
                             "arrayOptions": {
@@ -8670,8 +8688,11 @@
                                 "dynamicChannelLogsChannelDisplay": "{dynamicChannelLogsChannelDisplay}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}",
                                 "verifiedRoles": "{verifiedRoles}",
+                                "verifiedRolesDisplay": "{verifiedRolesDisplay}",
+                                "verifiedRolesGuild": "{verifiedRolesGuild}",
                                 "staffRoles": "{staffRoles}",
                                 "staffRolesDisplay": "{staffRolesDisplay}",
+                                "staffRolesGuild": "{staffRolesGuild}",
                                 "staffRolesNone": "{staffRolesNone}",
                                 "voiceRoleId": "{voiceRoleId}",
                                 "voiceRoleDisplay": "{voiceRoleDisplay}",
@@ -8804,10 +8825,16 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
-                            "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
+                            "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\nLeaving it empty falls back to the server wide verified roles.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
                             "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
+                            "options": {
+                                "verifiedRolesDisplay": {
+                                    "{verifiedRoles}": "{verifiedRoles}",
+                                    "{verifiedRolesGuild}": "{verifiedRoles} *(from the server options)*"
+                                }
+                            },
                             "arrayOptions": {
                                 "verifiedRoles": {
                                     "format": "<@&{value}>{separator}",
@@ -8818,7 +8845,9 @@
                                 "separator": "{separator}",
                                 "value": "{value}",
                                 "index": "{index}",
-                                "verifiedRoles": "{verifiedRoles}"
+                                "verifiedRoles": "{verifiedRoles}",
+                                "verifiedRolesDisplay": "{verifiedRolesDisplay}",
+                                "verifiedRolesGuild": "{verifiedRolesGuild}"
                             }
                         }
                     }
@@ -8832,14 +8861,15 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔑  Edit Staff Roles Of Master Channel #{index}",
-                            "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeave it empty if nobody should bypass the owner.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
+                            "description": "Staff roles are the mirror of the verified roles: the verified roles are the audience a channel can shut out, the staff roles are the ones it never can.\n\nA role selected here keeps access to every dynamic channel of Master Channel #{index}, whatever privacy state its owner picks - so a moderator can reach a private or hidden channel without being let in one at a time.\n\nLeaving it empty falls back to the server wide staff roles.\n\n**_Current Staff Roles_**\n\n> {staffRolesDisplay}",
                             "footer": "Note: The changes are applied immediately to the existing dynamic channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
                                 "staffRolesDisplay": {
                                     "{staffRoles}": "{staffRoles}",
-                                    "{staffRolesNone}": "**None**"
+                                    "{staffRolesGuild}": "{staffRoles} *(from the server options)*",
+                                    "{staffRolesNone}": "**None** *(from the server options)*"
                                 }
                             },
                             "arrayOptions": {
@@ -8854,6 +8884,7 @@
                                 "index": "{index}",
                                 "staffRoles": "{staffRoles}",
                                 "staffRolesDisplay": "{staffRolesDisplay}",
+                                "staffRolesGuild": "{staffRolesGuild}",
                                 "staffRolesNone": "{staffRolesNone}"
                             }
                         }
@@ -8876,7 +8907,7 @@
                                 "voiceRoleDisplay": {
                                     "{voiceRoleId}": "<@&{voiceRoleId}>",
                                     "{voiceRoleGuild}": "<@&{voiceRoleId}> *(from the server options)*",
-                                    "{voiceRoleNone}": "**None**"
+                                    "{voiceRoleNone}": "**None** *(from the server options)*"
                                 }
                             },
                             "vars": {
@@ -8932,7 +8963,7 @@
                             "color": 3369963,
                             "options": {
                                 "userLimitDisplay": {
-                                    "{userLimitInherit}": "**Copied from the generator channel**",
+                                    "{userLimitInherit}": "**Copied from the generator channel** ({masterChannelUserLimitDisplay})",
                                     "{userLimitUnlimited}": "**No limit**",
                                     "{userLimitValue}": "**{userLimit} users**"
                                 }
@@ -8943,7 +8974,8 @@
                                 "userLimitDisplay": "{userLimitDisplay}",
                                 "userLimitInherit": "{userLimitInherit}",
                                 "userLimitUnlimited": "{userLimitUnlimited}",
-                                "userLimitValue": "{userLimitValue}"
+                                "userLimitValue": "{userLimitValue}",
+                                "masterChannelUserLimitDisplay": "{masterChannelUserLimitDisplay}"
                             }
                         }
                     }
@@ -9203,7 +9235,7 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesMenu",
                                 "elementType": "role-select",
                                 "instanceType": "Dynamic",
-                                "placeholder": "Select Verified Roles"
+                                "placeholder": "🛡️ ∙ Select Verified Roles"
                             }
                         }
                     ],
@@ -9774,7 +9806,7 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesMenu",
                                 "elementType": "role-select",
                                 "instanceType": "Dynamic",
-                                "placeholder": "Select Verified Roles"
+                                "placeholder": "🛡️ ∙ Select Verified Roles"
                             }
                         }
                     ],

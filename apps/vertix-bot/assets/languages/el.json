@@ -825,12 +825,12 @@
               "value": "status"
             },
             {
-              "label": "Διεκδίκηση",
-              "value": "claim-button"
-            },
-            {
               "label": "Χτύπα",
               "value": "knock"
+            },
+            {
+              "label": "Διεκδίκηση",
+              "value": "claim-button"
             }
           ]
         }
@@ -2171,8 +2171,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
         }
@@ -2347,8 +2347,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           },
           "verifiedRoles": {
@@ -2966,8 +2966,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
         }

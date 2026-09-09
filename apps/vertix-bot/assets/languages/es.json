@@ -825,12 +825,12 @@
               "value": "status"
             },
             {
-              "label": "Reclamar",
-              "value": "claim-button"
-            },
-            {
               "label": "Llamar",
               "value": "knock"
+            },
+            {
+              "label": "Reclamar",
+              "value": "claim-button"
             }
           ]
         }
@@ -1553,8 +1553,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Estado**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Llamar**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Llamar**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
         }
@@ -1794,8 +1794,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Estado**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Llamar**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Llamar**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
         }
@@ -2119,8 +2119,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Estado**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Llamar**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Llamar**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           },
           "verifiedRoles": {

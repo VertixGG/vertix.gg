@@ -74,8 +74,8 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
             DynamicChannelTransferOwnerButton,
             DynamicChannelTemplatesButton,
             DynamicChannelStatusButton,
-            DynamicChannelClaimChannelButton,
             DynamicChannelKnockButton,
+            DynamicChannelClaimChannelButton,
         ].sort( ( a, b ) => a.getSortId() - b.getSortId() );
     }
 

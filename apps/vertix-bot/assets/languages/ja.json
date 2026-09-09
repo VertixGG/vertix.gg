@@ -825,12 +825,12 @@
               "value": "status"
             },
             {
-              "label": "取得",
-              "value": "claim-button"
-            },
-            {
               "label": "ノック",
               "value": "knock"
+            },
+            {
+              "label": "取得",
+              "value": "claim-button"
             }
           ]
         }
@@ -1285,8 +1285,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **ステータス**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **ノック**"
+              "knock": "<emoji name='KnockChannel'> ∙ **ノック**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           },
           "verifiedRoles": {
@@ -1686,8 +1686,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **ステータス**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **ノック**"
+              "knock": "<emoji name='KnockChannel'> ∙ **ノック**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
         }
@@ -1805,8 +1805,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **ステータス**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **ノック**"
+              "knock": "<emoji name='KnockChannel'> ∙ **ノック**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
         }

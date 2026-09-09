@@ -4,6 +4,8 @@ import { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-chann
 
 import { registerSelfGatedEntity } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-self-gated-entities";
 
+import { DynamicChannelStatusButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/status/dynamic-channel-status-button";
+
 export class DynamicChannelKnockButton extends DynamicChannelButtonBase {
     public static getName() {
         return "VertixBot/UI-V3/DynamicChannelKnockButton";
@@ -18,7 +20,7 @@ export class DynamicChannelKnockButton extends DynamicChannelButtonBase {
     }
 
     public static getSortId() {
-        return 11;
+        return this.getSortIdAfter( DynamicChannelStatusButton );
     }
 
     public getId() {

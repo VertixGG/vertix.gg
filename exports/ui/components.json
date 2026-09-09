@@ -5380,17 +5380,6 @@
                             }
                         },
                         {
-                            "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                            "definition": {
-                                "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "labelOmitted": true,
-                                "style": "secondary",
-                                "emoji": "<emoji name='ClaimChannel'>"
-                            }
-                        },
-                        {
                             "element": "VertixBot/UI-V3/DynamicChannelKnockButton",
                             "definition": {
                                 "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
@@ -5399,6 +5388,17 @@
                                 "labelOmitted": true,
                                 "style": "secondary",
                                 "emoji": "<emoji name='KnockChannel'>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<emoji name='ClaimChannel'>"
                             }
                         }
                     ]
@@ -6273,17 +6273,6 @@
                             }
                         },
                         {
-                            "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                            "definition": {
-                                "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "labelOmitted": true,
-                                "style": "secondary",
-                                "emoji": "<emoji name='ClaimChannel'>"
-                            }
-                        },
-                        {
                             "element": "VertixBot/UI-V3/DynamicChannelKnockButton",
                             "definition": {
                                 "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
@@ -6292,6 +6281,17 @@
                                 "labelOmitted": true,
                                 "style": "secondary",
                                 "emoji": "<emoji name='KnockChannel'>"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelClaimChannelButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "labelOmitted": true,
+                                "style": "secondary",
+                                "emoji": "<emoji name='ClaimChannel'>"
                             }
                         }
                     ]
@@ -8810,14 +8810,14 @@
                                         "emoji": "<emoji name='Megaphone'>"
                                     },
                                     {
-                                        "label": "Claim",
-                                        "value": "claim-button",
-                                        "emoji": "<emoji name='ClaimChannel'>"
-                                    },
-                                    {
                                         "label": "Knock",
                                         "value": "knock",
                                         "emoji": "<emoji name='KnockChannel'>"
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "claim-button",
+                                        "emoji": "<emoji name='ClaimChannel'>"
                                     }
                                 ]
                             }
@@ -9695,14 +9695,14 @@
                                         "emoji": "<emoji name='Megaphone'>"
                                     },
                                     {
-                                        "label": "Claim",
-                                        "value": "claim-button",
-                                        "emoji": "<emoji name='ClaimChannel'>"
-                                    },
-                                    {
                                         "label": "Knock",
                                         "value": "knock",
                                         "emoji": "<emoji name='KnockChannel'>"
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "claim-button",
+                                        "emoji": "<emoji name='ClaimChannel'>"
                                     }
                                 ]
                             }
@@ -10198,14 +10198,14 @@
                                         "emoji": "<emoji name='Megaphone'>"
                                     },
                                     {
-                                        "label": "Claim",
-                                        "value": "claim-button",
-                                        "emoji": "<emoji name='ClaimChannel'>"
-                                    },
-                                    {
                                         "label": "Knock",
                                         "value": "knock",
                                         "emoji": "<emoji name='KnockChannel'>"
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "claim-button",
+                                        "emoji": "<emoji name='ClaimChannel'>"
                                     }
                                 ]
                             }

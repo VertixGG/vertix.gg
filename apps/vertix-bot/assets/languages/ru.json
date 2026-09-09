@@ -825,12 +825,12 @@
               "value": "status"
             },
             {
-              "label": "Забрать",
-              "value": "claim-button"
-            },
-            {
               "label": "Постучать",
               "value": "knock"
+            },
+            {
+              "label": "Забрать",
+              "value": "claim-button"
             }
           ]
         }
@@ -2845,8 +2845,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
               "status": "<emoji name='Megaphone'> ∙ **Статус**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           }
         }
@@ -2922,8 +2922,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
               "status": "<emoji name='Megaphone'> ∙ **Статус**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           },
           "verifiedRoles": {
@@ -3075,8 +3075,8 @@
               "transfer": "<emoji name='TransferChannel'> ∙ **Передать**",
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
               "status": "<emoji name='Megaphone'> ∙ **Статус**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Постучать**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           }
         }

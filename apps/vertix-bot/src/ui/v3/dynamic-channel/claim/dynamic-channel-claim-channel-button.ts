@@ -6,6 +6,8 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
+import { DynamicChannelKnockButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-button";
+
 export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
     public static getName() {
         return "VertixBot/UI-V3/DynamicChannelClaimChannelButton";
@@ -20,7 +22,7 @@ export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
     }
 
     public static getSortId() {
-        return 10;
+        return this.getSortIdAfter( DynamicChannelKnockButton );
     }
 
     public getId() {

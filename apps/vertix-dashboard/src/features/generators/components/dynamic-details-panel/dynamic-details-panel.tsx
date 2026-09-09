@@ -297,6 +297,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                     settings={ settings }
                                     discordOptions={ discordOptions }
                                     generatorUserLimit={ details.discord?.masterChannel?.userLimit }
+                                    guildVoiceRoleId={ guildSettings?.voiceRoleId ?? null }
                                     isSaving={ isSaving }
                                     onClose={ handleStopEditing }
                                 />

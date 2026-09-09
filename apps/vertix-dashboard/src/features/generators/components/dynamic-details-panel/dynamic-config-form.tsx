@@ -5,7 +5,12 @@ import { useCommandState, useComponent, useCommand } from "@zenflux/react-comman
 
 import { Save, X } from "lucide-react";
 
-import { RoleCheckList, ToggleSwitch } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
+import {
+    ChannelRadioList,
+    RoleCheckList,
+    RoleRadioList,
+    ToggleSwitch
+} from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
 import {
     DYNAMIC_CONFIG_FORM_INITIAL_STATE,
@@ -26,6 +31,8 @@ export interface DynamicConfigFormProps {
     discordOptions: GuildDiscordOptions | null;
     /** The generator's own limit, which an empty field copies. `0` is Discord's word for none. */
     generatorUserLimit: number | undefined;
+    /** The server wide voice role, which this generator falls back to when it picks none. */
+    guildVoiceRoleId: string | null;
     isSaving: boolean;
     /** Closes the form. Owned by the panel, which is what decides whether one is open. */
     onClose: () => void;
@@ -54,6 +61,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     settings,
     discordOptions,
     generatorUserLimit,
+    guildVoiceRoleId,
     isSaving,
     onClose
 } ) => {
@@ -153,12 +161,12 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateStaffRoles", { value } );
     };
 
-    const handleUpdateVoiceRole = ( value: string ) => {
-        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateVoiceRole", { value: value || null } );
+    const handleUpdateVoiceRole = ( value: string | null ) => {
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateVoiceRole", { value } );
     };
 
-    const handleUpdateLogsChannel = ( value: string ) => {
-        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateLogsChannel", { value: value || null } );
+    const handleUpdateLogsChannel = ( value: string | null ) => {
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateLogsChannel", { value } );
     };
 
     // The api answers with an error body rather than a rejection when it cannot reach Discord, so
@@ -231,45 +239,31 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 border-t border-border-muted pt-4">
-                <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1">
-                        Voice role
-                    </label>
-                    <select
-                        value={ state.voiceRoleId ?? "" }
-                        onChange={ ( e ) => handleUpdateVoiceRole( e.target.value ) }
-                        className={ fieldClassName }
-                        disabled={ isSaving || !roles.length }
-                    >
-                        <option value="">From the server options</option>
-                        { roles.map( ( role ) => (
-                            <option key={ role.id } value={ role.id }>{ role.name }</option>
-                        ) ) }
-                    </select>
-                    <p className="text-xs text-text-muted mt-1 mb-0">
-                        Given to a member while they sit in one of these channels
-                    </p>
-                </div>
+                <RoleRadioList
+                    label="Voice role"
+                    hint="Given to a member while they sit in one of these channels"
+                    roles={ roles }
+                    selected={ state.voiceRoleId }
+                    disabled={ isSaving }
+                    emptyLabel="Roles could not be loaded from Discord"
+                    // Picking nothing here is not "no role", it is deferring to the server, so the
+                    // row names what deferring actually gets.
+                    noneLabel={ `From the server options (${ guildVoiceRoleId
+                        ? roles.find( ( role ) => role.id === guildVoiceRoleId )?.name ?? guildVoiceRoleId
+                        : "none" })` }
+                    onChange={ handleUpdateVoiceRole }
+                />
 
-                <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1">
-                        Logs channel
-                    </label>
-                    <select
-                        value={ state.logsChannelId ?? "" }
-                        onChange={ ( e ) => handleUpdateLogsChannel( e.target.value ) }
-                        className={ fieldClassName }
-                        disabled={ isSaving || !textChannels.length }
-                    >
-                        <option value="">None</option>
-                        { textChannels.map( ( channel ) => (
-                            <option key={ channel.id } value={ channel.id }>#{ channel.name }</option>
-                        ) ) }
-                    </select>
-                    <p className="text-xs text-text-muted mt-1 mb-0">
-                        Where channels being created, renamed and claimed is written
-                    </p>
-                </div>
+                <ChannelRadioList
+                    label="Logs channel"
+                    hint="Where channels being created, renamed and claimed is written"
+                    channels={ textChannels }
+                    selected={ state.logsChannelId }
+                    disabled={ isSaving }
+                    emptyLabel="Channels could not be loaded from Discord"
+                    noneLabel="None"
+                    onChange={ handleUpdateLogsChannel }
+                />
 
                 <RoleCheckList
                     label="Verified roles"

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Info } from "lucide-react";
 
 import type { ReactNode } from "react";
-import type { GuildDiscordRole } from "@vertix.gg/dashboard/src/features/generators/types";
+import type { GuildDiscordRole, GuildDiscordChannel } from "@vertix.gg/dashboard/src/features/generators/types";
 
 interface SettingRowProps {
     label: string;
@@ -154,10 +154,10 @@ export function ToggleSwitch( { checked, disabled, title, body, onChange }: Togg
 }
 
 /**
- * The frame both role lists share: a scrolling box rather than a native select, since a guild can
- * carry dozens of roles and a select hides all but a few of them behind a drag.
+ * The frame every option list shares: a scrolling box rather than a native select, since a guild
+ * can carry dozens of roles or channels and a select hides all but a few of them behind a drag.
  */
-function RoleListFrame( {
+function SelectListFrame( {
     label,
     hint,
     isEmpty,
@@ -187,13 +187,14 @@ function RoleListFrame( {
     );
 }
 
-function RoleRow( {
-    color,
+function SelectRow( {
+    marker,
     name,
     disabled,
     children
 }: {
-    color: number | null;
+    /** What sits between the control and the name - a role's colour, a channel's `#`. */
+    marker: React.ReactNode;
     name: string;
     disabled?: boolean;
     children: React.ReactNode;
@@ -204,12 +205,74 @@ function RoleRow( {
                 ${ disabled ? "opacity-50" : "cursor-pointer hover:bg-surface-elevated" }` }
         >
             { children }
-            <span
-                className="w-2 h-2 rounded-full shrink-0"
-                style={ { background: color ? `#${ color.toString( 16 ).padStart( 6, "0" ) }` : "var(--color-text-muted)" } }
-            />
+            { marker }
             <span className="text-text-primary truncate">{ name }</span>
         </label>
+    );
+}
+
+function RoleSwatch( { color }: { color: number | null } ) {
+    return (
+        <span
+            className="w-2 h-2 rounded-full shrink-0"
+            style={ { background: color ? `#${ color.toString( 16 ).padStart( 6, "0" ) }` : "var(--color-text-muted)" } }
+        />
+    );
+}
+
+interface ChannelRadioListProps {
+    label: string;
+    hint: string;
+    channels: GuildDiscordChannel[];
+    selected: string | null;
+    disabled?: boolean;
+    emptyLabel: string;
+    noneLabel: string;
+    onChange: ( value: string | null ) => void;
+}
+
+/**
+ * The single channel a setting points at - the channel mirror of `RoleRadioList`.
+ */
+export function ChannelRadioList( {
+    label,
+    hint,
+    channels,
+    selected,
+    disabled,
+    emptyLabel,
+    noneLabel,
+    onChange
+}: ChannelRadioListProps ) {
+    return (
+        <SelectListFrame label={ label } hint={ hint } isEmpty={ !channels.length } emptyLabel={ emptyLabel }>
+            <SelectRow marker={ null } name={ noneLabel } disabled={ disabled }>
+                <input
+                    type="radio"
+                    checked={ null === selected }
+                    disabled={ disabled }
+                    onChange={ () => onChange( null ) }
+                    className="accent-accent"
+                />
+            </SelectRow>
+
+            { channels.map( ( channel ) => (
+                <SelectRow
+                    key={ channel.id }
+                    marker={ <span className="text-text-muted shrink-0">#</span> }
+                    name={ channel.name }
+                    disabled={ disabled }
+                >
+                    <input
+                        type="radio"
+                        checked={ selected === channel.id }
+                        disabled={ disabled }
+                        onChange={ () => onChange( channel.id ) }
+                        className="accent-accent"
+                    />
+                </SelectRow>
+            ) ) }
+        </SelectListFrame>
     );
 }
 
@@ -241,8 +304,8 @@ export function RoleRadioList( {
     onChange
 }: RoleRadioListProps ) {
     return (
-        <RoleListFrame label={ label } hint={ hint } isEmpty={ !roles.length } emptyLabel={ emptyLabel }>
-            <RoleRow color={ null } name={ noneLabel } disabled={ disabled }>
+        <SelectListFrame label={ label } hint={ hint } isEmpty={ !roles.length } emptyLabel={ emptyLabel }>
+            <SelectRow marker={ null } name={ noneLabel } disabled={ disabled }>
                 <input
                     type="radio"
                     checked={ null === selected }
@@ -250,10 +313,10 @@ export function RoleRadioList( {
                     onChange={ () => onChange( null ) }
                     className="accent-accent"
                 />
-            </RoleRow>
+            </SelectRow>
 
             { roles.map( ( role ) => (
-                <RoleRow key={ role.id } color={ role.color } name={ role.name } disabled={ disabled }>
+                <SelectRow key={ role.id } marker={ <RoleSwatch color={ role.color } /> } name={ role.name } disabled={ disabled }>
                     <input
                         type="radio"
                         checked={ selected === role.id }
@@ -261,9 +324,9 @@ export function RoleRadioList( {
                         onChange={ () => onChange( role.id ) }
                         className="accent-accent"
                     />
-                </RoleRow>
+                </SelectRow>
             ) ) }
-        </RoleListFrame>
+        </SelectListFrame>
     );
 }
 
@@ -298,9 +361,9 @@ export function RoleCheckList( {
     };
 
     return (
-        <RoleListFrame label={ label } hint={ hint } isEmpty={ !roles.length } emptyLabel={ emptyLabel }>
+        <SelectListFrame label={ label } hint={ hint } isEmpty={ !roles.length } emptyLabel={ emptyLabel }>
             { roles.map( ( role ) => (
-                <RoleRow key={ role.id } color={ role.color } name={ role.name } disabled={ disabled }>
+                <SelectRow key={ role.id } marker={ <RoleSwatch color={ role.color } /> } name={ role.name } disabled={ disabled }>
                     <input
                         type="checkbox"
                         checked={ selected.includes( role.id ) }
@@ -308,8 +371,8 @@ export function RoleCheckList( {
                         onChange={ () => toggle( role.id ) }
                         className="accent-accent"
                     />
-                </RoleRow>
+                </SelectRow>
             ) ) }
-        </RoleListFrame>
+        </SelectListFrame>
     );
 }

@@ -27,6 +27,8 @@ export interface DynamicConfigFormProps {
     /** The generator's own limit, which an empty field copies. `0` is Discord's word for none. */
     generatorUserLimit: number | undefined;
     isSaving: boolean;
+    /** Closes the form. Owned by the panel, which is what decides whether one is open. */
+    onClose: () => void;
 }
 
 const PRIVACY_STATES: ReadonlyArray<{ value: ChannelPrivacyState; label: string; hint: string }> = [
@@ -50,7 +52,8 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     settings,
     discordOptions,
     generatorUserLimit,
-    isSaving
+    isSaving,
+    onClose
 } ) => {
     const [ state ] = useCommandState<DynamicConfigFormState, DynamicConfigFormState>(
         "Dashboard/Generators/DynamicConfigForm",
@@ -69,9 +72,6 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     );
 
     const formCommands = useComponent( "Dashboard/Generators/DynamicConfigForm" );
-    // `useComponent()` only hands back the context the caller is in, so a form cannot reach
-    // the panel around it that way; the command resolves by name instead.
-    const stopEditing = useCommand( "Dashboard/Generators/DynamicDetailsPanel/StopEditing" );
     const updateDynamicSettings = useCommand( "Dashboard/Generators/UpdateDynamicSettings" );
 
     // Initialize form with settings when mounted
@@ -107,12 +107,10 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 dynamicChannelLogsChannelId: state.logsChannelId
             }
         } );
-        stopEditing.run( {} );
+        onClose();
     };
 
-    const handleCancel = () => {
-        stopEditing.run( {} );
-    };
+    const handleCancel = onClose;
 
     const handleUpdateNameTemplate = ( value: string ) => {
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateNameTemplate", { value } );

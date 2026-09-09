@@ -18,12 +18,15 @@ export interface ScalingConfigFormProps {
     masterChannelId: string;
     settings: ScalingSettings | null;
     isSaving: boolean;
+    /** Closes the form. Owned by the panel, which is what decides whether one is open. */
+    onClose: () => void;
 }
 
 const ScalingConfigFormComponent: DCommandFunctionComponent<ScalingConfigFormProps, ScalingConfigFormState> = ( {
     masterChannelId,
     settings,
-    isSaving
+    isSaving,
+    onClose
 } ) => {
     const [ state ] = useCommandState<ScalingConfigFormState, Pick<ScalingConfigFormState, "prefix" | "maxMembers" | "minAvailable">>(
         "Dashboard/Generators/ScalingConfigForm",
@@ -35,9 +38,6 @@ const ScalingConfigFormComponent: DCommandFunctionComponent<ScalingConfigFormPro
     );
 
     const formCommands = useComponent( "Dashboard/Generators/ScalingConfigForm" );
-    // `useComponent()` only hands back the context the caller is in, so a form cannot reach
-    // the panel around it that way; the command resolves by name instead.
-    const stopEditing = useCommand( "Dashboard/Generators/ScalingDetailsPanel/StopEditing" );
     const updateScalingSettings = useCommand( "Dashboard/Generators/UpdateScalingSettings" );
 
     // Initialize form with settings when mounted
@@ -59,12 +59,10 @@ const ScalingConfigFormComponent: DCommandFunctionComponent<ScalingConfigFormPro
                 scalingChannelMinAvailableChannels: state.minAvailable
             }
         } );
-        stopEditing.run( {} );
+        onClose();
     };
 
-    const handleCancel = () => {
-        stopEditing.run( {} );
-    };
+    const handleCancel = onClose;
 
     const handleUpdatePrefix = ( value: string ) => {
         formCommands.run( "Dashboard/Generators/ScalingConfigForm/UpdatePrefix", { value } );

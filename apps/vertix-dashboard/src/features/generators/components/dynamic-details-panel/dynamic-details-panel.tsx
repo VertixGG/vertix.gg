@@ -178,12 +178,31 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
         return () => clearInterval( intervalId );
     }, [] );
 
+    // Polled here rather than on the page: an open form is edited against the settings it was
+    // opened with, and refreshing underneath it would swap them out mid-edit. The panel is what
+    // knows whether one is open.
+    useEffect( () => {
+        if ( state.isEditing ) {
+            return;
+        }
+
+        const intervalId = setInterval( () => {
+            refreshSelected.run( {} );
+        }, 60000 );
+
+        return () => clearInterval( intervalId );
+    }, [ state.isEditing ] );
+
     const handleRefresh = () => {
         refreshSelected.run( {} );
     };
 
     const handleDelete = () => {
         deleteDynamicSetup.run( { masterChannelId: master.id } );
+    };
+
+    const handleStopEditing = () => {
+        panelCommands.run( "Dashboard/Generators/DynamicDetailsPanel/StopEditing", {} );
     };
 
     const handleStartEditing = () => {
@@ -271,6 +290,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                     discordOptions={ discordOptions }
                                     generatorUserLimit={ details.discord?.masterChannel?.userLimit }
                                     isSaving={ isSaving }
+                                    onClose={ handleStopEditing }
                                 />
                             ) : (
                                 <div className="grid gap-6 md:grid-cols-2">

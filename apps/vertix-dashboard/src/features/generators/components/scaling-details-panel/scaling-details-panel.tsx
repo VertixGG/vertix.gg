@@ -86,6 +86,21 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
         return () => clearInterval( intervalId );
     }, [] );
 
+    // Polled here rather than on the page: an open form is edited against the settings it was
+    // opened with, and refreshing underneath it would swap them out mid-edit. The panel is what
+    // knows whether one is open.
+    useEffect( () => {
+        if ( state.isEditing ) {
+            return;
+        }
+
+        const intervalId = setInterval( () => {
+            refreshSelected.run( {} );
+        }, 60000 );
+
+        return () => clearInterval( intervalId );
+    }, [ state.isEditing ] );
+
     const handleRefresh = () => {
         refreshSelected.run( {} );
     };
@@ -100,6 +115,10 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
 
     const handleDelete = () => {
         deleteScalingSetup.run( { masterChannelId: master.id } );
+    };
+
+    const handleStopEditing = () => {
+        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/StopEditing", {} );
     };
 
     const handleStartEditing = () => {
@@ -185,6 +204,7 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
                                     masterChannelId={ master.id }
                                     settings={ settings }
                                     isSaving={ isSaving }
+                                    onClose={ handleStopEditing }
                                 />
                             ) : (
                                 <SettingsGroup title="Channel pool">

@@ -86,22 +86,6 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
         loadGuildGenerators.run( { guildId } );
     }, [ guildId ] );
 
-    // Poll for updates every minute when a master channel is selected
-    useEffect( () => {
-        if ( !state.selectedMasterChannelId || !state.selectedMasterChannelType ) {
-            return;
-        }
-
-        const intervalId = setInterval( () => {
-            selectMasterChannel.run( {
-                masterChannelId: state.selectedMasterChannelId!,
-                type: state.selectedMasterChannelType!
-            } );
-        }, 60000 ); // 1 minute
-
-        return () => clearInterval( intervalId );
-    }, [ state.selectedMasterChannelId, state.selectedMasterChannelType ] );
-
     // A menu that only closes by pressing its own button reads as stuck.
     useEffect( () => {
         if ( !showCreateDropdown ) {
@@ -336,6 +320,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                             </div>
                         ) : selectedMasterChannelType === "scaling" && selectedScalingMaster?.scalingChannels ? (
                             <ScalingDetailsPanel
+                                key={ selectedScalingMaster.id }
                                 details={ {
                                     master: selectedScalingMaster,
                                     scalingChannels: selectedScalingMaster.scalingChannels,
@@ -347,6 +332,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                             />
                         ) : selectedMasterChannelType === "dynamic" && selectedDynamicMaster?.dynamicChannels ? (
                             <DynamicDetailsPanel
+                                key={ selectedDynamicMaster.id }
                                 discordOptions={ state.discordOptions }
                                 guildSettings={ generatorsDetails.settings }
                                 details={ {

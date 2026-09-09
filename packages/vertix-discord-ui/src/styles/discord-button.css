@@ -14,8 +14,13 @@
     font-weight: var(--discord-font-weight-medium);
     gap: 4px;
     justify-content: center;
-    line-height: 16px;
-    padding: 2px 16px;
+    /* Discord's own button box, from its .sizeSmall rule: 32px tall, never narrower than 60px,
+       11px of padding either side of a 1px border, and sized to its label. */
+    line-height: 18px;
+    height: 32px;
+    min-height: 32px;
+    min-width: 60px;
+    padding: 3px 11px;
     position: relative;
     text-decoration: none;
     transition:
@@ -104,8 +109,8 @@
 .discord-button-emoji {
     font-size: 1em;
     line-height: 1;
-    width: 18px;
-    height: 18px;
+    width: 1.375em;
+    height: 1.375em;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -126,8 +131,8 @@
 
 .discord-button-icon img,
 .discord-button-icon .discord-emoji {
-    width: 18px;
-    height: 18px;
+    width: 1.375em;
+    height: 1.375em;
     object-fit: contain;
 }
 
@@ -152,11 +157,12 @@
     width: auto;
 }
 
+/* Discord stacks action rows 6px apart and sets them 4px below the message accessories above. */
 .discord-action-rows {
     display: flex;
     flex-direction: column;
-    row-gap: 8px;
-    margin-top: 8px;
+    row-gap: 6px;
+    margin-top: 4px;
     width: 100%;
 }
 

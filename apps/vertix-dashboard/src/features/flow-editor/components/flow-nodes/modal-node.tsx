@@ -43,7 +43,7 @@ export function ModalNode( props: NodeProps<ModalNodeType> ) {
 
                 <div className="p-3">
                     <div className="w-full [&_.discord-modal]:w-full [&_.discord-modal]:max-w-none">
-                        <DiscordModal title={ displayTitle } avatarUrl={ botAvatarUrl || "/robot.png" } cancelLabel="Cancel" showNotice noticeBotName={ botName || "Vertix" }>
+                        <DiscordModal title={ displayTitle } avatarUrl={ botAvatarUrl || "/vc.png" } cancelLabel="Cancel" showNotice noticeBotName={ botName || "VoiceChannels" }>
                             { displayInputs.map( ( input, index ) => (
                                 <DiscordInput
                                     key={ index }

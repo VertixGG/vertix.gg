@@ -3,7 +3,12 @@ import { useMemo, useState } from "react";
 import { Handle, Position, useStore } from "@xyflow/react";
 
 import { DiscordMessage, DiscordEmbed, DiscordButton } from "@vertix.gg/discord-ui/src";
-import { SELECT_MENU_ELEMENT_TYPES } from "@vertix.gg/definitions/src/ui-export-definitions";
+
+import {
+    getElementLabel,
+    isSelectMenu,
+    COMPONENT_NODE_MAX_WIDTH
+} from "@vertix.gg/dashboard/src/features/flow-editor/lib/element-metrics";
 
 import type { Node, NodeProps } from "@xyflow/react";
 import type { UIExportElementDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
@@ -88,29 +93,6 @@ function normalizeEmoji( emoji: unknown ): string | undefined {
     return undefined;
 }
 
-function formatElementFallbackLabel( elementName: string ): string {
-    const lastSegment = elementName.split( "/" ).pop() ?? elementName;
-
-    return lastSegment
-        .replace( /[-_]+/g, " " )
-        .replace( /([a-z0-9])([A-Z])/g, "$1 $2" )
-        .trim();
-}
-
-function getElementLabel( element: ElementData ): string {
-    if ( element.definition?.labelOmitted ) {
-        return "";
-    }
-
-    if ( element.definition?.label ) {
-        return element.definition.label;
-    }
-
-    const candidate = element.definition?.name ?? element.name;
-
-    return formatElementFallbackLabel( candidate );
-}
-
 function getButtonVariant( element: ElementData ): "primary" | "secondary" | "success" | "danger" | "link" {
     if ( element.definition?.style ) {
         return element.definition.style;
@@ -124,16 +106,6 @@ function getButtonVariant( element: ElementData ): "primary" | "secondary" | "su
 
 function getButtonEmoji( element: ElementData ): string | undefined {
     return element.definition?.emoji;
-}
-
-function isSelectMenu( element: ElementData ): boolean {
-    const elementType = element.definition?.elementType;
-
-    if ( elementType ) {
-        return ( SELECT_MENU_ELEMENT_TYPES as readonly string[] ).includes( elementType );
-    }
-
-    return element.name.toLowerCase().includes( "selectmenu" ) || element.name.toLowerCase().includes( "select" );
 }
 
 function getSelectPlaceholder( element: ElementData ): string {
@@ -168,7 +140,11 @@ function parseDiscordEmoji( emojiString: string ): DiscordEmoji | null {
     };
 }
 
-function renderDiscordEmojiHtml( emojiString: string ): string {
+// Discord draws an emoji at 18px in body text and at 1.375em - 22px against a 16px title - in a
+// heading, both sitting on the line's bottom edge so they never stretch the line box.
+const EMOJI_PIXELS = { body: 18, title: 22 } as const;
+
+function renderDiscordEmojiHtml( emojiString: string, context: keyof typeof EMOJI_PIXELS ): string {
     const parsed = parseDiscordEmoji( emojiString );
     if ( !parsed ) {
         return emojiString;
@@ -176,8 +152,9 @@ function renderDiscordEmojiHtml( emojiString: string ): string {
 
     const ext = parsed.animated ? "gif" : "png";
     const url = `https://cdn.discordapp.com/emojis/${ parsed.id }.${ ext }`;
+    const size = EMOJI_PIXELS[ context ];
 
-    return `<img src="${ url }" alt=":${ parsed.name }:" width="16" height="16" style="vertical-align:middle;display:inline-block;" />`;
+    return `<img src="${ url }" alt=":${ parsed.name }:" width="${ size }" height="${ size }" style="vertical-align:bottom;display:inline-block;" />`;
 }
 
 function applyDefaultVars( template: string, defaultVars: Record<string, string> | undefined ): string {
@@ -188,8 +165,8 @@ function applyDefaultVars( template: string, defaultVars: Record<string, string>
     return template.replace( /\{([a-zA-Z0-9_]+)\}/g, ( full, key: string ) => defaultVars[ key ] ?? full );
 }
 
-function replaceInlineDiscordEmojis( input: string ): string {
-    return input.replace( /<(a)?:([a-zA-Z0-9_]+):(\d+)>/g, ( match ) => renderDiscordEmojiHtml( match ) );
+function replaceInlineDiscordEmojis( input: string, context: keyof typeof EMOJI_PIXELS = "body" ): string {
+    return input.replace( /<(a)?:([a-zA-Z0-9_]+):(\d+)>/g, ( match ) => renderDiscordEmojiHtml( match, context ) );
 }
 
 function renderButtonEmoji( emoji: string | undefined ): { emoji?: string; icon?: JSX.Element } {
@@ -208,7 +185,7 @@ function renderButtonEmoji( emoji: string | undefined ): { emoji?: string; icon?
     return {
         icon: (
             <img
-                className="w-[22px] h-[22px] inline-block align-middle"
+                className="w-[1.375em] h-[1.375em] inline-block align-middle"
                 src={ url }
                 alt={ `:${ parsed.name }:` }
                 onError={ ( event ) => {
@@ -312,7 +289,10 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
     };
 
     return (
-        <div className="min-w-[380px] max-w-[520px] relative">
+        // Sized the way discord sizes a message: the browser lays the content out and the box
+        // shrinks to fit it - the embed caps itself, the buttons take the width their labels need,
+        // and a row wraps only when it genuinely runs out of room.
+        <div className="min-w-[380px] relative" style={ { maxWidth: COMPONENT_NODE_MAX_WIDTH } }>
             <Handle type="target" position={ Position.Top } className="bg-purple-400! w-2! h-2!" />
             <Handle type="target" position={ Position.Left } id="left" className="bg-emerald-400! w-2! h-2!" />
             <Handle type="target" position={ Position.Right } id="right" className="bg-emerald-400! w-2! h-2!" />
@@ -324,9 +304,9 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                 </div>
 
                 <div className="bg-[#313338] p-4">
-                    <DiscordMessage author="Vertix" app timestamp="">
+                    <DiscordMessage author="VoiceChannels" app timestamp="" avatar="/vc.png">
                         <DiscordEmbed
-                            title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, mergedDefaultVars ) ) }
+                            title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, mergedDefaultVars ), "title" ) }
                             description={ embed
                                 ? embed.description
                                     ? replaceInlineDiscordEmojis( applyDefaultVars( embed.description, mergedDefaultVars ) )
@@ -336,10 +316,9 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                             color={ embed?.color || 0x5865f2 }
                             image={ embed?.image }
                             thumbnail={ embed?.thumbnail }
-                            size="full"
                         />
                         { elementRows && elementRows.length > 0 && (
-                            <div className="discord-action-rows mt-2">
+                            <div className="discord-action-rows">
                                 { elementRows.map( ( row, rowIndex ) => (
                                     <div key={ rowIndex } className="discord-embed-button-row">
                                         { row.map( ( element ) => {
@@ -367,7 +346,7 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                                 const handlePosition = stateTrigger?.handlePosition ?? flowTrigger?.handlePosition ?? "bottom";
 
                                                 return (
-                                                    <div key={ element.name } className="relative flex-1 min-w-[180px]">
+                                                    <div key={ element.name } className="relative w-[400px] max-w-full">
                                                         <div className="relative">
                                                             <select
                                                                 value={ selectedValue }
@@ -378,7 +357,9 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                                                         [ element.name ]: e.target.value
                                                                     } ) );
                                                                 } }
-                                                                className="w-full appearance-none px-3 py-2 pr-10 bg-[#1e1f22] border border-[#3f4147] rounded text-[#949ba4] text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+                                                                // Discord's own select box: 400px wide unless the column is narrower, 40px
+                                                                // tall, 8px radius, and 12px/42px of padding around a 16px label.
+                                                                className="w-full h-10 appearance-none pl-3 pr-[42px] bg-[#1e1f22] border border-[#3f4147] rounded-lg text-[#949ba4] text-base focus:outline-none focus:ring-2 focus:ring-purple-500/40"
                                                             >
                                                                 <option value="" disabled>
                                                                     { getSelectPlaceholder( element ) }
@@ -393,8 +374,8 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                                                     </option>
                                                                 ) }
                                                             </select>
-                                                            <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-                                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                                                                     <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                                                 </svg>
                                                             </div>

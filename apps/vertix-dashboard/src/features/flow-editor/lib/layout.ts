@@ -1,6 +1,9 @@
 import Dagre from "@dagrejs/dagre";
 
 import { LAYOUT_OPTIONS, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
+import { measureComponentNodeWidth } from "@vertix.gg/dashboard/src/features/flow-editor/lib/element-metrics";
+
+import type { MeasurableElement } from "@vertix.gg/dashboard/src/features/flow-editor/lib/element-metrics";
 
 import type { Node, Edge } from "@xyflow/react";
 
@@ -28,6 +31,19 @@ const NODE_TYPE_DIMENSIONS: Record<string, { width: number; height: number }> = 
 };
 
 function getNodeDimensions( node: Node, opts: Required<LayoutOptions> ): { width: number; height: number } {
+    // A component node has no fixed width - the browser sizes it to its content. Once react flow
+    // has measured it, that real width is what the layout reserves; only the first pass, before
+    // anything is on screen, falls back to estimating it from the labels.
+    if ( "componentNode" === node.type ) {
+        const measured = node.measured?.width ?? ( node as { width?: number } ).width;
+
+        return {
+            width: measured
+                ?? measureComponentNodeWidth( ( node.data as { elementRows?: MeasurableElement[][] } | undefined )?.elementRows ),
+            height: node.measured?.height ?? NODE_DIMENSIONS.COMPONENT.height
+        };
+    }
+
     return NODE_TYPE_DIMENSIONS[ node.type ?? "default" ] ?? {
         width: opts.nodeWidth,
         height: opts.nodeHeight

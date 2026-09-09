@@ -181,12 +181,15 @@
     text-decoration: underline;
 }
 
+/* Discord applies one set of list metrics to every markup block, embeds included: 4px above the
+   list, 16px of indent, 4px under each item. */
 .discord-message-body ul {
-    padding-left: 18px;
+    margin: 4px 0 0 16px;
+    padding-left: 0;
 }
 
 .discord-message-body li {
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .discord-mention-pill {

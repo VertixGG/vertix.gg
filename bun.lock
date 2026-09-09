@@ -82,6 +82,7 @@
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/bot": "workspace:*",
         "@vertix.gg/data": "workspace:*",
+        "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/gui": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
@@ -100,18 +101,25 @@
         "@top-gg/sdk": "^3.1.6",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/data": "workspace:*",
+        "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/gui": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
+        "@vertix.gg/utils": "workspace:*",
         "@zenflux/utils": "latest",
         "cross-fetch": "^3.1.5",
         "discord-api-types": "latest",
         "discord.js": "latest",
         "dotenv": "^16.0.3",
+        "jest-diff": "^30.5.1",
         "picocolors": "^1.0.1",
         "tough-cookie": "^6.0.0",
       },
       "devDependencies": {
+        "@jest/globals": "^30.5.1",
+        "@vertix.gg/test-utils": "workspace:*",
         "@zenflux/cli": "latest",
+        "@zenflux/tsconfig-to-swc": "0.1.21",
+        "jest": "latest",
       },
     },
     "apps/vertix-dashboard": {
@@ -126,6 +134,7 @@
         "@radix-ui/react-tooltip": "^1.2.16",
         "@tailwindcss/postcss": "^4.3.3",
         "@tailwindcss/vite": "^4.3.3",
+        "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/discord-ui": "workspace:*",
         "@vertix.gg/ui": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
@@ -180,6 +189,7 @@
         "@types/node": "^20.19.43",
         "@types/react": "^18.3.31",
         "@types/react-dom": "^18.3.7",
+        "@vertix.gg/assets": "workspace:*",
         "@vertix.gg/discord-ui": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "class-variance-authority": "^0.7.1",
@@ -212,8 +222,10 @@
       "name": "@vertix.gg/base",
       "dependencies": {
         "@prisma/client": "latest",
+        "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/gui": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
+        "@vertix.gg/utils": "workspace:*",
         "cross-fetch": "^3.1.6",
         "discord.js": "latest",
         "http": "^0.0.1-security",
@@ -221,6 +233,12 @@
         "picocolors": "^1.0.0",
         "prisma": "latest",
         "tough-cookie": "^6.0.0",
+      },
+      "devDependencies": {
+        "@jest/globals": "^30.5.1",
+        "@jest/types": "^30.5.1",
+        "@vertix.gg/test-utils": "workspace:*",
+        "@zenflux/tsconfig-to-swc": "0.1.21",
       },
     },
     "packages/vertix-data": {
@@ -233,11 +251,19 @@
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "discord.js": "latest",
+        "jest-diff": "^30.5.1",
         "prisma": "latest",
       },
     },
     "packages/vertix-definitions": {
       "name": "@vertix.gg/definitions",
+      "dependencies": {
+        "@vertix.gg/gui": "workspace:*",
+      },
+      "devDependencies": {
+        "@jest/types": "^30.5.1",
+        "@zenflux/tsconfig-to-swc": "0.1.21",
+      },
     },
     "packages/vertix-discord-ui": {
       "name": "@vertix.gg/discord-ui",
@@ -265,11 +291,20 @@
       "name": "@vertix.gg/gui",
       "dependencies": {
         "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/bot": "workspace:*",
         "@vertix.gg/data": "workspace:*",
+        "@vertix.gg/definitions": "workspace:*",
+        "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "@zenflux/utils": "latest",
         "discord.js": "latest",
         "picocolors": "^1.1.1",
+      },
+      "devDependencies": {
+        "@jest/globals": "^30.5.1",
+        "@jest/types": "^30.5.1",
+        "@vertix.gg/test-utils": "workspace:*",
+        "@zenflux/tsconfig-to-swc": "0.1.21",
       },
     },
     "packages/vertix-logger": {
@@ -287,6 +322,7 @@
       "dependencies": {
         "@prisma/client": "^6.0.0",
         "@vertix.gg/base": "workspace:*",
+        "picocolors": "^1.1.1",
         "prisma": "^6.0.0",
       },
       "devDependencies": {
@@ -296,8 +332,11 @@
     "packages/vertix-test-utils": {
       "name": "@vertix.gg/test-utils",
       "dependencies": {
+        "@jest/globals": "^30.5.1",
+        "@vertix.gg/gui": "workspace:*",
         "discord-api-types": "latest",
         "discord.js": "latest",
+        "ts-mockito": "latest",
       },
       "devDependencies": {
         "@vertix.gg/base": "workspace:*",

@@ -8,10 +8,19 @@
     },
     "dependencies": {
         "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/bot": "workspace:*",
         "@vertix.gg/data": "workspace:*",
+        "@vertix.gg/definitions": "workspace:*",
+        "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "@zenflux/utils": "latest",
         "discord.js": "latest",
         "picocolors": "^1.1.1"
+    },
+    "devDependencies": {
+        "@jest/globals": "^30.5.1",
+        "@jest/types": "^30.5.1",
+        "@vertix.gg/test-utils": "workspace:*",
+        "@zenflux/tsconfig-to-swc": "0.1.21"
     }
 }

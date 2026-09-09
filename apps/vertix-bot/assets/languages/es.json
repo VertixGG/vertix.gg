@@ -3224,7 +3224,19 @@
       "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
       "content": {
         "title": "{knockEmoji}  No hay a qué llamar",
-        "description": "Todos los canales de aquí ya están abiertos para ti o son tuyos.\n\nUn canal que no puedes ver no aparece en la lista — si lo tiene un amigo, pídele una invitación."
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "Todos los canales de aquí ya están abiertos para ti o son tuyos.\n\nUn canal que no puedes ver no aparece en la lista — si lo tiene un amigo, pídele una invitación.",
+            "{openChannels}": "Aquí no hay nada cerrado para ti: estos están abiertos, entra sin más:\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
       }
     },
     {

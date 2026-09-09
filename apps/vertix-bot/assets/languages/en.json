@@ -3224,7 +3224,19 @@
       "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
       "content": {
         "title": "{knockEmoji}  Nothing to knock on",
-        "description": "Every channel here is either open to you already or is one of your own.\n\nA channel you cannot see is not listed - if a friend has one, ask them for an invite."
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "Every channel here is either open to you already or is one of your own.\n\nA channel you cannot see is not listed - if a friend has one, ask them for an invite.",
+            "{openChannels}": "Nothing here is closed to you - these are open, walk straight in:\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
       }
     },
     {

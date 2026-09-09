@@ -7,7 +7,11 @@ import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic
 
 import { DynamicChannelKnockComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-component";
 import { DynamicChannelKnockButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-button";
-import { getKnockableChannels } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-channel-lists";
+import {
+    getJoinableChannels,
+    getKnockableChannels,
+    isPressedFromControlPanel
+} from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-channel-lists";
 
 import { DynamicChannelKnockManager } from "@vertix.gg/bot/src/managers/dynamic-channel-knock-manager";
 
@@ -136,7 +140,11 @@ const DynamicChannelKnockAdapter = new DynamicExecutionAdapterBuilder<DefaultInt
                 embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
             .addTransition( "Open", { from: "Default", to: "SelectChannel" } )
-            .addTransition( "Nothing", { from: "Default", to: "Nothing" } )
+            .addTransition( "Nothing", {
+                from: "Default",
+                to: "Nothing",
+                mutations: [ { type: "set", path: [ "openChannels" ] } ]
+            } )
             .addTransition( "Sent", {
                 from: "SelectChannel",
                 to: "Sent",
@@ -158,7 +166,20 @@ const DynamicChannelKnockAdapter = new DynamicExecutionAdapterBuilder<DefaultInt
                     const knockable = await getKnockableChannels( interaction, interaction.member );
 
                     if ( ! knockable.length ) {
-                        await context.triggerTransition( "Nothing", interaction );
+                        // Nothing to ask about does not mean nowhere to go - if every channel is
+                        // already open, point at them rather than answering with a dead end.
+                        //
+                        // Only worth saying from the control panel: pressed inside a channel the
+                        // member is already in one, and does not need to be shown the way to it.
+                        const joinable = isPressedFromControlPanel( interaction )
+                            ? await getJoinableChannels( interaction, interaction.member )
+                            : [];
+
+                        const openChannels = joinable.map( ( channel ) => channel.id );
+
+                        context.setArgs( interaction, { openChannels } );
+
+                        await context.triggerTransition( "Nothing", interaction, { openChannels } );
                         return;
                     }
 

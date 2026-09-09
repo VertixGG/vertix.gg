@@ -3224,7 +3224,19 @@
       "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
       "content": {
         "title": "{knockEmoji}  ノックする先がありません",
-        "description": "ここのチャンネルはすべて、すでに入れるか自分のものです。\n\n見えないチャンネルは一覧に出ません — 友達が持っているなら招待を頼んでください。"
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "ここのチャンネルはすべて、すでに入れるか自分のものです。\n\n見えないチャンネルは一覧に出ません — 友達が持っているなら招待を頼んでください。",
+            "{openChannels}": "ここに閉じたチャンネルはありません — 以下は開いています、そのままどうぞ:\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
       }
     },
     {

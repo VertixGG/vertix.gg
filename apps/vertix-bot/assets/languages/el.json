@@ -3224,7 +3224,19 @@
       "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
       "content": {
         "title": "{knockEmoji}  Δεν υπάρχει πού να χτυπήσετε",
-        "description": "Κάθε κανάλι εδώ είτε είναι ήδη ανοιχτό για εσάς είτε είναι δικό σας.\n\nΈνα κανάλι που δεν βλέπετε δεν εμφανίζεται — αν το έχει κάποιος φίλος, ζητήστε του πρόσκληση."
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "Κάθε κανάλι εδώ είτε είναι ήδη ανοιχτό για εσάς είτε είναι δικό σας.\n\nΈνα κανάλι που δεν βλέπετε δεν εμφανίζεται — αν το έχει κάποιος φίλος, ζητήστε του πρόσκληση.",
+            "{openChannels}": "Τίποτα εδώ δεν σας είναι κλειστό — αυτά είναι ανοιχτά, μπείτε ελεύθερα:\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
       }
     },
     {

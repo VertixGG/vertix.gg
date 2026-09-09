@@ -3224,7 +3224,19 @@
       "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
       "content": {
         "title": "{knockEmoji}  Стучаться некуда",
-        "description": "Все каналы здесь либо уже открыты для вас, либо ваши собственные.\n\nКанал, который вы не видите, в списке не появится — если он есть у друга, попросите у него приглашение."
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "Все каналы здесь либо уже открыты для вас, либо ваши собственные.\n\nКанал, который вы не видите, в списке не появится — если он есть у друга, попросите у него приглашение.",
+            "{openChannels}": "Здесь для вас ничего не закрыто — эти каналы открыты, заходите:\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
       }
     },
     {

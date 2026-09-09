@@ -16,10 +16,31 @@ import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interact
  * the interaction would answer for that channel's generator - and pressing a control panel while
  * sitting in a channel from another generator would list that other generator's channels.
  */
-async function resolveMasterChannelId( interaction: UIAdapterReplyContext ): Promise<string | null> {
+function getPressedChannelId( interaction: UIAdapterReplyContext ): string | null {
     const messageChannelId = "message" in interaction ? interaction.message?.channelId : null;
 
-    const pressedChannelId = messageChannelId ?? interaction.channelId;
+    return messageChannelId ?? interaction.channelId ?? null;
+}
+
+/**
+ * Function isPressedFromControlPanel() :: Whether the interface pressed is the one beside the
+ * generator rather than the one inside a channel.
+ *
+ * The two carry the same buttons and mean different things by them: inside a channel the presser
+ * is already somewhere, and from the panel they are choosing where to be.
+ */
+export function isPressedFromControlPanel( interaction: UIAdapterReplyContext ): boolean {
+    const pressedChannelId = getPressedChannelId( interaction );
+
+    if ( ! pressedChannelId ) {
+        return false;
+    }
+
+    return ChannelType.GuildVoice !== interaction.guild.channels.cache.get( pressedChannelId )?.type;
+}
+
+async function resolveMasterChannelId( interaction: UIAdapterReplyContext ): Promise<string | null> {
+    const pressedChannelId = getPressedChannelId( interaction );
 
     if ( ! pressedChannelId ) {
         return null;
@@ -121,6 +142,49 @@ export async function getOwnedChannels(
         const channel = interaction.guild.channels.cache.get( dynamicChannelDB.channelId );
 
         if ( ChannelType.GuildVoice === channel?.type ) {
+            result.push( channel );
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Function getJoinableChannels() :: The channels under the same generator a member can walk into.
+ *
+ * The counterpart to the knockable ones, and the reason having nothing to knock on is not a dead
+ * end: if every channel is already open, what the member wanted was to find one, not to ask for
+ * one. Their own are left out - they know where those are.
+ */
+export async function getJoinableChannels(
+    interaction: UIAdapterReplyContext,
+    member: GuildMember
+): Promise<VoiceChannel[]> {
+    const masterChannelId = await resolveMasterChannelId( interaction );
+
+    if ( ! masterChannelId ) {
+        return [];
+    }
+
+    const dynamicChannelsDB = await ChannelModel.$.getDynamicsByMasterId( interaction.guildId, masterChannelId );
+
+    const result: VoiceChannel[] = [];
+
+    for ( const dynamicChannelDB of dynamicChannelsDB ) {
+        if ( dynamicChannelDB.userOwnerId === member.id ) {
+            continue;
+        }
+
+        const channel = interaction.guild.channels.cache.get( dynamicChannelDB.channelId );
+
+        if ( ChannelType.GuildVoice !== channel?.type ) {
+            continue;
+        }
+
+        const permissions = channel.permissionsFor( member );
+
+        if ( permissions?.has( PermissionsBitField.Flags.ViewChannel )
+            && permissions.has( PermissionsBitField.Flags.Connect ) ) {
             result.push( channel );
         }
     }

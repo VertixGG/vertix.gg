@@ -5844,13 +5844,31 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "{knockEmoji}  Nothing to knock on",
-                            "description": "Every channel here is either open to you already or is one of your own.\n\nA channel you cannot see is not listed - if a friend has one, ask them for an invite.",
-                            "color": 9807270,
+                            "description": "{openChannelsDisplay}",
+                            "color": 4943761,
+                            "options": {
+                                "openChannelsDisplay": {
+                                    "{openChannelsDefault}": "Every channel here is either open to you already or is one of your own.\n\nA channel you cannot see is not listed - if a friend has one, ask them for an invite.",
+                                    "{openChannels}": "Nothing here is closed to you - these are open, walk straight in:\n\n{openChannels}"
+                                }
+                            },
+                            "arrayOptions": {
+                                "openChannels": {
+                                    "format": "- <#{value}>{separator}",
+                                    "separator": "\n"
+                                }
+                            },
                             "vars": {
-                                "knockEmoji": "{knockEmoji}"
+                                "knockEmoji": "{knockEmoji}",
+                                "openChannels": "{openChannels}",
+                                "openChannelsDisplay": "{openChannelsDisplay}",
+                                "openChannelsDefault": "{openChannelsDefault}",
+                                "value": "{value}",
+                                "separator": "{separator}"
                             },
                             "defaultVars": {
-                                "knockEmoji": "<emoji name='KnockChannel'>"
+                                "knockEmoji": "<emoji name='KnockChannel'>",
+                                "openChannelsDisplay": "{openChannelsDefault}"
                             }
                         }
                     }

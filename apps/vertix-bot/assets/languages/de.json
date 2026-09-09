@@ -3224,7 +3224,19 @@
       "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
       "content": {
         "title": "{knockEmoji}  Nichts zum Anklopfen",
-        "description": "Jeder Kanal hier steht dir bereits offen oder gehört dir selbst.\n\nEin Kanal, den du nicht sehen kannst, wird nicht aufgeführt — hat ein Freund einen, bitte ihn um eine Einladung."
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "Jeder Kanal hier steht dir bereits offen oder gehört dir selbst.\n\nEin Kanal, den du nicht sehen kannst, wird nicht aufgeführt — hat ein Freund einen, bitte ihn um eine Einladung.",
+            "{openChannels}": "Hier ist dir nichts verschlossen — diese sind offen, geh einfach rein:\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
       }
     },
     {

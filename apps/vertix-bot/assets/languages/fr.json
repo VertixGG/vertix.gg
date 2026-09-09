@@ -3224,7 +3224,19 @@
       "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
       "content": {
         "title": "{knockEmoji}  Rien où frapper",
-        "description": "Tous les salons ici vous sont déjà ouverts ou sont les vôtres.\n\nUn salon que vous ne voyez pas n'est pas listé — si un ami en a un, demandez-lui une invitation."
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "Tous les salons ici vous sont déjà ouverts ou sont les vôtres.\n\nUn salon que vous ne voyez pas n'est pas listé — si un ami en a un, demandez-lui une invitation.",
+            "{openChannels}": "Rien ici ne vous est fermé — ceux-ci sont ouverts, entrez directement :\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
       }
     },
     {

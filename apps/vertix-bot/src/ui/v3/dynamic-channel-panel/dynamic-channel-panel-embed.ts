@@ -6,6 +6,8 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
+import { getButtonSheetImageUrl } from "@vertix.gg/bot/src/definitions/button-sheet";
+
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const vars = {
@@ -21,7 +23,7 @@ const DynamicChannelPanelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => `https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items=${ vars.dynamicChannelButtonsTemplate }` )
+    .setImage( () => getButtonSheetImageUrl( vars.dynamicChannelButtonsTemplate ) )
     .setTitle( () => "༄ Manage your Dynamic Channel" )
     .setDescription( () =>
         "Embrace the responsibility of overseeing your dynamic channel, " +

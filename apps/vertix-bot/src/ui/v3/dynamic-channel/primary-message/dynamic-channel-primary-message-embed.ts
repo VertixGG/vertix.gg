@@ -7,13 +7,12 @@ import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { getButtonSheetImageUrl } from "@vertix.gg/bot/src/definitions/button-sheet";
 
 import { DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/description/dynamic-channel-primary-message-edit-description-embed";
 import { DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_TITLE_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/title/dynamic-channel-primary-message-edit-title-embed";
 import { DYNAMIC_CHANNEL_REGION_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-embed";
 import { DYNAMIC_CHANNEL_PRIVACY_VARS } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-embed";
-
-import { DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/dynamic-channel-component";
 
 import { DynamicChannelLimitMetaButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/limit/dynamic-channel-limit-meta-button";
 import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-button";
@@ -59,11 +58,7 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    // The sheet is the legend for the buttons drawn underneath it, so it is laid out at the
-    // width they are - asked of the component rather than repeated here, since a legend that
-    // wraps differently to the thing it explains is worse than none.
-    .setImage( () => "https://api.voicechannels.online/api/tools/button-sheet.png"
-        + `?cols=${ DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW }&scale=3&items=${ vars.dynamicChannelButtonsTemplate }` )
+    .setImage( () => getButtonSheetImageUrl( vars.dynamicChannelButtonsTemplate ) )
     .setTitle( () => vars.title )
     .setDescription( () => (
         `${ vars.description }\n\n` +

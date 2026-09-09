@@ -6308,7 +6308,7 @@
                             "instanceType": "Dynamic",
                             "title": "༄ Manage your Dynamic Channel",
                             "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n",
-                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=4&scale=3&items={dynamicChannelButtonsTemplate}",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=5&scale=3&items={dynamicChannelButtonsTemplate}",
                             "color": 3369963,
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {

@@ -95,6 +95,14 @@ export interface IDynamicResetChannelResult {
 
 /* Default Permissions */
 
+/**
+ * How many buttons the dynamic channel interface draws per row.
+ *
+ * Read by the component that lays the buttons out and by the legend drawn above them, which
+ * has to wrap the same way to be a legend at all.
+ */
+export const DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW = 5;
+
 export const DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS = new PermissionsBitField();
 
 DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS.add(

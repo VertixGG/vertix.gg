@@ -10,15 +10,30 @@ import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interact
  *
  * A control panel is a text channel that names its generator, while the interface inside a dynamic
  * channel has to be traced back through the channel it sits in.
+ *
+ * Read off the message that was pressed rather than off the interaction. The adapter rewrites an
+ * interaction's channel to whichever voice channel the presser happens to be sitting in, so asking
+ * the interaction would answer for that channel's generator - and pressing a control panel while
+ * sitting in a channel from another generator would list that other generator's channels.
  */
 async function resolveMasterChannelId( interaction: UIAdapterReplyContext ): Promise<string | null> {
-    const channelDB = await ChannelModel.$.getByChannelId( interaction.channelId );
+    const messageChannelId = "message" in interaction ? interaction.message?.channelId : null;
+
+    const pressedChannelId = messageChannelId ?? interaction.channelId;
+
+    if ( ! pressedChannelId ) {
+        return null;
+    }
+
+    const channelDB = await ChannelModel.$.getByChannelId( pressedChannelId );
 
     if ( ! channelDB ) {
         return null;
     }
 
-    if ( ChannelType.GuildVoice === interaction.channel?.type ) {
+    const pressedChannel = interaction.guild.channels.cache.get( pressedChannelId );
+
+    if ( ChannelType.GuildVoice === pressedChannel?.type ) {
         const masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channelDB.channelId );
 
         return masterChannelDB?.channelId ?? null;

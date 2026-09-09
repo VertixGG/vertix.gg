@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 
 import { useCommand } from "@zenflux/react-commander/hooks";
 
-import { Plus, Save, X } from "lucide-react";
+import { Plus, Save, ShieldCheck, ShieldX, X } from "lucide-react";
+
+import { badwordsIsMatch } from "@vertix.gg/definitions/src/badwords-match";
 
 import { RoleCheckList, RoleRadioList } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
@@ -27,6 +29,22 @@ function sameList( a: string[], b: string[] ): boolean {
 }
 
 /**
+ * Function matchedBadwords() :: Which of the words would catch the given name.
+ *
+ * The name is split the way the bot splits it, and every word is put through the same matcher, so
+ * the answer here is the answer a member would get rather than an approximation of it.
+ */
+function matchedBadwords( content: string, badwords: string[] ): string[] {
+    const words = content.split( " " ).filter( ( word ) => word.length > 0 );
+
+    if ( ! words.length ) {
+        return [];
+    }
+
+    return badwords.filter( ( badword ) => words.some( ( word ) => badwordsIsMatch( word, badword ) ) );
+}
+
+/**
  * Function parseBadwords() :: The words an entry holds.
  *
  * Commas are accepted so a list can be pasted in one go rather than typed a word at a time.
@@ -46,6 +64,7 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
     const [ staffRoleIds, setStaffRoleIds ] = useState( config.staffRoleIds );
     const [ badwords, setBadwords ] = useState( config.badwords );
     const [ badwordDraft, setBadwordDraft ] = useState( "" );
+    const [ badwordTest, setBadwordTest ] = useState( "" );
 
     useEffect( () => {
         setVoiceRoleId( config.voiceRoleId );
@@ -53,6 +72,7 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
         setStaffRoleIds( config.staffRoleIds );
         setBadwords( config.badwords );
         setBadwordDraft( "" );
+        setBadwordTest( "" );
     }, [ config ] );
 
     // An empty list is not an empty audience, it is `@everyone` - whose role id is the guild id -
@@ -78,6 +98,9 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
     };
 
     const draftedBadwords = parseBadwords( badwordDraft );
+
+    const testedBadwords = matchedBadwords( badwordTest, badwords );
+    const isTesting = badwordTest.trim().length > 0;
 
     /**
      * Function handleAddBadwords() :: Puts the entry on the list.
@@ -216,26 +239,70 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                 </div>
 
                 { badwords.length ? (
-                    <div className="flex flex-wrap gap-2">
-                        { badwords.map( ( word ) => (
-                            <span
-                                key={ word }
-                                className="inline-flex items-center gap-1 pl-2.5 pr-1 py-1 bg-background border
-                                    border-border rounded-md text-sm text-text-primary font-mono"
-                            >
-                                { word }
-                                <button
-                                    onClick={ () => setBadwords( badwords.filter( ( entry ) => entry !== word ) ) }
-                                    disabled={ isSaving }
-                                    title={ `Remove ${ word }` }
-                                    className="p-0.5 text-text-muted hover:text-error rounded transition-colors
-                                        disabled:cursor-not-allowed"
-                                >
-                                    <X className="w-3.5 h-3.5" />
-                                </button>
-                            </span>
-                        ) ) }
-                    </div>
+                    <>
+                        <div className="flex flex-wrap gap-2">
+                            { badwords.map( ( word ) => {
+                                const caughtClassName = testedBadwords.includes( word )
+                                    ? "bg-error/15 border-error/50 text-error"
+                                    : "bg-background border-border text-text-primary";
+
+                                return (
+                                    <span
+                                        key={ word }
+                                        className={ `inline-flex items-center gap-1 pl-2.5 pr-1 py-1 border rounded-md
+                                            text-sm font-mono transition-colors ${ caughtClassName }` }
+                                    >
+                                        { word }
+                                        <button
+                                            onClick={ () => setBadwords( badwords.filter( ( entry ) => entry !== word ) ) }
+                                            disabled={ isSaving }
+                                            title={ `Remove ${ word }` }
+                                            className="p-0.5 text-text-muted hover:text-error rounded transition-colors
+                                                disabled:cursor-not-allowed"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    </span>
+                                );
+                            } ) }
+                        </div>
+
+                        <div className="border-t border-border-muted pt-4">
+                            <label className="block text-sm font-medium text-text-primary mb-1">
+                                Try a name
+                            </label>
+                            <input
+                                type="text"
+                                value={ badwordTest }
+                                onChange={ ( e ) => setBadwordTest( e.target.value ) }
+                                placeholder="{user}'s Channel"
+                                className={ fieldClassName }
+                                disabled={ isSaving }
+                            />
+
+                            { isTesting ? (
+                                <p className={ `flex items-center gap-1.5 text-xs mt-2 mb-0
+                                    ${ testedBadwords.length ? "text-error" : "text-success" }` }>
+                                    { testedBadwords.length ? (
+                                        <>
+                                            <ShieldX className="w-3.5 h-3.5 shrink-0" />
+                                            Blocked by { testedBadwords.length } of the words above
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                                            This name would be allowed
+                                        </>
+                                    ) }
+                                </p>
+                            ) : (
+                                <p className="text-xs text-text-muted mt-2 mb-0">
+                                    Checked against the words above, with the matcher the bot uses. Nothing is saved
+                                    by trying a name.
+                                </p>
+                            ) }
+                        </div>
+                    </>
                 ) : (
                     <p className="text-sm text-text-muted mb-0">
                         Using the built-in list. Adding a word here replaces it entirely.

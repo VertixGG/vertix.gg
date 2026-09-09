@@ -1,9 +1,6 @@
 import { DEFAULT_BADWORDS, DEFAULT_BADWORDS_SEPARATOR } from "@vertix.gg/definitions/src/badwords-defaults";
 
-const isMatch = ( word: string, badword: string ): boolean => {
-    const regex = new RegExp( `^${ badword.replace( /\*/g, ".*" ) }$`, "i" );
-    return regex.test( word );
-};
+import { badwordsIsMatch as isMatch } from "@vertix.gg/definitions/src/badwords-match";
 
 /**
  * Function badwordsSomeUsed() :: Determine if a word matches of the badwords and

@@ -62,6 +62,12 @@ const OWNER_CONTROLS = [
         body: "Allow or block individual members.",
     },
     {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.inviteChannel,
+        fallback: "📨",
+        title: "Invite",
+        body: "Let someone in and send them straight to the channel.",
+    },
+    {
         emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.privacy,
         fallback: "🚫",
         title: "Privacy",
@@ -108,6 +114,12 @@ const OWNER_CONTROLS = [
         fallback: "📢",
         title: "Status",
         body: "Say what is happening, under the channel's name.",
+    },
+    {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.knockChannel,
+        fallback: "🚪",
+        title: "Knock",
+        body: "The one that is not the owner's \u2014 ask to be let into a private channel.",
     },
     {
         emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.claimChannel,

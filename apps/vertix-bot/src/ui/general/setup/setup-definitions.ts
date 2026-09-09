@@ -7,7 +7,11 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 export const MAX_EDIT_MASTER_BUTTONS_PER_ROW = 2;
 
 export interface ISetupArgs extends UIArgs {
-    masterChannels?: PrismaBot.Channel[];
+    /**
+     * The generator channels, each carrying the discord limit its dynamic channels copy when they
+     * have no default of their own - only discord knows it, and the row does not.
+     */
+    masterChannels?: ( PrismaBot.Channel & { userLimit?: number } )[];
     badwords?: string[];
     voiceRoleId?: string | null;
     verifiedRoleIds?: string[];

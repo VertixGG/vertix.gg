@@ -1438,7 +1438,7 @@
         "description": "Das ist das Benutzerlimit, mit dem ein **neu erstellter** dynamischer Kanal beginnt. Bestehende Kanäle bleiben unberührt, und der Besitzer kann seinen eigenen Kanal weiterhin ändern.\n\nDen Generator-Kanal zu kopieren ist das alte Verhalten. Hier eine Zahl zu setzen ist meist besser, denn das Limit des Generators begrenzt auch, wie viele Leute gleichzeitig darin warten können.\n\nBei aktiviertem automatischem Speichern erhält ein wiederkehrender Besitzer stattdessen sein eigenes letztes Limit.\n\n**_Aktueller Standard_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Vom Generator-Kanal übernommen** ({masterChannelUserLimitDisplay})",
+            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Kein Limit**",
             "{userLimitValue}": "**{userLimit} Benutzer**"
           }
@@ -2878,7 +2878,7 @@
         "description": "Das ist das Benutzerlimit, mit dem ein **neu erstellter** dynamischer Kanal beginnt. Bestehende Kanäle bleiben unberührt, und der Besitzer kann seinen eigenen Kanal weiterhin ändern.\n\nDen Generator-Kanal zu kopieren ist das alte Verhalten. Hier eine Zahl zu setzen ist meist besser, denn das Limit des Generators begrenzt auch, wie viele Leute gleichzeitig darin warten können.\n\nBei aktiviertem automatischem Speichern erhält ein wiederkehrender Besitzer stattdessen sein eigenes letztes Limit.\n\n**_Aktueller Standard_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Vom Generator-Kanal übernommen** ({masterChannelUserLimitDisplay})",
+            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Kein Limit**",
             "{userLimitValue}": "**{userLimit} Benutzer**"
           }

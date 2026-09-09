@@ -1850,7 +1850,7 @@
         "description": "Este es el límite de usuarios con el que empieza un canal dinámico **recién creado**. No afecta a los que ya existen, y el propietario puede cambiarlo después.\n\nCopiar el canal generador es el comportamiento antiguo. Poner un número aquí suele ser mejor, porque el límite del generador también restringe cuántas personas pueden esperar dentro.\n\nCon el guardado automático activado, un propietario que vuelve recibe su propio último límite en lugar de este.\n\n**_Valor actual_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Copiado del canal generador** ({masterChannelUserLimitDisplay})",
+            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Sin límite**",
             "{userLimitValue}": "**{userLimit} usuarios**"
           }
@@ -2751,7 +2751,7 @@
         "description": "Este es el límite de usuarios con el que empieza un canal dinámico **recién creado**. No afecta a los que ya existen, y el propietario puede cambiarlo después.\n\nCopiar el canal generador es el comportamiento antiguo. Poner un número aquí suele ser mejor, porque el límite del generador también restringe cuántas personas pueden esperar dentro.\n\nCon el guardado automático activado, un propietario que vuelve recibe su propio último límite en lugar de este.\n\n**_Valor actual_**\n\n> {userLimitDisplay}",
         "options": {
           "userLimitDisplay": {
-            "{userLimitInherit}": "**Copiado del canal generador** ({masterChannelUserLimitDisplay})",
+            "{userLimitInherit}": "**{masterChannelUserLimitDisplay}**",
             "{userLimitUnlimited}": "**Sin límite**",
             "{userLimitValue}": "**{userLimit} usuarios**"
           }

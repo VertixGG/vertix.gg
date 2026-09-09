@@ -33,7 +33,7 @@ const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof vars>( "V
     ) )
     .setOptions( () => ( {
         userLimitDisplay: {
-            [ vars.userLimitInherit ]: `**Copied from the generator channel** (${ vars.masterChannelUserLimitDisplay })`,
+            [ vars.userLimitInherit ]: `**${ vars.masterChannelUserLimitDisplay }**`,
             [ vars.userLimitUnlimited ]: "**No limit**",
             [ vars.userLimitValue ]: `**${ vars.userLimit } users**`
         }

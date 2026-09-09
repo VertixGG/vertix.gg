@@ -531,7 +531,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
 
         const defaultUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
         const newChannelLimit = null === defaultUserLimit || undefined === defaultUserLimit
-            ? `Copied from the generator channel (${ inheritedUserLimitDisplay })`
+            ? inheritedUserLimitDisplay
             : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
 
         const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,
@@ -697,7 +697,7 @@ const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDI
     )
     .setOptions( ( v ) => ( {
         userLimitDisplay: {
-            [ v.userLimitInherit ]: `**Copied from the generator channel** (${ v.masterChannelUserLimitDisplay })`,
+            [ v.userLimitInherit ]: `**${ v.masterChannelUserLimitDisplay }**`,
             [ v.userLimitUnlimited ]: "**No limit**",
             [ v.userLimitValue ]: `**${ v.userLimit } users**`
         }

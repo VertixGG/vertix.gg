@@ -226,7 +226,7 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/S
 
         const defaultUserLimit = args.dynamicChannelDefaultUserLimit as number | null | undefined;
         const newChannelLimit = null === defaultUserLimit || undefined === defaultUserLimit
-            ? `Copied from the generator channel (${ inheritedUserLimitDisplay })`
+            ? inheritedUserLimitDisplay
             : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
 
         const ownVoiceRoleId = args.dynamicChannelVoiceRoleId as string | null,

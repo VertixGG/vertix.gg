@@ -578,10 +578,10 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 ? "🚫 Private"
                 : ( "hidden" === privacyState ? "🙈 Hidden" : "🌐 Public" );
 
-            const defaultUserLimit = data.dynamicChannelDefaultUserLimit;
-            const userLimitDisplay = null === defaultUserLimit || undefined === defaultUserLimit
-                ? "Copied from the generator channel"
-                : ( 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users` );
+            // An unset default copies the generator's own limit, so the number it copies is what
+            // gets named rather than the rule that it copies one.
+            const defaultUserLimit = data.dynamicChannelDefaultUserLimit ?? channel.userLimit ?? 0;
+            const userLimitDisplay = 0 === defaultUserLimit ? "No limit" : `${ defaultUserLimit } users`;
 
             const nameTemplate = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate;
             const logsDisplay = data.dynamicChannelLogsChannelId ? `<#${ data.dynamicChannelLogsChannelId }>` : vars.none;
@@ -703,7 +703,16 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
         }
 
         const args: ISetupArgs = {
-            masterChannels: await ChannelModel.$.getMasters( interaction.guild.id, "settings" ),
+            masterChannels: ( await ChannelModel.$.getMasters( interaction.guild.id, "settings" ) ).map(
+                ( channel ) => {
+                    const generator = interaction.guild.channels.cache.get( channel.channelId );
+
+                    return {
+                        ...channel,
+                        userLimit: generator && "userLimit" in generator ? generator.userLimit : undefined
+                    };
+                }
+            ),
             badwords: badwordsNormalizeArray( await GuildDataManager.$.getBadwords( interaction.guild.id ) ),
             voiceRoleId: await GuildDataManager.$.getVoiceRoleId( interaction.guild.id ),
             verifiedRoleIds: await GuildDataManager.$.getVerifiedRoleIds( interaction.guild.id ),

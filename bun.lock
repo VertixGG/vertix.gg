@@ -5,6 +5,7 @@
     "": {
       "name": "vertix.gg",
       "dependencies": {
+        "@vertix.gg/ai": "workspace:*",
         "@vertix.gg/api": "workspace:*",
         "@vertix.gg/assets": "workspace:*",
         "@vertix.gg/base": "workspace:*",
@@ -14,8 +15,10 @@
         "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/discord-ui": "workspace:*",
         "@vertix.gg/gui": "workspace:*",
+        "@vertix.gg/logger": "workspace:*",
         "@vertix.gg/mcp": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
+        "@vertix.gg/redis": "workspace:*",
         "@vertix.gg/test-utils": "workspace:*",
         "@vertix.gg/ui": "workspace:*",
         "@vertix.gg/utils": "workspace:*",

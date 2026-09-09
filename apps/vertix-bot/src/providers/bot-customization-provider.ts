@@ -1,4 +1,4 @@
-import { GuildCustomizationManager } from "@vertix.gg/bot/src/managers/guild-customization-manager";
+import { GuildCustomizationManager } from "@vertix.gg/data/src/managers/guild-customization-manager";
 
 import type {
     ICustomizationProvider,

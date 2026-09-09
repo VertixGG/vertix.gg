@@ -1,4 +1,4 @@
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";

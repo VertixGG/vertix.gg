@@ -1,5 +1,5 @@
-import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { ScalingChannelDataModel } from "@vertix.gg/data/src/models/master-channel/scaling-channel-data-model";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -12,6 +12,8 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
+import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/data/src/config/scaling-channel-config";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import { SetupScalingConfigModal } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-config-modal";
@@ -19,7 +21,6 @@ import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
 import { DeleteButton } from "@vertix.gg/bot/src/ui/general/decision/delete-button";
 import { DeleteConfirmModal } from "@vertix.gg/bot/src/ui/general/decision/delete-confirm-modal";
 import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
-import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
 
 import { ScalingSetupEditConfigButton } from "@vertix.gg/bot/src/ui/v3/scaling-setup/elements/scaling-setup-edit-config-button";
 
@@ -37,7 +38,7 @@ import type { BaseGuildTextChannel } from "discord.js";
 import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
 import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 import type UIService from "@vertix.gg/gui/src/ui-service";
-import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { ScalingChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 type Interactions =
     | UIDefaultButtonChannelTextInteraction

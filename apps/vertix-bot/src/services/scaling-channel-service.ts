@@ -1,7 +1,7 @@
 import "@vertix.gg/prisma/bot-client";
 
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -9,14 +9,15 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
-import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
+import { ScalingChannelDataModel } from "@vertix.gg/data/src/models/master-channel/scaling-channel-data-model";
 
 import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/utils/vars-utils";
 
 import { ChannelType } from "discord.js";
 
+import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/data/src/config/scaling-channel-config";
+
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
-import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
 import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
@@ -32,11 +33,11 @@ import type {
     DeleteScalingSetupPayload
 } from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
 
-import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { ScalingChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { CategoryChannel, Guild, OverwriteResolvable, VoiceChannel } from "discord.js";
 
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 

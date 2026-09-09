@@ -2,7 +2,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
@@ -18,7 +18,7 @@ import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
 import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-button";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 

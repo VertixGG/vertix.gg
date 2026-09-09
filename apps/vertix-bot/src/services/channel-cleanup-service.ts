@@ -1,5 +1,5 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import { ChannelType } from "discord.js";

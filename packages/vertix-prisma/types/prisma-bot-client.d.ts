@@ -11,6 +11,7 @@ declare global {
         export type ChannelData = PrismaTypes.ChannelData;
         export type Guild = PrismaTypes.Guild;
         export type GuildData = PrismaTypes.GuildData;
+        export type GuildCustomization = PrismaTypes.GuildCustomization;
         export type User = PrismaTypes.User;
         export type UserData = PrismaTypes.UserData;
         export type UserChannelData = PrismaTypes.UserChannelData;

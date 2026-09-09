@@ -2,15 +2,15 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { ChannelTemplateModel } from "@vertix.gg/base/src/models/data/channel-template-model";
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { ChannelTemplateModel } from "@vertix.gg/data/src/models/data/channel-template-model";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
 import { DynamicChannelTemplatesButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-button";
 import { DynamicChannelTemplatesComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-component";
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
-import type { ChannelTemplate, ChannelTemplateConfig } from "@vertix.gg/base/src/interfaces/channel-template";
-import type { ChannelPrivacyState } from "@vertix.gg/bot/src/definitions/dynamic-channel";
+import type { ChannelTemplate, ChannelTemplateConfig } from "@vertix.gg/data/src/interfaces/channel-template";
+import type { ChannelPrivacyState } from "@vertix.gg/definitions/src/dynamic-channel-definitions";
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction,

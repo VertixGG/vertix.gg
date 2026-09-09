@@ -1,7 +1,7 @@
 import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { ChannelTemplate } from "@vertix.gg/base/src/interfaces/channel-template";
+import type { ChannelTemplate } from "@vertix.gg/data/src/interfaces/channel-template";
 
 export class DynamicChannelTemplatesApplySelectMenu extends UIElementStringSelectMenu {
     public static getName() {

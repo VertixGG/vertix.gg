@@ -1,5 +1,5 @@
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
@@ -7,7 +7,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 

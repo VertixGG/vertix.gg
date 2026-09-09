@@ -1,5 +1,5 @@
 import "@vertix.gg/prisma/bot-client";
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -14,7 +14,7 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
-import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+import type { TVersionType } from "@vertix.gg/data/src/factory/data-versioning-model-factory";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 

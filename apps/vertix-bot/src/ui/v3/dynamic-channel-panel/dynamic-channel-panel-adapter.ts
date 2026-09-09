@@ -179,7 +179,7 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
                 "VertixBot/UI-V3/DynamicChannelTemplatesButton",
                 "OpenTemplates",
                 async( _context, interaction ) => {
-                    const { ChannelTemplateModel } = await import( "@vertix.gg/base/src/models/data/channel-template-model" );
+                    const { ChannelTemplateModel } = await import( "@vertix.gg/data/src/models/data/channel-template-model" );
 
                     const templates = await ChannelTemplateModel.$.getTemplates(
                         interaction.user.id,

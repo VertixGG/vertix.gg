@@ -1,11 +1,11 @@
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
+import { ConfigBase } from "@vertix.gg/data/src/bases/config-base";
 
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 // TODO: Move to `UI-V3` folder + registration to `ui-module`
 export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfaceV3> {

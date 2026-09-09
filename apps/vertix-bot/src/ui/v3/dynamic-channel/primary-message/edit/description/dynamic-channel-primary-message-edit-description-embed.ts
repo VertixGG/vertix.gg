@@ -1,5 +1,5 @@
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -7,7 +7,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import { DynamicChannelPrimaryMessageEditButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-button";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS = {

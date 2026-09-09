@@ -1,4 +1,4 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import { UIDataBase } from "@vertix.gg/gui/src/bases/ui-data-base";
 

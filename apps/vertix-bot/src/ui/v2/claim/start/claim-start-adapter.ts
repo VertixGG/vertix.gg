@@ -1,4 +1,4 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { ExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/execution-adapter-builder";

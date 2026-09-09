@@ -1,0 +1,17 @@
+{
+    "name": "@vertix.gg/data",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "type": "module",
+    "scripts": {
+        "vertix-data:typecheck": "bunx --bun tsc --noEmit"
+    },
+    "dependencies": {
+        "@prisma/client": "latest",
+        "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/definitions": "workspace:*",
+        "@vertix.gg/gui": "workspace:*",
+        "@vertix.gg/prisma": "workspace:*",
+        "@vertix.gg/utils": "workspace:*",
+        "prisma": "latest"
+    }
+}

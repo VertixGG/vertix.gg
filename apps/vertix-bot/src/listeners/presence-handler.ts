@@ -1,6 +1,6 @@
 import { Events } from "discord.js";
 
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import type { Client, Presence, VoiceChannel } from "discord.js";

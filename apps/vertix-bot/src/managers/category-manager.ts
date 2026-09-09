@@ -2,7 +2,7 @@ import { ChannelType } from "discord.js";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import { CategoryModel } from "@vertix.gg/bot/src/models/category-model";
+import { CategoryModel } from "@vertix.gg/data/src/models/category-model";
 
 import type { CategoryChannel, Guild, OverwriteResolvable } from "discord.js";
 

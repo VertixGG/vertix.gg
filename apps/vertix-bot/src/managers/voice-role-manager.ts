@@ -2,10 +2,10 @@ import { PermissionsBitField } from "discord.js";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import type { Guild, GuildMember, Role, Snowflake, VoiceState } from "discord.js";
 

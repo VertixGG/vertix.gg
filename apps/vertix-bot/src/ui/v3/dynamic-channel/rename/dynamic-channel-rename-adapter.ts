@@ -1,8 +1,8 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
@@ -18,7 +18,7 @@ import type {
     UIDefaultModalChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 type DefaultInteraction = UIDefaultButtonChannelVoiceInteraction | UIDefaultModalChannelVoiceInteraction;

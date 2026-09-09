@@ -19,6 +19,7 @@
         "@sinclair/typebox": "^0.34.30",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/bot": "workspace:*",
+        "@vertix.gg/data": "workspace:*",
         "@vertix.gg/gui": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",

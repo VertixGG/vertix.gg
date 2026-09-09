@@ -2,19 +2,19 @@ import "@vertix.gg/prisma/bot-client";
 
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-import { UserMasterChannelDataModel } from "@vertix.gg/base/src/models/data/user-master-channel-data-model";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
+import { UserMasterChannelDataModel } from "@vertix.gg/data/src/models/data/user-master-channel-data-model";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { gToken } from "@vertix.gg/base/src/discord/login";
 
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
-import { UserModel } from "@vertix.gg/base/src/models/user-model";
+import { UserModel } from "@vertix.gg/data/src/models/user-model";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
@@ -44,9 +44,9 @@ import {
     VAR_DYNAMIC_CHANNEL_USER
 } from "@vertix.gg/definitions/src/dynamic-channel-vars-definitions";
 
-import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
+import { GuildCustomizationManager } from "@vertix.gg/data/src/managers/guild-customization-manager";
 
-import { GuildCustomizationManager } from "@vertix.gg/bot/src/managers/guild-customization-manager";
+import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
@@ -71,19 +71,22 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
-import type { MasterChannelUserDataInterface } from "@vertix.gg/base/src/interfaces/master-channel-user-config";
+import type { MasterChannelUserDataInterface } from "@vertix.gg/data/src/interfaces/master-channel-user-config";
 
 import type { Snowflake } from "discord-api-types/v10";
 
 import type {
-    TDynamicChannelConfiguration,
     ChannelPrivacyState,
+    ChannelState,
+    ChannelVisibilityState
+} from "@vertix.gg/definitions/src/dynamic-channel-definitions";
+
+import type {
+    TDynamicChannelConfiguration,
     ActStatus,
     AddStatus,
-    ChannelState,
-    ChannelVisibilityState,
     EditStatus,
     IDynamicChannelCreateArgs,
     IDynamicClearChatResult,
@@ -119,7 +122,7 @@ import type {
 import type {
     MasterChannelConfigInterface,
     MasterChannelConfigInterfaceV3
-} from "@vertix.gg/base/src/interfaces/master-channel-config";
+} from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { IChannelEnterGenericArgs, IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 

@@ -1,5 +1,5 @@
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { ChannelType, PermissionsBitField } from "discord.js";
@@ -51,7 +51,7 @@ import type { BaseGuildTextChannel } from "discord.js";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { MasterChannelService } from "@vertix.gg/bot/src/services/master-channel-service";
-import type { MasterChannelConfigInterface, MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterface, MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type {
     WizardInteractions,

@@ -1,8 +1,8 @@
 import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
@@ -36,8 +36,8 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
     ChannelPrivacyStateDefault,
     MasterChannelConfigInterface
-} from "@vertix.gg/base/src/interfaces/master-channel-config";
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+} from "@vertix.gg/data/src/interfaces/master-channel-config";
+import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";

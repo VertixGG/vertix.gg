@@ -1,11 +1,11 @@
 import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
-import { ConfigBase } from "@vertix.gg/base/src/bases/config-base";
+import { ConfigBase } from "@vertix.gg/data/src/bases/config-base";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { MasterChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface> {
     public static getName() {

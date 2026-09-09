@@ -1,5 +1,5 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-import { UserMasterChannelDataModel } from "@vertix.gg/base/src/models/data/user-master-channel-data-model";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
+import { UserMasterChannelDataModel } from "@vertix.gg/data/src/models/data/user-master-channel-data-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";

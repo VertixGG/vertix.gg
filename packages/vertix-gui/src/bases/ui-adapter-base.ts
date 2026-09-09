@@ -3,7 +3,7 @@ import process from "process";
 import { DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE } from "@vertix.gg/definitions/src/guild-data-keys";
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors";
 
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
 import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 import { Logger } from "@vertix.gg/base/src/modules/logger";

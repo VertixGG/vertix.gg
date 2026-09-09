@@ -4,12 +4,12 @@ import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
-import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
+import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/data/src/config/scaling-channel-config";
 
 import type { UIArgs, UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-import type { ScalingChannelConfigInterface } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { ScalingChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 const getDefaultScalingPrefix = () => {
     const config = ConfigManager.$.get<ScalingChannelConfigInterface>(

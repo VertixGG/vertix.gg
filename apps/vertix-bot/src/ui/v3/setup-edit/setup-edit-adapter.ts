@@ -1,8 +1,8 @@
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
@@ -64,7 +64,7 @@ import {
     SETUP_EDIT_EMBED_VARS
 } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-definitions";
 
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 
@@ -75,7 +75,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
     ChannelPrivacyStateDefault,
     MasterChannelConfigInterfaceV3
-} from "@vertix.gg/base/src/interfaces/master-channel-config";
+} from "@vertix.gg/data/src/interfaces/master-channel-config";
 import type { ChannelCleanupService } from "@vertix.gg/bot/src/services/channel-cleanup-service";
 
 import type {

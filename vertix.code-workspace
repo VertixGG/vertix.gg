@@ -9,6 +9,10 @@
             "path": "./packages/vertix-base"
         },
         {
+            "name": "Data",
+            "path": "./packages/vertix-data"
+        },
+        {
             "name": "Bot",
             "path": "./apps/vertix-bot"
         },

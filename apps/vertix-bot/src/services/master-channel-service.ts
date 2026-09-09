@@ -1,10 +1,10 @@
 import "@vertix.gg/prisma/bot-client";
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model-v3";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -15,8 +15,10 @@ import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "d
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+
+import { CategoryModel } from "@vertix.gg/data/src/models/category-model";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
@@ -28,17 +30,15 @@ import {
     DEFAULT_MASTER_CHANNEL_CREATE_EVERYONE_PERMISSIONS
 } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import { CategoryModel } from "@vertix.gg/bot/src/models/category-model";
-
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
 import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
 
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
-import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+import type { TVersionType } from "@vertix.gg/data/src/factory/data-versioning-model-factory";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
 import type { UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
@@ -53,7 +53,7 @@ import type {
     MasterChannelConfigInterface,
     MasterChannelConfigInterfaceV3,
     MasterChannelSettingsInterface
-} from "@vertix.gg/base/src/interfaces/master-channel-config";
+} from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type {
     CategoryChannel,

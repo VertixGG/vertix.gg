@@ -46,7 +46,7 @@ import { BotCustomizationProvider } from "@vertix.gg/bot/src/providers/bot-custo
 
 import type { InteractionHandler } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
 
-import type { ConfigBase, ConfigBaseInterface } from "@vertix.gg/base/src/bases/config-base";
+import type { ConfigBase, ConfigBaseInterface } from "@vertix.gg/data/src/bases/config-base";
 
 import type { Client } from "discord.js";
 
@@ -417,12 +417,12 @@ async function registerUILanguageManager( options: {
 async function registerConfigs() {
     GlobalLogger.$.info( registerConfigs, "Registering configs ..." );
 
-    const { ConfigManager } = await import( "@vertix.gg/base/src/managers/config-manager" );
+    const { ConfigManager } = await import( "@vertix.gg/data/src/managers/config-manager" );
 
     const configs = await Promise.all( [
         import( "@vertix.gg/bot/src/config/master-channel-config" ),
         import( "@vertix.gg/bot/src/config/master-channel-config-v3" ),
-        import( "@vertix.gg/bot/src/config/scaling-channel-config" )
+        import( "@vertix.gg/data/src/config/scaling-channel-config" )
     ] );
 
     await Promise.all(
@@ -442,7 +442,7 @@ async function registerUIVersionStrategies() {
     GlobalLogger.$.info( registerUIVersionStrategies, "Registering version strategies ..." );
 
     const versionStrategies = await Promise.all( [
-            await import( "@vertix.gg/bot/src/version-strategies/ui-master-channel-version-strategy" )
+            await import( "@vertix.gg/data/src/version-strategies/ui-master-channel-version-strategy" )
         ] ),
         uiVersioningAdapterService = ServiceLocator.$.get<UIAdapterVersioningService>(
             "VertixGUI/UIVersioningAdapterService"

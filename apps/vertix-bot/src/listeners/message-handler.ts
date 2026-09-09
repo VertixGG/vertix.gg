@@ -1,6 +1,6 @@
 import { ChannelType, Events } from "discord.js";
 
-import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
+import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";

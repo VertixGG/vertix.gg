@@ -1,9 +1,9 @@
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
-import { UserMasterChannelDataModel } from "@vertix.gg/base/src/models/data/user-master-channel-data-model";
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
+import { UserMasterChannelDataModel } from "@vertix.gg/data/src/models/data/user-master-channel-data-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model-v3";
 
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
@@ -16,8 +16,8 @@ import { ChannelType } from "discord.js";
 
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/base/src/interfaces/master-channel-config";
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
+import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
 import type { VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";

@@ -4,6 +4,8 @@ import { PermissionFlagsBits } from "discord-api-types/v10";
 
 import type { Guild, VoiceState } from "discord.js";
 
+import type { ChannelState, ChannelVisibilityState } from "@vertix.gg/definitions/src/dynamic-channel-definitions";
+
 export enum DynamicEditChannelNameInternalResultCode {
     Error = 0,
     Success = "success",
@@ -100,14 +102,6 @@ DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS.add(
     PermissionFlagsBits.Connect,
     PermissionFlagsBits.ReadMessageHistory
 );
-
-export type ChannelState = "unknown" | "public" | "private";
-export type ChannelVisibilityState = "unknown" | "shown" | "hidden";
-
-/**
- * @since 0.0.8
- */
-export type ChannelPrivacyState = ChannelState | ChannelVisibilityState;
 
 export type AddStatus =
     | "error"

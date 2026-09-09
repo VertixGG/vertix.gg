@@ -1,6 +1,6 @@
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import { GuildModel } from "@vertix.gg/base/src/models/guild-model";
+import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";

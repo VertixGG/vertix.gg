@@ -2,8 +2,8 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
-import { MasterChannelDataModel } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model";
-import { MasterChannelDataModelV3 } from "@vertix.gg/base/src/models/master-channel/master-channel-data-model-v3";
+import { MasterChannelDataModel } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model";
+import { MasterChannelDataModelV3 } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model-v3";
 
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
@@ -28,7 +28,7 @@ import type {
     GetGuildOptionsResponse
 } from "@vertix.gg/definitions/src/ipc-definitions";
 
-import type { ChannelPrivacyStateDefault } from "@vertix.gg/base/src/interfaces/master-channel-config";
+import type { ChannelPrivacyStateDefault } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type {
     GetScalingChannelInfoRequest,

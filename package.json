@@ -11,6 +11,9 @@
         "type": "git",
         "url": "git+https://github.com/vertixgg/vertix.git"
     },
+    "overrides": {
+        "@zenflux/tsconfig-to-swc": "0.1.21"
+    },
     "workspaces": [
         "packages/*",
         "apps/*",
@@ -35,6 +38,7 @@
         "vertix:ci:eslint": "bash scripts/ci-eslint.bash",
         "vertix:ci:jest": "bash scripts/ci-jest.bash",
         "vertix:ci:typecheck": "bash scripts/ci-typecheck.bash",
+        "vertix:data:typecheck": "cd packages/vertix-data && bun run vertix-data:typecheck",
         "vertix:dashboard:dev": "cd apps/vertix-dashboard && bun run vertix-dashboard:dev",
         "vertix:dashboard:deploy": "cd apps/vertix-dashboard && bun run vertix-dashboard:deploy",
         "vertix:eslint": "time bunx --bun eslint .",
@@ -46,7 +50,7 @@
         "vertix:languages:check": "bun run --bun scripts/check-languages.js",
         "vertix:prisma:typecheck": "cd packages/vertix-prisma && bun run vertix-prisma:typecheck",
         "vertix:test-utils:typecheck": "cd packages/vertix-test-utils && bun run vertix-test-utils:typecheck",
-        "vertix:typecheck": "time ( bun run vertix:api:typecheck & bun run vertix:base:typecheck & bun run vertix:bot:typecheck & bun run vertix:borsa:typecheck & bun run vertix:gui:typecheck & bun run vertix:mcp:typecheck & bun run vertix:utils:typecheck & bun run vertix:prisma:typecheck & bun run vertix:test-utils:typecheck & bun run vertix:flow:typecheck & bun run vertix:website:typecheck )",
+        "vertix:typecheck": "time ( bun run vertix:api:typecheck & bun run vertix:base:typecheck & bun run vertix:data:typecheck & bun run vertix:bot:typecheck & bun run vertix:borsa:typecheck & bun run vertix:gui:typecheck & bun run vertix:mcp:typecheck & bun run vertix:utils:typecheck & bun run vertix:prisma:typecheck & bun run vertix:test-utils:typecheck & bun run vertix:flow:typecheck & bun run vertix:website:typecheck )",
         "vertix:utils:eslint": "time bunx --bun eslint packages/vertix-utils",
         "vertix:utils:typecheck": "cd packages/vertix-utils && bun run vertix-utils:typecheck",
         "vertix:website:build": "cd apps/vertix-website && bun run vertix-website:build",
@@ -76,6 +80,7 @@
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/bot": "workspace:*",
         "@vertix.gg/dashboard": "workspace:*",
+        "@vertix.gg/data": "workspace:*",
         "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/discord-ui": "workspace:*",
         "@vertix.gg/gui": "workspace:*",
@@ -112,7 +117,7 @@
         "@typescript-eslint/parser": "^8.70.0",
         "@zenflux/eslint": "latest",
         "@zenflux/jest": "latest",
-        "@zenflux/tsconfig-to-swc": "latest",
+        "@zenflux/tsconfig-to-swc": "0.1.21",
         "bun": "latest",
         "bun-types": "latest",
         "cross-env": "^7.0.3",

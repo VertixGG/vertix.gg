@@ -1,10 +1,10 @@
 import process from "process";
 
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
 
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
@@ -20,7 +20,7 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 
 import type { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
-import type { ChannelExtended } from "@vertix.gg/base/src/models/channel/channel-client-extend";
+import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
 import type { IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 

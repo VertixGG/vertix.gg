@@ -2,9 +2,9 @@ import {
     VERSION_UI_V2,
     VERSION_UI_V3
 } from "@vertix.gg/definitions/src/version";
-import { ConfigManager } from "@vertix.gg/base/src/managers/config-manager";
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
-import { ChannelModel } from "@vertix.gg/base/src/models/channel/channel-model";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import {
     badwordsNormalizeArray,
@@ -23,14 +23,14 @@ import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { EmbedBuilderUtils } from "@vertix.gg/gui/src/builders/embed-builder.utils";
 
-import { MasterChannelDataManager } from "@vertix.gg/base/src/managers/master-channel-data-manager";
-import { ScalingChannelDataModel } from "@vertix.gg/base/src/models/master-channel/scaling-channel-data-model";
+import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
+import { ScalingChannelDataModel } from "@vertix.gg/data/src/models/master-channel/scaling-channel-data-model";
 
 import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategies/ui-custom-id-hash-strategy";
 
 import { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
-import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/bot/src/config/scaling-channel-config";
+import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/data/src/config/scaling-channel-config";
 
 import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui/general/language/language-select-menu";
 
@@ -72,9 +72,9 @@ import type {
     MasterChannelConfigInterface,
     MasterChannelConfigInterfaceV3,
     ScalingChannelConfigInterface
-} from "@vertix.gg/base/src/interfaces/master-channel-config";
+} from "@vertix.gg/data/src/interfaces/master-channel-config";
 
-import type { TVersionType } from "@vertix.gg/base/src/factory/data-versioning-model-factory";
+import type { TVersionType } from "@vertix.gg/data/src/factory/data-versioning-model-factory";
 import type UIAdapterVersioningService from "@vertix.gg/gui/src/ui-adapter-versioning-service";
 
 import type {

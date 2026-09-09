@@ -1,4 +1,4 @@
-import { GuildDataManager } from "@vertix.gg/base/src/managers/guild-data-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
 import { rolesGetEveryoneRoleMention } from "@vertix.gg/bot/src/utils/roles";
 

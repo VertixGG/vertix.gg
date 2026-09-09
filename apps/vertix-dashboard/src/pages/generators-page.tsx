@@ -36,6 +36,7 @@ interface GeneratorsSelectedState {
     isSaving: GeneratorsState[ "isSaving" ];
     isCreating: GeneratorsState[ "isCreating" ];
     isLoading: GeneratorsState[ "isLoading" ];
+    isRefreshing: GeneratorsState[ "isRefreshing" ];
     error: GeneratorsState[ "error" ];
     lastRefreshTimestamp: GeneratorsState[ "lastRefreshTimestamp" ];
     showCreateModal: GeneratorsState[ "showCreateModal" ];
@@ -57,6 +58,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
             isSaving: state.isSaving,
             isCreating: state.isCreating,
             isLoading: state.isLoading,
+            isRefreshing: state.isRefreshing,
             error: state.error,
             lastRefreshTimestamp: state.lastRefreshTimestamp,
             showCreateModal: state.showCreateModal,
@@ -327,7 +329,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                                     discord: selectedScalingMaster.discord
                                 } }
                                 isSaving={ state.isSaving }
-                                isRefreshing={ state.isLoading }
+                                isRefreshing={ state.isRefreshing }
                                 lastRefreshTime={ state.lastRefreshTimestamp ? new Date( state.lastRefreshTimestamp ) : null }
                             />
                         ) : selectedMasterChannelType === "dynamic" && selectedDynamicMaster?.dynamicChannels ? (
@@ -341,7 +343,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                                     discord: selectedDynamicMaster.discord
                                 } }
                                 isSaving={ state.isSaving }
-                                isRefreshing={ state.isLoading }
+                                isRefreshing={ state.isRefreshing }
                                 lastRefreshTime={ state.lastRefreshTimestamp ? new Date( state.lastRefreshTimestamp ) : null }
                             />
                         ) : null }

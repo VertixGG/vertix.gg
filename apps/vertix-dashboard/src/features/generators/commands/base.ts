@@ -21,6 +21,12 @@ export interface GeneratorsState {
     isSaving: boolean;
     isCreating: boolean;
     isLoading: boolean;
+    /**
+     * A refresh of what is already on screen, as opposed to `isLoading`, which is a load with
+     * nothing to show yet. The panel stays up and only its refresh control reacts - swapping it
+     * for a spinner every time the poll runs reads as the page reloading itself.
+     */
+    isRefreshing: boolean;
     error: string | null;
     lastRefreshTimestamp: number;
     showCreateModal: boolean;
@@ -36,6 +42,7 @@ export const GENERATORS_INITIAL_STATE: GeneratorsState = {
     isSaving: false,
     isCreating: false,
     isLoading: false,
+    isRefreshing: false,
     error: null,
     lastRefreshTimestamp: 0,
     showCreateModal: false,

@@ -20,7 +20,7 @@ export class RefreshSelectedCommand extends GeneratorsCommandBase {
         }
 
         this.setState( {
-            isLoading: true,
+            isRefreshing: true,
             error: null
         } );
 
@@ -41,7 +41,7 @@ export class RefreshSelectedCommand extends GeneratorsCommandBase {
 
                 return this.setState( {
                     generatorsDetails: { ...generatorsDetails, scalingMasterChannels: updatedScalingMasters },
-                    isLoading: false,
+                    isRefreshing: false,
                     lastRefreshTimestamp: Date.now()
                 } );
             } else {
@@ -58,14 +58,14 @@ export class RefreshSelectedCommand extends GeneratorsCommandBase {
 
                 return this.setState( {
                     generatorsDetails: { ...generatorsDetails, dynamicMasterChannels: updatedDynamicMasters },
-                    isLoading: false,
+                    isRefreshing: false,
                     lastRefreshTimestamp: Date.now()
                 } );
             }
         } catch( error ) {
             return this.setState( {
                 error: error instanceof Error ? error.message : "Failed to refresh",
-                isLoading: false
+                isRefreshing: false
             } );
         }
     }

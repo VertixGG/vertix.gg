@@ -203,3 +203,20 @@ export async function getEmojiManifest(): Promise<Record<string, string>> {
 
     return manifest;
 }
+
+/**
+ * Function warmEmojiManifest() :: Builds the manifest before anyone asks for it.
+ *
+ * Resolving it means one call to Discord for the emoji list and then one download per emoji, and
+ * on a cold cache that work landed on whichever browser happened to ask first - which measured
+ * around nineteen seconds against half a second warm. The client gives up after four, and gives up
+ * for good, so that one unlucky visitor lost every icon on the page for their whole session.
+ *
+ * Awaited by nobody: the server has no reason to delay accepting connections for artwork, and a
+ * request arriving mid-warm simply awaits the same promises through `ensureDataUris()`.
+ */
+export function warmEmojiManifest(): void {
+    void getEmojiManifest().catch( () => {
+        // A cold manifest is not a reason to fail startup; the first request retries the fetch.
+    } );
+}

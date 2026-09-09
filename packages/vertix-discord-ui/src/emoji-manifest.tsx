@@ -16,7 +16,10 @@ import * as React from "react";
 
 const DEFAULT_API_BASE_URL = "https://api.voicechannels.online/api";
 
-const MANIFEST_TIMEOUT_MS = 4000;
+const MANIFEST_TIMEOUT_MS = 15000;
+
+const MANIFEST_RETRY_LIMIT = 2;
+const MANIFEST_RETRY_DELAY_MS = 1000;
 
 let sourceByName: Readonly<Record<string, string>> = {};
 
@@ -86,32 +89,52 @@ function resolveBaseUrl( explicit?: string ): string {
     return env?.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 }
 
+async function fetchManifestOnce( baseUrl: string | undefined ): Promise<boolean> {
+    const controller = new AbortController();
+    const timeout = setTimeout( () => controller.abort(), MANIFEST_TIMEOUT_MS );
+
+    try {
+        const response = await fetch(
+            `${ resolveBaseUrl( baseUrl ) }/tools/button-emojis.json`,
+            { signal: controller.signal }
+        );
+
+        if ( ! response.ok ) {
+            return false;
+        }
+
+        setEmojiManifest( await response.json() as Record<string, string> );
+
+        return true;
+    } catch {
+        return false;
+    } finally {
+        clearTimeout( timeout );
+    }
+}
+
 /**
  * Function loadEmojiManifest() :: Fetches the artwork manifest once and remembers it.
  *
  * Fire-and-forget by contract: a failed or slow api must never keep the page from rendering, so it
  * resolves either way and leaves the manifest empty on failure. Bounded by a timeout for the same
  * reason - a hung request cannot be allowed to hold a repaint hostage.
+ *
+ * Retried, because the result is remembered for the life of the page: a single slow answer used to
+ * cost a visitor every icon until they reloaded. The timeout is generous rather than tight for the
+ * same reason - giving up early only helps if giving up is cheap, and here it is not.
  */
 export function loadEmojiManifest( baseUrl?: string ): Promise<void> {
     if ( ! manifestPromise ) {
         manifestPromise = ( async() => {
-            const controller = new AbortController();
-            const timeout = setTimeout( () => controller.abort(), MANIFEST_TIMEOUT_MS );
-
-            try {
-                const response = await fetch(
-                    `${ resolveBaseUrl( baseUrl ) }/tools/button-emojis.json`,
-                    { signal: controller.signal }
-                );
-
-                if ( response.ok ) {
-                    setEmojiManifest( await response.json() as Record<string, string> );
+            for ( let attempt = 0; attempt <= MANIFEST_RETRY_LIMIT; attempt++ ) {
+                if ( await fetchManifestOnce( baseUrl ) ) {
+                    return;
                 }
-            } catch {
-                // Leave the manifest empty; custom emojis render as nothing rather than breaking.
-            } finally {
-                clearTimeout( timeout );
+
+                if ( attempt < MANIFEST_RETRY_LIMIT ) {
+                    await new Promise( ( resolve ) => setTimeout( resolve, MANIFEST_RETRY_DELAY_MS ) );
+                }
             }
         } )();
     }

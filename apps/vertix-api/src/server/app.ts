@@ -16,6 +16,8 @@ import { API_PREFIX } from "@vertix.gg/api/src/server/constants";
 import { PrismaSessionStore } from "@vertix.gg/api/src/server/services/session-store";
 import { registerFastifyPlugins } from "@vertix.gg/api/src/server/plugins";
 
+import { warmEmojiManifest } from "@vertix.gg/api/src/server/services/button-emoji-source";
+
 import type { FastifyInstance } from "fastify";
 
 const LOGGER_LEVEL = "info";
@@ -86,6 +88,8 @@ export async function createApp(): Promise<FastifyInstance> {
         await protectedRoutes.register( customizationRoutePlugin );
         await protectedRoutes.register( languageRoutePlugin );
     }, { prefix: API_PREFIX } );
+
+    warmEmojiManifest();
 
     return fastify;
 }

@@ -231,7 +231,7 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
     return (
         <>
             <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="px-6 py-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
+                <div className="px-6 py-4 border-b border-border">
                     <div>
                         <h1 className="text-2xl font-bold text-text-primary mb-1">Generators</h1>
                         <p className="text-sm text-text-muted mb-0">
@@ -243,53 +243,6 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={ handleRefreshList }
-                            disabled={ state.isLoading }
-                            className="flex items-center gap-2 px-3 py-2 text-sm text-text-secondary
-                                hover:text-text-primary bg-surface hover:bg-surface-hover border border-border
-                                rounded-lg transition-colors disabled:opacity-50"
-                            title="Refresh"
-                        >
-                            <RefreshCw className={ `w-4 h-4 ${ state.isLoading ? "animate-spin" : "" }` } />
-                            Refresh
-                        </button>
-
-                        <div className="relative" ref={ createMenuRef }>
-                            <button
-                                onClick={ () => setShowCreateDropdown( !showCreateDropdown ) }
-                                className="flex items-center gap-2 px-3 py-2 text-sm text-text-accent bg-accent/15
-                                    hover:bg-accent/25 border border-border-accent rounded-lg transition-colors"
-                            >
-                                <Plus className="w-4 h-4" />
-                                New setup
-                                <ChevronDown className="w-3 h-3" />
-                            </button>
-
-                            { showCreateDropdown && (
-                                <div className="absolute right-0 mt-1 w-56 bg-surface border border-border
-                                    rounded-lg shadow-lg z-10 overflow-hidden">
-                                    <button
-                                        onClick={ () => handleShowCreateModal( "dynamic" ) }
-                                        className="w-full px-3 py-2 text-left text-sm text-text-primary
-                                            hover:bg-surface-elevated flex items-center gap-2"
-                                    >
-                                        <Radio className="w-4 h-4 text-success" />
-                                        Dynamic Channel Setup
-                                    </button>
-                                    <button
-                                        onClick={ () => handleShowCreateModal( "scaling" ) }
-                                        className="w-full px-3 py-2 text-left text-sm text-text-primary
-                                            hover:bg-surface-elevated flex items-center gap-2"
-                                    >
-                                        <Layers className="w-4 h-4 text-text-accent" />
-                                        Auto-Scaling Setup
-                                    </button>
-                                </div>
-                            ) }
-                        </div>
-                    </div>
                 </div>
 
                 { state.error && (
@@ -315,6 +268,58 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                             selectedId={ selectedMasterChannelId }
                             onSelect={ handleSelectChannel }
                         />
+
+                        { /* Below the list rather than in the header: both act on the list, and a
+                             long one scrolls the header away from them. */ }
+                        <div className="shrink-0 p-2 border-t border-border flex items-center gap-2">
+                            <button
+                                onClick={ handleRefreshList }
+                                disabled={ state.isLoading }
+                                className="flex items-center justify-center gap-2 px-3 py-2 text-sm text-text-secondary
+                                    hover:text-text-primary bg-surface hover:bg-surface-hover border border-border
+                                    rounded-lg transition-colors disabled:opacity-50"
+                                title="Refresh"
+                            >
+                                <RefreshCw className={ `w-4 h-4 ${ state.isLoading ? "animate-spin" : "" }` } />
+                                Refresh
+                            </button>
+
+                            <div className="relative flex-1" ref={ createMenuRef }>
+                                <button
+                                    onClick={ () => setShowCreateDropdown( !showCreateDropdown ) }
+                                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm
+                                        text-text-accent bg-accent/15 hover:bg-accent/25 border border-border-accent
+                                        rounded-lg transition-colors"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    New setup
+                                    <ChevronDown className="w-3 h-3" />
+                                </button>
+
+                                { showCreateDropdown && (
+                                    // Opens upward, there is nothing below it to open into.
+                                    <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface
+                                        border border-border rounded-lg shadow-lg z-10 overflow-hidden">
+                                        <button
+                                            onClick={ () => handleShowCreateModal( "dynamic" ) }
+                                            className="w-full px-3 py-2 text-left text-sm text-text-primary
+                                                hover:bg-surface-elevated flex items-center gap-2"
+                                        >
+                                            <Radio className="w-4 h-4 text-success" />
+                                            Dynamic Channel Setup
+                                        </button>
+                                        <button
+                                            onClick={ () => handleShowCreateModal( "scaling" ) }
+                                            className="w-full px-3 py-2 text-left text-sm text-text-primary
+                                                hover:bg-surface-elevated flex items-center gap-2"
+                                        >
+                                            <Layers className="w-4 h-4 text-text-accent" />
+                                            Auto-Scaling Setup
+                                        </button>
+                                    </div>
+                                ) }
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex-1 flex flex-col bg-background">

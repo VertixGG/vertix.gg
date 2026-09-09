@@ -21,6 +21,10 @@ const CHUNK_TIME_LIMIT = 20000;
 const DISCORD_ERROR_UNKNOWN_CHANNEL = 10003;
 const DISCORD_ERROR_UNKNOWN_GUILD = 10004;
 
+const EXCLUDED_GUILD_IDS_ENV_KEY = "DEV_GUILD_ID";
+
+const EXCLUDED_GUILD_IDS_SEPARATOR = ",";
+
 class CleanupWorker extends InitializeBase {
     private static instance: CleanupWorker;
 
@@ -40,12 +44,30 @@ class CleanupWorker extends InitializeBase {
         return CleanupWorker.getInstance();
     }
 
+    private getExcludedGuildIds(): string[] {
+        return ( process.env[ EXCLUDED_GUILD_IDS_ENV_KEY ] ?? "" )
+            .split( EXCLUDED_GUILD_IDS_SEPARATOR )
+            .map( ( guildId ) => guildId.trim() )
+            .filter( ( guildId ) => guildId.length > 0 );
+    }
+
+    private getGuildExclusionFilter(): { guildId?: { notIn: string[] } } {
+        const excludedGuildIds = this.getExcludedGuildIds();
+
+        if ( ! excludedGuildIds.length ) {
+            return {};
+        }
+
+        return { guildId: { notIn: excludedGuildIds } };
+    }
+
     private async removeNonExistentChannelsByType( client: Client, channelType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {
         const prisma = PrismaBotClient.$.getClient();
 
         const channels = await prisma.channel.findMany( {
             where: {
-                internalType: channelType
+                internalType: channelType,
+                ... this.getGuildExclusionFilter()
             },
             select: {
                 id: true,
@@ -143,7 +165,9 @@ class CleanupWorker extends InitializeBase {
     private async removeEmptyCategories( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
-        const categories = await prisma.category.findMany();
+        const categories = await prisma.category.findMany( {
+            where: this.getGuildExclusionFilter()
+        } );
 
         let currentIndex = 0;
         let startTime = Date.now();
@@ -222,7 +246,8 @@ class CleanupWorker extends InitializeBase {
             where: {
                 updatedAtInternal: {
                     lt: new Date( Date.now() - 30 * 24 * 60 * 60 * 1000 )
-                }
+                },
+                ... this.getGuildExclusionFilter()
             },
             select: {
                 id: true,

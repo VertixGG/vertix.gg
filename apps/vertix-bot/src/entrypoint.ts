@@ -36,7 +36,7 @@ import { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 
-import { initWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
+import { initWorker, CleanupWorker } from "@vertix.gg/bot/src/_workers/cleanup-worker";
 
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 
@@ -106,6 +106,14 @@ type ExportBinder = {
         options?: BindingRegistrationOptions
     ) => void;
 };
+
+const ENV_MODE_ENV_KEY = "ENV_MODE";
+
+const ENV_MODE_DEV = "DEV";
+
+function isDevEnvMode(): boolean {
+    return ENV_MODE_DEV === process.env[ ENV_MODE_ENV_KEY ]?.trim().toUpperCase();
+}
 
 function registerHandlerIfMissing(
     id: string,
@@ -920,8 +928,12 @@ export async function entryPoint( options: {
 
     GlobalLogger.$.info( entryPoint, "Bot is initialized" );
 
-    // TODO: Dont run in dev mode
-    // CleanupWorker.$.handle( client ).catch( ( error ) => {
-    //     GlobalLogger.$.error( entryPoint, "Startup channel cleanup failed", error );
-    // } );
+    if ( isDevEnvMode() ) {
+        GlobalLogger.$.info( entryPoint, `Startup channel cleanup is skipped - '${ ENV_MODE_ENV_KEY }' is '${ ENV_MODE_DEV }'` );
+        return;
+    }
+
+    CleanupWorker.$.handle( client ).catch( ( error ) => {
+        GlobalLogger.$.error( entryPoint, "Startup channel cleanup failed", error );
+    } );
 }

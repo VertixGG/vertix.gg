@@ -1,6 +1,6 @@
 import { GuildChannel } from "discord.js";
 
-import type { RawGuildChannelData } from "discord.js/typings/rawDataTypes";
+import type { RawGuildChannelData } from "@vertix.gg/test-utils/src/__mock__/discord/raw-data-types";
 
 import type { GuildMock } from "@vertix.gg/test-utils/src/__mock__/discord/guild-mock";
 

@@ -23,6 +23,7 @@
         "@vertix.gg/gui": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
+        "@zenflux/utils": "latest",
         "dotenv": "^16.0.3",
         "fastify": "^5.2.1",
         "picocolors": "^1.0.1"

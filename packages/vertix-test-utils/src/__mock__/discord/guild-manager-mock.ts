@@ -11,7 +11,7 @@ import type {
     GuildMemberManager,
     UserResolvable
 } from "discord.js";
-import type { RawGuildMemberData } from "discord.js/typings/rawDataTypes";
+import type { RawGuildMemberData } from "@vertix.gg/test-utils/src/__mock__/discord/raw-data-types";
 
 export class GuildManagerMock {
     private guild: Guild;

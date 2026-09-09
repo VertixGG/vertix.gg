@@ -7,8 +7,11 @@
         "vertix-gui:typecheck": "bunx --bun tsc --noEmit"
     },
     "dependencies": {
+        "@vertix.gg/base": "workspace:*",
         "@vertix.gg/data": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
-        "@vertix.gg/base": "workspace:*"
+        "@zenflux/utils": "latest",
+        "discord.js": "latest",
+        "picocolors": "^1.1.1"
     }
 }

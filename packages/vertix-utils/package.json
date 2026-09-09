@@ -7,6 +7,8 @@
     "dependencies": {
         "@vertix.gg/base": "workspace:*",
         "cross-fetch": "^4.1.0",
+        "discord-api-types": "latest",
+        "discord.js": "latest",
         "tough-cookie": "^4.1.2"
     },
     "devDependencies": {

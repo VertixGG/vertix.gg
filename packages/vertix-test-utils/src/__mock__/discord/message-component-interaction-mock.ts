@@ -1,6 +1,6 @@
 // import { BaseInteraction, MessageComponentInteraction } from "discord.js";
 //
-// import { RawMessageComponentInteractionData } from "discord.js/typings/rawDataTypes";
+// import { RawMessageComponentInteractionData } from "@vertix.gg/test-utils/src/__mock__/discord/raw-data-types";
 //
 // import { ClientMock } from "./client-mock";
 // import { UserMock } from "./user-mock";

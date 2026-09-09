@@ -1,4 +1,4 @@
-import type { RawGuildMemberData } from "discord.js/typings/rawDataTypes";
+import type { RawGuildMemberData } from "@vertix.gg/test-utils/src/__mock__/discord/raw-data-types";
 import type { GuildMember } from "discord.js";
 
 import type { ClientMock } from "@vertix.gg/test-utils/src/__mock__/discord/client-mock";

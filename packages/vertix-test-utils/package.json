@@ -6,6 +6,9 @@
     },
     "devDependencies": {
         "@vertix.gg/base": "workspace:*"
-
+    },
+    "dependencies": {
+        "discord-api-types": "latest",
+        "discord.js": "latest"
     }
 }

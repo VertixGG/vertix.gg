@@ -4,7 +4,7 @@ import { GuildChannelManagerMock } from "@vertix.gg/test-utils/src/__mock__/disc
 
 import type { Guild, GuildChannelManager, GuildMemberManager } from "discord.js";
 
-import type { RawGuildData } from "discord.js/typings/rawDataTypes";
+import type { RawGuildData } from "@vertix.gg/test-utils/src/__mock__/discord/raw-data-types";
 
 import type { ClientMock } from "@vertix.gg/test-utils/src/__mock__/discord/client-mock";
 

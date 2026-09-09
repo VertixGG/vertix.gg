@@ -12,6 +12,7 @@
         "@vertix.gg/gui": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
+        "discord.js": "latest",
         "prisma": "latest"
     }
 }

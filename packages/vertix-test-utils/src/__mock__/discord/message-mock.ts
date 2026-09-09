@@ -1,6 +1,6 @@
 // import { Message } from "discord.js";
 //
-// import { RawMessageData } from "discord.js/typings/rawDataTypes";
+// import { RawMessageData } from "@vertix.gg/test-utils/src/__mock__/discord/raw-data-types";
 //
 // import { ClientMock } from "./client-mock";
 //

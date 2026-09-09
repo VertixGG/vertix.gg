@@ -19,14 +19,21 @@
         "vertix-bot:ts-node:start:dev--debug": "NODE_OPTIONS='--max-old-space-size=226' ts-node src/index.ts"
     },
     "dependencies": {
+        "@discordjs/rest": "^2.6.3",
         "@top-gg/sdk": "^3.1.6",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/data": "workspace:*",
         "@vertix.gg/gui": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
+        "@zenflux/utils": "latest",
         "cross-fetch": "^3.1.5",
+        "discord-api-types": "latest",
+        "discord.js": "latest",
         "dotenv": "^16.0.3",
         "picocolors": "^1.0.1",
         "tough-cookie": "^6.0.0"
+    },
+    "devDependencies": {
+        "@zenflux/cli": "latest"
     }
 }

@@ -107,6 +107,14 @@ const INHERITED_NOTE = (
     </>
 );
 
+const PUBLIC_PRIVACY_NOTE = (
+    <>
+        A public channel is not restricted, so it takes the
+        <strong className="font-semibold"> generator</strong>&apos;s own permissions. Changing them
+        on the <strong className="font-semibold">generator</strong> moves this with it.
+    </>
+);
+
 const COPIED_LIMIT_NOTE = (
     <>
         This <strong className="font-semibold">generator</strong> sets no limit of its own, so a new
@@ -303,6 +311,9 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                         <SettingRow
                                             label="Privacy"
                                             value={ PRIVACY_STATE_LABELS[ settings?.dynamicChannelDefaultPrivacyState ?? "public" ] }
+                                            note={ "public" === ( settings?.dynamicChannelDefaultPrivacyState ?? "public" )
+                                                ? PUBLIC_PRIVACY_NOTE
+                                                : undefined }
                                         />
                                         <SettingRow
                                             label="User limit"

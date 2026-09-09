@@ -32,7 +32,9 @@ export interface DynamicConfigFormProps {
 }
 
 const PRIVACY_STATES: ReadonlyArray<{ value: ChannelPrivacyState; label: string; hint: string }> = [
-    { value: "public", label: "🌐 Public", hint: "Anyone who can see the category can join" },
+    // Public writes no permission of its own, so the channel keeps what it inherited from the
+    // generator - saying it here rather than describing the category, which no longer decides.
+    { value: "public", label: "🌐 Public", hint: "Not restricted - takes the generator's own permissions" },
     { value: "private", label: "🚫 Private", hint: "Visible, but only the people the owner lets in" },
     { value: "hidden", label: "🙈 Hidden", hint: "Neither visible nor joinable until the owner allows it" }
 ];

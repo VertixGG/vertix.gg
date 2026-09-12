@@ -23,17 +23,21 @@ export const UI_VERSION = {
  * wrong way round while dropping 12 and 13 entirely - so a v2 generator listed a button it does
  * not carry and hid two it does.
  *
- * Not a bijection: v2 drew privacy as two buttons where v3 draws one, and v3 has buttons v2 never
- * carried - so this reads one way only, and a number with no entry is a button v3 dropped rather
- * than renamed. Ids 8-11 and 14 are v2's permission menus, which are not buttons a generator can
- * choose, so they are deliberately absent.
+ * Not a bijection: v3 has buttons v2 never carried, and v2 draws privacy as two buttons - state and
+ * visibility - where v3 draws one. Those two keep separate ids here rather than both reading as
+ * `privacy`: a generator arranges them independently, and collapsing them left the second one
+ * unaddressable, so it could not be saved into a set at all.
+ *
+ * `visibility` is therefore a v2 only id. It reads one way only, and a number with no entry is a
+ * button v3 dropped rather than renamed. Ids 8-11 and 14 are v2's permission menus, which are not
+ * buttons a generator can choose, so they are deliberately absent.
  */
 export const V2_TO_V3_BUTTON_IDS: Readonly<Record<string, string>> = {
     "0": "rename",
     "1": "limit",
     "2": "clear-chat",
     "3": "privacy",
-    "4": "privacy",
+    "4": "visibility",
     "5": "access",
     "6": "rest-channel",
     "7": "claim-button",
@@ -56,7 +60,7 @@ export const V2_ELEMENT_TO_V3_BUTTON_ID: Readonly<Record<string, string>> = {
     "VertixBot/UI-V2/DynamicChannelMetaLimitButton": "limit",
     "VertixBot/UI-V2/DynamicChannelMetaClearChatButton": "clear-chat",
     "VertixBot/UI-V2/DynamicChannelPermissionsStateButton": "privacy",
-    "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton": "privacy",
+    "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton": "visibility",
     "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton": "access",
     "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton": "rest-channel",
     "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": "claim-button",

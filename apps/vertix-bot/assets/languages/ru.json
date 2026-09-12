@@ -419,6 +419,18 @@
         "content": {
           "label": "Постучать"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Изменить захват"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
+        "content": {
+          "label": "Назад"
+        }
       }
     ],
     "textInputs": [
@@ -519,6 +531,30 @@
         "content": {
           "label": "НАЗВАНИЕ ШАБЛОНА",
           "placeholder": "Введите название шаблона…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "Секунды, пусто — значение по умолчанию"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "Секунды, пусто — значение по умолчанию"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "Секунды, пусто — значение по умолчанию"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "Секунды, пусто — значение по умолчанию"
         }
       }
     ],
@@ -1031,6 +1067,26 @@
         "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
         "content": {
           "placeholder": "🚪 Выберите канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ Выберите значение для изменения",
+          "selectOptions": [
+            {
+              "label": "∙ Отсутствие до захвата"
+            },
+            {
+              "label": "∙ Интервал проверки"
+            },
+            {
+              "label": "∙ Длительность голосования"
+            },
+            {
+              "label": "∙ Время за кандидата"
+            }
+          ]
         }
       }
     ]
@@ -3265,6 +3321,16 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  Настройки захвата",
+        "description": "Когда владелец динамического канала покидает его, Vertix какое-то время ждёт, прежде чем предложить канал тем, кто ещё внутри. Они голосуют за того, кто его займёт.\n\nВыберите значение ниже, чтобы изменить его. Значение с пометкой {defaultMarker} следует настройке самого бота, а не выбору, сделанному здесь; пустое поле возвращает его к ней.\n\n**🚪 Отсутствие до захвата** ∙ {valueClaimTimeout}\nСколько владелец может отсутствовать, прежде чем канал предложат остальным.\n\n**🔁 Интервал проверки** ∙ {valueClaimInterval}\nКак часто Vertix ищет заброшенные каналы — от этого зависит и то, насколько точно срабатывает ожидание выше.\n\n**🗳️ Длительность голосования** ∙ {valueVoteTimeout}\nСколько времени голосование за захват остаётся открытым.\n\n**➕ Время за кандидата** ∙ {valueVoteAddTime}\nДобавляется к идущему голосованию каждый раз, когда кто-то новый выдвигает себя.\n",
+        "options": {
+          "defaultMarker": "*(по умолчанию)*"
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3382,6 +3448,30 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Сохранить шаблон"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ Отсутствие до захвата"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ Интервал проверки"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ Длительность голосования"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ Время за кандидата"
       }
     }
   ]

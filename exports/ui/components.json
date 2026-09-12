@@ -389,6 +389,17 @@
                             }
                         },
                         {
+                            "element": "VertixBot/UI-General/SetupTimingsEditButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/SetupTimingsEditButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Edit Claim",
+                                "style": "secondary",
+                                "emoji": "⏱️"
+                            }
+                        },
+                        {
                             "element": "VertixBot/UI-General/DoneButton",
                             "definition": {
                                 "name": "VertixBot/UI-General/DoneButton",
@@ -396,6 +407,57 @@
                                 "instanceType": "Dynamic",
                                 "label": "✓ Done",
                                 "style": "success"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupClaimElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "◎ ∙ Select Value To Edit",
+                                "selectOptions": [
+                                    {
+                                        "label": "∙ Owner Away Before Claimable",
+                                        "value": "claim-owner-away",
+                                        "emoji": "🚪"
+                                    },
+                                    {
+                                        "label": "∙ Claim Check Interval",
+                                        "value": "claim-check-interval",
+                                        "emoji": "🔁"
+                                    },
+                                    {
+                                        "label": "∙ Vote Duration",
+                                        "value": "vote-duration",
+                                        "emoji": "🗳️"
+                                    },
+                                    {
+                                        "label": "∙ Vote Time Per Candidate",
+                                        "value": "vote-time-per-candidate",
+                                        "emoji": "➕"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/SetupClaimBackButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/SetupClaimBackButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Back",
+                                "style": "secondary",
+                                "emoji": "◀"
                             }
                         }
                     ]
@@ -551,11 +613,39 @@
                         }
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupClaimEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupClaimEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "⏱️  Claim Configuration",
+                            "description": "When the owner of a dynamic channel leaves it, Vertix waits a while before offering the channel to whoever is still inside. They then vote on who takes it over.\n\nPick a value below to change it. A value marked {defaultMarker} follows the bot's own configuration rather than a choice made here, and an empty field puts it back to that.\n\n**🚪 Owner Away Before Claimable** ∙ {valueClaimTimeout}\nHow long the owner can be gone before the channel is offered to the others.\n\n**🔁 Claim Check Interval** ∙ {valueClaimInterval}\nHow often Vertix looks for abandoned channels, which is also how close to the wait above the offer actually lands.\n\n**🗳️ Vote Duration** ∙ {valueVoteTimeout}\nHow long a claim vote stays open once it starts.\n\n**➕ Vote Time Per Candidate** ∙ {valueVoteAddTime}\nAdded to the running vote each time someone new puts themselves forward.\n",
+                            "color": 3369963,
+                            "options": {
+                                "defaultMarker": "*(default)*"
+                            },
+                            "vars": {
+                                "valueClaimTimeout": "{valueClaimTimeout}",
+                                "valueClaimInterval": "{valueClaimInterval}",
+                                "valueVoteTimeout": "{valueVoteTimeout}",
+                                "valueVoteAddTime": "{valueVoteAddTime}",
+                                "defaultMarker": "{defaultMarker}"
+                            }
+                        }
+                    }
+                ]
             }
         ],
         "modals": [
             "VertixBot/UI-General/BadwordsModal",
-            "VertixBot/UI-General/SetupScalingConfigModal"
+            "VertixBot/UI-General/SetupScalingConfigModal",
+            "VertixBot/UI-General/SetupClaimTimeoutModal",
+            "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+            "VertixBot/UI-General/SetupVoteTimeoutModal",
+            "VertixBot/UI-General/SetupVoteAddTimeModal"
         ],
         "modalDefinitions": [
             {
@@ -593,6 +683,58 @@
                         "maxLength": 3
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+                "title": "⏱️ Owner Away Before Claimable",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+                        "label": "Seconds, empty for the default",
+                        "style": "short",
+                        "minLength": 0,
+                        "maxLength": 7
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+                "title": "⏱️ Claim Check Interval",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+                        "label": "Seconds, empty for the default",
+                        "style": "short",
+                        "minLength": 0,
+                        "maxLength": 7
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+                "title": "⏱️ Vote Duration",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+                        "label": "Seconds, empty for the default",
+                        "style": "short",
+                        "minLength": 0,
+                        "maxLength": 7
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+                "title": "⏱️ Vote Time Per Candidate",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+                        "label": "Seconds, empty for the default",
+                        "style": "short",
+                        "minLength": 0,
+                        "maxLength": 7
+                    }
+                ]
             }
         ],
         "defaultElementsGroup": "VertixBot/UI-General/SetupElementsGroup",
@@ -601,8 +743,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 2,
-                "withDefinition": 2,
+                "total": 3,
+                "withDefinition": 3,
                 "missingDefinition": 0
             }
         }

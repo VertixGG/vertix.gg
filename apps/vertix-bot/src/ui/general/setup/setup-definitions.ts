@@ -2,6 +2,11 @@ import "@vertix.gg/prisma/bot-client";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
+import type {
+    GuildTimingsInterface,
+    TGuildTimingsOverrides
+} from "@vertix.gg/definitions/src/guild-timings-definitions";
+
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export const MAX_EDIT_MASTER_BUTTONS_PER_ROW = 2;
@@ -23,6 +28,10 @@ export interface ISetupArgs extends UIArgs {
     scalingPrefix?: string;
     scalingMaxMembers?: number;
     scalingMasterChannelIndex?: string | number;
+    /** In milliseconds, as the setting is stored - the timings screen is what turns them into seconds. */
+    timingsOverrides?: TGuildTimingsOverrides;
+    /** In milliseconds - what the guild runs on now, its own choices over the environment defaults. */
+    timingsEffective?: GuildTimingsInterface;
 }
 
 export const SETUP_EMBED_VARS = {

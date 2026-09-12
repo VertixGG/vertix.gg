@@ -82,6 +82,13 @@
                 "hooks": []
             },
             {
+                "key": "VertixBot/UI-General/SetupClaim",
+                "elementsGroup": "VertixBot/UI-General/SetupClaimElementsGroup",
+                "embedsGroup": "VertixBot/UI-General/SetupClaimEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
                 "key": "maxMasterChannelsReached",
                 "elementsGroup": null,
                 "embedsGroup": "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",

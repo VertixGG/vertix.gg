@@ -1,8 +1,11 @@
+import { MessageFlags } from "discord.js";
+
 import {
     VERSION_UI_V2,
     VERSION_UI_V3
 } from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
@@ -38,6 +41,8 @@ import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/e
 
 import { SetupMaxMasterChannelsEmbed } from "@vertix.gg/bot/src/ui/general/setup-elements/setup-max-master-channels-embed";
 
+import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
@@ -51,6 +56,20 @@ import { BadwordsModal } from "@vertix.gg/bot/src/ui/general/badwords/badwords-m
 
 import { SetupScalingConfigModal } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-config-modal";
 
+import {
+    SETUP_CLAIM_OPTIONS,
+    SetupClaimSweepIntervalModal,
+    SetupClaimTimeoutModal,
+    SetupVoteAddTimeModal,
+    SetupVoteTimeoutModal,
+    timingsMillisecondsToSeconds,
+    timingsSecondsToMilliseconds
+} from "@vertix.gg/bot/src/ui/general/setup/elements/setup-claim-modals";
+
+import { SetupClaimElementsGroup } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-claim-elements-group";
+
+import { SetupClaimEmbed } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-claim-embed";
+
 import { SETUP_EMBED_VARS } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
 import {
@@ -59,6 +78,8 @@ import {
     MASTER_CHANNEL_TYPE_V3,
     SetupMasterCreateSelectMenu
 } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
+
+import type { SetupClaimOptionInterface } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-claim-modals";
 
 import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
@@ -319,11 +340,88 @@ async function onScalingConfigModalSubmitted(
     context.deleteArgs( interaction );
 }
 
+const SETUP_CLAIM_STEP = "VertixBot/UI-General/SetupClaim",
+    SETUP_SERVER_OPTIONS_STEP = "VertixBot/UI-General/SetupServerOptions";
+
+async function onTimingsEditClicked(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    await context.editReplyWithStep( interaction, SETUP_CLAIM_STEP );
+}
+
+async function onClaimOptionSelected(
+    context: IExecutionAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+) {
+    const selected = interaction.values.at( 0 ),
+        option = SETUP_CLAIM_OPTIONS.find( ( entry ) => entry.value === selected );
+
+    if ( !option ) {
+        return;
+    }
+
+    await context.showModal( interaction, option.modal );
+}
+
+/**
+ * Function onClaimValueSubmitted() :: Takes one timing as the guild typed it, in seconds.
+ *
+ * An empty field drops that timing's override, which puts it back on the environment default - the
+ * placeholder shows what that is, so submitting an untouched field changes nothing. The others are
+ * read back and written again untouched, since each value now arrives on its own.
+ */
+async function onClaimValueSubmitted(
+    context: IExecutionAdapterContext<UIDefaultModalChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultModalChannelTextInteraction,
+    option: SetupClaimOptionInterface
+) {
+    const inputId = context.customIdStrategy.generateId( `VertixBot/UI-General/SetupAdapter:${ option.input }` );
+
+    const value = interaction.fields.getTextInputValue( inputId ).trim(),
+        overrides = { ... await GuildDataManager.$.getTimingsOverrides( interaction.guild.id ) };
+
+    if ( !value.length ) {
+        delete overrides[ option.field ];
+    } else {
+        const seconds = Number( value ),
+            milliseconds = timingsSecondsToMilliseconds( seconds );
+
+        if ( !Number.isInteger( seconds ) || !GuildTimingsConfig.$.isWithinBounds( option.field, milliseconds ) ) {
+            const { min, max } = GuildTimingsConfig.$.getBounds( option.field );
+
+            await interaction.reply( {
+                content:
+                    `⏱️ \`${ value }\` was not saved - expected a whole number of seconds between ` +
+                    `${ timingsMillisecondsToSeconds( min ) } and ${ timingsMillisecondsToSeconds( max ) }.`,
+                flags: MessageFlags.Ephemeral
+            } );
+
+            return;
+        }
+
+        overrides[ option.field ] = milliseconds;
+    }
+
+    await GuildDataManager.$.setTimings( interaction.guild.id, overrides );
+
+    await DynamicChannelClaimManager.refreshGuildTimers( interaction.guild.id );
+
+    await context.editReplyWithStep( interaction, SETUP_CLAIM_STEP );
+}
+
+async function onClaimBackClicked(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    await context.editReplyWithStep( interaction, SETUP_SERVER_OPTIONS_STEP );
+}
+
 async function onServerOptionsClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    await context.editReplyWithStep( interaction, "VertixBot/UI-General/SetupServerOptions" );
+    await context.editReplyWithStep( interaction, SETUP_SERVER_OPTIONS_STEP );
 }
 
 async function onServerOptionsDoneClicked(
@@ -693,10 +791,16 @@ const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/Setup
 const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponent" )
     .addElementsGroup( SetupElementsGroup )
     .addElementsGroup( ServerOptionsElementsGroup )
+    .addElementsGroup( SetupClaimElementsGroup )
     .addEmbedsSingleGroup( SetupEmbed )
     .addEmbedsSingleGroup( SetupMaxMasterChannelsEmbed )
+    .addEmbedsSingleGroup( SetupClaimEmbed )
     .addModal( BadwordsModal )
     .addModal( SetupScalingConfigModal )
+    .addModal( SetupClaimTimeoutModal )
+    .addModal( SetupClaimSweepIntervalModal )
+    .addModal( SetupVoteTimeoutModal )
+    .addModal( SetupVoteAddTimeModal )
     .setDefaultElementsGroup( "VertixBot/UI-General/SetupElementsGroup" )
     .setDefaultEmbedsGroup( "VertixBot/UI-General/SetupEmbedGroup" )
     .setInstanceType( UIInstancesTypes.Dynamic )
@@ -738,7 +842,11 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             voiceRoleId: await GuildDataManager.$.getVoiceRoleId( interaction.guild.id ),
             verifiedRoleIds: await GuildDataManager.$.getVerifiedRoleIds( interaction.guild.id ),
             staffRoleIds: await GuildDataManager.$.getStaffRoleIds( interaction.guild.id ),
-            guildId: interaction.guild.id
+            guildId: interaction.guild.id,
+            // Read here rather than when the timings screen opens: a modal is built from these
+            // args, and `showModal` reaches for them through this alone.
+            timingsOverrides: await GuildDataManager.$.getTimingsOverrides( interaction.guild.id ),
+            timingsEffective: await GuildDataManager.$.getTimings( interaction.guild.id )
         };
 
         if ( argsFromManager?.maxMasterChannels ) {
@@ -773,6 +881,17 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                     staffRolesMessage: "**None**"
                 }
             } )
+            .addState( "Claim", {
+                executionStep: "VertixBot/UI-General/SetupClaim",
+                embedsGroup: "VertixBot/UI-General/SetupClaimEmbedGroup",
+                elementsGroup: "VertixBot/UI-General/SetupClaimElementsGroup",
+                previewDefaultVars: {
+                    valueClaimTimeout: "`600s` *(default)*",
+                    valueClaimInterval: "`60s` *(default)*",
+                    valueVoteTimeout: "`60s` *(default)*",
+                    valueVoteAddTime: "`60s` *(default)*"
+                }
+            } )
             .addState( "MaxMasterChannelsReached", {
                 executionStep: "maxMasterChannelsReached",
                 embedsGroup: "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup",
@@ -792,6 +911,13 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             .addTransition( "GuildStaffRolesChanged", { from: "ServerOptions", to: "ServerOptions" } )
             .addTransition( "ServerOptionsDone", { from: "ServerOptions", to: "Initial" } )
             .addTransition( "SubmitScalingConfig", { from: "Initial", to: "Initial" } )
+            .addTransition( "OpenClaim", { from: "ServerOptions", to: "Claim" } )
+            .addTransition( "SelectClaimOption", { from: "Claim", to: "Claim" } )
+            .addTransition( "SubmitClaimTimeout", { from: "Claim", to: "Claim" } )
+            .addTransition( "SubmitClaimInterval", { from: "Claim", to: "Claim" } )
+            .addTransition( "SubmitVoteTimeout", { from: "Claim", to: "Claim" } )
+            .addTransition( "SubmitVoteAddTime", { from: "Claim", to: "Claim" } )
+            .addTransition( "ClaimDone", { from: "Claim", to: "ServerOptions" } )
             .addEntryPoint( {
                 flowName: "VertixBot/UI-General/CommandsFlow",
                 transition: "VertixBot/Commands/Setup",
@@ -935,6 +1061,55 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 "SubmitScalingConfig",
                 async( context, interaction ) => {
                     await onScalingConfigModalSubmitted( context, interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/SetupTimingsEditButton",
+                "OpenClaim",
+                async( context, interaction ) => {
+                    await onTimingsEditClicked( context, interaction );
+                }
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+                "SelectClaimOption",
+                async( context, interaction ) => {
+                    await onClaimOptionSelected( context, interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/SetupClaimBackButton",
+                "ClaimDone",
+                async( context, interaction ) => {
+                    await onClaimBackClicked( context, interaction );
+                }
+            )
+            .bindModal<UIDefaultModalChannelTextInteraction>(
+                SETUP_CLAIM_OPTIONS[ 0 ].modal,
+                SETUP_CLAIM_OPTIONS[ 0 ].transition,
+                async( context, interaction ) => {
+                    await onClaimValueSubmitted( context, interaction, SETUP_CLAIM_OPTIONS[ 0 ] );
+                }
+            )
+            .bindModal<UIDefaultModalChannelTextInteraction>(
+                SETUP_CLAIM_OPTIONS[ 1 ].modal,
+                SETUP_CLAIM_OPTIONS[ 1 ].transition,
+                async( context, interaction ) => {
+                    await onClaimValueSubmitted( context, interaction, SETUP_CLAIM_OPTIONS[ 1 ] );
+                }
+            )
+            .bindModal<UIDefaultModalChannelTextInteraction>(
+                SETUP_CLAIM_OPTIONS[ 2 ].modal,
+                SETUP_CLAIM_OPTIONS[ 2 ].transition,
+                async( context, interaction ) => {
+                    await onClaimValueSubmitted( context, interaction, SETUP_CLAIM_OPTIONS[ 2 ] );
+                }
+            )
+            .bindModal<UIDefaultModalChannelTextInteraction>(
+                SETUP_CLAIM_OPTIONS[ 3 ].modal,
+                SETUP_CLAIM_OPTIONS[ 3 ].transition,
+                async( context, interaction ) => {
+                    await onClaimValueSubmitted( context, interaction, SETUP_CLAIM_OPTIONS[ 3 ] );
                 }
             )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(

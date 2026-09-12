@@ -419,6 +419,18 @@
         "content": {
           "label": "Anklopfen"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Anspruch bearbeiten"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
+        "content": {
+          "label": "Zurück"
+        }
       }
     ],
     "textInputs": [
@@ -519,6 +531,30 @@
         "content": {
           "label": "VORLAGENNAME",
           "placeholder": "Gib einen Namen für deine Vorlage ein …"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "Sekunden, leer für den Standard"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "Sekunden, leer für den Standard"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "Sekunden, leer für den Standard"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "Sekunden, leer für den Standard"
         }
       }
     ],
@@ -1031,6 +1067,26 @@
         "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
         "content": {
           "placeholder": "🚪 Kanal auswählen"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ Wert zum Bearbeiten wählen",
+          "selectOptions": [
+            {
+              "label": "∙ Abwesenheit vor Übernahme"
+            },
+            {
+              "label": "∙ Prüfintervall"
+            },
+            {
+              "label": "∙ Abstimmungsdauer"
+            },
+            {
+              "label": "∙ Zeit pro Kandidat"
+            }
+          ]
         }
       }
     ]
@@ -3265,6 +3321,16 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  Anspruchs-Konfiguration",
+        "description": "Wenn der Besitzer eines dynamischen Kanals ihn verlässt, wartet Vertix eine Weile, bevor der Kanal denjenigen angeboten wird, die noch drin sind. Diese stimmen dann darüber ab, wer ihn übernimmt.\n\nWähle unten einen Wert, um ihn zu ändern. Ein mit {defaultMarker} markierter Wert folgt der Konfiguration des Bots statt einer hier getroffenen Wahl; ein leeres Feld setzt ihn darauf zurück.\n\n**🚪 Abwesenheit vor Übernahme** ∙ {valueClaimTimeout}\nWie lange der Besitzer weg sein darf, bevor der Kanal den anderen angeboten wird.\n\n**🔁 Prüfintervall** ∙ {valueClaimInterval}\nWie oft Vertix nach verlassenen Kanälen sucht - und damit, wie genau das Angebot die obige Wartezeit trifft.\n\n**🗳️ Abstimmungsdauer** ∙ {valueVoteTimeout}\nWie lange eine Übernahme-Abstimmung nach dem Start offen bleibt.\n\n**➕ Zeit pro Kandidat** ∙ {valueVoteAddTime}\nWird der laufenden Abstimmung hinzugefügt, sobald sich jemand Neues aufstellt.\n",
+        "options": {
+          "defaultMarker": "*(Standard)*"
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3382,6 +3448,30 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Vorlage speichern"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ Abwesenheit vor Übernahme"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ Prüfintervall"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ Abstimmungsdauer"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ Zeit pro Kandidat"
       }
     }
   ]

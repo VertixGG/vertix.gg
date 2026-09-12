@@ -419,6 +419,18 @@
         "content": {
           "label": "ノック"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "請求を編集"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
+        "content": {
+          "label": "戻る"
+        }
       }
     ],
     "textInputs": [
@@ -519,6 +531,30 @@
         "content": {
           "label": "テンプレート名",
           "placeholder": "テンプレートの名前を入力…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "秒数、空欄で既定値"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "秒数、空欄で既定値"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "秒数、空欄で既定値"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "秒数、空欄で既定値"
         }
       }
     ],
@@ -1031,6 +1067,26 @@
         "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
         "content": {
           "placeholder": "🚪 チャンネルを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ 編集する値を選択",
+          "selectOptions": [
+            {
+              "label": "∙ 請求までの不在時間"
+            },
+            {
+              "label": "∙ チェック間隔"
+            },
+            {
+              "label": "∙ 投票の継続時間"
+            },
+            {
+              "label": "∙ 候補者ごとの追加時間"
+            }
+          ]
         }
       }
     ]
@@ -3265,6 +3321,16 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  請求の設定",
+        "description": "ダイナミックチャンネルのオーナーが退出すると、Vertix はしばらく待ってから、まだ残っているメンバーにチャンネルを提供します。メンバーは誰が引き継ぐかを投票で決めます。\n\n下から値を選んで変更してください。{defaultMarker} が付いた値は、ここでの選択ではなくボット自身の設定に従います。空欄にすると、その状態に戻ります。\n\n**🚪 請求までの不在時間** ∙ {valueClaimTimeout}\nチャンネルが他のメンバーに提供されるまで、オーナーが不在でいられる時間です。\n\n**🔁 チェック間隔** ∙ {valueClaimInterval}\nVertix が放置されたチャンネルを探す頻度で、上記の待ち時間にどれだけ近いタイミングで提供されるかも決まります。\n\n**🗳️ 投票の継続時間** ∙ {valueVoteTimeout}\n請求の投票が開始してから開いたままになる時間です。\n\n**➕ 候補者ごとの追加時間** ∙ {valueVoteAddTime}\n誰かが新たに立候補するたびに、進行中の投票へ加算されます。\n",
+        "options": {
+          "defaultMarker": "*(既定)*"
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3382,6 +3448,30 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "テンプレートを保存"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ 請求までの不在時間"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ チェック間隔"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ 投票の継続時間"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ 候補者ごとの追加時間"
       }
     }
   ]

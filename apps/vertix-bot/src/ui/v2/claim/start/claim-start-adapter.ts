@@ -81,9 +81,9 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
             ownerId: channelDB.userOwnerId,
             channelId: channel.id,
             ownerDisplayName: await guildGetMemberDisplayName( channel.guild, channelDB.userOwnerId ),
-            absentInterval: DynamicChannelClaimManager.get(
+            absentInterval: await DynamicChannelClaimManager.get(
                 "VertixBot/UI-V2/DynamicChannelClaimManager"
-            ).getChannelOwnershipTimeout()
+            ).getChannelOwnershipTimeout( channel.guildId )
         };
     } )
     .build();

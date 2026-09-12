@@ -6,6 +6,7 @@ import {
     DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
     DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,
     DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES,
+    DEFAULT_GUILD_SETTINGS_KEY_TIMINGS,
     DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES,
     DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE
 } from "@vertix.gg/definitions/src/guild-data-keys";
@@ -18,13 +19,23 @@ import {
 
 import { badwordsMask, badwordsSomeUsed } from "@vertix.gg/base/src/utils/badwords-utils";
 
+import { GUILD_TIMINGS_FIELDS } from "@vertix.gg/definitions/src/guild-timings-definitions";
+
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+
+import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
 
 import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 
 import { ManagerDataBase } from "@vertix.gg/data/src/bases/manager-data-base";
 
+import type {
+    GuildTimingsInterface,
+    TGuildTimingsOverrides
+} from "@vertix.gg/definitions/src/guild-timings-definitions";
+
 import type { MasterChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 import type { Guild } from "discord.js";
 
 interface IGuildSettings {
@@ -233,6 +244,80 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         return result;
     }
 
+    /**
+     * Function getTimings() :: The claim and vote timings a guild runs on.
+     *
+     * `default: null` keeps `getData` from creating the row on a read, so a guild that never chose
+     * its own stays on the environment defaults instead of gaining a row the first time a vote runs.
+     */
+    public async getTimings( guildId: string ): Promise<GuildTimingsInterface> {
+        return GuildTimingsConfig.$.resolve( await this.getTimingsOverrides( guildId ) );
+    }
+
+    /**
+     * Function getTimingsOverrides() :: Only what the guild chose itself.
+     *
+     * Which is what the interface shows as set, and what an empty field there clears.
+     */
+    public async getTimingsOverrides( guildId: string ): Promise<TGuildTimingsOverrides> {
+        const result = await this.getData(
+            {
+                ownerId: guildId,
+                key: DEFAULT_GUILD_SETTINGS_KEY_TIMINGS,
+                default: null,
+                cache: true
+            },
+            true
+        );
+
+        return this.readTimingsOverrides( result?.object ?? null );
+    }
+
+    /**
+     * Function setTimings() :: Replaces the guild's overrides, and drops the row when none are left.
+     *
+     * Replaces rather than merges - a field the interface submitted empty is one the guild wants
+     * back on the environment default, which a merge would hold onto forever.
+     */
+    public async setTimings( guildId: string, overrides: TGuildTimingsOverrides, shouldAdminLog = true ) {
+        const previousOverrides = await this.getTimingsOverrides( guildId ),
+            timings: TGuildTimingsOverrides = {};
+
+        GUILD_TIMINGS_FIELDS.forEach( ( field ) => {
+            const value = overrides[ field ];
+
+            if ( undefined !== value && GuildTimingsConfig.$.isWithinBounds( field, value ) ) {
+                timings[ field ] = value;
+            }
+        } );
+
+        if ( ! Object.keys( timings ).length ) {
+            if ( Object.keys( previousOverrides ).length ) {
+                await this.deleteData( { ownerId: guildId, key: DEFAULT_GUILD_SETTINGS_KEY_TIMINGS }, true );
+            }
+        } else {
+            await this.setData(
+                {
+                    ownerId: guildId,
+                    key: DEFAULT_GUILD_SETTINGS_KEY_TIMINGS,
+                    default: timings,
+                    cache: true
+                },
+                true
+            );
+        }
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setTimings,
+                `⏱️  Timings modified - guildId: "${ guildId }", ` +
+                    `"${ JSON.stringify( previousOverrides ) }" => "${ JSON.stringify( timings ) }"`
+            );
+        }
+
+        return { previousOverrides, overrides: timings };
+    }
+
     public async hasSomeBadword( guildId: string, content: string ) {
         return badwordsSomeUsed( content, await this.getBadwords( guildId ) );
     }
@@ -245,6 +330,31 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         this.logger.debug( this.removeFromCache, `Removing guild data from cache for ownerId: '${ ownerId }'` );
 
         this.deleteCacheWithPrefix( ownerId );
+    }
+
+    /**
+     * Function readTimingsOverrides() :: What a stored row actually holds.
+     *
+     * Anything that is not a number under a field this release knows is left out, so a row written
+     * by a different version reads as unset for that field rather than putting a timer on a value
+     * it cannot run with.
+     */
+    private readTimingsOverrides( object: PrismaBot.Prisma.JsonValue | null ): TGuildTimingsOverrides {
+        if ( ! object || "object" !== typeof object || Array.isArray( object ) ) {
+            return {};
+        }
+
+        const overrides: TGuildTimingsOverrides = {};
+
+        GUILD_TIMINGS_FIELDS.forEach( ( field ) => {
+            const value = object[ field ];
+
+            if ( "number" === typeof value ) {
+                overrides[ field ] = value;
+            }
+        } );
+
+        return overrides;
     }
 
     /**

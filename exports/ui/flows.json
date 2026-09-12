@@ -227,7 +227,8 @@
                     "VertixBot/UI-General/SetupFlow/Transitions/VoiceRoleChanged",
                     "VertixBot/UI-General/SetupFlow/Transitions/GuildVerifiedRolesChanged",
                     "VertixBot/UI-General/SetupFlow/Transitions/GuildStaffRolesChanged",
-                    "VertixBot/UI-General/SetupFlow/Transitions/ServerOptionsDone"
+                    "VertixBot/UI-General/SetupFlow/Transitions/ServerOptionsDone",
+                    "VertixBot/UI-General/SetupFlow/Transitions/OpenClaim"
                 ],
                 "hooks": [],
                 "options": {
@@ -241,6 +242,29 @@
                         "staffRolesMessage": "**None**"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "transitions": [
+                    "VertixBot/UI-General/SetupFlow/Transitions/SelectClaimOption",
+                    "VertixBot/UI-General/SetupFlow/Transitions/SubmitClaimTimeout",
+                    "VertixBot/UI-General/SetupFlow/Transitions/SubmitClaimInterval",
+                    "VertixBot/UI-General/SetupFlow/Transitions/SubmitVoteTimeout",
+                    "VertixBot/UI-General/SetupFlow/Transitions/SubmitVoteAddTime",
+                    "VertixBot/UI-General/SetupFlow/Transitions/ClaimDone"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-General/SetupClaim",
+                    "component": "VertixBot/UI-General/SetupComponent",
+                    "previewDefaultVars": {
+                        "valueClaimTimeout": "`600s` *(default)*",
+                        "valueClaimInterval": "`60s` *(default)*",
+                        "valueVoteTimeout": "`60s` *(default)*",
+                        "valueVoteAddTime": "`60s` *(default)*"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-General/SetupClaimEmbedGroup"
                 }
             }
         ],
@@ -429,6 +453,111 @@
                         "navigation": {
                             "targetState": "VertixBot/UI-General/SetupFlow/States/Initial",
                             "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "to": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/SetupTimingsEditButton",
+                        "sourceEntity": "VertixBot/UI-General/SetupTimingsEditButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/Claim",
+                            "executionStep": "VertixBot/UI-General/SetupClaim"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "to": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/SetupClaimSelectOptionMenu",
+                        "sourceEntity": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/Claim",
+                            "executionStep": "VertixBot/UI-General/SetupClaim"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "to": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/SetupClaimTimeoutModal",
+                        "sourceEntity": "VertixBot/UI-General/SetupClaimTimeoutModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/Claim",
+                            "executionStep": "VertixBot/UI-General/SetupClaim"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "to": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/SetupClaimSweepIntervalModal",
+                        "sourceEntity": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/Claim",
+                            "executionStep": "VertixBot/UI-General/SetupClaim"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "to": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/SetupVoteTimeoutModal",
+                        "sourceEntity": "VertixBot/UI-General/SetupVoteTimeoutModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/Claim",
+                            "executionStep": "VertixBot/UI-General/SetupClaim"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "to": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/SetupVoteAddTimeModal",
+                        "sourceEntity": "VertixBot/UI-General/SetupVoteAddTimeModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/Claim",
+                            "executionStep": "VertixBot/UI-General/SetupClaim"
+                        }
+                    }
+                ]
+            },
+            {
+                "from": "VertixBot/UI-General/SetupFlow/States/Claim",
+                "to": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/SetupClaimBackButton",
+                        "sourceEntity": "VertixBot/UI-General/SetupClaimBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptions",
+                            "executionStep": "VertixBot/UI-General/SetupServerOptions"
                         }
                     }
                 ]

@@ -3,6 +3,7 @@ import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group
 import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
 
 import { BadwordsEditButton } from "@vertix.gg/bot/src/ui/general/badwords/badwords-edit-button";
+import { SetupTimingsEditButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-timings-edit-button";
 import { VoiceRoleMenu } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-menu";
 import { VerifiedRolesMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-menu";
 import { StaffRolesMenu } from "@vertix.gg/bot/src/ui/general/staff-roles/staff-roles-menu";
@@ -11,7 +12,7 @@ const ServerOptionsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-Gener
     .addRow( [ VoiceRoleMenu ] )
     .addRow( [ VerifiedRolesMenu ] )
     .addRow( [ StaffRolesMenu ] )
-    .addRow( [ BadwordsEditButton, DoneButton ] )
+    .addRow( [ BadwordsEditButton, SetupTimingsEditButton, DoneButton ] )
     .build();
 
 export { ServerOptionsElementsGroup };

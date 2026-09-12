@@ -1,8 +1,8 @@
-import process from "process";
-
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/index";
+
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
@@ -18,6 +18,8 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
+import type { TClaimTimings } from "@vertix.gg/definitions/src/guild-timings-definitions";
+
 import type { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
 import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
@@ -32,9 +34,6 @@ import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-
 import type { TAdapterMapping, UIService } from "@vertix.gg/gui/src/ui-service";
 
 import type { Client, Guild, GuildChannel, GuildMember, Message, VoiceBasedChannel, VoiceChannel } from "discord.js";
-
-const FALLBACK_OWNERSHIP_TIMER_INTERVAL = 30 * 1000, // Half minute.
-    FALLBACK_OWNERSHIP_TIMEOUT = 10 * 60 * 1000; // 10 minutes.
 
 interface TDynamicChannelClaimAdapters {
     claimStartAdapter(): TAdapterMapping[ "base" ];
@@ -54,8 +53,6 @@ interface TDynamicChannelClaimManagerRegisterArgs {
 
     dynamicChannelClaimButtonId: string;
 
-    ownershipTimeout?: number;
-    ownershipTimerInterval?: number;
     definitionLoader?: UIDefinitionLoader;
     fallbacks?: TDynamicChannelClaimFallbacks;
 }
@@ -125,9 +122,19 @@ export class DynamicChannelClaimManager extends InitializeBase {
     private static readonly DEFAULT_CLAIM_VOTE_STEP_IN_ENTITY = "VertixBot/UI-V3/ClaimVoteStepInButton";
     private static readonly DEFAULT_CLAIM_VOTE_ADD_ENTITY = "VertixBot/UI-V3/ClaimVoteAddButton";
 
-    private readonly timerIntervals: NodeJS.Timeout[] = [];
+    /**
+     * A sweep per guild, each on the interval that guild chose.
+     *
+     * A guild's timer lives exactly as long as it has a channel being tracked - it is raised by the
+     * first one and cleared with the last, so a guild nobody abandoned a channel in costs nothing.
+     */
+    private readonly guildTimers: Map<string, { interval: NodeJS.Timeout; timings: TClaimTimings }> = new Map();
 
-    private ownerShipTimerInterval: NodeJS.Timeout | null = null;
+    /**
+     * Whether anything has been swept yet, which is what makes the first sweep clear the stale
+     * "Claim Channel" buttons a previous run left behind.
+     */
+    private hasHandledAbandonedChannels = false;
 
     private trackedChannels: {
         [channelId: string]: {
@@ -146,13 +153,6 @@ export class DynamicChannelClaimManager extends InitializeBase {
     }
 
     public static register( instanceName: string, args: TDynamicChannelClaimManagerRegisterArgs ) {
-        args.ownershipTimeout =
-            args.ownershipTimeout ||
-            Number( process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMEOUT || FALLBACK_OWNERSHIP_TIMEOUT );
-        args.ownershipTimerInterval =
-            args.ownershipTimerInterval ||
-            Number( process.env.DYNAMIC_CHANNEL_CLAIM_OWNERSHIP_TIMER_INTERVAL || FALLBACK_OWNERSHIP_TIMER_INTERVAL );
-
         // Check if instance already exists.
         if ( DynamicChannelClaimManager.instances.has( instanceName ) ) {
             throw new Error(
@@ -163,8 +163,6 @@ export class DynamicChannelClaimManager extends InitializeBase {
         const instance = new DynamicChannelClaimManager(
             args.adapters,
             args.dynamicChannelClaimButtonId,
-            args.ownershipTimeout,
-            args.ownershipTimerInterval,
             args.definitionLoader,
             args.fallbacks
         );
@@ -172,6 +170,20 @@ export class DynamicChannelClaimManager extends InitializeBase {
         DynamicChannelClaimManager.instances.set( instanceName, instance );
 
         return instance;
+    }
+
+    /**
+     * Function refreshGuildTimers() :: Puts every registered manager back on a guild's timings.
+     *
+     * The interface that changes them has no business knowing which UI versions happen to be
+     * registered, and in headless mode none of them are.
+     */
+    public static async refreshGuildTimers( guildId: string ) {
+        await Promise.all(
+            Array.from( DynamicChannelClaimManager.instances.values() ).map( ( instance ) =>
+                instance.refreshGuild( guildId )
+            )
+        );
     }
 
     public static get( instanceName: string ) {
@@ -187,8 +199,6 @@ export class DynamicChannelClaimManager extends InitializeBase {
     protected constructor(
         private adapters: TDynamicChannelClaimAdapters,
         private dynamicChannelClaimButtonId: string,
-        private ownershipTimeout: number,
-        private ownershipTimerInterval: number,
         definitionLoader?: UIDefinitionLoader,
         fallbacks?: TDynamicChannelClaimFallbacks
     ) {
@@ -341,14 +351,44 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
     // TODO: Base timer.
     public destroy() {
-        this.timerIntervals.forEach( ( interval ) => clearInterval( interval ) );
+        this.guildTimers.forEach( ( timer ) => clearInterval( timer.interval ) );
+
+        this.guildTimers.clear();
     }
 
-    public getChannelOwnershipTimeout() {
-        return this.ownershipTimeout;
+    public async getChannelOwnershipTimeout( guildId: string ) {
+        return ( await this.resolveGuildTimings( guildId ) ).claimOwnershipTimeout;
     }
 
-    public addChannelTracking( owner: GuildMember, channel: VoiceBasedChannel ) {
+    /**
+     * Function refreshGuild() :: Puts a guild back on the timings it now holds.
+     *
+     * A guild with nothing tracked has no timer to rebuild - the next channel it abandons raises
+     * one, and reads the timings then.
+     */
+    public async refreshGuild( guildId: string ) {
+        const timer = this.guildTimers.get( guildId );
+
+        if ( !timer ) {
+            return;
+        }
+
+        const timings = await this.resolveGuildTimings( guildId );
+
+        // The timeout is read on every sweep, so holding it is enough - the interval is what the
+        // running timer was built with, and only a change there is worth rebuilding for.
+        if ( timings.claimOwnershipTimerInterval === timer.timings.claimOwnershipTimerInterval ) {
+            timer.timings = timings;
+
+            return;
+        }
+
+        this.clearGuildTimer( guildId );
+
+        await this.ensureGuildTimer( guildId );
+    }
+
+    public async addChannelTracking( owner: GuildMember, channel: VoiceBasedChannel ) {
         // Check if channel supports "Claim Channel".
         const trackingData = {
             owner,
@@ -362,6 +402,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
         );
 
         this.trackedChannels[ channel.id ] = trackingData;
+
+        await this.ensureGuildTimer( channel.guildId );
     }
 
     public removeChannelOwnerTracking( ownerId: string, channelId?: string ) {
@@ -370,6 +412,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
                 this.removeChannelOwnerTracking,
                 `Channel id is not provided! - Removing all owners with id: '${ ownerId }' from tracking.`
             );
+
+            const affectedGuildIds = new Set<string>();
 
             Object.keys( this.trackedChannels ).forEach( ( _channelId ) => {
                 const channelData = this.trackedChannels[ _channelId ];
@@ -380,9 +424,13 @@ export class DynamicChannelClaimManager extends InitializeBase {
                         `Channel id: '${ _channelId }' owner id: '${ ownerId }' - Removing channel from tracking according to ownerId.`
                     );
 
+                    affectedGuildIds.add( channelData.channel.guildId );
+
                     delete this.trackedChannels[ _channelId ];
                 }
             } );
+
+            affectedGuildIds.forEach( ( guildId ) => this.clearGuildTimerWhenEmpty( guildId ) );
 
             return;
         }
@@ -401,6 +449,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
         this.logger.info( this.removeChannelTracking, `Channel id: '${ channel.id }' - Removing channel from tracking.` );
 
         delete this.trackedChannels[ channelId ];
+
+        this.clearGuildTimerWhenEmpty( channel.guildId );
     }
 
     public markChannelAsClaimable( channel: VoiceBasedChannel ) {
@@ -477,7 +527,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
                 // If it startup process, remove old "Claim Channel" button.
                 // TODO: Not good place for this.
-                if ( !this.ownerShipTimerInterval ) {
+                if ( !this.hasHandledAbandonedChannels ) {
                     // Remove old "Claim Channel" button.
                     await this.adapters.claimStartAdapter().deleteRelatedComponentMessagesInternal( channel );
                 }
@@ -519,7 +569,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
                     continue;
                 }
 
-                this.addChannelTracking( owner, channel as VoiceBasedChannel );
+                await this.addChannelTracking( owner, channel as VoiceBasedChannel );
             }
         };
 
@@ -541,18 +591,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             await handleChannels( dynamicChannels );
         }
 
-        if ( !this.ownerShipTimerInterval ) {
-            const timerInterval = this.ownershipTimerInterval;
-
-            this.logger.info(
-                this.handleAbandonedChannels,
-                `Setting up timer with interval: '${ ( timerInterval / 60000 ).toFixed( 1 ) } minute(s)'`
-            );
-
-            this.ownerShipTimerInterval = setInterval( this.trackedChannelsTimer.bind( this ), timerInterval );
-
-            this.timerIntervals.push( this.ownerShipTimerInterval );
-        }
+        this.hasHandledAbandonedChannels = true;
     }
 
     public async handleVoteRequest( interaction: IVoteDefaultComponentInteraction, forceMessage?: Message<true> ) {
@@ -623,6 +662,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         this.removeChannelOwnerTracking( channelDB.userOwnerId, interaction.channelId );
 
+        const timings = await GuildDataManager.$.getTimings( interaction.guildId );
+
         DynamicChannelVoteManager.$.start(
             interaction.channel,
             ( channel, state ) =>
@@ -630,7 +671,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
                     interaction,
                     message: forceMessage || interaction.message
                 } ), // TODO Remove object.
-            interaction
+            interaction,
+            timings
         );
 
         this.dynamicChannelService.editPrimaryMessageDebounce( interaction.channel, 100 );
@@ -799,42 +841,55 @@ export class DynamicChannelClaimManager extends InitializeBase {
         }
     }
 
-    private async trackedChannelsTimer() {
-        if ( this.trackedChannels.length ) {
+    private async trackedChannelsTimer( guildId: string ) {
+        const timer = this.guildTimers.get( guildId );
+
+        if ( !timer ) {
+            return;
+        }
+
+        const trackedChannelIds = this.getTrackedChannelIds( guildId );
+
+        if ( trackedChannelIds.length ) {
             this.logger.log(
                 this.trackedChannelsTimer,
                 "Timer activated",
-                Object.entries( this.trackedChannels )
-                    .map( ( [ ownerId, data ] ) => {
-                        const { channel } = data,
-                            { guildId } = channel;
+                trackedChannelIds
+                    .map( ( channelId ) => {
+                        const { channel, owner, timestamp } = this.trackedChannels[ channelId ];
 
-                        return `Guild id: '${ guildId }', channel: '${ channel.name }', channelId: '${ channel.id }' - Owner id: '${ ownerId }', timestamp: '${ data.timestamp }'`;
+                        return `Guild id: '${ guildId }', channel: '${ channel.name }', channelId: '${ channel.id }' - Owner id: '${ owner.id }', timestamp: '${ timestamp }'`;
                     } )
                     .join( "\n" )
             );
         }
 
-        for ( const [ ownerId, data ] of Object.entries( this.trackedChannels ) ) {
-            const { channel, timestamp } = data;
+        for ( const channelId of trackedChannelIds ) {
+            const data = this.trackedChannels[ channelId ];
 
-            if ( Date.now() - timestamp < this.getChannelOwnershipTimeout() ) {
+            if ( !data ) {
+                continue;
+            }
+
+            const { channel, owner, timestamp } = data;
+
+            if ( Date.now() - timestamp < timer.timings.claimOwnershipTimeout ) {
                 continue;
             }
 
             this.logger.info(
                 this.trackedChannelsTimer,
-                `Guild id: '${ channel.guild.id }', owner id: '${ ownerId }' - Abandon the channel: '${ channel.name }'`
+                `Guild id: '${ channel.guild.id }', owner id: '${ owner.id }' - Abandon the channel: '${ channel.name }'`
             );
 
             if ( !channel.guild.channels.cache.has( channel.id ) ) {
                 this.logger.warn(
                     this.trackedChannelsTimer,
-                    `Guild id: '${ channel.guild.id }' Channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
+                    `Guild id: '${ channel.guild.id }' Channel id: '${ channel.id }', owner id: '${ owner.id }' ` +
                         `- Channel: '${ channel.name }' deleted while, skip abandon`
                 );
 
-                this.removeChannelOwnerTracking( ownerId );
+                this.removeChannelTracking( channel.id );
 
                 continue;
             }
@@ -843,7 +898,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
             this.debugger.log(
                 this.trackedChannelsTimer,
-                `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
+                `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ owner.id }' ` +
                     `- Channel: '${ channel.name }' vote state: '${ state }'`
             );
 
@@ -851,7 +906,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             if ( state !== "idle" ) {
                 this.logger.warn(
                     this.trackedChannelsTimer,
-                    `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ ownerId }' ` +
+                    `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }', owner id: '${ owner.id }' ` +
                         `- Channel: '${ channel.name }' has active vote, skip abandon`
                 );
 
@@ -866,8 +921,68 @@ export class DynamicChannelClaimManager extends InitializeBase {
             await this.adapters.claimStartAdapter().send( channel, {} );
 
             // Remove from abandon list.
-            this.removeChannelOwnerTracking( ownerId, channel.id );
+            this.removeChannelOwnerTracking( owner.id, channel.id );
         }
+
+        this.clearGuildTimerWhenEmpty( guildId );
+    }
+
+    private async resolveGuildTimings( guildId: string ): Promise<TClaimTimings> {
+        const { claimOwnershipTimeout, claimOwnershipTimerInterval } = await GuildDataManager.$.getTimings( guildId );
+
+        return { claimOwnershipTimeout, claimOwnershipTimerInterval };
+    }
+
+    private async ensureGuildTimer( guildId: string ) {
+        if ( this.guildTimers.has( guildId ) ) {
+            return;
+        }
+
+        const timings = await this.resolveGuildTimings( guildId );
+
+        // Another channel of the same guild could have raised it while these were being read.
+        if ( this.guildTimers.has( guildId ) ) {
+            return;
+        }
+
+        this.logger.info(
+            this.ensureGuildTimer,
+            `Guild id: '${ guildId }' - Setting up timer with interval: ` +
+                `'${ ( timings.claimOwnershipTimerInterval / 60000 ).toFixed( 1 ) } minute(s)'`
+        );
+
+        this.guildTimers.set( guildId, {
+            timings,
+            interval: setInterval( this.trackedChannelsTimer.bind( this, guildId ), timings.claimOwnershipTimerInterval )
+        } );
+    }
+
+    private clearGuildTimerWhenEmpty( guildId: string ) {
+        if ( this.getTrackedChannelIds( guildId ).length ) {
+            return;
+        }
+
+        this.clearGuildTimer( guildId );
+    }
+
+    private clearGuildTimer( guildId: string ) {
+        const timer = this.guildTimers.get( guildId );
+
+        if ( !timer ) {
+            return;
+        }
+
+        clearInterval( timer.interval );
+
+        this.guildTimers.delete( guildId );
+
+        this.logger.info( this.clearGuildTimer, `Guild id: '${ guildId }' - Timer stopped` );
+    }
+
+    private getTrackedChannelIds( guildId: string ) {
+        return Object.keys( this.trackedChannels ).filter(
+            ( channelId ) => this.trackedChannels[ channelId ].channel.guildId === guildId
+        );
     }
 
     public async isClaimButtonEnabled( channel: VoiceBasedChannel ) {
@@ -923,7 +1038,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
     private async onOwnerLeaveDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
         if ( await this.isClaimButtonEnabled( channel ) ) {
-            this.addChannelTracking( owner, channel );
+            await this.addChannelTracking( owner, channel );
         }
     }
 

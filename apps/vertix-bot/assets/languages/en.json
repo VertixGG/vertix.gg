@@ -419,6 +419,18 @@
         "content": {
           "label": "Knock"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Edit Claim"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
+        "content": {
+          "label": "Back"
+        }
       }
     ],
     "textInputs": [
@@ -519,6 +531,30 @@
         "content": {
           "label": "TEMPLATE NAME",
           "placeholder": "Enter a name for your template..."
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "Seconds, empty for the default"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "Seconds, empty for the default"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "Seconds, empty for the default"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "Seconds, empty for the default"
         }
       }
     ],
@@ -1031,6 +1067,26 @@
         "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
         "content": {
           "placeholder": "🚪 Select Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ Select Value To Edit",
+          "selectOptions": [
+            {
+              "label": "∙ Owner Away Before Claimable"
+            },
+            {
+              "label": "∙ Claim Check Interval"
+            },
+            {
+              "label": "∙ Vote Duration"
+            },
+            {
+              "label": "∙ Vote Time Per Candidate"
+            }
+          ]
         }
       }
     ]
@@ -3265,6 +3321,16 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  Claim Configuration",
+        "description": "When the owner of a dynamic channel leaves it, Vertix waits a while before offering the channel to whoever is still inside. They then vote on who takes it over.\n\nPick a value below to change it. A value marked {defaultMarker} follows the bot's own configuration rather than a choice made here, and an empty field puts it back to that.\n\n**🚪 Owner Away Before Claimable** ∙ {valueClaimTimeout}\nHow long the owner can be gone before the channel is offered to the others.\n\n**🔁 Claim Check Interval** ∙ {valueClaimInterval}\nHow often Vertix looks for abandoned channels, which is also how close to the wait above the offer actually lands.\n\n**🗳️ Vote Duration** ∙ {valueVoteTimeout}\nHow long a claim vote stays open once it starts.\n\n**➕ Vote Time Per Candidate** ∙ {valueVoteAddTime}\nAdded to the running vote each time someone new puts themselves forward.\n",
+        "options": {
+          "defaultMarker": "*(default)*"
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3382,6 +3448,30 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Save Template"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ Owner Away Before Claimable"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ Claim Check Interval"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ Vote Duration"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ Vote Time Per Candidate"
       }
     }
   ]

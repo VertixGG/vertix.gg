@@ -419,6 +419,18 @@
         "content": {
           "label": "Llamar"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Editar reclamación"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
+        "content": {
+          "label": "Atrás"
+        }
       }
     ],
     "textInputs": [
@@ -519,6 +531,30 @@
         "content": {
           "label": "NOMBRE DE LA PLANTILLA",
           "placeholder": "Escribe un nombre para tu plantilla…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "Segundos, vacío para el valor por defecto"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "Segundos, vacío para el valor por defecto"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "Segundos, vacío para el valor por defecto"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "Segundos, vacío para el valor por defecto"
         }
       }
     ],
@@ -1031,6 +1067,26 @@
         "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
         "content": {
           "placeholder": "🚪 Selecciona un canal"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ Selecciona un valor para editar",
+          "selectOptions": [
+            {
+              "label": "∙ Ausencia antes de reclamar"
+            },
+            {
+              "label": "∙ Frecuencia de comprobación"
+            },
+            {
+              "label": "∙ Duración de la votación"
+            },
+            {
+              "label": "∙ Tiempo por candidato"
+            }
+          ]
         }
       }
     ]
@@ -3265,6 +3321,16 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  Configuración de reclamación",
+        "description": "Cuando el propietario de un canal dinámico lo abandona, Vertix espera un rato antes de ofrecer el canal a quienes siguen dentro. Ellos votan quién se queda con él.\n\nElige un valor abajo para cambiarlo. Un valor marcado con {defaultMarker} sigue la configuración del bot en lugar de una elección hecha aquí, y un campo vacío lo devuelve a esa.\n\n**🚪 Ausencia antes de reclamar** ∙ {valueClaimTimeout}\nCuánto tiempo puede estar ausente el propietario antes de que el canal se ofrezca a los demás.\n\n**🔁 Frecuencia de comprobación** ∙ {valueClaimInterval}\nCon qué frecuencia Vertix busca canales abandonados, que es también lo cerca que la oferta queda de la espera anterior.\n\n**🗳️ Duración de la votación** ∙ {valueVoteTimeout}\nCuánto tiempo permanece abierta una votación de reclamación.\n\n**➕ Tiempo por candidato** ∙ {valueVoteAddTime}\nSe añade a la votación en curso cada vez que alguien nuevo se presenta.\n",
+        "options": {
+          "defaultMarker": "*(por defecto)*"
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3382,6 +3448,30 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Guardar plantilla"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ Ausencia antes de reclamar"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ Frecuencia de comprobación"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ Duración de la votación"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ Tiempo por candidato"
       }
     }
   ]

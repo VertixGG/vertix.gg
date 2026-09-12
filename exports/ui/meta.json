@@ -1,6 +1,6 @@
 {
     "schemaVersion": "1.0.0",
-    "exportedAt": "2026-09-12T13:38:43.558Z",
+    "exportedAt": "2026-09-12T17:30:49.446Z",
     "counts": {
         "components": 53,
         "adapters": 45,
@@ -18,8 +18,8 @@
             "adapters": 9,
             "flows": 4,
             "embeds": {
-                "total": 10,
-                "withDefinition": 10,
+                "total": 11,
+                "withDefinition": 11,
                 "missingDefinition": 0
             },
             "componentsWithEmbeds": 9,
@@ -53,8 +53,8 @@
         }
     ],
     "embedCoverage": {
-        "total": 154,
-        "withDefinition": 154,
+        "total": 155,
+        "withDefinition": 155,
         "missingDefinition": 0
     }
 }

@@ -419,6 +419,18 @@
         "content": {
           "label": "Frapper"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Modifier la réclamation"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
+        "content": {
+          "label": "Retour"
+        }
       }
     ],
     "textInputs": [
@@ -519,6 +531,30 @@
         "content": {
           "label": "NOM DU MODÈLE",
           "placeholder": "Entre un nom pour ton modèle…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "Secondes, vide pour la valeur par défaut"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "Secondes, vide pour la valeur par défaut"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "Secondes, vide pour la valeur par défaut"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "Secondes, vide pour la valeur par défaut"
         }
       }
     ],
@@ -1031,6 +1067,26 @@
         "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
         "content": {
           "placeholder": "🚪 Choisir un salon"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ Choisir une valeur à modifier",
+          "selectOptions": [
+            {
+              "label": "∙ Absence avant réclamation"
+            },
+            {
+              "label": "∙ Fréquence de vérification"
+            },
+            {
+              "label": "∙ Durée du vote"
+            },
+            {
+              "label": "∙ Temps par candidat"
+            }
+          ]
         }
       }
     ]
@@ -3265,6 +3321,16 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  Configuration de la réclamation",
+        "description": "Lorsque le propriétaire d'un canal dynamique le quitte, Vertix attend un moment avant de proposer le canal à ceux qui s'y trouvent encore. Ils votent ensuite pour désigner celui qui le reprend.\n\nChoisissez une valeur ci-dessous pour la modifier. Une valeur marquée {defaultMarker} suit la configuration du bot plutôt qu'un choix fait ici, et un champ vide l'y ramène.\n\n**🚪 Absence avant réclamation** ∙ {valueClaimTimeout}\nCombien de temps le propriétaire peut s'absenter avant que le canal soit proposé aux autres.\n\n**🔁 Fréquence de vérification** ∙ {valueClaimInterval}\nÀ quelle fréquence Vertix cherche les canaux abandonnés, ce qui détermine aussi la précision de l'attente ci-dessus.\n\n**🗳️ Durée du vote** ∙ {valueVoteTimeout}\nCombien de temps un vote de réclamation reste ouvert une fois lancé.\n\n**➕ Temps par candidat** ∙ {valueVoteAddTime}\nAjouté au vote en cours chaque fois qu'une nouvelle personne se présente.\n",
+        "options": {
+          "defaultMarker": "*(par défaut)*"
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3382,6 +3448,30 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Enregistrer le modèle"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ Absence avant réclamation"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ Fréquence de vérification"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ Durée du vote"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ Temps par candidat"
       }
     }
   ]

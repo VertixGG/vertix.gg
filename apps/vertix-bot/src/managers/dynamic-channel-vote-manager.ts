@@ -1,7 +1,9 @@
-import process from "process";
-
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
+
+import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
+
+import type { TVoteTimings } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
 import type { GuildChannel, MessageComponentInteraction, VoiceChannel } from "discord.js";
 
@@ -19,6 +21,15 @@ interface IVoteEvent<TInteraction, TChannel> {
 
     isInitialInterval: boolean;
     isInitialCandidate: boolean;
+
+    /**
+     * The timings this vote runs on, settled when it starts.
+     *
+     * Held per event rather than per manager so a guild that chose its own is honoured without the
+     * manager having to know what a guild is - whoever starts the vote resolves them and hands
+     * them over.
+     */
+    timings: TVoteTimings;
 
     intervalHandler?: NodeJS.Timeout;
 
@@ -43,10 +54,6 @@ enum VoteManagerResult {
 
 type VoteEventCallback<TChannel> = ( channel: TChannel, state: VoteEventState, args?: any ) => Promise<void>;
 type VoteEventState = "idle" | "starting" | "active" | "done";
-
-const FALLBACK_VOTE_TIMEOUT = 60 * 1000, // 1 minute.
-    FALLBACK_VOTE_ADD_TIMEOUT = 60 * 1000, // 1 minute.
-    FALLBACK_TIMER_INTERVAL = 1000; // 1 second.
 
 // TODO: What happens when bot restarts? should it be saved in the database?
 // TODO: convert to object oriented.
@@ -102,16 +109,14 @@ export class DynamicChannelVoteManager<
         return DynamicChannelVoteManager.getInstance();
     }
 
-    public constructor(
-        runTime = process.env.DYNAMIC_CHANNEL_VOTE_TIMEOUT || FALLBACK_VOTE_TIMEOUT,
-        addTime = process.env.DYNAMIC_CHANNEL_VOTE_ADD_TIME || FALLBACK_VOTE_ADD_TIMEOUT,
-        timerInterval = process.env.DYNAMIC_CHANNEL_VOTE_TIMER_INTERVAL || FALLBACK_TIMER_INTERVAL
-    ) {
+    public constructor( runTime?: number, addTime?: number, timerInterval?: number ) {
         super();
 
-        this.voteRunTime = parseInt( runTime.toString() );
-        this.voteAddTime = parseInt( addTime.toString() );
-        this.voteTimerIntervalTime = parseInt( timerInterval.toString() );
+        const defaults = GuildTimingsConfig.$.getDefaults();
+
+        this.voteRunTime = runTime ?? defaults.voteTimeout;
+        this.voteAddTime = addTime ?? defaults.voteAddTime;
+        this.voteTimerIntervalTime = timerInterval ?? defaults.voteTimerInterval;
 
         this.logger.info( this.constructor.name, "Initialized with time settings:", this.getTimeSettings() );
     }
@@ -123,7 +128,20 @@ export class DynamicChannelVoteManager<
         } );
     }
 
-    public start( channel: TChannel, callback: VoteEventCallback<TChannel>, initiatorInteraction?: TInteraction ) {
+    /**
+     * Function `start()` - Opens a vote on a channel.
+     *
+     * `timings` is what the guild runs on, resolved by the caller - left out, the vote runs on the
+     * manager's own. Stays synchronous on purpose: whoever starts a vote adds the first candidate
+     * immediately afterwards, which only works while the state is already active by the time this
+     * returns.
+     */
+    public start(
+        channel: TChannel,
+        callback: VoteEventCallback<TChannel>,
+        initiatorInteraction?: TInteraction,
+        timings?: TVoteTimings
+    ) {
         if ( !this.events[ channel.id ] ) {
             this.setInitialEventState( channel );
         }
@@ -142,14 +160,20 @@ export class DynamicChannelVoteManager<
             this.events[ channel.id ].initiatorInteraction = initiatorInteraction;
         }
 
+        if ( timings ) {
+            this.events[ channel.id ].timings = timings;
+        }
+
+        const eventTimings = this.events[ channel.id ].timings;
+
         this.events[ channel.id ].state = "active";
         this.events[ channel.id ].startTime = Date.now();
-        this.events[ channel.id ].endTime = Date.now() + this.voteRunTime;
+        this.events[ channel.id ].endTime = Date.now() + eventTimings.voteTimeout;
 
         this.timer( channel, callback ).then( () => {
             this.events[ channel.id ].intervalHandler = setInterval(
                 this.timer.bind( this, channel, callback ),
-                this.voteTimerIntervalTime
+                eventTimings.voteTimerInterval
             );
 
             this.logger.info( this.start, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Vote started` );
@@ -421,12 +445,21 @@ export class DynamicChannelVoteManager<
             channel,
             state: "idle",
             isInitialInterval: true,
-            isInitialCandidate: true
+            isInitialCandidate: true,
+            timings: this.getTimings()
+        };
+    }
+
+    private getTimings(): TVoteTimings {
+        return {
+            voteTimeout: this.voteRunTime,
+            voteAddTime: this.voteAddTime,
+            voteTimerInterval: this.voteTimerIntervalTime
         };
     }
 
     private addTime( channelId: string, baseTime = this.events[ channelId ].endTime ) {
-        this.events[ channelId ].endTime = ( baseTime || 0 ) + this.voteAddTime;
+        this.events[ channelId ].endTime = ( baseTime || 0 ) + this.events[ channelId ].timings.voteAddTime;
     }
 
     private addInternal( interaction: TInteraction, args: any ): VoteManagerResult {

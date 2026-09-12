@@ -100,9 +100,9 @@ const ClaimResultAdapter = new ExecutionAdapterBuilder<
 
         switch ( step ) {
             case "VertixBot/UI-V3/ClaimResultOwnerStop":
-                args.absentInterval = DynamicChannelClaimManager.get(
+                args.absentInterval = await DynamicChannelClaimManager.get(
                     "VertixBot/UI-V3/DynamicChannelClaimManager"
-                ).getChannelOwnershipTimeout();
+                ).getChannelOwnershipTimeout( interaction.guildId );
                 break;
 
             case "VertixBot/UI-V3/ClaimResultVotedSuccessfully":

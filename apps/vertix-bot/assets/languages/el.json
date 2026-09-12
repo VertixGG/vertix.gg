@@ -419,6 +419,18 @@
         "content": {
           "label": "Χτύπα"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Επεξεργασία διεκδίκησης"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
+        "content": {
+          "label": "Πίσω"
+        }
       }
     ],
     "textInputs": [
@@ -519,6 +531,30 @@
         "content": {
           "label": "ΟΝΟΜΑ ΠΡΟΤΥΠΟΥ",
           "placeholder": "Εισαγάγετε ένα όνομα για το πρότυπό σας…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "Δευτερόλεπτα, κενό για την προεπιλογή"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "Δευτερόλεπτα, κενό για την προεπιλογή"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "Δευτερόλεπτα, κενό για την προεπιλογή"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "Δευτερόλεπτα, κενό για την προεπιλογή"
         }
       }
     ],
@@ -1031,6 +1067,26 @@
         "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
         "content": {
           "placeholder": "🚪 Επιλέξτε κανάλι"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ Επιλέξτε τιμή για επεξεργασία",
+          "selectOptions": [
+            {
+              "label": "∙ Απουσία πριν τη διεκδίκηση"
+            },
+            {
+              "label": "∙ Συχνότητα ελέγχου"
+            },
+            {
+              "label": "∙ Διάρκεια ψηφοφορίας"
+            },
+            {
+              "label": "∙ Χρόνος ανά υποψήφιο"
+            }
+          ]
         }
       }
     ]
@@ -3265,6 +3321,16 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  Ρυθμίσεις διεκδίκησης",
+        "description": "Όταν ο κάτοχος ενός δυναμικού καναλιού το αφήσει, το Vertix περιμένει λίγο πριν προσφέρει το κανάλι σε όσους βρίσκονται ακόμη μέσα. Εκείνοι ψηφίζουν ποιος θα το αναλάβει.\n\nΕπιλέξτε μια τιμή παρακάτω για να την αλλάξετε. Μια τιμή με την ένδειξη {defaultMarker} ακολουθεί τη ρύθμιση του bot και όχι μια επιλογή που έγινε εδώ· ένα κενό πεδίο την επαναφέρει σε αυτήν.\n\n**🚪 Απουσία πριν τη διεκδίκηση** ∙ {valueClaimTimeout}\nΠόση ώρα μπορεί να λείπει ο κάτοχος πριν το κανάλι προσφερθεί στους υπόλοιπους.\n\n**🔁 Συχνότητα ελέγχου** ∙ {valueClaimInterval}\nΠόσο συχνά το Vertix ψάχνει για εγκαταλελειμμένα κανάλια, που καθορίζει και πόσο κοντά στην παραπάνω αναμονή γίνεται η προσφορά.\n\n**🗳️ Διάρκεια ψηφοφορίας** ∙ {valueVoteTimeout}\nΠόση ώρα παραμένει ανοιχτή μια ψηφοφορία διεκδίκησης.\n\n**➕ Χρόνος ανά υποψήφιο** ∙ {valueVoteAddTime}\nΠροστίθεται στην ψηφοφορία κάθε φορά που κάποιος νέος θέτει υποψηφιότητα.\n",
+        "options": {
+          "defaultMarker": "*(προεπιλογή)*"
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3382,6 +3448,30 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Αποθήκευση προτύπου"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ Απουσία πριν τη διεκδίκηση"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ Συχνότητα ελέγχου"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ Διάρκεια ψηφοφορίας"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ Χρόνος ανά υποψήφιο"
       }
     }
   ]

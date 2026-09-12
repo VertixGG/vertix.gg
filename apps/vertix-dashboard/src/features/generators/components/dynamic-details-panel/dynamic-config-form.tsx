@@ -14,6 +14,8 @@ import {
     ToggleSwitch
 } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
+import { ButtonsPicker } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
+
 import {
     DYNAMIC_CONFIG_FORM_INITIAL_STATE,
     DYNAMIC_CONFIG_FORM_COMMANDS
@@ -49,6 +51,16 @@ const PRIVACY_STATES: ReadonlyArray<{ value: ChannelPrivacyState; label: string;
 ];
 
 /**
+ * Function sameButtons() :: Whether two button selections hold the same buttons.
+ *
+ * Order carries no meaning here - the interface sorts them itself - so a set that came back in a
+ * different order than it went out is not a change to save.
+ */
+function sameButtons( a: string[], b: string[] ): boolean {
+    return a.length === b.length && a.every( ( id ) => b.includes( id ) );
+}
+
+/**
  * Function sameRoles() :: Whether two role selections hold the same roles.
  *
  * Ticking a box appends, so the saved order and the form's order differ for the same set - a plain
@@ -79,7 +91,8 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
             verifiedRoles: state.verifiedRoles,
             staffRoles: state.staffRoles,
             voiceRoleId: state.voiceRoleId,
-            logsChannelId: state.logsChannelId
+            logsChannelId: state.logsChannelId,
+            buttons: state.buttons
         } )
     );
 
@@ -101,7 +114,8 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
         state.voiceRoleId !== ( settings?.dynamicChannelVoiceRoleId ?? null ) ||
         state.logsChannelId !== ( settings?.dynamicChannelLogsChannelId ?? null ) ||
         !sameRoles( state.verifiedRoles, settings?.dynamicChannelVerifiedRoles ?? [] ) ||
-        !sameRoles( state.staffRoles, settings?.dynamicChannelStaffRoles ?? [] );
+        !sameRoles( state.staffRoles, settings?.dynamicChannelStaffRoles ?? [] ) ||
+        !sameButtons( state.buttons, settings?.dynamicChannelButtonsTemplate ?? [] );
 
     const handleSave = () => {
         updateDynamicSettings.run( {
@@ -116,7 +130,8 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 dynamicChannelVerifiedRoles: state.verifiedRoles,
                 dynamicChannelStaffRoles: state.staffRoles,
                 dynamicChannelVoiceRoleId: state.voiceRoleId,
-                dynamicChannelLogsChannelId: state.logsChannelId
+                dynamicChannelLogsChannelId: state.logsChannelId,
+                dynamicChannelButtonsTemplate: state.buttons
             }
         } );
         onClose();
@@ -165,6 +180,10 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
 
     const handleUpdateVoiceRole = ( value: string | null ) => {
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateVoiceRole", { value } );
+    };
+
+    const handleUpdateButtons = ( value: string[] ) => {
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateButtons", { value } );
     };
 
     const handleUpdateLogsChannel = ( value: string | null ) => {
@@ -311,6 +330,21 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                     title="Mentionable"
                     body="Mention the owner in the primary message"
                     onChange={ handleUpdateMentionable }
+                />
+            </div>
+
+            <div className="border-t border-border-muted pt-4">
+                <label className="block text-sm font-medium text-text-primary mb-1">
+                    Buttons
+                </label>
+                <p className="text-xs text-text-muted mt-0 mb-3">
+                    What a channel owner gets in the interface. Channels already open keep the set
+                    they were created with until their owner reopens them.
+                </p>
+                <ButtonsPicker
+                    selected={ state.buttons }
+                    disabled={ isSaving }
+                    onChange={ handleUpdateButtons }
                 />
             </div>
 

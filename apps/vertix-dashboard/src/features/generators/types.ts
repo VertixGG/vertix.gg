@@ -35,6 +35,9 @@ export interface DynamicSettings {
     /** Null defers to the guild wide voice role. */
     dynamicChannelVoiceRoleId: string | null;
     dynamicChannelLogsChannelId: string | null;
+    /** The buttons a generator's channels carry, by id, in the order the interface draws them. */
+    dynamicChannelButtonsTemplate: string[];
+    dynamicChannelButtonsTemplateByRole: Record<string, string[]>;
 }
 
 export interface GuildDiscordRole {

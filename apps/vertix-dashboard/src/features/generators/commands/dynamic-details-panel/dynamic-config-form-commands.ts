@@ -15,6 +15,8 @@ export interface DynamicConfigFormState {
     /** Null defers to the guild wide voice role. */
     voiceRoleId: string | null;
     logsChannelId: string | null;
+    /** Empty until the catalogue lands, which is why the form initialises from the settings. */
+    buttons: string[];
 }
 
 /**
@@ -31,7 +33,8 @@ export const DYNAMIC_CONFIG_FORM_INITIAL_STATE: DynamicConfigFormState = {
     verifiedRoles: [],
     staffRoles: [],
     voiceRoleId: null,
-    logsChannelId: null
+    logsChannelId: null,
+    buttons: []
 };
 
 export class InitializeCommand extends CommandBase<DynamicConfigFormState, { settings: DynamicSettings | null }> {
@@ -50,7 +53,8 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
             verifiedRoles: args.settings?.dynamicChannelVerifiedRoles ?? [],
             staffRoles: args.settings?.dynamicChannelStaffRoles ?? [],
             voiceRoleId: args.settings?.dynamicChannelVoiceRoleId ?? null,
-            logsChannelId: args.settings?.dynamicChannelLogsChannelId ?? null
+            logsChannelId: args.settings?.dynamicChannelLogsChannelId ?? null,
+            buttons: args.settings?.dynamicChannelButtonsTemplate ?? []
         } );
     }
 }
@@ -155,6 +159,16 @@ export class UpdateLogsChannelCommand extends CommandBase<DynamicConfigFormState
     }
 }
 
+export class UpdateButtonsCommand extends CommandBase<DynamicConfigFormState, { value: string[] }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateButtons";
+    }
+
+    public apply( args: { value: string[] } ) {
+        return this.setState( { buttons: args.value } );
+    }
+}
+
 export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     InitializeCommand,
     UpdateNameTemplateCommand,
@@ -166,5 +180,6 @@ export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     UpdateVerifiedRolesCommand,
     UpdateStaffRolesCommand,
     UpdateVoiceRoleCommand,
-    UpdateLogsChannelCommand
+    UpdateLogsChannelCommand,
+    UpdateButtonsCommand
 ] as const;

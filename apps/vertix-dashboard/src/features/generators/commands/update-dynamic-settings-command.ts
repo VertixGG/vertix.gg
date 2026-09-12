@@ -4,15 +4,11 @@ import { GeneratorsCommandBase } from "./base";
 
 import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generators/query/guild-generators-query";
 
-import type { DynamicMasterDetails } from "@vertix.gg/dashboard/src/features/generators/types";
+import type { DynamicMasterDetails, DynamicSettings } from "@vertix.gg/dashboard/src/features/generators/types";
 
 export class UpdateDynamicSettingsCommand extends GeneratorsCommandBase<{
     masterChannelId: string;
-    settings: {
-        dynamicChannelNameTemplate?: string;
-        dynamicChannelAutoSave?: boolean;
-        dynamicChannelMentionable?: boolean;
-    };
+    settings: Partial<DynamicSettings>;
 }> {
     public static getName(): string {
         return "Dashboard/Generators/UpdateDynamicSettings";
@@ -20,11 +16,7 @@ export class UpdateDynamicSettingsCommand extends GeneratorsCommandBase<{
 
     protected async run( args: {
         masterChannelId: string;
-        settings: {
-            dynamicChannelNameTemplate?: string;
-            dynamicChannelAutoSave?: boolean;
-            dynamicChannelMentionable?: boolean;
-        };
+        settings: Partial<DynamicSettings>;
     } ) {
         const generatorsDetails = this.generatorsDetails;
 

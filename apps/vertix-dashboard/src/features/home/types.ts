@@ -23,6 +23,13 @@ export interface MasterChannelInfo {
     categoryId: string | null;
     createdAt: string;
     dynamicChannelsCount: number;
+    /**
+     * Every channel sitting in this generator's category, against which Discord measures its
+     * per-category limit. Null when the generator has no category, or when Discord could not be asked,
+     * and absent altogether from an API deployed before the field existed - the dashboard ships on
+     * its own schedule, so a reader of this has to allow for all three.
+     */
+    categoryChannelsCount?: number | null;
 }
 
 export interface GuildDetails {

@@ -1,5 +1,7 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
+import { DISCORD_CATEGORY_CHANNELS_LIMIT } from "@vertix.gg/definitions/src/discord-limits-definitions";
+
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -26,8 +28,8 @@ const ChannelCreateFailedEmbed = new EmbedBuilder<UIArgs, typeof CHANNEL_CREATE_
     .setOptions( () => ( {
         reason: {
             [ CHANNEL_CREATE_FAILED_EMBED_VARS.reasonCategoryFull ]:
-                "The category this channel lives in is full. Discord allows 50 channels per category, " +
-                "and it has reached that.\n\n" +
+                "The category this channel lives in is full. Discord allows " +
+                `${ DISCORD_CATEGORY_CHANNELS_LIMIT } channels per category, and it has reached that.\n\n` +
                 "Please let a server admin know - they can free a channel or move the generator to " +
                 "another category.",
             [ CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown ]:

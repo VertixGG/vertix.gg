@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 
 import { Radio, Plus, ArrowRight } from "lucide-react";
 
+import { DISCORD_CATEGORY_CHANNELS_LIMIT } from "@vertix.gg/definitions/src/discord-limits-definitions";
+
 import { formatDate, formatShare } from "@vertix.gg/dashboard/src/features/home/lib/format";
 
 import type { MasterChannelInfo } from "@vertix.gg/dashboard/src/features/home/types";
@@ -9,6 +11,15 @@ import type { MasterChannelInfo } from "@vertix.gg/dashboard/src/features/home/t
 interface GeneratorsPanelProps {
     masterChannels: MasterChannelInfo[];
 }
+
+/**
+ * How full a category has to be before its bar stops reading as ordinary - crowded is still
+ * something a reader can act on, full is where Discord starts refusing the next channel.
+ */
+const CATEGORY_FILL_THRESHOLDS = {
+    CROWDED_PERCENT: 80,
+    FULL_PERCENT: 100
+} as const;
 
 function EmptyState() {
     return (
@@ -33,25 +44,79 @@ function EmptyState() {
 }
 
 /**
+ * Function getCategoryFillColorClassName() :: The bar's colour for how full the category is.
+ *
+ * A full category is the moment members stop getting channels, so it is worth reading as an error
+ * rather than as a shade of the usual accent.
+ */
+function getCategoryFillColorClassName( fillPercent: number ): string {
+    if ( fillPercent >= CATEGORY_FILL_THRESHOLDS.FULL_PERCENT ) {
+        return "bg-error";
+    }
+
+    if ( fillPercent >= CATEGORY_FILL_THRESHOLDS.CROWDED_PERCENT ) {
+        return "bg-warning";
+    }
+
+    return "bg-accent-muted";
+}
+
+/**
+ * Function readCategoryOccupancy() :: The category's channel count, or null when there is none to read.
+ *
+ * The count arrives over HTTP from an API that may be older than this build, so anything that is
+ * not a number reads as "not reported" rather than being paraded as one.
+ */
+function readCategoryOccupancy( master: MasterChannelInfo ): number | null {
+    return "number" === typeof master.categoryChannelsCount ? master.categoryChannelsCount : null;
+}
+
+/**
+ * Function describeCategoryFill() :: The generator's category in words - what it holds of what it may.
+ *
+ * Returns null when there is nothing truthful to say, so the caller leaves the line out rather than
+ * printing a count it had to invent.
+ */
+function describeCategoryFill( master: MasterChannelInfo, occupancy: number | null ): string | null {
+    if ( null === occupancy ) {
+        return master.categoryId ? "Category occupancy unavailable" : null;
+    }
+
+    return `${ occupancy } of ${ DISCORD_CATEGORY_CHANNELS_LIMIT } channels in ` +
+        `this category (${ master.dynamicChannelsCount } live)`;
+}
+
+/**
  * The generators of the guild, each with the channels standing under it right now.
  *
  * Ordered by how busy they are, since the question a reader brings here is which generator the
  * server actually lives in - the quiet ones are the candidates for retiring.
+ *
+ * The bar measures the generator's category against Discord's limit of
+ * DISCORD_CATEGORY_CHANNELS_LIMIT channels, counting everything in there rather than only the
+ * channels we made: that is the number members run into when a category stops handing out channels.
+ *
+ * Its track stays drawn even when that count never arrived - an empty track next to the words
+ * saying so reads as "nothing to report", where a missing one reads as a broken panel.
  */
 export function GeneratorsPanel( { masterChannels }: GeneratorsPanelProps ) {
     if ( ! masterChannels.length ) {
         return <EmptyState />;
     }
 
-    const total = masterChannels.reduce( ( sum, master ) => sum + master.dynamicChannelsCount, 0 );
-
     const ordered = [ ...masterChannels ].sort( ( a, b ) => b.dynamicChannelsCount - a.dynamicChannelsCount );
 
     return (
         <div className="bg-surface border border-border rounded-lg divide-y divide-border-muted">
             { ordered.map( ( master ) => {
-                const share = formatShare( master.dynamicChannelsCount, total );
                 const created = formatDate( master.createdAt );
+
+                const occupancy = readCategoryOccupancy( master );
+                const fill = describeCategoryFill( master, occupancy );
+
+                const fillPercent = null === occupancy
+                    ? null
+                    : formatShare( occupancy, DISCORD_CATEGORY_CHANNELS_LIMIT );
 
                 return (
                     <div key={ master.channelId } className="p-4">
@@ -70,16 +135,18 @@ export function GeneratorsPanel( { masterChannels }: GeneratorsPanelProps ) {
                         </div>
 
                         <div className="h-1.5 bg-surface-elevated rounded-full overflow-hidden mb-2">
-                            <div
-                                className="h-full bg-accent-muted rounded-full"
-                                style={ { width: `${ share }%` } }
-                            />
+                            { null !== fillPercent && (
+                                <div
+                                    className={ `h-full rounded-full ${ getCategoryFillColorClassName( fillPercent ) }` }
+                                    style={ { width: `${ Math.min( fillPercent, CATEGORY_FILL_THRESHOLDS.FULL_PERCENT ) }%` } }
+                                />
+                            ) }
                         </div>
 
                         <div className="flex flex-wrap gap-x-4 text-xs text-text-muted">
                             <span>Created { created ?? "at an unknown date" }</span>
                             <span>{ master.categoryId ? `Category ${ master.categoryId }` : "No category" }</span>
-                            <span>{ share }% of this server's live channels</span>
+                            { fill && <span>{ fill }</span> }
                         </div>
                     </div>
                 );

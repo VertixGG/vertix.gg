@@ -1,5 +1,6 @@
 import "@vertix.gg/prisma/bot-client";
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
+import { DISCORD_CATEGORY_CHANNELS_LIMIT } from "@vertix.gg/definitions/src/discord-limits-definitions";
 
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
@@ -23,7 +24,6 @@ import { CategoryModel } from "@vertix.gg/data/src/models/category-model";
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import {
-    DISCORD_CATEGORY_CHANNELS_LIMIT,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_VERIFIED_ROLES_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS,

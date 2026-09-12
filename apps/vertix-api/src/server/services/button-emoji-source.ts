@@ -250,12 +250,19 @@ function getButtonCatalogueV2(): ReadonlyArray<ButtonCatalogueEntry> {
     // template at an admin. The artwork still comes from v2.
     const namesFromV3 = new Map( getButtonCatalogueV3().map( ( entry ) => [ entry.value, entry.label ] ) );
 
+    // `visibility` is v2's alone - v3 folded it into one privacy button - so there is no v3 name to
+    // borrow and the id itself is titled instead of being printed as a slug.
+    const titleFor = ( value: string ) => value
+        .split( "-" )
+        .map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ) )
+        .join( " " );
+
     const nameFor = ( value: string, label: unknown ) => {
         if ( "string" === typeof label && ! label.includes( "{" ) ) {
             return label;
         }
 
-        return namesFromV3.get( value ) ?? value;
+        return namesFromV3.get( value ) ?? titleFor( value );
     };
 
     for ( const component of asArray( parsed ) ) {

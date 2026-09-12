@@ -94,6 +94,47 @@ export function isV2Version( version: string | null | undefined ): boolean {
  * Order is kept, because it is the order the buttons print in, and duplicates collapse onto their
  * first appearance - two v2 numbers can name the same v3 button.
  */
+/**
+ * The v2 number each id answers to, derived from the map above rather than restated.
+ *
+ * Well defined only because state and visibility carry separate ids - while both read as `privacy`
+ * there was no single number to write back for it.
+ */
+const V3_TO_V2_BUTTON_IDS: Readonly<Record<string, string>> = Object.freeze(
+    Object.fromEntries(
+        Object.entries( V2_TO_V3_BUTTON_IDS ).map( ( [ number, id ] ) => [ id, number ] )
+    )
+);
+
+/**
+ * Function toV2ButtonIds() :: A button set as the numbers a v2 generator stores.
+ *
+ * The inverse of `toV3ButtonIds()`, for writing rather than reading. V2's own buttons screen inside
+ * discord stores numbers and its channels read them back the same way, so a set saved against a v2
+ * generator is written in numbers: a bot that predates reading slugs draws nothing at all from a set
+ * it cannot parse, and nothing here can know which bot a guild is running.
+ *
+ * An entry already numeric is kept as it is, and an id with no v2 number is dropped - it names a
+ * button that version does not carry.
+ */
+export function toV2ButtonIds( buttons: ReadonlyArray<string | number> | null | undefined ): string[] {
+    if ( ! buttons ) {
+        return [];
+    }
+
+    const mapped = buttons.map( ( button ) => {
+        const id = String( button );
+
+        if ( V3_TO_V2_BUTTON_IDS[ id ] ) {
+            return V3_TO_V2_BUTTON_IDS[ id ];
+        }
+
+        return Number.isNaN( parseInt( id ) ) ? undefined : id;
+    } );
+
+    return [ ...new Set( mapped.filter( ( id ): id is string => undefined !== id ) ) ];
+}
+
 export function toV3ButtonIds( buttons: ReadonlyArray<string | number> | null | undefined ): string[] {
     if ( ! buttons ) {
         return [];

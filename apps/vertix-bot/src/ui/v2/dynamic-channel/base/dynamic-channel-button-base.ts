@@ -2,6 +2,8 @@ import { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-e
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import { V2_ELEMENT_TO_V3_BUTTON_ID } from "@vertix.gg/utils/src/button-ids";
+
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -45,11 +47,25 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
         return false;
     }
 
+    /**
+     * Whether this generator's set carries this button.
+     *
+     * A set holds this button's own number when the buttons screen inside discord wrote it, and the
+     * shared slug when the dashboard did - a generator can hold either, and a set written as slugs
+     * read against the number alone came back as no buttons at all.
+     */
     protected async isAvailable(): Promise<boolean> {
-        if ( this.uiArgs?.dynamicChannelButtonsTemplate?.length ) {
-            return this.uiArgs.dynamicChannelButtonsTemplate.some( ( i: any ) => parseInt( i ) === this.getId() );
+        const template = this.uiArgs?.dynamicChannelButtonsTemplate;
+
+        if ( ! template?.length ) {
+            return false;
         }
 
-        return false;
+        const id = this.getId(),
+            slug = V2_ELEMENT_TO_V3_BUTTON_ID[
+                ( this.constructor as typeof DynamicChannelButtonBase ).getName()
+            ];
+
+        return template.some( ( entry: string ) => parseInt( entry ) === id || ( Boolean( slug ) && entry === slug ) );
     }
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { BUTTON_ROW_LIMITS, joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
-import { toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
+import { isV2Version, toV2ButtonIds, toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
 
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
@@ -355,10 +355,17 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
         setIsSaving( true );
         setError( null );
 
+        // Written in the vocabulary the generator's own version reads: v2 channels match a stored
+        // entry by number, so saving one as slugs left it drawing no buttons at all against a bot
+        // that only parses numbers - and which bot a guild runs is not knowable from here.
+        const stored = isV2Version( generator!.version )
+            ? ids.map( ( row ) => toV2ButtonIds( row ) )
+            : ids;
+
         // The set and its breaks travel together: the breaks are indices into the set, so one
         // without the other would describe rows that no longer line up with the buttons.
         void apiClient.put( `/management/guild/${ guildId }/dynamic/${ generator!.id }`, {
-            dynamicChannelButtonsTemplate: joinTemplate( ids )
+            dynamicChannelButtonsTemplate: joinTemplate( stored )
         } )
             // Re-read before letting go of the draft: dropping it first would fall back to the
             // settings loaded at mount, which is the arrangement as it was before the save.

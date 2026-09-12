@@ -9,6 +9,7 @@ import { FeedbackAdapter } from "@vertix.gg/bot/src/ui/general/feedback/feedback
 import { LanguageAdapter } from "@vertix.gg/bot/src/ui/general/language/language-adapter";
 import { NotYourChannelAdapter } from "@vertix.gg/bot/src/ui/general/not-your-channel/not-your-channel-adapter";
 import { NoActiveDynamicChannelAdapter } from "@vertix.gg/bot/src/ui/general/no-active-dynamic-channel/no-active-dynamic-channel-adapter";
+import { ClaimInChannelOnlyAdapter } from "@vertix.gg/bot/src/ui/general/claim-in-channel-only/claim-in-channel-only-adapter";
 import { ChannelCreateFailedAdapter } from "@vertix.gg/bot/src/ui/general/channel-create-failed/channel-create-failed-adapter";
 import { UnassignableRoleAdapter } from "@vertix.gg/bot/src/ui/general/server-options/unassignable-role-adapter";
 import { AIAgentAdapter } from "@vertix.gg/bot/src/ui/general/ai-agent/ai-agent-adapter";
@@ -25,7 +26,7 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getAdapters() {
-        return [ FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter, NoActiveDynamicChannelAdapter, AIAgentAdapter, ChannelCreateFailedAdapter, UnassignableRoleAdapter ];
+        return [ FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter, NoActiveDynamicChannelAdapter, ClaimInChannelOnlyAdapter, AIAgentAdapter, ChannelCreateFailedAdapter, UnassignableRoleAdapter ];
     }
 
     public static getFlows() {

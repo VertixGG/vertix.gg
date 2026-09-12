@@ -3192,6 +3192,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
+      "content": {
+        "title": "\ud83d\ude08  Beanspruchen geht nur im Kanal selbst",
+        "description": "Dieses Panel steht neben dem Generator statt in einem einzelnen Kanal, hier gibt es also nichts zu beanspruchen.\n\nBetritt den Sprachkanal, den du \u00fcbernehmen m\u00f6chtest, \u00f6ffne dessen Chat und dr\u00fccke dort **Beanspruchen** auf der wartenden Nachricht."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/TopGGVoteEmbed",
       "content": {
         "title": "👑 Stimme für uns ab, um diese Funktion freizuschalten!",

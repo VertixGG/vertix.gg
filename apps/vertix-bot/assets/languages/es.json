@@ -3192,6 +3192,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
+      "content": {
+        "title": "\ud83d\ude08  Reclamar funciona dentro del canal",
+        "description": "Este panel est\u00e1 junto al generador y no dentro de ning\u00fan canal concreto, as\u00ed que aqu\u00ed no hay nada que reclamar.\n\nEntra en el canal de voz que quieres tomar, abre su chat y pulsa **Reclamar** en el mensaje que espera all\u00ed."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/TopGGVoteEmbed",
       "content": {
         "title": "👑 ¡Vota por nosotros para desbloquear esta función!",

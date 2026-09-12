@@ -3192,6 +3192,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
+      "content": {
+        "title": "\ud83d\ude08  Claim works inside the channel",
+        "description": "This panel sits beside the generator rather than in any one channel, so there is nothing here to claim.\n\nJoin the voice channel you want to take over, open its chat, and press **Claim** on the message waiting there."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/TopGGVoteEmbed",
       "content": {
         "title": "👑 Vote for us to unlock this feature!",

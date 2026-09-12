@@ -7,6 +7,9 @@ import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { isSelfGatedEntity } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-self-gated-entities";
+import {
+    answerClaimPressedFromControlPanel
+} from "@vertix.gg/bot/src/ui/general/claim-in-channel-only/claim-in-channel-only-gate";
 
 import {
     dynamicChannelBotPermissionsRequirements,
@@ -49,6 +52,10 @@ export abstract class DynamicChannelAdapterExuBase<
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {
+        if ( await answerClaimPressedFromControlPanel( interaction, this.getPressedEntityName( interaction ) ) ) {
+            return false;
+        }
+
         if ( this.isSelfGatedInteraction( interaction ) ) {
             return dynamicChannelBotPermissionsRequirements( interaction );
         }
@@ -65,13 +72,23 @@ export abstract class DynamicChannelAdapterExuBase<
      * is exactly what is about to be dispatched.
      */
     private isSelfGatedInteraction( interaction: TInteraction ): boolean {
+        const entityName = this.getPressedEntityName( interaction );
+
+        return !! entityName && isSelfGatedEntity( entityName );
+    }
+
+    /**
+     * Function getPressedEntityName() :: Which entity of this adapter was pressed.
+     *
+     * Read out of the custom id the same way `run()` does, so what is asked about here is exactly
+     * what is about to be dispatched.
+     */
+    protected getPressedEntityName( interaction: TInteraction ): string | null {
         if ( ! ( "customId" in interaction ) ) {
-            return false;
+            return null;
         }
 
-        const entityName = this.getCustomIdForEntity( interaction.customId ).split( UI_CUSTOM_ID_SEPARATOR )[ 1 ];
-
-        return isSelfGatedEntity( entityName );
+        return this.getCustomIdForEntity( interaction.customId ).split( UI_CUSTOM_ID_SEPARATOR )[ 1 ] ?? null;
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {

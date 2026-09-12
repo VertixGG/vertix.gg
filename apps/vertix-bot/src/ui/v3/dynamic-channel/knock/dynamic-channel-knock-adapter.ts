@@ -9,9 +9,9 @@ import { DynamicChannelKnockComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-c
 import { DynamicChannelKnockButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-button";
 import {
     getJoinableChannels,
-    getKnockableChannels,
-    isPressedFromControlPanel
+    getKnockableChannels
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-channel-lists";
+import { isPressedFromControlPanel } from "@vertix.gg/bot/src/ui/general/misc/pressed-from-control-panel";
 
 import { DynamicChannelKnockManager } from "@vertix.gg/bot/src/managers/dynamic-channel-knock-manager";
 

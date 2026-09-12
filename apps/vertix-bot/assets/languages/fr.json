@@ -3192,6 +3192,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
+      "content": {
+        "title": "\ud83d\ude08  R\u00e9clamer se fait dans le salon",
+        "description": "Ce panneau se trouve \u00e0 c\u00f4t\u00e9 du g\u00e9n\u00e9rateur plut\u00f4t que dans un salon pr\u00e9cis, il n'y a donc rien \u00e0 r\u00e9clamer ici.\n\nRejoins le salon vocal que tu veux reprendre, ouvre son chat et appuie sur **R\u00e9clamer** sur le message qui t'y attend."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/TopGGVoteEmbed",
       "content": {
         "title": "👑 Vote pour nous pour débloquer cette fonctionnalité !",

@@ -50,6 +50,13 @@ export class DynamicChannelClaimChannelButton extends DynamicChannelButtonBase {
     }
 
     protected async isDisabled(): Promise<boolean> {
+        // A panel is beside the generator rather than inside a channel, so it carries no channel to
+        // ask about - and a button greyed out there says nothing about why. Left pressable, so the
+        // press can be answered with where claiming actually happens.
+        if ( ! this.uiArgs?.channelId?.length ) {
+            return false;
+        }
+
         if ( [ "starting", "active" ].includes( DynamicChannelVoteManager.$.getState( this.uiArgs?.channelId ) ) ) {
             return true;
         }

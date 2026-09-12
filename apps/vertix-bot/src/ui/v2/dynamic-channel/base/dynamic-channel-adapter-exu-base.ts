@@ -4,7 +4,12 @@ import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/_dynamic-channel-requirements";
+import {
+    answerClaimPressedFromControlPanel
+} from "@vertix.gg/bot/src/ui/general/claim-in-channel-only/claim-in-channel-only-gate";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
@@ -42,9 +47,27 @@ export abstract class DynamicChannelAdapterExuBase<
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {
+        if ( await answerClaimPressedFromControlPanel( interaction, this.getPressedEntityName( interaction ) ) ) {
+            return false;
+        }
+
         const channel = await this.resolveTargetChannel( interaction );
 
         return ( await dynamicChannelRequirements( interaction, channel ) ) ?? false;
+    }
+
+    /**
+     * Function getPressedEntityName() :: Which entity of this adapter was pressed.
+     *
+     * Read out of the custom id the same way `run()` does, so what is asked about here is exactly
+     * what is about to be dispatched.
+     */
+    protected getPressedEntityName( interaction: TInteraction ): string | null {
+        if ( ! ( "customId" in interaction ) ) {
+            return null;
+        }
+
+        return this.getCustomIdForEntity( interaction.customId ).split( UI_CUSTOM_ID_SEPARATOR )[ 1 ] ?? null;
     }
 
     public async run( interaction: MessageComponentInteraction | ModalSubmitInteraction ) {

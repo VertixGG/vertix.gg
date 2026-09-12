@@ -5,6 +5,7 @@ import { GripVertical } from "lucide-react";
 import { useCustomEmojiSrc } from "@vertix.gg/discord-ui";
 
 import { BUTTON_ROW_LIMITS, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
+import { toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
@@ -30,28 +31,39 @@ const MOVE_STEP = {
     FORWARD: 1
 } as const;
 
-let cataloguePromise: Promise<ButtonCatalogueEntry[]> | null = null;
+// One promise per interface version. The two describe the same buttons with different artwork, and
+// a guild can hold generators of both, so caching a single list would show whichever was asked for
+// first to all of them.
+const cataloguePromises = new Map<string, Promise<ButtonCatalogueEntry[]>>();
 
 /**
- * Function useButtonCatalogue() :: Every button a generator can carry.
+ * Function useButtonCatalogue() :: Every button a generator of this version can carry.
  *
- * Fetched once for the page rather than per panel: the list changes when the bot ships a new
- * button, not while an admin is looking at it. A failure leaves the list empty, which the picker
- * reports rather than presenting as a generator with no buttons.
+ * Fetched once per version rather than per panel: the list changes when the bot ships a new button,
+ * not while an admin is looking at it. A failure leaves the list empty, which the picker reports
+ * rather than presenting as a generator with no buttons.
  */
-export function useButtonCatalogue(): { catalogue: ButtonCatalogueEntry[]; isFailed: boolean } {
+export function useButtonCatalogue( version?: string | null ): { catalogue: ButtonCatalogueEntry[]; isFailed: boolean } {
     const [ catalogue, setCatalogue ] = useState<ButtonCatalogueEntry[]>( [] );
     const [ isFailed, setIsFailed ] = useState( false );
 
     useEffect( () => {
         let isMounted = true;
 
-        if ( ! cataloguePromise ) {
-            cataloguePromise = fetch( `${ API_CONFIG.BASE_URL }/tools/buttons.json` )
+        const key = version ?? "";
+
+        let promise = cataloguePromises.get( key );
+
+        if ( ! promise ) {
+            const query = version ? `?version=${ encodeURIComponent( version ) }` : "";
+
+            promise = fetch( `${ API_CONFIG.BASE_URL }/tools/buttons.json${ query }` )
                 .then( ( response ) => response.ok ? response.json() as Promise<ButtonCatalogueEntry[]> : [] );
+
+            cataloguePromises.set( key, promise );
         }
 
-        void cataloguePromise
+        void promise
             .then( ( entries ) => {
                 if ( isMounted ) {
                     setCatalogue( entries );
@@ -59,7 +71,7 @@ export function useButtonCatalogue(): { catalogue: ButtonCatalogueEntry[]; isFai
                 }
             } )
             .catch( () => {
-                cataloguePromise = null;
+                cataloguePromises.delete( key );
 
                 if ( isMounted ) {
                     setIsFailed( true );
@@ -69,7 +81,7 @@ export function useButtonCatalogue(): { catalogue: ButtonCatalogueEntry[]; isFai
         return () => {
             isMounted = false;
         };
-    }, [] );
+    }, [ version ] );
 
     return { catalogue, isFailed };
 }
@@ -77,6 +89,17 @@ export function useButtonCatalogue(): { catalogue: ButtonCatalogueEntry[]; isFai
 export function ButtonArtwork( { emoji, label }: { emoji: string | null; label: string } ) {
     const name = EMOJI_NAME.exec( emoji ?? "" )?.[ 1 ] ?? "";
     const src = useCustomEmojiSrc( name );
+
+    // V2 draws its buttons with plain unicode emoji rather than application emoji, and those need
+    // no manifest - there is nothing to resolve, the character is the artwork. Without this they
+    // fell through to the blank square below, so a v2 generator listed its buttons unlabelled.
+    if ( ! src && ! name && emoji ) {
+        return (
+            <span aria-label={ label } role="img" className="w-5 h-5 shrink-0 leading-5 text-center">
+                { emoji }
+            </span>
+        );
+    }
 
     if ( ! src ) {
         return <span aria-hidden="true" className="w-5 h-5 shrink-0 rounded bg-surface-elevated" />;
@@ -160,11 +183,17 @@ function isButtonDrag( event: DragEvent<HTMLElement> ): boolean {
  * settings costs nothing extra. Drawn rather than listed as text because the order is part of the
  * setting now, and a row of artwork in order is the thing a channel owner will actually see.
  */
-export function ButtonsSummary( { selected }: { selected: string[] } ) {
-    const { catalogue, isFailed } = useButtonCatalogue();
+export function ButtonsSummary( { selected, version }: { selected: string[]; version?: string | null } ) {
+    const { catalogue, isFailed } = useButtonCatalogue( version );
 
     // The stored list carries its own row divisions, so the set and the rows come out together.
-    const { ids, rowBreaks } = splitTemplate( selected );
+    const { ids: storedIds, rowBreaks } = splitTemplate( selected );
+
+    // A v2 generator stores its set as numbers against its own elements group, and the catalogue
+    // here is v3's. Read straight, every one of those numbers failed to match and the panel showed
+    // whichever slugs happened to be in the row beside them - a set the admin never chose. The
+    // catalogue is shared because the buttons are the same buttons; only the ids differ.
+    const ids = toV3ButtonIds( storedIds );
 
     // An empty template is not an empty interface: the bot falls back to every button, both in
     // `master-channel-config-v3` and when it resolves a channel's args.

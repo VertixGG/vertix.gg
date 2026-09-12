@@ -7,6 +7,7 @@ import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
+import { toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
 
 import { UI_CUSTOM_ID_SEPARATOR, UIInstancesTypes, UI_IMAGE_EMPTY_LINE_URL } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -97,18 +98,6 @@ type Interactions =
     | UIDefaultChannelSelectMenuChannelTextInteraction
     | UIDefaultModalChannelTextInteraction;
 
-const V2_TO_V3_BUTTON_IDS: Record<string, string> = {
-    "0": "rename",
-    "1": "limit",
-    "2": "clear-chat",
-    "3": "privacy",
-    "4": "privacy",
-    "5": "access",
-    "6": "rest-channel",
-    "7": "transfer",
-    "8": "claim-button"
-};
-
 /**
  * Function migrateV2Buttons() :: Turns a stored button list into ids this version knows.
  *
@@ -117,13 +106,8 @@ const V2_TO_V3_BUTTON_IDS: Record<string, string> = {
  * version dropped would otherwise reach the screen and print as its own raw value.
  */
 function migrateV2Buttons( buttons: ( string | number )[] | undefined | null ): string[] {
-    if ( ! buttons ) {
-        return [];
-    }
-
-    return Array.from(
-        new Set( buttons.map( ( button ) => V2_TO_V3_BUTTON_IDS[ button.toString() ] ?? button.toString() ) )
-    ).filter( ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id ) );
+    return toV3ButtonIds( buttons )
+        .filter( ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id ) );
 }
 
 const ROSTER_LIMIT = 15;

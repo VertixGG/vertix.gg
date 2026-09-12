@@ -94,8 +94,11 @@ function getDynamicSettingsObject(
  * A key absent from the stored row means the setting predates it, so the default the bot itself
  * falls back to is what the dashboard must show - otherwise a form would save a value the admin
  * never chose.
+ *
+ * `version` is the generator's own, because the two interfaces carry a different set of buttons -
+ * a v2 generator with no set of its own falls back to v2's, not to every button v3 ships.
  */
-function readDynamicSettings( settingsData: Record<string, unknown> ): DynamicSettings {
+function readDynamicSettings( settingsData: Record<string, unknown>, version?: string | null ): DynamicSettings {
     return {
         dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{user}'s Channel",
         dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
@@ -111,7 +114,7 @@ function readDynamicSettings( settingsData: Record<string, unknown> ): DynamicSe
         // Absent means the generator predates any choice, and the bot falls back to every button
         // there is - which is exactly what the catalogue holds.
         dynamicChannelButtonsTemplate: ( settingsData.dynamicChannelButtonsTemplate as string[] )
-            ?? getButtonCatalogue().map( ( button ) => button.value ),
+            ?? getButtonCatalogue( version ).map( ( button ) => button.value ),
         dynamicChannelButtonsTemplateByRole:
             ( settingsData.dynamicChannelButtonsTemplateByRole as Record<string, string[]> ) ?? {},
         // Absent means no arrangement of its own, which the bot draws as rows of five.
@@ -390,7 +393,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     createdAt: master.createdAt,
                     dynamicChannelsCount,
                     version: master.version || "0.0.0.3",
-                    settings: settingsData ? readDynamicSettings( settingsData ) : null
+                    settings: settingsData ? readDynamicSettings( settingsData, master.version ) : null
                 };
             } )
         );
@@ -689,7 +692,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 createdAt: master.createdAt,
                 dynamicChannelsCount: dynamicChannels.length,
                 version: master.version || "0.0.0.3",
-                settings: settingsData ? readDynamicSettings( settingsData ) : null
+                settings: settingsData ? readDynamicSettings( settingsData, master.version ) : null
             },
             dynamicChannels: dynamicChannels.map( ( channel ) => ( {
                 id: channel.id,

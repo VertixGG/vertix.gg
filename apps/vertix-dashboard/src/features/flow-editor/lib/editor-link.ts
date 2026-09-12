@@ -1,3 +1,5 @@
+import { isV2Version } from "@vertix.gg/utils/src/button-ids";
+
 /**
  * Links into the interface editor, built in one place.
  *
@@ -6,13 +8,35 @@
  * talking about rather than on an empty editor the admin has to navigate themselves.
  */
 
-/** The flow a generator's channels are drawn by, which is what its settings link across to. */
-export const DYNAMIC_CHANNEL_FLOW = {
+/**
+ * The flow a generator's channels are drawn by, which is what its settings link across to.
+ *
+ * One set per interface version, because a generator keeps the one it was set up with and the two
+ * are separate flows in the editor - linking a v2 generator at the v3 flow opened an interface its
+ * channels do not draw, and offered buttons it cannot carry.
+ */
+export const DYNAMIC_CHANNEL_FLOW_V3 = {
     MODULE: "VertixBot/UI-V3/Module",
     FLOW: "VertixBot/UI-V3/DynamicChannelFlow",
     /** The component inside that flow whose elements a generator's buttons are. */
     COMPONENT: "VertixBot/UI-V3/DynamicChannel"
 } as const;
+
+export const DYNAMIC_CHANNEL_FLOW_V2 = {
+    MODULE: "VertixBot/UI-V2/Module",
+    FLOW: "VertixBot/UI-V2/DynamicChannelFlow",
+    COMPONENT: "VertixBot/UI-V2/DynamicChannel"
+} as const;
+
+/** Kept as the v3 name so existing readers that only ever meant v3 go on meaning it. */
+export const DYNAMIC_CHANNEL_FLOW = DYNAMIC_CHANNEL_FLOW_V3;
+
+/**
+ * Function dynamicChannelFlowFor() :: The flow a generator of this version is drawn by.
+ */
+export function dynamicChannelFlowFor( version?: string | null ) {
+    return isV2Version( version ) ? DYNAMIC_CHANNEL_FLOW_V2 : DYNAMIC_CHANNEL_FLOW_V3;
+}
 
 export const INTERFACE_EDITOR_PATH = "/interface-editor";
 
@@ -46,11 +70,16 @@ export function interfaceEditorLink( { module, flow, generatorId }: InterfaceEdi
 
 /**
  * Function dynamicChannelEditorLink() :: The interface editor, open on a generator's own channels.
+ *
+ * `version` is the one stored on the generator - omitted, the link goes to v3, which is what every
+ * generator set up since is.
  */
-export function dynamicChannelEditorLink( generatorId?: string ): string {
+export function dynamicChannelEditorLink( generatorId?: string, version?: string | null ): string {
+    const flow = dynamicChannelFlowFor( version );
+
     return interfaceEditorLink( {
-        module: DYNAMIC_CHANNEL_FLOW.MODULE,
-        flow: DYNAMIC_CHANNEL_FLOW.FLOW,
+        module: flow.MODULE,
+        flow: flow.FLOW,
         generatorId
     } );
 }

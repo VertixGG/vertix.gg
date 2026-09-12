@@ -9,6 +9,12 @@ import {
 
 import { emojiPreviewService } from "@vertix.gg/utils/src/emoji-preview-service";
 
+import {
+    DYNAMIC_CHANNEL_COMPONENT as DYNAMIC_CHANNEL_COMPONENTS,
+    V2_ELEMENT_TO_V3_BUTTON_ID,
+    isV2Version
+} from "@vertix.gg/utils/src/button-ids";
+
 import type { SheetSourceOption, SheetTile } from "@vertix.gg/utils/src/button-sheet-svg";
 
 /**
@@ -109,7 +115,7 @@ function loadOptions(): ReadonlyArray<SheetSourceOption> {
 }
 
 /** The component whose elements a generator's buttons are drawn by. */
-const DYNAMIC_CHANNEL_COMPONENT = "VertixBot/UI-V3/DynamicChannel";
+const DYNAMIC_CHANNEL_COMPONENT = DYNAMIC_CHANNEL_COMPONENTS.V3;
 
 /**
  * Function loadElementsByEmoji() :: The dynamic channel's elements, keyed by the artwork they draw.
@@ -216,12 +222,80 @@ async function ensureDataUris( names: ReadonlyArray<string> ): Promise<void> {
     } ) );
 }
 
+/** One button a generator can carry, as the dashboard and the site read it. */
+export interface ButtonCatalogueEntry {
+    value: string;
+    label: string;
+    emoji: string | null;
+    element: string | null;
+}
+
 /**
- * Function getButtonSheetTiles() :: The buttons the bot ships, as sheet tiles with Discord artwork.
+ * Function getButtonCatalogueV2() :: The same list for a generator on the older interface.
  *
- * Tiles are rebuilt per call from the resolved-icon cache rather than memoised, so a button whose
- * emoji failed to resolve once picks its artwork up on a later request without a server restart.
+ * V2 draws a narrower set and draws it with plain unicode emoji rather than the application emoji
+ * v3 uses, so a v2 generator described out of v3's catalogue showed the wrong artwork and offered
+ * buttons - invite, region, templates, knock - that its channels cannot draw at all.
+ *
+ * Keyed by the v3 slug regardless, because that is the one vocabulary every reader shares once a
+ * stored set has been through `toV3ButtonIds()`. Two v2 buttons collapse onto `privacy`, so the
+ * first of them wins and the list stays one entry per button v3 knows.
  */
+function getButtonCatalogueV2(): ReadonlyArray<ButtonCatalogueEntry> {
+    const parsed: unknown = JSON.parse( readFileSync( COMPONENTS_PATH, "utf-8" ) ),
+        entries = new Map<string, ButtonCatalogueEntry>();
+
+    // V2's privacy buttons name themselves at runtime - their stored label is the `{displayText}`
+    // placeholder - so those borrow v3's name for the same button rather than printing the
+    // template at an admin. The artwork still comes from v2.
+    const namesFromV3 = new Map( getButtonCatalogueV3().map( ( entry ) => [ entry.value, entry.label ] ) );
+
+    const nameFor = ( value: string, label: unknown ) => {
+        if ( "string" === typeof label && ! label.includes( "{" ) ) {
+            return label;
+        }
+
+        return namesFromV3.get( value ) ?? value;
+    };
+
+    for ( const component of asArray( parsed ) ) {
+        if ( property( component, "name" ) !== DYNAMIC_CHANNEL_COMPONENTS.V2 ) {
+            continue;
+        }
+
+        for ( const group of asArray( property( component, "elementsGroups" ) ) ) {
+            for ( const row of asArray( property( group, "items" ) ) ) {
+                for ( const item of asArray( row ) ) {
+                    const element = property( item, "element" );
+
+                    if ( "string" !== typeof element ) {
+                        continue;
+                    }
+
+                    const value = V2_ELEMENT_TO_V3_BUTTON_ID[ element ];
+
+                    if ( ! value || entries.has( value ) ) {
+                        continue;
+                    }
+
+                    const definition = property( item, "definition" ),
+                        label = property( definition, "label" ),
+                        emoji = property( definition, "emoji" );
+
+                    entries.set( value, {
+                        value,
+                        label: nameFor( value, label ),
+                        emoji: "string" === typeof emoji ? emoji : null,
+                        element
+                    } );
+                }
+            }
+        }
+    }
+
+    return [ ...entries.values() ];
+}
+
 /**
  * Function getButtonCatalogue() :: Every button a generator can carry, as the dashboard needs it.
  *
@@ -229,8 +303,11 @@ async function ensureDataUris( names: ReadonlyArray<string> ): Promise<void> {
  * restated here - so a button added to the interface appears in both without being named twice.
  * In the order the panel draws them, which is the order the export carries.
  */
-export function getButtonCatalogue():
-ReadonlyArray<{ value: string; label: string; emoji: string | null; element: string | null }> {
+export function getButtonCatalogue( version?: string | null ): ReadonlyArray<ButtonCatalogueEntry> {
+    return isV2Version( version ) ? getButtonCatalogueV2() : getButtonCatalogueV3();
+}
+
+function getButtonCatalogueV3(): ReadonlyArray<ButtonCatalogueEntry> {
     const elementsByEmoji = loadElementsByEmoji();
 
     return loadOptions()
@@ -245,6 +322,12 @@ ReadonlyArray<{ value: string; label: string; emoji: string | null; element: str
         } ) );
 }
 
+/**
+ * Function getButtonSheetTiles() :: The buttons the bot ships, as sheet tiles with Discord artwork.
+ *
+ * Tiles are rebuilt per call from the resolved-icon cache rather than memoised, so a button whose
+ * emoji failed to resolve once picks its artwork up on a later request without a server restart.
+ */
 export async function getButtonSheetTiles(): Promise<ReadonlyArray<SheetTile>> {
     const options = loadOptions();
 

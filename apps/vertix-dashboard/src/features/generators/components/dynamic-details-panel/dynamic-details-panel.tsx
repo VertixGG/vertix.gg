@@ -301,6 +301,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                             { state.isEditing ? (
                                 <DynamicConfigForm
                                     masterChannelId={ master.id }
+                                    masterChannelVersion={ master.version }
                                     settings={ settings }
                                     discordOptions={ discordOptions }
                                     generatorUserLimit={ details.discord?.masterChannel?.userLimit }
@@ -395,14 +396,15 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                     <div className="md:col-span-2">
                                         <SettingsGroup title="Buttons">
                                             <SettingRow
-                                                label="Shown to owners"
+                                                label="Shown to users"
                                                 value={
                                                     <span className="flex flex-col gap-1.5 items-start">
                                                         <ButtonsSummary
                                                             selected={ settings?.dynamicChannelButtonsTemplate ?? [] }
+                                                            version={ master.version }
                                                         />
                                                         <Link
-                                                            to={ dynamicChannelEditorLink( master.id ) }
+                                                            to={ dynamicChannelEditorLink( master.id, master.version ) }
                                                             className="link-accent"
                                                         >
                                                             Arrange in the interface editor

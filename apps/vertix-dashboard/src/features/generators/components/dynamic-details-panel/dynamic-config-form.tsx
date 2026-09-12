@@ -33,6 +33,8 @@ import type {
 
 export interface DynamicConfigFormProps {
     masterChannelId: string;
+    /** The interface version the generator was set up with, which decides the flow it links at. */
+    masterChannelVersion?: string | null;
     settings: DynamicSettings | null;
     discordOptions: GuildDiscordOptions | null;
     /** The generator's own limit, which an empty field copies. `0` is Discord's word for none. */
@@ -64,6 +66,7 @@ function sameRoles( a: string[], b: string[] ): boolean {
 
 const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormProps, DynamicConfigFormState> = ( {
     masterChannelId,
+    masterChannelVersion,
     settings,
     discordOptions,
     generatorUserLimit,
@@ -327,7 +330,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                          elements themselves, so the set and its rows are the same gesture there. */ }
                     Which buttons a channel owner gets, and the rows they sit in, are set in the{ " " }
                     <Link
-                        to={ dynamicChannelEditorLink( masterChannelId ) }
+                        to={ dynamicChannelEditorLink( masterChannelId, masterChannelVersion ) }
                         className="link-accent"
                     >
                         interface editor

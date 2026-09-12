@@ -19,13 +19,18 @@ import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 export class EmojiManager extends InitializeBase {
     private static instance: EmojiManager;
 
-    private appService: AppService;
-
     private debugger: Debugger;
 
-    private initPromise: Promise<void>;
+    /**
+     * Unset until `initialize()` runs, which is what `promise()` tests for before running it.
+     */
+    private initPromise: Promise<void> | undefined;
 
-    private emojis: RESTGetAPIApplicationEmojisResult;
+    /**
+     * Unset whenever the emojis could not be fetched - headless with no token reaches exactly
+     * that, and every read already treats their absence as a placeholder rather than a failure.
+     */
+    private emojis: RESTGetAPIApplicationEmojisResult | undefined;
 
     public static getName() {
         return "VertixBot/Managers/Emoji";
@@ -66,18 +71,18 @@ export class EmojiManager extends InitializeBase {
             return;
         }
 
-        this.appService = await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
+        const readyAppService: AppService = await ServiceLocator.$.waitFor( "VertixBot/Services/App", {
             silent: true,
             timeout: 5000
         } );
 
         // Wait for client to be ready using AppService's onceReady
         this.initPromise = new Promise<void>( ( resolve ) => {
-            this.appService.onceReady( async() => {
+            readyAppService.onceReady( async() => {
                 const rest = new REST( { version: GatewayVersion } ).setToken( gToken );
 
                 this.emojis = ( await rest.get(
-                    Routes.applicationEmojis( this.appService.getClient().user.id )
+                    Routes.applicationEmojis( readyAppService.getClient().user.id )
                 ) ) as RESTGetAPIApplicationEmojisResult;
 
                 this.debugger.dumpDown( this.initialize, this.emojis, "emojis" );

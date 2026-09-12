@@ -296,15 +296,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 );
             }
 
-            // The control panel beside the generator carries the default set, so editing that set
-            // has to redraw it - the same redraw the buttons screen does inside discord. A role's
-            // set never reaches the panel, which is why only the default one triggers it.
-            if ( settings.dynamicChannelButtonsTemplate !== undefined ) {
+            // A role's set never reaches the panel, so only an edit to the default one redraws it.
+            const isDefaultEdit = settings.dynamicChannelButtonsTemplate !== undefined,
+                isButtonsEdit = isDefaultEdit || settings.dynamicChannelButtonsTemplateByRole !== undefined;
+
+            if ( isButtonsEdit ) {
                 const guild = this.services.appService.getClient().guilds.cache.get( guildId );
 
                 if ( guild ) {
-                    await this.refreshControlPanel( guild, masterChannelDB )
-                        .catch( ( error ) => this.logger.error( this.handleUpdateDynamicSettings, "", error ) );
+                    await this.refreshGeneratorButtons( guild, masterChannelDB, isDefaultEdit );
                 }
             }
 
@@ -3450,6 +3450,44 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     /**
+     * Function refreshGeneratorButtons() :: Put a generator's new button set on screen.
+     *
+     * Buttons live in two places at once: the control panel beside the generator, which carries the
+     * default set, and the message inside every channel already open, which carries the set that
+     * channel was created with. Neither re-reads the set on its own, so redrawing one and not the
+     * other leaves a surface offering buttons the generator no longer has.
+     *
+     * Both places an edit can come from - the dashboard and the buttons screen inside discord - go
+     * through here, so the two cannot drift on what gets redrawn. A role's set never reaches the
+     * panel, which is what `includePanel` is for.
+     */
+    public async refreshGeneratorButtons(
+        guild: Guild,
+        masterChannelDB: ChannelExtended,
+        includePanel = true
+    ): Promise<void> {
+        if ( includePanel ) {
+            await this.refreshControlPanel( guild, masterChannelDB )
+                .catch( ( error ) => this.logger.error( this.refreshGeneratorButtons, "", error ) );
+        }
+
+        // The buttons screen builds a record carrying only the id it was given, and refreshing on
+        // a missing channel id would widen this to every channel in the guild.
+        const channelId = masterChannelDB.channelId
+            ?? ( await ChannelModel.$.getById( masterChannelDB.id ) )?.channelId;
+
+        if ( ! channelId ) {
+            this.logger.warn(
+                this.refreshGeneratorButtons,
+                `Master channel '${ masterChannelDB.id }' has no channel id, skipping channel refresh`
+            );
+            return;
+        }
+
+        await this.refreshDynamicChannelMessages( guild, channelId );
+    }
+
+    /**
      * Function refreshControlPanel() :: Redraws one master channel's control panel.
      *
      * The panel belongs to the master channel rather than to any owner, so it always carries the
@@ -3574,10 +3612,16 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     /**
      * Refresh primary messages in all active dynamic channels for a guild.
      * Called after customization changes so existing channels pick up the new settings.
+     *
+     * `masterChannelId` - the generator's discord channel id - narrows it to the channels that one
+     * generator owns, for an edit that only concerns them. A guild's other generators keep their
+     * own sets, so redrawing them would be work with nothing to show for it.
      */
-    private async refreshDynamicChannelMessages( guild: Guild ) {
+    private async refreshDynamicChannelMessages( guild: Guild, masterChannelId?: string ) {
         try {
-            const dynamicChannelsDB = await ChannelModel.$.getDynamics( guild.id );
+            const dynamicChannelsDB = masterChannelId
+                ? await ChannelModel.$.getDynamicsByMasterId( guild.id, masterChannelId )
+                : await ChannelModel.$.getDynamics( guild.id );
 
             if ( !dynamicChannelsDB?.length ) {
                 return;

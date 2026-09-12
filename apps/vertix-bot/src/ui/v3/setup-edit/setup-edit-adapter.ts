@@ -1121,13 +1121,13 @@ async function onButtonsSelected(
             : { dynamicChannelButtonsTemplateDefault: buttons } )
     } );
 
-    // The control panel carries the default set, so editing that set has to redraw it. A role's set
-    // never reaches it, which is why this only runs in the default scope.
-    if ( ! roleId && interaction.guild ) {
+    // The set reaches the channels already open as well as the control panel, and neither re-reads
+    // it on its own. A role's set never reaches the panel, so only the default scope redraws that.
+    if ( interaction.guild ) {
         const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
         await dynamicChannelService
-            .refreshControlPanel( interaction.guild, masterChannelDB )
+            .refreshGeneratorButtons( interaction.guild, masterChannelDB, ! roleId )
             .catch( ( error ) => GlobalLogger.$.error( onButtonsSelected, error ) );
     }
 

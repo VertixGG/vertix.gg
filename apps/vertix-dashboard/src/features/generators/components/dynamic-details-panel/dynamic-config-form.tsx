@@ -339,8 +339,8 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                     Buttons
                 </label>
                 <p className="text-xs text-text-muted mt-0 mb-3">
-                    What a channel owner gets in the interface. Channels already open keep the set
-                    they were created with until their owner reopens them.
+                    What a channel owner gets in the interface. Saving redraws the channels that are
+                    already open, along with the control panel beside the generator.
                 </p>
                 <ButtonsPicker
                     selected={ state.buttons }

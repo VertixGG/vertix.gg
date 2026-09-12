@@ -295,15 +295,15 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                 </div>
             </section>
 
-            <section className="bg-surface border border-border rounded-lg p-5 space-y-4">
-                <div>
-                    <h2 className="text-base font-semibold text-text-primary mb-1">Claim</h2>
-                    <p className="text-xs text-text-muted mb-0">
-                        When an abandoned channel is offered to whoever is still in it, and how long they vote
-                    </p>
-                </div>
+            { storedTimings ? (
+                <section className="bg-surface border border-border rounded-lg p-5 space-y-4">
+                    <div>
+                        <h2 className="text-base font-semibold text-text-primary mb-1">Claim</h2>
+                        <p className="text-xs text-text-muted mb-0">
+                            When an abandoned channel is offered to whoever is still in it, and how long they vote
+                        </p>
+                    </div>
 
-                { storedTimings ? ( <>
                     <div className="grid gap-4 sm:grid-cols-2">
                         { timingResults.map( ( { field, label, hint, error } ) => {
                             const inherited = toSeconds( storedTimings.defaults[ field ] );
@@ -349,12 +349,8 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                     <p className="text-xs text-text-muted mb-0">
                         Leave a field empty to follow the bot's own configuration, which is what the placeholder shows.
                     </p>
-                </> ) : (
-                    <p className="text-sm text-text-muted mb-0">
-                        This server has not reported its claim timings, so they cannot be changed from here yet.
-                    </p>
-                ) }
-            </section>
+                </section>
+            ) : null }
 
             <section className="bg-surface border border-border rounded-lg p-5 space-y-4">
                 <div>

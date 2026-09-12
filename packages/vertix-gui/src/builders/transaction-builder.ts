@@ -6,6 +6,10 @@ import type {
 } from "discord.js";
 
 import type {
+    UIExecutionConditionArgs,
+    UIExecutionStep
+} from "@vertix.gg/gui/src/bases/ui-definitions";
+import type {
     BindingFlowTriggerConfig
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type {
@@ -56,6 +60,14 @@ export interface StateConfig {
      * If not specified, uses the component's default markdown group.
      */
     markdownGroup?: string | null;
+    /**
+     * Whether this state is the one to render, asked of live state rather than of a transition.
+     *
+     * A screen that moves itself - one following something with its own clock, like a running vote
+     * - has no click to hang a transition on. `UIAdapterExecutionStepsBase` walks the steps after
+     * the current one on every build and renders the first whose condition holds.
+     */
+    getConditions?: ( args: UIExecutionConditionArgs ) => boolean;
     /**
      * How to navigate to this state.
      * - "editReply": Update the existing message (default)
@@ -375,8 +387,8 @@ export class TransactionBuilder<TContext = unknown> {
      * Returns a map of execution step names to their configuration,
      * derived from the state configs.
      */
-    public getExecutionSteps(): Record<string, { embedsGroup?: string | null; elementsGroup?: string | null; markdownGroup?: string | null }> {
-        const steps: Record<string, { embedsGroup?: string | null; elementsGroup?: string | null; markdownGroup?: string | null }> = {};
+    public getExecutionSteps(): Record<string, UIExecutionStep> {
+        const steps: Record<string, UIExecutionStep> = {};
 
         for ( const [ , stateConfig ] of this.states ) {
             const stepName = stateConfig.executionStep;
@@ -389,11 +401,13 @@ export class TransactionBuilder<TContext = unknown> {
             // Only add if there's at least one group defined
             if ( stateConfig.embedsGroup !== undefined ||
                  stateConfig.elementsGroup !== undefined ||
-                 stateConfig.markdownGroup !== undefined ) {
+                 stateConfig.markdownGroup !== undefined ||
+                 stateConfig.getConditions !== undefined ) {
                 steps[ stepName ] = {
                     ...( stateConfig.embedsGroup !== undefined && { embedsGroup: stateConfig.embedsGroup } ),
                     ...( stateConfig.elementsGroup !== undefined && { elementsGroup: stateConfig.elementsGroup } ),
-                    ...( stateConfig.markdownGroup !== undefined && { markdownGroup: stateConfig.markdownGroup } )
+                    ...( stateConfig.markdownGroup !== undefined && { markdownGroup: stateConfig.markdownGroup } ),
+                    ...( stateConfig.getConditions !== undefined && { getConditions: stateConfig.getConditions } )
                 };
             } else {
                 // Add empty config for the step (allows step to exist with defaults)

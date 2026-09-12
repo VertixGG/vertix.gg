@@ -15,7 +15,7 @@ import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
 import type { ButtonInteraction, Message, VoiceChannel } from "discord.js";
 
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs, UIExecutionConditionArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
@@ -121,18 +121,27 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultIntera
             .setInitialState( "StepIn" )
             .addState( "StepIn", {
                 executionStep: "VertixBot/UI-V2/ClaimStepIn",
+                getConditions: ( { context }: UIExecutionConditionArgs ) =>
+                    [ "starting", "active" ].includes(
+                        DynamicChannelVoteManager.$.getState( context.channelId as string )
+                    ) && DynamicChannelVoteManager.$.getCandidatesCount( context.channelId as string ) < 2,
                 embedsGroup: "VertixBot/UI-V2/ClaimVoteStepInEmbedGroup",
                 elementsGroup: "VertixBot/UI-V2/ClaimVoteStepInButtonGroup",
                 previewDefaultVars: { userInitiatorDisplayName: "Initiator", timeEnd: "1700000000000" }
             } )
             .addState( "VoteProcess", {
                 executionStep: "VertixBot/UI-V2/ClaimVoteProcess",
+                getConditions: ( { context }: UIExecutionConditionArgs ) =>
+                    "active" === DynamicChannelVoteManager.$.getState( context.channelId as string ) &&
+                    DynamicChannelVoteManager.$.getCandidatesCount( context.channelId as string ) > 1,
                 embedsGroup: "VertixBot/UI-V2/ClaimVoteEmbedGroup",
                 elementsGroup: "VertixBot/UI-V2/ClaimVoteElementsGroup",
                 previewDefaultVars: { userInitiatorDisplayName: "Initiator", timeEnd: "1700000000000" }
             } )
             .addState( "VoteWon", {
                 executionStep: "VertixBot/UI-V2/ClaimVoteWon",
+                getConditions: ( { context }: UIExecutionConditionArgs ) =>
+                    DynamicChannelVoteManager.$.isTimeExpired( context.channelId as string ),
                 embedsGroup: "VertixBot/UI-V2/ClaimVoteWonEmbedGroup",
                 markdownGroup: "VertixBot/UI-V2/ClaimVoteResultsMarkdownGroup",
                 previewDefaultVars: { userWonDisplayName: "Winner", previousOwnerDisplayName: "Previous Owner" }

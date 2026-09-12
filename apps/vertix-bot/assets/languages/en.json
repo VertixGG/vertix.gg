@@ -421,15 +421,51 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupTimingsEditButton",
-        "content": {
-          "label": "Edit Claim"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/SetupClaimBackButton",
         "content": {
           "label": "Back"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsBackButton",
+        "content": {
+          "label": "Back"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VoiceRoleClearButton",
+        "content": {
+          "label": "Clear"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesClearButton",
+        "content": {
+          "label": "Clear"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/StaffRolesClearButton",
+        "content": {
+          "label": "Clear"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/BadwordsClearButton",
+        "content": {
+          "label": "Remove all"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimResetButton",
+        "content": {
+          "label": "Reset to defaults"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Edit Claim"
         }
       }
     ],
@@ -672,23 +708,6 @@
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
           "placeholder": "🛡️ ∙ Select Verified Roles"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
-        "content": {
-          "placeholder": "🧹 ∙ Clear a role setting",
-          "selectOptions": [
-            {
-              "label": "Clear Voice Role"
-            },
-            {
-              "label": "Clear Verified Roles"
-            },
-            {
-              "label": "Clear Staff Roles"
-            }
-          ]
         }
       },
       {
@@ -1102,6 +1121,34 @@
             },
             {
               "label": "∙ Vote Time Per Candidate"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+        "content": {
+          "placeholder": "⚙️ ∙ Select Edit Options",
+          "selectOptions": [
+            {
+              "label": "Voice Role",
+              "description": "The role given to members while they are in a voice channel"
+            },
+            {
+              "label": "Verified Roles",
+              "description": "Who the dynamic channels are for"
+            },
+            {
+              "label": "Staff Roles",
+              "description": "Who may act on a channel they do not own"
+            },
+            {
+              "label": "Bad Words",
+              "description": "Words a member cannot put in a channel name"
+            },
+            {
+              "label": "Claim",
+              "description": "How long an abandoned channel waits, and how long the vote runs"
             }
           ]
         }
@@ -3211,7 +3258,7 @@
     {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
-        "title": "\ud83d\ude08  Claim works inside the channel",
+        "title": "😈  Claim works inside the channel",
         "description": "This panel sits beside the generator rather than in any one channel, so there is nothing here to claim.\n\nJoin the voice channel you want to take over, open its chat, and press **Claim** on the message waiting there."
       }
     },

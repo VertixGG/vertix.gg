@@ -4,9 +4,12 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIButtonStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-export class SetupTimingsEditButton extends UIElementButtonBase {
+/**
+ * Empties the staff list, leaving every channel to its own owner.
+ */
+export class StaffRolesClearButton extends UIElementButtonBase {
     public static getName() {
-        return "VertixBot/UI-General/SetupTimingsEditButton";
+        return "VertixBot/UI-General/StaffRolesClearButton";
     }
 
     public static getInstanceType() {
@@ -14,14 +17,14 @@ export class SetupTimingsEditButton extends UIElementButtonBase {
     }
 
     protected getLabel(): Promise<string> {
-        return Promise.resolve( "Edit Claim" );
+        return Promise.resolve( "Clear" );
     }
 
     protected getStyle(): Promise<UIButtonStyleTypes> {
-        return Promise.resolve( "secondary" );
+        return Promise.resolve( "danger" );
     }
 
     protected async getEmoji(): Promise<string> {
-        return "⏱️";
+        return "🧹";
     }
 }

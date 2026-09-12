@@ -421,15 +421,51 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupTimingsEditButton",
-        "content": {
-          "label": "請求を編集"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/SetupClaimBackButton",
         "content": {
           "label": "戻る"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsBackButton",
+        "content": {
+          "label": "戻る"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VoiceRoleClearButton",
+        "content": {
+          "label": "クリア"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesClearButton",
+        "content": {
+          "label": "クリア"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/StaffRolesClearButton",
+        "content": {
+          "label": "クリア"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/BadwordsClearButton",
+        "content": {
+          "label": "すべて削除"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimResetButton",
+        "content": {
+          "label": "既定値に戻す"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "請求を編集"
         }
       }
     ],
@@ -672,23 +708,6 @@
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
           "placeholder": "🛡️ ∙ 認証済みロールを選択"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
-        "content": {
-          "placeholder": "🧹 ∙ ロール設定をクリア",
-          "selectOptions": [
-            {
-              "label": "ボイスロールをクリア"
-            },
-            {
-              "label": "認証済みロールをクリア"
-            },
-            {
-              "label": "スタッフロールをクリア"
-            }
-          ]
         }
       },
       {
@@ -1102,6 +1121,34 @@
             },
             {
               "label": "∙ 候補者ごとの追加時間"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+        "content": {
+          "placeholder": "⚙️ ∙ 設定を選択",
+          "selectOptions": [
+            {
+              "label": "ボイスロール",
+              "description": "ボイスチャンネルにいる間メンバーに付与されるロール"
+            },
+            {
+              "label": "認証済みロール",
+              "description": "ダイナミックチャンネルを使える人"
+            },
+            {
+              "label": "スタッフロール",
+              "description": "自分のものではないチャンネルを操作できる人"
+            },
+            {
+              "label": "禁止ワード",
+              "description": "チャンネル名に使えない単語"
+            },
+            {
+              "label": "取得",
+              "description": "放置されたチャンネルが待つ時間と、投票が続く時間"
             }
           ]
         }
@@ -3211,8 +3258,8 @@
     {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
-        "title": "\ud83d\ude08  \u53d6\u5f97\u306f\u30c1\u30e3\u30f3\u30cd\u30eb\u5185\u3067\u884c\u3044\u307e\u3059",
-        "description": "\u3053\u306e\u30d1\u30cd\u30eb\u306f\u30b8\u30a7\u30cd\u30ec\u30fc\u30bf\u30fc\u306e\u96a3\u306b\u3042\u308a\u3001\u7279\u5b9a\u306e\u30c1\u30e3\u30f3\u30cd\u30eb\u306e\u4e2d\u306b\u306f\u306a\u3044\u305f\u3081\u3001\u3053\u3053\u3067\u53d6\u5f97\u3067\u304d\u308b\u3082\u306e\u306f\u3042\u308a\u307e\u305b\u3093\u3002\n\n\u5f15\u304d\u7d99\u304e\u305f\u3044\u30dc\u30a4\u30b9\u30c1\u30e3\u30f3\u30cd\u30eb\u306b\u53c2\u52a0\u3057\u3001\u305d\u306e\u30c1\u30e3\u30c3\u30c8\u3092\u958b\u3044\u3066\u3001\u305d\u3053\u3067\u5f85\u3063\u3066\u3044\u308b\u30e1\u30c3\u30bb\u30fc\u30b8\u306e **\u53d6\u5f97** \u3092\u62bc\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+        "title": "😈  取得はチャンネル内で行います",
+        "description": "このパネルはジェネレーターの隣にあり、特定のチャンネルの中にはないため、ここで取得できるものはありません。\n\n引き継ぎたいボイスチャンネルに参加し、そのチャットを開いて、そこで待っているメッセージの **取得** を押してください。"
       }
     },
     {

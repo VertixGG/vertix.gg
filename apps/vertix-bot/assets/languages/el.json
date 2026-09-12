@@ -421,15 +421,51 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupTimingsEditButton",
-        "content": {
-          "label": "Επεξεργασία διεκδίκησης"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/SetupClaimBackButton",
         "content": {
           "label": "Πίσω"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsBackButton",
+        "content": {
+          "label": "Πίσω"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VoiceRoleClearButton",
+        "content": {
+          "label": "Καθαρισμός"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesClearButton",
+        "content": {
+          "label": "Καθαρισμός"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/StaffRolesClearButton",
+        "content": {
+          "label": "Καθαρισμός"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/BadwordsClearButton",
+        "content": {
+          "label": "Αφαίρεση όλων"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimResetButton",
+        "content": {
+          "label": "Επαναφορά προεπιλογών"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Επεξεργασία διεκδίκησης"
         }
       }
     ],
@@ -672,23 +708,6 @@
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
           "placeholder": "🛡️ ∙ Επιλέξτε επαληθευμένους ρόλους"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
-        "content": {
-          "placeholder": "🧹 ∙ Καθαρισμός ρύθμισης ρόλων",
-          "selectOptions": [
-            {
-              "label": "Καθαρισμός ρόλου φωνής"
-            },
-            {
-              "label": "Καθαρισμός επαληθευμένων ρόλων"
-            },
-            {
-              "label": "Καθαρισμός ρόλων προσωπικού"
-            }
-          ]
         }
       },
       {
@@ -1102,6 +1121,34 @@
             },
             {
               "label": "∙ Χρόνος ανά υποψήφιο"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+        "content": {
+          "placeholder": "⚙️ ∙ Επιλέξτε ρύθμιση",
+          "selectOptions": [
+            {
+              "label": "Ρόλος φωνής",
+              "description": "Ο ρόλος που παίρνουν τα μέλη όσο βρίσκονται σε φωνητικό κανάλι"
+            },
+            {
+              "label": "Επαληθευμένοι ρόλοι",
+              "description": "Για ποιους είναι τα δυναμικά κανάλια"
+            },
+            {
+              "label": "Ρόλοι προσωπικού",
+              "description": "Ποιοι μπορούν να δράσουν σε κανάλι που δεν τους ανήκει"
+            },
+            {
+              "label": "Απαγορευμένες λέξεις",
+              "description": "Λέξεις που δεν επιτρέπονται σε όνομα καναλιού"
+            },
+            {
+              "label": "Διεκδίκηση",
+              "description": "Πόσο περιμένει ένα εγκαταλελειμμένο κανάλι και πόσο διαρκεί η ψηφοφορία"
             }
           ]
         }
@@ -3211,8 +3258,8 @@
     {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
-        "title": "\ud83d\ude08  \u0397 \u03b4\u03b9\u03b5\u03ba\u03b4\u03af\u03ba\u03b7\u03c3\u03b7 \u03b3\u03af\u03bd\u03b5\u03c4\u03b1\u03b9 \u03bc\u03ad\u03c3\u03b1 \u03c3\u03c4\u03bf \u03ba\u03b1\u03bd\u03ac\u03bb\u03b9",
-        "description": "\u0391\u03c5\u03c4\u03cc\u03c2 \u03bf \u03c0\u03af\u03bd\u03b1\u03ba\u03b1\u03c2 \u03b2\u03c1\u03af\u03c3\u03ba\u03b5\u03c4\u03b1\u03b9 \u03b4\u03af\u03c0\u03bb\u03b1 \u03c3\u03c4\u03b7 \u03b3\u03b5\u03bd\u03bd\u03ae\u03c4\u03c1\u03b9\u03b1 \u03ba\u03b1\u03b9 \u03cc\u03c7\u03b9 \u03bc\u03ad\u03c3\u03b1 \u03c3\u03b5 \u03ba\u03ac\u03c0\u03bf\u03b9\u03bf \u03ba\u03b1\u03bd\u03ac\u03bb\u03b9, \u03bf\u03c0\u03cc\u03c4\u03b5 \u03b4\u03b5\u03bd \u03c5\u03c0\u03ac\u03c1\u03c7\u03b5\u03b9 \u03c4\u03af\u03c0\u03bf\u03c4\u03b1 \u03b5\u03b4\u03ce \u03b3\u03b9\u03b1 \u03b4\u03b9\u03b5\u03ba\u03b4\u03af\u03ba\u03b7\u03c3\u03b7.\n\n\u039c\u03c0\u03b5\u03c2 \u03c3\u03c4\u03bf \u03c6\u03c9\u03bd\u03b7\u03c4\u03b9\u03ba\u03cc \u03ba\u03b1\u03bd\u03ac\u03bb\u03b9 \u03c0\u03bf\u03c5 \u03b8\u03ad\u03bb\u03b5\u03b9\u03c2 \u03bd\u03b1 \u03b1\u03bd\u03b1\u03bb\u03ac\u03b2\u03b5\u03b9\u03c2, \u03ac\u03bd\u03bf\u03b9\u03be\u03b5 \u03c4\u03b7 \u03c3\u03c5\u03bd\u03bf\u03bc\u03b9\u03bb\u03af\u03b1 \u03c4\u03bf\u03c5 \u03ba\u03b1\u03b9 \u03c0\u03ac\u03c4\u03b7\u03c3\u03b5 **\u0394\u03b9\u03b5\u03ba\u03b4\u03af\u03ba\u03b7\u03c3\u03b7** \u03c3\u03c4\u03bf \u03bc\u03ae\u03bd\u03c5\u03bc\u03b1 \u03c0\u03bf\u03c5 \u03c0\u03b5\u03c1\u03b9\u03bc\u03ad\u03bd\u03b5\u03b9 \u03b5\u03ba\u03b5\u03af."
+        "title": "😈  Η διεκδίκηση γίνεται μέσα στο κανάλι",
+        "description": "Αυτός ο πίνακας βρίσκεται δίπλα στη γεννήτρια και όχι μέσα σε κάποιο κανάλι, οπότε δεν υπάρχει τίποτα εδώ για διεκδίκηση.\n\nΜπες στο φωνητικό κανάλι που θέλεις να αναλάβεις, άνοιξε τη συνομιλία του και πάτησε **Διεκδίκηση** στο μήνυμα που περιμένει εκεί."
       }
     },
     {

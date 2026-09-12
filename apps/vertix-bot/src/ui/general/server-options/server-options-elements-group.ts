@@ -2,19 +2,13 @@ import { ElementsGroupBuilder } from "@vertix.gg/gui/src/builders/elements-group
 
 import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
 
-import { BadwordsEditButton } from "@vertix.gg/bot/src/ui/general/badwords/badwords-edit-button";
-import { SetupTimingsEditButton } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-timings-edit-button";
-import { VoiceRoleMenu } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-menu";
-import { VerifiedRolesMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-menu";
-import { StaffRolesMenu } from "@vertix.gg/bot/src/ui/general/staff-roles/staff-roles-menu";
-import { ClearRolesSelectMenu } from "@vertix.gg/bot/src/ui/general/server-options/clear-roles-select-menu";
+import {
+    ServerOptionsEditSelectMenu
+} from "@vertix.gg/bot/src/ui/general/server-options/server-options-edit-select-menu";
 
 const ServerOptionsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/ServerOptionsElementsGroup" )
-    .addRow( [ VoiceRoleMenu ] )
-    .addRow( [ VerifiedRolesMenu ] )
-    .addRow( [ StaffRolesMenu ] )
-    .addRow( [ ClearRolesSelectMenu ] )
-    .addRow( [ BadwordsEditButton, SetupTimingsEditButton, DoneButton ] )
+    .addRow( [ ServerOptionsEditSelectMenu ] )
+    .addRow( [ DoneButton ] )
     .build();
 
 export { ServerOptionsElementsGroup };

@@ -421,15 +421,51 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupTimingsEditButton",
-        "content": {
-          "label": "Editar reclamación"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/SetupClaimBackButton",
         "content": {
           "label": "Atrás"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsBackButton",
+        "content": {
+          "label": "Atrás"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VoiceRoleClearButton",
+        "content": {
+          "label": "Vaciar"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesClearButton",
+        "content": {
+          "label": "Vaciar"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/StaffRolesClearButton",
+        "content": {
+          "label": "Vaciar"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/BadwordsClearButton",
+        "content": {
+          "label": "Quitar todas"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimResetButton",
+        "content": {
+          "label": "Restablecer valores"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupTimingsEditButton",
+        "content": {
+          "label": "Editar reclamación"
         }
       }
     ],
@@ -672,23 +708,6 @@
         "name": "VertixBot/UI-General/VerifiedRolesMenu",
         "content": {
           "placeholder": "🛡️ ∙ Seleccionar roles verificados"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
-        "content": {
-          "placeholder": "🧹 ∙ Vaciar una configuración de roles",
-          "selectOptions": [
-            {
-              "label": "Vaciar rol de voz"
-            },
-            {
-              "label": "Vaciar roles verificados"
-            },
-            {
-              "label": "Vaciar roles del staff"
-            }
-          ]
         }
       },
       {
@@ -1102,6 +1121,34 @@
             },
             {
               "label": "∙ Tiempo por candidato"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+        "content": {
+          "placeholder": "⚙️ ∙ Seleccionar ajuste",
+          "selectOptions": [
+            {
+              "label": "Rol de voz",
+              "description": "El rol que reciben los miembros mientras están en un canal de voz"
+            },
+            {
+              "label": "Roles verificados",
+              "description": "Para quién son los canales dinámicos"
+            },
+            {
+              "label": "Roles del staff",
+              "description": "Quién puede actuar en un canal que no es suyo"
+            },
+            {
+              "label": "Palabras prohibidas",
+              "description": "Palabras que no pueden ir en el nombre de un canal"
+            },
+            {
+              "label": "Reclamar",
+              "description": "Cuánto espera un canal abandonado y cuánto dura la votación"
             }
           ]
         }
@@ -3211,8 +3258,8 @@
     {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
-        "title": "\ud83d\ude08  Reclamar funciona dentro del canal",
-        "description": "Este panel est\u00e1 junto al generador y no dentro de ning\u00fan canal concreto, as\u00ed que aqu\u00ed no hay nada que reclamar.\n\nEntra en el canal de voz que quieres tomar, abre su chat y pulsa **Reclamar** en el mensaje que espera all\u00ed."
+        "title": "😈  Reclamar funciona dentro del canal",
+        "description": "Este panel está junto al generador y no dentro de ningún canal concreto, así que aquí no hay nada que reclamar.\n\nEntra en el canal de voz que quieres tomar, abre su chat y pulsa **Reclamar** en el mensaje que espera allí."
       }
     },
     {

@@ -56,6 +56,12 @@ const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefa
 
                     switch ( result?.code ) {
                         case "success":
+                            // Nothing further answers the click: the result is a message sent to
+                            // the channel, and the transition after it is silent. Acknowledged here
+                            // rather than at the end, since fetching and deleting the channel's
+                            // messages can outlast the three seconds discord allows.
+                            await context.updateInteractionDefer( interaction );
+
                             // Custom success handling - sends message to channel
                             const messages = await interaction.channel.messages.fetch();
                             for ( const message of messages.values() ) {

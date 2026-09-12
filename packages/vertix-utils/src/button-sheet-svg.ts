@@ -250,8 +250,23 @@ export function buildSheetSvg(
         0
     );
 
+    /**
+     * How many columns of canvas the grid is drawn on, as opposed to how many it fills.
+     *
+     * Discord sizes an action row against the width of the message and leaves a short row's
+     * remainder empty - a row of two is two small buttons on the left, not two wide ones. The
+     * canvas used to shrink to the widest row instead, so the moment a set was arranged into two
+     * rows of two it came back nearly square, and discord scaled that up to the width of the embed:
+     * the same four buttons at twice the height and twice the tile size.
+     *
+     * Reserving the full width puts the ceiling back - height is rows of a fixed tile, not a share
+     * of however wide the picture happens to be. A single row is left measuring itself, which is
+     * what it already did and what every generator's legend looks like today.
+     */
+    const canvasColumns = 1 < sheetRows.length ? Math.max( widest, columns ) : widest;
+
     const columnWidth = widestLabel + fixed,
-        gridWidth = ( columnWidth * widest ) + ( gap * ( widest - 1 ) );
+        gridWidth = ( columnWidth * canvasColumns ) + ( gap * ( canvasColumns - 1 ) );
 
     const headHeight = config.title ? ( EM.wordmark * 1.2 * fontSize ) + ( 0.2 * fontSize ) : 0,
         noteHeight = config.note ? ( EM.note * EM.noteLineHeight * fontSize ) + ( 0.2 * fontSize ) : 0;

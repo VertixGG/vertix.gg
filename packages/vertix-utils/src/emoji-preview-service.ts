@@ -46,13 +46,18 @@ class EmojiPreviewService {
     }
 
     private async fetchAndCache() {
+        // These are APPLICATION emojis - the artwork the main bot's buttons are drawn with - so
+        // the token has to belong to that application or the fetch succeeds against the wrong one
+        // and comes back empty. `DISCORD_MCP_TOKEN` is whatever bot vertix-mcp was told to act as,
+        // commonly the AI Chat bot, so it sits last: a fallback for a single-bot setup rather than
+        // a preference. Reading it first is what silently emptied the button sheet.
         const token = process.env.FLOW_EMOJI_TOKEN
-            ?? process.env.DISCORD_MCP_TOKEN
             ?? process.env.DISCORD_BOT_TOKEN
-            ?? process.env.DISCORD_TOKEN;
+            ?? process.env.DISCORD_TOKEN
+            ?? process.env.DISCORD_MCP_TOKEN;
 
         if ( !token ) {
-            console.warn( "[EmojiPreviewService] Missing FLOW_EMOJI_TOKEN/DISCORD_MCP_TOKEN/DISCORD_BOT_TOKEN/DISCORD_TOKEN; previews will use placeholders." );
+            console.warn( "[EmojiPreviewService] Missing FLOW_EMOJI_TOKEN/DISCORD_BOT_TOKEN/DISCORD_TOKEN/DISCORD_MCP_TOKEN; previews will use placeholders." );
             return;
         }
 

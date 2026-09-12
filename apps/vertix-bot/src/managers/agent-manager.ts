@@ -104,11 +104,17 @@ export type AgentRunOptions = {
 
 export type AgentChatOptions = Omit<AgentRunOptions, "includeLogs">;
 
+/**
+ * What a signature probe actually learned. `unavailable` says the command never answered - it is
+ * not a verdict on the path, and must not be reported as one.
+ */
+type CliProbeResult = "matched" | "mismatched" | "unavailable";
+
 type CliBinarySpec = {
     envName: string;
     baseName: string;
     label: string;
-    verify: ( binaryPath: string ) => Promise<boolean>;
+    verify: ( binaryPath: string ) => Promise<CliProbeResult>;
 };
 
 type ClaudeCliResult = {
@@ -159,10 +165,9 @@ type DeepSeekChatCompletionRequest = {
 export class AgentManager extends InitializeBase {
     private static instance: AgentManager;
 
-    // Resolving a CLI means spawning it to check its signature - done once per process.
-    private codexBinaryPromise: Promise<string | null> | null = null;
-
-    private claudeBinaryPromise: Promise<string | null> | null = null;
+    // Resolving a CLI means spawning it to check its signature, so the answer is kept - but only
+    // when it found something. See getCliBinary.
+    private readonly binaryPromises = new Map<string, Promise<string | null>>();
 
     private readonly codexBinarySpec: CliBinarySpec = {
         envName: "AI_CHAT_CODEX_BIN",
@@ -335,8 +340,12 @@ export class AgentManager extends InitializeBase {
         return current + chunk.slice( 0, remaining );
     }
 
-    private async matchesCliSignature( binaryPath: string, args: string[], needles: readonly string[] ): Promise<boolean> {
-        return await new Promise( ( resolve ) => {
+    private async matchesCliSignature(
+        binaryPath: string,
+        args: string[],
+        needles: readonly string[]
+    ): Promise<CliProbeResult> {
+        return await new Promise<CliProbeResult>( ( resolve ) => {
             const child = spawn( binaryPath, args, {
                 cwd: REPO_ROOT,
                 env: {
@@ -348,7 +357,7 @@ export class AgentManager extends InitializeBase {
 
             const timeout = setTimeout( () => {
                 child.kill();
-                resolve( false );
+                resolve( "unavailable" );
             }, HELP_TIMEOUT_MS );
 
             let stdout = "";
@@ -364,28 +373,30 @@ export class AgentManager extends InitializeBase {
 
             child.on( "error", () => {
                 clearTimeout( timeout );
-                resolve( false );
+                resolve( "unavailable" );
             } );
 
             child.on( "close", ( code ) => {
                 clearTimeout( timeout );
 
+                // A non-zero exit says the command did not run, not that the path is the wrong
+                // program - a CLI halfway through replacing itself exits non-zero too.
                 if ( code !== 0 ) {
-                    return resolve( false );
+                    return resolve( "unavailable" );
                 }
 
                 const combined = `${ stdout }\n${ stderr }`;
 
-                resolve( needles.some( ( needle ) => combined.includes( needle ) ) );
+                resolve( needles.some( ( needle ) => combined.includes( needle ) ) ? "matched" : "mismatched" );
             } );
         } );
     }
 
-    private async isOpenAICodexCli( binaryPath: string ): Promise<boolean> {
+    private async isOpenAICodexCli( binaryPath: string ): Promise<CliProbeResult> {
         return await this.matchesCliSignature( binaryPath, [ "--help" ], [ "Codex CLI", "OpenAI Codex" ] );
     }
 
-    private async isClaudeCodeCli( binaryPath: string ): Promise<boolean> {
+    private async isClaudeCodeCli( binaryPath: string ): Promise<CliProbeResult> {
         return await this.matchesCliSignature( binaryPath, [ "--version" ], [ "Claude Code" ] );
     }
 
@@ -393,15 +404,19 @@ export class AgentManager extends InitializeBase {
         const configured = process.env[ spec.envName ]?.trim();
 
         if ( configured ) {
-            const isValid = await spec.verify( configured );
+            const result = await spec.verify( configured );
 
-            if ( isValid ) {
+            if ( "matched" === result ) {
                 return configured;
             }
 
+            // Told apart on purpose. "Did not answer" is not a claim about the path, and saying it
+            // was misconfigured sent someone looking at a setting that was correct all along.
             this.logger.error(
                 this.resolveCliBinary,
-                `${ spec.envName } is set but does not look like ${ spec.label }: '${ configured }'`
+                "unavailable" === result
+                    ? `${ spec.envName } did not answer in ${ HELP_TIMEOUT_MS }ms, so ${ spec.label } could not be identified: '${ configured }'`
+                    : `${ spec.envName } is set but does not look like ${ spec.label }: '${ configured }'`
             );
 
             return null;
@@ -433,9 +448,7 @@ export class AgentManager extends InitializeBase {
                     continue;
                 }
 
-                const isValid = await spec.verify( candidate );
-
-                if ( isValid ) {
+                if ( "matched" === await spec.verify( candidate ) ) {
                     return candidate;
                 }
             }
@@ -444,20 +457,48 @@ export class AgentManager extends InitializeBase {
         return null;
     }
 
-    private async getCodexBinary(): Promise<string | null> {
-        if ( ! this.codexBinaryPromise ) {
-            this.codexBinaryPromise = this.resolveCliBinary( this.codexBinarySpec );
-        }
+    /**
+     * What to say when a CLI could not be reached.
+     *
+     * Split on whether the path is even set, because the two are different problems and the old
+     * wording asserted the wrong one: a probe that timed out was reported as a missing setting,
+     * which is how someone ends up staring at a correct `.env` line.
+     */
+    private buildCliUnavailableMessage( label: string, envName: string ): string {
+        return process.env[ envName ]?.trim()
+            ? `${ label } did not respond, so I could not answer. ${ envName } is set, so this is ` +
+                "usually the CLI being busy or mid-update rather than a wrong path - try me again in a moment."
+            : `${ label } is not configured. Set ${ envName } to its path.`;
+    }
 
-        return await this.codexBinaryPromise;
+    private async getCodexBinary(): Promise<string | null> {
+        return await this.getCliBinary( this.codexBinarySpec );
     }
 
     private async getClaudeBinary(): Promise<string | null> {
-        if ( ! this.claudeBinaryPromise ) {
-            this.claudeBinaryPromise = this.resolveCliBinary( this.claudeBinarySpec );
+        return await this.getCliBinary( this.claudeBinarySpec );
+    }
+
+    /**
+     * Remembers where a CLI is, and deliberately forgets when it could not be found.
+     *
+     * The probe fails for reasons that have nothing to do with the path - Claude Code replacing
+     * itself mid-update is the one that happened, costing 29ms more than the window allows. A
+     * resolved promise holding `null` is still truthy, so keeping it answered every later turn
+     * from that one bad moment, and only a restart cleared it. Now the next turn probes again.
+     */
+    private async getCliBinary( spec: CliBinarySpec ): Promise<string | null> {
+        const promise = this.binaryPromises.get( spec.envName ) ?? this.resolveCliBinary( spec );
+
+        this.binaryPromises.set( spec.envName, promise );
+
+        const binaryPath = await promise.catch( () => null );
+
+        if ( ! binaryPath ) {
+            this.binaryPromises.delete( spec.envName );
         }
 
-        return await this.claudeBinaryPromise;
+        return binaryPath;
     }
 
     private isCodexOssEnabled(): boolean {
@@ -726,7 +767,7 @@ export class AgentManager extends InitializeBase {
 
         if ( ! claudeBinary ) {
             return {
-                response: "Claude Code CLI is not configured. Set AI_CHAT_CLAUDE_BIN to the Claude Code CLI path.",
+                response: this.buildCliUnavailableMessage( "Claude Code CLI", "AI_CHAT_CLAUDE_BIN" ),
                 logs: EMPTY_LOGS
             };
         }
@@ -883,7 +924,7 @@ export class AgentManager extends InitializeBase {
 
         if ( ! codexBinary ) {
             return {
-                response: "Codex CLI is not configured. Set AI_CHAT_CODEX_BIN to the OpenAI Codex CLI path.",
+                response: this.buildCliUnavailableMessage( "Codex CLI", "AI_CHAT_CODEX_BIN" ),
                 logs: EMPTY_LOGS
             };
         }

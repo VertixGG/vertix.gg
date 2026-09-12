@@ -15,15 +15,15 @@ class Environment {
     }
 
     // This server acts as whatever bot the process that spawns it hands down in
-    // DISCORD_TEST_TOKEN. It is deliberately unaware of any specific bot's token:
+    // DISCORD_MCP_TOKEN. It is deliberately unaware of any specific bot's token:
     // the parent process decides which identity this server runs as.
     public getDiscordToken(): string {
-        const token = process.env.DISCORD_TEST_TOKEN;
+        const token = process.env.DISCORD_MCP_TOKEN;
 
         if ( ! token ) {
             throw new Error(
-                "DISCORD_TEST_TOKEN is not set. The process that spawns this MCP server must pass, in "
-                + "DISCORD_TEST_TOKEN, the Discord bot token this server should act as."
+                "DISCORD_MCP_TOKEN is not set. The process that spawns this MCP server must pass, in "
+                + "DISCORD_MCP_TOKEN, the Discord bot token this server should act as."
             );
         }
 
@@ -31,7 +31,7 @@ class Environment {
     }
 
     public hasDiscordToken(): boolean {
-        return Boolean( process.env.DISCORD_TEST_TOKEN );
+        return Boolean( process.env.DISCORD_MCP_TOKEN );
     }
 }
 

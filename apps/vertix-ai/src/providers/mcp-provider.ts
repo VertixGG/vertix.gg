@@ -69,10 +69,10 @@ export class MCPProvider extends InitializeBase {
                 ...getDefaultEnvironment(),
                 LOGGER_DISABLED: "true",
                 VERTIX_MCP_READONLY: config.isMcpReadOnly() ? "true" : "false",
-                // vertix-mcp acts as whatever token it is handed in DISCORD_TEST_TOKEN.
+                // vertix-mcp acts as whatever token it is handed in DISCORD_MCP_TOKEN.
                 // Handing it this app's own token is what makes the tools act as this
                 // bot, in the guilds this bot was actually invited to.
-                DISCORD_TEST_TOKEN: config.getDiscordToken()
+                DISCORD_MCP_TOKEN: config.getDiscordToken()
             }
         } );
 

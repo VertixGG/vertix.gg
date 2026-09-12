@@ -88,7 +88,7 @@ Then open `.env` and fill in at minimum the following values (the rest already h
 
 | Variable | Where to get it |
 | --- | --- |
-| `DISCORD_TEST_TOKEN` | [Discord Developer Portal](https://discord.com/developers/applications) → your app → **Bot** → **Reset Token** |
+| `DISCORD_MCP_TOKEN` | [Discord Developer Portal](https://discord.com/developers/applications) → your app → **Bot** → **Reset Token** |
 | `OWNERD_ID` | Your own Discord user id (right-click your profile → **Copy User ID**, with Developer Mode on) |
 | `BOT_PRISMA_DATABASE_URL` | Your MongoDB replica set URL (default `mongodb://127.0.0.1:27017/discord?directConnection=true` works for a local install) |
 | `API_PRISMA_DATABASE_URL` | Same MongoDB instance, separate database — default `mongodb://127.0.0.1:27017/api?directConnection=true` |

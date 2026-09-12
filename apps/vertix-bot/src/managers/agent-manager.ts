@@ -540,9 +540,9 @@ export class AgentManager extends InitializeBase {
                         LOGGER_DISABLED: "true",
                         VERTIX_MCP_READONLY: readOnly ? "true" : "false",
                         // vertix-mcp acts as whatever token it is handed in
-                        // DISCORD_TEST_TOKEN; hand it the AI Chat bot's token so its
+                        // DISCORD_MCP_TOKEN; hand it the AI Chat bot's token so its
                         // tools post as the AI Chat bot.
-                        ... ( aiChatToken ? { DISCORD_TEST_TOKEN: aiChatToken } : {} )
+                        ... ( aiChatToken ? { DISCORD_MCP_TOKEN: aiChatToken } : {} )
                     }
                 }
             }

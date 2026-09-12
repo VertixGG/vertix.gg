@@ -88,7 +88,7 @@ export class EmojiManager extends InitializeBase {
     }
 
     private async fetchEmojisHeadless() {
-        const token = process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_TEST_TOKEN || process.env.DISCORD_TOKEN;
+        const token = process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_MCP_TOKEN || process.env.DISCORD_TOKEN;
         if ( !token ) {
             this.logger.warn( this.fetchEmojisHeadless, "No Discord token available, emoji markdown will use placeholders" );
             return;

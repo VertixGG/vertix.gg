@@ -46,7 +46,7 @@ export class ChannelModel extends ModelWithDataBase<
     }
 
     public static getName() {
-        return "VertixBase/Models/Channel";
+        return "VertixData/Models/Channel";
     }
 
     public constructor() {

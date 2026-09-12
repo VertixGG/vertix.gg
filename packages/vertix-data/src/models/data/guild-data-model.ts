@@ -14,7 +14,7 @@ export class GuildDataModel extends ModelDataOwnerBase<
     TDataOwnerDefaultUniqueKeys
 > {
     public static getName() {
-        return "VertixBase/Models/GuildDataV3";
+        return "VertixData/Models/GuildDataV3";
     }
 
     public constructor() {

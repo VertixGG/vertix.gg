@@ -20,7 +20,7 @@ export class MasterChannelDataModel extends MasterChannelDataModelBase<MasterCha
     }
 
     public static getName() {
-        return "VertixBase/Models/MasterChannelDataModel";
+        return "VertixData/Models/MasterChannelDataModel";
     }
 
     public constructor() {

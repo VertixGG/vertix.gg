@@ -22,7 +22,7 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
     }
 
     public static getName() {
-        return "VertixBase/Models/ScalingChannelData";
+        return "VertixData/Models/ScalingChannelData";
     }
 
     public constructor() {

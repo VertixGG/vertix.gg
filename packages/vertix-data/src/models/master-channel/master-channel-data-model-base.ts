@@ -16,7 +16,7 @@ export abstract class MasterChannelDataModelBase<T extends ConfigBaseInterface> 
     "settings"
 > {
     public static getName() {
-        return "VertixBase/Models/MasterChannelDataModelBase";
+        return "VertixData/Models/MasterChannelDataModelBase";
     }
 
     protected getModel() {

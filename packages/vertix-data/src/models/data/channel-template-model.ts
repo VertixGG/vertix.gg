@@ -22,7 +22,7 @@ export class ChannelTemplateModel extends ModelDataOwnerBase<
     private static instance: ChannelTemplateModel;
 
     public static getName() {
-        return "VertixBase/Models/ChannelTemplateModel";
+        return "VertixData/Models/ChannelTemplateModel";
     }
 
     public static get $() {

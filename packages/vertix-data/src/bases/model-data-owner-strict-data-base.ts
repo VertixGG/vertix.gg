@@ -14,7 +14,7 @@ export abstract class ModelDataOwnerStrictDataBase<
     TDataModelStrictData extends Record<string, any>
 > extends ModelDataOwnerBase<TModel, TDataModel, TDataModelResult, TDataModelUniqueKeys> {
     public static getName() {
-        return "VertixBase/Bases/ModelDataOwnerStrictDataBase";
+        return "VertixData/Bases/ModelDataOwnerStrictDataBase";
     }
 
     protected abstract getStrictDataFactor(): TDataModelStrictData;

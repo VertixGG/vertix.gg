@@ -12,7 +12,7 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
     private static instance: GuildModel;
 
     public static getName(): string {
-        return "VertixBase/Models/GuildModel";
+        return "VertixData/Models/GuildModel";
     }
 
     public static getInstance(): GuildModel {

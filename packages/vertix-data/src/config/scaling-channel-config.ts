@@ -6,7 +6,7 @@ export const VERSION_SCALING_CHANNEL_UI_V1 = "0.0.0.1" as const;
 
 export class ScalingChannelConfig extends ConfigBase<ScalingChannelConfigInterface> {
     public static getName() {
-        return "VertixBase/Config/ScalingChannel";
+        return "VertixData/Config/ScalingChannel";
     }
 
     public getConfigName() {

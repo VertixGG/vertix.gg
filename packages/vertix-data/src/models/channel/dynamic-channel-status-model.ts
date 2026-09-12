@@ -16,7 +16,7 @@ export class DynamicChannelStatusModel extends ChannelDataModelBase {
     private static instance: DynamicChannelStatusModel;
 
     public static getName() {
-        return "VertixBase/Models/DynamicChannelStatus";
+        return "VertixData/Models/DynamicChannelStatus";
     }
 
     public static get $() {

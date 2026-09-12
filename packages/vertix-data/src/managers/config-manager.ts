@@ -9,7 +9,7 @@ export class ConfigManager extends SingletonBase {
     private configs: Map<string, ConfigBase<ConfigBaseInterface>> = new Map();
 
     public static getName() {
-        return "VertixBase/Managers/ConfigManager";
+        return "VertixData/Managers/ConfigManager";
     }
 
     public static get $() {

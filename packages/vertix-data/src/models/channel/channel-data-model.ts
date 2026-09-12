@@ -6,7 +6,7 @@ import { ChannelDataModelBase } from "@vertix.gg/data/src/models/channel/channel
 
 export class ChannelDataModel extends ChannelDataModelBase {
     public static getName() {
-        return "VertixBase/Models/ChannelData";
+        return "VertixData/Models/ChannelData";
     }
 
     public constructor(

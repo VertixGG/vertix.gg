@@ -10,7 +10,7 @@ import type { Base } from "discord.js";
 
 export class UIMasterChannelVersionStrategy extends UIVersionStrategyBase {
     public static getName() {
-        return "VertixBot/VersionStrategies/UIMasterChannelVersionStrategy";
+        return "VertixData/VersionStrategies/UIMasterChannelVersionStrategy";
     }
 
     private getMaxRegisteredVersion(): number {

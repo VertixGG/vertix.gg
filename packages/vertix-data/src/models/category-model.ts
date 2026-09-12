@@ -6,7 +6,7 @@ export class CategoryModel extends ModelBase<PrismaBot.PrismaClient> {
     private static instance: CategoryModel;
 
     public static getName(): string {
-        return "VertixBot/Models/CategoryModel";
+        return "VertixData/Models/CategoryModel";
     }
 
     public static getInstance(): CategoryModel {

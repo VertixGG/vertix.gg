@@ -17,7 +17,7 @@ export class UserDataModelV3 extends ModelDataOwnerBase<
     TDataOwnerDefaultUniqueKeys
 > {
     public static getName() {
-        return "VertixBase/Models/UserDataV3";
+        return "VertixData/Models/UserDataV3";
     }
 
     public constructor() {

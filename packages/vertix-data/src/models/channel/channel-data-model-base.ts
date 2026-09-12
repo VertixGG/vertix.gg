@@ -11,7 +11,7 @@ export abstract class ChannelDataModelBase extends ModelDataOwnerBase<
     TDataOwnerDefaultUniqueKeys
 > {
     public static getName() {
-        return "VertixBase/Models/ChannelDataModelBase";
+        return "VertixData/Models/ChannelDataModelBase";
     }
 
     protected getModel() {

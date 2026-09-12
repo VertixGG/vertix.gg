@@ -41,7 +41,7 @@ export function DataVersioningModelFactory<
 
     class VersioningModel extends DataTypeFactory( ModelBaseCachedWithModel<TModel, TModelResult> ) {
         public static getName() {
-            return options.modelNamespace ?? "VertixBase/Factory/VersioningModel";
+            return options.modelNamespace ?? "VertixData/Factory/VersioningModel";
         }
 
         public constructor(

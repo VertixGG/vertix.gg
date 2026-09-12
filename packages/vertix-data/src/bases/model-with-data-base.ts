@@ -22,7 +22,7 @@ export abstract class ModelWithDataBase<
     protected dataModels;
 
     public static getName() {
-        return "VertixBase/Bases/ModelWithDataBase";
+        return "VertixData/Bases/ModelWithDataBase";
     }
 
     protected constructor( shouldDebugCache = true, shouldDebugModel = true ) {

@@ -28,7 +28,7 @@ export abstract class ModelDataOwnerBase<
     private dataVersioningModel;
 
     public static getName() {
-        return "VertixBase/Bases/DataModelBase";
+        return "VertixData/Bases/DataModelBase";
     }
 
     protected constructor( shouldDebugCache: boolean, shouldDebugModel: boolean ) {

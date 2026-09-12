@@ -52,7 +52,7 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
     protected static configModel = new ( DataVersioningModelFactory<PrismaBot.Config, PrismaBot.Prisma.ConfigDelegate>(
         PrismaBotClient.getPrismaClient().config,
         {
-            modelNamespace: "VertixBase/Models/Config"
+            modelNamespace: "VertixData/Models/Config"
         }
     ) )();
 

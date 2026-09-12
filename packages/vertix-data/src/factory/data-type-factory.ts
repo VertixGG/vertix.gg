@@ -37,7 +37,7 @@ export interface TDataDefaultResult {
 export function DataTypeFactory<TExtendClass extends typeof TObjectMixinBase>( ExtendClass: TExtendClass ) {
     abstract class DataTypeAbstract extends ExtendClass {
         public static getName() {
-            return "VertixBase/Models/DataType";
+            return "VertixData/Models/DataType";
         }
 
         protected constructor( ...args: any[] ) {

@@ -26,7 +26,7 @@ export abstract class ModelDataOwnerConfigBase<
         TDataConfig[ "data" ][ TDataConfigSlice ]
     > {
     public static getName() {
-        return "VertixBase/Bases/ModelDataOwnerConfigBase";
+        return "VertixData/Bases/ModelDataOwnerConfigBase";
     }
 
     protected abstract getConfig(): ConfigBase<TDataConfig>;

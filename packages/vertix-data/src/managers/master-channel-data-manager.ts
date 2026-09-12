@@ -26,7 +26,7 @@ export class MasterChannelDataManager extends InitializeBase {
     public keys = this.config.getKeys( "settings" );
 
     public static getName() {
-        return "VertixBase/Managers/MasterChannelData";
+        return "VertixData/Managers/MasterChannelData";
     }
 
     public static get $() {

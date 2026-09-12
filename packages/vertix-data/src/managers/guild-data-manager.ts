@@ -33,7 +33,7 @@ interface IGuildSettings {
 
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
     public static getName() {
-        return "VertixBase/Managers/GuildData";
+        return "VertixData/Managers/GuildData";
     }
 
     public static get $() {

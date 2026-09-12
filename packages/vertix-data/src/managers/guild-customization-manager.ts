@@ -33,7 +33,7 @@ export class GuildCustomizationManager extends InitializeBase {
     private cacheTTL: number = DEFAULT_CACHE_TTL;
 
     public static getName(): string {
-        return "VertixBot/Managers/GuildCustomization";
+        return "VertixData/Managers/GuildCustomization";
     }
 
     public static get $() {

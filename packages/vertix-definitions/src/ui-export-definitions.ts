@@ -41,6 +41,11 @@ export interface UIExportElementDefinition {
     url?: string;
     placeholder?: string;
     disabled?: boolean;
+    /**
+     * What an element that names itself at runtime fills its label from - v2's privacy buttons
+     * label themselves `{displayText}`, and these say what that reads as with nothing set.
+     */
+    options?: Record<string, string>;
     selectOptions?: SelectOptionDefinition[];
 }
 

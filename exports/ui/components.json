@@ -1205,6 +1205,7 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "label": "Vote {displayName}",
+                                "options": {},
                                 "style": "secondary",
                                 "emoji": "🗳️"
                             }
@@ -1493,6 +1494,11 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "label": "{displayText}",
+                                "options": {
+                                    "publicText": "Public",
+                                    "privateText": "Private",
+                                    "displayText": "{privateText}"
+                                },
                                 "style": "secondary",
                                 "emoji": "🚫"
                             }
@@ -1506,6 +1512,11 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "label": "{displayText}",
+                                "options": {
+                                    "shownText": "Shown",
+                                    "hiddenText": "Hidden",
+                                    "displayText": "{hiddenText}"
+                                },
                                 "style": "secondary",
                                 "emoji": "🐵"
                             }
@@ -1581,6 +1592,7 @@
                             "instanceType": "Dynamic",
                             "title": "༄ Manage your Dynamic Channel",
                             "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\nPlease be advised that the privilege to make alterations is vested solely of the channel owner.\n\n_Current settings_:\n- Name: **{name}**\n- User Limit: ✋ **{limit}**\n- State: {state}\n- Visibility State: {visibilityState}\n- Region: 🌍 **{region}**",
+                            "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
                                 "limit": {
@@ -2116,6 +2128,11 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "label": "{displayText}",
+                                "options": {
+                                    "publicText": "Public",
+                                    "privateText": "Private",
+                                    "displayText": "{privateText}"
+                                },
                                 "style": "secondary",
                                 "emoji": "🚫"
                             }
@@ -2129,6 +2146,11 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "label": "{displayText}",
+                                "options": {
+                                    "shownText": "Shown",
+                                    "hiddenText": "Hidden",
+                                    "displayText": "{hiddenText}"
+                                },
                                 "style": "secondary",
                                 "emoji": "🐵"
                             }
@@ -3164,6 +3186,16 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
+                                    "dynamicChannelAutoSaveLabel": "⫸ ∙ Auto save dynamic channel",
+                                    "dynamicChannelAutoStatusLabel": "📢 ∙ Automatic channel status",
+                                    "dynamicChannelLogsChannelLabel": "❯❯ ∙ Send logs to custom channel"
+                                },
                                 "placeholder": "⌘ ∙ Configuration",
                                 "selectOptions": [
                                     {
@@ -3373,6 +3405,13 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
+                                },
                                 "placeholder": "🛡️ ∙ Everyone role",
                                 "selectOptions": [
                                     {
@@ -4195,6 +4234,16 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
+                                    "dynamicChannelAutoSaveLabel": "⫸ ∙ Auto save dynamic channel",
+                                    "dynamicChannelAutoStatusLabel": "📢 ∙ Automatic channel status",
+                                    "dynamicChannelLogsChannelLabel": "❯❯ ∙ Send logs to custom channel"
+                                },
                                 "placeholder": "⌘ ∙ Configuration",
                                 "selectOptions": [
                                     {
@@ -4272,6 +4321,13 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
+                                },
                                 "placeholder": "🛡️ ∙ Everyone role",
                                 "selectOptions": [
                                     {
@@ -4629,6 +4685,16 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
+                                    "dynamicChannelAutoSaveLabel": "⫸ ∙ Auto save dynamic channel",
+                                    "dynamicChannelAutoStatusLabel": "📢 ∙ Automatic channel status",
+                                    "dynamicChannelLogsChannelLabel": "❯❯ ∙ Send logs to custom channel"
+                                },
                                 "placeholder": "⌘ ∙ Configuration",
                                 "selectOptions": [
                                     {
@@ -4738,6 +4804,13 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
+                                },
                                 "placeholder": "🛡️ ∙ Everyone role",
                                 "selectOptions": [
                                     {
@@ -5014,6 +5087,7 @@
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
                                 "label": "Vote {displayName}",
+                                "options": {},
                                 "style": "secondary",
                                 "emoji": "🗳️"
                             }
@@ -5415,7 +5489,7 @@
                             "instanceType": "Dynamic",
                             "title": "{title}",
                             "description": "{description}\n\n{renameEmoji} ・ Name: **{name}**\n\n{limitEmoji} ・ User Limit: **{limit}**\n\n{privacyEmoji} ・ Privacy State: **{state}**\n\n{regionEmoji} ・ Region:  **{region}**\n",
-                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=5&scale=3&items={dynamicChannelButtonsTemplate}",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=5&scale=3&items={dynamicChannelButtonsTemplate}&rows={dynamicChannelButtonsRowBreaks}",
                             "color": 3369963,
                             "options": {
                                 "limit": {
@@ -5431,6 +5505,11 @@
                             },
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
+                                    "format": "{value}{separator}",
+                                    "separator": ",",
+                                    "options": {}
+                                },
+                                "dynamicChannelButtonsRowBreaks": {
                                     "format": "{value}{separator}",
                                     "separator": ",",
                                     "options": {}
@@ -5457,7 +5536,8 @@
                                 "description": "{description}",
                                 "value": "{value}",
                                 "separator": "{separator}",
-                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}",
+                                "dynamicChannelButtonsRowBreaks": "{dynamicChannelButtonsRowBreaks}"
                             },
                             "defaultVars": {
                                 "renameEmoji": "<emoji name='ChannelRename'>",
@@ -6323,10 +6403,15 @@
                             "instanceType": "Dynamic",
                             "title": "༄ Manage your Dynamic Channel",
                             "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\n**Available Features:**\n\n",
-                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=5&scale=3&items={dynamicChannelButtonsTemplate}",
+                            "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=5&scale=3&items={dynamicChannelButtonsTemplate}&rows={dynamicChannelButtonsRowBreaks}",
                             "color": 3369963,
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
+                                    "format": "{value}{separator}",
+                                    "separator": ",",
+                                    "options": {}
+                                },
+                                "dynamicChannelButtonsRowBreaks": {
                                     "format": "{value}{separator}",
                                     "separator": ",",
                                     "options": {}
@@ -6335,7 +6420,8 @@
                             "vars": {
                                 "separator": "{separator}",
                                 "value": "{value}",
-                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
+                                "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}",
+                                "dynamicChannelButtonsRowBreaks": "{dynamicChannelButtonsRowBreaks}"
                             }
                         }
                     }
@@ -8666,6 +8752,16 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
+                                    "dynamicChannelAutoSaveLabel": "⫸ ∙ Auto save dynamic channel",
+                                    "dynamicChannelAutoStatusLabel": "📢 ∙ Automatic channel status",
+                                    "dynamicChannelLogsChannelLabel": "❯❯ ∙ Send logs to custom channel"
+                                },
                                 "placeholder": "⌘ ∙ Configuration",
                                 "selectOptions": [
                                     {
@@ -8895,6 +8991,13 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
+                                },
                                 "placeholder": "🛡️ ∙ Everyone role",
                                 "selectOptions": [
                                     {
@@ -9730,6 +9833,16 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
+                                    "dynamicChannelAutoSaveLabel": "⫸ ∙ Auto save dynamic channel",
+                                    "dynamicChannelAutoStatusLabel": "📢 ∙ Automatic channel status",
+                                    "dynamicChannelLogsChannelLabel": "❯❯ ∙ Send logs to custom channel"
+                                },
                                 "placeholder": "⌘ ∙ Configuration",
                                 "selectOptions": [
                                     {
@@ -9807,6 +9920,13 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
+                                },
                                 "placeholder": "🛡️ ∙ Everyone role",
                                 "selectOptions": [
                                     {
@@ -10233,6 +10353,16 @@
                                 "name": "VertixBot/UI-General/ConfigExtrasSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelMentionableLabel": "@ ∙ Mention user in primary message",
+                                    "dynamicChannelAutoSaveLabel": "⫸ ∙ Auto save dynamic channel",
+                                    "dynamicChannelAutoStatusLabel": "📢 ∙ Automatic channel status",
+                                    "dynamicChannelLogsChannelLabel": "❯❯ ∙ Send logs to custom channel"
+                                },
                                 "placeholder": "⌘ ∙ Configuration",
                                 "selectOptions": [
                                     {
@@ -10392,6 +10522,13 @@
                                 "name": "VertixBot/UI-General/VerifiedRolesEveryoneSelectMenu",
                                 "elementType": "select-menu",
                                 "instanceType": "Dynamic",
+                                "options": {
+                                    "state": {
+                                        "{stateOn}": "∙🟢 On",
+                                        "{stateOff}": "∙🔴 Off"
+                                    },
+                                    "dynamicChannelIncludeEveryoneRoleLabel": "Include everyone role"
+                                },
                                 "placeholder": "🛡️ ∙ Everyone role",
                                 "selectOptions": [
                                     {

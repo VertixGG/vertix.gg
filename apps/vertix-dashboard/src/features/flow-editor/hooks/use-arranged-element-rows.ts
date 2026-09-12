@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { BUTTON_ROW_LIMITS, joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
+import { toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
 
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
@@ -184,7 +185,11 @@ function locate( rows: SchemaElement[][], name: string ): { row: number; at: num
  */
 export function useArrangedElementRows( elementRows: SchemaElement[][] | null | undefined ) {
     const { selected: generator, refresh } = useEditorGenerator();
-    const { catalogue } = useButtonCatalogue();
+
+    // This generator's own version, so the sidebar reads the same catalogue the preview does. Asked
+    // without one it answers for v3, and a v2 component's elements matched nothing in it - leaving
+    // the section listing the schema's rows while the preview drew the generator's.
+    const { catalogue } = useButtonCatalogue( generator?.version );
     const guildId = useSelectedGuildId();
 
     const draftNames = useButtonArrangementStore( ( state ) => state.draft );
@@ -199,8 +204,12 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
 
     // The stored list carries its own row divisions, so there is one thing to read and one to
     // write - and no second field that can fail to come back.
-    const { ids: template, rowBreaks: storedBreaks } =
+    const { ids: storedIds, rowBreaks: storedBreaks } =
         splitTemplate( settings?.dynamicChannelButtonsTemplate ?? [] );
+
+    // Both catalogues are keyed by the v3 slug, so a v2 generator's stored numbers are read into
+    // that vocabulary before anything is matched against it.
+    const template = toV3ButtonIds( storedIds );
 
     const isArranged = Boolean( generator ) && catalogue.length > 0 && template.length > 0;
 

@@ -8,6 +8,7 @@ import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
 import { BUTTON_ROW_LIMITS, splitTemplate, toRowBreaks } from "@vertix.gg/utils/src/button-rows";
+import { toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
@@ -16,8 +17,7 @@ import { useButtonCatalogue } from "@vertix.gg/dashboard/src/features/generators
 import { useEditorGenerator } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-generator";
 import { useButtonArrangementStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-button-arrangement-store";
 import { arrangeElementRows, buttonIdsOf } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
-import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
-import { DYNAMIC_CHANNEL_FLOW } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
+import { dynamicChannelFlowFor } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
 
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 
@@ -36,9 +36,6 @@ import type { CustomizationData } from "@vertix.gg/dashboard/src/features/flow-e
 
 import type { Viewport, Node, Edge, ReactFlowInstance } from "@xyflow/react";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
-
-/** What the bot asks the legend for, so the preview is the same picture. */
-const SHEET_SCALE = 3;
 
 const logger = zCore.modules.createLogger( "flow-viewer" );
 
@@ -125,8 +122,13 @@ export function FlowViewer() {
     // What the preview should draw: this generator's own set, in the rows it prints them in,
     // including an arrangement still being dragged and not yet saved.
     const { selected: generator } = useEditorGenerator();
-    const { catalogue } = useButtonCatalogue();
+    const { catalogue } = useButtonCatalogue( generator?.version );
     const arrangementDraft = useButtonArrangementStore( ( state ) => state.draft );
+
+    // The component a generator's channels are drawn by, which is named per interface version. A v2
+    // generator matched against v3's name found nothing, so its set was never arranged and the
+    // editor never landed on the component the link from its settings was about.
+    const dynamicChannelComponent = dynamicChannelFlowFor( generator?.version ).COMPONENT;
 
     const { layoutedNodes, layoutedEdges } = useMemo( () => {
         if ( !moduleFlowsData ) {
@@ -326,7 +328,7 @@ export function FlowViewer() {
             // Last, so it arranges the elements as they will finally read - after their labels are
             // translated and their overrides applied. Only the component a generator's channels are
             // drawn by, and only once a generator is picked; otherwise the schema's rows stand.
-            if ( DYNAMIC_CHANNEL_FLOW.COMPONENT === node.data?.component && generator ) {
+            if ( dynamicChannelComponent === node.data?.component && generator ) {
                 const currentElementRows =
                     ( updatedData.elementRows ?? node.data?.elementRows ) as SchemaElement[][] | undefined;
 
@@ -335,7 +337,10 @@ export function FlowViewer() {
                 const arranged = currentElementRows && arrangeElementRows( {
                     schemaRows: currentElementRows,
                     catalogue,
-                    template: stored.ids,
+                    // Both catalogues are keyed by the v3 slug, so a v2 generator's stored numbers
+                    // are read into that vocabulary first - left raw they matched no element and
+                    // the arrangement fell back to the schema's own rows.
+                    template: toV3ButtonIds( stored.ids ),
                     rowBreaks: stored.rowBreaks,
                     draftNames: arrangementDraft
                 } );
@@ -346,9 +351,13 @@ export function FlowViewer() {
                     // shrink that set on every pass - the arrangement eating its own source.
                     updatedData = { ...updatedData, previewElementRows: arranged };
 
-                    // The legend above the buttons is an image fetched by url, and that url asks
-                    // for the buttons by name - so it has to be told this generator's set, or it
-                    // draws every button the bot ships and never changes.
+                    // The legend above the buttons is an image the embed already asks for, by a url
+                    // carrying `{dynamicChannelButtonsTemplate}` and `{dynamicChannelButtonsRowBreaks}`
+                    // - so this supplies those two and leaves the picture to the embed.
+                    //
+                    // Building the url here instead meant a second place deciding what the sheet
+                    // looks like, and it was drawn for every version: v2 has no legend at all, it
+                    // sets a blank spacer there, and the override replaced that with v3's sheet.
                     const currentEmbed = ( updatedData.embed ?? node.data?.embed ) as
                         Record<string, unknown> | undefined;
 
@@ -360,18 +369,10 @@ export function FlowViewer() {
                         const defaultVars =
                             ( currentEmbed.defaultVars ?? {} ) as Record<string, string>;
 
-                        // Built here rather than left to the url the export captured, which
-                        // predates rows - so the preview draws the arrangement even against an
-                        // export taken before it existed.
-                        const legend = `${ API_CONFIG.BASE_URL }/tools/button-sheet.png`
-                            + `?cols=${ BUTTON_ROW_LIMITS.MAX_PER_ROW }&scale=${ SHEET_SCALE }`
-                            + `&items=${ items }&rows=${ breaks }`;
-
                         updatedData = {
                             ...updatedData,
                             embed: {
                                 ...currentEmbed,
-                                image: { url: legend },
                                 defaultVars: {
                                     ...defaultVars,
                                     dynamicChannelButtonsTemplate: items,
@@ -395,7 +396,8 @@ export function FlowViewer() {
         selectedLanguage,
         generator,
         catalogue,
-        arrangementDraft
+        arrangementDraft,
+        dynamicChannelComponent
     ] );
 
     const [ nodes, setNodes, onNodesChange ] = useNodesState( initialNodes );
@@ -453,13 +455,13 @@ export function FlowViewer() {
         }
 
         const component = nodes.find(
-            ( node ) => DYNAMIC_CHANNEL_FLOW.COMPONENT === ( node.data as { component?: string } )?.component );
+            ( node ) => dynamicChannelComponent === ( node.data as { component?: string } )?.component );
 
         if ( component ) {
             autoSelectedRef.current = true;
             selectNode.run( { node: component, centerOnSelect: true } );
         }
-    }, [ nodes, openedForGenerator, selectedNodeId, selectNode ] );
+    }, [ nodes, openedForGenerator, selectedNodeId, selectNode, dynamicChannelComponent ] );
 
     // Sync selectedNode data changes back to the nodes array
     useEffect( () => {

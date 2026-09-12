@@ -937,6 +937,8 @@ export class UIDefinitionExporter extends UIBase {
                 getEmoji?: () => Promise<string>;
                 getURL?: () => Promise<string>;
                 getPlaceholder?: () => Promise<string>;
+                getOptions?: () => JsonObject;
+                getLogic?: () => Promise<JsonObject>;
             };
         };
 
@@ -974,6 +976,29 @@ export class UIDefinitionExporter extends UIBase {
                     definition.label = label;
                 }
             } catch {
+            }
+        }
+
+        // An element that names itself at runtime returns a template from `getLabel()` - v2's
+        // privacy buttons return `{displayText}` - and what fills it in is the element's own
+        // options, with `getLogic()` choosing between them. Read in the same empty context the
+        // label was, so a reader of the export resolves the label the way the element would with
+        // nothing set, rather than printing the placeholder at an admin.
+        if ( proto.getOptions || proto.getLogic ) {
+            const options: JsonObject = {};
+
+            try {
+                Object.assign( options, proto.getOptions?.call( {} ) ?? {} );
+            } catch {
+            }
+
+            try {
+                Object.assign( options, await proto.getLogic?.call( {} ) ?? {} );
+            } catch {
+            }
+
+            if ( Object.keys( options ).length ) {
+                definition.options = { ...definition.options, ...options };
             }
         }
 

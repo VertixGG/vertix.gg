@@ -110,12 +110,12 @@ function getButtonEmoji( element: ElementData ): string | undefined {
     return element.definition?.emoji;
 }
 
-function getSelectPlaceholder( element: ElementData ): string {
+function getSelectPlaceholder( element: ElementData, defaultVars: Record<string, string> | undefined ): string {
     if ( element.definition?.placeholder ) {
-        return element.definition.placeholder;
+        return applyDefaultVars( element.definition.placeholder, defaultVars );
     }
 
-    return getElementLabel( element );
+    return resolveElementLabel( element, defaultVars );
 }
 
 interface DiscordEmoji {
@@ -165,6 +165,41 @@ function applyDefaultVars( template: string, defaultVars: Record<string, string>
     }
 
     return template.replace( /\{([a-zA-Z0-9_]+)\}/g, ( full, key: string ) => defaultVars[ key ] ?? full );
+}
+
+/** A variable can name another - `{displayText}` resolves to `{privateText}` before it reads "Private". */
+const VAR_RESOLVE_PASSES = 4;
+
+/**
+ * Function resolveElementLabel() :: An element's label with the templates in it filled in.
+ *
+ * An element that names itself at runtime carries a template rather than words, and what fills it
+ * in is the element's own options - so those are read first, under the embed's variables. Resolved
+ * repeatedly because one variable can name another, and stops as soon as nothing changes.
+ */
+function resolveElementLabel( element: ElementData, defaultVars: Record<string, string> | undefined ): string {
+    const label = getElementLabel( element );
+
+    if ( ! label.includes( "{" ) ) {
+        return label;
+    }
+
+    const options = element.definition?.options as Record<string, string> | undefined;
+    const vars = { ...defaultVars, ...options };
+
+    let resolved = label;
+
+    for ( let pass = 0; pass < VAR_RESOLVE_PASSES; pass++ ) {
+        const next = applyDefaultVars( resolved, vars );
+
+        if ( next === resolved ) {
+            break;
+        }
+
+        resolved = next;
+    }
+
+    return resolved;
 }
 
 function replaceInlineDiscordEmojis( input: string, context: keyof typeof EMOJI_PIXELS = "body" ): string {
@@ -373,7 +408,7 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                                                 className="w-full h-10 appearance-none pl-3 pr-[42px] bg-[#1e1f22] border border-[#3f4147] rounded-lg text-[#949ba4] text-base focus:outline-none focus:ring-2 focus:ring-purple-500/40"
                                                             >
                                                                 <option value="" disabled>
-                                                                    { getSelectPlaceholder( element ) }
+                                                                    { getSelectPlaceholder( element, mergedDefaultVars ) }
                                                                 </option>
                                                                 { options.length > 0 ? options.map( ( option ) => (
                                                                     <option key={ option.value } value={ option.value }>
@@ -414,7 +449,7 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                             const button = (
                                                 <DiscordButton
                                                     variant={ variant }
-                                                    label={ getElementLabel( element ) }
+                                                    label={ resolveElementLabel( element, mergedDefaultVars ) }
                                                     emoji={ renderedEmoji.emoji }
                                                     icon={ renderedEmoji.icon }
                                                     trailingIcon={ variant === "link" ? (

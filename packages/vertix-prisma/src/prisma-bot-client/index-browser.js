@@ -237,6 +237,16 @@ exports.Prisma.UserChannelDataScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AIChannelPromptScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  guildId: 'guildId',
+  prompt: 'prompt',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -272,7 +282,8 @@ exports.Prisma.ModelName = {
   ChannelData: 'ChannelData',
   User: 'User',
   UserData: 'UserData',
-  UserChannelData: 'UserChannelData'
+  UserChannelData: 'UserChannelData',
+  AIChannelPrompt: 'AIChannelPrompt'
 };
 
 /**

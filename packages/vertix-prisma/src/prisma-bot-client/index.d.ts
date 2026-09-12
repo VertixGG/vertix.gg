@@ -67,6 +67,18 @@ export type UserData = $Result.DefaultSelection<Prisma.$UserDataPayload>
  * 
  */
 export type UserChannelData = $Result.DefaultSelection<Prisma.$UserChannelDataPayload>
+/**
+ * Model AIChannelPrompt
+ * An extra instruction the AI Chat bot follows in one channel.
+ * 
+ * Keyed by the raw Discord channel id rather than hung off `Channel`: that row only
+ * exists for channels Vertix itself created, and this has to work in any text channel
+ * the bot is talked to in.
+ * 
+ * Appended to the base system prompt, never replacing it - a channel can shape how the
+ * bot answers, but cannot talk it out of its own instructions.
+ */
+export type AIChannelPrompt = $Result.DefaultSelection<Prisma.$AIChannelPromptPayload>
 
 /**
  * Enums
@@ -287,6 +299,16 @@ export class PrismaClient<
     * ```
     */
   get userChannelData(): Prisma.UserChannelDataDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aIChannelPrompt`: Exposes CRUD operations for the **AIChannelPrompt** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AIChannelPrompts
+    * const aIChannelPrompts = await prisma.aIChannelPrompt.findMany()
+    * ```
+    */
+  get aIChannelPrompt(): Prisma.AIChannelPromptDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -737,7 +759,8 @@ export namespace Prisma {
     ChannelData: 'ChannelData',
     User: 'User',
     UserData: 'UserData',
-    UserChannelData: 'UserChannelData'
+    UserChannelData: 'UserChannelData',
+    AIChannelPrompt: 'AIChannelPrompt'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -756,7 +779,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "config" | "category" | "guild" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData"
+      modelProps: "config" | "category" | "guild" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt"
       txIsolationLevel: never
     }
     model: {
@@ -1500,6 +1523,80 @@ export namespace Prisma {
           }
         }
       }
+      AIChannelPrompt: {
+        payload: Prisma.$AIChannelPromptPayload<ExtArgs>
+        fields: Prisma.AIChannelPromptFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AIChannelPromptFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AIChannelPromptFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload>
+          }
+          findFirst: {
+            args: Prisma.AIChannelPromptFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AIChannelPromptFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload>
+          }
+          findMany: {
+            args: Prisma.AIChannelPromptFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload>[]
+          }
+          create: {
+            args: Prisma.AIChannelPromptCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload>
+          }
+          createMany: {
+            args: Prisma.AIChannelPromptCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.AIChannelPromptDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload>
+          }
+          update: {
+            args: Prisma.AIChannelPromptUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload>
+          }
+          deleteMany: {
+            args: Prisma.AIChannelPromptDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AIChannelPromptUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AIChannelPromptUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AIChannelPromptPayload>
+          }
+          aggregate: {
+            args: Prisma.AIChannelPromptAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAIChannelPrompt>
+          }
+          groupBy: {
+            args: Prisma.AIChannelPromptGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AIChannelPromptGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.AIChannelPromptFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.AIChannelPromptAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.AIChannelPromptCountArgs<ExtArgs>
+            result: $Utils.Optional<AIChannelPromptCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1589,6 +1686,7 @@ export namespace Prisma {
     user?: UserOmit
     userData?: UserDataOmit
     userChannelData?: UserChannelDataOmit
+    aIChannelPrompt?: AIChannelPromptOmit
   }
 
   /* Types for Logging */
@@ -12029,6 +12127,963 @@ export namespace Prisma {
 
 
   /**
+   * Model AIChannelPrompt
+   */
+
+  export type AggregateAIChannelPrompt = {
+    _count: AIChannelPromptCountAggregateOutputType | null
+    _min: AIChannelPromptMinAggregateOutputType | null
+    _max: AIChannelPromptMaxAggregateOutputType | null
+  }
+
+  export type AIChannelPromptMinAggregateOutputType = {
+    id: string | null
+    channelId: string | null
+    guildId: string | null
+    prompt: string | null
+    updatedBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AIChannelPromptMaxAggregateOutputType = {
+    id: string | null
+    channelId: string | null
+    guildId: string | null
+    prompt: string | null
+    updatedBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AIChannelPromptCountAggregateOutputType = {
+    id: number
+    channelId: number
+    guildId: number
+    prompt: number
+    updatedBy: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AIChannelPromptMinAggregateInputType = {
+    id?: true
+    channelId?: true
+    guildId?: true
+    prompt?: true
+    updatedBy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AIChannelPromptMaxAggregateInputType = {
+    id?: true
+    channelId?: true
+    guildId?: true
+    prompt?: true
+    updatedBy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AIChannelPromptCountAggregateInputType = {
+    id?: true
+    channelId?: true
+    guildId?: true
+    prompt?: true
+    updatedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AIChannelPromptAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIChannelPrompt to aggregate.
+     */
+    where?: AIChannelPromptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIChannelPrompts to fetch.
+     */
+    orderBy?: AIChannelPromptOrderByWithRelationInput | AIChannelPromptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AIChannelPromptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIChannelPrompts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIChannelPrompts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AIChannelPrompts
+    **/
+    _count?: true | AIChannelPromptCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AIChannelPromptMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AIChannelPromptMaxAggregateInputType
+  }
+
+  export type GetAIChannelPromptAggregateType<T extends AIChannelPromptAggregateArgs> = {
+        [P in keyof T & keyof AggregateAIChannelPrompt]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAIChannelPrompt[P]>
+      : GetScalarType<T[P], AggregateAIChannelPrompt[P]>
+  }
+
+
+
+
+  export type AIChannelPromptGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AIChannelPromptWhereInput
+    orderBy?: AIChannelPromptOrderByWithAggregationInput | AIChannelPromptOrderByWithAggregationInput[]
+    by: AIChannelPromptScalarFieldEnum[] | AIChannelPromptScalarFieldEnum
+    having?: AIChannelPromptScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AIChannelPromptCountAggregateInputType | true
+    _min?: AIChannelPromptMinAggregateInputType
+    _max?: AIChannelPromptMaxAggregateInputType
+  }
+
+  export type AIChannelPromptGroupByOutputType = {
+    id: string
+    channelId: string
+    guildId: string
+    prompt: string
+    updatedBy: string
+    createdAt: Date
+    updatedAt: Date
+    _count: AIChannelPromptCountAggregateOutputType | null
+    _min: AIChannelPromptMinAggregateOutputType | null
+    _max: AIChannelPromptMaxAggregateOutputType | null
+  }
+
+  type GetAIChannelPromptGroupByPayload<T extends AIChannelPromptGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AIChannelPromptGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AIChannelPromptGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AIChannelPromptGroupByOutputType[P]>
+            : GetScalarType<T[P], AIChannelPromptGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AIChannelPromptSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    channelId?: boolean
+    guildId?: boolean
+    prompt?: boolean
+    updatedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["aIChannelPrompt"]>
+
+
+
+  export type AIChannelPromptSelectScalar = {
+    id?: boolean
+    channelId?: boolean
+    guildId?: boolean
+    prompt?: boolean
+    updatedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AIChannelPromptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channelId" | "guildId" | "prompt" | "updatedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["aIChannelPrompt"]>
+
+  export type $AIChannelPromptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AIChannelPrompt"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      channelId: string
+      guildId: string
+      prompt: string
+      /**
+       * Who set it, for the admin log - Discord user id.
+       */
+      updatedBy: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["aIChannelPrompt"]>
+    composites: {}
+  }
+
+  type AIChannelPromptGetPayload<S extends boolean | null | undefined | AIChannelPromptDefaultArgs> = $Result.GetResult<Prisma.$AIChannelPromptPayload, S>
+
+  type AIChannelPromptCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AIChannelPromptFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AIChannelPromptCountAggregateInputType | true
+    }
+
+  export interface AIChannelPromptDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AIChannelPrompt'], meta: { name: 'AIChannelPrompt' } }
+    /**
+     * Find zero or one AIChannelPrompt that matches the filter.
+     * @param {AIChannelPromptFindUniqueArgs} args - Arguments to find a AIChannelPrompt
+     * @example
+     * // Get one AIChannelPrompt
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AIChannelPromptFindUniqueArgs>(args: SelectSubset<T, AIChannelPromptFindUniqueArgs<ExtArgs>>): Prisma__AIChannelPromptClient<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AIChannelPrompt that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AIChannelPromptFindUniqueOrThrowArgs} args - Arguments to find a AIChannelPrompt
+     * @example
+     * // Get one AIChannelPrompt
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AIChannelPromptFindUniqueOrThrowArgs>(args: SelectSubset<T, AIChannelPromptFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AIChannelPromptClient<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIChannelPrompt that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIChannelPromptFindFirstArgs} args - Arguments to find a AIChannelPrompt
+     * @example
+     * // Get one AIChannelPrompt
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AIChannelPromptFindFirstArgs>(args?: SelectSubset<T, AIChannelPromptFindFirstArgs<ExtArgs>>): Prisma__AIChannelPromptClient<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AIChannelPrompt that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIChannelPromptFindFirstOrThrowArgs} args - Arguments to find a AIChannelPrompt
+     * @example
+     * // Get one AIChannelPrompt
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AIChannelPromptFindFirstOrThrowArgs>(args?: SelectSubset<T, AIChannelPromptFindFirstOrThrowArgs<ExtArgs>>): Prisma__AIChannelPromptClient<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIChannelPrompts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIChannelPromptFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AIChannelPrompts
+     * const aIChannelPrompts = await prisma.aIChannelPrompt.findMany()
+     * 
+     * // Get first 10 AIChannelPrompts
+     * const aIChannelPrompts = await prisma.aIChannelPrompt.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const aIChannelPromptWithIdOnly = await prisma.aIChannelPrompt.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AIChannelPromptFindManyArgs>(args?: SelectSubset<T, AIChannelPromptFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AIChannelPrompt.
+     * @param {AIChannelPromptCreateArgs} args - Arguments to create a AIChannelPrompt.
+     * @example
+     * // Create one AIChannelPrompt
+     * const AIChannelPrompt = await prisma.aIChannelPrompt.create({
+     *   data: {
+     *     // ... data to create a AIChannelPrompt
+     *   }
+     * })
+     * 
+     */
+    create<T extends AIChannelPromptCreateArgs>(args: SelectSubset<T, AIChannelPromptCreateArgs<ExtArgs>>): Prisma__AIChannelPromptClient<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AIChannelPrompts.
+     * @param {AIChannelPromptCreateManyArgs} args - Arguments to create many AIChannelPrompts.
+     * @example
+     * // Create many AIChannelPrompts
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AIChannelPromptCreateManyArgs>(args?: SelectSubset<T, AIChannelPromptCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a AIChannelPrompt.
+     * @param {AIChannelPromptDeleteArgs} args - Arguments to delete one AIChannelPrompt.
+     * @example
+     * // Delete one AIChannelPrompt
+     * const AIChannelPrompt = await prisma.aIChannelPrompt.delete({
+     *   where: {
+     *     // ... filter to delete one AIChannelPrompt
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AIChannelPromptDeleteArgs>(args: SelectSubset<T, AIChannelPromptDeleteArgs<ExtArgs>>): Prisma__AIChannelPromptClient<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AIChannelPrompt.
+     * @param {AIChannelPromptUpdateArgs} args - Arguments to update one AIChannelPrompt.
+     * @example
+     * // Update one AIChannelPrompt
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AIChannelPromptUpdateArgs>(args: SelectSubset<T, AIChannelPromptUpdateArgs<ExtArgs>>): Prisma__AIChannelPromptClient<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AIChannelPrompts.
+     * @param {AIChannelPromptDeleteManyArgs} args - Arguments to filter AIChannelPrompts to delete.
+     * @example
+     * // Delete a few AIChannelPrompts
+     * const { count } = await prisma.aIChannelPrompt.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AIChannelPromptDeleteManyArgs>(args?: SelectSubset<T, AIChannelPromptDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AIChannelPrompts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIChannelPromptUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AIChannelPrompts
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AIChannelPromptUpdateManyArgs>(args: SelectSubset<T, AIChannelPromptUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one AIChannelPrompt.
+     * @param {AIChannelPromptUpsertArgs} args - Arguments to update or create a AIChannelPrompt.
+     * @example
+     * // Update or create a AIChannelPrompt
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.upsert({
+     *   create: {
+     *     // ... data to create a AIChannelPrompt
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AIChannelPrompt we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AIChannelPromptUpsertArgs>(args: SelectSubset<T, AIChannelPromptUpsertArgs<ExtArgs>>): Prisma__AIChannelPromptClient<$Result.GetResult<Prisma.$AIChannelPromptPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AIChannelPrompts that matches the filter.
+     * @param {AIChannelPromptFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: AIChannelPromptFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a AIChannelPrompt.
+     * @param {AIChannelPromptAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const aIChannelPrompt = await prisma.aIChannelPrompt.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: AIChannelPromptAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of AIChannelPrompts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIChannelPromptCountArgs} args - Arguments to filter AIChannelPrompts to count.
+     * @example
+     * // Count the number of AIChannelPrompts
+     * const count = await prisma.aIChannelPrompt.count({
+     *   where: {
+     *     // ... the filter for the AIChannelPrompts we want to count
+     *   }
+     * })
+    **/
+    count<T extends AIChannelPromptCountArgs>(
+      args?: Subset<T, AIChannelPromptCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AIChannelPromptCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AIChannelPrompt.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIChannelPromptAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AIChannelPromptAggregateArgs>(args: Subset<T, AIChannelPromptAggregateArgs>): Prisma.PrismaPromise<GetAIChannelPromptAggregateType<T>>
+
+    /**
+     * Group by AIChannelPrompt.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AIChannelPromptGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AIChannelPromptGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AIChannelPromptGroupByArgs['orderBy'] }
+        : { orderBy?: AIChannelPromptGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AIChannelPromptGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAIChannelPromptGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AIChannelPrompt model
+   */
+  readonly fields: AIChannelPromptFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AIChannelPrompt.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AIChannelPromptClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AIChannelPrompt model
+   */
+  interface AIChannelPromptFieldRefs {
+    readonly id: FieldRef<"AIChannelPrompt", 'String'>
+    readonly channelId: FieldRef<"AIChannelPrompt", 'String'>
+    readonly guildId: FieldRef<"AIChannelPrompt", 'String'>
+    readonly prompt: FieldRef<"AIChannelPrompt", 'String'>
+    readonly updatedBy: FieldRef<"AIChannelPrompt", 'String'>
+    readonly createdAt: FieldRef<"AIChannelPrompt", 'DateTime'>
+    readonly updatedAt: FieldRef<"AIChannelPrompt", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AIChannelPrompt findUnique
+   */
+  export type AIChannelPromptFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which AIChannelPrompt to fetch.
+     */
+    where: AIChannelPromptWhereUniqueInput
+  }
+
+  /**
+   * AIChannelPrompt findUniqueOrThrow
+   */
+  export type AIChannelPromptFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which AIChannelPrompt to fetch.
+     */
+    where: AIChannelPromptWhereUniqueInput
+  }
+
+  /**
+   * AIChannelPrompt findFirst
+   */
+  export type AIChannelPromptFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which AIChannelPrompt to fetch.
+     */
+    where?: AIChannelPromptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIChannelPrompts to fetch.
+     */
+    orderBy?: AIChannelPromptOrderByWithRelationInput | AIChannelPromptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIChannelPrompts.
+     */
+    cursor?: AIChannelPromptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIChannelPrompts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIChannelPrompts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIChannelPrompts.
+     */
+    distinct?: AIChannelPromptScalarFieldEnum | AIChannelPromptScalarFieldEnum[]
+  }
+
+  /**
+   * AIChannelPrompt findFirstOrThrow
+   */
+  export type AIChannelPromptFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which AIChannelPrompt to fetch.
+     */
+    where?: AIChannelPromptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIChannelPrompts to fetch.
+     */
+    orderBy?: AIChannelPromptOrderByWithRelationInput | AIChannelPromptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AIChannelPrompts.
+     */
+    cursor?: AIChannelPromptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIChannelPrompts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIChannelPrompts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AIChannelPrompts.
+     */
+    distinct?: AIChannelPromptScalarFieldEnum | AIChannelPromptScalarFieldEnum[]
+  }
+
+  /**
+   * AIChannelPrompt findMany
+   */
+  export type AIChannelPromptFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * Filter, which AIChannelPrompts to fetch.
+     */
+    where?: AIChannelPromptWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AIChannelPrompts to fetch.
+     */
+    orderBy?: AIChannelPromptOrderByWithRelationInput | AIChannelPromptOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AIChannelPrompts.
+     */
+    cursor?: AIChannelPromptWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AIChannelPrompts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AIChannelPrompts.
+     */
+    skip?: number
+    distinct?: AIChannelPromptScalarFieldEnum | AIChannelPromptScalarFieldEnum[]
+  }
+
+  /**
+   * AIChannelPrompt create
+   */
+  export type AIChannelPromptCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AIChannelPrompt.
+     */
+    data: XOR<AIChannelPromptCreateInput, AIChannelPromptUncheckedCreateInput>
+  }
+
+  /**
+   * AIChannelPrompt createMany
+   */
+  export type AIChannelPromptCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AIChannelPrompts.
+     */
+    data: AIChannelPromptCreateManyInput | AIChannelPromptCreateManyInput[]
+  }
+
+  /**
+   * AIChannelPrompt update
+   */
+  export type AIChannelPromptUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AIChannelPrompt.
+     */
+    data: XOR<AIChannelPromptUpdateInput, AIChannelPromptUncheckedUpdateInput>
+    /**
+     * Choose, which AIChannelPrompt to update.
+     */
+    where: AIChannelPromptWhereUniqueInput
+  }
+
+  /**
+   * AIChannelPrompt updateMany
+   */
+  export type AIChannelPromptUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AIChannelPrompts.
+     */
+    data: XOR<AIChannelPromptUpdateManyMutationInput, AIChannelPromptUncheckedUpdateManyInput>
+    /**
+     * Filter which AIChannelPrompts to update
+     */
+    where?: AIChannelPromptWhereInput
+    /**
+     * Limit how many AIChannelPrompts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIChannelPrompt upsert
+   */
+  export type AIChannelPromptUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AIChannelPrompt to update in case it exists.
+     */
+    where: AIChannelPromptWhereUniqueInput
+    /**
+     * In case the AIChannelPrompt found by the `where` argument doesn't exist, create a new AIChannelPrompt with this data.
+     */
+    create: XOR<AIChannelPromptCreateInput, AIChannelPromptUncheckedCreateInput>
+    /**
+     * In case the AIChannelPrompt was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AIChannelPromptUpdateInput, AIChannelPromptUncheckedUpdateInput>
+  }
+
+  /**
+   * AIChannelPrompt delete
+   */
+  export type AIChannelPromptDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+    /**
+     * Filter which AIChannelPrompt to delete.
+     */
+    where: AIChannelPromptWhereUniqueInput
+  }
+
+  /**
+   * AIChannelPrompt deleteMany
+   */
+  export type AIChannelPromptDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AIChannelPrompts to delete
+     */
+    where?: AIChannelPromptWhereInput
+    /**
+     * Limit how many AIChannelPrompts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AIChannelPrompt findRaw
+   */
+  export type AIChannelPromptFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * AIChannelPrompt aggregateRaw
+   */
+  export type AIChannelPromptAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * AIChannelPrompt without action
+   */
+  export type AIChannelPromptDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIChannelPrompt
+     */
+    select?: AIChannelPromptSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AIChannelPrompt
+     */
+    omit?: AIChannelPromptOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -12183,6 +13238,19 @@ export namespace Prisma {
   };
 
   export type UserChannelDataScalarFieldEnum = (typeof UserChannelDataScalarFieldEnum)[keyof typeof UserChannelDataScalarFieldEnum]
+
+
+  export const AIChannelPromptScalarFieldEnum: {
+    id: 'id',
+    channelId: 'channelId',
+    guildId: 'guildId',
+    prompt: 'prompt',
+    updatedBy: 'updatedBy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AIChannelPromptScalarFieldEnum = (typeof AIChannelPromptScalarFieldEnum)[keyof typeof AIChannelPromptScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -13076,6 +14144,68 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"UserChannelData"> | Date | string
   }
 
+  export type AIChannelPromptWhereInput = {
+    AND?: AIChannelPromptWhereInput | AIChannelPromptWhereInput[]
+    OR?: AIChannelPromptWhereInput[]
+    NOT?: AIChannelPromptWhereInput | AIChannelPromptWhereInput[]
+    id?: StringFilter<"AIChannelPrompt"> | string
+    channelId?: StringFilter<"AIChannelPrompt"> | string
+    guildId?: StringFilter<"AIChannelPrompt"> | string
+    prompt?: StringFilter<"AIChannelPrompt"> | string
+    updatedBy?: StringFilter<"AIChannelPrompt"> | string
+    createdAt?: DateTimeFilter<"AIChannelPrompt"> | Date | string
+    updatedAt?: DateTimeFilter<"AIChannelPrompt"> | Date | string
+  }
+
+  export type AIChannelPromptOrderByWithRelationInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    guildId?: SortOrder
+    prompt?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIChannelPromptWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    channelId?: string
+    AND?: AIChannelPromptWhereInput | AIChannelPromptWhereInput[]
+    OR?: AIChannelPromptWhereInput[]
+    NOT?: AIChannelPromptWhereInput | AIChannelPromptWhereInput[]
+    guildId?: StringFilter<"AIChannelPrompt"> | string
+    prompt?: StringFilter<"AIChannelPrompt"> | string
+    updatedBy?: StringFilter<"AIChannelPrompt"> | string
+    createdAt?: DateTimeFilter<"AIChannelPrompt"> | Date | string
+    updatedAt?: DateTimeFilter<"AIChannelPrompt"> | Date | string
+  }, "id" | "channelId">
+
+  export type AIChannelPromptOrderByWithAggregationInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    guildId?: SortOrder
+    prompt?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AIChannelPromptCountOrderByAggregateInput
+    _max?: AIChannelPromptMaxOrderByAggregateInput
+    _min?: AIChannelPromptMinOrderByAggregateInput
+  }
+
+  export type AIChannelPromptScalarWhereWithAggregatesInput = {
+    AND?: AIChannelPromptScalarWhereWithAggregatesInput | AIChannelPromptScalarWhereWithAggregatesInput[]
+    OR?: AIChannelPromptScalarWhereWithAggregatesInput[]
+    NOT?: AIChannelPromptScalarWhereWithAggregatesInput | AIChannelPromptScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
+    channelId?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
+    guildId?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
+    prompt?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
+    updatedBy?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"AIChannelPrompt"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AIChannelPrompt"> | Date | string
+  }
+
   export type ConfigCreateInput = {
     id?: string
     key: string
@@ -13909,6 +15039,72 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AIChannelPromptCreateInput = {
+    id?: string
+    channelId: string
+    guildId: string
+    prompt: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AIChannelPromptUncheckedCreateInput = {
+    id?: string
+    channelId: string
+    guildId: string
+    prompt: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AIChannelPromptUpdateInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    prompt?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIChannelPromptUncheckedUpdateInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    prompt?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIChannelPromptCreateManyInput = {
+    id?: string
+    channelId: string
+    guildId: string
+    prompt: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AIChannelPromptUpdateManyMutationInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    prompt?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AIChannelPromptUncheckedUpdateManyInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    prompt?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -14584,6 +15780,36 @@ export namespace Prisma {
     type?: SortOrder
     value?: SortOrder
     ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIChannelPromptCountOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    guildId?: SortOrder
+    prompt?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIChannelPromptMaxOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    guildId?: SortOrder
+    prompt?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AIChannelPromptMinOrderByAggregateInput = {
+    id?: SortOrder
+    channelId?: SortOrder
+    guildId?: SortOrder
+    prompt?: SortOrder
+    updatedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }

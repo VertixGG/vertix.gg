@@ -1,5 +1,7 @@
 import { Events } from "discord.js";
 
+import { AIChannelPromptModel } from "@vertix.gg/data/src/models/ai-channel-prompt-model";
+
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import { AgentManager } from "@vertix.gg/bot/src/managers/agent-manager";
 import { AttachmentManager } from "@vertix.gg/bot/src/managers/attachment-manager";
@@ -29,6 +31,40 @@ type ChannelSession = {
 
 const channelSessions = new Map<string, ChannelSession>();
 const SESSION_TIMEOUT_MS = 600000;
+
+function getSessionKey( channelId: string ): string {
+    return `private-${ channelId }`;
+}
+
+/**
+ * The base prompt, plus whatever this channel was told to add to it.
+ *
+ * Appended rather than substituted: a channel can shape how the bot answers, it cannot talk the
+ * bot out of its own instructions.
+ */
+async function buildSystemPrompt( channelId: string ): Promise<string> {
+    const channelPrompt = await AIChannelPromptModel.$.get( channelId ).catch( ( error ) => {
+        GlobalLogger.$.error( buildSystemPrompt, "[PRIVATE] Failed reading the channel prompt", error );
+
+        return null;
+    } );
+
+    if ( ! channelPrompt ) {
+        return PRIVATE_SYSTEM_PROMPT;
+    }
+
+    return `${ PRIVATE_SYSTEM_PROMPT }\n\n## Instructions for this channel\n\n${ channelPrompt }`;
+}
+
+/**
+ * Drops the channel's agent session so the next message starts a fresh one.
+ *
+ * The system prompt is only sent when a session begins - without this, a prompt changed
+ * mid-conversation would not reach the agent until the session timed out.
+ */
+export function resetChannelSession( channelId: string ): void {
+    channelSessions.delete( getSessionKey( channelId ) );
+}
 
 function getSession( sessionKey: string ): ChannelSession {
     let session = channelSessions.get( sessionKey );
@@ -98,7 +134,7 @@ export function mentionHandlerPrivate( client: Client ) {
             // conversation, next to what was just said, not rewritten into the one further up.
             startNewPanel( message.channelId );
 
-            const session = getSession( `private-${ message.channelId }` );
+            const session = getSession( getSessionKey( message.channelId ) );
 
             const attachments = await AttachmentManager.$.download( message );
             const stopTyping = startTypingUntilPanel( message.channel, message.channelId );
@@ -109,7 +145,7 @@ export function mentionHandlerPrivate( client: Client ) {
 
                 const isNewSession = ! session.conversationId;
                 const fullPrompt = isNewSession
-                    ? `${ PRIVATE_SYSTEM_PROMPT }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
+                    ? `${ await buildSystemPrompt( message.channelId ) }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
                     : userMessage;
 
                 const panelRevision = getPanelRevision( message.channelId );
@@ -118,7 +154,12 @@ export function mentionHandlerPrivate( client: Client ) {
                     conversationId: session.conversationId,
                     readOnly: false,
                     model: AgentManager.$.getPrivateModel(),
-                    attachments: attachments.files
+                    attachments: attachments.files,
+                    caller: {
+                        guildId: message.guildId ?? "",
+                        channelId: message.channelId,
+                        userId: message.author.id
+                    }
                 } );
 
                 if ( conversationId ) {
@@ -150,7 +191,7 @@ export function mentionHandlerPrivate( client: Client ) {
             return;
         }
 
-        void handleDynamicInteraction( client, interaction, origin.channelId );
+        void handleDynamicInteraction( client, interaction, origin.channelId, origin.guildId ?? TARGET_GUILD_ID ?? "" );
     } );
 
     cleanupOldSessions();
@@ -160,7 +201,7 @@ export function mentionHandlerPrivate( client: Client ) {
  * A click on a UI the agent built continues the same conversation, so the buttons actually lead
  * somewhere instead of only printing their canned reply.
  */
-async function handleDynamicInteraction( client: Client, interaction: DynamicUIInteraction, channelId: string ) {
+async function handleDynamicInteraction( client: Client, interaction: DynamicUIInteraction, channelId: string, guildId: string ) {
     try {
         const channel = await client.channels.fetch( channelId ).catch( () => null );
 
@@ -173,7 +214,7 @@ async function handleDynamicInteraction( client: Client, interaction: DynamicUII
             `[PRIVATE] Processing UI interaction '${ interaction.elementId }' of '${ interaction.specName }' from ${ interaction.username }`
         );
 
-        const session = getSession( `private-${ channelId }` );
+        const session = getSession( getSessionKey( channelId ) );
 
         const values = interaction.values?.length
             ? ` with values: ${ interaction.values.join( ", " ) }`
@@ -183,7 +224,7 @@ async function handleDynamicInteraction( client: Client, interaction: DynamicUII
 
         const prompt = session.conversationId
             ? event
-            : `${ PRIVATE_SYSTEM_PROMPT }\n\nContext:\n- Channel: (ID: ${ channelId })\n- Mode: FULL ACCESS (admin channel)\n\n${ event }`;
+            : `${ await buildSystemPrompt( channelId ) }\n\nContext:\n- Channel: (ID: ${ channelId })\n- Mode: FULL ACCESS (admin channel)\n\n${ event }`;
 
         const stopTyping = startTypingUntilPanel( channel, channelId );
 
@@ -193,7 +234,12 @@ async function handleDynamicInteraction( client: Client, interaction: DynamicUII
             const { response, conversationId } = await AgentManager.$.runChat( prompt, {
                 conversationId: session.conversationId,
                 readOnly: false,
-                model: AgentManager.$.getPrivateModel()
+                model: AgentManager.$.getPrivateModel(),
+                caller: {
+                    guildId,
+                    channelId,
+                    userId: interaction.userId
+                }
             } );
 
             if ( conversationId ) {

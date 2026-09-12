@@ -238,3 +238,28 @@ model UserChannelData {
   @@index([key])
   @@index([ownerId])
 }
+
+/// An extra instruction the AI Chat bot follows in one channel.
+///
+/// Keyed by the raw Discord channel id rather than hung off `Channel`: that row only
+/// exists for channels Vertix itself created, and this has to work in any text channel
+/// the bot is talked to in.
+///
+/// Appended to the base system prompt, never replacing it - a channel can shape how the
+/// bot answers, but cannot talk it out of its own instructions.
+model AIChannelPrompt {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  channelId String   @unique
+  guildId   String
+  // ---
+  prompt    String
+  // ---
+  /// Who set it, for the admin log - Discord user id.
+  updatedBy String
+  // ---
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([guildId])
+}

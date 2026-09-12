@@ -9,6 +9,10 @@ import { spawn } from "child_process";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
+import { AI_PROMPT_CALLER_ENV_VARS } from "@vertix.gg/definitions/src/ai-prompt-ipc-definitions";
+
+import type { AIPromptCaller } from "@vertix.gg/definitions/src/ai-prompt-ipc-definitions";
+
 const __dirname = path.dirname( fileURLToPath( import.meta.url ) );
 const REPO_ROOT = path.resolve( __dirname, "../../../../" );
 
@@ -88,6 +92,14 @@ export type AgentRunOptions = {
     reasoningEffort?: ReasoningEffort;
     /** Local files the agent may open - what a user attached to the message it is answering. */
     attachments?: AgentAttachment[];
+    /**
+     * Who this run is answering, handed to the MCP server so its channel-prompt tools have
+     * somebody to check a permission against.
+     *
+     * Claude only: the other providers reach MCP through their own configuration, which this
+     * manager does not write, so there is nowhere to put it that the model could not also reach.
+     */
+    caller?: AIPromptCaller;
 };
 
 export type AgentChatOptions = Omit<AgentRunOptions, "includeLogs">;
@@ -522,7 +534,7 @@ export class AgentManager extends InitializeBase {
     // config is written to a 0600 temp file (see writeClaudeMcpConfigFile), not
     // passed inline, so the token still never reaches the command line where `ps`
     // would expose it.
-    private buildClaudeMcpConfig( readOnly: boolean ): string {
+    private buildClaudeMcpConfig( readOnly: boolean, caller?: AIPromptCaller ): string {
         const configured = this.getConfiguredValue( [ "AI_CHAT_CLAUDE_MCP_CONFIG" ] );
 
         if ( configured ) {
@@ -542,7 +554,15 @@ export class AgentManager extends InitializeBase {
                         // vertix-mcp acts as whatever token it is handed in
                         // DISCORD_MCP_TOKEN; hand it the AI Chat bot's token so its
                         // tools post as the AI Chat bot.
-                        ... ( aiChatToken ? { DISCORD_MCP_TOKEN: aiChatToken } : {} )
+                        ... ( aiChatToken ? { DISCORD_MCP_TOKEN: aiChatToken } : {} ),
+                        // Who is being answered. It lives here rather than in a tool argument
+                        // because the model writes its arguments: a conversation could ask it to
+                        // claim to be somebody else, and the permission check rests on this.
+                        ... ( caller ? {
+                            [ AI_PROMPT_CALLER_ENV_VARS.GUILD_ID ]: caller.guildId,
+                            [ AI_PROMPT_CALLER_ENV_VARS.CHANNEL_ID ]: caller.channelId,
+                            [ AI_PROMPT_CALLER_ENV_VARS.USER_ID ]: caller.userId
+                        } : {} )
                     }
                 }
             }
@@ -552,11 +572,11 @@ export class AgentManager extends InitializeBase {
     // Writes the MCP config to a 0600 temp file and returns its path, so the token
     // it carries stays out of `ps`. Returns null (MCP simply off for the run) if the
     // write fails, rather than taking the whole reply down.
-    private writeClaudeMcpConfigFile( readOnly: boolean ): string | null {
+    private writeClaudeMcpConfigFile( readOnly: boolean, caller?: AIPromptCaller ): string | null {
         try {
             const filePath = path.join( os.tmpdir(), `vertix-mcp-config-${ crypto.randomUUID() }.json` );
 
-            fsNative.writeFileSync( filePath, this.buildClaudeMcpConfig( readOnly ), { mode: 0o600 } );
+            fsNative.writeFileSync( filePath, this.buildClaudeMcpConfig( readOnly, caller ), { mode: 0o600 } );
 
             return filePath;
         } catch( error ) {
@@ -701,7 +721,7 @@ export class AgentManager extends InitializeBase {
     }
 
     private async runClaude( prompt: string, options: AgentRunOptions = {} ): Promise<AgentRunResult> {
-        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort(), attachments = [] } = options;
+        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort(), attachments = [], caller } = options;
         const claudeBinary = await this.getClaudeBinary();
 
         if ( ! claudeBinary ) {
@@ -713,7 +733,7 @@ export class AgentManager extends InitializeBase {
 
         // Written to a 0600 temp file (so its token never reaches `ps`) and removed
         // when the run settles.
-        const mcpConfigPath = this.isClaudeMcpEnabled() ? this.writeClaudeMcpConfigFile( readOnly ) : null;
+        const mcpConfigPath = this.isClaudeMcpEnabled() ? this.writeClaudeMcpConfigFile( readOnly, caller ) : null;
 
         const baseArgs = [
             "--print",

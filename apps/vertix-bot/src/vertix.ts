@@ -21,6 +21,7 @@ import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 import { readyHandler } from "@vertix.gg/bot/src/listeners";
 
 import type { UIIPCService } from "@vertix.gg/bot/src/services/ui-ipc-service";
+import type { AIPromptIPCService } from "@vertix.gg/bot/src/services/ai-prompt-ipc-service";
 
 import type { Logger } from "@vertix.gg/base/src/modules/logger";
 
@@ -235,6 +236,22 @@ export default async function Main( { enableListeners }: {
                         logger.warn(
                             onAiLogin,
                             "UI IPC service did not come up - peers asking for the AI bot will post as the main Vertix bot"
+                        );
+                    } );
+
+                // Same deal, and the same reason it is not awaited: this client's membership is
+                // what resolves whoever asks the agent to change a channel's prompt.
+                void ServiceLocator.$.waitFor<AIPromptIPCService>( "VertixBot/Services/AIPromptIPC", {
+                    silent: true,
+                    timeout: 10000
+                } )
+                    .then( ( aiPromptIPCService ) => {
+                        aiPromptIPCService.registerClient( aiClient as Client<true> );
+                    } )
+                    .catch( () => {
+                        logger.warn(
+                            onAiLogin,
+                            "AI prompt IPC service did not come up - channel prompts cannot be changed by talking"
                         );
                     } );
 

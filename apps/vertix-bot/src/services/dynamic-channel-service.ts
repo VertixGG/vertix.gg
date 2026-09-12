@@ -65,7 +65,9 @@ import {
 import {
     DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS,
     DEFAULT_MASTER_CHANNEL_STAFF_ROLES_PERMISSIONS,
-    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS
+    DEFAULT_MASTER_OWNER_DYNAMIC_CHANNEL_PERMISSIONS,
+    DYNAMIC_CHANNEL_CHAT_PERMISSIONS,
+    DYNAMIC_CHANNEL_PRESENCE_PERMISSIONS
 } from "@vertix.gg/bot/src/definitions/master-channel";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
@@ -1666,6 +1668,17 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             verifiedFlagsDeny.push( PermissionsBitField.Flags.ViewChannel );
         } else if ( isPrivacyGranted && isVisibilityRestored && "shown" === dynamicChannelVisibilityState ) {
             verifiedFlagsAllow.push( PermissionsBitField.Flags.ViewChannel );
+        }
+
+        // This overwrite replaces the one the channel inherited rather than adding to it, so the
+        // chat grant that came with the inherited presence has to be restated here or a restored
+        // channel comes back silent - open to its audience, and unreadable to them.
+        //
+        // Only when both halves of presence are being granted, which is the same rule the inherited
+        // overwrite follows: a state that denies either one is a channel this audience is not fully
+        // in, and nothing is added to it.
+        if ( DYNAMIC_CHANNEL_PRESENCE_PERMISSIONS.every( ( flag ) => verifiedFlagsAllow.includes( flag ) ) ) {
+            verifiedFlagsAllow.push( ... DYNAMIC_CHANNEL_CHAT_PERMISSIONS );
         }
 
         if ( verifiedFlagsDeny.length || verifiedFlagsAllow.length ) {

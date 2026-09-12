@@ -18,6 +18,32 @@ export const DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS = new PermissionsBitField(
 ] );
 
 /**
+ * The two flags that decide whether a role is in the channel at all: it can see it, and it can
+ * enter it. These are exactly the pair the privacy states flip.
+ */
+export const DYNAMIC_CHANNEL_PRESENCE_PERMISSIONS = [
+    Flags.ViewChannel,
+    Flags.Connect
+];
+
+/**
+ * What being in the channel is worth nothing without.
+ *
+ * A voice channel keeps its chat behind `SendMessages` and its scrollback behind
+ * `ReadMessageHistory`. A role granted only the presence pair above arrives somewhere it can see
+ * and join and cannot read a word of, which is not a channel anyone can use.
+ *
+ * Named beside that pair because the rule is about the two together: wherever presence is granted
+ * on a dynamic channel, this is granted with it. Spelled once so the places that write an overwrite
+ * - what a channel inherits from its generator, and what a restored privacy state rewrites over the
+ * top - cannot come to different conclusions about it.
+ */
+export const DYNAMIC_CHANNEL_CHAT_PERMISSIONS = [
+    Flags.ReadMessageHistory,
+    Flags.SendMessages
+];
+
+/**
  * What the owner of a dynamic channel is granted on it.
  *
  * Everything else stays neutral, so the owner keeps whatever the server already gives them and

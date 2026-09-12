@@ -8,6 +8,11 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
+import {
+    DYNAMIC_CHANNEL_CHAT_PERMISSIONS,
+    DYNAMIC_CHANNEL_PRESENCE_PERMISSIONS
+} from "@vertix.gg/bot/src/definitions/master-channel";
+
 import type {
     GuildChannel,
     Interaction,
@@ -170,14 +175,29 @@ export class PermissionsManager extends InitializeBase {
      * whole point of the `Clear Chat` feature. Scoping this to the everyone overwrite alone used to
      * let any other role carrying the deny - a verified role, or anything an admin set on the
      * master channel - inherit it and end up silenced in every dynamic channel.
+     *
+     * Lifting the deny is only half of it, though. A voice channel keeps its chat behind
+     * `SendMessages` and its scrollback behind `ReadMessageHistory`, and the generator grants
+     * neither - it only ever grants the two flags that let a role see the channel and enter it. So
+     * an audience that inherited those two arrived in a room it could join and not read a word of,
+     * which is not what "the channels are meant to be talked in" means.
+     *
+     * Both are therefore granted alongside them, and only ever alongside them: an overwrite that
+     * does not already allow `ViewChannel` and `Connect` is passed through exactly as the generator
+     * had it. That is what keeps this from widening anything - a role kept out of the channel, or
+     * left neutral to inherit from the category, is untouched, and the privacy states go on denying
+     * the same two flags they always did.
      */
     public getChannelDefaultInheritedPermissions( channel: VoiceBasedChannel ) {
         const { permissionOverwrites } = channel,
             result = [];
 
         for ( const overwrite of permissionOverwrites.cache.values() ) {
-            const { id, allow, type } = overwrite,
-                deny = overwrite.deny.remove( PermissionsBitField.Flags.SendMessages );
+            const { id, type } = overwrite,
+                deny = overwrite.deny.remove( PermissionsBitField.Flags.SendMessages ),
+                allow = overwrite.allow.has( DYNAMIC_CHANNEL_PRESENCE_PERMISSIONS )
+                    ? overwrite.allow.add( ...DYNAMIC_CHANNEL_CHAT_PERMISSIONS )
+                    : overwrite.allow;
 
             this.debugger.debugPermission( this.getChannelDefaultInheritedPermissions, overwrite );
 

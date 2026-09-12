@@ -12,6 +12,21 @@ const logger = new Logger( "VertixAPI/Entrypoint", { skipEventBusHook: true } );
 async function registerServices() {
     logger.info( registerServices, "Registering services..." );
 
+    // Logger client first, so the registrations below are forwarded too. The bot
+    // does the same in its own entrypoint; without it the API logs only to its
+    // own stdout and never reaches vertix-logger.
+    const loggerServerPort = process.env.LOGGER_SERVER_HTTP_PORT ? parseInt( process.env.LOGGER_SERVER_HTTP_PORT, 10 ) : 3090;
+    const loggerServerHost = process.env.LOGGER_SERVER_HOST || "localhost";
+
+    const { MCPService } = await import( "@vertix.gg/base/src/modules/mcp-server/mcp-service" );
+
+    // Force re-registration to pick up code changes
+    ServiceLocator.$.unregister( MCPService.getName() );
+    ServiceLocator.$.register( MCPService, { loggerServerUrl: `http://${ loggerServerHost }:${ loggerServerPort }` } );
+
+    await ServiceLocator.$.waitFor( MCPService.getName(), { timeout: 5000 } );
+    logger.info( registerServices, "MCP service (Logger Client) ready" );
+
     // Register and wait for IPC service (needs Redis connection)
     const { IPCService } = await import( "@vertix.gg/base/src/modules/ipc" );
 

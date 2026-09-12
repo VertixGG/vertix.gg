@@ -8,6 +8,9 @@
 ## Build, Test & Development Commands
 - `bun install` – refresh workspace dependencies after cloning or adding packages.
 - `bun run vertix:bot:bun:start:dev` – start the Discord bot with Bun hot reload (`vertix:bot:node:start:dev` uses ts-node).
+- `bun run vertix:pm2:start` – bring up Redis, the logger, the API, the bot and the pm2 dashboard together (`ecosystem.config.cjs`); pair with `vertix:pm2:logs`, `:status`, `:stop`.
+- `bun run vertix:pm2:restart` – ordered cold restart: tears everything down, then starts Redis, logger, API and bot one at a time, waiting for each to accept connections first.
+- pm2 never reads `.env`. The dashboard binds loopback on `PM2_DASHBOARD_PORT` (3091) and nginx republishes it to the LAN on 3092; override `PM2_DASHBOARD_HOST` / `PM2_DASHBOARD_PORT` in the shell before `pm2 start`.
 - `bun run vertix:flow:dev` / `vertix:website:dev` – boot the flow editor or marketing site; follow with `vertix:website:build` or `:preview` before release.
 - `bun run vertix:jest` – run base, bot, and GUI suites in parallel; target a package via scripts like `vertix:bot:jest`.
 - `bun run vertix:eslint` or `vertix:eslint:fix` – satisfy linting and auto-fix style issues.

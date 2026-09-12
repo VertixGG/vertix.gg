@@ -65,7 +65,10 @@ export default defineConfig( ( { mode } ) => {
             include: [
                 "@zenflux/react-commander",
                 "@xyflow/react",
-                "eventemitter3"
+                "eventemitter3",
+                // `@zenflux/core` ships raw `src`, and its deep subpaths are served unbundled,
+                // so its CommonJS `picocolors` needs prebundling to get an ESM default export.
+                "picocolors"
             ],
             exclude: [
             ]

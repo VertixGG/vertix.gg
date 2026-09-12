@@ -18,6 +18,9 @@ const ClaimInChannelOnlyAdapter = new AdapterBuilderBase<
         IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/ClaimInChannelOnlyAdapter", UIAdapterBase )
     .setComponent( ClaimInChannelOnlyComponent )
+    // The embed says one fixed thing and reads nothing, but the base makes this mandatory - left
+    // out, the reply throws rather than rendering an argument-less embed.
+    .getReplyArgs( async() => ( {} ) )
     .disableMiddleware()
     .build();
 

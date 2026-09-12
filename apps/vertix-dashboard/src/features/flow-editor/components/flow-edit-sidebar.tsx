@@ -19,6 +19,7 @@ import {
     useArrangedElementRows
 } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
+import { useEditorScopeStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-scope";
 import { EditedText, EditedTextArea } from "@vertix.gg/dashboard/src/components/edited-text";
 
 import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
@@ -768,6 +769,10 @@ function ElementEditPanel( {
 export function FlowEditSidebar() {
     const { editingFlowName, exitEditMode, customization, isLoadingCustomization } = useEditMode();
     const selectedLanguage = useLanguageStore( ( state ) => state.selectedLanguage );
+
+    // What an edit here is written about: the whole server, or the one generator named above the
+    // canvas. The same one the preview resolves as, so the two cannot disagree.
+    const scopeMasterChannelId = useEditorScopeStore( ( state ) => state.masterChannelId );
     const translations = useLanguageStore( ( state ) => state.translations );
     const [ selectedElementIndex, setSelectedElementIndex ] = useState<{ row: number; col: number } | null>( null );
     const [ draggedElementName, setDraggedElementName ] = useState<string | null>( null );
@@ -825,10 +830,15 @@ export function FlowEditSidebar() {
         // Only apply once per node+language+translation combination to avoid infinite loops
         const translationKey = translations ? JSON.stringify( translations.embeds[ embedName ?? "" ] ?? null ) : "null";
         const componentCustomization = ( customization && component )
-            ? resolveCustomization( customization, { component, state, language: selectedLanguage } ) ?? undefined
+            ? resolveCustomization( customization, {
+                component,
+                state,
+                language: selectedLanguage,
+                masterChannelId: scopeMasterChannelId
+            } ) ?? undefined
             : undefined;
 
-        const appliedKey = `${ selectedNode.id }-${ selectedLanguage }-${ translationKey }-${ JSON.stringify( componentCustomization ) }`;
+        const appliedKey = `${ selectedNode.id }-${ selectedLanguage }-${ scopeMasterChannelId ?? "" }-${ translationKey }-${ JSON.stringify( componentCustomization ) }`;
         if ( appliedCustomization === appliedKey ) {
             return;
         }
@@ -980,7 +990,7 @@ export function FlowEditSidebar() {
         }
 
         setAppliedCustomization( appliedKey );
-    }, [ customization, translations, selectedNode, isLoadingCustomization, appliedCustomization, selectedLanguage, updateNodeData ] );
+    }, [ customization, translations, selectedNode, isLoadingCustomization, appliedCustomization, selectedLanguage, scopeMasterChannelId, updateNodeData ] );
 
     const nodeType = selectedNode?.data?.type as string | undefined;
 

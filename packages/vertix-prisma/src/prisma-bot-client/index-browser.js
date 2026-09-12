@@ -166,6 +166,7 @@ exports.Prisma.GuildCustomizationScalarFieldEnum = {
   component: 'component',
   state: 'state',
   language: 'language',
+  masterChannelId: 'masterChannelId',
   embedOverrides: 'embedOverrides',
   elementOverrides: 'elementOverrides',
   modalOverrides: 'modalOverrides',

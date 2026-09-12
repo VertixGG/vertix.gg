@@ -38,6 +38,9 @@ export abstract class UIElementBase<T extends APIBaseComponent<ComponentType>> e
         const component = this.uiArgs?._customizationComponent as string | undefined;
         const state = this.uiArgs?._customizationState as string | undefined;
         const languageCode = this.uiArgs?._language as string | undefined;
+        // Which generator this element is being drawn for, so a label written about that generator
+        // alone is found. The embed beside it resolves against the same one.
+        const masterChannelId = this.uiArgs?.masterChannelId as string | undefined;
 
         if ( !guildId || !component ) {
             return null;
@@ -48,7 +51,8 @@ export abstract class UIElementBase<T extends APIBaseComponent<ComponentType>> e
             const customization = await provider.getComponentCustomization( guildId, {
                 component,
                 state: state ?? null,
-                language: languageCode ?? null
+                language: languageCode ?? null,
+                masterChannelId: masterChannelId ?? null
             } );
 
             if ( !customization?.elementOverrides ) {

@@ -8,6 +8,7 @@ import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 import { useSelectedGuildStore } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
+import { useEditorScopeStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-scope";
 import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
 
 import type { Node } from "@xyflow/react";
@@ -324,7 +325,8 @@ export class RestoreNodeDataCommand extends CommandBase<FlowEditorState> {
  */
 function extractNodeCustomization(
     nodeData: Record<string, unknown>,
-    originalNodeData: Record<string, unknown>
+    originalNodeData: Record<string, unknown>,
+    masterChannelId: string | null
 ): { target: CustomizationTarget; customization: Record<string, unknown> } | null {
     const component = nodeData.component as string | undefined;
 
@@ -334,7 +336,10 @@ function extractNodeCustomization(
 
     const target: CustomizationTarget = {
         component,
-        state: ( nodeData.state as string | null ) ?? null
+        state: ( nodeData.state as string | null ) ?? null,
+        // What the scope above the canvas says this edit is about. Null is the whole server, which
+        // is what it was before a generator could be named and what the editor still opens on.
+        masterChannelId
     };
 
     // Extract customization data from node
@@ -551,6 +556,10 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
         const queryModule = getQueryModule( CustomizationQuery );
         const isDefault = guildId === "__default__";
 
+        // The default layer sits under every guild, so it is not something one guild's generator
+        // can narrow - a generator belongs to a guild, and the layer beneath them all does not.
+        const masterChannelId = isDefault ? null : useEditorScopeStore.getState().masterChannelId;
+
         // Collect all nodes that need saving: dirty nodes + currently selected node
         const nodesToSave: Array<{ nodeData: Record<string, unknown>; originalData: Record<string, unknown>; nodeId: string }> = [];
 
@@ -587,7 +596,7 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
         try {
             // Save each node's customization
             for ( const { nodeData, originalData, nodeId } of nodesToSave ) {
-                const extracted = extractNodeCustomization( nodeData, originalData );
+                const extracted = extractNodeCustomization( nodeData, originalData, masterChannelId );
 
                 if ( !extracted ) {
                     logger.warn( this.apply, `Skipping node ${ nodeId } — nothing to attach an override to` );
@@ -612,6 +621,7 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
                             component: target.component,
                             state: target.state ?? null,
                             language: selectedLanguage,
+                            masterChannelId: target.masterChannelId ?? null,
                             customization
                         }
                 );

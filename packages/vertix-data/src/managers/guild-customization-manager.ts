@@ -22,8 +22,8 @@ interface CacheEntry {
  * The overrides a guild has stored, and the resolution of which of them apply to what is being
  * rendered.
  *
- * Each override is a row saying what it applies to - a component, optionally narrowed to a state
- * and a language - so nothing here parses a key apart to find out.
+ * Each override is a row saying what it applies to - a component, optionally narrowed to a
+ * generator, a state and a language - so nothing here parses a key apart to find out.
  */
 export class GuildCustomizationManager extends InitializeBase {
     private static instance: GuildCustomizationManager;
@@ -113,6 +113,9 @@ export class GuildCustomizationManager extends InitializeBase {
             .filter( ( row ) => row.component === target.component )
             .filter( ( row ) => !row.state || row.state === target.state )
             .filter( ( row ) => !row.language || row.language === target.language )
+            // A row written about one generator says nothing about the others. A row written about
+            // none is the guild's, and applies to all of them.
+            .filter( ( row ) => !row.masterChannelId || row.masterChannelId === target.masterChannelId )
             .sort( ( a, b ) => this.specificity( a ) - this.specificity( b ) );
 
         if ( !applicable.length ) {
@@ -171,11 +174,17 @@ export class GuildCustomizationManager extends InitializeBase {
     /**
      * Function specificity() :: How narrowly a row applies, for ordering the merge.
      *
-     * A row written for this guild outranks the default layer, a state outranks the whole
-     * component, and a language outranks every language.
+     * A row written about one generator outranks one written about the whole guild, which outranks
+     * the default layer; a state outranks the whole component, and a language outranks every
+     * language. Scored so that no combination of the narrower three can outweigh the generator -
+     * an admin who worded one generator differently means it, whatever the guild says.
      */
     private specificity( row: GuildCustomizationRow ): number {
         let score = 0;
+
+        if ( row.masterChannelId ) {
+            score += 8;
+        }
 
         if ( DEFAULT_CUSTOMIZATION_GUILD_ID !== row.guildId ) {
             score += 4;

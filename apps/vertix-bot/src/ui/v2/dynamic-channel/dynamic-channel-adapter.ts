@@ -128,6 +128,11 @@ async function getAllArgs( channel: VoiceChannel, ownerRoleIds: string[] = [] ) 
 
         args.dynamicChannelButtonsTemplate = stored.ids;
         args.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
+
+        // Which generator this channel came from, so wording written about that generator alone is
+        // found. Its discord id rather than its row id: that is what the override is stored
+        // against, and what every other reader of a channel already holds.
+        args.masterChannelId = masterChannelDB.channelId;
     }
 
     return args;

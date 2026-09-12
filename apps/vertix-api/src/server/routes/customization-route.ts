@@ -30,6 +30,8 @@ interface ComponentBody {
     state?: string | null;
     /** The language it is narrowed to, or null/absent for every language. */
     language?: string | null;
+    /** The generator it is narrowed to, by discord id, or null/absent for the whole guild. */
+    masterChannelId?: string | null;
     customization: ComponentCustomization;
 }
 
@@ -37,6 +39,7 @@ interface DeleteComponentBody {
     component: string;
     state?: string | null;
     language?: string | null;
+    masterChannelId?: string | null;
 }
 
 /**
@@ -122,7 +125,7 @@ async function handleUpdateComponentCustomization(
 ) {
     try {
         const { guildId } = request.params;
-        const { component, state, language, customization } = request.body;
+        const { component, state, language, masterChannelId, customization } = request.body;
 
         if ( !component || typeof component !== "string" ) {
             return reply.status( 400 ).send( { error: "Invalid request", message: "component is required" } );
@@ -132,7 +135,11 @@ async function handleUpdateComponentCustomization(
             return reply.status( 400 ).send( { error: "Invalid request", message: "customization object is required" } );
         }
 
-        const result = await updateComponentCustomization( guildId, { component, state, language }, customization );
+        const result = await updateComponentCustomization(
+            guildId,
+            { component, state, language, masterChannelId },
+            customization
+        );
 
         // Notify bot to refresh active sessions with updated customization
         notifyBotCustomizationRefresh( guildId );
@@ -154,13 +161,13 @@ async function handleDeleteComponentCustomization(
 ) {
     try {
         const { guildId } = request.params;
-        const { component, state, language } = request.body;
+        const { component, state, language, masterChannelId } = request.body;
 
         if ( !component || typeof component !== "string" ) {
             return reply.status( 400 ).send( { error: "Invalid request", message: "component is required" } );
         }
 
-        const result = await deleteComponentCustomization( guildId, { component, state, language } );
+        const result = await deleteComponentCustomization( guildId, { component, state, language, masterChannelId } );
 
         if ( !result ) {
             return reply.status( 404 ).send( { error: "Not found", message: "No customization found for this guild" } );

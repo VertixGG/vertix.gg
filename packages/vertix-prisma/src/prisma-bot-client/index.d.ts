@@ -35,11 +35,11 @@ export type Guild = $Result.DefaultSelection<Prisma.$GuildPayload>
 export type GuildData = $Result.DefaultSelection<Prisma.$GuildDataPayload>
 /**
  * Model GuildCustomization
- * One override target: a component, optionally narrowed to a state and a language.
+ * One override target: a component, optionally narrowed to a generator, a state and a language.
  * 
- * A row rather than a key inside a per-guild blob, so the four things that identify an override
- * are four fields - nothing has to encode them into a string, and a writer cannot disagree with a
- * reader about how that string is spelled.
+ * A row rather than a key inside a per-guild blob, so the things that identify an override are
+ * fields - nothing has to encode them into a string, and a writer cannot disagree with a reader
+ * about how that string is spelled.
  */
 export type GuildCustomization = $Result.DefaultSelection<Prisma.$GuildCustomizationPayload>
 /**
@@ -5806,6 +5806,7 @@ export namespace Prisma {
     component: string | null
     state: string | null
     language: string | null
+    masterChannelId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5816,6 +5817,7 @@ export namespace Prisma {
     component: string | null
     state: string | null
     language: string | null
+    masterChannelId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5826,6 +5828,7 @@ export namespace Prisma {
     component: number
     state: number
     language: number
+    masterChannelId: number
     embedOverrides: number
     elementOverrides: number
     modalOverrides: number
@@ -5842,6 +5845,7 @@ export namespace Prisma {
     component?: true
     state?: true
     language?: true
+    masterChannelId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5852,6 +5856,7 @@ export namespace Prisma {
     component?: true
     state?: true
     language?: true
+    masterChannelId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5862,6 +5867,7 @@ export namespace Prisma {
     component?: true
     state?: true
     language?: true
+    masterChannelId?: true
     embedOverrides?: true
     elementOverrides?: true
     modalOverrides?: true
@@ -5949,6 +5955,7 @@ export namespace Prisma {
     component: string
     state: string | null
     language: string | null
+    masterChannelId: string | null
     embedOverrides: JsonValue | null
     elementOverrides: JsonValue | null
     modalOverrides: JsonValue | null
@@ -5980,6 +5987,7 @@ export namespace Prisma {
     component?: boolean
     state?: boolean
     language?: boolean
+    masterChannelId?: boolean
     embedOverrides?: boolean
     elementOverrides?: boolean
     modalOverrides?: boolean
@@ -5996,6 +6004,7 @@ export namespace Prisma {
     component?: boolean
     state?: boolean
     language?: boolean
+    masterChannelId?: boolean
     embedOverrides?: boolean
     elementOverrides?: boolean
     modalOverrides?: boolean
@@ -6004,7 +6013,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GuildCustomizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "component" | "state" | "language" | "embedOverrides" | "elementOverrides" | "modalOverrides" | "variables" | "createdAt" | "updatedAt", ExtArgs["result"]["guildCustomization"]>
+  export type GuildCustomizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "component" | "state" | "language" | "masterChannelId" | "embedOverrides" | "elementOverrides" | "modalOverrides" | "variables" | "createdAt" | "updatedAt", ExtArgs["result"]["guildCustomization"]>
 
   export type $GuildCustomizationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GuildCustomization"
@@ -6028,6 +6037,12 @@ export namespace Prisma {
        * The language the override is narrowed to, or null for every language.
        */
       language: string | null
+      /**
+       * The generator whose channels the override is narrowed to, or null for the whole guild.
+       * A guild runs several generators and words them differently, so the guild is not always the
+       * right thing to say an override about.
+       */
+      masterChannelId: string | null
       embedOverrides: Prisma.JsonValue | null
       elementOverrides: Prisma.JsonValue | null
       modalOverrides: Prisma.JsonValue | null
@@ -6431,6 +6446,7 @@ export namespace Prisma {
     readonly component: FieldRef<"GuildCustomization", 'String'>
     readonly state: FieldRef<"GuildCustomization", 'String'>
     readonly language: FieldRef<"GuildCustomization", 'String'>
+    readonly masterChannelId: FieldRef<"GuildCustomization", 'String'>
     readonly embedOverrides: FieldRef<"GuildCustomization", 'Json'>
     readonly elementOverrides: FieldRef<"GuildCustomization", 'Json'>
     readonly modalOverrides: FieldRef<"GuildCustomization", 'Json'>
@@ -12080,6 +12096,7 @@ export namespace Prisma {
     component: 'component',
     state: 'state',
     language: 'language',
+    masterChannelId: 'masterChannelId',
     embedOverrides: 'embedOverrides',
     elementOverrides: 'elementOverrides',
     modalOverrides: 'modalOverrides',
@@ -12587,6 +12604,7 @@ export namespace Prisma {
     component?: StringFilter<"GuildCustomization"> | string
     state?: StringNullableFilter<"GuildCustomization"> | string | null
     language?: StringNullableFilter<"GuildCustomization"> | string | null
+    masterChannelId?: StringNullableFilter<"GuildCustomization"> | string | null
     embedOverrides?: JsonNullableFilter<"GuildCustomization">
     elementOverrides?: JsonNullableFilter<"GuildCustomization">
     modalOverrides?: JsonNullableFilter<"GuildCustomization">
@@ -12601,6 +12619,7 @@ export namespace Prisma {
     component?: SortOrder
     state?: SortOrder
     language?: SortOrder
+    masterChannelId?: SortOrder
     embedOverrides?: SortOrder
     elementOverrides?: SortOrder
     modalOverrides?: SortOrder
@@ -12611,7 +12630,7 @@ export namespace Prisma {
 
   export type GuildCustomizationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    guildId_component_state_language?: GuildCustomizationGuildIdComponentStateLanguageCompoundUniqueInput
+    guildId_masterChannelId_component_state_language?: GuildCustomizationGuildIdMasterChannelIdComponentStateLanguageCompoundUniqueInput
     AND?: GuildCustomizationWhereInput | GuildCustomizationWhereInput[]
     OR?: GuildCustomizationWhereInput[]
     NOT?: GuildCustomizationWhereInput | GuildCustomizationWhereInput[]
@@ -12619,13 +12638,14 @@ export namespace Prisma {
     component?: StringFilter<"GuildCustomization"> | string
     state?: StringNullableFilter<"GuildCustomization"> | string | null
     language?: StringNullableFilter<"GuildCustomization"> | string | null
+    masterChannelId?: StringNullableFilter<"GuildCustomization"> | string | null
     embedOverrides?: JsonNullableFilter<"GuildCustomization">
     elementOverrides?: JsonNullableFilter<"GuildCustomization">
     modalOverrides?: JsonNullableFilter<"GuildCustomization">
     variables?: JsonNullableFilter<"GuildCustomization">
     createdAt?: DateTimeFilter<"GuildCustomization"> | Date | string
     updatedAt?: DateTimeFilter<"GuildCustomization"> | Date | string
-  }, "id" | "guildId_component_state_language">
+  }, "id" | "guildId_masterChannelId_component_state_language">
 
   export type GuildCustomizationOrderByWithAggregationInput = {
     id?: SortOrder
@@ -12633,6 +12653,7 @@ export namespace Prisma {
     component?: SortOrder
     state?: SortOrder
     language?: SortOrder
+    masterChannelId?: SortOrder
     embedOverrides?: SortOrder
     elementOverrides?: SortOrder
     modalOverrides?: SortOrder
@@ -12653,6 +12674,7 @@ export namespace Prisma {
     component?: StringWithAggregatesFilter<"GuildCustomization"> | string
     state?: StringNullableWithAggregatesFilter<"GuildCustomization"> | string | null
     language?: StringNullableWithAggregatesFilter<"GuildCustomization"> | string | null
+    masterChannelId?: StringNullableWithAggregatesFilter<"GuildCustomization"> | string | null
     embedOverrides?: JsonNullableWithAggregatesFilter<"GuildCustomization">
     elementOverrides?: JsonNullableWithAggregatesFilter<"GuildCustomization">
     modalOverrides?: JsonNullableWithAggregatesFilter<"GuildCustomization">
@@ -13369,6 +13391,7 @@ export namespace Prisma {
     component: string
     state?: string | null
     language?: string | null
+    masterChannelId?: string | null
     embedOverrides?: InputJsonValue | null
     elementOverrides?: InputJsonValue | null
     modalOverrides?: InputJsonValue | null
@@ -13383,6 +13406,7 @@ export namespace Prisma {
     component: string
     state?: string | null
     language?: string | null
+    masterChannelId?: string | null
     embedOverrides?: InputJsonValue | null
     elementOverrides?: InputJsonValue | null
     modalOverrides?: InputJsonValue | null
@@ -13396,6 +13420,7 @@ export namespace Prisma {
     component?: StringFieldUpdateOperationsInput | string
     state?: NullableStringFieldUpdateOperationsInput | string | null
     language?: NullableStringFieldUpdateOperationsInput | string | null
+    masterChannelId?: NullableStringFieldUpdateOperationsInput | string | null
     embedOverrides?: InputJsonValue | InputJsonValue | null
     elementOverrides?: InputJsonValue | InputJsonValue | null
     modalOverrides?: InputJsonValue | InputJsonValue | null
@@ -13409,6 +13434,7 @@ export namespace Prisma {
     component?: StringFieldUpdateOperationsInput | string
     state?: NullableStringFieldUpdateOperationsInput | string | null
     language?: NullableStringFieldUpdateOperationsInput | string | null
+    masterChannelId?: NullableStringFieldUpdateOperationsInput | string | null
     embedOverrides?: InputJsonValue | InputJsonValue | null
     elementOverrides?: InputJsonValue | InputJsonValue | null
     modalOverrides?: InputJsonValue | InputJsonValue | null
@@ -13423,6 +13449,7 @@ export namespace Prisma {
     component: string
     state?: string | null
     language?: string | null
+    masterChannelId?: string | null
     embedOverrides?: InputJsonValue | null
     elementOverrides?: InputJsonValue | null
     modalOverrides?: InputJsonValue | null
@@ -13436,6 +13463,7 @@ export namespace Prisma {
     component?: StringFieldUpdateOperationsInput | string
     state?: NullableStringFieldUpdateOperationsInput | string | null
     language?: NullableStringFieldUpdateOperationsInput | string | null
+    masterChannelId?: NullableStringFieldUpdateOperationsInput | string | null
     embedOverrides?: InputJsonValue | InputJsonValue | null
     elementOverrides?: InputJsonValue | InputJsonValue | null
     modalOverrides?: InputJsonValue | InputJsonValue | null
@@ -13449,6 +13477,7 @@ export namespace Prisma {
     component?: StringFieldUpdateOperationsInput | string
     state?: NullableStringFieldUpdateOperationsInput | string | null
     language?: NullableStringFieldUpdateOperationsInput | string | null
+    masterChannelId?: NullableStringFieldUpdateOperationsInput | string | null
     embedOverrides?: InputJsonValue | InputJsonValue | null
     elementOverrides?: InputJsonValue | InputJsonValue | null
     modalOverrides?: InputJsonValue | InputJsonValue | null
@@ -14256,8 +14285,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type GuildCustomizationGuildIdComponentStateLanguageCompoundUniqueInput = {
+  export type GuildCustomizationGuildIdMasterChannelIdComponentStateLanguageCompoundUniqueInput = {
     guildId: string
+    masterChannelId: string
     component: string
     state: string
     language: string
@@ -14269,6 +14299,7 @@ export namespace Prisma {
     component?: SortOrder
     state?: SortOrder
     language?: SortOrder
+    masterChannelId?: SortOrder
     embedOverrides?: SortOrder
     elementOverrides?: SortOrder
     modalOverrides?: SortOrder
@@ -14283,6 +14314,7 @@ export namespace Prisma {
     component?: SortOrder
     state?: SortOrder
     language?: SortOrder
+    masterChannelId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14293,6 +14325,7 @@ export namespace Prisma {
     component?: SortOrder
     state?: SortOrder
     language?: SortOrder
+    masterChannelId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }

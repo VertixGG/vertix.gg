@@ -78,11 +78,18 @@ export interface ComponentCustomization {
  * The component is its own name, as `getName()` returns it - never shortened, since
  * `UI-V2/DynamicChannel` and `UI-V3/DynamicChannel` are different components that would otherwise
  * collapse into one. A null state or language means "every one of them".
+ *
+ * `masterChannelId` narrows an override to the channels of one generator. Null is the whole guild,
+ * which is what every override written before this was, so a row with no generator on it goes on
+ * meaning what it always meant. A guild can run generators of both interface versions and several
+ * of the same one, and its admins word them differently - a welcome that suits a gaming generator
+ * reads wrong on a study one - so the guild is not always the right thing to say it about.
  */
 export interface CustomizationTarget {
     component: string;
     state?: string | null;
     language?: string | null;
+    masterChannelId?: string | null;
 }
 
 /**

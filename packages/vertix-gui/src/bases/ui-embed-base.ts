@@ -149,14 +149,19 @@ export abstract class UIEmbedBase extends UITemplateBase {
     /**
      * Fetches guild-specific customization for this embed.
      * Uses _guildId, _customizationComponent and _customizationState from uiArgs.
+     *
+     * `masterChannelId` says which generator this message belongs to, so an override written about
+     * that generator alone can be found. Absent, only the guild wide overrides apply - which is
+     * every message that is not drawn for a particular generator.
      */
     private async fetchCustomization() {
         const guildId = this.uiArgs?._guildId as string | undefined;
         const component = this.uiArgs?._customizationComponent as string | undefined;
         const state = this.uiArgs?._customizationState as string | undefined;
         const languageCode = this.uiArgs?._language as string | undefined;
+        const masterChannelId = this.uiArgs?.masterChannelId as string | undefined;
 
-        UIEmbedBase.$debugger.log( this.fetchCustomization, "Fetching customization", { guildId, component, state, languageCode } );
+        UIEmbedBase.$debugger.log( this.fetchCustomization, "Fetching customization", { guildId, component, state, languageCode, masterChannelId } );
 
         if ( !guildId || !component ) {
             UIEmbedBase.$debugger.log( this.fetchCustomization, "Missing guildId or component, skipping" );
@@ -168,7 +173,8 @@ export abstract class UIEmbedBase extends UITemplateBase {
             const result = await provider.getComponentCustomization( guildId, {
                 component,
                 state: state ?? null,
-                language: languageCode ?? null
+                language: languageCode ?? null,
+                masterChannelId: masterChannelId ?? null
             } );
 
             UIEmbedBase.$debugger.log( this.fetchCustomization, "Customization result", { hasResult: !!result, result } );

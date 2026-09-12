@@ -15,8 +15,17 @@ export interface CustomizationData {
     rows: GuildCustomizationRow[];
 }
 
+/**
+ * The same scoring the bot resolves by - a row about one generator outranks one about the whole
+ * guild, which outranks the default layer. Kept in step with `GuildCustomizationManager`, since
+ * the editor's whole claim is that it shows what a member will see.
+ */
 function specificity( row: GuildCustomizationRow ): number {
     let score = 0;
+
+    if ( row.masterChannelId ) {
+        score += 8;
+    }
 
     if ( DEFAULT_CUSTOMIZATION_GUILD_ID !== row.guildId ) {
         score += 4;
@@ -40,6 +49,12 @@ function applies( row: GuildCustomizationRow, target: CustomizationTarget ): boo
 
     // A row without a state or a language applies to all of them.
     if ( row.state && row.state !== target.state ) {
+        return false;
+    }
+
+    // A row written about one generator says nothing about the others; one written about none is
+    // the guild's, and applies to all of them.
+    if ( row.masterChannelId && row.masterChannelId !== target.masterChannelId ) {
         return false;
     }
 
@@ -89,5 +104,6 @@ export function findOwnRow(
         && row.component === target.component
         && ( row.state ?? null ) === ( target.state ?? null )
         && ( row.language ?? null ) === ( target.language ?? null )
+        && ( row.masterChannelId ?? null ) === ( target.masterChannelId ?? null )
     ) ?? null;
 }

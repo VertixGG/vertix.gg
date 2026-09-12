@@ -84,6 +84,9 @@ async function getAllArgs( channel: VoiceChannel ) {
 
         args.dynamicChannelButtonsTemplate = stored.ids;
         args.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
+
+        // The panel belongs to a generator outright, so it always has one to resolve against.
+        args.masterChannelId = masterChannelDB.channelId;
     }
 
     return args;

@@ -11,6 +11,7 @@ import { EntityList } from "@vertix.gg/dashboard/src/features/flow-editor/compon
 import { FlowEditSidebar } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-edit-sidebar";
 import { LanguageSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/language-selector";
 import { GeneratorSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/generator-selector";
+import { ScopeSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/scope-selector";
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
 
@@ -190,13 +191,21 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
             </ResizablePanel>
 
             <div className="flex-1 flex flex-col min-w-0">
-                <header className="h-12 border-b border-zinc-700 flex items-center px-4 bg-zinc-800/50">
+                <header className="relative h-12 border-b border-zinc-700 flex items-center px-4 bg-zinc-800/50">
                     <h2 className="text-xs font-small text-zinc-300">
                         { state.selectedModule ? `Module: ${ state.selectedModule }` : "Module Viewer" }
                     </h2>
                     { state.isLoading && (
                         <span className="ml-4 text-zinc-500 text-xs">Loading...</span>
                     ) }
+
+                    { /* Centred rather than filed away with the pickers on the right, because this
+                         is the one control that changes what every edit below it means - the whole
+                         server's wording, or one generator's. */ }
+                    <div className="absolute left-1/2 -translate-x-1/2">
+                        <ScopeSelector selectedModule={ state.selectedModule } />
+                    </div>
+
                     <div className="ml-auto flex items-center gap-2">
                         { /* Which generator's set is being arranged - the wording beside it is
                              server wide, so the two sit together rather than one inside the other. */ }

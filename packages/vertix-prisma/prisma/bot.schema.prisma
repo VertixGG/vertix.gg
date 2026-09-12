@@ -100,11 +100,11 @@ model GuildData {
   @@unique([ownerId, key, version])
 }
 
-/// One override target: a component, optionally narrowed to a state and a language.
+/// One override target: a component, optionally narrowed to a generator, a state and a language.
 ///
-/// A row rather than a key inside a per-guild blob, so the four things that identify an override
-/// are four fields - nothing has to encode them into a string, and a writer cannot disagree with a
-/// reader about how that string is spelled.
+/// A row rather than a key inside a per-guild blob, so the things that identify an override are
+/// fields - nothing has to encode them into a string, and a writer cannot disagree with a reader
+/// about how that string is spelled.
 model GuildCustomization {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
@@ -117,6 +117,10 @@ model GuildCustomization {
   state            String?
   /// The language the override is narrowed to, or null for every language.
   language         String?
+  /// The generator whose channels the override is narrowed to, or null for the whole guild.
+  /// A guild runs several generators and words them differently, so the guild is not always the
+  /// right thing to say an override about.
+  masterChannelId  String?
   // ---
   embedOverrides   Json?
   elementOverrides Json?
@@ -126,7 +130,7 @@ model GuildCustomization {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  @@unique([ guildId, component, state, language ])
+  @@unique([ guildId, masterChannelId, component, state, language ])
   @@index([ guildId, component ])
 }
 

@@ -15,6 +15,7 @@ import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-
 
 import { useButtonCatalogue } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
 import { useEditorGenerator } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-generator";
+import { useEditorScopeStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-scope";
 import { useButtonArrangementStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-button-arrangement-store";
 import { arrangeElementRows, buttonIdsOf } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
 import { dynamicChannelFlowFor } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
@@ -62,6 +63,10 @@ export function FlowViewer() {
     const guildId = useSelectedGuildId();
     const selectedLanguage = useLanguageStore( ( state ) => state.selectedLanguage );
     const translations = useLanguageStore( ( state ) => state.translations );
+
+    // Which generator the preview is resolving as. Null draws what every generator of this version
+    // shows; naming one draws that generator's own wording on top.
+    const scopeMasterChannelId = useEditorScopeStore( ( state ) => state.masterChannelId );
 
     // Load customizations for the guild
     const [ customization, setCustomization ] = useState<CustomizationData | null>( null );
@@ -231,7 +236,8 @@ export function FlowViewer() {
                 const componentCustomization = resolveCustomization( customization, {
                     component,
                     state: ( node.data?.state as string | null ) ?? null,
-                    language: selectedLanguage
+                    language: selectedLanguage,
+                    masterChannelId: scopeMasterChannelId
                 } );
 
                 if ( componentCustomization?.embedOverrides ) {
@@ -394,6 +400,7 @@ export function FlowViewer() {
         translations,
         customization,
         selectedLanguage,
+        scopeMasterChannelId,
         generator,
         catalogue,
         arrangementDraft,

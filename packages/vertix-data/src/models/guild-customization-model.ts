@@ -54,8 +54,10 @@ export class GuildCustomizationModel extends ModelBase<PrismaBot.PrismaClient> {
     /**
      * Function upsertComponent() :: Write one override, merging into the row already there.
      *
-     * Addressed by the four fields rather than by `whereUnique`: the compound carries nullable
-     * members, which the mongo connector will not accept as a unique selector.
+     * Addressed by its fields rather than by `whereUnique`: the compound carries nullable members,
+     * which the mongo connector will not accept as a unique selector. A null `masterChannelId` is
+     * the guild's own row, and is spelled out rather than left off - left off it would match the
+     * first generator's row and merge a guild wide edit into it.
      */
     public async upsertComponent(
         guildId: string,
@@ -66,7 +68,8 @@ export class GuildCustomizationModel extends ModelBase<PrismaBot.PrismaClient> {
             guildId,
             component: target.component,
             state: target.state ?? null,
-            language: target.language ?? null
+            language: target.language ?? null,
+            masterChannelId: target.masterChannelId ?? null
         };
 
         const existing = await this.prisma.guildCustomization.findFirst( { where } );
@@ -91,7 +94,8 @@ export class GuildCustomizationModel extends ModelBase<PrismaBot.PrismaClient> {
                 guildId,
                 component: target.component,
                 state: target.state ?? null,
-                language: target.language ?? null
+                language: target.language ?? null,
+                masterChannelId: target.masterChannelId ?? null
             }
         } );
 
@@ -108,6 +112,7 @@ export class GuildCustomizationModel extends ModelBase<PrismaBot.PrismaClient> {
             component: record.component,
             state: record.state,
             language: record.language,
+            masterChannelId: record.masterChannelId,
             embedOverrides: ( record.embedOverrides ?? undefined ) as GuildCustomizationRow[ "embedOverrides" ],
             elementOverrides: ( record.elementOverrides ?? undefined ) as GuildCustomizationRow[ "elementOverrides" ],
             modalOverrides: ( record.modalOverrides ?? undefined ) as GuildCustomizationRow[ "modalOverrides" ],

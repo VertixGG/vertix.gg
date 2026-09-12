@@ -1,3 +1,8 @@
+import type {
+    GuildTimingsInterface,
+    TGuildTimingsOverrides
+} from "@vertix.gg/definitions/src/guild-timings-definitions";
+
 import type { GuildDiscordOptions } from "@vertix.gg/dashboard/src/features/generators/types";
 
 export type { GuildDiscordOptions };
@@ -14,6 +19,26 @@ export interface ServerConfig {
     verifiedRoleIds: string[];
     staffRoleIds: string[];
     badwords: string[];
+    timings: ServerConfigTimings;
 }
 
-export type ServerConfigInput = Partial<ServerConfig>;
+/**
+ * What the guild chose for its claim, and what it runs on having chosen nothing.
+ *
+ * Both in milliseconds. Held apart so a field can show the inherited value while staying empty,
+ * which is how the screen says a timing is followed rather than chosen.
+ */
+export interface ServerConfigTimings {
+    overrides: TGuildTimingsOverrides;
+    defaults: GuildTimingsInterface;
+}
+
+/**
+ * What a save carries.
+ *
+ * `timings` narrows to the guild's own choices: the defaults travel the other way only, since they
+ * are the bot's own configuration and nothing here may set them.
+ */
+export type ServerConfigInput = Partial<Omit<ServerConfig, "timings">> & {
+    timings?: TGuildTimingsOverrides;
+};

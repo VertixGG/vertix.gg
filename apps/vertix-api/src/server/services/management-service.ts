@@ -11,11 +11,23 @@ import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/s
 import {
     DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
     DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES,
+    DEFAULT_GUILD_SETTINGS_KEY_TIMINGS,
     DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES,
     DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE
 } from "@vertix.gg/definitions/src/guild-data-keys";
 
+import { GUILD_TIMINGS_FIELDS } from "@vertix.gg/definitions/src/guild-timings-definitions";
+
+import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
+
 import { getButtonCatalogue } from "@vertix.gg/api/src/server/services/button-emoji-source";
+
+import type {
+    GuildTimingsInterface,
+    TGuildTimingsOverrides
+} from "@vertix.gg/definitions/src/guild-timings-definitions";
+
+import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 import type { DiscordService } from "./discord-service";
 
@@ -242,6 +254,43 @@ export interface GuildSettings {
     staffRoleIds: string[];
     /** Empty means the guild never set its own, so the bot's built in list applies. */
     badwords: string[];
+    timings: GuildTimingsSettings;
+}
+
+/**
+ * Function readTimingsOverrides() :: What a stored timings row actually holds.
+ *
+ * Anything that is not a number under a field this release knows is left out, so a row written by
+ * another version reads as unset for that field rather than reaching a screen as something it
+ * cannot show.
+ */
+function readTimingsOverrides( object: PrismaBot.Prisma.JsonValue | null ): TGuildTimingsOverrides {
+    if ( ! object || "object" !== typeof object || Array.isArray( object ) ) {
+        return {};
+    }
+
+    const overrides: TGuildTimingsOverrides = {};
+
+    GUILD_TIMINGS_FIELDS.forEach( ( field ) => {
+        const value = object[ field ];
+
+        if ( "number" === typeof value ) {
+            overrides[ field ] = value;
+        }
+    } );
+
+    return overrides;
+}
+
+/**
+ * What a guild chose for its claim, and what it runs on when it chose nothing.
+ *
+ * Both in milliseconds. Reported apart so a screen can tell a value someone picked from one that
+ * merely follows the bot's own configuration, which is the difference an empty field expresses.
+ */
+export interface GuildTimingsSettings {
+    overrides: TGuildTimingsOverrides;
+    defaults: GuildTimingsInterface;
 }
 
 export interface UpdateGuildSettingsInput {
@@ -249,6 +298,7 @@ export interface UpdateGuildSettingsInput {
     verifiedRoleIds?: string[];
     staffRoleIds?: string[];
     badwords?: string[];
+    timings?: TGuildTimingsOverrides;
 }
 
 export interface ScalingMasterDetails {
@@ -421,7 +471,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                         DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE,
                         DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES,
                         DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES,
-                        DEFAULT_GUILD_SETTINGS_KEY_BADWORDS
+                        DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
+                        DEFAULT_GUILD_SETTINGS_KEY_TIMINGS
                     ]
                 }
             }
@@ -429,11 +480,19 @@ export class ManagementService extends ServiceWithDependenciesBase<{
 
         const valuesOf = ( key: string ) => rows.find( ( row ) => row.key === key )?.values ?? [];
 
+        // The timings row holds an object rather than a list, so it is read from `object` where
+        // every other guild wide setting is read from `values`.
+        const timings = rows.find( ( row ) => row.key === DEFAULT_GUILD_SETTINGS_KEY_TIMINGS )?.object ?? null;
+
         return {
             voiceRoleId: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE )[ 0 ] ?? null,
             verifiedRoleIds: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_VERIFIED_ROLES ),
             staffRoleIds: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_STAFF_ROLES ),
-            badwords: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_BADWORDS )
+            badwords: valuesOf( DEFAULT_GUILD_SETTINGS_KEY_BADWORDS ),
+            timings: {
+                overrides: readTimingsOverrides( timings ),
+                defaults: GuildTimingsConfig.$.getDefaults()
+            }
         };
     }
 

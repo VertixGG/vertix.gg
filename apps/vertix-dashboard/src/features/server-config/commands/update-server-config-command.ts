@@ -36,8 +36,16 @@ export class UpdateServerConfigCommand extends CommandBase<ServerConfigState, { 
                 ...args.settings
             } );
 
+            const { timings, ...rest } = args.settings;
+
             return this.setState( {
-                config: { ...config, ...args.settings },
+                // `timings` arrives as the guild's own choices alone, while the state holds those
+                // beside the defaults they fall back to - so it is folded in rather than assigned.
+                config: {
+                    ...config,
+                    ...rest,
+                    timings: timings ? { ...config.timings, overrides: timings } : config.timings
+                },
                 isSaving: false
             } );
         } catch( error ) {

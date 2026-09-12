@@ -6,10 +6,12 @@ import { Plus, Save, ShieldCheck, ShieldX, X } from "lucide-react";
 
 import { DiscordButton } from "@vertix.gg/discord-ui/src";
 import { badwordsIsMatch } from "@vertix.gg/definitions/src/badwords-match";
+import { GUILD_TIMINGS_BOUNDS } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
 import { RoleCheckList, RoleRadioList } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
 import type { ServerConfig, GuildDiscordOptions } from "@vertix.gg/dashboard/src/features/server-config/types";
+import type { TGuildTimingsField, TGuildTimingsOverrides } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
 export interface ServerConfigFormProps {
     config: ServerConfig;
@@ -57,6 +59,67 @@ function parseBadwords( value: string ): string[] {
         .filter( ( word ) => word.length > 0 );
 }
 
+const MILLISECONDS_PER_SECOND = 1000;
+
+/**
+ * The claim timings this screen offers, in the order it shows them.
+ *
+ * `voteTimerInterval` is deliberately absent, exactly as it is on the setup screen: every one of
+ * its ticks edits the running vote message, so it is discord traffic rather than behaviour.
+ */
+const CLAIM_FIELDS: { field: TGuildTimingsField; label: string; hint: string }[] = [
+    {
+        field: "claimOwnershipTimeout",
+        label: "Owner away before claimable",
+        hint: "How long the owner can be gone before the channel is offered to the others"
+    },
+    {
+        field: "claimOwnershipTimerInterval",
+        label: "Claim check interval",
+        hint: "How often abandoned channels are looked for, so how close to the wait above the offer lands"
+    },
+    {
+        field: "voteTimeout",
+        label: "Vote duration",
+        hint: "How long a claim vote stays open once it starts"
+    },
+    {
+        field: "voteAddTime",
+        label: "Vote time per candidate",
+        hint: "Added to the running vote each time someone new puts themselves forward"
+    }
+];
+
+function toSeconds( milliseconds: number ) {
+    return Math.round( milliseconds / MILLISECONDS_PER_SECOND );
+}
+
+/**
+ * Function readTimingDraft() :: What a typed field means, or that it means nothing yet.
+ *
+ * An empty field is the guild following the default rather than choosing zero, and a value outside
+ * what the bot accepts is refused here so a save cannot quietly do nothing.
+ */
+function readTimingDraft( field: TGuildTimingsField, draft: string ) {
+    const trimmed = draft.trim();
+
+    if ( ! trimmed.length ) {
+        return { milliseconds: undefined, error: null };
+    }
+
+    const seconds = Number( trimmed ),
+        { min, max } = GUILD_TIMINGS_BOUNDS[ field ];
+
+    if ( ! Number.isInteger( seconds ) || seconds * MILLISECONDS_PER_SECOND < min || seconds * MILLISECONDS_PER_SECOND > max ) {
+        return {
+            milliseconds: undefined,
+            error: `Between ${ toSeconds( min ) } and ${ toSeconds( max ) } seconds`
+        };
+    }
+
+    return { milliseconds: seconds * MILLISECONDS_PER_SECOND, error: null };
+}
+
 export function ServerConfigForm( { config, discordOptions, guildId, isSaving }: ServerConfigFormProps ) {
     const updateServerConfig = useCommand( "Dashboard/ServerConfig/Update" );
 
@@ -65,6 +128,15 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
     const [ staffRoleIds, setStaffRoleIds ] = useState( config.staffRoleIds );
     const [ badwords, setBadwords ] = useState( config.badwords );
     const [ badwordDraft, setBadwordDraft ] = useState( "" );
+    const [ timingDrafts, setTimingDrafts ] = useState<Record<string, string>>( () =>
+        CLAIM_FIELDS.reduce( ( acc, { field } ) => {
+            const chosen = config.timings.overrides[ field ];
+
+            acc[ field ] = undefined === chosen ? "" : String( toSeconds( chosen ) );
+
+            return acc;
+        }, {} as Record<string, string> )
+    );
     const [ badwordTest, setBadwordTest ] = useState( "" );
 
     useEffect( () => {
@@ -130,7 +202,27 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
         setBadwordDraft( "" );
     };
 
+    const timingResults = CLAIM_FIELDS.map( ( entry ) => ( {
+        ... entry,
+        ... readTimingDraft( entry.field, timingDrafts[ entry.field ] ?? "" )
+    } ) );
+
+    const timingErrors = timingResults.filter( ( entry ) => entry.error );
+
+    const timingOverrides = timingResults.reduce( ( acc, { field, milliseconds } ) => {
+        if ( undefined !== milliseconds ) {
+            acc[ field ] = milliseconds;
+        }
+
+        return acc;
+    }, {} as TGuildTimingsOverrides );
+
+    const timingsChanged = CLAIM_FIELDS.some(
+        ( { field } ) => timingOverrides[ field ] !== config.timings.overrides[ field ]
+    );
+
     const hasChanges =
+        timingsChanged ||
         voiceRoleId !== config.voiceRoleId ||
         !sameList( verifiedRoleIds, config.verifiedRoleIds ) ||
         !sameList( staffRoleIds, config.staffRoleIds ) ||
@@ -142,7 +234,8 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                 voiceRoleId,
                 verifiedRoleIds,
                 staffRoleIds,
-                badwords
+                badwords,
+                timings: timingOverrides
             }
         } );
     };
@@ -196,6 +289,61 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                         onChange={ setStaffRoleIds }
                     />
                 </div>
+            </section>
+
+            <section className="bg-surface border border-border rounded-lg p-5 space-y-4">
+                <div>
+                    <h2 className="text-base font-semibold text-text-primary mb-1">Claim</h2>
+                    <p className="text-xs text-text-muted mb-0">
+                        When an abandoned channel is offered to whoever is still in it, and how long they vote
+                    </p>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                    { timingResults.map( ( { field, label, hint, error } ) => {
+                        const inherited = toSeconds( config.timings.defaults[ field ] );
+                        const isFollowing = ! ( timingDrafts[ field ] ?? "" ).trim().length;
+
+                        return (
+                            <div key={ field }>
+                                <label className="block text-sm font-medium text-text-primary mb-1">
+                                    { label }
+                                </label>
+
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        inputMode="numeric"
+                                        value={ timingDrafts[ field ] ?? "" }
+                                        onChange={ ( e ) => setTimingDrafts( {
+                                            ... timingDrafts,
+                                            [ field ]: e.target.value
+                                        } ) }
+                                        placeholder={ String( inherited ) }
+                                        disabled={ isSaving }
+                                        className={ `${ fieldClassName } pr-20 ${ error ? "border-error" : "" }` }
+                                    />
+                                    <span className="absolute inset-y-0 right-3 flex items-center text-xs text-text-muted
+                                        pointer-events-none">
+                                        seconds
+                                    </span>
+                                </div>
+
+                                { error ? (
+                                    <p className="text-xs text-error mt-1 mb-0">{ error }</p>
+                                ) : (
+                                    <p className="text-xs text-text-muted mt-1 mb-0">
+                                        { hint }{ isFollowing ? ` \u00b7 Following the default of ${ inherited }s` : "" }
+                                    </p>
+                                ) }
+                            </div>
+                        );
+                    } ) }
+                </div>
+
+                <p className="text-xs text-text-muted mb-0">
+                    Leave a field empty to follow the bot's own configuration, which is what the placeholder shows.
+                </p>
             </section>
 
             <section className="bg-surface border border-border rounded-lg p-5 space-y-4">
@@ -313,7 +461,7 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                 <DiscordButton
                     variant="primary"
                     onClick={ handleSave }
-                    disabled={ !hasChanges || isSaving }
+                    disabled={ !hasChanges || isSaving || 0 < timingErrors.length }
                     icon={ <Save className="w-4 h-4" /> }
                 >
                     { isSaving ? "Saving..." : "Save changes" }

@@ -13,6 +13,8 @@ import { gToken } from "@vertix.gg/base/src/discord/login";
 
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
+import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
 import { UserModel } from "@vertix.gg/data/src/models/user-model";
@@ -1266,6 +1268,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             if ( settings.badwords !== undefined ) {
                 await GuildDataManager.$.setBadwords( guildId, settings.badwords );
+            }
+
+            if ( settings.timings !== undefined ) {
+                await GuildDataManager.$.setTimings( guildId, settings.timings );
+
+                // The sweep a guild's tracked channels run on was built with the interval it held
+                // a moment ago, so it is rebuilt here exactly as the setup screen rebuilds it.
+                await DynamicChannelClaimManager.refreshGuildTimers( guildId );
             }
         } catch( error ) {
             this.logger.error( this.handleUpdateGuildSettings, `Failed to update guild settings for ${ guildId }`, error );

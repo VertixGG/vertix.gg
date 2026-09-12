@@ -7,6 +7,7 @@ import type {
 } from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
 
 import type { IPC_REQUEST_ACTIONS, IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
+import type { TGuildTimingsOverrides } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
 export const DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS = {
     CREATE_SCALING_SETUP: "create_scaling_setup",
@@ -64,6 +65,8 @@ export interface UpdateGuildSettingsPayload {
      * is `@everyone` for the audience and nobody for the staff.
      */
     settings: {
+        /** Only what the guild chose for itself, in milliseconds - absent keys stay as they are. */
+        timings?: TGuildTimingsOverrides;
         voiceRoleId?: string | null;
         verifiedRoleIds?: string[];
         staffRoleIds?: string[];

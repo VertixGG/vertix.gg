@@ -465,38 +465,22 @@ async function onGuildVerifiedRolesSelected(
     context: IExecutionAdapterContext<UIDefaultStringSelectRolesChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
-    // Every master channel this touches has its overwrites rewritten channel by channel, which
-    // is a Discord round trip each and runs well past the three seconds an interaction has to be
-    // acknowledged in. Answered first, so the work happens against a live token.
-    await context.updateInteractionDefer( interaction );
-
-    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
-        .applyGuildVerifiedRoles( interaction.guildId, [ ...interaction.values ].sort() );
-
-    await context.editReplyWithStep( interaction, SETUP_VERIFIED_ROLES_STEP );
+    await context.runWhileThinking( interaction, SETUP_VERIFIED_ROLES_STEP, async() => {
+        await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+            .applyGuildVerifiedRoles( interaction.guildId, [ ...interaction.values ].sort() );
+    } );
 }
 
 async function onGuildStaffRolesSelected(
     context: IExecutionAdapterContext<UIDefaultStringSelectRolesChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
-    // Every master channel this touches has its overwrites rewritten channel by channel, which
-    // is a Discord round trip each and runs well past the three seconds an interaction has to be
-    // acknowledged in. Answered first, so the work happens against a live token.
-    await context.updateInteractionDefer( interaction );
-
-    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
-        .applyGuildStaffRoles( interaction.guildId, [ ...interaction.values ].sort() );
-
-    await context.editReplyWithStep( interaction, SETUP_STAFF_ROLES_STEP );
+    await context.runWhileThinking( interaction, SETUP_STAFF_ROLES_STEP, async() => {
+        await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+            .applyGuildStaffRoles( interaction.guildId, [ ...interaction.values ].sort() );
+    } );
 }
 
-/**
- * Function onServerOptionsEditSelected() :: Opens the screen of the setting that was picked.
- *
- * One setting per screen, so each can carry the sentence saying what it does and the button that
- * empties it - neither of which fits beside four other pickers in a row.
- */
 async function onServerOptionsEditSelected(
     context: IExecutionAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
@@ -545,26 +529,20 @@ async function onVerifiedRolesClearClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    // Every channel that was following the list has its overwrites rewritten, one Discord round
-    // trip at a time, which outlasts the three seconds an interaction has to be acknowledged in.
-    await context.updateInteractionDefer( interaction );
-
-    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
-        .applyGuildVerifiedRoles( interaction.guildId, [] );
-
-    await context.editReplyWithStep( interaction, SETUP_VERIFIED_ROLES_STEP );
+    await context.runWhileThinking( interaction, SETUP_VERIFIED_ROLES_STEP, async() => {
+        await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+            .applyGuildVerifiedRoles( interaction.guildId, [] );
+    } );
 }
 
 async function onStaffRolesClearClicked(
     context: IExecutionAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultButtonChannelTextInteraction
 ) {
-    await context.updateInteractionDefer( interaction );
-
-    await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
-        .applyGuildStaffRoles( interaction.guildId, [] );
-
-    await context.editReplyWithStep( interaction, SETUP_STAFF_ROLES_STEP );
+    await context.runWhileThinking( interaction, SETUP_STAFF_ROLES_STEP, async() => {
+        await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
+            .applyGuildStaffRoles( interaction.guildId, [] );
+    } );
 }
 
 async function onBadwordsClearClicked(

@@ -1,3 +1,5 @@
+import { ComponentType, MessageFlags } from "discord.js";
+
 import { ForceMethodImplementation } from "@vertix.gg/base/src/errors/force-method-implementation";
 
 import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
@@ -251,6 +253,72 @@ export abstract class UIAdapterExecutionStepsBase<
         if ( this.isDynamic() ) {
             this.currentExecutionStep = this.getInitialStep();
         }
+    }
+
+    /**
+     * Function runWhileThinking() :: Carries out a change that outlasts the press asking for it.
+     *
+     * Discord's "thinking" comes from answering a press with a deferred reply, and a deferred reply
+     * is a new message - so it costs the one response the press had, and the screen it came from
+     * can no longer be edited by it. The screen is reached through the interaction that opened it
+     * instead, which is a different token and still good while it lasts: the controls go dead
+     * before the work starts, the thinking shows while it runs, and when it is done the screen is
+     * written into the reply the thinking was in and the dead one is taken away.
+     *
+     * That token is the part that can be missing - too old, or a screen this process did not open.
+     * Then the screen cannot be reached at all, and what is left is the thinking and a screen that
+     * arrives as a new message. Nothing is left disabled in that case, which is the one thing this
+     * must never do.
+     */
+    protected async runWhileThinking(
+        interaction: TInteraction,
+        stepName: string,
+        work: () => Promise<void>
+    ) {
+        const owner = this.getScreenOwner( interaction.user.id );
+
+        const locked = owner
+            ? await owner
+                .editReply( { components: this.disabledRows( interaction ) } )
+                .then( () => true )
+                .catch( () => false )
+            : false;
+
+        await interaction.deferReply( { flags: MessageFlags.Ephemeral } );
+
+        await work();
+
+        // The reply the thinking was in becomes the screen, so it is that press which owns it now.
+        await this.editReplyWithStep( interaction, stepName );
+
+        this.setScreenOwner( interaction.user.id, interaction );
+
+        if ( locked && owner ) {
+            await owner.deleteReply().catch( () => {} );
+        }
+    }
+
+    /**
+     * Function disabledRows() :: The pressed screen's controls, every one of them dead.
+     */
+    private disabledRows( interaction: TInteraction ) {
+        if ( ! ( "message" in interaction ) || ! interaction.message ) {
+            return [];
+        }
+
+        return interaction.message.components.map( ( row ) => {
+            const json = row.toJSON();
+
+            // Only a row holds controls; the rest of what a message can carry has nothing to disable.
+            if ( ComponentType.ActionRow !== json.type ) {
+                return json;
+            }
+
+            return {
+                ... json,
+                components: json.components.map( ( component ) => ( { ... component, disabled: true } ) )
+            };
+        } );
     }
 
     protected editReplyWithStep( interaction: TInteraction, stepName: string, sendArgs?: UIArgs ) {

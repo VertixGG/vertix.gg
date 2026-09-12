@@ -542,6 +542,8 @@ export class AdapterBuilderBase<
                         editReply: this.editReply.bind( this ),
                         showModal: ( interaction, name ) => this.showModal( name, interaction ),
                         updateInteractionDefer: this.updateInteractionDefer.bind( this ),
+                        getScreenOwner: this.getScreenOwner.bind( this ),
+                        setScreenOwner: this.setScreenOwner.bind( this ),
                         deleteRelatedEphemeralInteractionsInternal: this.deleteRelatedEphemeralInteractionsInternal.bind( this )
                     };
                 }

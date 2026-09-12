@@ -1,6 +1,6 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { PermissionsBitField, Guild } from "discord.js";
+import { OverwriteType, PermissionsBitField, Guild } from "discord.js";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
@@ -423,6 +423,19 @@ export class PermissionsManager extends InitializeBase {
         return channel.permissionsFor( botMember ).missing( permissions );
     }
 
+    /**
+     * Function editChannelRolesPermissions() :: Applies one change to several roles of a channel.
+     *
+     * Written as a single request rather than one per role. Discord rate limits a channel's
+     * overwrite endpoint per channel, so requests to the same one queue behind each other however
+     * they are started - two roles on one channel cost two round trips of roughly a quarter second,
+     * and a guild wide audience change walked into eighteen of them.
+     *
+     * The cost of the single request is that it carries the channel's whole overwrite list: what is
+     * written back for the roles not named here is what the cache currently holds for them. That is
+     * what the bot itself last wrote in all but the case of someone editing the same channel from
+     * Discord at the same moment.
+     */
     public async editChannelRolesPermissions(
         channel: GuildChannel,
         roles: string[],
@@ -430,12 +443,20 @@ export class PermissionsManager extends InitializeBase {
     ): Promise<void> {
         this.debugger.dumpDown( this.editChannelRolesPermissions, permissions, "Permissions" );
 
-        const updatePromises: Promise<void>[] = [];
+        const overwrites = new Map<string, { allow: bigint; deny: bigint; type: OverwriteType }>();
+
+        for ( const overwrite of channel.permissionOverwrites.cache.values() ) {
+            overwrites.set( overwrite.id, {
+                allow: overwrite.allow.bitfield,
+                deny: overwrite.deny.bitfield,
+                type: overwrite.type
+            } );
+        }
+
+        const applied: string[] = [];
 
         for ( const roleId of roles ) {
-            const role = channel.guild.roles.cache.get( roleId );
-
-            if ( !role ) {
+            if ( ! channel.guild.roles.cache.get( roleId ) ) {
                 this.logger.warn(
                     this.editChannelRolesPermissions,
                     `Guild id: '${ channel.guildId }', channel id: ${ channel.id } - Role id: '${ roleId }' not found`
@@ -443,27 +464,33 @@ export class PermissionsManager extends InitializeBase {
                 continue;
             }
 
-            updatePromises.push(
-                channel.permissionOverwrites
-                    .edit( role, permissions )
-                    .then( () => {
-                        this.logger.log(
-                            this.editChannelRolesPermissions,
-                            `Successfully updated permissions for role: ${ roleId } in channel: ${ channel.id }`
-                        );
-                    } )
-                    .catch( ( error ) => {
-                        this.logger.error(
-                            this.editChannelRolesPermissions,
-                            `Failed to update permissions for role: ${ roleId } in channel: ${ channel.id }`,
-                            error
-                        );
-                        throw error; // Re-throw to mark the overall operation as failed
-                    } )
-            );
+            const current = overwrites.get( roleId ) ??
+                { allow: 0n, deny: 0n, type: OverwriteType.Role };
+
+            for ( const [ name, value ] of Object.entries( permissions ) ) {
+                const flag = PermissionsBitField.Flags[ name as keyof typeof PermissionsBitField.Flags ];
+
+                if ( undefined === flag ) {
+                    continue;
+                }
+
+                // Cleared first either way: `null` means the channel says nothing about this
+                // permission for the role, which is neither of the other two answers.
+                current.allow &= ~flag;
+                current.deny &= ~flag;
+
+                if ( true === value ) {
+                    current.allow |= flag;
+                } else if ( false === value ) {
+                    current.deny |= flag;
+                }
+            }
+
+            overwrites.set( roleId, current );
+            applied.push( roleId );
         }
 
-        if ( updatePromises.length === 0 ) {
+        if ( ! applied.length ) {
             this.logger.warn(
                 this.editChannelRolesPermissions,
                 `No valid roles found to update permissions for channel: ${ channel.id }`
@@ -471,7 +498,28 @@ export class PermissionsManager extends InitializeBase {
             return;
         }
 
-        // Wait for all permission updates to complete
-        await Promise.all( updatePromises );
+        const resolvable: OverwriteResolvable[] = [ ... overwrites ].map( ( [ id, overwrite ] ) => ( {
+            id,
+            allow: overwrite.allow,
+            deny: overwrite.deny,
+            type: overwrite.type
+        } ) );
+
+        await channel.permissionOverwrites
+            .set( resolvable )
+            .then( () => {
+                this.logger.log(
+                    this.editChannelRolesPermissions,
+                    `Successfully updated permissions for roles: ${ applied.join( ", " ) } in channel: ${ channel.id }`
+                );
+            } )
+            .catch( ( error ) => {
+                this.logger.error(
+                    this.editChannelRolesPermissions,
+                    `Failed to update permissions for roles: ${ applied.join( ", " ) } in channel: ${ channel.id }`,
+                    error
+                );
+                throw error;
+            } );
     }
 }

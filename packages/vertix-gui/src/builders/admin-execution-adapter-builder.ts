@@ -108,11 +108,21 @@ export class AdminExecutionAdapterBuilder<
                 return {
                     ...baseContext,
                     editReplyWithStep: this.editReplyWithStepWrapper.bind( this ),
+                    runWhileThinking: this.runWhileThinkingWrapper.bind( this ),
                     ephemeralWithStep: this.ephemeralWithStepWrapper.bind( this ),
                     getCurrentExecutionStep: this.getCurrentExecutionStepWrapper.bind( this ),
                     getName: () => this.getName(),
                     triggerTransition: this.triggerTransitionWrapper.bind( this )
                 } satisfies IExecutionAdapterContext<TInteraction, TArgs>;
+            }
+
+            private runWhileThinkingWrapper(
+                interaction: TInteraction,
+                stepName: string,
+                work: () => Promise<void>
+            ) {
+                const method = Reflect.get( this, "runWhileThinking" ) as Function;
+                return method.call( this, interaction, stepName, work );
             }
 
             private editReplyWithStepWrapper( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) {

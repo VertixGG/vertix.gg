@@ -40,6 +40,7 @@ import type { UIService } from "@vertix.gg/gui/src//ui-service";
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import type {
+    MessagePayload,
     BaseMessageOptions,
     ButtonInteraction,
     ChannelType,
@@ -60,6 +61,25 @@ const ADAPTER_CLEANUP_EPHEMERAL_TIMEOUT = Number( process.env.ADAPTER_CLEANUP_EP
 
 const ADAPTER_CLEANUP_STATIC_ARGS_TIMEOUT = Number( process.env.ADAPTER_CLEANUP_STATIC_ARGS_TIMEOUT ) || 600000; // 10 minutes.
 
+// How long the interaction that opened a screen can still be used to change it. Discord's own
+// window is fifteen minutes; it is read from the environment because the number is Discord's
+// rather than ours, and a deployment that finds it has moved should not need a new build.
+/**
+ * What a screen's interaction is kept for: changing that screen later, taking it away, and knowing
+ * how much of its token is left.
+ *
+ * Described by what it has to do rather than named as one of discord.js's interaction types, so
+ * that a command, a button and a modal submit all satisfy it - a screen can be opened by any of
+ * them, and what happens afterwards is the same whichever it was.
+ */
+export interface UIScreenOwner {
+    createdAt: Date;
+    editReply( options: string | MessagePayload | InteractionEditReplyOptions ): Promise<unknown>;
+    deleteReply(): Promise<unknown>;
+}
+
+const ADAPTER_INTERACTION_TOKEN_LIFETIME = Number( process.env.ADAPTER_INTERACTION_TOKEN_LIFETIME ) || 900000; // 15 minutes.
+
 /**
  * TChannel - The channel type that will be used if the adapter starts interaction.
  * TInteraction - The channel type that will be used if the adapter replies to interaction.
@@ -79,6 +99,21 @@ export abstract class UIAdapterBase<
             interaction: MessageComponentInteraction | ModalSubmitInteraction;
             rawCustomId: string;
         };
+    } = {};
+
+    /**
+     * The interaction each user's screen was last opened or moved by, per adapter.
+     *
+     * An ephemeral message has no channel route to edit it by - the only way back to one is the
+     * token of the interaction that sent it. Holding that token lets a screen be changed without
+     * spending the response of whatever was just pressed on it, which is what leaves the press free
+     * to be answered with Discord's own "thinking" state.
+     *
+     * A token dies after `ADAPTER_INTERACTION_TOKEN_LIFETIME`, so this is a way to reach a screen
+     * rather than a promise of reaching one. Every caller has to have an answer for not reaching it.
+     */
+    private static screenOwners: {
+        [ userIdPlusAdapterName: string ]: UIScreenOwner;
     } = {};
 
     private static staticArgs = new UIArgsManager( picocolors.green( "StaticArgs" ) );
@@ -176,6 +211,15 @@ export abstract class UIAdapterBase<
                 );
 
                 delete UIAdapterBase.ephemeralInteractions[ id ];
+            }
+        }
+
+        // Drop owners whose token has died; holding them only keeps interactions from being freed.
+        for ( const key in UIAdapterBase.screenOwners ) {
+            const owner = UIAdapterBase.screenOwners[ key ];
+
+            if ( Date.now() - owner.createdAt.getTime() > ADAPTER_INTERACTION_TOKEN_LIFETIME ) {
+                delete UIAdapterBase.screenOwners[ key ];
             }
         }
 
@@ -454,7 +498,10 @@ export abstract class UIAdapterBase<
                     this.$$.staticLogger.error( this.editReply, "", e );
                 } );
         } else {
-            if ( !interaction.isCommand() && !interaction.deferred ) {
+            // `replied` covers an interaction already answered with an update - a screen that greyed
+            // its own controls before starting work. Deferring one of those throws "already
+            // acknowledged", and the throw used to end the edit here, leaving the screen locked.
+            if ( !interaction.isCommand() && !interaction.deferred && !interaction.replied ) {
                 // TODO: Use dedicated method.
                 if (
                     false ===
@@ -595,6 +642,8 @@ export abstract class UIAdapterBase<
                 ephemeral: true
             } )
             .then( ( _result ) => {
+                this.setScreenOwner( interaction.user.id, interaction );
+
                 if ( shouldDeletePreviousInteraction ) {
                     this.$$.ephemeralInteractions[ interactionInternalId ] = {
                         interaction,
@@ -641,6 +690,44 @@ export abstract class UIAdapterBase<
 
     public async waitUntilInitialized() {
         return this.getComponent().waitUntilInitialized();
+    }
+
+    private getScreenOwnerKey( userId: string ) {
+        return userId + UI_CUSTOM_ID_SEPARATOR + this.getName();
+    }
+
+    /**
+     * Function getScreenOwner() :: The interaction a user's screen can still be changed through.
+     *
+     * `null` once the token is too old to use, which the caller has to treat as "the screen cannot
+     * be reached" rather than as an error - the screen is still there, it just cannot be edited by
+     * anything except the response of a press on it.
+     */
+    public getScreenOwner( userId: string ): UIScreenOwner | null {
+        const key = this.getScreenOwnerKey( userId ),
+            owner = this.$$.screenOwners[ key ];
+
+        if ( ! owner ) {
+            return null;
+        }
+
+        if ( Date.now() - owner.createdAt.getTime() > ADAPTER_INTERACTION_TOKEN_LIFETIME ) {
+            delete this.$$.screenOwners[ key ];
+
+            return null;
+        }
+
+        return owner;
+    }
+
+    /**
+     * Function setScreenOwner() :: Records which interaction a user's screen now answers to.
+     *
+     * Called when a screen is sent, and again whenever it moves into a different message - a reply
+     * that a screen was written into owns that screen from then on.
+     */
+    public setScreenOwner( userId: string, interaction: UIScreenOwner ) {
+        this.$$.screenOwners[ this.getScreenOwnerKey( userId ) ] = interaction;
     }
 
     public getStartedMessages( channel: TChannel ) {

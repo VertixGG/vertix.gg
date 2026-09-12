@@ -1,3 +1,5 @@
+import type { UIScreenOwner } from "@vertix.gg/gui/src/bases/ui-adapter-base";
+
 import type { UIModalSchema } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import type { Logger } from "@vertix.gg/base/src/modules/logger";
@@ -37,6 +39,14 @@ export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TAr
     setArgs: ( interaction: Message<true> | UIAdapterReplyContext | UIAdapterStartContext, args: UIArgs ) => void;
 
     updateInteractionDefer: ( interaction: TInteraction ) => Promise<void>;
+
+    /**
+     * The interaction a user's screen can still be changed through, or `null` once its token is
+     * too old. A handler that wants to touch the screen without spending the response of the
+     * press it is answering has to go through this, and has to cope with not getting one.
+     */
+    getScreenOwner: ( userId: string ) => UIScreenOwner | null;
+    setScreenOwner: ( userId: string, interaction: UIScreenOwner ) => void;
     deleteRelatedEphemeralInteractionsInternal: ( interaction: TInteraction, customId: string, count: number ) => Promise<number>;
 }
 
@@ -62,6 +72,13 @@ export interface IWizardAdapterContext<TInteraction extends UIAdapterReplyContex
 export interface IExecutionAdapterContext<TInteraction extends UIAdapterReplyContext, TArgs extends UIArgs = UIArgs>
     extends IAdapterContext<TInteraction, TArgs> {
     editReplyWithStep: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs ) => Promise<void | {}>;
+
+    /**
+     * Carry out a change that takes longer than the three seconds a press has to be answered in:
+     * the screen's controls go dead, Discord shows its "thinking" state, and the given step is
+     * drawn when the work is done. A screen too old to be reached loses only the dead controls.
+     */
+    runWhileThinking: ( interaction: TInteraction, stepName: string, work: () => Promise<void> ) => Promise<void>;
     ephemeralWithStep: ( interaction: TInteraction, stepName: string, sendArgs?: TArgs, deletePrevious?: boolean ) => Promise<void>;
     getCurrentExecutionStep: ( interaction?: TInteraction ) => UIExecutionStepItem | undefined;
 

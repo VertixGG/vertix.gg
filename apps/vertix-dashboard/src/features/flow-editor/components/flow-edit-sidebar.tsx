@@ -778,6 +778,8 @@ export function FlowEditSidebar() {
     const [ draggedElementName, setDraggedElementName ] = useState<string | null>( null );
     const [ lastNodeId, setLastNodeId ] = useState<string | null>( null );
     const [ appliedCustomization, setAppliedCustomization ] = useState<string | null>( null );
+    /** The scope the node currently carries the overrides of, so a change of it can be noticed. */
+    const [ lastScope, setLastScope ] = useState<string | null>( null );
 
     const [ state ] = useCommandState<FlowEditorState, FlowEditSidebarSelectedState>(
         "Dashboard/FlowEditor",
@@ -803,6 +805,32 @@ export function FlowEditSidebar() {
             setAppliedCustomization( null );
         }
     }, [ selectedNode?.id, lastNodeId ] );
+
+    /**
+     * Switching scope re-derives the node rather than patching it.
+     *
+     * The pass below writes what the scope being switched to defines, and says nothing about what
+     * it does not - so a colour, a button's label or a variable set under one scope stayed on the
+     * node and read as the next one's own. An admin who set something for one generator then
+     * looked at the server saw their own change looking back, which is the one thing this screen
+     * must never do: it claims to show what a member will see.
+     *
+     * Back to the node's own definition first, then the new scope's overrides on top of it.
+     */
+    useEffect( () => {
+        if ( scopeMasterChannelId === lastScope ) {
+            return;
+        }
+
+        setLastScope( scopeMasterChannelId );
+        setSelectedElementIndex( null );
+
+        if ( selectedNode ) {
+            restoreNodeData.run( {} );
+        }
+
+        setAppliedCustomization( null );
+    }, [ scopeMasterChannelId, lastScope, selectedNode, restoreNodeData ] );
 
     // Apply language translations + saved customizations to node data when customization/translations are loaded
     useEffect( () => {
@@ -871,14 +899,19 @@ export function FlowEditSidebar() {
 
             const { color, title, description } = componentCustomization.embedOverrides;
 
+            // `isSavedOverride`, not `isInitialLoad`, for the same reason the variables below use
+            // it: an override is what a guild changed, not what the component is. Written as an
+            // initial load it became part of the node's own defaults, so Restore handed back the
+            // override it was meant to undo - and the re-derive below had nothing true to fall
+            // back to when a scope stopped defining one.
             if ( color !== undefined ) {
-                updateNodeData.run( { path: "embed.color", value: color, isInitialLoad: true } );
+                updateNodeData.run( { path: "embed.color", value: color, isSavedOverride: true } );
             }
             if ( title !== undefined ) {
-                updateNodeData.run( { path: "embed.title", value: title, isInitialLoad: true } );
+                updateNodeData.run( { path: "embed.title", value: title, isSavedOverride: true } );
             }
             if ( description !== undefined ) {
-                updateNodeData.run( { path: "embed.description", value: description, isInitialLoad: true } );
+                updateNodeData.run( { path: "embed.description", value: description, isSavedOverride: true } );
             }
         }
 

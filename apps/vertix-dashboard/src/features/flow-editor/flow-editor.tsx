@@ -10,7 +10,6 @@ import { ModuleSelector } from "@vertix.gg/dashboard/src/features/flow-editor/co
 import { EntityList } from "@vertix.gg/dashboard/src/features/flow-editor/components/entity-list";
 import { FlowEditSidebar } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-edit-sidebar";
 import { LanguageSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/language-selector";
-import { GeneratorSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/generator-selector";
 import { ScopeSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/scope-selector";
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
@@ -191,7 +190,11 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
             </ResizablePanel>
 
             <div className="flex-1 flex flex-col min-w-0">
-                <header className="relative h-12 border-b border-zinc-700 flex items-center px-4 bg-zinc-800/50">
+                { /* Raised above the canvas, which react-flow puts in a stacking context of its
+                     own: every picker up here opens downwards over it, and the canvas was winning
+                     the click while the menu was still the thing being drawn on top. Raising a
+                     menu's own z-index does not help - it is the header that has to sit above. */ }
+                <header className="relative z-20 h-12 border-b border-zinc-700 flex items-center px-4 bg-zinc-800/50">
                     <h2 className="text-xs font-small text-zinc-300">
                         { state.selectedModule ? `Module: ${ state.selectedModule }` : "Module Viewer" }
                     </h2>
@@ -207,9 +210,6 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
                     </div>
 
                     <div className="ml-auto flex items-center gap-2">
-                        { /* Which generator's set is being arranged - the wording beside it is
-                             server wide, so the two sit together rather than one inside the other. */ }
-                        <GeneratorSelector />
                         <LanguageSelector />
                     </div>
                 </header>

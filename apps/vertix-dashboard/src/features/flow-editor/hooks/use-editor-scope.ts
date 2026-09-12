@@ -76,8 +76,9 @@ export function moduleVersion( moduleName: string | null | undefined ): string |
  */
 export function useEditorScope( selectedModule: string | null | undefined ) {
     // `linked` is the generator the url names - which is how the editor is reached from a
-    // generator's own settings, rather than from the module list.
-    const { generators, selected: linked } = useEditorGenerator();
+    // generator's own settings, rather than from the module list. `selectGenerator` writes that
+    // same url param, which is what the arrangement and the preview read.
+    const { generators, selected: linked, select: selectGenerator } = useEditorGenerator();
 
     const masterChannelId = useEditorScopeStore( ( state ) => state.masterChannelId );
     const isChosen = useEditorScopeStore( ( state ) => state.isChosen );
@@ -100,8 +101,9 @@ export function useEditorScope( selectedModule: string | null | undefined ) {
     useEffect( () => {
         if ( masterChannelId && ! available.some( ( generator ) => generator.channelId === masterChannelId ) ) {
             forget();
+            selectGenerator( null );
         }
-    }, [ masterChannelId, available, forget ] );
+    }, [ masterChannelId, available, forget, selectGenerator ] );
 
     // Arriving from a generator's settings, that generator is what the admin came here about - so
     // the editor opens on it rather than on the whole server, which is a wider thing than they
@@ -116,6 +118,24 @@ export function useEditorScope( selectedModule: string | null | undefined ) {
         }
     }, [ isChosen, linkedChannelId, masterChannelId, suggestMasterChannelId ] );
 
+    /**
+     * Function select() :: Look at the whole server, or at one generator.
+     *
+     * The one act, because they were never two questions. A generator's buttons and a generator's
+     * wording are the same generator's, and letting them be chosen apart meant the screen could
+     * show one generator's buttons underneath another scope's words - a channel that exists
+     * nowhere, presented as a preview of what a member will see.
+     */
+    const select = ( channelId: string | null ) => {
+        setMasterChannelId( channelId );
+
+        const generator = channelId
+            ? available.find( ( candidate ) => candidate.channelId === channelId )
+            : null;
+
+        selectGenerator( generator?.id ?? null );
+    };
+
     return {
         /** Whether this module is one an edit can be narrowed on at all. */
         isScopable: Boolean( version ) && available.length > 0,
@@ -123,6 +143,6 @@ export function useEditorScope( selectedModule: string | null | undefined ) {
         available,
         selected,
         masterChannelId: selected ? masterChannelId : null,
-        select: setMasterChannelId
+        select
     };
 }

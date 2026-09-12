@@ -20,6 +20,8 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 
 import type { TClaimTimings } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+
 import type { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
 import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
@@ -685,10 +687,23 @@ export class DynamicChannelClaimManager extends InitializeBase {
         DynamicChannelVoteManager.$.addCandidate( interaction );
     }
 
-    private async handleVoteRequestActiveState( interaction: IVoteDefaultComponentInteraction ) {
-        this.debugger.log( this.handleVoteRequestActiveState, "customId:", interaction.customId );
+    /**
+     * Function resolveCustomId() :: A custom id as the entities behind it are named.
+     *
+     * What rides on an interaction is hashed part by part, so measuring it against an entity's own
+     * name matches nothing. `interactionHandler()` decodes it exactly this way before it looks the
+     * adapter up - which is also why the id it logs reads plainly while the one here does not.
+     */
+    private resolveCustomId( customId: string ) {
+        return ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent( customId );
+    }
 
-        const customIdParts = interaction.customId.split( UI_CUSTOM_ID_SEPARATOR, 3 );
+    private async handleVoteRequestActiveState( interaction: IVoteDefaultComponentInteraction ) {
+        const customId = this.resolveCustomId( interaction.customId );
+
+        this.debugger.log( this.handleVoteRequestActiveState, "customId:", customId );
+
+        const customIdParts = customId.split( UI_CUSTOM_ID_SEPARATOR, 3 );
 
         switch ( customIdParts[ 1 ] ) {
             case this.getClaimVoteStepInEntity():

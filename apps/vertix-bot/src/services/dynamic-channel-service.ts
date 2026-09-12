@@ -7,6 +7,7 @@ import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { UserMasterChannelDataModel } from "@vertix.gg/data/src/models/data/user-master-channel-data-model";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+import { splitTemplate } from "@vertix.gg/utils/src/button-rows";
 
 import { gToken } from "@vertix.gg/base/src/discord/login";
 
@@ -69,6 +70,8 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 import { DynamicChannelKnockManager } from "@vertix.gg/bot/src/managers/dynamic-channel-knock-manager";
 
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
+
+import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
 
@@ -3523,7 +3526,9 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return false;
         }
 
-        const panelAdapterName = masterChannelDB.version === VERSION_UI_V3
+        const isV3 = masterChannelDB.version === VERSION_UI_V3;
+
+        const panelAdapterName = isV3
             ? "VertixBot/UI-V3/DynamicChannelPanelAdapter"
             : "VertixBot/UI-V2/DynamicChannelPanelAdapter";
 
@@ -3533,10 +3538,34 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return false;
         }
 
-        const panelArgs = {
+        // The panel belongs to a generator rather than to any channel, so `channelId` is empty and
+        // there is nothing for the data source to find a master channel by unless it is named
+        // here. Without it the read falls through to every button that exists, and whatever the
+        // generator arranged is lost on the way - which is why a panel redrawn at startup came
+        // back in one row while a channel created afterwards did not.
+        const masterChannelId = masterChannelDB.channelId
+            ?? ( await ChannelModel.$.getById( masterChannelDB.id ) )?.channelId;
+
+        const panelArgs: UIArgs = {
+            ... ( masterChannelId ? { masterChannelId } : {} ),
             dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,
             channelId: ""
         };
+
+        // Rows are a v3 notion, and so is the id of every button named in one. A v2 generator
+        // stores its set as numbers against a different elements group, so it is handed on
+        // untouched rather than filtered against ids it was never written in.
+        if ( isV3 ) {
+            // The stored list carries its row divisions inline, so they come out before the ids are
+            // looked up - a separator is not a button, and left in it reaches the legend image as
+            // an item of its own.
+            const stored = splitTemplate( settings.dynamicChannelButtonsTemplate ?? [] );
+
+            panelArgs.dynamicChannelButtonsTemplate = stored.ids.filter(
+                ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
+            );
+            panelArgs.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
+        }
 
         const client = this.services.appService.getClient();
 

@@ -42,6 +42,19 @@ export class ClaimVoteResultsMarkdown extends UIMarkdownBase {
     }
 
     protected async getLogic( args: UIArgs ) {
+        // Built on every build of the component, the step-in and voting steps included - only the
+        // won step ever hands it results. There is nothing to list before then, and every field
+        // below is absent, so they are answered empty rather than computed from nothing.
+        if ( ! args.results ) {
+            args.displayNameAndResults = "";
+            args.votesForMembersResults = "";
+            args.elapsedTimeSeconds = "0.00";
+            args.previousOwnerDisplayName = "";
+            args.resultsLength = 0;
+
+            return args;
+        }
+
         // TODO: Use array selectOptions.
         args.displayNameAndResults = [];
 

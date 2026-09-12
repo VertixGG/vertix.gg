@@ -40,7 +40,15 @@ export const useEditorScopeStore = create<EditorScopeState>( ( set ) => ( {
     masterChannelId: null,
     isChosen: false,
     setMasterChannelId: ( masterChannelId ) => set( { masterChannelId, isChosen: true } ),
-    suggestMasterChannelId: ( masterChannelId ) => set( { masterChannelId } ),
+
+    // Declines once a choice has been made, and reads that from the live state rather than being
+    // told. The effect that suggests is scheduled during a render, so the `isChosen` it captured
+    // can already be out of date by the time it runs - a click landing in that gap was answered by
+    // a suggestion made before it, and the scope snapped back to the link's generator. How often
+    // depended on when the generators finished loading, which is why it only happened sometimes.
+    suggestMasterChannelId: ( masterChannelId ) =>
+        set( ( state ) => state.isChosen ? state : { masterChannelId } ),
+
     forget: () => set( { masterChannelId: null, isChosen: false } )
 } ) );
 

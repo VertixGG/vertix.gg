@@ -46,6 +46,32 @@ export interface MasterChannelInfo {
     categoryChannelsCount: number | null;
 }
 
+export interface GuildBotPresence {
+    guildId: string;
+    /**
+     * Whether the bot is a member of the guild. Null when Discord could not be asked - which is an
+     * absence of an answer, not an answer of "no".
+     */
+    isBotInGuild: boolean | null;
+}
+
+/**
+ * Function getGuildBotPresence() :: Whether the bot is in the guild at all.
+ *
+ * The dashboard locks itself against a server the bot cannot reach, so this is asked of Discord
+ * every time rather than read from a column a worker refreshes on its own schedule.
+ */
+export async function getGuildBotPresence( guildId: string ): Promise<GuildBotPresence> {
+    const discordService = ServiceLocator.$.get<DiscordService>( "VertixAPI/Services/Discord", { silent: true } );
+
+    if ( !discordService ) {
+        logger.warn( getGuildBotPresence, `Discord service not registered - membership of ${ guildId } unknown` );
+        return { guildId, isBotInGuild: null };
+    }
+
+    return { guildId, isBotInGuild: await discordService.isBotInGuild( guildId ) };
+}
+
 export async function getGlobalStats(): Promise<GlobalStats> {
     const [ totalGuilds, activeGuilds, totalChannels, channelsByType, totalUsers ] = await Promise.all( [
         client.guild.count(),

@@ -2,6 +2,14 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 const DISCORD_API_BASE = "https://discord.com/api/v10";
 
+/**
+ * The two answers Discord gives for a guild the bot is not a member of: it reports one it cannot
+ * see as missing, and one it is barred from as forbidden. Every other status is a failure to ask,
+ * not an answer.
+ */
+const DISCORD_STATUS_FORBIDDEN = 403,
+    DISCORD_STATUS_NOT_FOUND = 404;
+
 export interface DiscordAPIChannel {
     id: string;
     name: string;
@@ -130,6 +138,40 @@ export class DiscordService extends ServiceBase {
             return await response.json() as DiscordAPIGuild;
         } catch( error ) {
             this.logger.error( this.fetchGuild, `Error fetching guild ${ guildId }`, error );
+            return null;
+        }
+    }
+
+    /**
+     * Whether the bot is a member of the guild, asked of Discord rather than of our own tables.
+     *
+     * Our `isInGuild` column is only as fresh as the last cleanup pass, and a guild the bot was
+     * never added to has no row to read at all - both of which this answers correctly.
+     *
+     * Returns null when the question could not be put to Discord. A refusal Discord never gave is
+     * not a "no", and a caller that locks the dashboard on it would lock it on a network hiccup.
+     */
+    public async isBotInGuild( guildId: string ): Promise<boolean | null> {
+        try {
+            const response = await fetch( `${ DISCORD_API_BASE }/guilds/${ guildId }`, {
+                headers: {
+                    Authorization: `Bot ${ this.botToken }`
+                }
+            } );
+
+            if ( response.ok ) {
+                return true;
+            }
+
+            if ( DISCORD_STATUS_NOT_FOUND === response.status || DISCORD_STATUS_FORBIDDEN === response.status ) {
+                return false;
+            }
+
+            this.logger.warn( this.isBotInGuild, `Guild ${ guildId } answered ${ response.status } - membership unknown` );
+
+            return null;
+        } catch( error ) {
+            this.logger.error( this.isBotInGuild, `Error asking Discord about guild ${ guildId }`, error );
             return null;
         }
     }

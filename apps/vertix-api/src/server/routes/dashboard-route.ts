@@ -1,7 +1,8 @@
 import {
     getGlobalStats,
     getGuildStats,
-    getGuildDetails
+    getGuildDetails,
+    getGuildBotPresence
 } from "@vertix.gg/api/src/server/services/dashboard-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
@@ -71,6 +72,19 @@ async function handleGetGuildDetails(
     }
 }
 
+async function handleGetGuildBotPresence(
+    request: FastifyRequest<{ Params: GuildParams }>,
+    reply: FastifyReply
+) {
+    try {
+        const { guildId } = request.params;
+
+        return await getGuildBotPresence( guildId );
+    } catch( error ) {
+        handleError( handleGetGuildBotPresence, error, reply, "Failed to check bot presence" );
+    }
+}
+
 const dashboardRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance ): Promise<void> => {
     // Global stats doesn't need guild access check
     fastify.get( "/dashboard/stats/global", handleGetGlobalStats );
@@ -87,6 +101,11 @@ const dashboardRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance
         guildRoutes.get<{ Params: GuildParams }>(
             "/dashboard/guild/:guildId",
             handleGetGuildDetails
+        );
+
+        guildRoutes.get<{ Params: GuildParams }>(
+            "/dashboard/guild/:guildId/bot-presence",
+            handleGetGuildBotPresence
         );
     } );
 };

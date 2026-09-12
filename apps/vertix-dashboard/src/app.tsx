@@ -13,6 +13,7 @@ import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/gu
 import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-details-query";
 import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generators/query/guild-generators-query";
 import { ServerConfigQuery } from "@vertix.gg/dashboard/src/features/server-config/query/server-config-query";
+import { BotPresenceQuery } from "@vertix.gg/dashboard/src/features/bot-presence/query/bot-presence-query";
 
 import { AuthProvider, ProtectedRoute, LoginPage, ServerSelectionPage } from "@vertix.gg/dashboard/src/features/auth";
 
@@ -37,6 +38,7 @@ client.registerModule( GuildStatsQuery );
 client.registerModule( GuildDetailsQuery );
 client.registerModule( GuildGeneratorsQuery );
 client.registerModule( ServerConfigQuery );
+client.registerModule( BotPresenceQuery );
 
 export function App() {
     return (

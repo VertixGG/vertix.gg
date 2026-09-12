@@ -185,6 +185,23 @@ async function ensureDataUris( names: ReadonlyArray<string> ): Promise<void> {
  * Tiles are rebuilt per call from the resolved-icon cache rather than memoised, so a button whose
  * emoji failed to resolve once picks its artwork up on a later request without a server restart.
  */
+/**
+ * Function getButtonCatalogue() :: Every button a generator can carry, as the dashboard needs it.
+ *
+ * The same list the buttons picker inside discord offers, read from the ui export rather than
+ * restated here - so a button added to the interface appears in both without being named twice.
+ * In the order the panel draws them, which is the order the export carries.
+ */
+export function getButtonCatalogue(): ReadonlyArray<{ value: string; label: string; emoji: string | null }> {
+    return loadOptions()
+        .filter( ( option ): option is SheetSourceOption & { value: string } => Boolean( option.value ) )
+        .map( ( option ) => ( {
+            value: option.value,
+            label: option.label ?? option.value,
+            emoji: option.emoji ?? null
+        } ) );
+}
+
 export async function getButtonSheetTiles(): Promise<ReadonlyArray<SheetTile>> {
     const options = loadOptions();
 

@@ -54,6 +54,8 @@ interface UpdateDynamicSettingsBody {
     dynamicChannelStaffRoles?: string[];
     dynamicChannelVoiceRoleId?: string | null;
     dynamicChannelLogsChannelId?: string | null;
+    dynamicChannelButtonsTemplate?: string[];
+    dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
 }
 
 interface UpdateGuildSettingsBody {

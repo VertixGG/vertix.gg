@@ -18,6 +18,8 @@ import {
     DEFAULT_GUILD_SETTINGS_KEY_VOICE_ROLE
 } from "@vertix.gg/definitions/src/guild-data-keys";
 
+import { getButtonCatalogue } from "@vertix.gg/api/src/server/services/button-emoji-source";
+
 import type { DiscordService } from "./discord-service";
 
 import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
@@ -105,7 +107,13 @@ function readDynamicSettings( settingsData: Record<string, unknown> ): DynamicSe
         dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || [],
         dynamicChannelStaffRoles: ( settingsData.dynamicChannelStaffRoles as string[] ) || [],
         dynamicChannelVoiceRoleId: ( settingsData.dynamicChannelVoiceRoleId as string | null ) ?? null,
-        dynamicChannelLogsChannelId: ( settingsData.dynamicChannelLogsChannelId as string | null ) ?? null
+        dynamicChannelLogsChannelId: ( settingsData.dynamicChannelLogsChannelId as string | null ) ?? null,
+        // Absent means the generator predates any choice, and the bot falls back to every button
+        // there is - which is exactly what the catalogue holds.
+        dynamicChannelButtonsTemplate: ( settingsData.dynamicChannelButtonsTemplate as string[] )
+            ?? getButtonCatalogue().map( ( button ) => button.value ),
+        dynamicChannelButtonsTemplateByRole:
+            ( settingsData.dynamicChannelButtonsTemplateByRole as Record<string, string[]> ) ?? {}
     };
 }
 
@@ -120,6 +128,8 @@ export interface DynamicSettings {
     dynamicChannelStaffRoles: string[];
     dynamicChannelVoiceRoleId: string | null;
     dynamicChannelLogsChannelId: string | null;
+    dynamicChannelButtonsTemplate: string[];
+    dynamicChannelButtonsTemplateByRole: Record<string, string[]>;
 }
 
 export interface ScalingMasterChannelInfo {
@@ -195,6 +205,8 @@ export interface UpdateDynamicSettingsInput {
     dynamicChannelStaffRoles?: string[];
     dynamicChannelVoiceRoleId?: string | null;
     dynamicChannelLogsChannelId?: string | null;
+    dynamicChannelButtonsTemplate?: string[];
+    dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
 }
 
 export interface ScalingChannelInfo {

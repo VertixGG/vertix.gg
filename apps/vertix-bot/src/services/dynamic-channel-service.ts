@@ -282,6 +282,32 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 );
             }
 
+            if ( settings.dynamicChannelButtonsTemplate !== undefined ) {
+                await MasterChannelDataManager.$.setChannelButtonsTemplate(
+                    masterChannelDB,
+                    settings.dynamicChannelButtonsTemplate
+                );
+            }
+
+            if ( settings.dynamicChannelButtonsTemplateByRole !== undefined ) {
+                await MasterChannelDataManager.$.setChannelButtonsTemplateOverrides(
+                    masterChannelDB,
+                    settings.dynamicChannelButtonsTemplateByRole
+                );
+            }
+
+            // The control panel beside the generator carries the default set, so editing that set
+            // has to redraw it - the same redraw the buttons screen does inside discord. A role's
+            // set never reaches the panel, which is why only the default one triggers it.
+            if ( settings.dynamicChannelButtonsTemplate !== undefined ) {
+                const guild = this.services.appService.getClient().guilds.cache.get( guildId );
+
+                if ( guild ) {
+                    await this.refreshControlPanel( guild, masterChannelDB )
+                        .catch( ( error ) => this.logger.error( this.handleUpdateDynamicSettings, "", error ) );
+                }
+            }
+
             this.logger.log(
                 this.handleUpdateDynamicSettings,
                 `Successfully updated dynamic settings for master ${ masterChannelId }`

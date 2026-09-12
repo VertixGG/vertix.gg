@@ -148,6 +148,42 @@ export class MasterChannelDataManager extends InitializeBase {
         } );
     }
 
+    /**
+     * Function setChannelButtonsTemplateOverrides() :: Replaces every role's set in one write.
+     *
+     * A dashboard hands over the whole map rather than one role at a time, and a role the admin
+     * cleared is simply missing from it. `setSettings()` merges, so a missing role would keep the
+     * set it already had - every role that had one and no longer does is written empty instead,
+     * which is the removal every reader already understands.
+     */
+    public async setChannelButtonsTemplateOverrides(
+        masterChannelDB: ChannelExtended,
+        overrides: Record<string, string[]>,
+        shouldAdminLog = true
+    ) {
+        const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, true );
+        const previous = settings?.dynamicChannelButtonsTemplateByRole ?? {};
+
+        const nextByRole: Record<string, string[]> = { ...overrides };
+
+        for ( const roleId of Object.keys( previous ) ) {
+            if ( ! ( roleId in nextByRole ) ) {
+                nextByRole[ roleId ] = [];
+            }
+        }
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setChannelButtonsTemplateOverrides,
+                `🎚  Dynamic Channel role buttons replaced - masterChannelId: "${ masterChannelDB.id }", roles: "${ Object.keys( overrides ).join( ", " ) }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelButtonsTemplateByRole: nextByRole
+        } );
+    }
+
     public async removeChannelButtonsTemplateForRole(
         masterChannelDB: ChannelExtended,
         roleId: string,

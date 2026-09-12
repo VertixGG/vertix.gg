@@ -20,6 +20,12 @@
 - Default indent is 4 spaces; stylistic rules expect padded braces (`{ value }`), spaced arrays, and no space before function parentheses (`handler()`).
 - Name files by feature (`emoji-manager.spec.ts`, `ui-language-definitions.ts`); services/classes stay PascalCase, functions camelCase, env constants UPPER_SNAKE.
 
+## Stored Data Keys
+- A data row is filed under `<model name>/<key>` — `ModelDataOwnerBase.normalizeUniqueKeys()` builds it that way — so a model's name is not only a label, it is the key its rows already live under in the database.
+- **Spell a stored key as a literal string; never build one from `getName()`.** Deriving it couples the database to a class name, so a rename nobody thought was risky silently repoints every lookup at a key that has no rows: settings read as absent and fall back to defaults, which surfaces as "Could not find master template name in database" rather than as an error anyone can trace.
+- Renaming a model therefore takes two changes, not one: the code, and a migration that carries the existing rows over. `scripts/migrate-data-model-keys.ts` does the carrying (dry run by default, `--apply` to write).
+- The same goes for any other persisted identifier — a settings key, an IPC action, a cache namespace. They are storage contracts that outlive the code that wrote them.
+
 ## UI Copy & Translations
 - Any user-facing string in a UI entity (embed title/description/options, button label, select-menu placeholder) is snapshotted into `apps/vertix-bot/assets/languages/*.json` — **the snapshot wins at runtime**, so editing the code alone changes nothing users see.
 - Changing such a string is three edits, not one: the code, the seven language files, then re-run the export.

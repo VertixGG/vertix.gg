@@ -2,9 +2,6 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
-import { MasterChannelDataModel } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model";
-import { MasterChannelDataModelV3 } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model-v3";
-
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
 import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ipc-definitions";
@@ -47,21 +44,25 @@ function getClient() {
     return PrismaBotClient.$.getClient();
 }
 
-const SCALING_SETTINGS_KEY = "VertixBase/Models/ScalingChannelData/settings";
+const SCALING_SETTINGS_KEY = "VertixData/Models/ScalingChannelData/settings";
 const SCALING_DATA_VERSION = "0.0.0.1";
 
 /**
- * The bot writes its settings row under `<model name>/settings` at the model's own data version,
- * and the model differs per ui version. Deriving both from the models keeps this in step with them
- * rather than restating a string that neither model produces.
+ * The key a generator's settings row is filed under, per ui version.
+ *
+ * Written out rather than asked of the models, because this is the name the row already carries in
+ * the database - not the name the class happens to answer to today. Derived from `getName()` it
+ * followed a rename of the model into a key that had no rows behind it, and every generator's
+ * settings read as absent. See "Stored Data Keys" in AGENTS.md: changing one of these is a
+ * migration, not an edit.
  */
 const DYNAMIC_SETTINGS_BY_VERSION = {
     [ VERSION_UI_V2 ]: {
-        key: `${ MasterChannelDataModel.getName() }/settings`,
+        key: "VertixData/Models/MasterChannelDataModel/settings",
         version: VERSION_UI_V2
     },
     [ VERSION_UI_V3 ]: {
-        key: `${ MasterChannelDataModelV3.getName() }/settings`,
+        key: "VertixData/Models/MasterChannelDataV3/settings",
         version: VERSION_UI_V3
     }
 } as const;

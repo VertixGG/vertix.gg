@@ -41,13 +41,21 @@ export const captchaToolDefinitions: Tool[] = [
             "with captcha_send_challenge), 'expired' (too slow, post a new one), or 'none' " +
             "(nothing was pending for them - do not tell them they failed). Only a 'correct' " +
             "verdict means they passed; never treat anything else as passing, and never verify " +
-            "somebody on your own judgement without calling this",
+            "somebody on your own judgement without calling this. Pass grantRoleId to have the " +
+            "bot give them the role itself when they pass - you cannot add the role any other " +
+            "way here, and the bot refuses any role this channel's prompt does not name",
         inputSchema: {
             type: "object",
             properties: {
                 channelId: { type: "string", description: "Discord channel id the challenge was posted in" },
                 userId: { type: "string", description: "Discord user id of the person answering" },
-                answer: { type: "string", description: "Exactly what they typed" }
+                answer: { type: "string", description: "Exactly what they typed" },
+                grantRoleId: {
+                    type: "string",
+                    description:
+                        "Role id to grant on a correct answer - the verified role this channel's prompt names. " +
+                        "The result says what happened in 'grant': granted, already-held, not-in-prompt or failed"
+                }
             },
             required: [ "channelId", "userId", "answer" ]
         }

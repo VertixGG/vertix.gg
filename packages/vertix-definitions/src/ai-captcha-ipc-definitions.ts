@@ -3,6 +3,15 @@ export const AI_CAPTCHA_IPC_CHANNELS = {
     AI_CAPTCHA_RESPONSE: "vertix:ai-captcha:response"
 } as const;
 
+/**
+ * Tools the bot lets through despite read-only mode, comma separated.
+ *
+ * Read-only is otherwise all-or-nothing, and verification needs neither half: the assistant that
+ * answers a stranger must not gain the mutating Discord surface, but it does need to post a
+ * challenge and check an answer. Named here so the bot and the MCP server agree on the spelling.
+ */
+export const AI_EXTRA_TOOLS_ENV_VAR = "VERTIX_MCP_EXTRA_TOOLS";
+
 export const AI_CAPTCHA_IPC_ACTIONS = {
     SEND_CHALLENGE: "captcha_send_challenge",
     VERIFY_ANSWER: "captcha_verify_answer"
@@ -48,6 +57,15 @@ export interface AIVerifyCaptchaAnswerRequest {
     channelId: string;
     userId: string;
     answer: string;
+    /**
+     * Granted only on a correct answer, and only if the channel's own prompt names it.
+     *
+     * The grant lives behind the comparison rather than in the caller's hands: a tool that adds a
+     * role on request is a role anybody can talk their way into, and the whole point of the image
+     * is that talking is not enough. Checking it against the prompt is what stops a different role
+     * being named than the one the channel was set up to hand out.
+     */
+    grantRoleId?: string;
 }
 
 export type AICaptchaIPCRequestPayload =
@@ -70,12 +88,17 @@ export interface AISendCaptchaChallengeResponse {
  */
 export type AICaptchaVerdict = "correct" | "incorrect" | "expired" | "exhausted" | "none";
 
+/** Why a role was or was not handed over, so the bot can say something true about it. */
+export type AICaptchaGrantOutcome = "granted" | "already-held" | "not-in-prompt" | "failed" | "not-requested";
+
 export interface AIVerifyCaptchaAnswerResponse {
     verdict: AICaptchaVerdict;
     channelId: string;
     userId: string;
     attemptsUsed: number;
     attemptsRemaining: number;
+    grant: AICaptchaGrantOutcome;
+    grantedRoleId?: string;
 }
 
 export type AICaptchaIPCResponsePayload =

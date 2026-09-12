@@ -11,6 +11,7 @@ import {
 } from "@vertix.gg/definitions/src/ai-prompt-ipc-definitions";
 
 import { resetChannelSession } from "@vertix.gg/bot/src/listeners/mention-handler-private";
+import { resetPublicChannelSession } from "@vertix.gg/bot/src/listeners/mention-handler-public";
 
 import type { Client } from "discord.js";
 
@@ -223,9 +224,11 @@ export class AIPromptIPCService extends ServiceWithDependenciesBase<{
      * like the change having been ignored.
      */
     private applyImmediately( target: PromptTarget ) {
+        // Both, because the channel's prompt now shapes whichever assistant answers there.
         resetChannelSession( target.channelId );
+        resetPublicChannelSession( target.guildId, target.channelId );
 
-        this.logger.debug( this.applyImmediately, `Reset the agent session for '${ target.channelId }'` );
+        this.logger.debug( this.applyImmediately, `Reset the agent sessions for '${ target.channelId }'` );
     }
 
     private async resolveTarget( channelId: string ): Promise<PromptTarget> {

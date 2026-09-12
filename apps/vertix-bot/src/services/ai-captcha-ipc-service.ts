@@ -3,6 +3,7 @@ import { AttachmentBuilder } from "discord.js";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import { AICaptchaChallengeModel } from "@vertix.gg/data/src/models/ai-captcha-challenge-model";
+import { AIChannelPromptModel } from "@vertix.gg/data/src/models/ai-channel-prompt-model";
 
 import {
     AI_CAPTCHA_IPC_ACTIONS,
@@ -18,6 +19,7 @@ import type { Client } from "discord.js";
 import type { IPCRequest, IPCService } from "@vertix.gg/base/src/modules/ipc";
 
 import type {
+    AICaptchaGrantOutcome,
     AICaptchaIPCRequestPayload,
     AICaptchaIPCResponsePayload,
     AISendCaptchaChallengeRequest,
@@ -175,7 +177,9 @@ export class AICaptchaIPCService extends ServiceWithDependenciesBase<{
                 `Challenge passed - channelId: '${ payload.channelId }' userId: '${ payload.userId }'`
             );
 
-            return this.buildVerdict( payload, "correct", challenge.attempts );
+            const grant = await this.grantRole( payload );
+
+            return { ...this.buildVerdict( payload, "correct", challenge.attempts ), ...grant };
         }
 
         const attempts = await AICaptchaChallengeModel.$.countAttempt( payload.channelId, payload.userId );
@@ -189,6 +193,61 @@ export class AICaptchaIPCService extends ServiceWithDependenciesBase<{
         return this.buildVerdict( payload, "incorrect", attempts );
     }
 
+    /**
+     * Hands over the role, but only one the channel's prompt actually names.
+     *
+     * The caller says which role; the prompt says which roles this channel is allowed to give
+     * away. Whoever writes the prompt holds Manage Server already, so that is a decision they were
+     * always entitled to make - and a request for any other role is simply refused, so no wording
+     * in a conversation can turn a passed image into a different role than the one on offer.
+     */
+    private async grantRole(
+        payload: AIVerifyCaptchaAnswerRequest
+    ): Promise<{ grant: AICaptchaGrantOutcome; grantedRoleId?: string }> {
+        const roleId = payload.grantRoleId?.trim();
+
+        if ( ! roleId ) {
+            return { grant: "not-requested" };
+        }
+
+        const prompt = await AIChannelPromptModel.$.get( payload.channelId );
+
+        if ( ! prompt?.includes( roleId ) ) {
+            this.logger.warn(
+                this.grantRole,
+                `Refused role '${ roleId }' - not named in the prompt of channel '${ payload.channelId }'`
+            );
+
+            return { grant: "not-in-prompt" };
+        }
+
+        const channel = await this.resolveChannel( payload.channelId );
+        const member = await channel.guild.members.fetch( payload.userId ).catch( () => null );
+
+        if ( ! member ) {
+            return { grant: "failed" };
+        }
+
+        if ( member.roles.cache.has( roleId ) ) {
+            return { grant: "already-held", grantedRoleId: roleId };
+        }
+
+        const added = await member.roles.add( roleId ).then( () => true ).catch( ( error: unknown ) => {
+            this.logger.error( this.grantRole, `Could not add role '${ roleId }'`, error );
+
+            return false;
+        } );
+
+        if ( added ) {
+            this.logger.admin(
+                this.grantRole,
+                `✅  Verified - userId: "${ payload.userId }" granted role "${ roleId }" in channel "${ payload.channelId }"`
+            );
+        }
+
+        return { grant: added ? "granted" : "failed", grantedRoleId: roleId };
+    }
+
     private buildVerdict(
         payload: AIVerifyCaptchaAnswerRequest,
         verdict: AIVerifyCaptchaAnswerResponse[ "verdict" ],
@@ -199,7 +258,8 @@ export class AICaptchaIPCService extends ServiceWithDependenciesBase<{
             channelId: payload.channelId,
             userId: payload.userId,
             attemptsUsed,
-            attemptsRemaining: Math.max( 0, AI_CAPTCHA_MAX_ATTEMPTS - attemptsUsed )
+            attemptsRemaining: Math.max( 0, AI_CAPTCHA_MAX_ATTEMPTS - attemptsUsed ),
+            grant: "not-requested"
         };
     }
 

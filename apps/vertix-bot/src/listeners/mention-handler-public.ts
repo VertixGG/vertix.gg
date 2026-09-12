@@ -1,6 +1,9 @@
 import { Events } from "discord.js";
 
 import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
+import { AIChannelPromptModel } from "@vertix.gg/data/src/models/ai-channel-prompt-model";
+
+import { AI_CAPTCHA_IPC_ACTIONS } from "@vertix.gg/definitions/src/ai-captcha-ipc-definitions";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";
@@ -40,6 +43,47 @@ type ChannelSession = {
     conversationId?: string;
     lastActivity: number;
 };
+
+/**
+ * What a channel with its own prompt is allowed to do beyond reading.
+ *
+ * Only these two. The assistant that answers strangers stays read-only otherwise - it can pose a
+ * challenge and have an answer checked, and the role behind a correct answer is handed over by the
+ * bot against what the prompt names, never by this assistant deciding somebody deserves it.
+ */
+const CHANNEL_PROMPT_EXTRA_TOOLS = [
+    AI_CAPTCHA_IPC_ACTIONS.SEND_CHALLENGE,
+    AI_CAPTCHA_IPC_ACTIONS.VERIFY_ANSWER
+];
+
+function getSessionKey( guildId: string, channelId: string ): string {
+    return `${ guildId }-${ channelId }`;
+}
+
+/**
+ * The shipped prompt, plus whatever this channel was told to add to it.
+ *
+ * Appended, never substituted: the restrictions above are what make this assistant safe to point
+ * at anyone who mentions it, and a channel must not be able to write them away.
+ */
+async function buildSystemPrompt( channelId: string, botName: string ): Promise<string> {
+    const channelPrompt = await AIChannelPromptModel.$.get( channelId ).catch( ( error ) => {
+        GlobalLogger.$.error( buildSystemPrompt, "[PUBLIC] Failed reading the channel prompt", error );
+
+        return null;
+    } );
+
+    if ( ! channelPrompt ) {
+        return buildPublicSystemPrompt( botName );
+    }
+
+    return `${ buildPublicSystemPrompt( botName ) }\n\n## Instructions for this channel\n\n${ channelPrompt }`;
+}
+
+/** Drops the channel's session so a changed prompt is used from the next message rather than the next timeout. */
+export function resetPublicChannelSession( guildId: string, channelId: string ): void {
+    channelSessions.delete( getSessionKey( guildId, channelId ) );
+}
 
 const channelSessions = new Map<string, ChannelSession>();
 const SESSION_TIMEOUT_MS = 300000;
@@ -109,7 +153,7 @@ export function mentionHandlerPublic( client: Client ) {
 
             GlobalLogger.$.log( mentionHandlerPublic, `[PUBLIC] Processing mention from ${ message.author.username } in ${ message.guild.name }` );
 
-            const sessionKey = `${ guildId }-${ message.channelId }`;
+            const sessionKey = getSessionKey( guildId ?? "", message.channelId );
             let session = channelSessions.get( sessionKey );
 
             if ( ! session || Date.now() - session.lastActivity > SESSION_TIMEOUT_MS ) {
@@ -126,16 +170,26 @@ export function mentionHandlerPublic( client: Client ) {
                 const contextInfo = await buildContextInfo( message );
                 const userMessage = formatMentionMessage( message, botId, attachments.files ) || content;
 
+                const channelPrompt = await AIChannelPromptModel.$.get( message.channelId ).catch( () => null );
+
                 const isNewSession = ! session.conversationId;
                 const fullPrompt = isNewSession
-                    ? `${ buildPublicSystemPrompt( message.client.user?.username ?? "an AI assistant" ) }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
+                    ? `${ await buildSystemPrompt( message.channelId, message.client.user?.username ?? "an AI assistant" ) }\n\n${ contextInfo }\n\nUser message: ${ userMessage }`
                     : userMessage;
 
                 const { response, conversationId } = await AgentManager.$.runChat( fullPrompt, {
                     conversationId: session.conversationId,
                     readOnly: true,
                     model: AgentManager.$.getPublicModel(),
-                    attachments: attachments.files
+                    attachments: attachments.files,
+                    // Earned by the channel having been configured at all: a channel nobody set up
+                    // gains nothing, so this widens exactly where somebody meant it to.
+                    extraTools: channelPrompt ? CHANNEL_PROMPT_EXTRA_TOOLS : [],
+                    caller: {
+                        guildId: guildId ?? "",
+                        channelId: message.channelId,
+                        userId: message.author.id
+                    }
                 } );
 
                 if ( conversationId ) {

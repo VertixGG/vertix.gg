@@ -93,3 +93,26 @@ export function varsIndexAsAlpha( index: number ): string {
 
     return result;
 }
+
+/**
+ * Function varsReplaceTokens() :: Swaps every token in a template for its value, in one pass.
+ *
+ * One pass is the point. Replacing token after token would let a value that happens to contain a
+ * token be replaced again by a later round - a game called "{user}" would come out as the owner's
+ * name - so each position is matched once and never looked at again.
+ *
+ * A token with no entry in the replacements is left standing, which is what tells somebody they
+ * typed one that this particular setting does not understand.
+ */
+export function varsReplaceTokens( template: string, replacements: Record<string, string> ): string {
+    const tokens = Object.keys( replacements );
+
+    if ( ! tokens.length ) {
+        return template;
+    }
+
+    return template.replace(
+        new RegExp( tokens.map( ( token ) => token.replace( /[{}]/g, "\\$&" ) ).join( "|" ), "g" ),
+        ( matched: string ) => replacements[ matched ]
+    );
+}

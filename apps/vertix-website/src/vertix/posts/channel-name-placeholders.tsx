@@ -53,6 +53,30 @@ const CHANNEL_NAME_TOKENS = [
     },
 ];
 
+const STATUS_TOKENS = [
+    {
+        token: "{user}",
+        becomes: "The channel owner's display name — their server nickname if they have one, otherwise their username.",
+        example: "Leonid",
+    },
+    {
+        token: "{game}",
+        becomes: "What the room is playing right now, by however many members are playing it. Empty when nobody is playing anything.",
+        example: "Counter-Strike",
+    },
+    {
+        token: "{state}",
+        becomes: "🟢 while the channel is public, 🔴 once it is private.",
+        example: "🟢",
+    },
+];
+
+const STATUS_EXAMPLES = [
+    { template: "{user} playing {game}", result: "Leonid playing Counter-Strike" },
+    { template: "{state} squad night", result: "🟢 squad night" },
+    { template: "{user}'s room · {game}", result: "Leonid's room · Dota 2" },
+];
+
 const SCALING_TOKENS = [
     { token: "{index}", becomes: "The number of the scaled channel." },
 ];
@@ -60,6 +84,7 @@ const SCALING_TOKENS = [
 const WHERE_ROWS = [
     { what: "Dynamic channel name", where: "/setup → Edit Channel's Name", tokens: "All of the tokens below" },
     { what: "Auto-scaling channel prefix", where: "/setup → auto-scaling prefix", tokens: "{index} only" },
+    { what: "Channel status", where: "Channel panel → Status", tokens: "{user}, {game}, {state}" },
 ];
 
 export default function ChannelNamePlaceholders() {
@@ -220,6 +245,96 @@ export default function ChannelNamePlaceholders() {
                     If the prefix contains no index placeholder at all, the number is appended to the end instead,
                     so <code>Room</code> becomes <code>Room-1</code>, <code>Room-2</code> and so on.
                 </p>
+            </section>
+
+            <hr />
+
+            <section className="mb-12">
+                <h3 className="mb-4">Channel status</h3>
+
+                <p className="text-h5">
+                    The status is the line Discord shows under a channel&apos;s name. The owner pins one from the
+                    channel panel, under <b>Status</b>, and it understands three placeholders — the three that can
+                    still change while people are sitting in the channel.
+                </p>
+
+                <p className="text-h5">
+                    That is the difference worth holding on to. A name is built once, when the channel is created;
+                    a status is rewritten every time the channel changes — somebody joins or leaves, the limit
+                    moves, the channel goes private. So { T( "{game}" ) } in a status follows the room onto whatever
+                    it plays next, where the same token in a name keeps whatever was playing at the start.
+                </p>
+
+                <div className="overflow-x-auto">
+                    <table className="vc-table">
+                        <thead>
+                            <tr>
+                                <th>Placeholder</th>
+                                <th>Becomes</th>
+                                <th>Example value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { STATUS_TOKENS.map( ( row ) => (
+                                <tr key={ row.token }>
+                                    <td><code>{ row.token }</code></td>
+                                    <td>{ row.becomes }</td>
+                                    <td><code>{ row.example }</code></td>
+                                </tr>
+                            ) ) }
+                        </tbody>
+                    </table>
+                </div>
+
+                <br />
+
+                <div className="overflow-x-auto">
+                    <table className="vc-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Shows as</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { STATUS_EXAMPLES.map( ( row ) => (
+                                <tr key={ row.template }>
+                                    <td><code>{ row.template }</code></td>
+                                    <td><code>{ row.result }</code></td>
+                                </tr>
+                            ) ) }
+                        </tbody>
+                    </table>
+                </div>
+
+                <br />
+
+                <p className="text-h5"><b>Worth knowing</b></p>
+
+                <ul className="text-h5">
+                    <li>
+                        The other tokens are not understood here and are printed exactly as typed. { T( "{index}" ) },
+                        the role tokens and { T( "{guild-id}" ) } cannot change while the channel is open, so they
+                        belong in its name, where they are written once.
+                    </li>
+                    <li>
+                        Pin no status at all and the bot writes its own: what the room is playing, how full it is,
+                        and a marker when the channel is private or hidden. Clearing your status hands the line back
+                        to it.
+                    </li>
+                    <li>
+                        { T( "{game}" ) } reads what members are playing, so it needs their activity to be visible.
+                        Nobody playing anything, or everybody hiding it, and it resolves to nothing.
+                    </li>
+                    <li>
+                        { T( "{state}" ) } tells public from private only. A hidden channel shows the private marker.
+                    </li>
+                    <li>
+                        Your server&apos;s bad-word list is applied to the finished line, not just to what you typed.
+                        A word arriving through { T( "{game}" ) } or { T( "{user}" ) } is covered with asterisks the
+                        same way it would be in a channel name.
+                    </li>
+                </ul>
             </section>
 
             <hr />

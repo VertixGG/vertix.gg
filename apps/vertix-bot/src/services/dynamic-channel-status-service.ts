@@ -5,6 +5,18 @@ import { DynamicChannelStatusModel } from "@vertix.gg/data/src/models/channel/dy
 
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+
+import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
+
+import {
+    DYNAMIC_CHANNEL_STATUS_VARS,
+    VAR_DYNAMIC_CHANNEL_GAME,
+    VAR_DYNAMIC_CHANNEL_STATE,
+    VAR_DYNAMIC_CHANNEL_USER
+} from "@vertix.gg/definitions/src/dynamic-channel-vars-definitions";
+
+import { varsReplaceTokens } from "@vertix.gg/base/src/utils/vars-utils";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -21,6 +33,8 @@ import {
     DYNAMIC_CHANNEL_STATUS_TIMING,
     DynamicChannelSetStatusResultCode
 } from "@vertix.gg/bot/src/definitions/dynamic-channel-status";
+
+import type { MasterChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { RESTPutAPIChannelVoiceStatusJSONBody } from "discord-api-types/v10";
 
@@ -47,6 +61,8 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
     private readonly debugger: Debugger;
 
     private readonly writeDebounceMap = new Map<string, NodeJS.Timeout>();
+
+    private config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
     public static getName() {
         return "VertixBot/Services/DynamicChannelStatus";
@@ -95,7 +111,7 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
         const customStatus = await this.getCustomStatus( channel );
 
         if ( null !== customStatus ) {
-            return customStatus;
+            return this.expandStatusVars( channel, customStatus );
         }
 
         if ( !( await this.isAutoStatusEnabled( channel ) ) ) {
@@ -152,7 +168,14 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
             return;
         }
 
-        await this.write( channel, status.slice( 0, DYNAMIC_CHANNEL_STATUS_LIMITS.API_MAX_LENGTH ) );
+        // Whatever the line ends up saying is written from here, and most of it never passed the
+        // check the owner's own typing did: a game name read off somebody's presence, a display
+        // name a token pulled in. Masked rather than refused - there is nobody waiting to be told,
+        // and a channel that quietly stops saying anything is worse than one saying it with the
+        // word covered.
+        const masked = await GuildDataManager.$.maskBadwords( channel.guildId, status );
+
+        await this.write( channel, masked.slice( 0, DYNAMIC_CHANNEL_STATUS_LIMITS.API_MAX_LENGTH ) );
     }
 
     /**
@@ -306,7 +329,59 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
                 break;
         }
 
-        return parts.join( DYNAMIC_CHANNEL_STATUS_PARTS.SEPARATOR );
+        // Masked here rather than only on the way out, because this is also what the status modal
+        // shows the owner as the line their channel falls back to. The game name in it is read off
+        // somebody's presence and can say anything at all.
+        return GuildDataManager.$.maskBadwords( channel.guildId, parts.join( DYNAMIC_CHANNEL_STATUS_PARTS.SEPARATOR ) );
+    }
+
+    /**
+     * Function `expandStatusVars()` - Fills in the tokens a pinned status is allowed to carry.
+     *
+     * Done on every write rather than once when the status is pinned, which is the whole point of
+     * allowing them: a status reading `{game}` follows the room onto whatever it plays next, where
+     * a value frozen at the moment somebody typed it would be a claim that quietly stopped being
+     * true.
+     *
+     * A token nobody used costs nothing - the status is returned untouched, and the reads behind
+     * each token only happen for the tokens actually present.
+     */
+    private async expandStatusVars( channel: VoiceChannel, status: string ): Promise<string> {
+        if ( !DYNAMIC_CHANNEL_STATUS_VARS.some( ( variable ) => status.includes( variable ) ) ) {
+            return status;
+        }
+
+        const channelDB = await ChannelModel.$.getByChannelId( channel.id ),
+            ownerId = channelDB?.userOwnerId;
+
+        const replacements: Record<string, string> = {};
+
+        if ( status.includes( VAR_DYNAMIC_CHANNEL_USER ) ) {
+            // The owner keeps the channel while they step out of it, so the guild cache answers
+            // where the channel's own member list no longer does.
+            const owner = ownerId
+                ? channel.members.get( ownerId ) ?? channel.guild.members.cache.get( ownerId )
+                : null;
+
+            replacements[ VAR_DYNAMIC_CHANNEL_USER ] = owner?.displayName ?? "";
+        }
+
+        if ( status.includes( VAR_DYNAMIC_CHANNEL_GAME ) ) {
+            replacements[ VAR_DYNAMIC_CHANNEL_GAME ] = this.getChannelGame( channel, ownerId ) ?? "";
+        }
+
+        if ( status.includes( VAR_DYNAMIC_CHANNEL_STATE ) ) {
+            const { constants } = this.config.data;
+
+            // Public and private only, the same two the channel name tells apart - a hidden channel
+            // reads as private, since that is what it is to anyone who could not find it.
+            replacements[ VAR_DYNAMIC_CHANNEL_STATE ] =
+                "private" === await this.services.dynamicChannelService.getChannelState( channel )
+                    ? constants.dynamicChannelStatePrivate
+                    : constants.dynamicChannelStatePublic;
+        }
+
+        return varsReplaceTokens( status, replacements );
     }
 
     /**

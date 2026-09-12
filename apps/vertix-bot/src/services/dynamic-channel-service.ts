@@ -30,7 +30,7 @@ import { Routes } from "discord-api-types/v10";
 
 import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
 
-import { varsHasIndexPlaceholder, varsIndexAsAlpha, varsIndexAsRoman } from "@vertix.gg/base/src/utils/vars-utils";
+import { varsHasIndexPlaceholder, varsIndexAsAlpha, varsIndexAsRoman, varsReplaceTokens } from "@vertix.gg/base/src/utils/vars-utils";
 
 import {
     VAR_DYNAMIC_CHANNEL_GAME,
@@ -745,10 +745,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             [ VAR_DYNAMIC_CHANNEL_ROLE_HOIST ]: roleHoist ? this.sanitizeChannelNamePart( roleHoist ) : "",
         };
 
-        return channelNameTemplate.replace(
-            new RegExp( Object.keys( replacements ).map( key => key.replace( /[{}]/g, "\\$&" ) ).join( "|" ), "g" ),
-            ( matched: any ) => replacements[ matched ]
-        );
+        return varsReplaceTokens( channelNameTemplate, replacements );
     }
 
     private async getDynamicChannelTemplateIndex(

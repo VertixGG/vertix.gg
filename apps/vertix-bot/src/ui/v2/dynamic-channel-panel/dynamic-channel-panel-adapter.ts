@@ -1,5 +1,7 @@
 import { VoiceChannel } from "discord.js";
 
+import { splitTemplate } from "@vertix.gg/utils/src/button-rows";
+
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
@@ -73,8 +75,15 @@ async function getAllArgs( channel: VoiceChannel ) {
         masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
     if ( masterChannelDB ) {
-        args.dynamicChannelButtonsTemplate =
-            await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB );
+        // Taken apart the same way the channel's own message takes it apart, since the panel is
+        // drawn by the same component - one of the two reading the set joined would print a
+        // different arrangement than the other for the same generator.
+        const stored = splitTemplate(
+            await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB ) ?? []
+        );
+
+        args.dynamicChannelButtonsTemplate = stored.ids;
+        args.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
     }
 
     return args;
@@ -232,8 +241,12 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
         const resolvedChannel = await resolveChannelFromContext( channel, argsFromManager );
 
         if ( !resolvedChannel ) {
+            // The panel hangs in a text channel, so there is no voice channel to read a set off
+            // and the caller's own args are all there is. The rows travel with the set: handing on
+            // one without the other described an arrangement over buttons it no longer matched.
             return {
-                dynamicChannelButtonsTemplate: argsFromManager?.dynamicChannelButtonsTemplate
+                dynamicChannelButtonsTemplate: argsFromManager?.dynamicChannelButtonsTemplate,
+                dynamicChannelButtonsRowBreaks: argsFromManager?.dynamicChannelButtonsRowBreaks
             };
         }
 
@@ -249,7 +262,8 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
 
         if ( !resolvedChannel ) {
             return {
-                dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
+                dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
+                dynamicChannelButtonsRowBreaks: args.dynamicChannelButtonsRowBreaks
             };
         }
 
@@ -269,7 +283,8 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
 
         if ( !resolvedChannel ) {
             return {
-                dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
+                dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
+                dynamicChannelButtonsRowBreaks: args.dynamicChannelButtonsRowBreaks
             };
         }
 

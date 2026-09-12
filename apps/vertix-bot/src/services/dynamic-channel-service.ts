@@ -3546,26 +3546,23 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         const masterChannelId = masterChannelDB.channelId
             ?? ( await ChannelModel.$.getById( masterChannelDB.id ) )?.channelId;
 
+        // The stored list carries its row divisions inline, so they come out before the ids are
+        // looked up - a separator is not a button, and left in it reaches the legend image as an
+        // item of its own. Both versions arrange their rows, so both are taken apart here; only
+        // the vocabulary of the ids inside differs.
+        const stored = splitTemplate( settings.dynamicChannelButtonsTemplate ?? [] );
+
         const panelArgs: UIArgs = {
             ... ( masterChannelId ? { masterChannelId } : {} ),
-            dynamicChannelButtonsTemplate: settings.dynamicChannelButtonsTemplate,
+            // A v2 set names its buttons by number against a different elements group, so it is
+            // handed on as stored rather than filtered against ids it was never written in - the
+            // v2 component matches either vocabulary itself.
+            dynamicChannelButtonsTemplate: isV3
+                ? stored.ids.filter( ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id ) )
+                : stored.ids,
+            dynamicChannelButtonsRowBreaks: stored.rowBreaks,
             channelId: ""
         };
-
-        // Rows are a v3 notion, and so is the id of every button named in one. A v2 generator
-        // stores its set as numbers against a different elements group, so it is handed on
-        // untouched rather than filtered against ids it was never written in.
-        if ( isV3 ) {
-            // The stored list carries its row divisions inline, so they come out before the ids are
-            // looked up - a separator is not a button, and left in it reaches the legend image as
-            // an item of its own.
-            const stored = splitTemplate( settings.dynamicChannelButtonsTemplate ?? [] );
-
-            panelArgs.dynamicChannelButtonsTemplate = stored.ids.filter(
-                ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
-            );
-            panelArgs.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
-        }
 
         const client = this.services.appService.getClient();
 

@@ -2,7 +2,7 @@ import { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-e
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { V2_ELEMENT_TO_V3_BUTTON_ID } from "@vertix.gg/utils/src/button-ids";
+import { isV2ButtonEntry } from "@vertix.gg/utils/src/button-ids";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
@@ -61,11 +61,8 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
             return false;
         }
 
-        const id = this.getId(),
-            slug = V2_ELEMENT_TO_V3_BUTTON_ID[
-                ( this.constructor as typeof DynamicChannelButtonBase ).getName()
-            ];
+        const elementName = ( this.constructor as typeof DynamicChannelButtonBase ).getName();
 
-        return template.some( ( entry: string ) => parseInt( entry ) === id || ( Boolean( slug ) && entry === slug ) );
+        return template.some( ( entry: string ) => isV2ButtonEntry( entry, elementName, this.getId() ) );
     }
 }

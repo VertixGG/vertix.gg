@@ -1,5 +1,7 @@
 import { VoiceChannel } from "discord.js";
 
+import { splitTemplate } from "@vertix.gg/utils/src/button-rows";
+
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
@@ -116,11 +118,16 @@ async function getAllArgs( channel: VoiceChannel, ownerRoleIds: string[] = [] ) 
         masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 
     if ( masterChannelDB ) {
-        args.dynamicChannelButtonsTemplate = await resolveButtonsTemplate(
-            masterChannelDB,
-            channel.guild.id,
-            ownerRoleIds
+        // The stored list carries its row divisions inline, so they come out before it is handed
+        // on - a separator is not a button, and the component needs the two apart to draw the
+        // arrangement at all. Left joined, the set arrived without an arrangement and every panel
+        // printed in plain rows whatever the editor had been asked for.
+        const stored = splitTemplate(
+            await resolveButtonsTemplate( masterChannelDB, channel.guild.id, ownerRoleIds )
         );
+
+        args.dynamicChannelButtonsTemplate = stored.ids;
+        args.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
     }
 
     return args;

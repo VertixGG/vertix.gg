@@ -75,6 +75,27 @@ export const DYNAMIC_CHANNEL_COMPONENT = {
 } as const;
 
 /**
+ * Function isV2ButtonEntry() :: Whether one stored entry names this v2 button.
+ *
+ * A v2 set can hold either vocabulary - its own screen inside discord writes numbers, and a
+ * dashboard that predates writing them back wrote slugs - so both have to be answered to. Kept
+ * here rather than in the button that first needed it, because the same question is asked twice
+ * with two different answers riding on it: whether a channel carries the button at all, and where
+ * in the arranged order it sits. Two spellings of the rule is how those two came to disagree.
+ *
+ * A separator carries no number and names no button, so it falls out here by matching nothing.
+ */
+export function isV2ButtonEntry( entry: string, elementName: string, id: number ): boolean {
+    if ( parseInt( entry ) === id ) {
+        return true;
+    }
+
+    const slug = V2_ELEMENT_TO_V3_BUTTON_ID[ elementName ];
+
+    return Boolean( slug ) && entry === slug;
+}
+
+/**
  * Function isV2Version() :: Whether a stored version string is the older interface.
  *
  * Anything that is not explicitly v2 is treated as v3, so a row written by a version this code

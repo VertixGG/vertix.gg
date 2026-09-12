@@ -456,6 +456,11 @@ async function onGuildVerifiedRolesSelected(
     context: IExecutionAdapterContext<UIDefaultStringSelectRolesChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
+    // Every master channel this touches has its overwrites rewritten channel by channel, which
+    // is a Discord round trip each and runs well past the three seconds an interaction has to be
+    // acknowledged in. Answered first, so the work happens against a live token.
+    await context.updateInteractionDefer( interaction );
+
     await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
         .applyGuildVerifiedRoles( interaction.guildId, [ ...interaction.values ].sort() );
 
@@ -466,6 +471,11 @@ async function onGuildStaffRolesSelected(
     context: IExecutionAdapterContext<UIDefaultStringSelectRolesChannelTextInteraction, ISetupArgs>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
 ) {
+    // Every master channel this touches has its overwrites rewritten channel by channel, which
+    // is a Discord round trip each and runs well past the three seconds an interaction has to be
+    // acknowledged in. Answered first, so the work happens against a live token.
+    await context.updateInteractionDefer( interaction );
+
     await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
         .applyGuildStaffRoles( interaction.guildId, [ ...interaction.values ].sort() );
 

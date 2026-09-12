@@ -31,7 +31,7 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
                 dynamicChannelStatePrivate: "🔴",
                 dynamicChannelStatePublic: "🟢",
 
-                masterChannelMaximumFreeChannels: 6,
+                masterChannelMaximumFreeChannels: 2,
                 masterChannelName: "➕ New Channel"
             },
 

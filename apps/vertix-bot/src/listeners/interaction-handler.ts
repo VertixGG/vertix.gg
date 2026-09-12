@@ -39,9 +39,16 @@ export function interactionHandler( client: Client ) {
                 // An adapter throwing here surfaces as an 'error' event on the client, which takes
                 // the whole bot down with it.
                 await adapter.run( interaction ).catch( ( error: unknown ) => {
+                    // Spelled into the message rather than left as a parameter alone: the shipped
+                    // line carries only the message, so an error kept beside it is one nobody
+                    // reading the logs can see.
+                    const reason = error instanceof Error
+                        ? `${ error.name }: ${ error.message }\n${ error.stack ?? "" }`
+                        : String( error );
+
                     GlobalLogger.$.error(
                         interactionHandler,
-                        `Adapter '${ customId }' failed to handle interaction '${ interaction.id }'`,
+                        `Adapter '${ customId }' failed to handle interaction '${ interaction.id }' - ${ reason }`,
                         error
                     );
                 } );

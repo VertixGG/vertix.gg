@@ -108,6 +108,13 @@ export class MCPService extends ServiceBase {
         }
     }
 
+    /**
+     * Function onLoggerOutput() :: Ships one logged line to the logger server.
+     *
+     * An `Error` is turned into a plain object on the way: `JSON.stringify()` answers `{}` for one,
+     * since neither its message nor its stack is enumerable - so every error ever handed to
+     * `logger.error()` as a parameter reached the server carrying nothing at all.
+     */
     private async onLoggerOutput( prefix: string, timeDiff: string, source: string, messagePrefix: string, message: string, params: any[] ): Promise<void> {
         // Skip sending if server is known to be unavailable (health check will retry)
         if ( !MCPService.isServerAvailable ) {
@@ -118,6 +125,12 @@ export class MCPService extends ServiceBase {
             process.env.npm_package_name ||
             "unknown";
 
+        const normalizedParams = ( params ?? [] ).map( ( param ) =>
+            param instanceof Error
+                ? { name: param.name, message: param.message, stack: param.stack }
+                : param
+        );
+
         // Create a log entry with all the relevant information
         const logEntry = {
             timestamp: new Date().getTime(),
@@ -127,7 +140,7 @@ export class MCPService extends ServiceBase {
             source,
             messagePrefix,
             message,
-            params: params && params.length ? params : [],
+            params: normalizedParams,
             formatted: `${ prefix }[+${ timeDiff }ms][${ source }]${ messagePrefix }: ${ message }`
         };
 

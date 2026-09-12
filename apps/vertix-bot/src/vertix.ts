@@ -22,6 +22,7 @@ import { readyHandler } from "@vertix.gg/bot/src/listeners";
 
 import type { UIIPCService } from "@vertix.gg/bot/src/services/ui-ipc-service";
 import type { AIPromptIPCService } from "@vertix.gg/bot/src/services/ai-prompt-ipc-service";
+import type { AICaptchaIPCService } from "@vertix.gg/bot/src/services/ai-captcha-ipc-service";
 
 import type { Logger } from "@vertix.gg/base/src/modules/logger";
 
@@ -252,6 +253,22 @@ export default async function Main( { enableListeners }: {
                         logger.warn(
                             onAiLogin,
                             "AI prompt IPC service did not come up - channel prompts cannot be changed by talking"
+                        );
+                    } );
+
+                // The challenge images are posted by this client too, so they come from the bot
+                // the person is actually talking to.
+                void ServiceLocator.$.waitFor<AICaptchaIPCService>( "VertixBot/Services/AICaptchaIPC", {
+                    silent: true,
+                    timeout: 10000
+                } )
+                    .then( ( aiCaptchaIPCService ) => {
+                        aiCaptchaIPCService.registerClient( aiClient as Client<true> );
+                    } )
+                    .catch( () => {
+                        logger.warn(
+                            onAiLogin,
+                            "AI captcha IPC service did not come up - captcha challenges cannot be posted"
                         );
                     } );
 

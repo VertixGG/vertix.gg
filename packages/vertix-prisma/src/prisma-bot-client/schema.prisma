@@ -263,3 +263,28 @@ model AIChannelPrompt {
 
   @@index([guildId])
 }
+
+/// A word the AI Chat bot drew into an image and is waiting to hear back.
+///
+/// Lives here rather than in the MCP server because that process is spawned per agent run and
+/// dies with it - the answer has to outlive the turn that posed the question.
+///
+/// One per person per channel: asking again replaces the old word rather than leaving two
+/// answers that would both be accepted.
+model AICaptchaChallenge {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  channelId String
+  userId    String
+  guildId   String
+  // ---
+  /// Normalised to lower case; compared that way, never shown to the model.
+  answer    String
+  attempts  Int      @default(0)
+  // ---
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([channelId, userId])
+  @@index([expiresAt])
+}

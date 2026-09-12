@@ -326,7 +326,8 @@ export async function registerServices() {
         import( "@vertix.gg/bot/src/services/scaling-channel-service" ),
         import( "@vertix.gg/bot/src/services/management-ipc-service" ),
         import( "@vertix.gg/bot/src/services/ui-ipc-service" ),
-        import( "@vertix.gg/bot/src/services/ai-prompt-ipc-service" )
+        import( "@vertix.gg/bot/src/services/ai-prompt-ipc-service" ),
+        import( "@vertix.gg/bot/src/services/ai-captcha-ipc-service" )
     ] );
 
     services.forEach( ( service ) => {

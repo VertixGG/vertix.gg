@@ -10,6 +10,8 @@ import {
     isReadOnlyAIPromptTool
 } from "@vertix.gg/mcp/src/tools/ai-prompt";
 
+import { captchaTools, executeCaptchaTool, isCaptchaTool } from "@vertix.gg/mcp/src/tools/captcha";
+
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 
 const isReadOnlyMode = process.env.VERTIX_MCP_READONLY === "true";
@@ -19,10 +21,18 @@ export function getAllTools(): Tool[] {
         return [ ...discordReadOnlyToolDefinitions, ...uiReadOnlyToolDefinitions, ...aiPromptReadOnlyToolDefinitions ];
     }
 
-    return [ ...discordTools, ...uiTools, ...aiPromptTools ];
+    return [ ...discordTools, ...uiTools, ...aiPromptTools, ...captchaTools ];
 }
 
 export async function executeTool( name: string, args: Record<string, unknown> | undefined ): Promise<unknown> {
+    if ( isCaptchaTool( name ) ) {
+        if ( isReadOnlyMode ) {
+            throw new Error( `Tool "${ name }" is not available in read-only mode` );
+        }
+
+        return executeCaptchaTool( name, args );
+    }
+
     if ( name.startsWith( "ai_" ) ) {
         if ( isReadOnlyMode && ! isReadOnlyAIPromptTool( name ) ) {
             throw new Error( `Tool "${ name }" is not available in read-only mode` );

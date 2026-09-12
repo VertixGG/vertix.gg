@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "@discordjs/rest": "^2.6.3",
+        "@napi-rs/canvas": "^1.0.9",
         "@top-gg/sdk": "^3.1.6",
         "@vertix.gg/base": "workspace:*",
         "@vertix.gg/data": "workspace:*",

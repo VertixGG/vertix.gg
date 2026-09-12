@@ -247,6 +247,17 @@ exports.Prisma.AIChannelPromptScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AICaptchaChallengeScalarFieldEnum = {
+  id: 'id',
+  channelId: 'channelId',
+  userId: 'userId',
+  guildId: 'guildId',
+  answer: 'answer',
+  attempts: 'attempts',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -283,7 +294,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   UserData: 'UserData',
   UserChannelData: 'UserChannelData',
-  AIChannelPrompt: 'AIChannelPrompt'
+  AIChannelPrompt: 'AIChannelPrompt',
+  AICaptchaChallenge: 'AICaptchaChallenge'
 };
 
 /**

@@ -48,6 +48,10 @@ import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui
 
 import { ServerOptionsEditButton } from "@vertix.gg/bot/src/ui/general/server-options/server-options-edit-button";
 import { ServerOptionsElementsGroup } from "@vertix.gg/bot/src/ui/general/server-options/server-options-elements-group";
+import { VoiceRoleElementsGroup } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-elements-group";
+import { VerifiedRolesElementsGroup } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-elements-group";
+import { StaffRolesElementsGroup } from "@vertix.gg/bot/src/ui/general/staff-roles/staff-roles-elements-group";
+import { BadwordsElementsGroup } from "@vertix.gg/bot/src/ui/general/badwords/badwords-elements-group";
 import { warnOnUnassignableVoiceRole } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-utils";
 
 import {
@@ -908,6 +912,10 @@ const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/Setup
 const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponent" )
     .addElementsGroup( SetupElementsGroup )
     .addElementsGroup( ServerOptionsElementsGroup )
+    .addElementsGroup( VoiceRoleElementsGroup )
+    .addElementsGroup( VerifiedRolesElementsGroup )
+    .addElementsGroup( StaffRolesElementsGroup )
+    .addElementsGroup( BadwordsElementsGroup )
     .addElementsGroup( SetupClaimElementsGroup )
     .addEmbedsSingleGroup( SetupEmbed )
     .addEmbedsSingleGroup( SetupMaxMasterChannelsEmbed )

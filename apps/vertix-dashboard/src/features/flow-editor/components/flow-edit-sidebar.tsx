@@ -19,6 +19,7 @@ import {
     useArrangedElementRows
 } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
+import { EditedText, EditedTextArea } from "@vertix.gg/dashboard/src/components/edited-text";
 
 import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
@@ -617,10 +618,10 @@ function ElementEditPanel( {
                             <ChevronDown className="w-3 h-3" />
                             Placeholder
                         </label>
-                        <input
+                        <EditedText
                             type="text"
                             value={ element.definition?.placeholder ?? "" }
-                            onChange={ ( e ) => onUpdate( "placeholder", e.target.value ) }
+                            onValueChange={ ( value ) => onUpdate( "placeholder", value ) }
                             placeholder="Choose an option..."
                             className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 focus:outline-none"
                         />
@@ -642,19 +643,19 @@ function ElementEditPanel( {
                                                 onChange={ ( value ) => onUpdate( `selectOptions.${ optIndex }.emoji`, value ) }
                                                 onRemove={ () => onUpdate( `selectOptions.${ optIndex }.emoji`, "" ) }
                                             />
-                                            <input
+                                            <EditedText
                                                 type="text"
                                                 value={ option.label ?? "" }
-                                                onChange={ ( e ) => onUpdate( `selectOptions.${ optIndex }.label`, e.target.value ) }
+                                                onValueChange={ ( value ) => onUpdate( `selectOptions.${ optIndex }.label`, value ) }
                                                 className="flex-1 bg-zinc-800 border border-zinc-600 rounded px-2 py-0.5 text-xs text-white focus:border-blue-500 focus:outline-none"
                                                 placeholder="Option label"
                                             />
                                         </div>
                                         { option.description && (
-                                            <input
+                                            <EditedText
                                                 type="text"
                                                 value={ option.description }
-                                                onChange={ ( e ) => onUpdate( `selectOptions.${ optIndex }.description`, e.target.value ) }
+                                                onValueChange={ ( value ) => onUpdate( `selectOptions.${ optIndex }.description`, value ) }
                                                 className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-0.5 text-[10px] text-zinc-400 focus:border-blue-500 focus:outline-none"
                                                 placeholder="Description"
                                             />
@@ -694,10 +695,10 @@ function ElementEditPanel( {
                                 <Type className="w-3 h-3" />
                                 Label
                             </label>
-                            <input
+                            <EditedText
                                 type="text"
                                 value={ displayLabel }
-                                onChange={ ( e ) => handleLabelChange( e.target.value ) }
+                                onValueChange={ handleLabelChange }
                                 className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 focus:outline-none"
                             />
                         </div>
@@ -737,10 +738,10 @@ function ElementEditPanel( {
                                 <Link className="w-3 h-3" />
                                 URL
                             </label>
-                            <input
+                            <EditedText
                                 type="text"
                                 value={ element.definition?.url ?? "" }
-                                onChange={ ( e ) => onUpdate( "url", e.target.value ) }
+                                onValueChange={ ( value ) => onUpdate( "url", value ) }
                                 placeholder="https://..."
                                 className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-xs text-white focus:border-blue-500 focus:outline-none"
                             />
@@ -1084,10 +1085,10 @@ export function FlowEditSidebar() {
                                                 <Type className="w-3 h-3" />
                                                 Title
                                             </label>
-                                            <input
+                                            <EditedText
                                                 type="text"
                                                 value={ embed.title ?? "" }
-                                                onChange={ ( e ) => handleUpdateEmbed( "title", e.target.value ) }
+                                                onValueChange={ ( value ) => handleUpdateEmbed( "title", value ) }
                                                 className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-sm text-white focus:border-blue-500 focus:outline-none"
                                             />
                                         </div>
@@ -1098,9 +1099,9 @@ export function FlowEditSidebar() {
                                                 <FileText className="w-3 h-3" />
                                                 Description
                                             </label>
-                                            <textarea
+                                            <EditedTextArea
                                                 value={ embed.description ?? "" }
-                                                onChange={ ( e ) => handleUpdateEmbed( "description", e.target.value ) }
+                                                onValueChange={ ( value ) => handleUpdateEmbed( "description", value ) }
                                                 rows={ 8 }
                                                 className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-sm text-white focus:border-blue-500 focus:outline-none resize-y"
                                             />
@@ -1119,10 +1120,10 @@ export function FlowEditSidebar() {
                                                     onChange={ ( e ) => handleColorChange( e.target.value ) }
                                                     className="w-8 h-8 rounded border border-zinc-600 cursor-pointer"
                                                 />
-                                                <input
+                                                <EditedText
                                                     type="text"
                                                     value={ `#${ embed.color.toString( 16 ).padStart( 6, "0" ) }` }
-                                                    onChange={ ( e ) => handleColorChange( e.target.value ) }
+                                                    onValueChange={ handleColorChange }
                                                     className="flex-1 bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-sm text-white focus:border-blue-500 focus:outline-none"
                                                 />
                                             </div>
@@ -1134,10 +1135,10 @@ export function FlowEditSidebar() {
                                                 <Image className="w-3 h-3" />
                                                 Image URL
                                             </label>
-                                            <input
+                                            <EditedText
                                                 type="text"
                                                 value={ embed.image.url }
-                                                onChange={ ( e ) => updateNodeData.run( { path: "embed.image.url", value: e.target.value } ) }
+                                                onValueChange={ ( value ) => updateNodeData.run( { path: "embed.image.url", value } ) }
                                                 className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-sm text-white focus:border-blue-500 focus:outline-none"
                                             />
                                         </div>
@@ -1393,17 +1394,17 @@ export function FlowEditSidebar() {
                                                 { displayDefault !== undefined && (
                                                     <div className="mt-1">
                                                         <label className="text-[10px] text-zinc-500 block mb-0.5">Default</label>
-                                                        <input
+                                                        <EditedText
                                                             type="text"
                                                             value={ displayDefault ?? "" }
-                                                            onChange={ ( e ) => {
+                                                            onValueChange={ ( value ) => {
                                                                 if ( varInfo.optionString !== undefined ) {
-                                                                    updateNodeData.run( { path: `embedDefinition.options.${ varName }`, value: e.target.value } );
+                                                                    updateNodeData.run( { path: `embedDefinition.options.${ varName }`, value } );
                                                                 } else {
-                                                                    updateNodeData.run( { path: `embedDefinition.defaultVars.${ varName }`, value: e.target.value } );
+                                                                    updateNodeData.run( { path: `embedDefinition.defaultVars.${ varName }`, value } );
                                                                 }
                                                                 // Also update embed.defaultVars so the preview re-renders immediately
-                                                                updateNodeData.run( { path: `embed.defaultVars.${ varName }`, value: e.target.value } );
+                                                                updateNodeData.run( { path: `embed.defaultVars.${ varName }`, value } );
                                                             } }
                                                             className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-0.5 text-[11px] text-white focus:border-blue-500 focus:outline-none"
                                                         />
@@ -1420,11 +1421,11 @@ export function FlowEditSidebar() {
                                                         { Object.entries( varInfo.optionRecord! ).map( ( [ optKey, optValue ] ) => (
                                                             <div key={ optKey } className="flex items-center gap-1">
                                                                 <span className="text-[10px] text-zinc-400 shrink-0">{ stripTemplateBraces( optKey ) }:</span>
-                                                                <input
+                                                                <EditedText
                                                                     type="text"
                                                                     value={ optValue }
-                                                                    onChange={ ( e ) => {
-                                                                        const updatedRecord = { ...varInfo.optionRecord!, [ optKey ]: e.target.value };
+                                                                    onValueChange={ ( value ) => {
+                                                                        const updatedRecord = { ...varInfo.optionRecord!, [ optKey ]: value };
                                                                         updateNodeData.run( { path: `embedDefinition.options.${ varName }`, value: updatedRecord } );
                                                                     } }
                                                                     className="flex-1 min-w-0 bg-zinc-900 border border-zinc-600 rounded px-1.5 py-0.5 text-[11px] text-white focus:border-blue-500 focus:outline-none"
@@ -1455,10 +1456,10 @@ export function FlowEditSidebar() {
                                 Modal Title
                             </h3>
                             <div className="bg-zinc-700/50 rounded-lg p-3">
-                                <input
+                                <EditedText
                                     type="text"
                                     value={ modalTitle ?? "" }
-                                    onChange={ ( e ) => handleUpdateModalTitle( e.target.value ) }
+                                    onValueChange={ ( value ) => handleUpdateModalTitle( value ) }
                                     className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-sm text-white focus:border-pink-500 focus:outline-none"
                                     placeholder="Modal title"
                                 />
@@ -1485,20 +1486,20 @@ export function FlowEditSidebar() {
                                             </div>
                                             <div>
                                                 <label className="text-[10px] text-zinc-400 block mb-0.5">Label</label>
-                                                <input
+                                                <EditedText
                                                     type="text"
                                                     value={ input.label ?? "" }
-                                                    onChange={ ( e ) => handleUpdateModalInput( index, "label", e.target.value ) }
+                                                    onValueChange={ ( value ) => handleUpdateModalInput( index, "label", value ) }
                                                     className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-0.5 text-[11px] text-white focus:border-pink-500 focus:outline-none"
                                                     placeholder="Input label"
                                                 />
                                             </div>
                                             <div>
                                                 <label className="text-[10px] text-zinc-400 block mb-0.5">Placeholder</label>
-                                                <input
+                                                <EditedText
                                                     type="text"
                                                     value={ input.placeholder ?? "" }
-                                                    onChange={ ( e ) => handleUpdateModalInput( index, "placeholder", e.target.value ) }
+                                                    onValueChange={ ( value ) => handleUpdateModalInput( index, "placeholder", value ) }
                                                     className="w-full bg-zinc-900 border border-zinc-600 rounded px-2 py-0.5 text-[11px] text-white focus:border-pink-500 focus:outline-none"
                                                     placeholder="Input placeholder"
                                                 />

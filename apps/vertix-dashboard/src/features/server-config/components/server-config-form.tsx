@@ -130,7 +130,7 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
     const [ badwordDraft, setBadwordDraft ] = useState( "" );
     const [ timingDrafts, setTimingDrafts ] = useState<Record<string, string>>( () =>
         CLAIM_FIELDS.reduce( ( acc, { field } ) => {
-            const chosen = config.timings.overrides[ field ];
+            const chosen = config.timings?.overrides[ field ];
 
             acc[ field ] = undefined === chosen ? "" : String( toSeconds( chosen ) );
 
@@ -217,8 +217,12 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
         return acc;
     }, {} as TGuildTimingsOverrides );
 
-    const timingsChanged = CLAIM_FIELDS.some(
-        ( { field } ) => timingOverrides[ field ] !== config.timings.overrides[ field ]
+    // Only what the api reported can be edited, and only then can a save speak for it - sending
+    // an empty set for a server that never reported one would clear whatever it holds.
+    const storedTimings = config.timings;
+
+    const timingsChanged = undefined !== storedTimings && CLAIM_FIELDS.some(
+        ( { field } ) => timingOverrides[ field ] !== storedTimings.overrides[ field ]
     );
 
     const hasChanges =
@@ -235,7 +239,7 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                 verifiedRoleIds,
                 staffRoleIds,
                 badwords,
-                timings: timingOverrides
+                ... ( storedTimings ? { timings: timingOverrides } : {} )
             }
         } );
     };
@@ -299,51 +303,57 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                     </p>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                    { timingResults.map( ( { field, label, hint, error } ) => {
-                        const inherited = toSeconds( config.timings.defaults[ field ] );
-                        const isFollowing = ! ( timingDrafts[ field ] ?? "" ).trim().length;
+                { storedTimings ? ( <>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        { timingResults.map( ( { field, label, hint, error } ) => {
+                            const inherited = toSeconds( storedTimings.defaults[ field ] );
+                            const isFollowing = ! ( timingDrafts[ field ] ?? "" ).trim().length;
 
-                        return (
-                            <div key={ field }>
-                                <label className="block text-sm font-medium text-text-primary mb-1">
-                                    { label }
-                                </label>
+                            return (
+                                <div key={ field }>
+                                    <label className="block text-sm font-medium text-text-primary mb-1">
+                                        { label }
+                                    </label>
 
-                                <div className="relative">
-                                    <input
-                                        type="number"
-                                        inputMode="numeric"
-                                        value={ timingDrafts[ field ] ?? "" }
-                                        onChange={ ( e ) => setTimingDrafts( {
-                                            ... timingDrafts,
-                                            [ field ]: e.target.value
-                                        } ) }
-                                        placeholder={ String( inherited ) }
-                                        disabled={ isSaving }
-                                        className={ `${ fieldClassName } pr-20 ${ error ? "border-error" : "" }` }
-                                    />
-                                    <span className="absolute inset-y-0 right-3 flex items-center text-xs text-text-muted
+                                    <div className="relative">
+                                        <input
+                                            type="number"
+                                            inputMode="numeric"
+                                            value={ timingDrafts[ field ] ?? "" }
+                                            onChange={ ( e ) => setTimingDrafts( {
+                                                ... timingDrafts,
+                                                [ field ]: e.target.value
+                                            } ) }
+                                            placeholder={ String( inherited ) }
+                                            disabled={ isSaving }
+                                            className={ `${ fieldClassName } pr-20 ${ error ? "border-error" : "" }` }
+                                        />
+                                        <span className="absolute inset-y-0 right-3 flex items-center text-xs text-text-muted
                                         pointer-events-none">
-                                        seconds
-                                    </span>
+                                            seconds
+                                        </span>
+                                    </div>
+
+                                    { error ? (
+                                        <p className="text-xs text-error mt-1 mb-0">{ error }</p>
+                                    ) : (
+                                        <p className="text-xs text-text-muted mt-1 mb-0">
+                                            { hint }{ isFollowing ? ` \u00b7 Following the default of ${ inherited }s` : "" }
+                                        </p>
+                                    ) }
                                 </div>
+                            );
+                        } ) }
+                    </div>
 
-                                { error ? (
-                                    <p className="text-xs text-error mt-1 mb-0">{ error }</p>
-                                ) : (
-                                    <p className="text-xs text-text-muted mt-1 mb-0">
-                                        { hint }{ isFollowing ? ` \u00b7 Following the default of ${ inherited }s` : "" }
-                                    </p>
-                                ) }
-                            </div>
-                        );
-                    } ) }
-                </div>
-
-                <p className="text-xs text-text-muted mb-0">
-                    Leave a field empty to follow the bot's own configuration, which is what the placeholder shows.
-                </p>
+                    <p className="text-xs text-text-muted mb-0">
+                        Leave a field empty to follow the bot's own configuration, which is what the placeholder shows.
+                    </p>
+                </> ) : (
+                    <p className="text-sm text-text-muted mb-0">
+                        This server has not reported its claim timings, so they cannot be changed from here yet.
+                    </p>
+                ) }
             </section>
 
             <section className="bg-surface border border-border rounded-lg p-5 space-y-4">

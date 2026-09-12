@@ -19,7 +19,11 @@ export interface ServerConfig {
     verifiedRoleIds: string[];
     staffRoleIds: string[];
     badwords: string[];
-    timings: ServerConfigTimings;
+    /**
+     * Absent from an api that does not report them yet, so the screen says so rather than showing
+     * numbers it would have to invent.
+     */
+    timings?: ServerConfigTimings;
 }
 
 /**

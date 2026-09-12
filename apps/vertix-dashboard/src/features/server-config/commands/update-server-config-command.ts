@@ -44,7 +44,9 @@ export class UpdateServerConfigCommand extends CommandBase<ServerConfigState, { 
                 config: {
                     ...config,
                     ...rest,
-                    timings: timings ? { ...config.timings, overrides: timings } : config.timings
+                    timings: timings && config.timings
+                        ? { ...config.timings, overrides: timings }
+                        : config.timings
                 },
                 isSaving: false
             } );

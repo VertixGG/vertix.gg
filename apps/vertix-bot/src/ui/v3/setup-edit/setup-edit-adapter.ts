@@ -867,22 +867,23 @@ async function onSetupMasterEditSelected(
     //
     // Both are rebuilt rather than referenced. `getAllSettings()` hands back the config defaults
     // themselves when a master channel has none of its own, so the empty by-role object is one
-    // instance shared by every such channel in the process, and `sortIds()` sorts in place.
+    // instance shared by every such channel in the process.
+    //
+    // Kept in their saved order rather than sorted: the order is the admin's, set from the
+    // dashboard, and this screen would otherwise quietly normalise it away on open.
     args.guildId = interaction.guildId;
 
     const storedTemplate = args.dynamicChannelButtonsTemplate;
 
-    args.dynamicChannelButtonsTemplateDefault = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-        migrateV2Buttons( Array.isArray( storedTemplate ) ? [ ...storedTemplate ] : [] )
+    args.dynamicChannelButtonsTemplateDefault = migrateV2Buttons(
+        Array.isArray( storedTemplate ) ? [ ...storedTemplate ] : []
     );
 
     const storedByRole = args.dynamicChannelButtonsTemplateByRole as Record<string, string[]> | undefined,
         byRole: Record<string, string[]> = {};
 
     Object.entries( storedByRole ?? {} ).forEach( ( [ roleId, buttons ] ) => {
-        byRole[ roleId ] = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-            migrateV2Buttons( Array.isArray( buttons ) ? [ ...buttons ] : [] )
-        );
+        byRole[ roleId ] = migrateV2Buttons( Array.isArray( buttons ) ? [ ...buttons ] : [] );
     } );
 
     args.dynamicChannelButtonsTemplateByRole = byRole;
@@ -1012,13 +1013,28 @@ function readButtonsScope( context: IExecutionAdapterContext<Interactions>, inte
  *
  * A role with nothing of its own opens on the default set rather than on an empty menu, so the
  * common intent - this role, plus one more button - is a single tick instead of rebuilding the
- * list. The copy matters: `sortIds()` sorts in place and args share their nested arrays with the
- * stored bag, so sorting a borrowed reference would reorder the saved default.
+ * list. The copy matters: args share their nested arrays with the stored bag, so handing back a
+ * borrowed reference would let a later edit write through to the saved default.
  */
 function scopeTemplate( byRole: Record<string, string[]>, templateDefault: string[], roleId: string | null ) {
     const source = roleId && byRole[ roleId ]?.length ? byRole[ roleId ] : templateDefault;
 
-    return DynamicChannelPrimaryMessageElementsGroup.sortIds( [ ...source ] );
+    return [ ...source ];
+}
+
+/**
+ * Function keepOrder() :: The picked set, in the order it already had.
+ *
+ * A select menu has no way to express order - it hands its values back in its own - so taking the
+ * pick at face value would flatten an arrangement made in the dashboard every time somebody ticked
+ * one more button here. What was already in the set keeps its place, and anything new lands at the
+ * end, which is where the dashboard puts a newly added button too.
+ */
+function keepOrder( previous: string[], picked: string[] ): string[] {
+    const kept = previous.filter( ( id ) => picked.includes( id ) ),
+        added = picked.filter( ( id ) => ! previous.includes( id ) );
+
+    return [ ...kept, ...added ];
 }
 
 async function onButtonsScopeSelected(
@@ -1078,11 +1094,13 @@ async function onButtonsSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
-    const { byRole, roleId, masterChannelDB } = readButtonsScope( context, interaction );
+    const { byRole, roleId, templateDefault, masterChannelDB } = readButtonsScope( context, interaction );
 
-    const buttons = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-        interaction.values.filter( ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id ) )
+    const picked = interaction.values.filter(
+        ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
     );
+
+    const buttons = keepOrder( scopeTemplate( byRole, templateDefault, roleId ), picked );
 
     // Saved on the pick, like every other setting on this screen's siblings. There is no pending
     // state to lose and nothing to press afterwards to make it count.
@@ -1887,9 +1905,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         let args: UIArgs = {};
 
         if ( argsFromManager?.dynamicChannelButtonsTemplate ) {
-            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-                argsFromManager.dynamicChannelButtonsTemplate
-            );
+            args.dynamicChannelButtonsTemplate = [ ...argsFromManager.dynamicChannelButtonsTemplate as string[] ];
         }
 
         const availableArgs = context.getArgs( interaction ),
@@ -1966,9 +1982,9 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 ...( buttonsTemplateByRoleFromArgs ?? {} )
             };
 
-            args.dynamicChannelButtonsTemplateDefault = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-                buttonsTemplateFromDb as string[]
-            );
+            // Copies rather than sorts, here and below: the saved order is the admin's arrangement,
+            // and these arrays can be the ones held inside the cached settings row.
+            args.dynamicChannelButtonsTemplateDefault = [ ...buttonsTemplateFromDb as string[] ];
 
             const roleId = availableArgs?.dynamicChannelButtonsRoleId as string | null | undefined;
             args.dynamicChannelButtonsRoleId = roleId ?? null;
@@ -1978,10 +1994,10 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 const override = byRole[ roleId ];
 
                 if ( Array.isArray( override ) ) {
-                    args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds( override );
+                    args.dynamicChannelButtonsTemplate = [ ...override ];
                 }
             } else if ( buttonsTemplateFromArgs ) {
-                args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds( buttonsTemplateFromArgs );
+                args.dynamicChannelButtonsTemplate = [ ...buttonsTemplateFromArgs ];
             } else {
                 args.dynamicChannelButtonsTemplate = args.dynamicChannelButtonsTemplateDefault;
             }

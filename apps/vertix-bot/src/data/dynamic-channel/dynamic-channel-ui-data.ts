@@ -154,12 +154,11 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
             const resolvedButtons = roleButtons
                 ?? ( templateButtons?.length ? templateButtons : configV3.settings.dynamicChannelButtonsTemplate );
 
-            // Copied before sorting - `sortIds()` sorts in place and this array can be the one
-            // living inside the cached settings row.
-            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-                [ ...resolvedButtons ].filter(
-                    ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
-                )
+            // Left in the order it was saved in, which is the order the channel draws its buttons
+            // and its legend in. `filter()` hands back a fresh array, so the one living inside the
+            // cached settings row is not the one that travels on args.
+            args.dynamicChannelButtonsTemplate = resolvedButtons.filter(
+                ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
             );
             args.masterChannelId = masterChannelDB.channelId;
             args.dynamicChannelNameTemplate = masterChannelSettings?.dynamicChannelNameTemplate

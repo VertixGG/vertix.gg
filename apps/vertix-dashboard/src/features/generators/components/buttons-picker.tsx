@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 
+import { GripVertical } from "lucide-react";
+
 import { useCustomEmojiSrc } from "@vertix.gg/discord-ui";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
+
+import type { DragEvent, KeyboardEvent } from "react";
 
 /** One button a generator can carry, as `/tools/buttons.json` describes it. */
 export interface ButtonCatalogueEntry {
@@ -13,6 +17,14 @@ export interface ButtonCatalogueEntry {
 }
 
 const EMOJI_NAME = /<emoji name='([^']+)'>/;
+
+/** Marks a drag as ours, so a stray drop from elsewhere on the page is ignored. */
+const DRAG_MIME = "application/x-vertix-button";
+
+const MOVE_STEP = {
+    BACK: -1,
+    FORWARD: 1
+} as const;
 
 let cataloguePromise: Promise<ButtonCatalogueEntry[]> | null = null;
 
@@ -76,22 +88,86 @@ function ButtonArtwork( { emoji, label }: { emoji: string | null; label: string 
     );
 }
 
+/**
+ * Function moveTo() :: The selection with `movedId` sitting where `targetId` was.
+ *
+ * A move rather than a swap: an admin dragging a button three places left expects the ones it
+ * passes to close up behind it, which is what the interface does when it redraws the row. Removing
+ * before inserting is what makes a drag in either direction land where it was dropped.
+ */
+function moveTo( selected: string[], movedId: string, targetId: string ): string[] {
+    const from = selected.indexOf( movedId ),
+        to = selected.indexOf( targetId );
+
+    if ( 0 > from || 0 > to || from === to ) {
+        return selected;
+    }
+
+    const next = [ ...selected ];
+
+    next.splice( from, 1 );
+    next.splice( to, 0, movedId );
+
+    return next;
+}
+
+/**
+ * Function moveBy() :: The selection with `movedId` shifted one place.
+ *
+ * The keyboard route to the same result as a drag, since a pointer is not the only way an admin
+ * arrives here. Out of range is a no-op rather than a wrap: a button at the end that jumps to the
+ * front reads as a bug, not as a move.
+ */
+function moveBy( selected: string[], movedId: string, delta: number ): string[] {
+    const from = selected.indexOf( movedId );
+
+    if ( 0 > from ) {
+        return selected;
+    }
+
+    const to = from + delta;
+
+    if ( 0 > to || to >= selected.length ) {
+        return selected;
+    }
+
+    const next = [ ...selected ];
+
+    next.splice( from, 1 );
+    next.splice( to, 0, movedId );
+
+    return next;
+}
+
+/**
+ * Function isButtonDrag() :: Whether the drag in flight is one of ours.
+ *
+ * A dropped file or a drag from elsewhere on the page reaches these handlers too, and reordering
+ * on one would move a button the admin never picked up.
+ */
+function isButtonDrag( event: DragEvent<HTMLElement> ): boolean {
+    return event.dataTransfer.types.includes( DRAG_MIME );
+}
+
 export interface ButtonsPickerProps {
-    /** The ids the generator carries, in whatever order they were stored. */
+    /** The ids the generator carries, in the order channel owners see them. */
     selected: string[];
     disabled: boolean;
     onChange: ( value: string[] ) => void;
 }
 
 /**
- * Function ButtonsPicker() :: The buttons a generator's channels carry.
+ * Function ButtonsPicker() :: The buttons a generator's channels carry, and the order they carry them in.
  *
- * The same choice the buttons screen offers inside Discord, which until now was the only place it
- * could be made. Kept in the catalogue's order rather than the order they were ticked, since that
- * is the order the interface draws them and an admin is picking from a panel they can picture.
+ * The same choice the buttons screen offers inside Discord, plus the ordering that screen cannot
+ * express - a select menu has no way to say "this one first". Order is kept as the admin arranges
+ * it rather than normalised to the catalogue, because the same array drives the buttons and the
+ * legend drawn above them, and a legend in a different order than its buttons is worse than none.
  */
 export function ButtonsPicker( { selected, disabled, onChange }: ButtonsPickerProps ) {
     const { catalogue, isFailed } = useButtonCatalogue();
+    const [ draggedId, setDraggedId ] = useState<string | null>( null );
+    const [ dropTargetId, setDropTargetId ] = useState<string | null>( null );
 
     if ( isFailed ) {
         return (
@@ -106,51 +182,173 @@ export function ButtonsPicker( { selected, disabled, onChange }: ButtonsPickerPr
         return <p className="text-sm text-text-muted mb-0">Loading buttons…</p>;
     }
 
-    const toggle = ( value: string ) => {
-        const next = selected.includes( value )
-            ? selected.filter( ( id ) => id !== value )
-            : catalogue.filter( ( entry ) => entry.value === value || selected.includes( entry.value ) )
-                .map( ( entry ) => entry.value );
+    const byValue = new Map( catalogue.map( ( entry ) => [ entry.value, entry ] ) );
 
-        onChange( next );
+    // Driven by `selected` rather than by the catalogue, so the admin's order is what is drawn. An
+    // id the catalogue no longer knows is dropped here rather than rendered as a blank tile.
+    const chosen = selected
+        .map( ( id ) => byValue.get( id ) )
+        .filter( ( entry ): entry is ButtonCatalogueEntry => Boolean( entry ) );
+
+    const available = catalogue.filter( ( entry ) => ! selected.includes( entry.value ) );
+
+    const add = ( value: string ) => onChange( [ ...selected, value ] );
+
+    const remove = ( value: string ) => onChange( selected.filter( ( id ) => id !== value ) );
+
+    const handleDrop = ( targetId: string ) => {
+        setDropTargetId( null );
+
+        if ( ! draggedId ) {
+            return;
+        }
+
+        const next = moveTo( selected, draggedId, targetId );
+
+        setDraggedId( null );
+
+        if ( next !== selected ) {
+            onChange( next );
+        }
+    };
+
+    const handleKeyDown = ( event: KeyboardEvent<HTMLElement>, value: string ) => {
+        // Alt so the arrows keep meaning "move the caret" everywhere else on the form.
+        if ( ! event.altKey ) {
+            return;
+        }
+
+        const delta = "ArrowLeft" === event.key
+            ? MOVE_STEP.BACK
+            : "ArrowRight" === event.key ? MOVE_STEP.FORWARD : null;
+
+        if ( null === delta ) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const next = moveBy( selected, value, delta );
+
+        if ( next !== selected ) {
+            onChange( next );
+        }
     };
 
     return (
-        <div>
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                { catalogue.map( ( entry ) => {
-                    const isSelected = selected.includes( entry.value );
+        <div className="space-y-3">
+            <div>
+                <p className="text-xs text-text-muted mt-0 mb-2">
+                    { chosen.length
+                        ? "Shown to channel owners, in this order. Drag to rearrange, or hold Alt and press ← →."
+                        : "Nothing is shown yet - with none, owners get no interface at all." }
+                </p>
 
-                    return (
-                        <label
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                    { chosen.map( ( entry, index ) => (
+                        <div
                             key={ entry.value }
+                            draggable={ ! disabled }
+                            onDragStart={ ( event ) => {
+                                setDraggedId( entry.value );
+                                event.dataTransfer.effectAllowed = "move";
+                                event.dataTransfer.setData( DRAG_MIME, entry.value );
+                            } }
+                            onDragOver={ ( event ) => {
+                                if ( ! isButtonDrag( event ) || draggedId === entry.value ) {
+                                    return;
+                                }
+
+                                event.preventDefault();
+                                event.dataTransfer.dropEffect = "move";
+                                setDropTargetId( entry.value );
+                            } }
+                            onDragLeave={ () => setDropTargetId(
+                                ( current ) => current === entry.value ? null : current
+                            ) }
+                            onDrop={ ( event ) => {
+                                if ( ! isButtonDrag( event ) ) {
+                                    return;
+                                }
+
+                                event.preventDefault();
+                                handleDrop( entry.value );
+                            } }
+                            onDragEnd={ () => {
+                                setDraggedId( null );
+                                setDropTargetId( null );
+                            } }
                             className={ `flex items-center gap-2 px-3 py-2 rounded-md border transition-colors
-                                ${ disabled ? "opacity-50" : "cursor-pointer" }
-                                ${ isSelected
-                            ? "bg-surface-elevated border-border-accent"
-                            : "bg-background border-border" }` }
+                                bg-surface-elevated border-border-accent
+                                ${ disabled ? "opacity-50" : "cursor-grab active:cursor-grabbing" }
+                                ${ draggedId === entry.value ? "opacity-40" : "" }
+                                ${ dropTargetId === entry.value ? "ring-2 ring-border-accent" : "" }` }
                         >
-                            <input
-                                type="checkbox"
-                                className="sr-only"
-                                checked={ isSelected }
-                                disabled={ disabled }
-                                onChange={ () => toggle( entry.value ) }
+                            <GripVertical
+                                aria-hidden="true"
+                                className="w-4 h-4 shrink-0 text-text-muted"
                             />
+
+                            <span className="text-xs tabular-nums text-text-muted w-4 shrink-0">
+                                { index + 1 }
+                            </span>
 
                             <ButtonArtwork emoji={ entry.emoji } label={ entry.label } />
 
-                            <span className={ `text-sm ${ isSelected ? "text-text-primary" : "text-text-muted" }` }>
+                            <span className="text-sm text-text-primary truncate">
                                 { entry.label }
                             </span>
-                        </label>
-                    );
-                } ) }
+
+                            <button
+                                type="button"
+                                disabled={ disabled }
+                                onClick={ () => remove( entry.value ) }
+                                onKeyDown={ ( event ) => handleKeyDown( event, entry.value ) }
+                                aria-label={ `Remove ${ entry.label }, position ${ index + 1 } of ${ chosen.length }` }
+                                className="ml-auto text-xs text-text-muted hover:text-text-primary shrink-0"
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ) ) }
+                </div>
             </div>
 
+            { available.length > 0 && (
+                <div>
+                    <p className="text-xs text-text-muted mt-0 mb-2">
+                        Not shown - pick one to add it to the end.
+                    </p>
+
+                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                        { available.map( ( entry ) => (
+                            <label
+                                key={ entry.value }
+                                className={ `flex items-center gap-2 px-3 py-2 rounded-md border transition-colors
+                                    bg-background border-border
+                                    ${ disabled ? "opacity-50" : "cursor-pointer" }` }
+                            >
+                                <input
+                                    type="checkbox"
+                                    className="sr-only"
+                                    checked={ false }
+                                    disabled={ disabled }
+                                    onChange={ () => add( entry.value ) }
+                                />
+
+                                <ButtonArtwork emoji={ entry.emoji } label={ entry.label } />
+
+                                <span className="text-sm text-text-muted truncate">
+                                    { entry.label }
+                                </span>
+                            </label>
+                        ) ) }
+                    </div>
+                </div>
+            ) }
+
             <p className="text-xs text-text-muted mt-2 mb-0">
-                { selected.length } of { catalogue.length } shown to channel owners.
-                { ! selected.length && " With none, owners get no interface at all." }
+                { chosen.length } of { catalogue.length } shown to channel owners.
             </p>
         </div>
     );

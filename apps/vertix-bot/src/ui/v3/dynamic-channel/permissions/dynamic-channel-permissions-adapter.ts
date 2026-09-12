@@ -358,8 +358,11 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 false
             );
 
+            // Left in the order it was saved in: this array is what orders the buttons and the
+            // legend drawn above them, so sorting it here would throw away the arrangement an
+            // admin made. A copy, since the buttons are rearranged per channel downstream.
             args.dynamicChannelButtonsTemplate = templateButtons?.length
-                ? DynamicChannelPrimaryMessageElementsGroup.sortIds( templateButtons )
+                ? [ ...templateButtons ]
                 : DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );
 
             const accessButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(

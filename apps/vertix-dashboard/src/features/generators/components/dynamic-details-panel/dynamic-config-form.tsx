@@ -51,13 +51,14 @@ const PRIVACY_STATES: ReadonlyArray<{ value: ChannelPrivacyState; label: string;
 ];
 
 /**
- * Function sameButtons() :: Whether two button selections hold the same buttons.
+ * Function sameButtons() :: Whether two button selections hold the same buttons in the same order.
  *
- * Order carries no meaning here - the interface sorts them itself - so a set that came back in a
- * different order than it went out is not a change to save.
+ * Order is part of the setting now that the picker can arrange it: the one array drives both the
+ * buttons a channel carries and the legend drawn above them, so a rearrangement that adds and
+ * removes nothing is still a change worth saving.
  */
 function sameButtons( a: string[], b: string[] ): boolean {
-    return a.length === b.length && a.every( ( id ) => b.includes( id ) );
+    return a.length === b.length && a.every( ( id, index ) => id === b[ index ] );
 }
 
 /**

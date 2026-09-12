@@ -7,8 +7,18 @@ import zCore from "@zenflux/core";
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
+import { BUTTON_ROW_LIMITS, toRowBreaks } from "@vertix.gg/utils/src/button-rows";
+
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
+
+import { useButtonCatalogue } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
+import { useEditorGenerator } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-generator";
+import { useButtonArrangementStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-button-arrangement-store";
+import { arrangeElementRows, buttonIdsOf } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
+import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
+import { DYNAMIC_CHANNEL_FLOW } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
+
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 
 import { nodeTypes } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes";
@@ -20,10 +30,15 @@ import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-edito
 
 import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
+import type { SchemaElement } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
+
 import type { CustomizationData } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
 import type { Viewport, Node, Edge, ReactFlowInstance } from "@xyflow/react";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
+
+/** What the bot asks the legend for, so the preview is the same picture. */
+const SHEET_SCALE = 3;
 
 const logger = zCore.modules.createLogger( "flow-viewer" );
 
@@ -107,6 +122,12 @@ export function FlowViewer() {
     }, [] );
 
     // Step 1: Layout — only recompute when structure changes (module, edit mode)
+    // What the preview should draw: this generator's own set, in the rows it prints them in,
+    // including an arrangement still being dragged and not yet saved.
+    const { selected: generator } = useEditorGenerator();
+    const { catalogue } = useButtonCatalogue();
+    const arrangementDraft = useButtonArrangementStore( ( state ) => state.draft );
+
     const { layoutedNodes, layoutedEdges } = useMemo( () => {
         if ( !moduleFlowsData ) {
             return { layoutedNodes: [] as Node[], layoutedEdges: [] as Edge[] };
@@ -302,11 +323,78 @@ export function FlowViewer() {
                 }
             }
 
+            // Last, so it arranges the elements as they will finally read - after their labels are
+            // translated and their overrides applied. Only the component a generator's channels are
+            // drawn by, and only once a generator is picked; otherwise the schema's rows stand.
+            if ( DYNAMIC_CHANNEL_FLOW.COMPONENT === node.data?.component && generator ) {
+                const currentElementRows =
+                    ( updatedData.elementRows ?? node.data?.elementRows ) as SchemaElement[][] | undefined;
+
+                const arranged = currentElementRows && arrangeElementRows( {
+                    schemaRows: currentElementRows,
+                    catalogue,
+                    template: generator.settings?.dynamicChannelButtonsTemplate ?? [],
+                    rowBreaks: generator.settings?.dynamicChannelButtonsRowBreaks ?? [],
+                    draftNames: arrangementDraft
+                } );
+
+                if ( arranged ) {
+                    // A field of its own: `elementRows` is what the edit sidebar reads as the
+                    // component's full set, and overwriting it with the arranged subset would
+                    // shrink that set on every pass - the arrangement eating its own source.
+                    updatedData = { ...updatedData, previewElementRows: arranged };
+
+                    // The legend above the buttons is an image fetched by url, and that url asks
+                    // for the buttons by name - so it has to be told this generator's set, or it
+                    // draws every button the bot ships and never changes.
+                    const currentEmbed = ( updatedData.embed ?? node.data?.embed ) as
+                        Record<string, unknown> | undefined;
+
+                    if ( currentEmbed ) {
+                        const ids = arranged.map( ( row ) => buttonIdsOf( [ row ], catalogue ) ),
+                            items = ids.flat().join( "," ),
+                            breaks = toRowBreaks( ids, BUTTON_ROW_LIMITS.MAX_PER_ROW ).join( "," );
+
+                        const defaultVars =
+                            ( currentEmbed.defaultVars ?? {} ) as Record<string, string>;
+
+                        // Built here rather than left to the url the export captured, which
+                        // predates rows - so the preview draws the arrangement even against an
+                        // export taken before it existed.
+                        const legend = `${ API_CONFIG.BASE_URL }/tools/button-sheet.png`
+                            + `?cols=${ BUTTON_ROW_LIMITS.MAX_PER_ROW }&scale=${ SHEET_SCALE }`
+                            + `&items=${ items }&rows=${ breaks }`;
+
+                        updatedData = {
+                            ...updatedData,
+                            embed: {
+                                ...currentEmbed,
+                                image: { url: legend },
+                                defaultVars: {
+                                    ...defaultVars,
+                                    dynamicChannelButtonsTemplate: items,
+                                    dynamicChannelButtonsRowBreaks: breaks
+                                }
+                            }
+                        };
+                    }
+                }
+            }
+
             return updatedData !== node.data ? { ...node, data: updatedData } : node;
         } );
 
         return { initialNodes: contentNodes, initialEdges: layoutedEdges };
-    }, [ layoutedNodes, layoutedEdges, translations, customization, selectedLanguage ] );
+    }, [
+        layoutedNodes,
+        layoutedEdges,
+        translations,
+        customization,
+        selectedLanguage,
+        generator,
+        catalogue,
+        arrangementDraft
+    ] );
 
     const [ nodes, setNodes, onNodesChange ] = useNodesState( initialNodes );
     const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );

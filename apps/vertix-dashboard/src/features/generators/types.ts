@@ -38,6 +38,8 @@ export interface DynamicSettings {
     /** The buttons a generator's channels carry, by id, in the order the interface draws them. */
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole: Record<string, string[]>;
+    /** Where that set is divided into rows; empty means the interface draws it in rows of five. */
+    dynamicChannelButtonsRowBreaks: number[];
 }
 
 export interface GuildDiscordRole {

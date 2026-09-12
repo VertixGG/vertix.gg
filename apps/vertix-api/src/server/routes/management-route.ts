@@ -56,6 +56,7 @@ interface UpdateDynamicSettingsBody {
     dynamicChannelLogsChannelId?: string | null;
     dynamicChannelButtonsTemplate?: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
+    dynamicChannelButtonsRowBreaks?: number[];
 }
 
 interface UpdateGuildSettingsBody {

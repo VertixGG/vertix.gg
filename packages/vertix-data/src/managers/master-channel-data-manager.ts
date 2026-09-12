@@ -87,6 +87,21 @@ export class MasterChannelDataManager extends InitializeBase {
     }
 
     /**
+     * Function getChannelButtonsRowBreaks() :: Where the button set is divided into rows.
+     *
+     * Kept apart from the set rather than folded into it, so everything that only wants to know
+     * which buttons a generator carries goes on reading a flat list. Empty means the set has no
+     * arrangement of its own and falls back to rows of five.
+     *
+     * One arrangement covers the role sets too: they are narrower rather than different, and the
+     * grouping is re-fitted to whatever a channel actually draws.
+     */
+    public async getChannelButtonsRowBreaks( masterChannelDB: ChannelExtended, returnDefault?: boolean ) {
+        return ( await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, returnDefault ) )
+            ?.dynamicChannelButtonsRowBreaks;
+    }
+
+    /**
      * Function getChannelButtonsTemplateOverrides() :: Every role that carries a button set.
      *
      * Resolving a panel means walking the owner's roles in order, so the whole map is read once
@@ -490,6 +505,24 @@ export class MasterChannelDataManager extends InitializeBase {
 
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
             dynamicChannelButtonsTemplate: newButtons
+        } );
+    }
+
+    /**
+     * Function setChannelButtonsRowBreaks() :: Save how the button set is divided into rows.
+     *
+     * An empty list is the absence of an arrangement rather than an arrangement into nothing, and
+     * is what a set falls back from - so clearing the rows returns a generator to plain rows of
+     * five instead of leaving it frozen at the shape it last had.
+     */
+    public async setChannelButtonsRowBreaks( masterChannelDB: ChannelExtended, rowBreaks: number[] ) {
+        this.logger.log(
+            this.setChannelButtonsRowBreaks,
+            `Master channel id: '${ masterChannelDB.id }' - Setting channel buttons rows: '${ rowBreaks.join( "," ) }'`
+        );
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelButtonsRowBreaks: rowBreaks
         } );
     }
 

@@ -50,6 +50,8 @@ export interface UpdateDynamicSettingsPayload {
         dynamicChannelLogsChannelId?: string | null;
         dynamicChannelButtonsTemplate?: string[];
         dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
+        /** Where the button set is divided into rows; empty returns it to rows of five. */
+        dynamicChannelButtonsRowBreaks?: number[];
     };
 }
 

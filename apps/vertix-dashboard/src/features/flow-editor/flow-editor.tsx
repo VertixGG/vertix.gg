@@ -10,6 +10,7 @@ import { ModuleSelector } from "@vertix.gg/dashboard/src/features/flow-editor/co
 import { EntityList } from "@vertix.gg/dashboard/src/features/flow-editor/components/entity-list";
 import { FlowEditSidebar } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-edit-sidebar";
 import { LanguageSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/language-selector";
+import { GeneratorSelector } from "@vertix.gg/dashboard/src/features/flow-editor/components/generator-selector";
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
 
@@ -196,7 +197,10 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
                     { state.isLoading && (
                         <span className="ml-4 text-zinc-500 text-xs">Loading...</span>
                     ) }
-                    <div className="ml-auto">
+                    <div className="ml-auto flex items-center gap-2">
+                        { /* Which generator's set is being arranged - the wording beside it is
+                             server wide, so the two sit together rather than one inside the other. */ }
+                        <GeneratorSelector />
                         <LanguageSelector />
                     </div>
                 </header>

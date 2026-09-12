@@ -20,7 +20,8 @@ const SHEET_DEFAULTS: SheetConfig = {
     title: false,
     note: "",
     omit: [],
-    items: []
+    items: [],
+    rowBreaks: []
 };
 
 const MAX_PIXELS = 8000 * 8000;
@@ -32,6 +33,7 @@ interface SheetQuery {
     note?: string;
     omit?: string;
     items?: string;
+    rows?: string;
 }
 
 function parseIdList( raw: string | undefined ): string[] {
@@ -78,7 +80,11 @@ function parseQuery( query: SheetQuery ): SheetConfig {
         title: "on" === query.title,
         note: ( query.note ?? "" ).slice( 0, 120 ),
         omit: parseIdList( query.omit ),
-        items: parseItems( query.items )
+        items: parseItems( query.items ),
+        // Where those items are divided into rows, so the legend is cut where the buttons are.
+        rowBreaks: parseItems( query.rows )
+            .map( ( at ) => Number( at ) )
+            .filter( ( at ) => Number.isInteger( at ) && 0 < at )
     };
 }
 

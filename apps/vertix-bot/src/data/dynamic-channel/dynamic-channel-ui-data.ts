@@ -50,6 +50,8 @@ export interface DynamicChannelUIDataResult {
     channelId: string;
     region: string | null;
     dynamicChannelButtonsTemplate: string[];
+    /** Where that set is divided into rows; empty means rows of five. */
+    dynamicChannelButtonsRowBreaks?: number[];
     title?: string;
     description?: string;
     masterChannelId?: string;
@@ -160,6 +162,12 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
             args.dynamicChannelButtonsTemplate = resolvedButtons.filter(
                 ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
             );
+
+            // The generator's own arrangement, which the component re-fits to whatever this
+            // channel draws. One arrangement serves the role sets too - they are narrower than the
+            // default set rather than arranged differently.
+            args.dynamicChannelButtonsRowBreaks = masterChannelSettings?.dynamicChannelButtonsRowBreaks ?? [];
+
             args.masterChannelId = masterChannelDB.channelId;
             args.dynamicChannelNameTemplate = masterChannelSettings?.dynamicChannelNameTemplate
                 ?? configV3.settings.dynamicChannelNameTemplate;

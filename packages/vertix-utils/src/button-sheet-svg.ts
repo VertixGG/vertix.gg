@@ -1,3 +1,5 @@
+import { BUTTON_ROW_LIMITS, toRows } from "@vertix.gg/utils/src/button-rows";
+
 export interface SheetTile {
     id: string;
     label: string;
@@ -13,6 +15,12 @@ export interface SheetConfig {
     // The buttons to print, in print order (the list order is the order). Omitted/empty
     // keeps the source order.
     items?: ReadonlyArray<string>;
+    /**
+     * Where `items` is divided into rows - each entry the index a row starts at. Empty draws the
+     * plain grid of `cols` it always did; given, the legend is cut where the buttons it explains
+     * are cut, which is the only way the two read against each other.
+     */
+    rowBreaks?: ReadonlyArray<number>;
 }
 
 export interface SheetSvg {
@@ -226,8 +234,14 @@ export function buildSheetSvg(
     // stale, unresolved or all-unknown list never renders a blank sheet.
     const shown = selected.length ? selected : visible;
 
-    const columns = Math.max( 1, config.cols ),
-        rows = Math.max( 1, Math.ceil( shown.length / columns ) );
+    const columns = Math.max( 1, config.cols );
+
+    // The same division the buttons themselves are drawn in, so a legend beside a row of four and
+    // a row of two is cut the same way rather than re-flowed into a grid of its own.
+    const sheetRows = toRows( shown, config.rowBreaks, columns, BUTTON_ROW_LIMITS.MAX_ROWS );
+
+    const widest = sheetRows.reduce( ( most, row ) => Math.max( most, row.length ), 1 ),
+        rows = Math.max( 1, sheetRows.length );
 
     const fixed = ( EM.padLeft + EM.icon + EM.iconGap + EM.padRight ) * fontSize;
 
@@ -237,7 +251,7 @@ export function buildSheetSvg(
     );
 
     const columnWidth = widestLabel + fixed,
-        gridWidth = ( columnWidth * columns ) + ( gap * ( columns - 1 ) );
+        gridWidth = ( columnWidth * widest ) + ( gap * ( widest - 1 ) );
 
     const headHeight = config.title ? ( EM.wordmark * 1.2 * fontSize ) + ( 0.2 * fontSize ) : 0,
         noteHeight = config.note ? ( EM.note * EM.noteLineHeight * fontSize ) + ( 0.2 * fontSize ) : 0;
@@ -288,9 +302,10 @@ export function buildSheetSvg(
         cursorY += noteHeight;
     }
 
-    shown.forEach( ( tile, index ) => {
-        const column = index % columns,
-            row = Math.floor( index / columns );
+    let index = -1;
+
+    sheetRows.forEach( ( rowTiles, row ) => rowTiles.forEach( ( tile, column ) => {
+        index++;
 
         const x = column * ( columnWidth + gap ),
             y = cursorY + ( row * ( tileHeight + gap ) ),
@@ -325,7 +340,7 @@ export function buildSheetSvg(
                 "</text>"
             );
         } );
-    } );
+    } ) );
 
     const svg =
         "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +

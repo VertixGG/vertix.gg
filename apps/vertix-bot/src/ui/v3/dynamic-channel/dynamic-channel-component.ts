@@ -1,4 +1,4 @@
-import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
+import { toRows } from "@vertix.gg/utils/src/button-rows";
 
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
@@ -46,12 +46,17 @@ export class DynamicChannelComponent extends UIComponentBase {
     /** The order this generator's buttons were arranged in, for `getSchemaInternal()` below. */
     private buttonsTemplate: string[] = [];
 
+    /** Where that order is divided into rows, empty when the generator never arranged any. */
+    private buttonsRowBreaks: number[] = [];
+
     protected async buildDynamicEntities( args?: UIArgs ) {
-        // Kept here because `getSchemaInternal()` is what decides the row order and is handed no
-        // args of its own.
-        const template = args?.dynamicChannelButtonsTemplate;
+        // Kept here because `getSchemaInternal()` is what decides the rows and is handed no args
+        // of its own.
+        const template = args?.dynamicChannelButtonsTemplate,
+            rowBreaks = args?.dynamicChannelButtonsRowBreaks;
 
         this.buttonsTemplate = Array.isArray( template ) ? template.map( ( id ) => String( id ) ) : [];
+        this.buttonsRowBreaks = Array.isArray( rowBreaks ) ? rowBreaks.map( ( at ) => Number( at ) ) : [];
 
         return super.buildDynamicEntities( args );
     }
@@ -79,6 +84,41 @@ export class DynamicChannelComponent extends UIComponentBase {
         return [ ...elements ].sort( ( a, b ) => positionOf( a ) - positionOf( b ) );
     }
 
+    /**
+     * Function breaksForElements() :: Where the arranged rows divide the buttons actually drawn.
+     *
+     * The layout is saved against the generator's whole set, but a channel draws only the buttons
+     * it has - a role's set is narrower, and a button can be unavailable to this owner. Counting
+     * how many of each saved row survived restates the arrangement in terms of what is drawn: the
+     * grouping is kept, the gaps close behind the missing, and a row left holding nothing collapses
+     * rather than printing empty.
+     */
+    private breaksForElements( ordered: UIEntitySchemaBase[] ): number[] {
+        if ( ! this.buttonsRowBreaks.length || ! this.buttonsTemplate.length ) {
+            return [];
+        }
+
+        const present = new Set(
+            ordered
+                .map( ( element ) => DynamicChannelPrimaryMessageElementsGroup.getByName( element.name )?.getId() )
+                .filter( ( id ): id is string => undefined !== id )
+        );
+
+        const breaks: number[] = [];
+
+        let at = 0;
+
+        toRows( this.buttonsTemplate, this.buttonsRowBreaks, DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW )
+            .slice( 0, -1 )
+            .forEach( ( row ) => {
+                at += row.filter( ( id ) => present.has( id ) ).length;
+
+                breaks.push( at );
+            } );
+
+        return breaks;
+    }
+
     protected async getSchemaInternal() {
         const schema = await super.getSchemaInternal();
 
@@ -93,10 +133,15 @@ export class DynamicChannelComponent extends UIComponentBase {
                 element.isAvailable
         );
 
-        schema.entities.elements = uiUtilsDynamicElementsRearrange(
-            [ this.orderByTemplate( available ) as any ],
+        const ordered = this.orderByTemplate( available );
+
+        // Rows come from the generator's own arrangement rather than from cutting the list every
+        // five, which is what made the placement shown in the editor have no effect on what printed.
+        schema.entities.elements = toRows(
+            ordered,
+            this.breaksForElements( ordered ),
             DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW
-        );
+        ) as any;
 
         return schema;
     }

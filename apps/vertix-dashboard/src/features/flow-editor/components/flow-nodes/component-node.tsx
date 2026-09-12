@@ -60,6 +60,8 @@ type ComponentNodeData = Record<
     type: string;
     embed?: EmbedData;
     elementRows?: ElementData[][];
+    /** The same elements in this generator's rows, when the editor is scoped to one. */
+    previewElementRows?: ElementData[][];
     buttonModalTriggers?: ButtonModalTrigger[];
     buttonFlowTriggers?: ButtonFlowTrigger[];
     stateTransitionTriggers?: StateTransitionTrigger[];
@@ -200,7 +202,11 @@ type ComponentNodeType = Node<ComponentNodeData, "componentNode">;
 
 export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
     const { data, selected } = props;
-    const { label, embed, elementRows, buttonModalTriggers, buttonFlowTriggers, stateTransitionTriggers } = data;
+    const { label, embed, buttonModalTriggers, buttonFlowTriggers, stateTransitionTriggers } = data;
+
+    // What a channel will actually draw: the generator's arrangement when the editor is scoped to
+    // one, and the component's own rows otherwise.
+    const elementRows = data.previewElementRows ?? data.elementRows;
 
     // Merge embedDefinition.defaultVars over embed.defaultVars so sidebar edits
     // and restore operations are always reflected in the preview.
@@ -314,7 +320,12 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                 : "Component preview"
                             }
                             color={ embed?.color || 0x5865f2 }
-                            image={ embed?.image }
+                            // The legend is fetched by url, and that url carries the buttons it is
+                            // a legend for - so it needs its variables filled in like any other
+                            // part of the embed, or it renders every button the bot ships.
+                            image={ embed?.image
+                                ? { ...embed.image, url: applyDefaultVars( embed.image.url, mergedDefaultVars ) }
+                                : undefined }
                             thumbnail={ embed?.thumbnail }
                         />
                         { elementRows && elementRows.length > 0 && (

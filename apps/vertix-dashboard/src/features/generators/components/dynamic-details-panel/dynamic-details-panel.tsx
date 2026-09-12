@@ -7,12 +7,14 @@ import { Radio, RefreshCw, Trash2, Settings, Hash, AlertTriangle, Pencil } from 
 
 import { DiscordButton } from "@vertix.gg/discord-ui/src";
 
+import { Link } from "react-router-dom";
+
 import { DynamicChannelCard } from "./dynamic-channel-card";
 import DynamicConfigForm from "./dynamic-config-form";
 
 import { SettingRow, SettingsGroup } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
-import { ButtonsSummary } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
+import { dynamicChannelEditorLink } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
 
 import {
     DYNAMIC_DETAILS_PANEL_INITIAL_STATE,
@@ -123,13 +125,6 @@ const COPIED_LIMIT_NOTE = (
     <>
         This <strong className="font-semibold">generator</strong> sets no limit of its own, so a new
         channel copies the <strong className="font-semibold">generator</strong>&apos;s own limit.
-    </>
-);
-
-const DEFAULT_BUTTONS_NOTE = (
-    <>
-        This <strong className="font-semibold">generator</strong> picks no buttons of its own, so a
-        new channel carries every button the bot ships.
     </>
 );
 
@@ -394,15 +389,20 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                         />
                                     </SettingsGroup>
 
-                                    { /* Across both columns: the set runs wide, and the order it runs in is the setting. */ }
+                                    { /* Buttons live in the interface editor now, where the set and
+                                         the rows it prints in are one thing. */ }
                                     <div className="md:col-span-2">
                                         <SettingsGroup title="Buttons">
                                             <SettingRow
                                                 label="Shown to owners"
-                                                value={ <ButtonsSummary selected={ settings?.dynamicChannelButtonsTemplate ?? [] } /> }
-                                                note={ ( settings?.dynamicChannelButtonsTemplate ?? [] ).length
-                                                    ? undefined
-                                                    : DEFAULT_BUTTONS_NOTE }
+                                                value={
+                                                    <Link
+                                                        to={ dynamicChannelEditorLink( master.id ) }
+                                                        className="text-text-accent hover:underline"
+                                                    >
+                                                        Arrange in the interface editor
+                                                    </Link>
+                                                }
                                             />
                                         </SettingsGroup>
                                     </div>

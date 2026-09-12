@@ -113,7 +113,9 @@ function readDynamicSettings( settingsData: Record<string, unknown> ): DynamicSe
         dynamicChannelButtonsTemplate: ( settingsData.dynamicChannelButtonsTemplate as string[] )
             ?? getButtonCatalogue().map( ( button ) => button.value ),
         dynamicChannelButtonsTemplateByRole:
-            ( settingsData.dynamicChannelButtonsTemplateByRole as Record<string, string[]> ) ?? {}
+            ( settingsData.dynamicChannelButtonsTemplateByRole as Record<string, string[]> ) ?? {},
+        // Absent means no arrangement of its own, which the bot draws as rows of five.
+        dynamicChannelButtonsRowBreaks: ( settingsData.dynamicChannelButtonsRowBreaks as number[] ) ?? []
     };
 }
 
@@ -130,6 +132,7 @@ export interface DynamicSettings {
     dynamicChannelLogsChannelId: string | null;
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole: Record<string, string[]>;
+    dynamicChannelButtonsRowBreaks: number[];
 }
 
 export interface ScalingMasterChannelInfo {
@@ -207,6 +210,7 @@ export interface UpdateDynamicSettingsInput {
     dynamicChannelLogsChannelId?: string | null;
     dynamicChannelButtonsTemplate?: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
+    dynamicChannelButtonsRowBreaks?: number[];
 }
 
 export interface ScalingChannelInfo {

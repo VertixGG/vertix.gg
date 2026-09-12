@@ -9,7 +9,15 @@ import { getEmojiFromPreviewCache } from "@vertix.gg/utils/src/emoji-preview-cac
 import { ELEMENT_OVERRIDE_STRING_FIELDS } from "@vertix.gg/definitions/src/ui-customization-definitions";
 import { SELECT_MENU_ELEMENT_TYPES, BUTTON_ELEMENT_TYPES } from "@vertix.gg/definitions/src/ui-export-definitions";
 
+import { BUTTON_ROW_LIMITS } from "@vertix.gg/utils/src/button-rows";
+
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
+
+import {
+    ELEMENT_DRAG_MIME,
+    OMITTED_ROW,
+    useArrangedElementRows
+} from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 
 import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
@@ -761,6 +769,7 @@ export function FlowEditSidebar() {
     const selectedLanguage = useLanguageStore( ( state ) => state.selectedLanguage );
     const translations = useLanguageStore( ( state ) => state.translations );
     const [ selectedElementIndex, setSelectedElementIndex ] = useState<{ row: number; col: number } | null>( null );
+    const [ draggedElementName, setDraggedElementName ] = useState<string | null>( null );
     const [ lastNodeId, setLastNodeId ] = useState<string | null>( null );
     const [ appliedCustomization, setAppliedCustomization ] = useState<string | null>( null );
 
@@ -993,6 +1002,24 @@ export function FlowEditSidebar() {
         ? elementRows[ selectedElementIndex.row ]?.[ selectedElementIndex.col ]
         : null;
 
+    // The elements again, but in the rows the generator being looked at actually prints them in.
+    // Without a generator this hands back the schema's own rows, so the section is unchanged.
+    const arranged = useArrangedElementRows( elementRows );
+
+    // Selection still addresses the schema's own layout, so a chip drawn in an arranged row has to
+    // say where it came from rather than where it now sits.
+    const originalIndexOf = ( name: string ) => {
+        for ( let row = 0; row < ( elementRows?.length ?? 0 ); row++ ) {
+            const col = elementRows![ row ].findIndex( ( element ) => element.name === name );
+
+            if ( 0 <= col ) {
+                return { row, col };
+            }
+        }
+
+        return null;
+    };
+
     const handleUpdateEmbed = ( field: string, value: string | number ) => {
         updateNodeData.run( { path: `embed.${ field }`, value } );
     };
@@ -1119,32 +1146,100 @@ export function FlowEditSidebar() {
                             </div>
                         ) }
 
-                        { /* Elements Section */ }
+                        { /* Elements - drawn in the rows the generator being looked at prints them
+                             in, so the arrangement and the elements it arranges are one list
+                             rather than two beside each other saying different things. */ }
                         { elementRows && elementRows.length > 0 && (
                             <div>
                                 <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-2">
                                     <Grid3X3 className="w-3 h-3" />
                                     Elements
+                                    { arranged.isArranged && (
+                                        <span className="ml-auto font-normal normal-case text-zinc-600">
+                                            drag to arrange
+                                        </span>
+                                    ) }
                                 </h3>
                                 <div className="space-y-2">
-                                    { elementRows.map( ( row, rowIndex ) => {
-                                        const rowHasSelectedElement = selectedElementIndex?.row === rowIndex;
+                                    { arranged.rows.map( ( row, rowIndex ) => {
+                                        const rowHasSelectedElement = row.some(
+                                            ( element ) => element.name === selectedElement?.name );
 
                                         return (
-                                            <div key={ rowIndex } className="bg-zinc-700/50 rounded-lg p-2">
+                                            <div
+                                                key={ rowIndex }
+                                                onDragOver={ ( event ) => {
+                                                    if ( ! arranged.isArranged
+                                                        || ! event.dataTransfer.types.includes( ELEMENT_DRAG_MIME ) ) {
+                                                        return;
+                                                    }
+
+                                                    event.preventDefault();
+                                                    event.dataTransfer.dropEffect = "move";
+                                                } }
+                                                onDrop={ ( event ) => {
+                                                    if ( ! arranged.isArranged || ! draggedElementName
+                                                        || ! event.dataTransfer.types.includes( ELEMENT_DRAG_MIME ) ) {
+                                                        return;
+                                                    }
+
+                                                    event.preventDefault();
+                                                    arranged.move( draggedElementName, rowIndex, row.length );
+                                                    setDraggedElementName( null );
+                                                } }
+                                                className="bg-zinc-700/50 rounded-lg p-2"
+                                            >
                                                 <div className="text-xs text-zinc-500 mb-2">Row { rowIndex + 1 }</div>
                                                 <div className="flex flex-wrap gap-1">
                                                     { row.map( ( element, colIndex ) => {
                                                         const elementType = element.definition?.elementType ?? "button";
                                                         const isButton = isButtonElement( elementType );
                                                         const isSelect = isSelectMenuElement( elementType );
-                                                        const isSelected = selectedElementIndex?.row === rowIndex && selectedElementIndex?.col === colIndex;
+                                                        const isSelected = selectedElement?.name === element.name;
 
                                                         return (
                                                             <button
-                                                                key={ colIndex }
-                                                                onClick={ () => handleSelectElement( rowIndex, colIndex ) }
+                                                                key={ element.name }
+                                                                draggable={ arranged.isArranged }
+                                                                onDragStart={ ( event ) => {
+                                                                    setDraggedElementName( element.name );
+                                                                    event.dataTransfer.effectAllowed = "move";
+                                                                    event.dataTransfer.setData( ELEMENT_DRAG_MIME, element.name );
+                                                                } }
+                                                                onDragOver={ ( event ) => {
+                                                                    if ( ! arranged.isArranged
+                                                                        || ! event.dataTransfer.types.includes( ELEMENT_DRAG_MIME ) ) {
+                                                                        return;
+                                                                    }
+
+                                                                    event.preventDefault();
+                                                                } }
+                                                                onDrop={ ( event ) => {
+                                                                    if ( ! arranged.isArranged || ! draggedElementName
+                                                                        || ! event.dataTransfer.types.includes( ELEMENT_DRAG_MIME ) ) {
+                                                                        return;
+                                                                    }
+
+                                                                    event.preventDefault();
+                                                                    event.stopPropagation();
+                                                                    arranged.move( draggedElementName, rowIndex, colIndex );
+                                                                    setDraggedElementName( null );
+                                                                } }
+                                                                onDragEnd={ () => setDraggedElementName( null ) }
+                                                                onClick={ () => {
+                                                                    // The schema's own index, since that is what the
+                                                                    // edit panel is addressed by.
+                                                                    const at = originalIndexOf( element.name );
+
+                                                                    if ( at ) {
+                                                                        handleSelectElement( at.row, at.col );
+                                                                    }
+                                                                } }
                                                                 className={ `px-2 py-1 rounded text-xs transition-colors ${
+                                                                    arranged.isArranged ? "cursor-grab active:cursor-grabbing " : ""
+                                                                }${
+                                                                    draggedElementName === element.name ? "opacity-40 " : ""
+                                                                }${
                                                                     isSelected
                                                                         ? "ring-2 ring-blue-400 bg-blue-600 text-white"
                                                                         : isSelect
@@ -1171,6 +1266,124 @@ export function FlowEditSidebar() {
                                             </div>
                                         );
                                     } ) }
+
+                                    { arranged.isArranged && arranged.rows.length < BUTTON_ROW_LIMITS.MAX_ROWS && (
+                                        <div
+                                            onDragOver={ ( event ) => {
+                                                if ( ! event.dataTransfer.types.includes( ELEMENT_DRAG_MIME ) ) {
+                                                    return;
+                                                }
+
+                                                event.preventDefault();
+                                            } }
+                                            onDrop={ ( event ) => {
+                                                if ( ! draggedElementName
+                                                    || ! event.dataTransfer.types.includes( ELEMENT_DRAG_MIME ) ) {
+                                                    return;
+                                                }
+
+                                                event.preventDefault();
+                                                arranged.move( draggedElementName, arranged.rows.length, 0 );
+                                                setDraggedElementName( null );
+                                            } }
+                                            className="px-2 py-2 rounded-lg border border-dashed border-zinc-600
+                                                text-xs text-zinc-500"
+                                        >
+                                            Drop an element here to start a new row
+                                        </div>
+                                    ) }
+
+                                    { arranged.isArranged && (
+                                        <div
+                                            onDragOver={ ( event ) => {
+                                                if ( ! event.dataTransfer.types.includes( ELEMENT_DRAG_MIME ) ) {
+                                                    return;
+                                                }
+
+                                                event.preventDefault();
+                                            } }
+                                            onDrop={ ( event ) => {
+                                                if ( ! draggedElementName
+                                                    || ! event.dataTransfer.types.includes( ELEMENT_DRAG_MIME ) ) {
+                                                    return;
+                                                }
+
+                                                event.preventDefault();
+                                                arranged.move( draggedElementName, OMITTED_ROW, 0 );
+                                                setDraggedElementName( null );
+                                            } }
+                                            className="rounded-lg p-2 border border-dashed border-zinc-700"
+                                        >
+                                            <div className="text-xs text-zinc-600 mb-2">
+                                                Not shown - drag one into a row to add it, or drop one
+                                                here to take it away
+                                            </div>
+                                            <div className="flex flex-wrap gap-1">
+                                                { arranged.omitted.map( ( element ) => (
+                                                    <button
+                                                        key={ element.name }
+                                                        type="button"
+                                                        draggable
+                                                        onDragStart={ ( event ) => {
+                                                            setDraggedElementName( element.name );
+                                                            event.dataTransfer.effectAllowed = "move";
+                                                            event.dataTransfer.setData( ELEMENT_DRAG_MIME, element.name );
+                                                        } }
+                                                        onDragEnd={ () => setDraggedElementName( null ) }
+                                                        onClick={ () => {
+                                                            const at = originalIndexOf( element.name );
+
+                                                            if ( at ) {
+                                                                handleSelectElement( at.row, at.col );
+                                                            }
+                                                        } }
+                                                        title={ element.name }
+                                                        className={ `px-2 py-1 rounded text-xs cursor-grab active:cursor-grabbing
+                                                            bg-zinc-700/40 text-zinc-500 border border-zinc-700
+                                                            hover:text-zinc-300 ${
+                                                    draggedElementName === element.name ? "opacity-40" : "" }` }
+                                                    >
+                                                        { element.name.split( "/" ).pop() }
+                                                    </button>
+                                                ) ) }
+
+                                                { ! arranged.omitted.length && (
+                                                    <span className="text-xs text-zinc-700">
+                                                        every button is shown
+                                                    </span>
+                                                ) }
+                                            </div>
+                                        </div>
+                                    ) }
+
+                                    { arranged.error && (
+                                        <p className="text-xs text-red-400 mb-0">{ arranged.error }</p>
+                                    ) }
+
+                                    { arranged.isArranged && (
+                                        <div className="flex items-center gap-2 pt-1">
+                                            <button
+                                                type="button"
+                                                onClick={ arranged.save }
+                                                disabled={ ! arranged.hasChanges || arranged.isSaving }
+                                                className="px-2 py-1 rounded text-xs bg-blue-600 text-white
+                                                    hover:bg-blue-500 disabled:opacity-40 disabled:hover:bg-blue-600"
+                                            >
+                                                { arranged.isSaving ? "Saving..." : "Save rows" }
+                                            </button>
+
+                                            { arranged.hasChanges && (
+                                                <button
+                                                    type="button"
+                                                    onClick={ arranged.reset }
+                                                    disabled={ arranged.isSaving }
+                                                    className="text-xs text-zinc-400 hover:text-zinc-200"
+                                                >
+                                                    Reset
+                                                </button>
+                                            ) }
+                                        </div>
+                                    ) }
                                 </div>
                             </div>
                         ) }

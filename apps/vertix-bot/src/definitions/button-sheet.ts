@@ -16,9 +16,12 @@ const BUTTON_SHEET_SCALE = 3;
  * internet; a self hosted instance that is not simply leaves this pointed at ours, which draws the
  * same stock buttons.
  */
-export function getButtonSheetImageUrl( items: string ) {
+export function getButtonSheetImageUrl( items: string, rows = "" ) {
     const baseUrl = process.env.API_PUBLIC_URL || DEFAULT_BUTTON_SHEET_BASE_URL;
 
+    // `rows` is where the set is divided, so the legend wraps where the buttons wrap rather than
+    // being cut every `cols` - which is the width it falls back to when a generator arranged none.
     return `${ baseUrl }/tools/button-sheet.png`
-        + `?cols=${ DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW }&scale=${ BUTTON_SHEET_SCALE }&items=${ items }`;
+        + `?cols=${ DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW }&scale=${ BUTTON_SHEET_SCALE }&items=${ items }`
+        + `&rows=${ rows }`;
 }

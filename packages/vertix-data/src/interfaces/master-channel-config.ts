@@ -19,6 +19,12 @@ export interface MasterChannelSettingsInterface {
     dynamicChannelDefaultUserLimit: number | null;
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
+    /**
+     * Where `dynamicChannelButtonsTemplate` is divided into rows - each entry is the index a row
+     * starts at. Absent or empty means the set has no arrangement of its own and is drawn in rows
+     * of five, which is how every generator behaved before rows could be arranged.
+     */
+    dynamicChannelButtonsRowBreaks?: number[];
     dynamicChannelControlChannelId: string | null;
     dynamicChannelLogsChannelId: string | null;
     dynamicChannelMentionable: boolean;

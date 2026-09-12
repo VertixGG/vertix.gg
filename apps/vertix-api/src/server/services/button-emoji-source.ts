@@ -108,6 +108,43 @@ function loadOptions(): ReadonlyArray<SheetSourceOption> {
     throw new Error( `Could not find '${ BUTTONS_MENU_ELEMENT }' in the UI export` );
 }
 
+/** The component whose elements a generator's buttons are drawn by. */
+const DYNAMIC_CHANNEL_COMPONENT = "VertixBot/UI-V3/DynamicChannel";
+
+/**
+ * Function loadElementsByEmoji() :: The dynamic channel's elements, keyed by the artwork they draw.
+ *
+ * The buttons menu names a button `rename` and the component names an element
+ * `.../DynamicChannelRenameButton`, and nothing in the export carries both. The emoji token does,
+ * because it is the same artwork in each - so the join happens here, once, against the file that
+ * holds both halves, rather than being guessed at by every reader downstream.
+ */
+function loadElementsByEmoji(): ReadonlyMap<string, string> {
+    const parsed: unknown = JSON.parse( readFileSync( COMPONENTS_PATH, "utf-8" ) ),
+        byEmoji = new Map<string, string>();
+
+    for ( const component of asArray( parsed ) ) {
+        if ( property( component, "name" ) !== DYNAMIC_CHANNEL_COMPONENT ) {
+            continue;
+        }
+
+        for ( const group of asArray( property( component, "elementsGroups" ) ) ) {
+            for ( const row of asArray( property( group, "items" ) ) ) {
+                for ( const item of asArray( row ) ) {
+                    const name = property( item, "element" ),
+                        emoji = property( property( item, "definition" ), "emoji" );
+
+                    if ( "string" === typeof name && "string" === typeof emoji ) {
+                        byEmoji.set( emoji, name );
+                    }
+                }
+            }
+        }
+    }
+
+    return byEmoji;
+}
+
 /**
  * Function discoverNames() :: The emoji base names the sheet asks for.
  *
@@ -192,13 +229,19 @@ async function ensureDataUris( names: ReadonlyArray<string> ): Promise<void> {
  * restated here - so a button added to the interface appears in both without being named twice.
  * In the order the panel draws them, which is the order the export carries.
  */
-export function getButtonCatalogue(): ReadonlyArray<{ value: string; label: string; emoji: string | null }> {
+export function getButtonCatalogue():
+ReadonlyArray<{ value: string; label: string; emoji: string | null; element: string | null }> {
+    const elementsByEmoji = loadElementsByEmoji();
+
     return loadOptions()
         .filter( ( option ): option is SheetSourceOption & { value: string } => Boolean( option.value ) )
         .map( ( option ) => ( {
             value: option.value,
             label: option.label ?? option.value,
-            emoji: option.emoji ?? null
+            emoji: option.emoji ?? null,
+            // Which element of the component draws this button, so the editor can arrange the
+            // elements it already shows rather than list the same buttons a second time.
+            element: option.emoji ? elementsByEmoji.get( option.emoji ) ?? null : null
         } ) );
 }
 

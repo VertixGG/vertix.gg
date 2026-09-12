@@ -4,6 +4,8 @@ import { GripVertical } from "lucide-react";
 
 import { useCustomEmojiSrc } from "@vertix.gg/discord-ui";
 
+import { BUTTON_ROW_LIMITS, toRows } from "@vertix.gg/utils/src/button-rows";
+
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
 import type { DragEvent, KeyboardEvent } from "react";
@@ -14,6 +16,8 @@ export interface ButtonCatalogueEntry {
     label: string;
     /** The `<emoji name='X'>` token the interface draws, or null for a button without artwork. */
     emoji: string | null;
+    /** Which element of the dynamic channel component draws it, resolved by the api. */
+    element?: string | null;
 }
 
 const EMOJI_NAME = /<emoji name='([^']+)'>/;
@@ -35,7 +39,7 @@ let cataloguePromise: Promise<ButtonCatalogueEntry[]> | null = null;
  * button, not while an admin is looking at it. A failure leaves the list empty, which the picker
  * reports rather than presenting as a generator with no buttons.
  */
-function useButtonCatalogue(): { catalogue: ButtonCatalogueEntry[]; isFailed: boolean } {
+export function useButtonCatalogue(): { catalogue: ButtonCatalogueEntry[]; isFailed: boolean } {
     const [ catalogue, setCatalogue ] = useState<ButtonCatalogueEntry[]>( [] );
     const [ isFailed, setIsFailed ] = useState( false );
 
@@ -70,7 +74,7 @@ function useButtonCatalogue(): { catalogue: ButtonCatalogueEntry[]; isFailed: bo
     return { catalogue, isFailed };
 }
 
-function ButtonArtwork( { emoji, label }: { emoji: string | null; label: string } ) {
+export function ButtonArtwork( { emoji, label }: { emoji: string | null; label: string } ) {
     const name = EMOJI_NAME.exec( emoji ?? "" )?.[ 1 ] ?? "";
     const src = useCustomEmojiSrc( name );
 
@@ -156,7 +160,7 @@ function isButtonDrag( event: DragEvent<HTMLElement> ): boolean {
  * settings costs nothing extra. Drawn rather than listed as text because the order is part of the
  * setting now, and a row of artwork in order is the thing a channel owner will actually see.
  */
-export function ButtonsSummary( { selected }: { selected: string[] } ) {
+export function ButtonsSummary( { selected, rowBreaks }: { selected: string[]; rowBreaks?: number[] } ) {
     const { catalogue, isFailed } = useButtonCatalogue();
 
     // An empty template is not an empty interface: the bot falls back to every button, both in
@@ -172,21 +176,34 @@ export function ButtonsSummary( { selected }: { selected: string[] } ) {
 
     const byValue = new Map( catalogue.map( ( entry ) => [ entry.value, entry ] ) );
 
-    const chosen = selected
-        .map( ( id ) => byValue.get( id ) )
-        .filter( ( entry ): entry is ButtonCatalogueEntry => Boolean( entry ) );
+    // In the rows the interface draws them in, so reading the settings shows the arrangement
+    // rather than a sequence that has to be imagined back into rows.
+    const rows = toRows(
+        selected.filter( ( id ) => byValue.has( id ) ),
+        rowBreaks,
+        BUTTON_ROW_LIMITS.MAX_PER_ROW,
+        BUTTON_ROW_LIMITS.MAX_ROWS
+    );
 
     return (
-        <span className="flex flex-wrap items-center gap-1.5">
-            { chosen.map( ( entry ) => (
-                <span
-                    key={ entry.value }
-                    title={ entry.label }
-                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded
-                        bg-surface-elevated border border-border text-xs text-text-primary"
-                >
-                    <ButtonArtwork emoji={ entry.emoji } label={ entry.label } />
-                    { entry.label }
+        <span className="flex flex-col gap-1">
+            { rows.map( ( row, rowIndex ) => (
+                <span key={ rowIndex } className="flex flex-wrap items-center gap-1.5">
+                    { row.map( ( id ) => {
+                        const entry = byValue.get( id )!;
+
+                        return (
+                            <span
+                                key={ id }
+                                title={ entry.label }
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded
+                                    bg-surface-elevated border border-border text-xs text-text-primary"
+                            >
+                                <ButtonArtwork emoji={ entry.emoji } label={ entry.label } />
+                                { entry.label }
+                            </span>
+                        );
+                    } ) }
                 </span>
             ) ) }
         </span>
@@ -196,8 +213,14 @@ export function ButtonsSummary( { selected }: { selected: string[] } ) {
 export interface ButtonsPickerProps {
     /** The ids the generator carries, in the order channel owners see them. */
     selected: string[];
+    /**
+     * Where that order is divided into rows. Carried through rather than edited here - rows are
+     * arranged in the interface editor - but kept in step as buttons come and go, so an
+     * arrangement made there survives a change of mind about the set.
+     */
+    rowBreaks: number[];
     disabled: boolean;
-    onChange: ( value: string[] ) => void;
+    onChange: ( value: string[], rowBreaks: number[] ) => void;
 }
 
 /**
@@ -208,7 +231,7 @@ export interface ButtonsPickerProps {
  * it rather than normalised to the catalogue, because the same array drives the buttons and the
  * legend drawn above them, and a legend in a different order than its buttons is worse than none.
  */
-export function ButtonsPicker( { selected, disabled, onChange }: ButtonsPickerProps ) {
+export function ButtonsPicker( { selected, rowBreaks, disabled, onChange }: ButtonsPickerProps ) {
     const { catalogue, isFailed } = useButtonCatalogue();
     const [ draggedId, setDraggedId ] = useState<string | null>( null );
     const [ dropTargetId, setDropTargetId ] = useState<string | null>( null );
@@ -236,9 +259,19 @@ export function ButtonsPicker( { selected, disabled, onChange }: ButtonsPickerPr
 
     const available = catalogue.filter( ( entry ) => ! selected.includes( entry.value ) );
 
-    const add = ( value: string ) => onChange( [ ...selected, value ] );
+    // Appended, so it joins the last row; the breaks count what comes before them and are unmoved.
+    const add = ( value: string ) => onChange( [ ...selected, value ], rowBreaks );
 
-    const remove = ( value: string ) => onChange( selected.filter( ( id ) => id !== value ) );
+    const remove = ( value: string ) => {
+        const at = selected.indexOf( value );
+
+        // A break counts the buttons before it, so dropping one from earlier in the list slides
+        // every break past it back by one - otherwise the rows would silently re-divide.
+        onChange(
+            selected.filter( ( id ) => id !== value ),
+            rowBreaks.map( ( count ) => count > at ? count - 1 : count )
+        );
+    };
 
     const handleDrop = ( targetId: string ) => {
         setDropTargetId( null );
@@ -252,7 +285,7 @@ export function ButtonsPicker( { selected, disabled, onChange }: ButtonsPickerPr
         setDraggedId( null );
 
         if ( next !== selected ) {
-            onChange( next );
+            onChange( next, rowBreaks );
         }
     };
 
@@ -275,7 +308,7 @@ export function ButtonsPicker( { selected, disabled, onChange }: ButtonsPickerPr
         const next = moveBy( selected, value, delta );
 
         if ( next !== selected ) {
-            onChange( next );
+            onChange( next, rowBreaks );
         }
     };
 

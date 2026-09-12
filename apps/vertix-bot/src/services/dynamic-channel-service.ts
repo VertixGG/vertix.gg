@@ -296,8 +296,16 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 );
             }
 
+            if ( settings.dynamicChannelButtonsRowBreaks !== undefined ) {
+                await MasterChannelDataManager.$.setChannelButtonsRowBreaks(
+                    masterChannelDB,
+                    settings.dynamicChannelButtonsRowBreaks
+                );
+            }
+
             // A role's set never reaches the panel, so only an edit to the default one redraws it.
-            const isDefaultEdit = settings.dynamicChannelButtonsTemplate !== undefined,
+            const isDefaultEdit = settings.dynamicChannelButtonsTemplate !== undefined
+                    || settings.dynamicChannelButtonsRowBreaks !== undefined,
                 isButtonsEdit = isDefaultEdit || settings.dynamicChannelButtonsTemplateByRole !== undefined;
 
             if ( isButtonsEdit ) {

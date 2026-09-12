@@ -365,6 +365,11 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 ? [ ...templateButtons ]
                 : DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );
 
+            args.dynamicChannelButtonsRowBreaks = await MasterChannelDataManager.$.getChannelButtonsRowBreaks(
+                masterChannelDB,
+                true
+            ) ?? [];
+
             const accessButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(
                 DynamicChannelPermissionsAccessButton.getName()
             )?.getId();

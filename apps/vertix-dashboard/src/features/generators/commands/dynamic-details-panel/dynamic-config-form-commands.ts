@@ -17,6 +17,8 @@ export interface DynamicConfigFormState {
     logsChannelId: string | null;
     /** Empty until the catalogue lands, which is why the form initialises from the settings. */
     buttons: string[];
+    /** Where `buttons` is divided into rows; empty means rows of five. */
+    buttonRowBreaks: number[];
 }
 
 /**
@@ -34,7 +36,8 @@ export const DYNAMIC_CONFIG_FORM_INITIAL_STATE: DynamicConfigFormState = {
     staffRoles: [],
     voiceRoleId: null,
     logsChannelId: null,
-    buttons: []
+    buttons: [],
+    buttonRowBreaks: []
 };
 
 export class InitializeCommand extends CommandBase<DynamicConfigFormState, { settings: DynamicSettings | null }> {
@@ -54,7 +57,8 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
             staffRoles: args.settings?.dynamicChannelStaffRoles ?? [],
             voiceRoleId: args.settings?.dynamicChannelVoiceRoleId ?? null,
             logsChannelId: args.settings?.dynamicChannelLogsChannelId ?? null,
-            buttons: args.settings?.dynamicChannelButtonsTemplate ?? []
+            buttons: args.settings?.dynamicChannelButtonsTemplate ?? [],
+            buttonRowBreaks: args.settings?.dynamicChannelButtonsRowBreaks ?? []
         } );
     }
 }
@@ -159,13 +163,18 @@ export class UpdateLogsChannelCommand extends CommandBase<DynamicConfigFormState
     }
 }
 
-export class UpdateButtonsCommand extends CommandBase<DynamicConfigFormState, { value: string[] }> {
+export class UpdateButtonsCommand extends CommandBase<
+    DynamicConfigFormState,
+    { value: string[]; rowBreaks: number[] }
+> {
     public static getName() {
         return "Dashboard/Generators/DynamicConfigForm/UpdateButtons";
     }
 
-    public apply( args: { value: string[] } ) {
-        return this.setState( { buttons: args.value } );
+    // The set and its rows travel together: the breaks are indices into the set, so saving one
+    // without the other would describe rows that no longer line up with the buttons.
+    public apply( args: { value: string[]; rowBreaks: number[] } ) {
+        return this.setState( { buttons: args.value, buttonRowBreaks: args.rowBreaks } );
     }
 }
 

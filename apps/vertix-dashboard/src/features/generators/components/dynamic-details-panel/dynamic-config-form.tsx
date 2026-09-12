@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 
+import { Link } from "react-router-dom";
+
 import { withCommands } from "@zenflux/react-commander/with-commands";
 import { useCommandState, useComponent, useCommand } from "@zenflux/react-commander/hooks";
 
@@ -14,7 +16,7 @@ import {
     ToggleSwitch
 } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
-import { ButtonsPicker } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
+import { dynamicChannelEditorLink } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
 
 import {
     DYNAMIC_CONFIG_FORM_INITIAL_STATE,
@@ -51,17 +53,6 @@ const PRIVACY_STATES: ReadonlyArray<{ value: ChannelPrivacyState; label: string;
 ];
 
 /**
- * Function sameButtons() :: Whether two button selections hold the same buttons in the same order.
- *
- * Order is part of the setting now that the picker can arrange it: the one array drives both the
- * buttons a channel carries and the legend drawn above them, so a rearrangement that adds and
- * removes nothing is still a change worth saving.
- */
-function sameButtons( a: string[], b: string[] ): boolean {
-    return a.length === b.length && a.every( ( id, index ) => id === b[ index ] );
-}
-
-/**
  * Function sameRoles() :: Whether two role selections hold the same roles.
  *
  * Ticking a box appends, so the saved order and the form's order differ for the same set - a plain
@@ -93,7 +84,6 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
             staffRoles: state.staffRoles,
             voiceRoleId: state.voiceRoleId,
             logsChannelId: state.logsChannelId,
-            buttons: state.buttons
         } )
     );
 
@@ -115,8 +105,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
         state.voiceRoleId !== ( settings?.dynamicChannelVoiceRoleId ?? null ) ||
         state.logsChannelId !== ( settings?.dynamicChannelLogsChannelId ?? null ) ||
         !sameRoles( state.verifiedRoles, settings?.dynamicChannelVerifiedRoles ?? [] ) ||
-        !sameRoles( state.staffRoles, settings?.dynamicChannelStaffRoles ?? [] ) ||
-        !sameButtons( state.buttons, settings?.dynamicChannelButtonsTemplate ?? [] );
+        !sameRoles( state.staffRoles, settings?.dynamicChannelStaffRoles ?? [] );
 
     const handleSave = () => {
         updateDynamicSettings.run( {
@@ -132,7 +121,6 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 dynamicChannelStaffRoles: state.staffRoles,
                 dynamicChannelVoiceRoleId: state.voiceRoleId,
                 dynamicChannelLogsChannelId: state.logsChannelId,
-                dynamicChannelButtonsTemplate: state.buttons
             }
         } );
         onClose();
@@ -181,10 +169,6 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
 
     const handleUpdateVoiceRole = ( value: string | null ) => {
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateVoiceRole", { value } );
-    };
-
-    const handleUpdateButtons = ( value: string[] ) => {
-        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateButtons", { value } );
     };
 
     const handleUpdateLogsChannel = ( value: string | null ) => {
@@ -338,15 +322,17 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 <label className="block text-sm font-medium text-text-primary mb-1">
                     Buttons
                 </label>
-                <p className="text-xs text-text-muted mt-0 mb-3">
-                    What a channel owner gets in the interface. Saving redraws the channels that are
-                    already open, along with the control panel beside the generator.
+                <p className="text-xs text-text-muted mt-0 mb-0">
+                    { /* Chosen and arranged in one place rather than two - the editor draws the
+                         elements themselves, so the set and its rows are the same gesture there. */ }
+                    Which buttons a channel owner gets, and the rows they sit in, are set in the{ " " }
+                    <Link
+                        to={ dynamicChannelEditorLink( masterChannelId ) }
+                        className="text-text-accent hover:underline"
+                    >
+                        interface editor
+                    </Link>.
                 </p>
-                <ButtonsPicker
-                    selected={ state.buttons }
-                    disabled={ isSaving }
-                    onChange={ handleUpdateButtons }
-                />
             </div>
 
             <div className="flex items-center gap-2 pt-1">

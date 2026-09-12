@@ -49,7 +49,8 @@ const vars = {
 
     value: uiUtilsWrapAsTemplate( "value" ),
     separator: uiUtilsWrapAsTemplate( "separator" ),
-    dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
+    dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" ),
+    dynamicChannelButtonsRowBreaks: uiUtilsWrapAsTemplate( "dynamicChannelButtonsRowBreaks" )
 };
 
 const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
@@ -58,7 +59,10 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => getButtonSheetImageUrl( vars.dynamicChannelButtonsTemplate ) )
+    .setImage( () => getButtonSheetImageUrl(
+        vars.dynamicChannelButtonsTemplate,
+        vars.dynamicChannelButtonsRowBreaks
+    ) )
     .setTitle( () => vars.title )
     .setDescription( () => (
         `${ vars.description }\n\n` +
@@ -141,6 +145,12 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     // `items=` param. Empty `options` means `{value}` is the raw id.
     .setArrayOptions( () => ( {
         dynamicChannelButtonsTemplate: {
+            format: `${ vars.value }${ vars.separator }`,
+            separator: ",",
+            options: {}
+        },
+        // The row divisions, joined the same way, so the legend is cut where the buttons are.
+        dynamicChannelButtonsRowBreaks: {
             format: `${ vars.value }${ vars.separator }`,
             separator: ",",
             options: {}

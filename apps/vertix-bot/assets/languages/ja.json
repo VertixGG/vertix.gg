@@ -2431,8 +2431,20 @@
             "{visibilityStateHidden}": "🙈 **非表示**"
           },
           "region": {
-            "{regionDisplayValue}": "{regionValue}",
-            "{regionDisplayAuto}": "自動"
+            "{region-auto}": "自動",
+            "{region-brazil}": "ブラジル",
+            "{region-hongkong}": "香港",
+            "{region-india}": "インド",
+            "{region-japan}": "日本",
+            "{region-rotterdam}": "ロッテルダム",
+            "{region-russia}": "ロシア",
+            "{region-singapore}": "シンガポール",
+            "{region-southafrica}": "南アフリカ",
+            "{region-sydney}": "シドニー",
+            "{region-us-central}": "米国中部",
+            "{region-us-east}": "米国東部",
+            "{region-us-south}": "米国南部",
+            "{region-us-west}": "米国西部"
           }
         }
       }

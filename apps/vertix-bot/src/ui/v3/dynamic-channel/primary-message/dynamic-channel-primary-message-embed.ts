@@ -1,4 +1,6 @@
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-definitions";
+
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
@@ -44,6 +46,14 @@ const vars = {
     regionEmoji: DYNAMIC_CHANNEL_REGION_VARS.regionEmoji,
     regionAutomatic: uiUtilsWrapAsTemplate( "regionAutomatic" ),
 
+    // A var per region, which is what the option map below answers with a name in the reader's
+    // own language. Declared but never reached into before, so the raw `us-west` was shown.
+    ... Object.values( DEFAULT_RTC_REGIONS ).reduce( ( acc, region ) => {
+        acc[ `region-${ region }` ] = uiUtilsWrapAsTemplate( `region-${ region }` );
+
+        return acc;
+    }, {} as Record<string, string> ),
+
     title: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_TITLE_VARS.title,
     description: DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.description,
 
@@ -52,6 +62,18 @@ const vars = {
     dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" ),
     dynamicChannelButtonsRowBreaks: uiUtilsWrapAsTemplate( "dynamicChannelButtonsRowBreaks" )
 };
+
+/**
+ * Function resolveRegionVar() :: The var naming a region, or the one naming no choice at all.
+ *
+ * A region discord adds before this map knows of it resolves to nothing, and reads as automatic
+ * rather than as a raw name the reader has no use for.
+ */
+function resolveRegionVar( region: unknown ) {
+    const key = `region-${ "string" === typeof region && region.length ? region : "auto" }`;
+
+    return ( vars as Record<string, string> )[ key ] ?? ( vars as Record<string, string> )[ "region-auto" ];
+}
 
 const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed",
@@ -82,7 +104,12 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
                 [ vars.statePrivate ]: "🚫 Private",
                 [ vars.stateShown ]: "🐵 Shown",
                 [ vars.stateHidden ]: "🙈 Hidden"
-            }
+            },
+            region: Object.entries( DEFAULT_RTC_REGIONS ).reduce( ( acc, [ label, value ] ) => {
+                acc[ uiUtilsWrapAsTemplate( `region-${ value }` ) ] = label;
+
+                return acc;
+            }, {} as Record<string, string> )
         };
     } )
     .setLogic( ( args: UIArgs ) => {
@@ -99,7 +126,7 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
             title: args.title || configV3.data.constants.dynamicChannelPrimaryMessageTitle,
             description: args.description || configV3.data.constants.dynamicChannelPrimaryMessageDescription,
-            region: args.region || vars.regionAutomatic,
+            region: resolveRegionVar( args.region ),
             regionEmoji: DynamicChannelRegionButton.getEmoji(),
             dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
             // Declared above and used by the image url, but a var is only filled from here - left

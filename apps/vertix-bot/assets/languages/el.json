@@ -1444,8 +1444,20 @@
             "{visibilityStateHidden}": "🙈 **Κρυφό**"
           },
           "region": {
-            "{regionDisplayValue}": "{regionValue}",
-            "{regionDisplayAuto}": "Αυτόματο"
+            "{region-auto}": "Αυτόματα",
+            "{region-brazil}": "Βραζιλία",
+            "{region-hongkong}": "Χονγκ Κονγκ",
+            "{region-india}": "Ινδία",
+            "{region-japan}": "Ιαπωνία",
+            "{region-rotterdam}": "Ρότερνταμ",
+            "{region-russia}": "Ρωσία",
+            "{region-singapore}": "Σιγκαπούρη",
+            "{region-southafrica}": "Νότια Αφρική",
+            "{region-sydney}": "Σίδνεϊ",
+            "{region-us-central}": "US Central",
+            "{region-us-east}": "US East",
+            "{region-us-south}": "US South",
+            "{region-us-west}": "US West"
           }
         }
       }

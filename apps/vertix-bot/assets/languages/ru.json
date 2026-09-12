@@ -1444,8 +1444,20 @@
             "{visibilityStateHidden}": "🙈 **Скрытый**"
           },
           "region": {
-            "{regionDisplayValue}": "{regionValue}",
-            "{regionDisplayAuto}": "Автоматически"
+            "{region-auto}": "Автоматически",
+            "{region-brazil}": "Бразилия",
+            "{region-hongkong}": "Гонконг",
+            "{region-india}": "Индия",
+            "{region-japan}": "Япония",
+            "{region-rotterdam}": "Роттердам",
+            "{region-russia}": "Россия",
+            "{region-singapore}": "Сингапур",
+            "{region-southafrica}": "Южная Африка",
+            "{region-sydney}": "Сидней",
+            "{region-us-central}": "США Центр",
+            "{region-us-east}": "США Восток",
+            "{region-us-south}": "США Юг",
+            "{region-us-west}": "США Запад"
           }
         }
       }

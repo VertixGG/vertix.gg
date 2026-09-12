@@ -2446,8 +2446,20 @@
             "{visibilityStateHidden}": "🙈 **Oculto**"
           },
           "region": {
-            "{regionDisplayValue}": "{regionValue}",
-            "{regionDisplayAuto}": "Automático"
+            "{region-auto}": "Automático",
+            "{region-brazil}": "Brasil",
+            "{region-hongkong}": "Hong Kong",
+            "{region-india}": "India",
+            "{region-japan}": "Japón",
+            "{region-rotterdam}": "Róterdam",
+            "{region-russia}": "Rusia",
+            "{region-singapore}": "Singapur",
+            "{region-southafrica}": "Sudáfrica",
+            "{region-sydney}": "Sídney",
+            "{region-us-central}": "US Central",
+            "{region-us-east}": "US East",
+            "{region-us-south}": "US South",
+            "{region-us-west}": "US West"
           }
         }
       }

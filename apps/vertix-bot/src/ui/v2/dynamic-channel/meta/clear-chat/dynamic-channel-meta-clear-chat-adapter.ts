@@ -97,7 +97,15 @@ const DynamicChannelMetaClearChatAdapter = new DynamicExecutionAdapterBuilder<UI
             totalMessages: argsFromManager?.totalMessages
         };
     } )
-    .getReplyArgs( async() => ( {} ) )
+    /**
+     * The success step is reached through an interaction rather than a channel, so what the button
+     * handler passed arrives here and not in `getStartArgs()` - dropping it left the embed
+     * rendering its own `{ownerDisplayName}` and `{totalMessages}` placeholders.
+     */
+    .getReplyArgs( async( _context, _interaction, argsFromManager ) => ( {
+        ownerDisplayName: argsFromManager?.ownerDisplayName,
+        totalMessages: argsFromManager?.totalMessages
+    } ) )
     .build();
 
 export { DynamicChannelMetaClearChatAdapter };

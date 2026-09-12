@@ -149,6 +149,50 @@ function isButtonDrag( event: DragEvent<HTMLElement> ): boolean {
     return event.dataTransfer.types.includes( DRAG_MIME );
 }
 
+/**
+ * Function ButtonsSummary() :: The buttons a generator carries, to look at rather than edit.
+ *
+ * Shares the picker's catalogue, which is fetched once for the page, so reading a generator's
+ * settings costs nothing extra. Drawn rather than listed as text because the order is part of the
+ * setting now, and a row of artwork in order is the thing a channel owner will actually see.
+ */
+export function ButtonsSummary( { selected }: { selected: string[] } ) {
+    const { catalogue, isFailed } = useButtonCatalogue();
+
+    // An empty template is not an empty interface: the bot falls back to every button, both in
+    // `master-channel-config-v3` and when it resolves a channel's args.
+    if ( ! selected.length ) {
+        return <span className="text-text-primary">Every button</span>;
+    }
+
+    if ( isFailed || ! catalogue.length ) {
+        // The ids are still worth showing when their labels cannot be read.
+        return <span className="text-text-primary">{ selected.length } selected</span>;
+    }
+
+    const byValue = new Map( catalogue.map( ( entry ) => [ entry.value, entry ] ) );
+
+    const chosen = selected
+        .map( ( id ) => byValue.get( id ) )
+        .filter( ( entry ): entry is ButtonCatalogueEntry => Boolean( entry ) );
+
+    return (
+        <span className="flex flex-wrap items-center gap-1.5">
+            { chosen.map( ( entry ) => (
+                <span
+                    key={ entry.value }
+                    title={ entry.label }
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded
+                        bg-surface-elevated border border-border text-xs text-text-primary"
+                >
+                    <ButtonArtwork emoji={ entry.emoji } label={ entry.label } />
+                    { entry.label }
+                </span>
+            ) ) }
+        </span>
+    );
+}
+
 export interface ButtonsPickerProps {
     /** The ids the generator carries, in the order channel owners see them. */
     selected: string[];
@@ -241,7 +285,7 @@ export function ButtonsPicker( { selected, disabled, onChange }: ButtonsPickerPr
                 <p className="text-xs text-text-muted mt-0 mb-2">
                     { chosen.length
                         ? "Shown to channel owners, in this order. Drag to rearrange, or hold Alt and press ← →."
-                        : "Nothing is shown yet - with none, owners get no interface at all." }
+                        : "Nothing picked, so channels carry every button. Pick some to choose the set and its order." }
                 </p>
 
                 <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">

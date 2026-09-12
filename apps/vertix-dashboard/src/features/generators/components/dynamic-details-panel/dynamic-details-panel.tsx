@@ -12,6 +12,8 @@ import DynamicConfigForm from "./dynamic-config-form";
 
 import { SettingRow, SettingsGroup } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
+import { ButtonsSummary } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
+
 import {
     DYNAMIC_DETAILS_PANEL_INITIAL_STATE,
     DYNAMIC_DETAILS_PANEL_COMMANDS
@@ -121,6 +123,13 @@ const COPIED_LIMIT_NOTE = (
     <>
         This <strong className="font-semibold">generator</strong> sets no limit of its own, so a new
         channel copies the <strong className="font-semibold">generator</strong>&apos;s own limit.
+    </>
+);
+
+const DEFAULT_BUTTONS_NOTE = (
+    <>
+        This <strong className="font-semibold">generator</strong> picks no buttons of its own, so a
+        new channel carries every button the bot ships.
     </>
 );
 
@@ -384,6 +393,19 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                             value={ formatChannel( settings?.dynamicChannelLogsChannelId ?? null, discordOptions ) }
                                         />
                                     </SettingsGroup>
+
+                                    { /* Across both columns: the set runs wide, and the order it runs in is the setting. */ }
+                                    <div className="md:col-span-2">
+                                        <SettingsGroup title="Buttons">
+                                            <SettingRow
+                                                label="Shown to owners"
+                                                value={ <ButtonsSummary selected={ settings?.dynamicChannelButtonsTemplate ?? [] } /> }
+                                                note={ ( settings?.dynamicChannelButtonsTemplate ?? [] ).length
+                                                    ? undefined
+                                                    : DEFAULT_BUTTONS_NOTE }
+                                            />
+                                        </SettingsGroup>
+                                    </div>
                                 </div>
                             ) }
                         </div>

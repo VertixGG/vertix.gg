@@ -7,7 +7,8 @@ import type { GuildDiscordRole, GuildDiscordChannel } from "@vertix.gg/dashboard
 
 interface SettingRowProps {
     label: string;
-    value: string;
+    /** Usually the value as text, but a setting the eye reads faster as artwork can draw itself. */
+    value: ReactNode;
     /** Where the value came from, when it is not the generator's own answer. */
     note?: ReactNode;
     mono?: boolean;

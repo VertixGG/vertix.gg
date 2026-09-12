@@ -22,7 +22,7 @@ bun run vertix:logger:start
 bun run vertix:logger:dev
 ```
 
-### Install as a systemd service
+### Install as a systemd service (Linux)
 
 From the repo root:
 
@@ -50,6 +50,39 @@ Logs:
 
 ```bash
 journalctl --user -u vertix-logger.service -f
+```
+
+### Install as a launchd service (macOS)
+
+From the repo root:
+
+```bash
+bash packages/vertix-logger/install-launchd-service.bash
+```
+
+This installs a user-scoped plist to `~/Library/LaunchAgents/gg.vertix.logger.plist` and loads it immediately.
+
+Optional flags:
+
+```bash
+bash packages/vertix-logger/install-launchd-service.bash --name gg.vertix.logger --scope user
+bash packages/vertix-logger/install-launchd-service.bash --repo-root /opt/vertix.gg
+bash packages/vertix-logger/install-launchd-service.bash --scope system --plist-dir /Library/LaunchDaemons
+bash packages/vertix-logger/install-launchd-service.bash --env-file /path/to/.env
+bash packages/vertix-logger/install-launchd-service.bash --no-start
+```
+
+Uninstall:
+
+```bash
+bash packages/vertix-logger/uninstall-launchd-service.bash
+```
+
+Logs:
+
+```bash
+tail -f ~/Library/Logs/vertix-logger/stdout.log
+tail -f ~/Library/Logs/vertix-logger/stderr.log
 ```
 
 ### Environment Variables

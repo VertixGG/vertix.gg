@@ -5,6 +5,8 @@ import { useCommandState, useComponent } from "@zenflux/react-commander/hooks";
 
 import { Search, X, Layers, Radio } from "lucide-react";
 
+import { isV2Version } from "@vertix.gg/definitions/src/button-ids";
+
 import {
     MASTER_CHANNEL_LIST_INITIAL_STATE,
     MASTER_CHANNEL_LIST_COMMANDS
@@ -177,11 +179,11 @@ const MasterChannelListComponent: DCommandFunctionComponent<MasterChannelListPro
                                             </span>
                                             { item.version && (
                                                 <span className={ `text-[10px] px-1 py-0.5 rounded flex-shrink-0 ${
-                                                    item.version === "0.0.0.3"
-                                                        ? "bg-accent/20 text-text-accent"
-                                                        : "bg-surface-hover/50 text-text-secondary"
+                                                    isV2Version( item.version )
+                                                        ? "bg-surface-hover/50 text-text-secondary"
+                                                        : "bg-accent/20 text-text-accent"
                                                 }` }>
-                                                    { item.version === "0.0.0.3" ? "V3" : "V2" }
+                                                    { isV2Version( item.version ) ? "V2" : "V3" }
                                                 </span>
                                             ) }
                                         </div>

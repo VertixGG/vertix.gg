@@ -7,7 +7,7 @@ import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
-import { toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
+import { toV3ButtonIds } from "@vertix.gg/definitions/src/button-ids";
 
 import { UI_CUSTOM_ID_SEPARATOR, UIInstancesTypes, UI_IMAGE_EMPTY_LINE_URL } from "@vertix.gg/gui/src/bases/ui-definitions";
 

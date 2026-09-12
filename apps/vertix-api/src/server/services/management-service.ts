@@ -393,7 +393,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     categoryId: master.categoryId,
                     createdAt: master.createdAt,
                     dynamicChannelsCount,
-                    version: master.version || "0.0.0.3",
+                    version: master.version || VERSION_UI_V3,
                     settings: settingsData ? readDynamicSettings( settingsData, master.version ) : null
                 };
             } )
@@ -692,7 +692,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 categoryId: master.categoryId,
                 createdAt: master.createdAt,
                 dynamicChannelsCount: dynamicChannels.length,
-                version: master.version || "0.0.0.3",
+                version: master.version || VERSION_UI_V3,
                 settings: settingsData ? readDynamicSettings( settingsData, master.version ) : null
             },
             dynamicChannels: dynamicChannels.map( ( channel ) => ( {

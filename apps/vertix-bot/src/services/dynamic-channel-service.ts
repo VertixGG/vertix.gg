@@ -47,6 +47,8 @@ import {
 
 import { GuildCustomizationManager } from "@vertix.gg/data/src/managers/guild-customization-manager";
 
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
 import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
@@ -3597,7 +3599,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             `Refreshing customization for guild ${ guildId }`
         );
 
-        if ( guildId === "__default__" ) {
+        if ( guildId === DEFAULT_CUSTOMIZATION_GUILD_ID ) {
             // Default customizations affect all guilds — invalidate everything
             GuildCustomizationManager.$.invalidateAllCache();
 
@@ -3615,7 +3617,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         // Invalidate customization cache so next build() reads fresh data from DB
         GuildCustomizationManager.$.invalidateCache( guildId );
         // Also invalidate __default__ since it's merged as a base layer
-        GuildCustomizationManager.$.invalidateCache( "__default__" );
+        GuildCustomizationManager.$.invalidateCache( DEFAULT_CUSTOMIZATION_GUILD_ID );
 
         this.logger.log(
             this.handleRefreshCustomization,

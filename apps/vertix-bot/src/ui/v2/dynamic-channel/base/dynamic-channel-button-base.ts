@@ -2,7 +2,7 @@ import { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-e
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { isV2ButtonEntry } from "@vertix.gg/utils/src/button-ids";
+import { isV2ButtonEntry } from "@vertix.gg/definitions/src/button-ids";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 

@@ -1,4 +1,4 @@
-import { isV2Version } from "@vertix.gg/utils/src/button-ids";
+import { DYNAMIC_CHANNEL_COMPONENT, isV2Version } from "@vertix.gg/definitions/src/button-ids";
 
 /**
  * Links into the interface editor, built in one place.
@@ -18,14 +18,19 @@ import { isV2Version } from "@vertix.gg/utils/src/button-ids";
 export const DYNAMIC_CHANNEL_FLOW_V3 = {
     MODULE: "VertixBot/UI-V3/Module",
     FLOW: "VertixBot/UI-V3/DynamicChannelFlow",
-    /** The component inside that flow whose elements a generator's buttons are. */
-    COMPONENT: "VertixBot/UI-V3/DynamicChannel"
+    /**
+     * The component inside that flow whose elements a generator's buttons are.
+     *
+     * Taken from the shared map rather than spelled again: it is the name an override is stored
+     * against, so a copy of it here that drifted would write overrides nothing ever reads.
+     */
+    COMPONENT: DYNAMIC_CHANNEL_COMPONENT.V3
 } as const;
 
 export const DYNAMIC_CHANNEL_FLOW_V2 = {
     MODULE: "VertixBot/UI-V2/Module",
     FLOW: "VertixBot/UI-V2/DynamicChannelFlow",
-    COMPONENT: "VertixBot/UI-V2/DynamicChannel"
+    COMPONENT: DYNAMIC_CHANNEL_COMPONENT.V2
 } as const;
 
 /** Kept as the v3 name so existing readers that only ever meant v3 go on meaning it. */

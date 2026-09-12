@@ -4,6 +4,8 @@ import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
 import { Home, Boxes, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronUp } from "lucide-react";
 
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
 interface NavItem {
@@ -70,7 +72,7 @@ export function Sidebar() {
 
     const user = state.user;
     const selectedGuild = state.selectedGuild;
-    const isDefaultGuild = selectedGuild?.id === "__default__";
+    const isDefaultGuild = selectedGuild?.id === DEFAULT_CUSTOMIZATION_GUILD_ID;
 
     const visibleNavItems = isDefaultGuild
         ? navItems.filter( ( item ) => !item.hideForDefault )

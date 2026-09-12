@@ -5,6 +5,8 @@ import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
 import { Server, Loader2, Settings } from "lucide-react";
 
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 import type { Guild } from "@vertix.gg/dashboard/src/features/auth/types";
 
@@ -80,7 +82,7 @@ export function ServerSelectionPage() {
                     { state.isOwner && (
                         <button
                             onClick={ () => handleSelectGuild( {
-                                id: "__default__",
+                                id: DEFAULT_CUSTOMIZATION_GUILD_ID,
                                 name: "Default Settings",
                                 icon: null,
                                 owner: true,

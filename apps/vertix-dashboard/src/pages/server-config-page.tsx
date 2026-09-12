@@ -7,6 +7,8 @@ import { withCommands } from "@zenflux/react-commander/with-commands";
 
 import { Loader2, AlertTriangle, X } from "lucide-react";
 
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
 import {
     SERVER_CONFIG_COMMANDS,
     SERVER_CONFIG_INITIAL_STATE
@@ -115,7 +117,7 @@ export function ServerConfigPage() {
         );
     }
 
-    if ( authState.selectedGuild.id === "__default__" ) {
+    if ( authState.selectedGuild.id === DEFAULT_CUSTOMIZATION_GUILD_ID ) {
         return <Navigate to="/interface-editor" replace />;
     }
 

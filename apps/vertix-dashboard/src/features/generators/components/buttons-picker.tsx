@@ -5,9 +5,12 @@ import { GripVertical } from "lucide-react";
 import { useCustomEmojiSrc } from "@vertix.gg/discord-ui";
 
 import { BUTTON_ROW_LIMITS, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
-import { toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
+import { DYNAMIC_CHANNEL_COMPONENT, buttonsPerRow, isV2Version, toV3ButtonIds } from "@vertix.gg/definitions/src/button-ids";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
+import { useGuildCustomization } from "@vertix.gg/dashboard/src/hooks/use-guild-customization";
+import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
+import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
 import type { DragEvent, KeyboardEvent } from "react";
 
@@ -182,9 +185,36 @@ function isButtonDrag( event: DragEvent<HTMLElement> ): boolean {
  * Shares the picker's catalogue, which is fetched once for the page, so reading a generator's
  * settings costs nothing extra. Drawn rather than listed as text because the order is part of the
  * setting now, and a row of artwork in order is the thing a channel owner will actually see.
+ *
+ * Named as this generator names them: an override written about it wins, the server's is what it
+ * falls back to, and the name the component shipped with is under both. The catalogue alone is
+ * none of those - it is the bot's own wording, which is the one thing no channel here prints once
+ * an admin has changed it. A row that says "shown to users" has to mean it.
  */
-export function ButtonsSummary( { selected, version }: { selected: string[]; version?: string | null } ) {
+export function ButtonsSummary( {
+    selected,
+    version,
+    masterChannelId
+}: {
+    selected: string[];
+    version?: string | null;
+    /** The generator these buttons belong to, so its own wording is preferred over the server's. */
+    masterChannelId?: string | null;
+} ) {
     const { catalogue, isFailed } = useButtonCatalogue( version );
+    const customization = useGuildCustomization();
+    const language = useLanguageStore( ( state ) => state.selectedLanguage );
+
+    // The same resolver the editor and the bot use, so the three cannot disagree about which
+    // layer wins.
+    const resolved = resolveCustomization( customization, {
+        component: isV2Version( version ) ? DYNAMIC_CHANNEL_COMPONENT.V2 : DYNAMIC_CHANNEL_COMPONENT.V3,
+        state: null,
+        language,
+        masterChannelId: masterChannelId ?? null
+    } );
+
+    const elementOverrides = resolved?.elementOverrides ?? {};
 
     // The stored list carries its own row divisions, so the set and the rows come out together.
     const { ids: storedIds, rowBreaks } = splitTemplate( selected );
@@ -210,10 +240,12 @@ export function ButtonsSummary( { selected, version }: { selected: string[]; ver
 
     // In the rows the interface draws them in, so reading the settings shows the arrangement
     // rather than a sequence that has to be imagined back into rows.
+    // Cut where this version cuts. Five is what discord allows and what v3 uses, but v2 draws four
+    // - so a v2 generator's settings showed rows of five beside channels drawing rows of four.
     const rows = toRows(
         ids.filter( ( id ) => byValue.has( id ) ),
         rowBreaks,
-        BUTTON_ROW_LIMITS.MAX_PER_ROW,
+        buttonsPerRow( version ),
         BUTTON_ROW_LIMITS.MAX_ROWS
     );
 
@@ -224,15 +256,23 @@ export function ButtonsSummary( { selected, version }: { selected: string[]; ver
                     { row.map( ( id ) => {
                         const entry = byValue.get( id )!;
 
+                        // The override is stored against the element that draws the button, which
+                        // is what the catalogue carries alongside the id - so the two join here
+                        // without either side having to know the other's vocabulary.
+                        const override = entry.element ? elementOverrides[ entry.element ] : undefined;
+
+                        const label = override?.label ?? entry.label;
+                        const emoji = override?.emoji ?? entry.emoji;
+
                         return (
                             <span
                                 key={ id }
-                                title={ entry.label }
+                                title={ label }
                                 className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded
                                     bg-surface-elevated border border-border text-xs text-text-primary"
                             >
-                                <ButtonArtwork emoji={ entry.emoji } label={ entry.label } />
-                                { entry.label }
+                                <ButtonArtwork emoji={ emoji } label={ label } />
+                                { label }
                             </span>
                         );
                     } ) }

@@ -13,7 +13,7 @@ import {
     DYNAMIC_CHANNEL_COMPONENT as DYNAMIC_CHANNEL_COMPONENTS,
     V2_ELEMENT_TO_V3_BUTTON_ID,
     isV2Version
-} from "@vertix.gg/utils/src/button-ids";
+} from "@vertix.gg/definitions/src/button-ids";
 
 import type { SheetSourceOption, SheetTile } from "@vertix.gg/utils/src/button-sheet-svg";
 

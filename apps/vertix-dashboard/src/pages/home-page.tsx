@@ -5,6 +5,8 @@ import { Navigate } from "react-router-dom";
 
 import { Server, Users, Radio, Layers, Activity, Hash, Gauge } from "lucide-react";
 
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
 import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/global-stats-query";
 import { GuildStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-stats-query";
 import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/home/query/guild-details-query";
@@ -320,7 +322,7 @@ export function HomePage() {
         } )
     );
 
-    if ( authState.selectedGuild?.id === "__default__" ) {
+    if ( authState.selectedGuild?.id === DEFAULT_CUSTOMIZATION_GUILD_ID ) {
         return <Navigate to="/interface-editor" replace />;
     }
 

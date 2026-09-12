@@ -4,6 +4,8 @@ import { create } from "zustand";
 import zCore from "@zenflux/core";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
 import { AppMode, useModeStore } from "./use-mode-store";
 import { useLanguageStore } from "./use-language-store";
 
@@ -130,7 +132,7 @@ export function useEditMode(): UseEditModeReturn {
 
         try {
             const queryModule = getQueryModule( CustomizationQuery );
-            const isDefault = guildIdToLoad === "__default__";
+            const isDefault = guildIdToLoad === DEFAULT_CUSTOMIZATION_GUILD_ID;
             const data = await queryModule.request<CustomizationData>(
                 isDefault ? "Dashboard/Customization/GetDefault" : "Dashboard/Customization/GetGuild",
                 isDefault ? {} : { guildId: guildIdToLoad }
@@ -211,7 +213,7 @@ export function useEditMode(): UseEditModeReturn {
         try {
             logger.debug( saveComponentCustomization, "Saving via query module", { guildId, ...target, languageCode: currentLanguage } );
             const queryModule = getQueryModule( CustomizationQuery );
-            const isDefault = guildId === "__default__";
+            const isDefault = guildId === DEFAULT_CUSTOMIZATION_GUILD_ID;
             const updated = await queryModule.request<CustomizationData>(
                 isDefault ? "Dashboard/Customization/UpdateDefaultComponent" : "Dashboard/Customization/UpdateComponent",
                 isDefault

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { BUTTON_ROW_LIMITS, joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
-import { isV2Version, toV2ButtonIds, toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
+import { isV2Version, toV2ButtonIds, toV3ButtonIds } from "@vertix.gg/definitions/src/button-ids";
 
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";

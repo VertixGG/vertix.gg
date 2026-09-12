@@ -402,6 +402,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                                         <ButtonsSummary
                                                             selected={ settings?.dynamicChannelButtonsTemplate ?? [] }
                                                             version={ master.version }
+                                                            masterChannelId={ master.channelId }
                                                         />
                                                         <Link
                                                             to={ dynamicChannelEditorLink( master.id, master.version ) }

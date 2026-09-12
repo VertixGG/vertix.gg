@@ -2,7 +2,7 @@ import zCore from "@zenflux/core";
 import { CommandBase } from "@zenflux/react-commander/command-base";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
-import { ELEMENT_OVERRIDE_STRING_FIELDS } from "@vertix.gg/definitions/src/ui-customization-definitions";
+import { ELEMENT_OVERRIDE_STRING_FIELDS , DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
@@ -554,7 +554,7 @@ export class SaveNodeChangesCommand extends CommandBase<FlowEditorState> {
 
         const selectedLanguage = useLanguageStore.getState().selectedLanguage;
         const queryModule = getQueryModule( CustomizationQuery );
-        const isDefault = guildId === "__default__";
+        const isDefault = guildId === DEFAULT_CUSTOMIZATION_GUILD_ID;
 
         // The default layer sits under every guild, so it is not something one guild's generator
         // can narrow - a generator belongs to a guild, and the layer beneath them all does not.

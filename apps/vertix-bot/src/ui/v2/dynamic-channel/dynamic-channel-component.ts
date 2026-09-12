@@ -1,11 +1,10 @@
 import { BUTTON_ROW_LIMITS, toRows } from "@vertix.gg/utils/src/button-rows";
 
-import { isV2ButtonEntry } from "@vertix.gg/utils/src/button-ids";
+import { BUTTONS_PER_ROW, isV2ButtonEntry } from "@vertix.gg/definitions/src/button-ids";
 
 import { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
 
 import {
-    UI_ELEMENTS_DEFAULT_MAX_PER_ROW,
     UI_ELEMENTS_DEPTH,
     UIInstancesTypes
 } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -35,6 +34,15 @@ export class DynamicChannelComponent extends UIComponentBase {
 
     public static getDefaultElementsGroup() {
         return "VertixBot/UI-V2/DynamicChannelElementsGroup";
+    }
+
+    /**
+     * Stated rather than left to the shared default, so the exporter bakes the same width this
+     * prints at and the dashboard reads it from the same place - three readers of one number that
+     * used to be three numbers.
+     */
+    public static getMaxElementsPerRow(): number {
+        return BUTTONS_PER_ROW.V2;
     }
 
     /** The order this generator's buttons were arranged in, for `getSchemaInternal()` below. */
@@ -155,7 +163,7 @@ export class DynamicChannelComponent extends UIComponentBase {
         schema.entities.elements = toRows(
             ordered,
             breaks,
-            breaks.length ? BUTTON_ROW_LIMITS.MAX_PER_ROW : UI_ELEMENTS_DEFAULT_MAX_PER_ROW
+            breaks.length ? BUTTON_ROW_LIMITS.MAX_PER_ROW : BUTTONS_PER_ROW.V2
         ) as any;
 
         return schema;

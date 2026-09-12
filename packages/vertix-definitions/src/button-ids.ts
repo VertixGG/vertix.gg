@@ -9,70 +9,105 @@
  * per reader is how they end up disagreeing about what a generator carries.
  */
 
-/** The interface version a generator was set up with, as it is stored on the channel row. */
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
+
+/**
+ * The interface version a generator was set up with, as it is stored on the channel row.
+ *
+ * Taken from `version.ts` rather than written out again. Spelled here as literals, the two said
+ * the same thing in two places, and a version string that disagrees with the one the row was
+ * written under matches nothing at all.
+ */
 export const UI_VERSION = {
-    V2: "0.0.0.2",
-    V3: "0.0.0.3"
+    V2: VERSION_UI_V2,
+    V3: VERSION_UI_V3
 } as const;
 
 /**
- * The v3 slug each v2 button number means.
+ * Every button v2 carries: the element that draws it, the number it answers to, and the shared id
+ * it is known by everywhere else.
  *
- * The numbers are `getId()` on v2's own primary-message group, read off the buttons themselves
- * rather than assumed: 7 is Claim and 12 is Transfer, which an earlier copy of this map had the
- * wrong way round while dropping 12 and 13 entirely - so a v2 generator listed a button it does
- * not carry and hid two it does.
+ * One table rather than the two maps this used to be. The two were a hand written join of three
+ * facts the button classes already own - `getName()` and `getId()` on the v2 button, `getId()` on
+ * the v3 one - and being written twice they could disagree, which they did: one copy had 7 and 12
+ * the wrong way round and dropped 12 and 13 entirely, so a v2 generator listed a button it does
+ * not carry and hid two it does. Spelled once, that particular mistake cannot be made.
  *
- * Not a bijection: v3 has buttons v2 never carried, and v2 draws privacy as two buttons - state and
- * visibility - where v3 draws one. Those two keep separate ids here rather than both reading as
+ * The numbers are read off the buttons themselves rather than assumed, and `button-ids.spec.ts`
+ * holds this table against them, so a renamed element or a renumbered button fails a test here
+ * instead of quietly matching nothing at runtime.
+ *
+ * Not a bijection with v3: it has buttons v2 never carried, and v2 draws privacy as two buttons -
+ * state and visibility - where v3 draws one. Those keep separate ids rather than both reading as
  * `privacy`: a generator arranges them independently, and collapsing them left the second one
- * unaddressable, so it could not be saved into a set at all.
+ * unaddressable, so it could not be saved into a set at all. `visibility` is therefore a v2 only
+ * id, and reads one way only.
  *
- * `visibility` is therefore a v2 only id. It reads one way only, and a number with no entry is a
- * button v3 dropped rather than renamed. Ids 8-11 and 14 are v2's permission menus, which are not
- * buttons a generator can choose, so they are deliberately absent.
+ * Ids 8-11 and 14 are v2's permission menus, which are not buttons a generator can choose, so they
+ * are deliberately absent.
  */
-export const V2_TO_V3_BUTTON_IDS: Readonly<Record<string, string>> = {
-    "0": "rename",
-    "1": "limit",
-    "2": "clear-chat",
-    "3": "privacy",
-    "4": "visibility",
-    "5": "access",
-    "6": "rest-channel",
-    "7": "claim-button",
-    "12": "transfer",
-    "13": "status"
-};
+export const V2_BUTTONS = [
+    { element: "VertixBot/UI-V2/DynamicChannelMetaRenameButton", id: "0", shared: "rename" },
+    { element: "VertixBot/UI-V2/DynamicChannelMetaLimitButton", id: "1", shared: "limit" },
+    { element: "VertixBot/UI-V2/DynamicChannelMetaClearChatButton", id: "2", shared: "clear-chat" },
+    { element: "VertixBot/UI-V2/DynamicChannelPermissionsStateButton", id: "3", shared: "privacy" },
+    { element: "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton", id: "4", shared: "visibility" },
+    { element: "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton", id: "5", shared: "access" },
+    { element: "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", id: "6", shared: "rest-channel" },
+    { element: "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton", id: "7", shared: "claim-button" },
+    { element: "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", id: "12", shared: "transfer" },
+    { element: "VertixBot/UI-V2/DynamicChannelMetaStatusButton", id: "13", shared: "status" }
+] as const;
 
 /**
- * The v3 slug each v2 button element draws.
+ * The v3 slug each v2 button number means, derived from the table above.
+ *
+ * A number with no entry is a button v3 dropped rather than renamed.
+ */
+export const V2_TO_V3_BUTTON_IDS: Readonly<Record<string, string>> = Object.freeze(
+    Object.fromEntries( V2_BUTTONS.map( ( button ) => [ button.id, button.shared ] ) )
+);
+
+/**
+ * The v3 slug each v2 button element draws, derived from the same table.
  *
  * The ui export carries an element's name, label and emoji but not the number it answers to, so
- * the catalogue joins on the name where a stored set joins on the number. Same ten buttons as the
- * map above, addressed the other way.
- *
- * This is what lets a v2 generator be described in v3 slugs throughout - one vocabulary for the
- * set, with each version supplying its own artwork for it.
+ * the catalogue joins on the name where a stored set joins on the number. Same ten buttons,
+ * addressed the other way - and now provably the same ten, rather than two lists that had to be
+ * kept in step by hand.
  */
-export const V2_ELEMENT_TO_V3_BUTTON_ID: Readonly<Record<string, string>> = {
-    "VertixBot/UI-V2/DynamicChannelMetaRenameButton": "rename",
-    "VertixBot/UI-V2/DynamicChannelMetaLimitButton": "limit",
-    "VertixBot/UI-V2/DynamicChannelMetaClearChatButton": "clear-chat",
-    "VertixBot/UI-V2/DynamicChannelPermissionsStateButton": "privacy",
-    "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton": "visibility",
-    "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton": "access",
-    "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton": "rest-channel",
-    "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": "claim-button",
-    "VertixBot/UI-V2/DynamicChannelTransferOwnerButton": "transfer",
-    "VertixBot/UI-V2/DynamicChannelMetaStatusButton": "status"
-};
+export const V2_ELEMENT_TO_V3_BUTTON_ID: Readonly<Record<string, string>> = Object.freeze(
+    Object.fromEntries( V2_BUTTONS.map( ( button ) => [ button.element, button.shared ] ) )
+);
 
 /** The component whose elements are the buttons of each version's dynamic channel. */
 export const DYNAMIC_CHANNEL_COMPONENT = {
     V2: "VertixBot/UI-V2/DynamicChannel",
     V3: "VertixBot/UI-V3/DynamicChannel"
 } as const;
+
+/**
+ * How many buttons a version prints in a row when the generator arranged none.
+ *
+ * Discord allows five, and v3 uses all five; v2 has always drawn four and its exported schema is
+ * baked at four, so a generator that arranged nothing goes on printing the rows it always did.
+ *
+ * Here rather than in whichever reader needed it first, because three of them have to agree: the
+ * component that prints the row, the exporter that bakes it into the schema, and the dashboard
+ * that tells an admin what their channels look like. The dashboard cut every version at five, so
+ * a v2 generator's settings showed rows of five beside channels drawing rows of four.
+ */
+export const BUTTONS_PER_ROW = {
+    V2: 4,
+    V3: 5
+} as const;
+
+/**
+ * Function buttonsPerRow() :: The row width this version draws at.
+ */
+export function buttonsPerRow( version: string | null | undefined ): number {
+    return isV2Version( version ) ? BUTTONS_PER_ROW.V2 : BUTTONS_PER_ROW.V3;
+}
 
 /**
  * Function isV2ButtonEntry() :: Whether one stored entry names this v2 button.

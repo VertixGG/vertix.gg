@@ -2,6 +2,8 @@ import { PermissionsBitField } from "discord.js";
 
 import { PermissionFlagsBits } from "discord-api-types/v10";
 
+import { BUTTONS_PER_ROW } from "@vertix.gg/definitions/src/button-ids";
+
 import type { Guild, VoiceState } from "discord.js";
 
 import type { ChannelState, ChannelVisibilityState } from "@vertix.gg/definitions/src/dynamic-channel-definitions";
@@ -101,7 +103,11 @@ export interface IDynamicResetChannelResult {
  * Read by the component that lays the buttons out and by the legend drawn above them, which
  * has to wrap the same way to be a legend at all.
  */
-export const DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW = 5;
+/**
+ * Kept as a name here because it is used all over the v3 interface, but the number itself comes
+ * from the one place both versions and the dashboard read it from.
+ */
+export const DYNAMIC_CHANNEL_MAX_ELEMENTS_PER_ROW = BUTTONS_PER_ROW.V3;
 
 export const DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS = new PermissionsBitField();
 

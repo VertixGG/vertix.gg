@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { create } from "zustand";
 
-import { UI_VERSION } from "@vertix.gg/utils/src/button-ids";
+import { UI_VERSION } from "@vertix.gg/definitions/src/button-ids";
 
 import { useEditorGenerator } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-generator";
 

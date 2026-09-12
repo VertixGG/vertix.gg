@@ -9,6 +9,8 @@ import { Layers, Radio, Loader2, Plus, RefreshCw, ChevronDown, AlertTriangle, X 
 
 import { DiscordButton } from "@vertix.gg/discord-ui/src";
 
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
 import {
     GENERATORS_COMMANDS,
     GENERATORS_INITIAL_STATE
@@ -381,7 +383,7 @@ export function GeneratorsPage() {
         );
     }
 
-    if ( authState.selectedGuild.id === "__default__" ) {
+    if ( authState.selectedGuild.id === DEFAULT_CUSTOMIZATION_GUILD_ID ) {
         return <Navigate to="/interface-editor" replace />;
     }
 

@@ -8,7 +8,9 @@ import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
 import { BUTTON_ROW_LIMITS, splitTemplate, toRowBreaks } from "@vertix.gg/utils/src/button-rows";
-import { toV3ButtonIds } from "@vertix.gg/utils/src/button-ids";
+import { toV3ButtonIds } from "@vertix.gg/definitions/src/button-ids";
+
+import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
@@ -91,7 +93,7 @@ export function FlowViewer() {
 
         // Fetch customizations when guild changes or when refresh is triggered
         const queryModule = getQueryModule( CustomizationQuery );
-        const isDefault = guildId === "__default__";
+        const isDefault = guildId === DEFAULT_CUSTOMIZATION_GUILD_ID;
         queryModule.request<CustomizationData>(
             isDefault ? "Dashboard/Customization/GetDefault" : "Dashboard/Customization/GetGuild",
             isDefault ? {} : { guildId }

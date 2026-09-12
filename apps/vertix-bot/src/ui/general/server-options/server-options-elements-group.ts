@@ -7,11 +7,13 @@ import { SetupTimingsEditButton } from "@vertix.gg/bot/src/ui/general/setup/elem
 import { VoiceRoleMenu } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-menu";
 import { VerifiedRolesMenu } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-menu";
 import { StaffRolesMenu } from "@vertix.gg/bot/src/ui/general/staff-roles/staff-roles-menu";
+import { ClearRolesSelectMenu } from "@vertix.gg/bot/src/ui/general/server-options/clear-roles-select-menu";
 
 const ServerOptionsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/ServerOptionsElementsGroup" )
     .addRow( [ VoiceRoleMenu ] )
     .addRow( [ VerifiedRolesMenu ] )
     .addRow( [ StaffRolesMenu ] )
+    .addRow( [ ClearRolesSelectMenu ] )
     .addRow( [ BadwordsEditButton, SetupTimingsEditButton, DoneButton ] )
     .build();
 

@@ -675,6 +675,23 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
+        "content": {
+          "placeholder": "🧹 ∙ Clear a role setting",
+          "selectOptions": [
+            {
+              "label": "Clear Voice Role"
+            },
+            {
+              "label": "Clear Verified Roles"
+            },
+            {
+              "label": "Clear Staff Roles"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-General/VoiceRoleMenu",
         "content": {
           "placeholder": "🎙️ ∙ Select Voice Role"

@@ -675,6 +675,23 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
+        "content": {
+          "placeholder": "🧹 ∙ ロール設定をクリア",
+          "selectOptions": [
+            {
+              "label": "ボイスロールをクリア"
+            },
+            {
+              "label": "認証済みロールをクリア"
+            },
+            {
+              "label": "スタッフロールをクリア"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-General/VoiceRoleMenu",
         "content": {
           "placeholder": "🎙️ ∙ ボイスロールを選択"

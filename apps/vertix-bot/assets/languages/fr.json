@@ -675,6 +675,23 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
+        "content": {
+          "placeholder": "🧹 ∙ Vider un réglage de rôles",
+          "selectOptions": [
+            {
+              "label": "Vider le rôle vocal"
+            },
+            {
+              "label": "Vider les rôles vérifiés"
+            },
+            {
+              "label": "Vider les rôles du staff"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-General/VoiceRoleMenu",
         "content": {
           "placeholder": "🎙️ ∙ Sélectionner le rôle vocal"

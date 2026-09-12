@@ -675,6 +675,23 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
+        "content": {
+          "placeholder": "🧹 ∙ Καθαρισμός ρύθμισης ρόλων",
+          "selectOptions": [
+            {
+              "label": "Καθαρισμός ρόλου φωνής"
+            },
+            {
+              "label": "Καθαρισμός επαληθευμένων ρόλων"
+            },
+            {
+              "label": "Καθαρισμός ρόλων προσωπικού"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-General/VoiceRoleMenu",
         "content": {
           "placeholder": "🎙️ ∙ Επιλέξτε ρόλο φωνής"

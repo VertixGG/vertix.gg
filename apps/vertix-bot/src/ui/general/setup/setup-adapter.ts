@@ -50,6 +50,12 @@ import { ServerOptionsEditButton } from "@vertix.gg/bot/src/ui/general/server-op
 import { ServerOptionsElementsGroup } from "@vertix.gg/bot/src/ui/general/server-options/server-options-elements-group";
 import { warnOnUnassignableVoiceRole } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-utils";
 
+import {
+    CLEAR_STAFF_ROLES,
+    CLEAR_VERIFIED_ROLES,
+    CLEAR_VOICE_ROLE
+} from "@vertix.gg/bot/src/ui/general/server-options/clear-roles-select-menu";
+
 import { LanguageChooseButton } from "@vertix.gg/bot/src/ui/general/language/language-choose-button";
 
 import { BadwordsModal } from "@vertix.gg/bot/src/ui/general/badwords/badwords-modal";
@@ -480,6 +486,43 @@ async function onGuildStaffRolesSelected(
         .applyGuildStaffRoles( interaction.guildId, [ ...interaction.values ].sort() );
 
     await context.editReplyWithStep( interaction, "VertixBot/UI-General/SetupServerOptions" );
+}
+
+/**
+ * Function onClearRolesSelected() :: Empties one of the three role settings.
+ *
+ * Each is cleared by handing its own setter the empty answer it already understands, so clearing
+ * goes down the same path as choosing - an emptied verified list falls back to `@everyone`, and the
+ * channels that were following it move with it.
+ */
+async function onClearRolesSelected(
+    context: IExecutionAdapterContext<UIDefaultStringSelectMenuChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+) {
+    // Clearing an audience rewrites the overwrites of every channel that followed it, which is far
+    // more than the three seconds an interaction has to be acknowledged in.
+    await context.updateInteractionDefer( interaction );
+
+    const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
+
+    switch ( interaction.values.at( 0 ) ) {
+        case CLEAR_VOICE_ROLE:
+            await GuildDataManager.$.setVoiceRoleId( interaction.guildId, null );
+            break;
+
+        case CLEAR_VERIFIED_ROLES:
+            await dynamicChannelService.applyGuildVerifiedRoles( interaction.guildId, [] );
+            break;
+
+        case CLEAR_STAFF_ROLES:
+            await dynamicChannelService.applyGuildStaffRoles( interaction.guildId, [] );
+            break;
+
+        default:
+            return;
+    }
+
+    await context.editReplyWithStep( interaction, SETUP_SERVER_OPTIONS_STEP );
 }
 
 async function onEditBadwordsClicked(
@@ -919,6 +962,7 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             .addTransition( "VoiceRoleChanged", { from: "ServerOptions", to: "ServerOptions" } )
             .addTransition( "GuildVerifiedRolesChanged", { from: "ServerOptions", to: "ServerOptions" } )
             .addTransition( "GuildStaffRolesChanged", { from: "ServerOptions", to: "ServerOptions" } )
+            .addTransition( "ClearRolesSelected", { from: "ServerOptions", to: "ServerOptions" } )
             .addTransition( "ServerOptionsDone", { from: "ServerOptions", to: "Initial" } )
             .addTransition( "SubmitScalingConfig", { from: "Initial", to: "Initial" } )
             .addTransition( "OpenClaim", { from: "ServerOptions", to: "Claim" } )
@@ -1043,6 +1087,13 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 "GuildStaffRolesChanged",
                 async( context, interaction ) => {
                     await onGuildStaffRolesSelected( context, interaction );
+                }
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-General/ClearRolesSelectMenu",
+                "ClearRolesSelected",
+                async( context, interaction ) => {
+                    await onClearRolesSelected( context, interaction );
                 }
             )
             .bindButton<UIDefaultButtonChannelTextInteraction>(

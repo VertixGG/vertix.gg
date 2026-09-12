@@ -675,6 +675,23 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
+        "content": {
+          "placeholder": "🧹 ∙ Очистить настройку ролей",
+          "selectOptions": [
+            {
+              "label": "Очистить голосовую роль"
+            },
+            {
+              "label": "Очистить проверенные роли"
+            },
+            {
+              "label": "Очистить роли персонала"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-General/VoiceRoleMenu",
         "content": {
           "placeholder": "🎙️ ∙ Выберите голосовую роль"

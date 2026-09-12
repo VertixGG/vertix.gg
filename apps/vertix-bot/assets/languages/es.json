@@ -675,6 +675,23 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
+        "content": {
+          "placeholder": "🧹 ∙ Vaciar una configuración de roles",
+          "selectOptions": [
+            {
+              "label": "Vaciar rol de voz"
+            },
+            {
+              "label": "Vaciar roles verificados"
+            },
+            {
+              "label": "Vaciar roles del staff"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-General/VoiceRoleMenu",
         "content": {
           "placeholder": "🎙️ ∙ Seleccionar rol de voz"

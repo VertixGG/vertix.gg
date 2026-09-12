@@ -675,6 +675,23 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/ClearRolesSelectMenu",
+        "content": {
+          "placeholder": "🧹 ∙ Rollen-Einstellung leeren",
+          "selectOptions": [
+            {
+              "label": "Sprachrolle leeren"
+            },
+            {
+              "label": "Verifizierte Rollen leeren"
+            },
+            {
+              "label": "Team-Rollen leeren"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-General/VoiceRoleMenu",
         "content": {
           "placeholder": "🎙️ ∙ Sprachrolle auswählen"

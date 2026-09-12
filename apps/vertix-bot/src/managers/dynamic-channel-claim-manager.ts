@@ -20,6 +20,8 @@ import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-c
 
 import type { TClaimTimings } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
+import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
+
 import type { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
 import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
@@ -680,10 +682,22 @@ export class DynamicChannelClaimManager extends InitializeBase {
         DynamicChannelVoteManager.$.addCandidate( interaction );
     }
 
+    /**
+     * Function resolveCustomId() :: A custom id as the entities behind it are named.
+     *
+     * Every UI module hashes its custom ids part by part, so what arrives on an interaction reads
+     * `<hash>:<hash>:<hash>` - measuring that against an entity's own name matches nothing, which
+     * left every click on a running vote unanswered. An id that was never hashed comes back
+     * untouched, so this is safe whichever strategy the module chose.
+     */
+    private resolveCustomId( customId: string ) {
+        return ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent( customId );
+    }
+
     private async handleVoteRequestActiveState( interaction: IVoteDefaultComponentInteraction ) {
         this.debugger.log( this.handleVoteRequestActiveState, "customId:", interaction.customId );
 
-        const customIdParts = interaction.customId.split( UI_CUSTOM_ID_SEPARATOR, 3 );
+        const customIdParts = this.resolveCustomId( interaction.customId ).split( UI_CUSTOM_ID_SEPARATOR, 3 );
 
         switch ( customIdParts[ 1 ] ) {
             case this.getClaimVoteStepInEntity():

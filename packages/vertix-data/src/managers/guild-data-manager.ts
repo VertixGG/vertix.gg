@@ -43,6 +43,15 @@ interface IGuildSettings {
 }
 
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
+    /**
+     * What each guild chose for itself, remembered including when it chose nothing.
+     *
+     * `getData()` caches only rows that exist, so a guild that never set its own timings - which
+     * is every guild until someone opens the screen - reached the database on every read. These
+     * are read while answering an interaction, where the budget is three seconds in total.
+     */
+    private timingsOverridesCache: Map<string, TGuildTimingsOverrides> = new Map();
+
     public static getName() {
         return "VertixData/Managers/GuildData";
     }
@@ -260,6 +269,12 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
      * Which is what the interface shows as set, and what an empty field there clears.
      */
     public async getTimingsOverrides( guildId: string ): Promise<TGuildTimingsOverrides> {
+        const cached = this.timingsOverridesCache.get( guildId );
+
+        if ( cached ) {
+            return cached;
+        }
+
         const result = await this.getData(
             {
                 ownerId: guildId,
@@ -270,7 +285,11 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             true
         );
 
-        return this.readTimingsOverrides( result?.object ?? null );
+        const overrides = this.readTimingsOverrides( result?.object ?? null );
+
+        this.timingsOverridesCache.set( guildId, overrides );
+
+        return overrides;
     }
 
     /**
@@ -307,6 +326,8 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             );
         }
 
+        this.timingsOverridesCache.delete( guildId );
+
         if ( shouldAdminLog ) {
             this.logger.admin(
                 this.setTimings,
@@ -328,6 +349,8 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
 
     public removeFromCache( ownerId: string ) {
         this.logger.debug( this.removeFromCache, `Removing guild data from cache for ownerId: '${ ownerId }'` );
+
+        this.timingsOverridesCache.delete( ownerId );
 
         this.deleteCacheWithPrefix( ownerId );
     }

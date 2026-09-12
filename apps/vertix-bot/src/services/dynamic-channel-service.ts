@@ -13,8 +13,6 @@ import { gToken } from "@vertix.gg/base/src/discord/login";
 
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
-import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
-
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
 import { UserModel } from "@vertix.gg/data/src/models/user-model";
@@ -50,6 +48,8 @@ import {
 import { GuildCustomizationManager } from "@vertix.gg/data/src/managers/guild-customization-manager";
 
 import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
+import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
 
@@ -1047,6 +1047,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 } );
             }
 
+            // The generator itself is a channel of the audience's: left visible, anyone outside it
+            // could still walk in and have a channel built for them.
+            if ( ! currentRoles.includes( masterChannel.guild.roles.everyone.id ) ) {
+                await PermissionsManager.$.editChannelEveryoneOutsideAudience( masterChannel );
+            }
+
             // The category is a template as much as a container - discord copies its overwrites
             // onto channels created inside it without their own - so it follows the audience too.
             const masterCategory = masterChannel.parent;
@@ -1064,11 +1070,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                     } );
                 }
 
-                await PermissionsManager.$.editChannelRolesPermissions(
-                    masterCategory,
-                    [ masterChannel.guild.roles.everyone.id ],
-                    { ViewChannel: currentRoles.includes( masterChannel.guild.roles.everyone.id ) }
-                );
+                if ( currentRoles.includes( masterChannel.guild.roles.everyone.id ) ) {
+                    await PermissionsManager.$.editChannelRolesPermissions(
+                        masterCategory,
+                        [ masterChannel.guild.roles.everyone.id ],
+                        { ViewChannel: true }
+                    );
+                } else {
+                    await PermissionsManager.$.editChannelEveryoneOutsideAudience( masterCategory );
+                }
             }
         }
 
@@ -1107,14 +1117,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             // An audience narrower than `@everyone` keeps `@everyone` out of the channel entirely,
             // whatever the state is, so narrowing the list must not hand the channel to everyone.
             if ( ! currentRoles.includes( channel.guild.roles.everyone.id ) ) {
-                await PermissionsManager.$.editChannelRolesPermissions(
-                    channel,
-                    [ channel.guild.roles.everyone.id ],
-                    {
-                        Connect: false,
-                        ViewChannel: false
-                    }
-                );
+                await PermissionsManager.$.editChannelEveryoneOutsideAudience( channel );
             }
         }
     }
@@ -1385,7 +1388,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
      * list too - otherwise editing the roles leaves a panel visible to people who can no longer see
      * a single channel it controls, or hidden from the audience that just gained them.
      *
-     * Only `ViewChannel` is touched; the panel's read only deny list is left alone.
+     * Only the audience's `ViewChannel` is touched. `@everyone` goes through the same shape as
+     * every other channel of a narrower audience, which re-asserts the `SendMessages` deny the
+     * panel is created with rather than changing it - the rest of its read only deny list is
+     * left alone.
      */
     private async updateControlChannelVerifiedRoles(
         guildId: string,
@@ -1432,11 +1438,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         }
 
         // `@everyone` sees the panel only while it is itself the audience.
-        await controlChannel.permissionOverwrites
-            .edit( everyoneRoleId, { ViewChannel: currentRoles.includes( everyoneRoleId ) } )
-            .catch( ( error ) => {
-                this.logger.error( this.updateControlChannelVerifiedRoles, "", error );
-            } );
+        if ( currentRoles.includes( everyoneRoleId ) ) {
+            await controlChannel.permissionOverwrites
+                .edit( everyoneRoleId, { ViewChannel: true } )
+                .catch( ( error ) => {
+                    this.logger.error( this.updateControlChannelVerifiedRoles, "", error );
+                } );
+        } else {
+            await PermissionsManager.$.editChannelEveryoneOutsideAudience( controlChannel );
+        }
     }
 
     public async getChannelState( channel: VoiceChannel ): Promise<ChannelState> {

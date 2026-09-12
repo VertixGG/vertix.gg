@@ -382,16 +382,28 @@ export class PermissionsManager extends InitializeBase {
         }
 
         // Reaching here means the audience is narrower than `@everyone`, so `@everyone` is not part
-        // of this channel at all and stays denied whatever the state is - "public" means public to
-        // the audience. Clearing it on a grant would hand the channel back to everyone and undo the
-        // reason a narrower audience was chosen.
-        const everyonePermissions: PermissionOverwriteOptions = {};
+        // of this channel at all and stays out of it whatever the state is - "public" means public
+        // to the audience. Clearing it on a grant would hand the channel back to everyone and undo
+        // the reason a narrower audience was chosen.
+        await this.editChannelEveryoneOutsideAudience( channel );
+    }
 
-        for ( const permission of Object.keys( permissions ) as ( keyof PermissionOverwriteOptions )[] ) {
-            everyonePermissions[ permission ] = false;
-        }
-
-        await this.editChannelRolesPermissions( channel, [ everyoneRoleId ], everyonePermissions );
+    /**
+     * Function editChannelEveryoneOutsideAudience() :: Puts `@everyone` outside a channel kept for
+     * a narrower audience.
+     *
+     * `ViewChannel` and `SendMessages` are denied: such a channel should be absent from the list of
+     * anyone outside the audience, and silent to them if they reach it another way. Everything else
+     * this bot writes is cleared rather than denied, so the state the channel is in says nothing
+     * about people who are not its audience in the first place - and an overwrite an admin put here
+     * for reasons of their own is left where it is.
+     */
+    public async editChannelEveryoneOutsideAudience( channel: GuildChannel ): Promise<void> {
+        await this.editChannelRolesPermissions( channel, [ channel.guild.roles.everyone.id ], {
+            Connect: null,
+            ViewChannel: false,
+            SendMessages: false
+        } );
     }
 
     /**

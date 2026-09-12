@@ -1,0 +1,16 @@
+{
+    "mcpServers": {
+        "vertix-mcp": {
+            "command": "bun",
+            "args": [
+                "run",
+                "--bun",
+                "apps/vertix-mcp/src/index.ts"
+            ],
+            "env": {
+                "LOGGER_DISABLED": "true",
+                "VERTIX_MCP_READONLY": "false"
+            }
+        }
+    }
+}

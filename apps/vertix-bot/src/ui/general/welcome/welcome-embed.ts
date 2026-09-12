@@ -1,13 +1,13 @@
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 const WelcomeEmbed = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
     .setInstanceType( UIInstancesTypes.Static )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( "https://i.imgur.com/x8jMguN.gif" )
-    .setThumbnail( "https://voicechannels.online/assets/Robot-Dz6J42ZT.png" )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( "༄ Vertix is here, let's get started!" )
     .setDescription(
         "Welcome to Vertix, an incredible addition to your server!\n" +

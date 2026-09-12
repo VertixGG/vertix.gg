@@ -14,6 +14,8 @@ import { UIDataBase } from "@vertix.gg/gui/src/bases/ui-data-base";
 
 import { ChannelType } from "discord.js";
 
+import { splitTemplate } from "@vertix.gg/utils/src/button-rows";
+
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
@@ -157,16 +159,18 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
                 ?? ( templateButtons?.length ? templateButtons : configV3.settings.dynamicChannelButtonsTemplate );
 
             // Left in the order it was saved in, which is the order the channel draws its buttons
-            // and its legend in. `filter()` hands back a fresh array, so the one living inside the
-            // cached settings row is not the one that travels on args.
-            args.dynamicChannelButtonsTemplate = resolvedButtons.filter(
+            // and its legend in. The stored list carries its own row divisions, so those are taken
+            // out before the ids are looked up - a separator is not a button.
+            const stored = splitTemplate( resolvedButtons );
+
+            args.dynamicChannelButtonsTemplate = stored.ids.filter(
                 ( id ) => undefined !== DynamicChannelPrimaryMessageElementsGroup.getById( id )
             );
 
             // The generator's own arrangement, which the component re-fits to whatever this
             // channel draws. One arrangement serves the role sets too - they are narrower than the
             // default set rather than arranged differently.
-            args.dynamicChannelButtonsRowBreaks = masterChannelSettings?.dynamicChannelButtonsRowBreaks ?? [];
+            args.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
 
             args.masterChannelId = masterChannelDB.channelId;
             args.dynamicChannelNameTemplate = masterChannelSettings?.dynamicChannelNameTemplate

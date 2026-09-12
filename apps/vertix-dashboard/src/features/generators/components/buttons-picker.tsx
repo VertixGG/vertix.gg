@@ -4,7 +4,7 @@ import { GripVertical } from "lucide-react";
 
 import { useCustomEmojiSrc } from "@vertix.gg/discord-ui";
 
-import { BUTTON_ROW_LIMITS, toRows } from "@vertix.gg/utils/src/button-rows";
+import { BUTTON_ROW_LIMITS, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
@@ -160,18 +160,21 @@ function isButtonDrag( event: DragEvent<HTMLElement> ): boolean {
  * settings costs nothing extra. Drawn rather than listed as text because the order is part of the
  * setting now, and a row of artwork in order is the thing a channel owner will actually see.
  */
-export function ButtonsSummary( { selected, rowBreaks }: { selected: string[]; rowBreaks?: number[] } ) {
+export function ButtonsSummary( { selected }: { selected: string[] } ) {
     const { catalogue, isFailed } = useButtonCatalogue();
+
+    // The stored list carries its own row divisions, so the set and the rows come out together.
+    const { ids, rowBreaks } = splitTemplate( selected );
 
     // An empty template is not an empty interface: the bot falls back to every button, both in
     // `master-channel-config-v3` and when it resolves a channel's args.
-    if ( ! selected.length ) {
+    if ( ! ids.length ) {
         return <span className="text-text-primary">Every button</span>;
     }
 
     if ( isFailed || ! catalogue.length ) {
-        // The ids are still worth showing when their labels cannot be read.
-        return <span className="text-text-primary">{ selected.length } selected</span>;
+        // The count is still worth showing when the labels cannot be read.
+        return <span className="text-text-primary">{ ids.length } selected</span>;
     }
 
     const byValue = new Map( catalogue.map( ( entry ) => [ entry.value, entry ] ) );
@@ -179,7 +182,7 @@ export function ButtonsSummary( { selected, rowBreaks }: { selected: string[]; r
     // In the rows the interface draws them in, so reading the settings shows the arrangement
     // rather than a sequence that has to be imagined back into rows.
     const rows = toRows(
-        selected.filter( ( id ) => byValue.has( id ) ),
+        ids.filter( ( id ) => byValue.has( id ) ),
         rowBreaks,
         BUTTON_ROW_LIMITS.MAX_PER_ROW,
         BUTTON_ROW_LIMITS.MAX_ROWS

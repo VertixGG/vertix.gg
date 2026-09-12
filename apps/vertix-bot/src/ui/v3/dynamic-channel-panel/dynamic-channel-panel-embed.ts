@@ -14,7 +14,8 @@ const vars = {
     separator: uiUtilsWrapAsTemplate( "separator" ),
     value: uiUtilsWrapAsTemplate( "value" ),
 
-    dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" )
+    dynamicChannelButtonsTemplate: uiUtilsWrapAsTemplate( "dynamicChannelButtonsTemplate" ),
+    dynamicChannelButtonsRowBreaks: uiUtilsWrapAsTemplate( "dynamicChannelButtonsRowBreaks" )
 };
 
 const DynamicChannelPanelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
@@ -23,7 +24,10 @@ const DynamicChannelPanelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
-    .setImage( () => getButtonSheetImageUrl( vars.dynamicChannelButtonsTemplate ) )
+    .setImage( () => getButtonSheetImageUrl(
+        vars.dynamicChannelButtonsTemplate,
+        vars.dynamicChannelButtonsRowBreaks
+    ) )
     .setTitle( () => "༄ Manage your Dynamic Channel" )
     .setDescription( () =>
         "Embrace the responsibility of overseeing your dynamic channel, " +
@@ -31,12 +35,19 @@ const DynamicChannelPanelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         "**Available Features:**\n\n"
     )
     .setLogic( ( args: UIArgs ) => ( {
-        dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
+        dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
+        dynamicChannelButtonsRowBreaks: args.dynamicChannelButtonsRowBreaks ?? []
     } ) )
     // Renders the buttons-template array as a comma-joined id list for the image
     // `items=` param. Empty `options` means `{value}` is the raw id.
     .setArrayOptions( () => ( {
         dynamicChannelButtonsTemplate: {
+            format: `${ vars.value }${ vars.separator }`,
+            separator: ",",
+            options: {}
+        },
+        // The row divisions, joined the same way, so the legend is cut where the buttons are.
+        dynamicChannelButtonsRowBreaks: {
             format: `${ vars.value }${ vars.separator }`,
             separator: ",",
             options: {}

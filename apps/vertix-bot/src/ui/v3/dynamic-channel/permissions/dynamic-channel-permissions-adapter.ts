@@ -2,12 +2,15 @@ import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-ch
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
+import { splitTemplate } from "@vertix.gg/utils/src/button-rows";
+
 import { DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS } from "@vertix.gg/bot/src/definitions/dynamic-channel";
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 import { DynamicChannelPermissionsComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/dynamic-channel-permissions-component";
 import {
     DynamicChannelPermissionsAccessButton,
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/permissions/elements";
+
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import type {
@@ -361,14 +364,15 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             // Left in the order it was saved in: this array is what orders the buttons and the
             // legend drawn above them, so sorting it here would throw away the arrangement an
             // admin made. A copy, since the buttons are rearranged per channel downstream.
-            args.dynamicChannelButtonsTemplate = templateButtons?.length
-                ? [ ...templateButtons ]
+            // The stored list carries its own row divisions, so the ids and the arrangement come
+            // out of the one array rather than from a second field beside it.
+            const stored = splitTemplate( templateButtons ?? [] );
+
+            args.dynamicChannelButtonsTemplate = stored.ids.length
+                ? stored.ids
                 : DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );
 
-            args.dynamicChannelButtonsRowBreaks = await MasterChannelDataManager.$.getChannelButtonsRowBreaks(
-                masterChannelDB,
-                true
-            ) ?? [];
+            args.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
 
             const accessButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(
                 DynamicChannelPermissionsAccessButton.getName()

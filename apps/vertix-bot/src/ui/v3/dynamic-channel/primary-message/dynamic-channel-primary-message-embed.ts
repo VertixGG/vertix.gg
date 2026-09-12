@@ -101,7 +101,10 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             description: args.description || configV3.data.constants.dynamicChannelPrimaryMessageDescription,
             region: args.region || vars.regionAutomatic,
             regionEmoji: DynamicChannelRegionButton.getEmoji(),
-            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate
+            dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
+            // Declared above and used by the image url, but a var is only filled from here - left
+            // out, the legend was drawn five to a row whatever the buttons below it did.
+            dynamicChannelButtonsRowBreaks: args.dynamicChannelButtonsRowBreaks ?? []
         };
 
         switch ( args.state ) {

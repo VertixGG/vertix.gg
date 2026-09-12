@@ -25,6 +25,25 @@
     --color-error: #ef4444;
 }
 
+/*
+ * A link that has to read as one.
+ *
+ * The shared reset paints every `a` with the colour around it, and it is unlayered - which beats a
+ * tailwind utility no matter how specific the utility is. So this says it here, at the same level,
+ * rather than losing a fight with the cascade.
+ */
+.link-accent {
+    color: var(--color-text-accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+}
+
+.link-accent:hover {
+    color: var(--color-accent-hover);
+}
+
 body {
     margin: 0;
     padding: 0;

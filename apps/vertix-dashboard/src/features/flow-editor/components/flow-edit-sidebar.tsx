@@ -1359,31 +1359,6 @@ export function FlowEditSidebar() {
                                     { arranged.error && (
                                         <p className="text-xs text-red-400 mb-0">{ arranged.error }</p>
                                     ) }
-
-                                    { arranged.isArranged && (
-                                        <div className="flex items-center gap-2 pt-1">
-                                            <button
-                                                type="button"
-                                                onClick={ arranged.save }
-                                                disabled={ ! arranged.hasChanges || arranged.isSaving }
-                                                className="px-2 py-1 rounded text-xs bg-blue-600 text-white
-                                                    hover:bg-blue-500 disabled:opacity-40 disabled:hover:bg-blue-600"
-                                            >
-                                                { arranged.isSaving ? "Saving..." : "Save rows" }
-                                            </button>
-
-                                            { arranged.hasChanges && (
-                                                <button
-                                                    type="button"
-                                                    onClick={ arranged.reset }
-                                                    disabled={ arranged.isSaving }
-                                                    className="text-xs text-zinc-400 hover:text-zinc-200"
-                                                >
-                                                    Reset
-                                                </button>
-                                            ) }
-                                        </div>
-                                    ) }
                                 </div>
                             </div>
                         ) }
@@ -1546,20 +1521,34 @@ export function FlowEditSidebar() {
 
             <div className="p-4 border-t border-zinc-700 space-y-3">
                 <div className="flex gap-2">
+                    { /* One Save for the screen: the wording and artwork the editor already saved,
+                         and the rows arranged beside them. Two buttons meant an admin could leave
+                         with half their work written. */ }
                     <button
-                        onClick={ () => saveNodeChanges.run( {} ) }
-                        disabled={ !state.hasUnsavedChanges }
+                        onClick={ () => {
+                            if ( state.hasUnsavedChanges ) {
+                                saveNodeChanges.run( {} );
+                            }
+
+                            if ( arranged.hasChanges ) {
+                                arranged.save();
+                            }
+                        } }
+                        disabled={ ( !state.hasUnsavedChanges && !arranged.hasChanges ) || arranged.isSaving }
                         className={ `flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors ${
-                            state.hasUnsavedChanges
+                            ( state.hasUnsavedChanges || arranged.hasChanges ) && !arranged.isSaving
                                 ? "bg-blue-600 hover:bg-blue-700 text-white"
                                 : "bg-zinc-700 text-zinc-500 cursor-not-allowed"
                         }` }
                     >
                         <Save className="w-4 h-4" />
-                        Save
+                        { arranged.isSaving ? "Saving..." : "Save" }
                     </button>
                     <button
-                        onClick={ () => restoreNodeData.run( {} ) }
+                        onClick={ () => {
+                            restoreNodeData.run( {} );
+                            arranged.reset();
+                        } }
                         className={ `flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors ${
                             selectedNode
                                 ? "bg-zinc-600 hover:bg-zinc-500 text-white"
@@ -1570,7 +1559,7 @@ export function FlowEditSidebar() {
                         Restore
                     </button>
                 </div>
-                { state.hasUnsavedChanges && (
+                { ( state.hasUnsavedChanges || arranged.hasChanges ) && (
                     <div className="text-xs text-amber-400 text-center">
                         You have unsaved changes
                     </div>

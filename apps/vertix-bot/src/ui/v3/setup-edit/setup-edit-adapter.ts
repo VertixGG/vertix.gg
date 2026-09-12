@@ -6,6 +6,8 @@ import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
+import { joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
+
 import { UI_CUSTOM_ID_SEPARATOR, UIInstancesTypes, UI_IMAGE_EMPTY_LINE_URL } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
@@ -494,8 +496,10 @@ const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "
             processedLogsChannelId = processedLogsChannelId[ 0 ] || null;
         }
 
+        // Split rather than mapped straight: the stored list carries its row divisions inline, and
+        // a separator has no label to show - it would print as a bare `|` between the buttons.
         const formatButtons = ( buttonIds: string[] ) => {
-            return buttonIds.map( ( id ) => {
+            return splitTemplate( buttonIds ).ids.map( ( id ) => {
                 const item = DynamicChannelPrimaryMessageElementsGroup.getById( id );
                 const label = item ? item.getLabelForEmbed() : id;
                 return `${ v.labelButtonPrefix } ${ label }`;
@@ -1023,18 +1027,40 @@ function scopeTemplate( byRole: Record<string, string[]>, templateDefault: strin
 }
 
 /**
- * Function keepOrder() :: The picked set, in the order it already had.
+ * Function keepOrder() :: The picked set, in the order and rows it already had.
  *
- * A select menu has no way to express order - it hands its values back in its own - so taking the
- * pick at face value would flatten an arrangement made in the dashboard every time somebody ticked
- * one more button here. What was already in the set keeps its place, and anything new lands at the
- * end, which is where the dashboard puts a newly added button too.
+ * A select menu has no way to express either - it hands its values back in its own order and with
+ * no notion of rows - so taking the pick at face value would flatten an arrangement made in the
+ * dashboard every time somebody ticked one more button here. What was already in the set keeps its
+ * place, and anything new lands at the end, which is where the dashboard puts a newly added button
+ * too.
+ *
+ * The rows ride inside the stored list, so they have to be taken out before the pick is compared
+ * against it and put back after - a separator is not a button and would never survive `picked`.
  */
 function keepOrder( previous: string[], picked: string[] ): string[] {
-    const kept = previous.filter( ( id ) => picked.includes( id ) ),
-        added = picked.filter( ( id ) => ! previous.includes( id ) );
+    const { ids, rowBreaks } = splitTemplate( previous );
 
-    return [ ...kept, ...added ];
+    const kept = ids.filter( ( id ) => picked.includes( id ) ),
+        added = picked.filter( ( id ) => ! ids.includes( id ) );
+
+    // A set that was never arranged stays unarranged, rather than being frozen into the rows it
+    // happens to fall into today the moment somebody edits it from here.
+    if ( ! rowBreaks.length ) {
+        return [ ...kept, ...added ];
+    }
+
+    const rows = toRows( ids, rowBreaks )
+        .map( ( row ) => row.filter( ( id ) => picked.includes( id ) ) )
+        .filter( ( row ) => row.length );
+
+    if ( added.length ) {
+        // Onto the end of the last row, which `toRows()` spills for us if that takes it past the
+        // five discord draws.
+        rows.length ? rows[ rows.length - 1 ].push( ...added ) : rows.push( added );
+    }
+
+    return joinTemplate( rows );
 }
 
 async function onButtonsScopeSelected(

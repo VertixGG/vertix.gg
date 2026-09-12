@@ -14,6 +14,7 @@ import DynamicConfigForm from "./dynamic-config-form";
 
 import { SettingRow, SettingsGroup } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
+import { ButtonsSummary } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
 import { dynamicChannelEditorLink } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
 
 import {
@@ -396,12 +397,17 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                             <SettingRow
                                                 label="Shown to owners"
                                                 value={
-                                                    <Link
-                                                        to={ dynamicChannelEditorLink( master.id ) }
-                                                        className="text-text-accent hover:underline"
-                                                    >
-                                                        Arrange in the interface editor
-                                                    </Link>
+                                                    <span className="flex flex-col gap-1.5 items-start">
+                                                        <ButtonsSummary
+                                                            selected={ settings?.dynamicChannelButtonsTemplate ?? [] }
+                                                        />
+                                                        <Link
+                                                            to={ dynamicChannelEditorLink( master.id ) }
+                                                            className="link-accent"
+                                                        >
+                                                            Arrange in the interface editor
+                                                        </Link>
+                                                    </span>
                                                 }
                                             />
                                         </SettingsGroup>

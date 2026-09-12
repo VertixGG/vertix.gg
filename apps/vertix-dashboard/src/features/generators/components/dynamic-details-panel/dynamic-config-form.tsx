@@ -328,7 +328,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                     Which buttons a channel owner gets, and the rows they sit in, are set in the{ " " }
                     <Link
                         to={ dynamicChannelEditorLink( masterChannelId ) }
-                        className="text-text-accent hover:underline"
+                        className="link-accent"
                     >
                         interface editor
                     </Link>.

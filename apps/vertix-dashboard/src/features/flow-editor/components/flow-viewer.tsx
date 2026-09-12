@@ -7,7 +7,7 @@ import zCore from "@zenflux/core";
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
-import { BUTTON_ROW_LIMITS, toRowBreaks } from "@vertix.gg/utils/src/button-rows";
+import { BUTTON_ROW_LIMITS, splitTemplate, toRowBreaks } from "@vertix.gg/utils/src/button-rows";
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
@@ -330,11 +330,13 @@ export function FlowViewer() {
                 const currentElementRows =
                     ( updatedData.elementRows ?? node.data?.elementRows ) as SchemaElement[][] | undefined;
 
+                const stored = splitTemplate( generator.settings?.dynamicChannelButtonsTemplate ?? [] );
+
                 const arranged = currentElementRows && arrangeElementRows( {
                     schemaRows: currentElementRows,
                     catalogue,
-                    template: generator.settings?.dynamicChannelButtonsTemplate ?? [],
-                    rowBreaks: generator.settings?.dynamicChannelButtonsRowBreaks ?? [],
+                    template: stored.ids,
+                    rowBreaks: stored.rowBreaks,
                     draftNames: arrangementDraft
                 } );
 
@@ -439,6 +441,25 @@ export function FlowViewer() {
             } ) )
         );
     }, [ selectedNodeId, setNodes ] );
+
+    // Arriving from a generator's settings means the admin came here to edit that flow's buttons,
+    // so the component is opened for them rather than left behind a "click a component" prompt.
+    const openedForGenerator = Boolean( generator );
+    const autoSelectedRef = useRef( false );
+
+    useEffect( () => {
+        if ( autoSelectedRef.current || ! openedForGenerator || selectedNodeId ) {
+            return;
+        }
+
+        const component = nodes.find(
+            ( node ) => DYNAMIC_CHANNEL_FLOW.COMPONENT === ( node.data as { component?: string } )?.component );
+
+        if ( component ) {
+            autoSelectedRef.current = true;
+            selectNode.run( { node: component, centerOnSelect: true } );
+        }
+    }, [ nodes, openedForGenerator, selectedNodeId, selectNode ] );
 
     // Sync selectedNode data changes back to the nodes array
     useEffect( () => {

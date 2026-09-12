@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { BUTTON_ROW_LIMITS, flattenRows, toRowBreaks, toRows } from "@vertix.gg/utils/src/button-rows";
+import { BUTTON_ROW_LIMITS, joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
 
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
@@ -196,7 +196,11 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
     const schemaRows = elementRows ?? [];
 
     const settings = generator?.settings;
-    const template = settings?.dynamicChannelButtonsTemplate ?? [];
+
+    // The stored list carries its own row divisions, so there is one thing to read and one to
+    // write - and no second field that can fail to come back.
+    const { ids: template, rowBreaks: storedBreaks } =
+        splitTemplate( settings?.dynamicChannelButtonsTemplate ?? [] );
 
     const isArranged = Boolean( generator ) && catalogue.length > 0 && template.length > 0;
 
@@ -241,7 +245,7 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
     // The generator's own rows, drawn as the elements that sit in them. An id the component no
     // longer ships is skipped rather than drawn as a gap.
     const saved = withoutEmpty(
-        toRows( template, settings?.dynamicChannelButtonsRowBreaks ?? [], BUTTON_ROW_LIMITS.MAX_PER_ROW, BUTTON_ROW_LIMITS.MAX_ROWS )
+        toRows( template, storedBreaks, BUTTON_ROW_LIMITS.MAX_PER_ROW, BUTTON_ROW_LIMITS.MAX_ROWS )
             .map( ( row ) => row.map( ( id ) => elementById.get( id ) ).filter( Boolean ) as SchemaElement[] )
     );
 
@@ -334,7 +338,7 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
 
         // An empty set is the bot's word for "every button", so writing one would quietly undo the
         // generator's choice instead of saving an arrangement of it. Refused rather than sent.
-        if ( ! flattenRows( ids ).length ) {
+        if ( ! ids.flat().length ) {
             setError( "A generator has to carry at least one button" );
             return;
         }
@@ -345,8 +349,7 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
         // The set and its breaks travel together: the breaks are indices into the set, so one
         // without the other would describe rows that no longer line up with the buttons.
         void apiClient.put( `/management/guild/${ guildId }/dynamic/${ generator!.id }`, {
-            dynamicChannelButtonsTemplate: flattenRows( ids ),
-            dynamicChannelButtonsRowBreaks: toRowBreaks( ids, BUTTON_ROW_LIMITS.MAX_PER_ROW )
+            dynamicChannelButtonsTemplate: joinTemplate( ids )
         } )
             // Re-read before letting go of the draft: dropping it first would fall back to the
             // settings loaded at mount, which is the arrangement as it was before the save.

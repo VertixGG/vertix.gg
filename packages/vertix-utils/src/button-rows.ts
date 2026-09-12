@@ -18,6 +18,48 @@ export const BUTTON_ROW_LIMITS = {
 } as const;
 
 /**
+ * The entry that marks where one row ends and the next begins.
+ *
+ * The divisions ride inside the button list rather than beside it. A separate field would be the
+ * tidier shape, but the list is the thing every reader already round trips - and a reader that does
+ * not know about rows drops this entry the same way it drops any id it does not recognise, so an
+ * older bot keeps drawing exactly the buttons it drew before.
+ */
+export const ROW_SEPARATOR = "|";
+
+/**
+ * Function splitTemplate() :: A stored template as its buttons, and where they are divided.
+ */
+export function splitTemplate( template: ReadonlyArray<string> ): { ids: string[]; rowBreaks: number[] } {
+    const ids: string[] = [],
+        rowBreaks: number[] = [];
+
+    template.forEach( ( entry ) => {
+        if ( ROW_SEPARATOR !== entry ) {
+            ids.push( entry );
+
+            return;
+        }
+
+        // A separator before anything, or two in a row, describes an empty row and says nothing.
+        if ( ids.length && rowBreaks[ rowBreaks.length - 1 ] !== ids.length ) {
+            rowBreaks.push( ids.length );
+        }
+    } );
+
+    return { ids, rowBreaks };
+}
+
+/**
+ * Function joinTemplate() :: Rows of ids as the single list that gets stored.
+ */
+export function joinTemplate( rows: ReadonlyArray<ReadonlyArray<string>> ): string[] {
+    return rows
+        .filter( ( row ) => row.length )
+        .flatMap( ( row, index ) => index ? [ ROW_SEPARATOR, ...row ] : [ ...row ] );
+}
+
+/**
  * Function chunkRows() :: The list cut into rows of at most `maxPerRow`.
  *
  * What a set falls back to when it has no layout of its own, and what every generator had before

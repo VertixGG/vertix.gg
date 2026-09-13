@@ -232,7 +232,28 @@ const DynamicChannelInviteAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             );
     } )
     .getStartArgs( async() => ( {} ) )
-    .getReplyArgs( async( context, interaction ) => context.getArgs( interaction ) )
+    /**
+     * Function getReplyArgs() :: Hands the sent message what it needs to name who was invited.
+     *
+     * Args live against the message they were written on, and SelectUser answers on a new one, so
+     * the write that records the invited member has no store to land in and is dropped with only a
+     * line in the log to show for it. `argsFromManager` is the same args the render was called
+     * with, which is where they still are - the transfer flow, which picks a member and then names
+     * them back exactly like this one, reaches for it the same way.
+     */
+    .getReplyArgs( async( context, interaction, argsFromManager ) => {
+        const currentStep = context.getCurrentExecutionStep( interaction )?.name,
+            storedArgs = context.getArgs( interaction );
+
+        if ( "VertixBot/UI-V3/DynamicChannelInviteSent" === currentStep ) {
+            return {
+                invitedDisplayName: storedArgs.invitedDisplayName ?? argsFromManager?.invitedDisplayName,
+                isInviteDelivered: storedArgs.isInviteDelivered ?? argsFromManager?.isInviteDelivered
+            };
+        }
+
+        return storedArgs;
+    } )
     .build();
 
 export { DynamicChannelInviteAdapter };

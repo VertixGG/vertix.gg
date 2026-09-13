@@ -73,7 +73,13 @@ const DynamicChannelInviteAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             } )
             .addState( "SelectUser", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelInviteSelectUser",
-                navigationType: "ephemeral",
+                // Edits the screen the channel was picked on rather than opening a second one.
+                // Args are keyed by the message they were written against, so a new message here
+                // strands everything set before it and everything set on it - `setArgs` finds no
+                // store for an id nobody seeded, says so to the log, and drops the write. That is
+                // what left the sent message with no name to report. Every other state reached
+                // from inside this screen already edits it; this was the one that did not.
+                navigationType: "editReply",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelInviteEmbedGroup",
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelInviteUserMenuGroup"
             } )

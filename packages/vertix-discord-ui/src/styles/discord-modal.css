@@ -1,14 +1,23 @@
+/*
+ * Measured off Discord's own rename modal.
+ *
+ * 480px wide on a 12px corner, drawn on `--modal-background` - the same surface an embed is drawn
+ * on, not the darker chat behind it - and every section inset 24px, which is what the 430px of
+ * content inside it comes to.
+ */
 .discord-modal {
-    background-color: var(--discord-background-gradient-chat);
-    border-radius: 8px;
+    background-color: var(--discord-background-surface-high);
+    font-family: var(--discord-font-primary);
+    border-radius: 12px;
     min-width: 280px;
-    max-width: 440px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.24);
+    max-width: 480px;
+    padding: 8px 0 16px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
     overflow: hidden;
 }
 
 .discord-modal-header {
-    padding: 16px 16px 12px;
+    padding: 16px 24px 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -30,10 +39,10 @@
 }
 
 .discord-modal-title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 24px;
+    font-weight: var(--discord-font-weight-semibold);
     color: var(--discord-text-strong);
-    line-height: 24px;
+    line-height: 30px;
     font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -51,32 +60,34 @@
     flex-shrink: 0;
 }
 
+/* 16px of air above the body and 8px below, which is what Discord's two spacers come to. */
 .discord-modal-content {
-    padding: 16px 16px 20px;
+    padding: 16px 24px 8px;
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
+/* The action bar carries no fill of its own - it is the card showing through. */
 .discord-modal-footer {
-    padding: 16px;
-    background-color: var(--discord-background-surface-high);
+    padding: 16px 24px 8px;
     display: flex;
     gap: 8px;
 }
 
 .discord-modal-cancel {
     background-color: var(--discord-control-secondary-background-default);
-    color: #fff;
+    color: var(--discord-text-strong);
     border: none;
-    border-radius: 4px;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-radius: 8px;
+    padding: 0;
+    font-size: 16px;
+    font-weight: var(--discord-font-weight-normal);
+    font-family: var(--discord-font-primary);
     cursor: pointer;
     flex: 1;
-    min-height: 44px;
+    min-width: 100px;
+    height: 40px;
 }
 
 .discord-modal-cancel:hover {
@@ -85,40 +96,43 @@
 
 .discord-modal-submit {
     background-color: #5865f2;
-    color: white;
+    color: var(--discord-white-500);
     border: none;
-    border-radius: 4px;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-radius: 8px;
+    padding: 0;
+    font-size: 16px;
+    font-weight: var(--discord-font-weight-normal);
+    font-family: var(--discord-font-primary);
     cursor: pointer;
     flex: 1;
-    min-height: 44px;
+    min-width: 100px;
+    height: 40px;
 }
 
 .discord-modal-submit:hover {
     background-color: #4752c4;
 }
 
+/* Amber throughout - the fill, the hairline and the words are all the same feedback colour. */
 .discord-modal-notice {
-    background-color: rgba(240, 178, 50, 0.1);
-    border: 1px solid rgba(240, 178, 50, 0.5);
+    background-color: rgba(248, 163, 0, 0.08);
+    border: 1px solid var(--discord-feedback-warning);
     color: var(--discord-text-default);
-    padding: 10px 12px;
+    margin-bottom: 16px;
+    padding: 8px;
     border-radius: 8px;
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    font-size: 13px;
-    line-height: 1.375rem;
-    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 16px;
+    font-family: var(--discord-font-primary);
 }
 
 .discord-modal-notice svg {
     flex-shrink: 0;
     margin-top: 2px;
-    color: #f0b232;
+    color: var(--discord-feedback-warning);
 }
 
 .discord-modal-notice span {
@@ -126,8 +140,8 @@
 }
 
 .discord-modal-notice strong {
-    font-weight: 600;
-    color: var(--discord-text-strong);
+    font-weight: var(--discord-font-weight-semibold);
+    color: inherit;
 }
 
 .discord-input-wrapper {
@@ -136,13 +150,14 @@
     gap: 8px;
 }
 
+/* Not uppercased by css - the bot writes the label in capitals itself, and Discord prints it. */
 .discord-input-label {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--discord-text-default);
-    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    letter-spacing: 0.02em;
+    font-size: 16px;
+    font-weight: var(--discord-font-weight-medium);
+    line-height: 20px;
+    color: var(--discord-text-strong);
+    font-family: var(--discord-font-primary);
+    letter-spacing: 0.32px;
 }
 
 .discord-input-required {
@@ -150,19 +165,20 @@
     padding-left: 4px;
 }
 
+/* A well like the select beside it: black at 12% behind a grey hairline, on an 8px corner. */
 .discord-input {
-    background-color: var(--discord-background-base-lowest);
-    border: 1px solid #3f4147;
-    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--discord-border-normal);
+    border-radius: 8px;
     color: var(--discord-text-default);
     font-size: 16px;
-    padding: 10px;
-    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 1px 12px;
+    font-family: var(--discord-font-primary);
     outline: none;
 }
 
 .discord-input::placeholder {
-    color: #87888c;
+    color: var(--discord-select-placeholder);
 }
 
 .discord-input-short {

@@ -337,9 +337,34 @@ export function DiscordEmbed( {
 
 export default DiscordEmbed;
 
+/**
+ * Function withInlineCode() :: A scrap of code in a line that is going out as html.
+ *
+ * Spelled as html rather than left as backticks because the line it belongs to is emitted as html,
+ * and nothing parses markdown inside that. The content is escaped on the way in - it is the bot's
+ * own wording rather than anybody's input, but it is about to be parsed as markup either way.
+ */
+function withInlineCode( line: string ): string {
+    return line.replace(
+        /`([^`]+)`/g,
+        ( _, code: string ) => `<code class="discord-embed-code">${
+            code.replace( /&/g, "&amp;" ).replace( /</g, "&lt;" )
+        }</code>`
+    );
+}
+
+/**
+ * Function replaceDiscordSubtext() :: Discord's `-#` small print, as a line of its own.
+ *
+ * Given as raw html, which is what puts it outside the markdown - so the one piece of markup
+ * Discord still renders inside a subtext line, a scrap of code, has to be spelled out here. Left to
+ * the parser it would print its own backticks.
+ */
 function replaceDiscordSubtext( text: string ): string {
     return text
         .split( "\n" )
-        .map( ( line ) => line.startsWith( "-# " ) ? `<div class="discord-embed-subtext">${ line.slice( 3 ) }</div>` : line )
+        .map( ( line ) => line.startsWith( "-# " )
+            ? `<div class="discord-embed-subtext">${ withInlineCode( line.slice( 3 ) ) }</div>`
+            : line )
         .join( "\n" );
 }

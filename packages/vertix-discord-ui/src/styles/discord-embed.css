@@ -163,7 +163,7 @@
  * same height as the lines around it.
  */
 .discord-embed-code {
-    background-color: var(--discord-background-base-lowest);
+    background-color: var(--discord-background-code);
     border: 1px solid var(--discord-border-normal);
     border-radius: 4px;
     margin: -0.2em 0;

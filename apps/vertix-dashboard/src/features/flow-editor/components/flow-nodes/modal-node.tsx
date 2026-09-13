@@ -41,19 +41,26 @@ export function ModalNode( props: NodeProps<ModalNodeType> ) {
                     <div className="text-white font-semibold text-sm">{ label }</div>
                 </div>
 
+                { /*
+                   * Drawn at the size Discord draws it, rather than stretched to the node.
+                   *
+                   * The modal is 440px wide because that is what Discord's is, and everything in it
+                   * is laid out against that - the two footer buttons split the row between them,
+                   * the notice wraps where Discord's wraps. Overriding its width to fill whatever
+                   * node it lands in pulled all of that out of proportion, which is the whole of
+                   * what made this one look unlike the real thing.
+                   */ }
                 <div className="p-3">
-                    <div className="w-full [&_.discord-modal]:w-full [&_.discord-modal]:max-w-none">
-                        <DiscordModal title={ displayTitle } avatarUrl={ botAvatarUrl || "/vc.png" } cancelLabel="Cancel" showNotice noticeBotName={ botName || "VoiceChannels" }>
-                            { displayInputs.map( ( input, index ) => (
-                                <DiscordInput
-                                    key={ index }
-                                    label={ input.label ?? "Input" }
-                                    placeholder={ input.placeholder }
-                                    style={ input.style }
-                                />
-                            ) ) }
-                        </DiscordModal>
-                    </div>
+                    <DiscordModal title={ displayTitle } avatarUrl={ botAvatarUrl || "/vc.png" } cancelLabel="Cancel" showNotice noticeBotName={ botName || "VoiceChannels" }>
+                        { displayInputs.map( ( input, index ) => (
+                            <DiscordInput
+                                key={ index }
+                                label={ input.label ?? "Input" }
+                                placeholder={ input.placeholder }
+                                style={ input.style }
+                            />
+                        ) ) }
+                    </DiscordModal>
                 </div>
             </div>
 

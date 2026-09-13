@@ -48,3 +48,12 @@
 .discord-channel-intro-actions {
     margin-top: 8px;
 }
+
+/*
+ * Discord draws this icon at 16px, a step smaller than the 18px a button in a message carries.
+ * Sized here rather than on the shared rule, which every panel button depends on.
+ */
+.discord-channel-intro-actions .discord-button-icon svg {
+    width: 16px;
+    height: 16px;
+}

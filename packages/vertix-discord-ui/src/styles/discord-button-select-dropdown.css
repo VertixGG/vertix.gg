@@ -1,8 +1,9 @@
 @import "./discord-tokens.css";
 
 .discord-button-select-dropdown {
-    background-color: var(--discord-background-base-lowest);
-    border-radius: 4px;
+    background-color: var(--discord-background-surface-higher);
+    border: 1px solid var(--discord-border-subtle);
+    border-radius: 8px;
     overflow: hidden;
     font-family: var(--discord-font-primary);
     min-width: 280px;
@@ -21,7 +22,7 @@
 }
 
 .discord-button-select-item:hover {
-    background-color: rgba(79, 84, 92, 0.3);
+    background-color: var(--discord-interactive-background-hover);
 }
 
 .discord-button-select-item.highlighted {

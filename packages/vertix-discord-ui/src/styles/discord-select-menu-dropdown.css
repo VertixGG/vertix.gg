@@ -1,15 +1,22 @@
 @import "./discord-tokens.css";
 
+/*
+ * The list a menu opens, measured off Discord's own popout.
+ *
+ * It is a step lighter than the card behind it rather than the same shade - `--background-surface-
+ * higher` against the embed's `-high` - which is what lifts it off the message. A hairline round it,
+ * an 8px corner, and no shadow at all: Discord draws none on this one.
+ */
 .discord-select-menu-dropdown {
-    background-color: var(--discord-background-surface-high);
-    border-radius: 4px;
+    background-color: var(--discord-background-surface-higher);
+    border: 1px solid var(--discord-border-subtle);
+    border-radius: 8px;
     overflow-y: auto;
     overflow-x: hidden;
     font-family: var(--discord-font-primary);
     width: 100%;
     max-height: 215px;
-    padding: 4px 0;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+    padding: 0;
 }
 
 .discord-select-menu-dropdown.discord-select-menu-dropdown-absolute {
@@ -23,18 +30,18 @@
 .discord-select-menu-dropdown-item {
     display: flex;
     align-items: flex-start;
-    padding: 10px 12px;
+    padding: 8px;
     gap: 10px;
     cursor: pointer;
     transition: background-color 0.1s ease;
 }
 
 .discord-select-menu-dropdown-item:hover {
-    background-color: rgba(79, 84, 92, 0.4);
+    background-color: var(--discord-interactive-background-hover);
 }
 
 .discord-select-menu-dropdown-item.selected {
-    background-color: rgba(79, 84, 92, 0.4);
+    background-color: var(--discord-interactive-background-selected);
 }
 
 .discord-select-menu-dropdown-item.highlighted {
@@ -72,10 +79,12 @@
     min-width: 0;
 }
 
+/* An option is set at the same 16px the chat is, in the grey Discord gives anything you can pick. */
 .discord-select-menu-dropdown-label {
-    font-size: 14px;
-    font-weight: var(--discord-font-weight-medium);
-    color: #ffffff;
+    font-size: 16px;
+    font-weight: var(--discord-font-weight-normal);
+    line-height: 20px;
+    color: var(--discord-interactive-text);
 }
 
 .discord-select-menu-dropdown-description {

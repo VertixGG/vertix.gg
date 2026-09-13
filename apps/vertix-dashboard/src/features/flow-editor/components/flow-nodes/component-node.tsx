@@ -344,7 +344,10 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                     <div className="text-white font-semibold text-sm whitespace-pre-line">{ label }</div>
                 </div>
 
-                <div className="bg-[#313338] p-4">
+                { /* Discord's chat, the same `--discord-background-gradient-chat` the message inside
+                     paints itself with - written out because that variable is scoped to discord-ui's
+                     own components and this wrapper is not one of them. */ }
+                <div className="bg-[#1a1a1e] p-4">
                     <DiscordMessage author="VoiceChannels" app timestamp="" avatar="/vc.png">
                         <DiscordEmbed
                             title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, mergedDefaultVars ), "title" ) }
@@ -404,8 +407,10 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                                                     } ) );
                                                                 } }
                                                                 // Discord's own select box: 400px wide unless the column is narrower, 40px
-                                                                // tall, 8px radius, and 12px/42px of padding around a 16px label.
-                                                                className="w-full h-10 appearance-none pl-3 pr-[42px] bg-[#1e1f22] border border-[#3f4147] rounded-lg text-[#949ba4] text-base focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+                                                                // tall, 8px radius, and 12px/42px of padding around a 16px label. It is a
+                                                                // well rather than a card - black at 12% with a grey hairline - and the
+                                                                // label is a placeholder, so it takes the dimmer of the two greys.
+                                                                className="w-full h-10 appearance-none pl-3 pr-[42px] bg-black/12 border border-[rgba(151,151,159,0.2)] rounded-lg text-[#8f9196] text-base focus:outline-none focus:ring-2 focus:ring-purple-500/40"
                                                             >
                                                                 <option value="" disabled>
                                                                     { getSelectPlaceholder( element, mergedDefaultVars ) }

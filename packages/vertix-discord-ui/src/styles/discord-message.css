@@ -74,7 +74,7 @@
  * `--message-mentioned-background-default` and the border it draws beside it.
  */
 .discord-message.discord-message-mentioned {
-    background-color: rgba(243, 167, 0, 0.078);
+    background-color: rgba(248, 163, 0, 0.08);
     border-radius: 0 4px 4px 0;
 }
 
@@ -93,7 +93,7 @@
  * same shape Discord gives a message that mentions you - only the colour says which it is.
  */
 .discord-message.ephemeral {
-    background-color: rgba( 78, 98, 235, 0.051 );
+    background-color: rgba( 88, 101, 242, 0.05 );
 }
 
 .discord-message.ephemeral::before {

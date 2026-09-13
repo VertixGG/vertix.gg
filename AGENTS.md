@@ -47,6 +47,8 @@
 - New commands, services, or adapters need positive and failure-path coverage before `bun run vertix:jest` (mirrors `scripts/ci-jest.bash`).
 
 ## Commit & Pull Request Guidelines
+- **Never run `git commit` or `git push` without explicit approval for that specific change.** Show what would be staged and wait for a yes. Approval for one commit is not approval for the next one, and "the work is finished" is not approval to commit it.
+- Stage only the files belonging to the change you were asked to make; leave unrelated work in the tree alone rather than sweeping it into the commit.
 - Follow the current log style: short imperative subjects with optional scope (`Enhance adapter builders`, `Refactor: streamline embed logic`). Prefix `Refactor:`, `Fix:`, or `Feat:` as needed.
 - Squash WIP commits and reference related issues or Discord tickets in the body.
 - PRs must state affected packages, schema/env updates, screenshots for GUI/website work, and the commands you ran (`vertix:jest`, `vertix:eslint`).

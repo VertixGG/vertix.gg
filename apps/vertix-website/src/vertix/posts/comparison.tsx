@@ -45,15 +45,6 @@ const CONTENDERS: Contender[] = [
         priceNote: "per month, 1 server",
         free: false,
     },
-    {
-        name: "ChannelBot",
-        accent: "var(--color-vc-ice-dim)",
-        servers: "28.6K",
-        rating: "3.8",
-        price: "Utility bot",
-        priceNote: "Temp channels is one feature",
-        free: false,
-    },
 ];
 
 const GATING = [
@@ -83,29 +74,36 @@ const GATING = [
     },
 ];
 
-const ASTRO_CAPS = [
-    { label: "Voice channel generators", astro: "2", vc: "2" },
-    { label: "Interfaces", astro: "1", vc: "No limit" },
-    { label: "Voice roles", astro: "1", vc: "Not available" },
-    { label: "Saved templates", astro: "3", vc: "No limit" },
-];
+const BOT_COLUMNS = [ "VoiceChannels", "VoiceMaster", "TempVoice", "Astro" ] as const;
 
-const CONTROLS = [
-    { capability: "Rename the room", vc: "Rename", vm: "Name" },
-    { capability: "Cap how many can join", vc: "User Limit", vm: "Limit" },
-    { capability: "Make it private or hidden", vc: "Privacy", vm: "Lock, Ghost" },
-    { capability: "Allow or block individuals", vc: "Access", vm: "Permit" },
-    { capability: "Send somebody straight in", vc: "Invite", vm: "Invite" },
-    { capability: "Take over an abandoned room", vc: "Claim", vm: "Claim" },
-    { capability: "Say what is happening", vc: "Status", vm: "Status" },
-    { capability: "Ask to enter a private room", vc: "Knock", vm: null },
-    { capability: "Choose the voice region", vc: "Region", vm: null },
-    { capability: "Wipe the channel's messages", vc: "Clear Chat", vm: null },
-    { capability: "Put every setting back", vc: "Reset", vm: null },
-    { capability: "Save a setup and reuse it", vc: "Templates", vm: "Clone Setup" },
-    { capability: "Set the bitrate", vc: "Inherited from the generator", vm: "Bitrate, owner sets it" },
-    { capability: "Paired temporary text channel", vc: null, vm: "Text" },
-    { capability: "Reword the bot, per language", vc: "Dashboard", vm: null },
+/**
+ * Each row is one capability, then one cell per bot in BOT_COLUMNS order. A cell is either what
+ * that bot calls the feature, or null - meaning it appears nowhere in that bot's own documentation.
+ */
+const MATRIX: { capability: string, cells: ( string | null )[] }[] = [
+    { capability: "Owner control panel", cells: [ "Buttons", "Interface", "Interface, /voice", "Interface" ] },
+    { capability: "Rename the room", cells: [ "Rename", "Name", "name", "Button" ] },
+    { capability: "Cap how many can join", cells: [ "User Limit", "Limit", "limit", "Button" ] },
+    { capability: "Lock or hide it", cells: [ "Privacy", "Lock, Ghost", "privacy", "Button" ] },
+    { capability: "Allow or block individuals", cells: [ "Access", "Permit", "trust, block", "Button" ] },
+    { capability: "Kick somebody out", cells: [ "Access", null, "kick", null ] },
+    { capability: "Take over an empty room", cells: [ "Claim", "Claim", "claim", null ] },
+    { capability: "Hand it to someone else", cells: [ "Transfer", null, "transfer", null ] },
+    { capability: "Ask to be let in", cells: [ "Knock", null, "waiting", "Waiting rooms" ] },
+    { capability: "Enter with a password", cells: [ null, null, "password", null ] },
+    { capability: "Owner changes bitrate", cells: [ null, "Bitrate", "bitrate", null ] },
+    { capability: "Bitrate from the generator", cells: [ "Inherited", null, "Setting", null ] },
+    { capability: "Voice region", cells: [ "Region", null, "region", null ] },
+    { capability: "Text chat for the room", cells: [ null, "Text", "thread", "Private text chats" ] },
+    { capability: "Role while in a room", cells: [ "Voice role", null, "Voice role", "Voice roles" ] },
+    { capability: "Name placeholders", cells: [ "Placeholders", "Predefined setup", "Placeholders", "Variables" ] },
+    { capability: "Activity in the name", cells: [ "{game}", null, "{ACTIVITY_NAME}", "Activity variables" ] },
+    { capability: "Activity log", cells: [ "Logs channel", null, "Moderation Log", null ] },
+    { capability: "Turn controls off per server", cells: [ "Enable features", null, "Toggle Features", null ] },
+    { capability: "Reword the bot, per language", cells: [ "Dashboard", null, null, null ] },
+    { capability: "Free tier generator cap", cells: [ "2", "Not published", "Not published", "2" ] },
+    { capability: "Costs nothing, ever", cells: [ "Yes", null, null, null ] },
+    { capability: "No vote-gated commands", cells: [ "Yes", "Not published", null, null ] },
 ];
 
 const HONEST = [
@@ -117,18 +115,14 @@ const HONEST = [
     },
     {
         name: "Pick TempVoice if",
-        body: "the rating matters to you. 4.8 across 528 reviews is the highest of the five, and "
+        body: "the rating matters to you. 4.8 across 528 reviews is the highest of the four, and "
             + "a happy user base is a real signal that no feature table captures.",
     },
     {
         name: "Pick Astro if",
-        body: "you need voice roles - a role handed out when somebody joins a channel - or you "
-            + "need more than two generators and are willing to pay to lift the cap.",
-    },
-    {
-        name: "Pick ChannelBot if",
-        body: "temporary channels are a side dish. It also does server backups, reaction roles, "
-            + "welcome messages and sticky messages, and replacing four bots with one has value.",
+        body: "you need more than two generators, or more than one interface, and will pay to "
+            + "lift those caps. Both bots stop at two generators free; only Astro sells a way "
+            + "past it.",
     },
 ];
 
@@ -138,12 +132,12 @@ export default function Comparison() {
             <h1 className="text-h4">Discord temporary voice channel bots, compared</h1>
 
             <p className="text-vc-ice-dim mt-4 mb-10">
-                The four most-used bots in top.gg&rsquo;s temporary-voice-channels category,
-                against this one. Every number below is read off their own public pages, and the
-                rows that go against us are here too.
+                The three bots whose whole product is temporary voice channels, against this
+                one. Every number below is read off their own public pages, and the rows that go
+                against us are here too.
             </p>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 mb-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-4">
                 { CONTENDERS.map( ( bot ) => (
                     <div key={ bot.name }
                         className="p-4 rounded border h-full"
@@ -197,40 +191,13 @@ export default function Comparison() {
                 ) ) }
             </div>
 
-            <h2 className="text-h5 mb-3">Where the free tier stops</h2>
+            <h2 className="text-h5 mb-3">Everything, side by side</h2>
 
             <p className="text-vc-ice-dim mb-6">
-                Astro is the only one of the four that publishes its free limits outright, so it is
-                the only one that can be compared honestly on this. We hit the same wall it does on
-                generators - two - and unlike Astro there is no tier to buy that lifts it.
-            </p>
-
-            <div className="overflow-x-auto mb-12">
-                <table className="w-full text-sm">
-                    <thead>
-                        <tr className="border-b border-vc-hairline-bright text-left">
-                            <th className="py-3 pr-4 font-semibold"></th>
-                            <th className="py-3 pr-4 font-semibold text-vc-mint">VoiceChannels</th>
-                            <th className="py-3 font-semibold text-vc-ice-dim">Astro, free</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { ASTRO_CAPS.map( ( row ) => (
-                            <tr key={ row.label } className="border-b border-vc-hairline">
-                                <td className="py-3 pr-4 text-vc-ice">{ row.label }</td>
-                                <td className="py-3 pr-4 text-vc-ice-dim">{ row.vc }</td>
-                                <td className="py-3 text-vc-ice-dim">{ row.astro }</td>
-                            </tr>
-                        ) ) }
-                    </tbody>
-                </table>
-            </div>
-
-            <h2 className="text-h5 mb-3">Control by control</h2>
-
-            <p className="text-vc-ice-dim mb-6">
-                VoiceMaster is the only other one publishing a full control list, so it is the only
-                column that can be filled in without guessing.
+                One row per capability, one column per bot. A cell in{ " " }
+                <span className="text-vc-crimson">red</span> means the feature appears nowhere in
+                that bot&rsquo;s own documentation - which is the closest thing to proof it is not
+                there, since a feature nobody documents is one nobody can find.
             </p>
 
             <div className="overflow-x-auto mb-4">
@@ -238,20 +205,24 @@ export default function Comparison() {
                     <thead>
                         <tr className="border-b border-vc-hairline-bright text-left">
                             <th className="py-3 pr-4 font-semibold">Capability</th>
-                            <th className="py-3 pr-4 font-semibold text-vc-mint">VoiceChannels</th>
-                            <th className="py-3 font-semibold text-vc-ice-dim">VoiceMaster</th>
+                            { BOT_COLUMNS.map( ( bot, index ) => (
+                                <th key={ bot }
+                                    className={ `py-3 pr-4 font-semibold whitespace-nowrap ${
+                                        0 === index ? "text-vc-mint" : "text-vc-ice-dim" }` }>
+                                    { bot }
+                                </th>
+                            ) ) }
                         </tr>
                     </thead>
                     <tbody>
-                        { CONTROLS.map( ( row ) => (
+                        { MATRIX.map( ( row ) => (
                             <tr key={ row.capability } className="border-b border-vc-hairline">
-                                <td className="py-3 pr-4 text-vc-ice">{ row.capability }</td>
-                                <td className="py-3 pr-4 text-vc-ice-dim">
-                                    { row.vc ?? <span className="text-vc-crimson">Not available</span> }
-                                </td>
-                                <td className="py-3 text-vc-ice-dim">
-                                    { row.vm ?? "Not advertised" }
-                                </td>
+                                <td className="py-3 pr-4 text-vc-ice whitespace-nowrap">{ row.capability }</td>
+                                { row.cells.map( ( cell, index ) => (
+                                    <td key={ BOT_COLUMNS[ index ] } className="py-3 pr-4 text-vc-ice-dim">
+                                        { cell ?? <span className="text-vc-crimson">Unavailable</span> }
+                                    </td>
+                                ) ) }
                             </tr>
                         ) ) }
                     </tbody>
@@ -259,12 +230,16 @@ export default function Comparison() {
             </div>
 
             <p className="text-vc-ice-dim text-fine mb-12">
-                &ldquo;Not advertised&rdquo; means it is not claimed on their site, not that it
-                cannot be done. Read from{ " " }
+                Read in September 2026 from{ " " }
                 <a href="https://voicemaster.xyz/" target="_blank" rel="noreferrer nofollow">voicemaster.xyz</a>,{ " " }
-                <a href="https://tempvoice.xyz/" target="_blank" rel="noreferrer nofollow">tempvoice.xyz</a>,{ " " }
-                <a href="https://astro-bot.space/" target="_blank" rel="noreferrer nofollow">astro-bot.space</a>{ " " }
-                and their top.gg listings, September 2026.
+                <a href="https://easy.tempvoice.xyz/" target="_blank" rel="noreferrer nofollow">easy.tempvoice.xyz</a>,{ " " }
+                and{ " " }
+                <a href="https://astro-bot.space/" target="_blank" rel="noreferrer nofollow">astro-bot.space</a>.
+                One caveat worth stating: Astro&rsquo;s interface buttons are added and removed by
+                the server owner with <code>/interface add button</code>, and its guides do not
+                list which buttons exist - so its control rows say only that an interface does the
+                job, not which of these it can do. &ldquo;Not published&rdquo; marks a number none
+                of them state anywhere.
             </p>
 
             <h2 className="text-h5 mb-3">When not to pick this one</h2>

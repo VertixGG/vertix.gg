@@ -680,18 +680,14 @@ export abstract class UIAdapterBase<
 
         const argsId = this.argsManager.getArgsId( interaction as TInteraction );
 
-        // Laid over what the screen already knows rather than written in its place. These are the
-        // adapter's reply args, worked out fresh from the interaction alone, so they hold what any
-        // screen of this adapter starts with and nothing of what this one has since been told -
-        // the generator that was picked, the step it is on. Writing them flat would hand the modal
-        // a screen that had forgotten which generator it was editing, which is how a modal opened
-        // from a chosen master channel comes back with nothing to write it to.
-        this.argsManager.setInitialArgs(
-            this,
-            argsId,
-            { ... this.argsManager.getArgsById( this, argsId ), ... args },
-            { overwrite: true, silent: true }
-        );
+        // Only a dynamic screen's args are rewritten here, the same condition `editReply` keeps.
+        // These are reply args, worked out from the interaction alone: a dynamic screen can be
+        // rebuilt from one, so writing them back is a refresh. A static screen cannot - what it
+        // knows was put there once, by whatever opened it, and is the generator it was told to
+        // edit. Writing over that hands the modal a screen that has forgotten what it is editing.
+        if ( this.isDynamic() ) {
+            this.argsManager.setInitialArgs( this, argsId, args, { overwrite: true, silent: true } );
+        }
 
         const entityMapped = this.getEntityMap( modalName ),
             modalInstance = this.getEntityInstance( entityMapped.entity ) as UIModalBase,

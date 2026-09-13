@@ -3,11 +3,46 @@ import React from "react";
 import { DiscordModal, DiscordInput, DiscordFlowSimulator, DiscordAppFrame } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
+import { varsReplaceTokens } from "@vertix.gg/base/src/utils/vars-utils";
+
+import {
+    DYNAMIC_CHANNEL_STATUS_VARS,
+    VAR_DYNAMIC_CHANNEL_GAME,
+    VAR_DYNAMIC_CHANNEL_STATE,
+    VAR_DYNAMIC_CHANNEL_USER
+} from "@vertix.gg/definitions/src/dynamic-channel-vars-definitions";
+
 import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
 import { DEMO_CHANNEL_NAME, DEMO_MEMBERS, DEMO_OWNER, DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
 import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
 import { DynamicChannelV3Sidebar } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-sidebar";
+
+/**
+ * What the three tokens a status may carry stand for, here.
+ *
+ * Only three of them, and the bot says which: a status is rewritten every time somebody joins or
+ * leaves, so it may only carry what can change while people are sitting in the channel. The room's
+ * game rather than the owner's, because a status is about what is happening in there - and the
+ * state is public or private only, a hidden channel reading as private since that is what it is to
+ * anybody who could not find it.
+ */
+const STATUS_TOKEN_VALUES: Readonly<Record<string, string>> = {
+    [ VAR_DYNAMIC_CHANNEL_USER ]: DEMO_OWNER,
+    [ VAR_DYNAMIC_CHANNEL_GAME ]: "Counter-Strike",
+    [ VAR_DYNAMIC_CHANNEL_STATE ]: "🟢"
+};
+
+/**
+ * Function statusOf() :: The line the channel would actually wear.
+ *
+ * The bot fills the tokens in on every write rather than once when the status was pinned, which is
+ * the whole point of allowing them - a status reading `{game}` follows the room onto whatever it
+ * plays next. What is shown back is therefore always the assembled line, never what was typed.
+ */
+function statusOf( typed: string ): string {
+    return varsReplaceTokens( typed.trim(), STATUS_TOKEN_VALUES );
+}
 
 /**
  * Function StatusModal() :: The modal the bot opens, with a field somebody can actually type in.
@@ -144,8 +179,9 @@ export default function Status() {
                                     "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Default": {
                                         title: "Type what is happening, then submit",
                                         body: <>
-                                            Leave it empty to hand the line back to the bot, or use the
-                                            word <code>noob</code> to see a server&apos;s bad-word list refuse it.
+                                            A status can carry <code>{ VAR_DYNAMIC_CHANNEL_GAME }</code> and fill
+                                            itself in. Leave the field empty to hand the line back to the bot, or use
+                                            the word <code>noob</code> to see a server&apos;s bad-word list refuse it.
                                         </>
                                     },
                                     Success: { title: "Your channel says it, until you change it" },
@@ -160,7 +196,7 @@ export default function Status() {
                                         // line to the composed one the Cleared state declares, and
                                         // writing "" here would print that away as a pair of quotes.
                                         toVariables: ( values ): Readonly<Record<string, string>> => {
-                                            const status = values.status.trim();
+                                            const status = statusOf( values.status );
 
                                             return status ? { channelStatus: status } : {};
                                         },
@@ -169,7 +205,7 @@ export default function Status() {
                                         // itself - a status the bot refused never reaches the channel.
                                         onTransition: ( transitionName, values ) => {
                                             if ( "VertixBot/UI-V3/DynamicChannelStatusFlow/Transitions/SubmitSuccess" === transitionName ) {
-                                                setChannelStatus( values.status.trim() );
+                                                setChannelStatus( statusOf( values.status ) );
                                             } else if ( "VertixBot/UI-V3/DynamicChannelStatusFlow/Transitions/SubmitCleared" === transitionName ) {
                                                 setChannelStatus( null );
                                             }
@@ -178,6 +214,25 @@ export default function Status() {
                                 } }
                             />
                         </DiscordAppFrame>
+                    </div>
+
+                    { /* The three are read off the bot's own list rather than named here, so a page
+                         cannot go on offering a token the status stopped accepting. */ }
+                    <div className="text-h5 text-vc-ice-dim">
+                        <p className="mb-0">
+                            A status can carry placeholders, and the bot fills them in again every time it
+                            rewrites the line — so one reading <code>{ VAR_DYNAMIC_CHANNEL_GAME }</code> follows the
+                            room onto whatever it plays next. Only{ " " }
+                            { DYNAMIC_CHANNEL_STATUS_VARS.map( ( token, index ) => (
+                                <React.Fragment key={ token }>
+                                    { index > 0 && ( index === DYNAMIC_CHANNEL_STATUS_VARS.length - 1 ? " and " : ", " ) }
+                                    <code>{ token }</code>
+                                </React.Fragment>
+                            ) ) }
+                            { " " }work here, because a status may only carry what can change while people are
+                            sitting in the channel.{ " " }
+                            <a href="/posts/channel-name-placeholders">What each one means in full</a>.
+                        </p>
                     </div>
                 </div>
             </div>

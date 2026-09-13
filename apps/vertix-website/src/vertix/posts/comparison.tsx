@@ -386,26 +386,6 @@ export default function Comparison() {
             </div>
 
             <p className="text-vc-ice-dim text-fine mb-12">
-                Every column is read off the thing itself rather than its marketing. VoiceChannels
-                from its own buttons and generator settings; the other three from the commands each
-                app registers with discord, the panels they post, and their dashboards -
-                Astro&rsquo;s one settings page, TempVoice&rsquo;s four tabs,
-                VoiceMaster&rsquo;s eight sections. Those lists are complete, so a capability
-                missing from all of them is marked unavailable rather than assumed.
-            </p>
-
-            <p className="text-vc-ice-dim text-fine mb-12">
-                Paid and subscription are the bots&rsquo; own words rather than a judgement: Astro
-                only ever offers Ultimate, while TempVoice and VoiceMaster both hand back a top.gg
-                vote as well. Each button was pressed from inside that bot&rsquo;s own temporary
-                channel, which matters - all three check where you are before they check what you
-                have paid for, so a gated button answers &ldquo;you need to be in a VC&rdquo; from
-                outside and reads as free. The dashboards settle the rest, badging their paid
-                settings inline: it is how TempVoice&rsquo;s voice role and VoiceMaster&rsquo;s
-                member role turn out to cost money when both look free from inside discord.
-            </p>
-
-            <p className="text-vc-ice-dim text-fine mb-12">
                 Read in September 2026 against one test server running all four. Anything nobody
                 could press comes from each bot&rsquo;s own documentation:{ " " }
                 <a href="https://voicemaster.xyz/en/docs/commands" target="_blank" rel="noreferrer nofollow">voicemaster.xyz/docs</a>,{ " " }

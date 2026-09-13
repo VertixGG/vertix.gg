@@ -28,7 +28,7 @@ const GENERATOR_NAME = "＋ New Channel";
  * the last person has gone. The middle one is the whole feature; the other two are what it is
  * measured against.
  */
-type Stage = "generator" | "created" | "gone";
+type Stage = "generator" | "created" | "gone" | "moved";
 
 const GUIDANCE: Record<Stage, { title: React.ReactNode; body: React.ReactNode }> = {
     generator: {
@@ -46,11 +46,20 @@ const GUIDANCE: Record<Stage, { title: React.ReactNode; body: React.ReactNode }>
             out, no command to learn.
         </>
     },
-    gone: {
-        title: "You left, so the room went with you",
+    moved: {
+        title: "You moved again, and nothing followed you",
         body: <>
-            Yours is gone the moment it emptied. Jordan and Sam still have theirs, because they
-            are still in them - and nobody has anything to tidy up.
+            Hopping between rooms costs nothing, because none of them are yours to leave behind.
+            Each panel belongs to whoever the room was made for. The generator is still up there
+            whenever you want one of your own.
+        </>
+    },
+    gone: {
+        title: "You walked into somebody else's, so yours went",
+        body: <>
+            The room emptied and was deleted on the spot. The panel here is theirs, not yours -
+            same buttons, and only the person it was made for can press them. Walk back into the
+            generator for one of your own.
         </>
     }
 };
@@ -62,10 +71,19 @@ const GUIDANCE: Record<Stage, { title: React.ReactNode; body: React.ReactNode }>
  * these two walked into it before you did, and yours appearing and disappearing leaves them
  * exactly where they are.
  */
-const OTHER_MEMBERS_CHANNELS: DiscordChannelListItem[] = [
+const SAM = { id: "sam", username: "Sam", avatar: "https://cdn.discordapp.com/embed/avatars/4.png" };
+
+/**
+ * Each of these carries who owns it, because walking into one means reading their panel rather
+ * than yours - the room's settings are on it, and the line about only the owner being able to
+ * change them is suddenly about somebody else.
+ */
+const OTHER_MEMBERS_CHANNELS: ( DiscordChannelListItem & { owner: string, plainName: string } )[] = [
     {
         id: "jordan-channel",
         name: "🟢 Jordan's Channel",
+        plainName: "Jordan's Channel",
+        owner: DEMO_MEMBERS.jordan.username,
         userCount: 3,
         maxUsers: 4,
         users: [ DEMO_MEMBERS.jordan, DEMO_MEMBERS.mia, DEMO_MEMBERS.alex ]
@@ -73,12 +91,18 @@ const OTHER_MEMBERS_CHANNELS: DiscordChannelListItem[] = [
     {
         id: "sam-channel",
         name: "🔴 Sam's Channel",
+        plainName: "Sam's Channel",
+        owner: SAM.username,
         locked: true,
         userCount: 1,
         maxUsers: 2,
-        users: [ { id: "sam", username: "Sam", avatar: "https://cdn.discordapp.com/embed/avatars/4.png" } ]
+        users: [ SAM ]
     }
 ];
+
+function getJoinedChannel( joined: string | null ) {
+    return OTHER_MEMBERS_CHANNELS.find( ( channel ) => channel.id === joined ) ?? null;
+}
 
 /**
  * The channels the server has, at this point in the walk.
@@ -86,7 +110,7 @@ const OTHER_MEMBERS_CHANNELS: DiscordChannelListItem[] = [
  * The generator never moves and is never removed, which is the point being made - what appears
  * below it is the only thing that changes.
  */
-function getChannels( stage: Stage ): DiscordChannelListItem[] {
+function getChannels( stage: Stage, joined: string | null ): DiscordChannelListItem[] {
     const channels: DiscordChannelListItem[] = [ { id: "generator", name: GENERATOR_NAME } ];
 
     if ( "created" === stage ) {
@@ -102,7 +126,21 @@ function getChannels( stage: Stage ): DiscordChannelListItem[] {
         } );
     }
 
-    return [ ...channels, ...OTHER_MEMBERS_CHANNELS ];
+    // You are wherever you walked to, so the room you joined gains you and its count moves with
+    // it. A list that deleted your room without putting you anywhere would be showing a leave
+    // that never landed.
+    const others = OTHER_MEMBERS_CHANNELS.map( ( channel ) => (
+        channel.id === joined
+            ? {
+                ...channel,
+                active: true,
+                userCount: ( channel.userCount ?? 0 ) + 1,
+                users: [ ...( channel.users ?? [] ), DEMO_MEMBERS.owner ]
+            }
+            : channel
+    ) );
+
+    return [ ...channels, ...others ];
 }
 
 /**
@@ -114,7 +152,10 @@ function getChannels( stage: Stage ): DiscordChannelListItem[] {
  */
 export default function JoinToCreateWalkthrough() {
     const openFeature = useOpenDynamicChannelV3Feature(),
-        [ stage, setStage ] = React.useState<Stage>( "generator" );
+        [ stage, setStage ] = React.useState<Stage>( "generator" ),
+        [ joined, setJoined ] = React.useState<string | null>( null );
+
+    const joinedChannel = getJoinedChannel( joined );
 
     const guidance = GUIDANCE[ stage ];
 
@@ -127,20 +168,35 @@ export default function JoinToCreateWalkthrough() {
             </div>
 
             <DiscordAppFrame
-                channelName={ "created" === stage ? DEMO_CHANNEL_NAME : undefined }
+                channelName={ "created" === stage ? DEMO_CHANNEL_NAME : joinedChannel?.plainName }
                 sidebar={
                     <DiscordChannelList
                         title="Voice Channels"
-                        channels={ getChannels( stage ) }
+                        channels={ getChannels( stage, joined ) }
                         onChannelClick={ ( channel ) => {
                             if ( "generator" === channel.id ) {
+                                setJoined( null );
                                 setStage( "created" );
+                                return;
                             }
+
+                            // Nothing to walk out of yet - the guidance is asking for the
+                            // generator, and the rooms below it are somebody else's business.
+                            if ( "generator" === stage ) {
+                                return;
+                            }
+
+                            // Walking into somebody else's room is leaving your own, and an empty
+                            // room is deleted - so the way out of the walk is the same gesture
+                            // that started it, rather than a button that only exists on a page.
+                            // Doing it again is only a move: yours went the first time.
+                            setJoined( channel.id );
+                            setStage( "created" === stage ? "gone" : "moved" );
                         } }
                     />
                 }
             >
-                { "created" === stage ? (
+                { "created" === stage && (
                     <div className="discord-chat-container">
                         <DiscordUIComponentMessage
                             author="VoiceChannels"
@@ -152,27 +208,33 @@ export default function JoinToCreateWalkthrough() {
                             onElementClick={ openFeature }
                         />
                     </div>
-                ) : (
+                ) }
+
+                { joinedChannel && "created" !== stage && (
+                    <div className="discord-chat-container">
+                        <DiscordUIComponentMessage
+                            author="VoiceChannels"
+                            avatar={ VertixAvatar }
+                            timestamp="Today at 11:41 AM"
+                            mentionUsername={ joinedChannel.owner }
+                            componentName="VertixBot/UI-V3/DynamicChannel"
+                            variables={ {
+                                ...DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES,
+                                name: joinedChannel.plainName,
+                                limit: String( joinedChannel.maxUsers ?? "Unlimited" ),
+                                state: joinedChannel.locked ? "🔒 Private" : "🌐 Public"
+                            } }
+                        />
+                    </div>
+                ) }
+
+                { "generator" === stage && (
                     <p className="px-4 py-10 text-center text-vc-ice-dim mb-0">
-                        { "generator" === stage
-                            ? "Nothing here yet - the room does not exist until somebody joins."
-                            : "The room was deleted the moment it emptied." }
+                        Nothing here yet - the room does not exist until somebody joins.
                     </p>
                 ) }
             </DiscordAppFrame>
 
-            <div className="flex flex-wrap items-center gap-3 mt-4">
-                { "created" === stage && (
-                    <button
-                        type="button"
-                        onClick={ () => setStage( "gone" ) }
-                        className="inline-flex items-center whitespace-nowrap rounded-md border border-white/15
-                            bg-white/5 px-4 py-2 text-h5 transition-colors hover:bg-white/10"
-                    >
-                        Leave the channel
-                    </button>
-                ) }
-            </div>
         </div>
     );
 }

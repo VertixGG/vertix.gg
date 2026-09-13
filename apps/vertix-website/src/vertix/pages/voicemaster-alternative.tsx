@@ -143,15 +143,10 @@ export default function VoiceMasterAlternative() {
                         Nothing stops two of these running on one server while you decide. Set up a
                         generator, see how it behaves, and remove whichever you like less.
                     </p>
-                    <div className="flex flex-wrap justify-center gap-3">
-                        <button onClick={ goToInvite }
-                            className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
-                            Add to Discord
-                        </button>
-                        <a href="/join-to-create" className="vc-btn vc-btn-lg">
-                            How Join to Create works
-                        </a>
-                    </div>
+                    <button onClick={ goToInvite }
+                        className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
+                        Add to Discord
+                    </button>
                 </div>
             </section>
         </div>

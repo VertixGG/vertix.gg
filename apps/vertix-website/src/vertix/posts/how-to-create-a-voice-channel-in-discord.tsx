@@ -97,9 +97,9 @@ export default function HowToCreateAVoiceChannelInDiscord() {
             <p className="text-vc-ice-dim">
                 The person who created the room gets the settings above - name, user limit, region,
                 who can join - as buttons inside the channel, without needing Manage Channels on
-                your server. That is what this bot does:{ " " }
-                <a href="/join-to-create">how Join to Create works</a>, and the{ " " }
-                <a href="/posts/how-to-setup">setup guide</a> if you want to try it.
+                your server. That is what this bot does - the{ " " }
+                <a href="/posts/how-to-setup">setup guide</a> walks through it if you want to
+                try it.
             </p>
 
             <div className="p-6 mt-10 bg-vc-space rounded border border-vc-hairline-bright text-center">

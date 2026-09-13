@@ -240,10 +240,14 @@ const DynamicChannelInviteAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
      * line in the log to show for it. `argsFromManager` is the same args the render was called
      * with, which is where they still are - the transfer flow, which picks a member and then names
      * them back exactly like this one, reaches for it the same way.
+     *
+     * It defaults the stored half, which transfer does not have to: `getArgs` answers `undefined`
+     * for a message nobody seeded, and this is the flow where that is the normal case rather than
+     * the impossible one.
      */
     .getReplyArgs( async( context, interaction, argsFromManager ) => {
         const currentStep = context.getCurrentExecutionStep( interaction )?.name,
-            storedArgs = context.getArgs( interaction );
+            storedArgs = context.getArgs( interaction ) ?? {};
 
         if ( "VertixBot/UI-V3/DynamicChannelInviteSent" === currentStep ) {
             return {

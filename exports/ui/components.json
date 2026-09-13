@@ -4309,7 +4309,7 @@
                                         "emoji": "📣"
                                     },
                                     {
-                                        "label": "Claim",
+                                        "label": "LFM",
                                         "value": "15",
                                         "emoji": "🔎"
                                     },
@@ -5381,7 +5381,7 @@
                                         "emoji": "📣"
                                     },
                                     {
-                                        "label": "Claim",
+                                        "label": "LFM",
                                         "value": "15",
                                         "emoji": "🔎"
                                     },
@@ -5855,7 +5855,7 @@
                                         "emoji": "📣"
                                     },
                                     {
-                                        "label": "Claim",
+                                        "label": "LFM",
                                         "value": "15",
                                         "emoji": "🔎"
                                     },
@@ -7060,13 +7060,13 @@
                             },
                             "defaultVars": {
                                 "inviteEmoji": "<emoji name='InviteChannel'>",
-                                "invitedDisplayName": "Example User",
+                                "invitedDisplayName": "The member",
                                 "deliveryDisplay": "{deliveryDelivered}"
                             },
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args) => ({\n  invitedDisplayName: args?.invitedDisplayName,\n  deliveryDisplay: args?.isInviteDelivered ? DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryDelivered : DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryBlocked\n})",
+                                        "source": "(args) => {\n  const result = {\n    deliveryDisplay: args?.isInviteDelivered ? DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryDelivered : DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryBlocked\n  };\n  if (args?.invitedDisplayName)\n    result.invitedDisplayName = args.invitedDisplayName;\n  return result;\n}",
                                         "binds": [
                                             "DYNAMIC_CHANNEL_INVITE_SENT_VARS"
                                         ]

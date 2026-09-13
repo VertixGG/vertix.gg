@@ -764,34 +764,48 @@
           "placeholder": "🎚 ボタンを選択",
           "selectOptions": [
             {
-              "label": "名前変更"
+              "label": "名前変更",
+              "value": "0"
             },
             {
-              "label": "制限"
+              "label": "制限",
+              "value": "1"
             },
             {
-              "label": "チャットをクリア"
+              "label": "チャットをクリア",
+              "value": "2"
             },
             {
-              "label": "公開/非公開"
+              "label": "公開/非公開",
+              "value": "3"
             },
             {
-              "label": "表示/非表示"
+              "label": "表示/非表示",
+              "value": "4"
             },
             {
-              "label": "アクセス"
+              "label": "アクセス",
+              "value": "5"
             },
             {
-              "label": "リセット"
+              "label": "リセット",
+              "value": "6"
             },
             {
-              "label": "転送"
+              "label": "転送",
+              "value": "12"
             },
             {
-              "label": "ステータス"
+              "label": "ステータス",
+              "value": "13"
             },
             {
-              "label": "取得"
+              "label": "LFM",
+              "value": "15"
+            },
+            {
+              "label": "取得",
+              "value": "7"
             }
           ]
         }

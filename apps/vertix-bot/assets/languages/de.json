@@ -764,34 +764,48 @@
           "placeholder": "🎚 Schaltflächen auswählen",
           "selectOptions": [
             {
-              "label": "Umbenennen"
+              "label": "Umbenennen",
+              "value": "0"
             },
             {
-              "label": "Limit"
+              "label": "Limit",
+              "value": "1"
             },
             {
-              "label": "Chat löschen"
+              "label": "Chat löschen",
+              "value": "2"
             },
             {
-              "label": "Öffentlich/Privat"
+              "label": "Öffentlich/Privat",
+              "value": "3"
             },
             {
-              "label": "Sichtbar/Versteckt"
+              "label": "Sichtbar/Versteckt",
+              "value": "4"
             },
             {
-              "label": "Zugriff"
+              "label": "Zugriff",
+              "value": "5"
             },
             {
-              "label": "Zurücksetzen"
+              "label": "Zurücksetzen",
+              "value": "6"
             },
             {
-              "label": "Übertragen"
+              "label": "Übertragen",
+              "value": "12"
             },
             {
-              "label": "Status"
+              "label": "Status",
+              "value": "13"
             },
             {
-              "label": "Beanspruchen"
+              "label": "LFM",
+              "value": "15"
+            },
+            {
+              "label": "Beanspruchen",
+              "value": "7"
             }
           ]
         }

@@ -764,34 +764,48 @@
           "placeholder": "🎚 Select Buttons",
           "selectOptions": [
             {
-              "label": "Rename"
+              "label": "Rename",
+              "value": "0"
             },
             {
-              "label": "Limit"
+              "label": "Limit",
+              "value": "1"
             },
             {
-              "label": "Clear Chat"
+              "label": "Clear Chat",
+              "value": "2"
             },
             {
-              "label": "Public/Private"
+              "label": "Public/Private",
+              "value": "3"
             },
             {
-              "label": "Shown/Hidden"
+              "label": "Shown/Hidden",
+              "value": "4"
             },
             {
-              "label": "Access"
+              "label": "Access",
+              "value": "5"
             },
             {
-              "label": "Reset"
+              "label": "Reset",
+              "value": "6"
             },
             {
-              "label": "Transfer"
+              "label": "Transfer",
+              "value": "12"
             },
             {
-              "label": "Status"
+              "label": "Status",
+              "value": "13"
             },
             {
-              "label": "Claim"
+              "label": "LFM",
+              "value": "15"
+            },
+            {
+              "label": "Claim",
+              "value": "7"
             }
           ]
         }

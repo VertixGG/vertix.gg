@@ -764,34 +764,48 @@
           "placeholder": "🎚 Seleccionar botones",
           "selectOptions": [
             {
-              "label": "Renombrar"
+              "label": "Renombrar",
+              "value": "0"
             },
             {
-              "label": "Límite"
+              "label": "Límite",
+              "value": "1"
             },
             {
-              "label": "Limpiar chat"
+              "label": "Limpiar chat",
+              "value": "2"
             },
             {
-              "label": "Público/Privado"
+              "label": "Público/Privado",
+              "value": "3"
             },
             {
-              "label": "Visible/Oculto"
+              "label": "Visible/Oculto",
+              "value": "4"
             },
             {
-              "label": "Acceso"
+              "label": "Acceso",
+              "value": "5"
             },
             {
-              "label": "Restablecer"
+              "label": "Restablecer",
+              "value": "6"
             },
             {
-              "label": "Transferir"
+              "label": "Transferir",
+              "value": "12"
             },
             {
-              "label": "Estado"
+              "label": "Estado",
+              "value": "13"
             },
             {
-              "label": "Reclamar"
+              "label": "LFM",
+              "value": "15"
+            },
+            {
+              "label": "Reclamar",
+              "value": "7"
             }
           ]
         }

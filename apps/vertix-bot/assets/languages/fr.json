@@ -764,34 +764,48 @@
           "placeholder": "🎚 Sélectionner les boutons",
           "selectOptions": [
             {
-              "label": "Renommer"
+              "label": "Renommer",
+              "value": "0"
             },
             {
-              "label": "Limite"
+              "label": "Limite",
+              "value": "1"
             },
             {
-              "label": "Effacer le chat"
+              "label": "Effacer le chat",
+              "value": "2"
             },
             {
-              "label": "Public/Privé"
+              "label": "Public/Privé",
+              "value": "3"
             },
             {
-              "label": "Visible/Masqué"
+              "label": "Visible/Masqué",
+              "value": "4"
             },
             {
-              "label": "Accès"
+              "label": "Accès",
+              "value": "5"
             },
             {
-              "label": "Réinitialiser"
+              "label": "Réinitialiser",
+              "value": "6"
             },
             {
-              "label": "Transférer"
+              "label": "Transférer",
+              "value": "12"
             },
             {
-              "label": "Statut"
+              "label": "Statut",
+              "value": "13"
             },
             {
-              "label": "Réclamer"
+              "label": "LFM",
+              "value": "15"
+            },
+            {
+              "label": "Réclamer",
+              "value": "7"
             }
           ]
         }

@@ -103,7 +103,7 @@ const CONTROLS = [
     { capability: "Wipe the channel's messages", vc: "Clear Chat", vm: null },
     { capability: "Put every setting back", vc: "Reset", vm: null },
     { capability: "Save a setup and reuse it", vc: "Templates", vm: "Clone Setup" },
-    { capability: "Change the bitrate", vc: null, vm: "Bitrate" },
+    { capability: "Set the bitrate", vc: "Inherited from the generator", vm: "Bitrate, owner sets it" },
     { capability: "Paired temporary text channel", vc: null, vm: "Text" },
     { capability: "Reword the bot, per language", vc: "Dashboard", vm: null },
 ];
@@ -111,9 +111,9 @@ const CONTROLS = [
 const HONEST = [
     {
         name: "Pick VoiceMaster if",
-        body: "you want the room owner to control bitrate, or you want every voice room to come "
-            + "with a text channel of its own. VoiceChannels does neither, and both are things "
-            + "people genuinely build servers around.",
+        body: "you want the room owner deciding bitrate themselves, or every voice room to come "
+            + "with a text channel of its own. Here the bitrate is whatever the generator is set "
+            + "to, and there is no paired text channel at all.",
     },
     {
         name: "Pick TempVoice if",

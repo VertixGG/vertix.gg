@@ -62,10 +62,6 @@ const routes = [
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/join-to-create" ) ),
     },
     {
-        path: "/posts/how-to-create-a-voice-channel-in-discord",
-        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/how-to-create-a-voice-channel-in-discord" ) ),
-    },
-    {
         path: "/posts/channel-name-placeholders",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/channel-name-placeholders" ) ),
     },

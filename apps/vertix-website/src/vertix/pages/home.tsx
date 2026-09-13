@@ -342,13 +342,19 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-3">
+                    <div className="mx-auto grid w-full max-w-[640px] grid-cols-1 gap-3 sm:grid-cols-2">
                         <button onClick={ goToInvite }
-                            className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
+                            className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect w-full">
                             Add to Discord
                         </button>
-                        <a href="/posts/how-to-setup" className="vc-btn vc-btn-lg">
+                        <a href="/posts/how-to-setup" className="vc-btn vc-btn-lg w-full">
                             Read the setup guide
+                        </a>
+                        <a href="/posts/join-to-create" className="vc-btn vc-btn-lg w-full">
+                            How Join to Create works
+                        </a>
+                        <a href="/posts/comparison" className="vc-btn vc-btn-lg w-full">
+                            Compared with other bots
                         </a>
                     </div>
                 </div>

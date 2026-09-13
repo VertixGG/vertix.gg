@@ -87,12 +87,12 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.9,
     },
     {
-        path: "/voicemaster-alternative",
-        sourcePath: "src/vertix/pages/voicemaster-alternative.tsx",
-        title: "A Free VoiceMaster Alternative | VoiceChannels",
+        path: "/posts/comparison",
+        sourcePath: "src/vertix/posts/comparison.tsx",
+        title: "Discord Temporary Voice Channel Bots Compared | VoiceChannels",
         description:
-            "VoiceChannels compared with VoiceMaster and TempVoice, control by control - what "
-            + "each one advertises, where they differ, and what costs money.",
+            "VoiceChannels against VoiceMaster, TempVoice, Astro and ChannelBot - server counts, "
+            + "ratings, what each one charges for, and where their free tiers stop.",
         priority: 0.8,
     },
     {

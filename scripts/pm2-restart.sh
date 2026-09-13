@@ -4,15 +4,20 @@
 # next. `pm2 restart` cannot do this - it signals every app at once.
 #
 # Order is not cosmetic:
+#   logger  - first up and last down. It owns :3090, and everything else here
+#             sends its lines there, so it has to be listening before any of them
+#             starts and still listening while they stop. It needs nothing itself,
+#             which is why it can go ahead of redis.
 #   redis   - RedisClient fails fast and latches `connectionFailed` forever, so
 #             anything that starts before the container is listening never
 #             reconnects. It is started even though it is not in the requested
 #             list, because the API and the bot cannot come up without it.
-#   logger  - owns :3090, so the API and the bot have somewhere to send their
-#             first lines instead of dropping them.
 #   api     - owns :3021.
 #   bot     - last; it has no port of its own.
 # The dashboard is restored at the end so a teardown does not leave the UI down.
+#
+# The teardown is ordered too, in reverse. `pm2 delete all` signals every app at
+# once, which takes the logger down alongside the apps still writing to it.
 
 set -euo pipefail
 
@@ -57,6 +62,14 @@ start_app() {
 }
 
 echo "pm2-restart: tearing down"
+
+# Reverse of the start order, so the logger is still up while everything that
+# logs to it is going down, and is the last of the named apps to go.
+for app in pm2-dashboard vertix-bot vertix-api vertix-redis vertix-logger; do
+    pm2 delete "$app" --silent 2>/dev/null || true
+done
+
+# Anything this script does not name - added since, or left by a dead daemon.
 pm2 delete all --silent 2>/dev/null || true
 
 # Stragglers: a daemon that died mid-flight leaves its apps reparented to init,
@@ -67,11 +80,11 @@ pkill -f "bun src/index.ts" 2>/dev/null || true
 pkill -f "pm2-dashboard --host" 2>/dev/null || true
 sleep 2
 
-start_app vertix-redis
-wait_for_port "localhost" 6379 "redis"
-
 start_app vertix-logger
 wait_for_port "127.0.0.1" "$( env_value LOGGER_SERVER_HTTP_PORT 3090 )" "logger"
+
+start_app vertix-redis
+wait_for_port "localhost" 6379 "redis"
 
 start_app vertix-api
 wait_for_port "127.0.0.1" "$( env_value API_PORT 3021 )" "api"

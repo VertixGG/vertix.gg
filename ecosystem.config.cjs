@@ -36,15 +36,15 @@ const shared = {
 
 module.exports = {
     apps: [
-        {
-            ... shared,
-            name: "vertix-redis",
-            cwd: path.join( ROOT, "apps", "redis" ),
-            // Foreground, not `up -d`: a detached compose would exit and read as a crash.
-            script: "docker",
-            args: "compose up",
-            interpreter: "none",
-        },
+        /**
+         * First, and ahead of redis - which it can be, because it needs nothing itself.
+         *
+         * Everything else here sends its lines to :3090, so it has to be listening before any of
+         * them starts. This order only governs a plain `pm2 start ecosystem.config.cjs`; the
+         * restart everybody actually runs is scripts/pm2-restart.sh, which starts each app by name
+         * and waits for its port, and decides the order itself. Changing one without the other
+         * leaves them disagreeing.
+         */
         {
             ... shared,
             name: "vertix-logger",
@@ -53,6 +53,15 @@ module.exports = {
             args: "bun src/index.ts",
             env: { LOGGER_PROCESS_NAME: "vertix-logger" },
             interpreter: "bash",
+        },
+        {
+            ... shared,
+            name: "vertix-redis",
+            cwd: path.join( ROOT, "apps", "redis" ),
+            // Foreground, not `up -d`: a detached compose would exit and read as a crash.
+            script: "docker",
+            args: "compose up",
+            interpreter: "none",
         },
         {
             ... shared,

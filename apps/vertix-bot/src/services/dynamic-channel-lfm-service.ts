@@ -19,7 +19,10 @@ import { ChannelType, EmbedBuilder } from "discord.js";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { dynamicChannelLfmTimingsResolve } from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
+import {
+    dynamicChannelLfmCooldownRemaining,
+    dynamicChannelLfmTimingsResolve
+} from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 
 import { DynamicChannelLfmManager } from "@vertix.gg/bot/src/managers/dynamic-channel-lfm-manager";
 
@@ -723,6 +726,10 @@ export class DynamicChannelLfmService extends ServiceWithDependenciesBase<{
      * Zero once the moment has passed, so a caller never has to tell "no cooldown" apart from "a
      * cooldown that finished" - and the stale row is left to be overwritten by the next post
      * rather than cleaned up on a read.
+     *
+     * Answered against the generator's cooldown as it is set now rather than as it was set when
+     * the row was written, so shortening it - or turning it off - takes effect on the rest already
+     * running instead of on the one after it.
      */
     public async getCooldownRemaining( channel: VoiceChannel | VoiceBasedChannel ) {
         const masterChannelDB = await this.getMasterChannel( channel as VoiceChannel );
@@ -737,7 +744,9 @@ export class DynamicChannelLfmService extends ServiceWithDependenciesBase<{
             return 0;
         }
 
-        return Math.max( 0, stored.until - Date.now() );
+        const { postCooldown } = await MasterChannelDataManager.$.getChannelLfmTimings( masterChannelDB );
+
+        return dynamicChannelLfmCooldownRemaining( stored, postCooldown );
     }
 
     /**
@@ -746,15 +755,22 @@ export class DynamicChannelLfmService extends ServiceWithDependenciesBase<{
      * Counted from the post going up rather than coming down, because a generator has many rooms
      * and each may hold a post at once: a clock started on release would let every room post
      * together and only then begin resting, which is the opposite of what it is for.
+     *
+     * The moment it began is written alongside the deadline it produces, because the deadline on
+     * its own cannot say which setting it came from - and so cannot be reworked when that setting
+     * changes.
      */
     private async rememberCooldown( masterChannelDB: ChannelExtended, postCooldown: number ) {
         if ( ! postCooldown ) {
             return;
         }
 
+        const startedAt = Date.now();
+
         await DynamicChannelLfmCooldownModel.$.setCooldown( masterChannelDB.id, {
             masterChannelId: masterChannelDB.channelId,
-            until: Date.now() + postCooldown
+            startedAt,
+            until: startedAt + postCooldown
         } ).catch( ( error: unknown ) => this.logger.error( this.rememberCooldown, "", error ) );
     }
 

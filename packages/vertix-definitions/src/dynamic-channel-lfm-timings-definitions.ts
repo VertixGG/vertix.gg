@@ -95,3 +95,48 @@ export function dynamicChannelLfmTimingsResolve(
 
     return resolved;
 }
+
+/**
+ * A stored post cooldown, as far as resolving it is concerned: when the rest began, and when it
+ * was written to end.
+ *
+ * Structural rather than the storage interface itself, which lives in the data package - the data
+ * package already depends on this one, and the dependency cannot run both ways.
+ */
+export interface DynamicChannelLfmStoredCooldownInterface {
+    until: number;
+    startedAt?: number;
+}
+
+/**
+ * Function dynamicChannelLfmCooldownRemaining() :: What a stored cooldown still owes under the
+ * setting in force now, in milliseconds.
+ *
+ * The row holds a deadline, and a deadline is only the setting as it stood when the post went up.
+ * Resolving it against the current setting on every read is what lets an admin who shortens the
+ * cooldown - or turns it off - have that apply to the rest already running, instead of waiting out
+ * a window nobody would be allowed to start today. It is the same reason the timings themselves
+ * are re-resolved rather than honoured because they were written first.
+ *
+ * Only ever shortens. A cooldown that has been raised applies from the next post rather than
+ * reaching back to extend a rest the generator was already most of the way through: lengthening
+ * what was already granted would let a settings change trap rooms that posted under the old rule.
+ *
+ * A row written before the start was recorded is honoured as written - there is nothing to resolve
+ * it against, and the next post replaces it.
+ */
+export function dynamicChannelLfmCooldownRemaining(
+    stored: DynamicChannelLfmStoredCooldownInterface,
+    postCooldown: number,
+    now = Date.now()
+) {
+    if ( ! postCooldown ) {
+        return 0;
+    }
+
+    const until = undefined === stored.startedAt
+        ? stored.until
+        : Math.min( stored.until, stored.startedAt + postCooldown );
+
+    return Math.max( 0, until - now );
+}

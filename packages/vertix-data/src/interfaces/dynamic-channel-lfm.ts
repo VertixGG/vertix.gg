@@ -31,6 +31,15 @@ export interface IDynamicChannelLfmStoredPost {
 export interface IDynamicChannelLfmStoredCooldown {
     masterChannelId: string;
     until: number;
+
+    /**
+     * When the rest began, kept alongside the deadline it produced so the deadline can be worked
+     * out again against whatever the generator's cooldown is set to now.
+     *
+     * Optional because rows written before it existed hold no start to resolve against; those are
+     * honoured as written until the next post replaces them.
+     */
+    startedAt?: number;
 }
 
 /**

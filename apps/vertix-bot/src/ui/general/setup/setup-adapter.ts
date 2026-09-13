@@ -754,7 +754,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
             const defaultButtons = version === VERSION_UI_V3
                 ? DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( btn ) => btn.getId() )
-                : DynamicChannelElementsGroup.getAll().map( ( btn ) => btn.getId() );
+                : DynamicChannelElementsGroup.getDefaults().map( ( btn ) => btn.getId() );
 
             const usedButtons: string[] | number[] = data.dynamicChannelButtonsTemplate || defaultButtons;
 

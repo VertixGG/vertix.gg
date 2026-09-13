@@ -87,7 +87,7 @@ async function _onButtonSelected(
 ) {
     const selectedButtonId = interaction.values[ 0 ],
         args = context.getArgs( interaction ),
-        buttons = args.dynamicChannelButtonsTemplate || DynamicChannelElementsGroup.getAll().map( ( i ) => i.getId() );
+        buttons = args.dynamicChannelButtonsTemplate || DynamicChannelElementsGroup.getDefaults().map( ( i ) => i.getId() );
 
     if ( state === "added" ) {
         if ( !buttons.includes( parseInt( selectedButtonId ) ) ) {
@@ -307,10 +307,11 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
                 }
 
                 if ( !args.dynamicChannelButtonsTemplate?.length && interaction ) {
-                    // Every button is enabled by default, seeding it here makes the step show what
-                    // the master channel will actually be created with, Status included.
+                    // Seeding it here makes the step show what the master channel will actually be
+                    // created with, Status included - and Lfm left unchecked, since it has nowhere
+                    // to post until a destination is picked.
                     const defaultButtonsTemplate = DynamicChannelElementsGroup.sortIds(
-                        DynamicChannelElementsGroup.getAll().map( ( item ) => item.getId() )
+                        DynamicChannelElementsGroup.getDefaults().map( ( item ) => item.getId() )
                     );
 
                     args.dynamicChannelButtonsTemplate = defaultButtonsTemplate;

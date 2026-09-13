@@ -46,7 +46,7 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
 
                 dynamicChannelDefaultUserLimit: null,
 
-                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getAll().map( ( i ) => i.getId().toString() ),
+                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getDefaults().map( ( i ) => i.getId().toString() ),
 
                 dynamicChannelButtonsTemplateByRole: {},
 

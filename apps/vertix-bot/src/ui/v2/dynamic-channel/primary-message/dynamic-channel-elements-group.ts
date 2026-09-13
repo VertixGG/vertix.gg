@@ -121,6 +121,17 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
         return DynamicChannelElementsGroup.allButtons;
     }
 
+    /**
+     * The set a generator is created with.
+     *
+     * Every button that says it belongs there. Which ones those are is each button's own answer
+     * rather than a list kept here, so a button that needs configuring before it can do anything
+     * stays out of new generators without this group having to know which button that is.
+     */
+    public static getDefaults() {
+        return this.getAll().filter( ( item ) => item.isInDefaultSet() );
+    }
+
     public static getById( id: number ) {
         return this.getItemFromMap( this.allButtonsById, id.toString() );
     }

@@ -48,6 +48,18 @@ export abstract class DynamicChannelButtonBase extends UIElementButtonBase imple
     }
 
     /**
+     * Whether a generator that curated nothing carries this button.
+     *
+     * Apart from `isAvailable()`, which reads the set a generator already has - this one decides
+     * what goes into that set when it is first written. A button that can do nothing until an
+     * admin has configured something else says no, and is offered as an unchecked box in the
+     * buttons screen rather than drawn on every panel as a control that answers with an apology.
+     */
+    public isInDefaultSet(): boolean {
+        return true;
+    }
+
+    /**
      * Whether this generator's set carries this button.
      *
      * A set holds this button's own number when the buttons screen inside discord wrote it, and the

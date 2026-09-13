@@ -13,6 +13,14 @@ export class DynamicChannelLfmButton extends DynamicChannelButtonBase {
         return 9;
     }
 
+    /**
+     * Out of the set a new generator is given: there is nowhere to post until an admin picks a
+     * destination, and a button that can only say so is worse than one nobody switched on yet.
+     */
+    public override isInDefaultSet() {
+        return false;
+    }
+
     public getLabelForEmbed() {
         return "🔎 ∙ **LFM**";
     }

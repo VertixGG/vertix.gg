@@ -1277,19 +1277,39 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         }
 
         const availableArgs = interaction ? context.getArgs( interaction ) : undefined;
+
         const masterChannelDB = argsFromManager?.masterChannelDB || availableArgs?.masterChannelDB;
 
-        if ( masterChannelDB ) {
+        // The list is still drawn whenever the row itself is missing, exactly as before.
+        if ( ! masterChannelDB ) {
+            const guildId = interaction?.guild?.id || "";
+            args.masterChannels = await ChannelModel.$.getMasters( guildId, "settings" );
+        }
+
+        // The row when the screen still holds it, and the id it kept instead when it does not.
+        // `masterChannelDB` is not among the args a screen stores - what survives a round trip is
+        // the id it was resolved from - so anything arriving with nothing but its own interaction,
+        // a modal above all, described a generator that had never been chosen. Only the id and the
+        // version are read below, which is what an id on its own can answer for.
+        const masterChannelRef = masterChannelDB
+            || ( availableArgs?.ChannelDBId
+                ? { id: availableArgs.ChannelDBId, version: VERSION_UI_V2 } as ChannelExtended
+                : undefined );
+
+        if ( masterChannelRef ) {
             // A sibling of `masterChannelDB` rather than a field on it - the channel row knows
             // nothing about its position in the list, and reading it from there left every title
             // rendered through this path saying "#NaN".
             args.index = argsFromManager?.masterChannelIndex ?? availableArgs?.masterChannelIndex ?? 0;
-            args.ChannelDBId = masterChannelDB.id;
-            args.masterChannelId = masterChannelDB.channelId;
+            args.ChannelDBId = masterChannelRef.id;
+
+            // The channel id comes off the row when there is one and off the screen otherwise -
+            // an id standing in for the row can say which generator, but not where it lives.
+            args.masterChannelId = masterChannelRef.channelId ?? availableArgs?.masterChannelId;
 
             const masterChannelKeys = MasterChannelDataManager.$.getKeys();
 
-            const masterChannelSettings = await MasterChannelDataManager.$.getAllSettings( masterChannelDB );
+            const masterChannelSettings = await MasterChannelDataManager.$.getAllSettings( masterChannelRef );
 
             const selectedKeys = [
                 masterChannelKeys.dynamicChannelNameTemplate,
@@ -1320,10 +1340,6 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             selectedKeys.forEach( ( key ) => {
                 args[ key ] = masterChannelSettings[ key ];
             } );
-
-        } else {
-            const guildId = interaction?.guild?.id || "";
-            args.masterChannels = await ChannelModel.$.getMasters( guildId, "settings" );
         }
 
         return args;

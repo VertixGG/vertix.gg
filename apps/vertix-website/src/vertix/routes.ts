@@ -70,7 +70,7 @@ const routes = [
     // ---
     {
         path: "*",
-        component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/home" ) ),
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/not-found" ) ),
     }
 ];
 

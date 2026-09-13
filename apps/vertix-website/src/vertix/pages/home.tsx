@@ -1,4 +1,4 @@
-import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
 import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
@@ -180,9 +180,8 @@ export default function Home() {
             <section className="vc-shell vc-band-hero">
                 <div className="flex flex-col gap-14 lg:flex-row lg:items-center lg:gap-16">
                     <div className="flex-1">
-                        <h1 className="vc-display mb-5">
-                            Voice channels that<br className="hidden sm:block"/>
-                            { " " }clean up after themselves
+                        <h1 className="vc-display mb-5 text-balance">
+                            Temporary Discord voice channels that clean up after themselves
                         </h1>
 
                         <p className="vc-lede mb-8">

@@ -1,6 +1,6 @@
 import { DiscordChannelWizard, DiscordChannelDisplay, DiscordUIComponentMessage, DiscordSelectMenuDropdown, DiscordModal, DiscordInput } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import { AUTO_SCALING_CONFIG, autoScalingWizardSteps, reindexWizardSteps } from "../../shared/auto-scaling-data";

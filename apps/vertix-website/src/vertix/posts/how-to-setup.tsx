@@ -1,6 +1,6 @@
 import { DiscordCommandSuggestion, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
@@ -12,7 +12,7 @@ export default function HowToSetup() {
     return (
         <>
             <div className="vc-container vc-page-panel">
-                <h4>Setup step-by-step</h4>
+                <h1 className="text-h4">How to set up temporary voice channels in Discord</h1>
                 <br/>
 
                 <ul className="text-h5">

@@ -1,6 +1,6 @@
 import { DiscordUIComponentMessage, DiscordCommandSuggestion, DiscordMessage, DiscordEmbed } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import {
@@ -28,7 +28,7 @@ const CONFIG_VARIABLES_ENABLED = {
 export default function HowToSetupLogsChannel() {
     return (
         <div className="vc-container vc-page-panel">
-            <h5>Enabling Dynamic Channel - Logs</h5>
+            <h1 className="text-h5">How to enable a Discord voice channel logs channel</h1>
             <br />
             <p className="text-h5">Since <b>Version</b> <code>0.0.5</code> we added <b>Logs Channel</b> is available for each <b>Master Channel</b>.</p>
             <p className="text-h5">The logs disabled by <code>default</code> and can be enabled using <code>/setup</code> command:</p>

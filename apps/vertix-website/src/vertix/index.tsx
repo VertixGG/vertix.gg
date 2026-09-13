@@ -13,6 +13,7 @@ import DashboardAnnouncement from "@vertix.gg/website/src/vertix/components/ui/d
 import localRoutes from "@vertix.gg/website/src/vertix/routes";
 
 import { useDocumentMeta } from "@vertix.gg/website/src/vertix/seo/use-document-meta";
+import { useStructuredData } from "@vertix.gg/website/src/vertix/seo/use-structured-data";
 
 import "@vertix.gg/website/src/vertix/styles/index.css";
 
@@ -41,6 +42,7 @@ const IndexContent = () => {
     const shouldHideHeader = location.pathname === "/welcome";
 
     useDocumentMeta();
+    useStructuredData();
 
     return (
         <>

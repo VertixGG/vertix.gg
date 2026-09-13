@@ -1,7 +1,9 @@
 import path from "path";
 
 import fs from "node:fs/promises";
-import { createReadStream } from "node:fs";
+import http from "node:http";
+import { execFileSync } from "node:child_process";
+import { createReadStream, existsSync } from "node:fs";
 import { pipeline } from "node:stream/promises";
 
 import react from "@vitejs/plugin-react";
@@ -91,6 +93,10 @@ function getContentType( filePath: string ): string {
         return "image/jpeg";
     }
 
+    if ( ext === ".html" ) {
+        return "text/html; charset=utf-8";
+    }
+
     if ( ext === ".css" ) {
         return "text/css; charset=utf-8";
     }
@@ -104,6 +110,32 @@ function getContentType( filePath: string ): string {
 
 // https://vitejs.dev/config/
 
+function readSourceCommitDate( sourcePath: string | undefined ): string | null {
+    if ( ! sourcePath ) {
+        return null;
+    }
+
+    const absolutePath = path.resolve( __dirname, sourcePath );
+
+    if ( ! existsSync( absolutePath ) ) {
+        console.warn( `sitemap: sourcePath does not exist, lastmod omitted - ${ sourcePath }` );
+
+        return null;
+    }
+
+    try {
+        const stdout = execFileSync(
+            "git",
+            [ "log", "-1", "--format=%cs", "--", absolutePath ],
+            { cwd: __dirname, encoding: "utf-8" }
+        ).trim();
+
+        return stdout || null;
+    } catch {
+        return null;
+    }
+}
+
 /**
  * Emits `sitemap.xml` from the same route metadata the app renders its tags
  * from, so the two can't drift apart.
@@ -115,12 +147,16 @@ function sitemapPlugin(): Plugin {
         async closeBundle() {
             const entries = ROUTE_META
                 .filter( ( route ) => ! route.noSitemap )
-                .map( ( route ) => [
-                    "    <url>",
-                    `        <loc>${ SITE_ORIGIN }${ route.path === "/" ? "/" : route.path }</loc>`,
-                    `        <priority>${ ( route.priority ?? 0.5 ).toFixed( 1 ) }</priority>`,
-                    "    </url>",
-                ].join( "\n" ) );
+                .map( ( route ) => {
+                    const lastModified = readSourceCommitDate( route.sourcePath );
+
+                    return [
+                        "    <url>",
+                        `        <loc>${ SITE_ORIGIN }${ route.path === "/" ? "/" : route.path }</loc>`,
+                        ...( lastModified ? [ `        <lastmod>${ lastModified }</lastmod>` ] : [] ),
+                        "    </url>",
+                    ].join( "\n" );
+                } );
 
             const xml = [
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
@@ -138,6 +174,117 @@ function sitemapPlugin(): Plugin {
     };
 }
 
+const PRERENDER_HOST = "127.0.0.1";
+
+const PRERENDER_READY_SELECTOR = ".body-container.loaded";
+
+const PRERENDER_READY_TIMEOUT_MS = 30000;
+
+const PRERENDER_NAVIGATION_TIMEOUT_MS = 60000;
+
+const PRERENDER_VIEWPORT = {
+    width: 1280,
+    height: 900,
+} as const;
+
+async function startPrerenderServer( rootDir: string ) {
+    const server = http.createServer( ( request, response ) => {
+        void ( async() => {
+            const url = request.url ?? "/",
+                urlPath = decodeURIComponent( url.split( "?" )[ 0 ]?.split( "#" )[ 0 ] ?? "/" );
+
+            const candidate = path.resolve( rootDir, "." + urlPath ),
+                isWithinRoot = candidate === rootDir || candidate.startsWith( rootDir + path.sep );
+
+            let filePath = isWithinRoot ? candidate : rootDir;
+
+            try {
+                const stats = await fs.stat( filePath );
+
+                if ( stats.isDirectory() ) {
+                    filePath = path.join( filePath, "index.html" );
+                }
+            } catch {
+                filePath = path.join( rootDir, "index.html" );
+            }
+
+            try {
+                const body = await fs.readFile( filePath );
+
+                response.setHeader( "Content-Type", getContentType( filePath ) );
+                response.end( body );
+            } catch {
+                response.statusCode = 404;
+                response.end();
+            }
+        } )();
+    } );
+
+    await new Promise<void>( ( resolve ) => server.listen( 0, PRERENDER_HOST, resolve ) );
+
+    const address = server.address(),
+        port = ( address && "object" === typeof address ) ? address.port : 0;
+
+    return {
+        origin: `http://${ PRERENDER_HOST }:${ port }`,
+        close: () => new Promise<void>( ( resolve ) => server.close( () => resolve() ) ),
+    };
+}
+
+function toOutputPath( outDir: string, routePath: string ): string {
+    if ( "/" === routePath ) {
+        return path.join( outDir, "index.html" );
+    }
+
+    return path.join( outDir, routePath.replace( /^\//, "" ), "index.html" );
+}
+
+function prerenderPlugin(): Plugin {
+    return {
+        name: "vertix:prerender",
+        apply: "build",
+        async closeBundle() {
+            const outDir = path.resolve( __dirname, "dist" ),
+                { default: puppeteer } = await import( "puppeteer" ),
+                staticServer = await startPrerenderServer( outDir ),
+                browser = await puppeteer.launch( { headless: true } );
+
+            const rendered: { routePath: string, html: string }[] = [];
+
+            try {
+                const page = await browser.newPage();
+
+                await page.setViewport( PRERENDER_VIEWPORT );
+
+                for ( const route of ROUTE_META ) {
+                    await page.goto( staticServer.origin + route.path, {
+                        waitUntil: "networkidle0",
+                        timeout: PRERENDER_NAVIGATION_TIMEOUT_MS,
+                    } );
+
+                    await page.waitForSelector( PRERENDER_READY_SELECTOR, {
+                        timeout: PRERENDER_READY_TIMEOUT_MS,
+                    } );
+
+                    rendered.push( { routePath: route.path, html: await page.content() } );
+                }
+            } finally {
+                await browser.close();
+                await staticServer.close();
+            }
+
+            for ( const { routePath, html } of rendered ) {
+                const outputPath = toOutputPath( outDir, routePath );
+
+                await fs.mkdir( path.dirname( outputPath ), { recursive: true } );
+                await fs.writeFile( outputPath, html, "utf-8" );
+            }
+
+            console.log( `prerendered ${ rendered.length } routes` );
+        },
+    };
+}
+
 export default defineConfig( ( { mode } ) => {
     const rootEnv = loadEnv( mode, path.resolve( __dirname, "../.." ), "" );
     const localEnv = loadEnv( mode, process.cwd(), "" );
@@ -150,7 +297,7 @@ export default defineConfig( ( { mode } ) => {
     const apiBaseUrl = env.API_PUBLIC_URL || `http://${ apiHost }:${ apiPort }/api`;
 
     return {
-        plugins: [ react(), exportsAssetsPlugin(), sitemapPlugin() ],
+        plugins: [ react(), exportsAssetsPlugin(), sitemapPlugin(), prerenderPlugin() ],
         define: {
             "import.meta.env.VITE_DASHBOARD_URL": JSON.stringify( dashboardUrl ),
             "import.meta.env.API_PUBLIC_URL": JSON.stringify( apiBaseUrl ),

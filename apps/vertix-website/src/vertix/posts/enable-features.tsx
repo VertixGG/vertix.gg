@@ -1,6 +1,6 @@
 import { DiscordUIComponentMessage, DiscordCommandSuggestion } from "@vertix.gg/discord-ui";
 
-import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.png";
 
 import {
@@ -68,7 +68,7 @@ const BADWORDS_MESSAGE = "`badword*`";
 export default function EnableFeatures() {
     return (
         <div className="vc-container vc-page-panel">
-            <h5>Enabling Dynamic Channel Features</h5>
+            <h1 className="text-h5">How to enable dynamic voice channel features</h1>
             <br />
 
             <ol className="text-h5">

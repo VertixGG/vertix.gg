@@ -23,7 +23,6 @@ export default function Access() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:08 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelPermissionsComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbedGroup"
                             variables={ {
@@ -48,7 +47,6 @@ export default function Access() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:08 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelPermissionsComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbedGroup"
                             variables={ {
@@ -74,7 +72,6 @@ export default function Access() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:08 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelPermissionsComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbedGroup"
                             variables={ {
@@ -100,7 +97,6 @@ export default function Access() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:08 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelPermissionsComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbedGroup"
                             variables={ {
@@ -126,7 +122,6 @@ export default function Access() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:08 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelPermissionsComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbedGroup"
                             variables={ {
@@ -151,7 +146,6 @@ export default function Access() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:08 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelPermissionsComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPermissionsKickEmbedGroup"
                             variables={ {

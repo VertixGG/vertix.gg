@@ -67,12 +67,12 @@ export default function UserLimit() {
                                 author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:35 PM"
-                                mentionUsername="iNewLegend"
                                 componentName="VertixBot/UI-V2/DynamicChannelMetaLimitComponent"
                                 preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbedGroup"
                                 variables={ {
                                     userLimit: "4"
                                 } }
+                                ephemeral={ true }
                             />
                         </div>
                     </div>

@@ -67,12 +67,12 @@ export default function RenameChannel() {
                                 author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 3:34 PM"
-                                mentionUsername="iNewLegend"
                                 componentName="VertixBot/UI-V2/DynamicChannelMetaRenameComponent"
                                 preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbedGroup"
                                 variables={ {
                                     channelName: "iNewLegend's Office123"
                                 } }
+                                ephemeral={ true }
                             />
                         </div>
                     </div>

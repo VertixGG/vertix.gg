@@ -41,14 +41,12 @@ export default function ClaimChannel() {
                                 "VertixBot/UI-V2/DynamicChannelTransferOwnerButton": { label: "Transfer" },
                                 "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": { label: "Claim Channel" },
                             } }
-                            ephemeral={ true }
                             interactionUser="iNewLegend"
                         />
                         <DiscordUIComponentMessage
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:27 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/ClaimStartComponent"
                             variables={ {
                                 ownerId: "<@123456789>",
@@ -58,7 +56,6 @@ export default function ClaimChannel() {
                             elementOverrides={ {
                                 "VertixBot/UI-V2/ClaimStartClaimButton": {}
                             } }
-                            ephemeral={ true }
                             interactionUser="iNewLegend"
                         />
                     </div>
@@ -92,14 +89,12 @@ export default function ClaimChannel() {
                                 "VertixBot/UI-V2/DynamicChannelTransferOwnerButton": { label: "Transfer" },
                                 "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": { label: "Claim Channel", disabled: true },
                             } }
-                            ephemeral={ true }
                             interactionUser="iNewLegend"
                         />
                         <DiscordUIComponentMessage
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:28 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/ClaimResultComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/ClaimResultOwnerStopEmbedGroup"
                             variables={ {
@@ -120,7 +115,6 @@ export default function ClaimChannel() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:30 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/ClaimVoteComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/ClaimVoteEmbedGroup"
                             preferredElementsGroup="VertixBot/UI-V2/ClaimVoteElementsGroup"
@@ -135,7 +129,6 @@ export default function ClaimChannel() {
                                 "VertixBot/UI-V2/ClaimVoteAddButton:<@iNewLegend>": { label: "Vote iNewLegend" },
                                 "VertixBot/UI-V2/ClaimVoteStepInButton": { label: "Step in" }
                             } }
-                            ephemeral={ true }
                             interactionUser="iNewLegend"
                         />
                     </div>

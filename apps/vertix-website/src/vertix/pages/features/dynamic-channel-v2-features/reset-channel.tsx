@@ -52,7 +52,6 @@ export default function ResetChannel() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 3:38 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelPremiumResetChannelComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbedGroup"
                             variables={ {

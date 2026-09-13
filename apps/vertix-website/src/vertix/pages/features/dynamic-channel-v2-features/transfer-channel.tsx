@@ -52,7 +52,6 @@ export default function TransferChannel() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 10:05 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelTransferOwnerComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelTransferOwnerEmbedGroup"
                             preferredElementsGroup="VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup"
@@ -72,7 +71,6 @@ export default function TransferChannel() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 10:05 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelTransferOwnerComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbedGroup"
                             variables={ {
@@ -95,7 +93,6 @@ export default function TransferChannel() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 4:39 PM"
-                            mentionUsername="doctor-helper"
                             componentName="VertixBot/UI-V2/DynamicChannelTransferOwnerComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbedGroup"
                             hideElements={ true }

@@ -49,13 +49,13 @@ export default function ToggleChannelVisibilityState() {
                                 author="VoiceChannels"
                                 avatar={ VertixAvatar }
                                 timestamp="Today at 2:51 PM"
-                                mentionUsername="iNewLegend"
                                 componentName="VertixBot/UI-V2/DynamicChannelPermissionsComponent"
                                 preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbedGroup"
                                 variables={ {
                                     allowedUsersDisplay: "_Allowed users_:\n• @doctor-helper\n",
                                     message: "You can use **( 👥 Access )** - _Button_ to manage the access of your channel."
                                 } }
+                                ephemeral={ true }
                             />
                         </div>
                     </div>
@@ -97,9 +97,9 @@ export default function ToggleChannelVisibilityState() {
                             author="VoiceChannels"
                             avatar={ VertixAvatar }
                             timestamp="Today at 2:58 PM"
-                            mentionUsername="iNewLegend"
                             componentName="VertixBot/UI-V2/DynamicChannelPermissionsComponent"
                             preferredEmbedsGroup="VertixBot/UI-V2/DynamicChannelPermissionsShownEmbedGroup"
+                            ephemeral={ true }
                         />
                     </div>
                 </div>

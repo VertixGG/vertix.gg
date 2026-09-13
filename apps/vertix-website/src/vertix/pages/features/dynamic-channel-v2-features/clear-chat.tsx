@@ -108,6 +108,7 @@ export default function ClearChat() {
                                     ownerDisplayName: "inewlegend",
                                     totalMessages: "2"
                                 } }
+                                ephemeral={ true }
                             />
                         </div>
                     </div>

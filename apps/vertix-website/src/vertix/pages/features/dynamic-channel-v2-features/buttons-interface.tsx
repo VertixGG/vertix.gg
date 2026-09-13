@@ -1,7 +1,11 @@
 import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
+import { useOpenDynamicChannelV2Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
 export default function ButtonsInterface() {
+    const openFeature = useOpenDynamicChannelV2Feature();
+
     return (
         <div className="mb-12">
             <div className="flex items-center mb-4">
@@ -29,13 +33,18 @@ export default function ButtonsInterface() {
                                     "VertixBot/UI-V2/DynamicChannelPermissionsStateButton": { label: "Private" },
                                     "VertixBot/UI-V2/DynamicChannelPermissionsVisibilityButton": { label: "Hidden" },
                                     "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton": { label: "Access" },
-                                    "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": { disabled: true, label: "Claim" },
+                                    // Claim is greyed out in a channel whose owner is still in it,
+                                    // which is every channel this panel is drawn for - but the
+                                    // panel here is a way into the ten features rather than a
+                                    // channel to operate, so it is left pressable like the rest.
+                                    "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": { label: "Claim" },
                                     "VertixBot/UI-V2/DynamicChannelMetaRenameButton": { label: "Rename" },
                                     "VertixBot/UI-V2/DynamicChannelMetaLimitButton": { label: "Limit" },
                                     "VertixBot/UI-V2/DynamicChannelMetaClearChatButton": { label: "Clear Chat" },
                                     "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton": { label: "Reset" },
                                     "VertixBot/UI-V2/DynamicChannelTransferOwnerButton": { label: "Transfer" },
                                 } }
+                                onElementClick={ openFeature }
                             />
                         </div>
                     </div>
@@ -43,6 +52,7 @@ export default function ButtonsInterface() {
                         <div className="text-h5 text-vc-ice-dim">
                             <ul className="text-left inline-block">
                                 <li><strong>The buttons interface is located inside the dynamic channel.</strong></li>
+                                <li>Press a button above to read what it does.</li>
                                 <li>You can access it by opening the chat box of the dynamic channel.</li>
                                 <li>You can modify the buttons using <code>/setup</code> command</li>
                             </ul>

@@ -23,7 +23,7 @@ import type { FastifyInstance } from "fastify";
 const LOGGER_LEVEL = "info";
 
 const FRONTEND_URL = process.env.DASHBOARD_URL || "http://localhost:3020";
-const DASHBOARD_PROD_URL = process.env.DASHBOARD_PROD_URL || "https://dashboard.voicechannnels.gg";
+const DASHBOARD_PROD_URL = process.env.DASHBOARD_PROD_URL || "https://dashboard.voicechannels.online";
 
 // The public marketing site reads the emoji manifest (`/tools/button-emojis.json`) so it too can
 // draw button artwork straight from Discord. It is a static, first-party origin that never sends

@@ -1307,7 +1307,14 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelLfmPostCooldownMs,
                 masterChannelKeys.dynamicChannelLfmPingCooldownMs,
                 masterChannelKeys.dynamicChannelLfmPostExpiryMs,
-                masterChannelKeys.dynamicChannelLfmOccupancyDebounceMs
+                masterChannelKeys.dynamicChannelLfmOccupancyDebounceMs,
+
+                // The destinations and the roles they may ping, for the same reason: whatever this
+                // rebuilds is the whole of what the screen knows afterwards, so a key left out here
+                // is a setting the screen reports as unset - the lfm screen saying the feature is
+                // off while the generator's own row still lists the channels it posts to.
+                masterChannelKeys.dynamicChannelLfmChannelIds,
+                masterChannelKeys.dynamicChannelLfmPingRoleIds
             ];
 
             selectedKeys.forEach( ( key ) => {

@@ -1,3 +1,4 @@
+import { DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS } from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
@@ -50,6 +51,18 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
                 dynamicChannelButtonsTemplateByRole: {},
 
                 dynamicChannelControlChannelId: null,
+
+                dynamicChannelLfmChannelIds: [],
+
+                dynamicChannelLfmPingRoleIds: [],
+
+                dynamicChannelLfmPostCooldownMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.postCooldown,
+
+                dynamicChannelLfmPingCooldownMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.pingCooldown,
+
+                dynamicChannelLfmPostExpiryMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.postExpiry,
+
+                dynamicChannelLfmOccupancyDebounceMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.occupancyDebounce,
 
                 dynamicChannelLogsChannelId: null,
 

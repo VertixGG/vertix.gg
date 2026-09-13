@@ -39,7 +39,8 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ClearChat",
                 "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ResetChannel",
                 "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ClaimChannel",
-                "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner"
+                "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
+                "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm"
             ]
         };
     }
@@ -53,7 +54,8 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
             "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ClearChat": "VertixBot/UI-V2/DynamicChannelMetaClearChatFlow/States/Default",
             "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ResetChannel": "VertixBot/UI-V2/DynamicChannelPremiumResetFlow/States/Default",
             "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ClaimChannel": "VertixBot/UI-V2/ClaimStartFlow/States/Default",
-            "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/Default"
+            "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/Default",
+            "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default"
         };
     }
 
@@ -146,6 +148,11 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 triggeringElementId: "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
                 transitionName: "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
                 targetFlowName: "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow"
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V2/DynamicChannelLfmButton",
+                transitionName: "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm",
+                targetFlowName: "VertixBot/UI-V2/DynamicChannelLfmFlow"
             }
         ];
     }

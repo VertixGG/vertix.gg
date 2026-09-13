@@ -1,8 +1,11 @@
+import { isUntouchedV2DefaultSet, isV2Version } from "@vertix.gg/definitions/src/button-ids";
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases";
+
+import { dynamicChannelLfmTimingsResolve } from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 
 import { MasterChannelDataModelV3 } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model-v3";
 
@@ -13,6 +16,11 @@ import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
 import type { ChannelPrivacyStateDefault, MasterChannelConfigInterface, MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
+import type {
+    DynamicChannelLfmTimingsInterface,
+    TDynamicChannelLfmTimingsOverrides
+} from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
+
 import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
 export type MasterChannelSettingsAllVersions =
@@ -81,9 +89,23 @@ export class MasterChannelDataManager extends InitializeBase {
             ?.dynamicChannelNameTemplate;
     }
 
+    /**
+     * Function getChannelButtonsTemplate() :: Which buttons a generator carries.
+     *
+     * A set that is the untouched default of an earlier version reads as the current default
+     * instead, so a button added to v2 reaches the generators nobody curated. Answered on the way
+     * out rather than written back: a generator that is later curated stops matching and keeps
+     * whatever it was given, and nothing has to be migrated to undo this.
+     */
     public async getChannelButtonsTemplate( masterChannelDB: ChannelExtended, returnDefault?: boolean ) {
-        return ( await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, returnDefault ) )
+        const stored = ( await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, returnDefault ) )
             ?.dynamicChannelButtonsTemplate;
+
+        if ( isV2Version( masterChannelDB.version ) && isUntouchedV2DefaultSet( stored ) ) {
+            return this.config.defaults.settings.dynamicChannelButtonsTemplate;
+        }
+
+        return stored;
     }
 
     /**
@@ -473,6 +495,46 @@ export class MasterChannelDataManager extends InitializeBase {
         return result?.dynamicChannelLogsChannelId ?? undefined;
     }
 
+    public async getChannelLfmChannelIds( masterChannelDB: ChannelExtended ): Promise<string[]> {
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+
+        return result?.dynamicChannelLfmChannelIds ?? [];
+    }
+
+    public async getChannelLfmPingRoleIds( masterChannelDB: ChannelExtended ): Promise<string[]> {
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+
+        return result?.dynamicChannelLfmPingRoleIds ?? [];
+    }
+
+    /**
+     * Function getChannelLfmTimings() :: The clocks this generator's lfm posts run on.
+     *
+     * Resolved through the shared bounds on every read, so a value stored before a bound moved
+     * falls back to the default instead of being honoured because it was written first.
+     */
+    public async getChannelLfmTimings(
+        masterChannelDB: ChannelExtended
+    ): Promise<DynamicChannelLfmTimingsInterface> {
+        const defaults = this.config.defaults.settings;
+        const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>
+            res ? { ...defaults, ...res } : defaults
+        );
+
+        return dynamicChannelLfmTimingsResolve( {
+            postCooldown: result?.dynamicChannelLfmPostCooldownMs,
+            pingCooldown: result?.dynamicChannelLfmPingCooldownMs,
+            postExpiry: result?.dynamicChannelLfmPostExpiryMs,
+            occupancyDebounce: result?.dynamicChannelLfmOccupancyDebounceMs
+        } );
+    }
+
     public async setChannelNameTemplate( masterChannelDB: ChannelExtended, newName: string ) {
         this.logger.log(
             this.setChannelNameTemplate,
@@ -625,6 +687,86 @@ export class MasterChannelDataManager extends InitializeBase {
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
             dynamicChannelLogsChannelId: channelId
         } );
+    }
+
+    public async setChannelLfmChannelIds(
+        masterChannelDB: ChannelExtended,
+        channelIds: string[],
+        shouldAdminLog = true
+    ) {
+        this.logger.log(
+            this.setChannelLfmChannelIds,
+            `Master channel id: '${ masterChannelDB.id }' - Setting lfm channels: '${ channelIds.join( ", " ) }'`
+        );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setChannelLfmChannelIds,
+                `📣 Set lfm channels - masterChannelId: "${ masterChannelDB.id }" channelIds: "${ channelIds.join( ", " ) }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelLfmChannelIds: channelIds
+        } );
+    }
+
+    public async setChannelLfmPingRoleIds(
+        masterChannelDB: ChannelExtended,
+        roleIds: string[],
+        shouldAdminLog = true
+    ) {
+        this.logger.log(
+            this.setChannelLfmPingRoleIds,
+            `Master channel id: '${ masterChannelDB.id }' - Setting lfm ping roles: '${ roleIds.join( ", " ) }'`
+        );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setChannelLfmPingRoleIds,
+                `🔔 Set lfm ping roles - masterChannelId: "${ masterChannelDB.id }" roleIds: "${ roleIds.join( ", " ) }"`
+            );
+        }
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelLfmPingRoleIds: roleIds
+        } );
+    }
+
+    /**
+     * Function setChannelLfmTimings() :: Writes the clocks this generator chose.
+     *
+     * Only fields inside their bounds are written, and a field left out is left alone - the modal
+     * submits all four together, so anything missing here was refused rather than omitted.
+     */
+    public async setChannelLfmTimings(
+        masterChannelDB: ChannelExtended,
+        overrides: TDynamicChannelLfmTimingsOverrides,
+        shouldAdminLog = true
+    ) {
+        const timings = dynamicChannelLfmTimingsResolve( overrides );
+
+        this.logger.log(
+            this.setChannelLfmTimings,
+            `Master channel id: '${ masterChannelDB.id }' - Setting lfm timings: '${ JSON.stringify( timings ) }'`
+        );
+
+        if ( shouldAdminLog ) {
+            this.logger.admin(
+                this.setChannelLfmTimings,
+                `⏱️  Set lfm timings - masterChannelId: "${ masterChannelDB.id }" ` +
+                    `timings: "${ JSON.stringify( timings ) }"`
+            );
+        }
+
+        await this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelLfmPostCooldownMs: timings.postCooldown,
+            dynamicChannelLfmPingCooldownMs: timings.pingCooldown,
+            dynamicChannelLfmPostExpiryMs: timings.postExpiry,
+            dynamicChannelLfmOccupancyDebounceMs: timings.occupancyDebounce
+        } );
+
+        return timings;
     }
 
     public async setChannelControlChannel(

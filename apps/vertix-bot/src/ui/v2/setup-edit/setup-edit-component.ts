@@ -22,6 +22,10 @@ import { SetupEditStaffRolesEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/ed
 import { SetupEditVoiceRoleElementsGroup } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-voice-role/setup-edit-voice-role-elements-group";
 import { SetupEditVoiceRoleEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-voice-role/setup-edit-voice-role-embed";
 
+import { SetupEditLfmChannelsElementsGroup } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-lfm-channels/setup-edit-lfm-channels-elements-group";
+import { SetupEditLfmChannelsEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-lfm-channels/setup-edit-lfm-channels-embed";
+import { SetupEditLfmTimingsModal } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-lfm-channels/setup-edit-lfm-timings-modal";
+
 import {
     SetupEditDefaultPrivacyElementsGroup,
     SetupEditDefaultUserLimitElementsGroup
@@ -35,6 +39,7 @@ const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V2/ConfigComponen
     .addElementsGroup( SetupEditVerifiedRolesElementsGroup )
     .addElementsGroup( SetupEditStaffRolesElementsGroup )
     .addElementsGroup( SetupEditVoiceRoleElementsGroup )
+    .addElementsGroup( SetupEditLfmChannelsElementsGroup )
     .addElementsGroup( SetupEditDefaultPrivacyElementsGroup )
     .addElementsGroup( SetupEditDefaultUserLimitElementsGroup )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditEmbed ) )
@@ -42,10 +47,12 @@ const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V2/ConfigComponen
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVerifiedRolesEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditStaffRolesEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditVoiceRoleEmbed ) )
+    .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditLfmChannelsEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditDefaultPrivacyEmbed ) )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( SetupEditDefaultUserLimitEmbed ) )
     .addModal( ChannelNameTemplateModal )
     .addModal( DeleteConfirmModal )
+    .addModal( SetupEditLfmTimingsModal )
     .setDefaultElementsGroup( "VertixBot/UI-V2/SetupEditElementsGroup" )
     .setDefaultEmbedsGroup( "VertixBot/UI-V2/SetupEditEmbedGroup" )
     .setInstanceType( UIInstancesTypes.Static )

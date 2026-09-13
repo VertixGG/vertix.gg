@@ -42,7 +42,17 @@ function collectNames( node, acc = new Set() ) {
     return acc;
 }
 
+// A flow names its states and transitions after what they open, so a transition to a modal is
+// called "...Transitions/OpenNameModal" and ends in a translatable suffix while being a node in a
+// state machine rather than anything with copy. Matched on the path rather than the suffix,
+// because the suffix is exactly what they have in common.
+const FLOW_NODE_SEGMENTS = [ "/Transitions/", "/States/" ];
+
 function isTranslatable( name ) {
+    if ( FLOW_NODE_SEGMENTS.some( ( segment ) => name.includes( segment ) ) ) {
+        return false;
+    }
+
     const last = name.split( "/" ).pop();
 
     if ( last.endsWith( "Group" ) ) {

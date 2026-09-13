@@ -480,6 +480,89 @@
         ]
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V2/DynamicChannelLfmComponent",
+        "module": "VertixBot/UI-V2/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": "VertixBot/UI-V2/DynamicChannelLfmChannelMenuGroup",
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmSelectChannel",
+                "elementsGroup": "VertixBot/UI-V2/DynamicChannelLfmChannelMenuGroup",
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmPosted",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmCooldown",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmUnavailable",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V2/DynamicChannelLfmAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmPostAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V2/DynamicChannelLfmPostComponent",
+        "module": "VertixBot/UI-V2/Module",
+        "instanceType": "Static",
+        "channelTypes": [
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V2/DynamicChannelLfmPostAdapter/Hooks/GetStartArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V2/DynamicChannelMetaClearChatComponent",
@@ -1013,6 +1096,13 @@
                 "key": "VertixBot/UI-V2/SetupEditVoiceRole",
                 "elementsGroup": "VertixBot/UI-V2/SetupEditVoiceRoleElementsGroup",
                 "embedsGroup": "VertixBot/UI-V2/SetupEditVoiceRoleEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/SetupEditLfmChannels",
+                "elementsGroup": "VertixBot/UI-V2/SetupEditLfmChannelsElementsGroup",
+                "embedsGroup": "VertixBot/UI-V2/SetupEditLfmChannelsEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             },

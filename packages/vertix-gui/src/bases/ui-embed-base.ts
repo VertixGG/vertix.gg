@@ -1,6 +1,7 @@
 import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { UITemplateBase } from "@vertix.gg/gui/src/bases/ui-template-base";
+import { uiUtilsHasUnresolvedTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import type {
     UIArgs,
@@ -98,8 +99,12 @@ export abstract class UIEmbedBase extends UITemplateBase {
             attributes.footer = content.footer;
         }
 
-        if ( thumbnail ) {
-            attributes.thumbnail = thumbnail;
+        if ( thumbnail?.url.length ) {
+            // Kept as a top-level string so its {vars} are substituted like the description;
+            // wrapped back into the thumbnail object after composeTemplate. Handed over nested,
+            // it would reach Discord with its variable names still in it - composeTemplate walks
+            // string values, not the objects around them.
+            attributes.thumbnail = thumbnail.url;
         }
 
         if ( image.length ) {
@@ -141,6 +146,14 @@ export abstract class UIEmbedBase extends UITemplateBase {
                 ...this.getImageData(),
                 url: template.image
             };
+        }
+
+        if ( "string" === typeof template.thumbnail ) {
+            // A thumbnail is decoration. A variable that never arrived would leave its own name in
+            // the URL and cost us the entire message, so an unresolved one is dropped instead.
+            template.thumbnail = uiUtilsHasUnresolvedTemplate( template.thumbnail )
+                ? undefined
+                : { ... thumbnail, url: template.thumbnail };
         }
 
         return template;

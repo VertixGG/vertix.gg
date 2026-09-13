@@ -330,5 +330,59 @@ describe( "VertixGUI/UIEmbedBase", () => {
             "userIds: 1,2,3-4,5,6"
         );
     } );
+
+    it( "should substitute variables inside the thumbnail url", async function() {
+        // Arrange.
+        const embed = new class extends UIEmbedBase {
+            public static getName() {
+                return "test-template";
+            }
+
+            protected getTitle() {
+                return "Looking for members";
+            }
+
+            protected getThumbnail() {
+                return { url: uiUtilsWrapAsTemplate( "avatarUrl" ) };
+            }
+
+            protected getLogic() {
+                return {
+                    avatarUrl: "https://cdn.discordapp.com/avatars/1/2.webp"
+                };
+            }
+        };
+
+        // Act.
+        await embed.build();
+
+        // Assert - the url reaches Discord resolved, not as its own variable name.
+        expect( embed.getSchema().attributes.thumbnail ).toEqual( {
+            url: "https://cdn.discordapp.com/avatars/1/2.webp"
+        } );
+    } );
+
+    it( "should drop a thumbnail whose variable never resolved", async function() {
+        // Arrange - nothing supplies `avatarUrl`, as happens for a member who has no avatar.
+        const embed = new class extends UIEmbedBase {
+            public static getName() {
+                return "test-template";
+            }
+
+            protected getTitle() {
+                return "Looking for members";
+            }
+
+            protected getThumbnail() {
+                return { url: uiUtilsWrapAsTemplate( "avatarUrl" ) };
+            }
+        };
+
+        // Act.
+        await embed.build();
+
+        // Assert - a half-built url would cost the whole message, so it is left off.
+        expect( embed.getSchema().attributes.thumbnail ).toBeUndefined();
+    } );
 } );
 

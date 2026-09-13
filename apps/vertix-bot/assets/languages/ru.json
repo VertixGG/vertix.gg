@@ -467,6 +467,18 @@
         "content": {
           "label": "Изменить захват"
         }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+        "content": {
+          "label": "Изменить тайминги"
+        }
       }
     ],
     "textInputs": [
@@ -591,6 +603,36 @@
         "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
         "content": {
           "label": "Секунды, пусто — значение по умолчанию"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "КОГО ВЫ ИЩЕТЕ"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
+        "content": {
+          "label": "Задержка между постами (минуты, 0 — без)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
+        "content": {
+          "label": "Задержка между пингами (минуты, 0 — без)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
+        "content": {
+          "label": "Срок действия поста (минуты)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
+        "content": {
+          "label": "Задержка обновления числа участников (секунды)"
         }
       }
     ],
@@ -820,25 +862,36 @@
           "placeholder": "◎ ∙ Выберите опцию редактирования",
           "selectOptions": [
             {
-              "label": "∙ Изменить название канала"
+              "label": "∙ Изменить название канала",
+              "value": "edit-dynamic-channel-name"
             },
             {
-              "label": "∙ Изменить кнопки канала"
+              "label": "∙ Изменить кнопки канала",
+              "value": "edit-dynamic-channel-buttons"
             },
             {
-              "label": "∙ Изменить проверенные роли канала"
+              "label": "∙ Изменить проверенные роли канала",
+              "value": "edit-dynamic-channel-verified-roles"
             },
             {
-              "label": "∙ Изменить роли персонала канала"
+              "label": "∙ Изменить роли персонала канала",
+              "value": "edit-dynamic-channel-staff-roles"
             },
             {
-              "label": "∙ Изменить голосовую роль канала"
+              "label": "∙ Изменить голосовую роль канала",
+              "value": "edit-dynamic-channel-voice-role"
             },
             {
-              "label": "∙ Изменить состояние приватности"
+              "label": "∙ Изменить LFM",
+              "value": "edit-dynamic-channel-lfm-channels"
             },
             {
-              "label": "∙ Изменить лимит пользователей"
+              "label": "∙ Изменить состояние приватности",
+              "value": "edit-dynamic-channel-default-privacy"
+            },
+            {
+              "label": "∙ Изменить лимит пользователей",
+              "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
         }
@@ -1151,6 +1204,24 @@
               "description": "Сколько ждёт покинутый канал и сколько длится голосование"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 Выберите канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmChannelsSelectMenu",
+        "content": {
+          "placeholder": "🔎 ∙ LFM-каналы"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+        "content": {
+          "placeholder": "🔔 ∙ Роли для пинга"
         }
       }
     ]
@@ -1972,7 +2043,9 @@
               "5": "👥 ∙ **Доступ**",
               "6": "🔃 ∙ **Сброс**",
               "7": "😈 ∙ **Забрать**",
-              "12": "🔀 ∙ **Передать**"
+              "12": "🔀 ∙ **Передать**",
+              "13": "📣 ∙ **Статус**",
+              "15": "🔎 ∙ **LFM**"
             }
           }
         }
@@ -2045,7 +2118,8 @@
               "6": "🔃 ∙ **Сбросить**",
               "7": "😈 ∙ **Забрать**",
               "12": "🔀 ∙ **Передать**",
-              "13": "📣 ∙ **Статус**"
+              "13": "📣 ∙ **Статус**",
+              "15": "🔎 ∙ **LFM**"
             }
           },
           "verifiedRoles": {
@@ -2154,7 +2228,7 @@
       "name": "VertixBot/UI-V2/SetupStep2Embed",
       "content": {
         "title": "Шаг 2 - Настройка динамических каналов",
-        "description": "Настройте интерфейс управления динамическими каналами.\n\n**_🎚 Интерфейс кнопок_**\n\n{message}\n**_⚙️ Конфигурация_**\n\n> @ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n> ⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n> 📢 ∙ Автоматический статус канала: {configAutoStatus}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, что делают кнопки? Ознакомьтесь с [объяснением](https://voicechannels.online/features/dynamic-channels-showcase).",
+        "description": "Настройте интерфейс управления динамическими каналами.\n\n**_🎚 Интерфейс кнопок_**\n\n{message}\n**_⚙️ Конфигурация_**\n\n> @ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n> ⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n> 📢 ∙ Автоматический статус канала: {configAutoStatus}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, что делают кнопки? Ознакомьтесь с [объяснением](https://voicechannels.online/features/dynamic-channel-v2).",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -2194,7 +2268,8 @@
               "6": "🔃 ∙ **Сбросить**",
               "7": "😈 ∙ **Забрать**",
               "12": "🔀 ∙ **Передать**",
-              "13": "📣 ∙ **Статус**"
+              "13": "📣 ∙ **Статус**",
+              "15": "🔎 ∙ **LFM**"
             }
           }
         }
@@ -3164,7 +3239,7 @@
       "name": "VertixBot/UI-V3/SetupNewStep2Embed",
       "content": {
         "title": "Шаг 2 - Настройка динамических каналов",
-        "description": "Настройте интерфейс управления динамическими каналами.\n\n**_🎚 Интерфейс кнопок_**\n\n{message}\n**_⚙️ Конфигурация_**\n\n> @ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n> ⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n> 📢 ∙ Автоматический статус канала: {configAutoStatus}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, что делают кнопки? Ознакомьтесь с [объяснением](https://voicechannels.online/features/dynamic-channels-showcase).",
+        "description": "Настройте интерфейс управления динамическими каналами.\n\n**_🎚 Интерфейс кнопок_**\n\n{message}\n**_⚙️ Конфигурация_**\n\n> @ ∙ Упоминать пользователя в главном сообщении: {configUserMention}\n> ⫸ ∙ Автосохранение динамических каналов: {configAutoSave}\n> 📢 ∙ Автоматический статус канала: {configAutoStatus}\n\nВы можете сохранить настройки по умолчанию, нажав кнопку **( `Далее ▶` )**.\n\nНе уверены, что делают кнопки? Ознакомьтесь с [объяснением](https://voicechannels.online/features/dynamic-channel-v3).",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙Вкл`",
@@ -3414,6 +3489,105 @@
           "defaultMarker": "*(по умолчанию)*"
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostEmbed",
+      "content": {
+        "title": "🔎  {channelName} ищет участников",
+        "description": "{noteLine}{gameLine}**Участников** {occupancy}\n**Хост** <@{ownerId}>\n\nПрисоединяйтесь в <#{channelId}> · закроется через `{elapsedTimeFormatFraction}`",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "секунда",
+            "units": "секунд"
+          },
+          "formatMinuteUnits": {
+            "unit": "минута",
+            "units": "минут"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "gameLine": {
+            "{gameKnown}": "**Играют** {gameName}\n",
+            "{gameUnknown}": ""
+          },
+          "noteLine": {
+            "{noteKnown}": "> {note}\n\n",
+            "{noteUnknown}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  Куда отправить?",
+        "description": "Выберите канал, в который будет отправлен ваш призыв к участникам.\n\nВ нём видно, кто хост, во что играют и сколько человек уже внутри. Сообщение убирается, когда ваш канал заполняется или пустеет."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  Ваш канал в списке",
+        "description": "Отправлено в <#{lfmChannelId}>.\n\nКоличество участников обновляется само, а сообщение убирается, когда ваш канал заполняется или пустеет."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  Пока рано",
+        "description": "На этом сервере ограничено, как часто такие каналы могут заявлять о себе, и последний пост был недавно. Следующий можно будет отправить примерно через {retryMinutes} минут."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  Нечего публиковать",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "Канал для таких сообщений ещё не настроен. Администратор выбирает его в настройках.",
+            "{reasonHidden}": "Ваш канал скрыт, поэтому его всё равно никто не найдёт. Сначала сделайте его видимым.",
+            "{reasonPrivate}": "Ваш канал приватный, поэтому приглашённые не смогут войти. Сначала сделайте его публичным.",
+            "{reasonFull}": "Ваш канал уже заполнен.",
+            "{reasonAlreadyPosted}": "Ваш канал уже в списке.",
+            "{reasonFailed}": "При публикации что-то пошло не так. Попробуйте ещё раз через момент."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmChannelsEmbed",
+      "content": {
+        "title": "🔎  Изменить LFM главного канала #{index}",
+        "description": "Владелец канала может объявить о своём канале в текстовых каналах, выбранных здесь, чтобы участники, читающие чат, увидели комнату, которая ищет людей, и присоединились.\n\nУчастники выбирают из них при отправке и не могут отправить никуда ещё.\n\nЕсли оставить пустым, функция отключается для этого мастер-канала.\n\n**_Текущие LFM-каналы_**\n\n> {lfmChannelsDisplay}\n\n**_Пингуемые роли_**\n\n> {pingRolesDisplay}\n\n**_Тайминги_**\n\n> Задержка между постами (все каналы): {postCooldown}\n> Задержка между пингами: {pingCooldown}\n> Срок действия поста: {postExpiry}\n> Обновление числа участников: {occupancyDebounce}",
+        "footer": "Примечание: боту нужны права просматривать канал, отправлять сообщения и встраивать ссылки в каждом выбранном канале.",
+        "options": {
+          "lfmChannelsDisplay": {
+            "{lfmChannels}": "{lfmChannels}",
+            "{lfmChannelsNone}": "**Нет** *(функция отключена)*"
+          },
+          "pingRolesDisplay": {
+            "{pingRoles}": "{pingRoles}",
+            "{pingRolesNone}": "**Нет** *(посты публикуются тихо)*"
+          }
+        },
+        "arrayOptions": {
+          "lfmChannels": {
+            "format": "<#{value}>{separator}",
+            "separator": ", "
+          },
+          "pingRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3555,6 +3729,18 @@
       "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
       "content": {
         "title": "⏱️ Время за кандидата"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "Поиск участников"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
+      "content": {
+        "title": "⏱️ Тайминги LFM главного канала #{index}"
       }
     }
   ]

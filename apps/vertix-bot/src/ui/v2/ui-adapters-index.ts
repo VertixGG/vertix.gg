@@ -10,5 +10,7 @@ export { DynamicChannelMetaRenameAdapter } from "@vertix.gg/bot/src/ui/v2/dynami
 export { DynamicChannelMetaStatusAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/status/dynamic-channel-meta-status-adapter";
 export { DynamicChannelPermissionsAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/dynamic-channel-permissions-adapter";
 export { DynamicChannelTransferOwnerAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-adapter";
+export { DynamicChannelLfmAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/lfm/dynamic-channel-lfm-adapter";
+export { DynamicChannelLfmPostAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/lfm/dynamic-channel-lfm-post-adapter";
 export { DynamicChannelPremiumResetChannelAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-adapter";
 export { SetupNewWizardAdapter } from "@vertix.gg/bot/src/ui/v2/setup-new/setup-new-wizard-adapter";

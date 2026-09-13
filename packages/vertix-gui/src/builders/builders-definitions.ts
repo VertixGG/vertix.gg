@@ -114,6 +114,24 @@ export type GetReplyArgsHandler<
     argsFromManager: TArgs
 ) => Promise<TArgs>;
 
+/**
+ * The message content an adapter sends alongside its embeds and components.
+ *
+ * Synchronous, because `getMessage()` is - everything it needs has already been resolved into the
+ * args by the time the message is built.
+ *
+ * Exists because a mention only notifies on the message that first carried it: content added by a
+ * later edit is inert, so an adapter that wants to ping has to say so at build time or not at all.
+ */
+export type GetMessageContentHandler<
+    TInteraction extends UIAdapterReplyContext,
+    TArgs extends UIArgs = UIArgs,
+    TContext extends IAdapterContext<TInteraction, TArgs> = IAdapterContext<TInteraction, TArgs>
+> = (
+    context: TContext,
+    argsFromManager?: TArgs
+) => string;
+
 export interface BindingFlowTriggerConfig {
     flowName: string;
     transition: string;

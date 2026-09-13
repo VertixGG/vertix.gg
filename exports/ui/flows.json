@@ -1607,6 +1607,199 @@
         }
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmFlow",
+        "module": "VertixBot/UI-V2/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default",
+                "transitions": [
+                    "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/NoteSubmitted",
+                    "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/SelectDestination",
+                    "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/CoolingDown",
+                    "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/NotAvailable"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-V2/DynamicChannelLfmComponent",
+                    "previewElementsGroup": "VertixBot/UI-V2/DynamicChannelLfmChannelMenuGroup"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/SelectChannel",
+                "transitions": [
+                    "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/ChannelSelected",
+                    "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/NotAvailable"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelLfmSelectChannel",
+                    "component": "VertixBot/UI-V2/DynamicChannelLfmComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbedGroup",
+                    "previewElementsGroup": "VertixBot/UI-V2/DynamicChannelLfmChannelMenuGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Posted",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelLfmPosted",
+                    "component": "VertixBot/UI-V2/DynamicChannelLfmComponent",
+                    "previewDefaultVars": {
+                        "lfmChannelId": "123456789"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Cooldown",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelLfmCooldown",
+                    "component": "VertixBot/UI-V2/DynamicChannelLfmComponent",
+                    "previewDefaultVars": {
+                        "retryMinutes": "10"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Unavailable",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelLfmUnavailable",
+                    "component": "VertixBot/UI-V2/DynamicChannelLfmComponent",
+                    "previewDefaultVars": {
+                        "reasonCode": "not-configured"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/NoteSubmitted",
+                "from": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Posted",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/DynamicChannelLfmFlow/Handlers/VertixBot/UI-V2/DynamicChannelLfmNoteModal",
+                        "sourceEntity": "VertixBot/UI-V2/DynamicChannelLfmNoteModal",
+                        "handlerKind": "modal",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Posted",
+                            "executionStep": "VertixBot/UI-V2/DynamicChannelLfmPosted"
+                        },
+                        "mutations": [
+                            {
+                                "type": "set",
+                                "path": [
+                                    "lfmChannelId"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "mutations": [
+                    {
+                        "type": "set",
+                        "path": [
+                            "lfmChannelId"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/SelectDestination",
+                "from": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/SelectChannel"
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/ChannelSelected",
+                "from": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/SelectChannel",
+                "to": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Posted",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/DynamicChannelLfmFlow/Handlers/VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+                        "sourceEntity": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Posted",
+                            "executionStep": "VertixBot/UI-V2/DynamicChannelLfmPosted"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/CoolingDown",
+                "from": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Cooldown"
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/NotAvailable",
+                "from": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Unavailable"
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmFlow/Transitions/NotAvailable",
+                "from": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/SelectChannel",
+                "to": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Unavailable"
+            }
+        ],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmPostFlow",
+        "module": "VertixBot/UI-V2/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-V2/DynamicChannelLfmPostFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelLfmPostFlow/States/Default",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-V2/DynamicChannelLfmPostComponent",
+                    "previewDefaultVars": {
+                        "channelId": "123456789",
+                        "channelName": "Leo's Channel",
+                        "ownerId": "123456789",
+                        "occupancy": "2/5",
+                        "gameName": "Valorant"
+                    }
+                }
+            }
+        ],
+        "transitions": [],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatFlow",
         "module": "VertixBot/UI-V2/Module",
         "flowKind": "virtual",
@@ -2859,6 +3052,7 @@
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVerifiedRoles",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenStaffRoles",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVoiceRole",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenLfmChannels",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenDefaultPrivacy",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenDefaultUserLimit",
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenNameModal",
@@ -2982,6 +3176,25 @@
                 }
             },
             {
+                "key": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "transitions": [
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/LfmChannelsUpdated",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/LfmPingRolesUpdated",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/LfmTimingsUpdated",
+                    "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromLfmChannels"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/SetupEditLfmChannels",
+                    "component": "VertixBot/UI-V2/ConfigComponent",
+                    "previewDefaultVars": {
+                        "view": "LFM channels configuration"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/SetupEditLfmChannelsEmbedGroup",
+                    "previewElementsGroup": "VertixBot/UI-V2/SetupEditLfmChannelsElementsGroup"
+                }
+            },
+            {
                 "key": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
                 "transitions": [
                     "VertixBot/UI-V2/SetupEditFlow/Transitions/StaffRolesUpdated",
@@ -3046,6 +3259,11 @@
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVoiceRole",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole"
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenLfmChannels",
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels"
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenDefaultPrivacy",
@@ -3334,6 +3552,59 @@
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
             },
             {
+                "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/LfmChannelsUpdated",
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/LfmChannelsSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V2/LfmChannelsSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                            "executionStep": "VertixBot/UI-V2/SetupEditLfmChannels"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/LfmPingRolesUpdated",
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/LfmPingRolesSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                            "executionStep": "VertixBot/UI-V2/SetupEditLfmChannels"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/LfmTimingsUpdated",
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditLfmTimingsButton",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                            "executionStep": "VertixBot/UI-V2/SetupEditLfmChannels"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromLfmChannels",
+                "from": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+            },
+            {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/DefaultPrivacyUpdated",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
@@ -3411,6 +3682,11 @@
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
                 "to": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
                 "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-V2/SetupEditLfmTimingsButton",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditLfmTimingsButton::VertixBot/UI-V2/SetupEditLfmTimingsModal",
+                        "handlerKind": "modal-button"
+                    },
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-General/DeleteButton",
                         "sourceEntity": "VertixBot/UI-General/DeleteButton::VertixBot/UI-General/DeleteConfirmModal",
@@ -3708,7 +3984,8 @@
                     "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ClearChat",
                     "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ResetChannel",
                     "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ClaimChannel",
-                    "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner"
+                    "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
+                    "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm"
                 ],
                 "hooks": []
             }
@@ -3745,6 +4022,10 @@
             {
                 "from": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
                 "to": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/Default"
+            },
+            {
+                "from": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm",
+                "to": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default"
             }
         ],
         "requiredData": [
@@ -3778,6 +4059,10 @@
             },
             {
                 "transition": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
+                "fields": []
+            },
+            {
+                "transition": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm",
                 "fields": []
             }
         ],
@@ -3843,6 +4128,14 @@
                 "description": "Entry triggered from DynamicChannel primary message interaction.",
                 "targetState": "VertixBot/UI-V2/DynamicChannelFlow/States/Default",
                 "transition": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
+                "requiredData": [],
+                "integrationType": "GENERIC"
+            },
+            {
+                "flowName": "VertixBot/UI-V2/DynamicChannelFlow",
+                "description": "Entry triggered from DynamicChannel primary message interaction.",
+                "targetState": "VertixBot/UI-V2/DynamicChannelFlow/States/Default",
+                "transition": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm",
                 "requiredData": [],
                 "integrationType": "GENERIC"
             }
@@ -3919,6 +4212,15 @@
                 "transition": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
                 "requiredData": [],
                 "integrationType": "GENERIC"
+            },
+            {
+                "flowName": "VertixBot/UI-V2/DynamicChannelLfmFlow",
+                "description": "Handoff from DynamicChannel: OpenLfm",
+                "sourceState": "VertixBot/UI-V2/DynamicChannelFlow/States/Default",
+                "targetState": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Default",
+                "transition": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm",
+                "requiredData": [],
+                "integrationType": "GENERIC"
             }
         ],
         "externalReferences": {},
@@ -3962,6 +4264,11 @@
                 "triggeringElementId": "VertixBot/UI-V2/DynamicChannelTransferOwnerButton",
                 "transitionName": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/TransferOwner",
                 "targetFlowName": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-V2/DynamicChannelLfmButton",
+                "transitionName": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLfm",
+                "targetFlowName": "VertixBot/UI-V2/DynamicChannelLfmFlow"
             }
         ],
         "requiredDataComponents": [],

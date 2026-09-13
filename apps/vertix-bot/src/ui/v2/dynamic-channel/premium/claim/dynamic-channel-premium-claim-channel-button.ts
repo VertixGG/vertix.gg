@@ -14,7 +14,7 @@ export class DynamicChannelPremiumClaimChannelButton extends DynamicChannelButto
     }
 
     public getSortId() {
-        return 9;
+        return 10;
     }
 
     public getLabelForEmbed() {

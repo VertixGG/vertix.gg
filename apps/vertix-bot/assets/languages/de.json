@@ -467,6 +467,18 @@
         "content": {
           "label": "Anspruch bearbeiten"
         }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+        "content": {
+          "label": "Zeiten bearbeiten"
+        }
       }
     ],
     "textInputs": [
@@ -591,6 +603,36 @@
         "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
         "content": {
           "label": "Sekunden, leer für den Standard"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "WEN SUCHST DU"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
+        "content": {
+          "label": "Beitrags-Abklingzeit (Minuten, 0 = keine)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
+        "content": {
+          "label": "Ping-Abklingzeit (Minuten, 0 = keine)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
+        "content": {
+          "label": "Beitragsdauer (Minuten)"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
+        "content": {
+          "label": "Verzögerung der Mitgliederzahl (Sekunden)"
         }
       }
     ],
@@ -820,25 +862,36 @@
           "placeholder": "◎ ∙ Bearbeitungsoption auswählen",
           "selectOptions": [
             {
-              "label": "∙ Kanalname bearbeiten"
+              "label": "∙ Kanalname bearbeiten",
+              "value": "edit-dynamic-channel-name"
             },
             {
-              "label": "∙ Kanalschaltflächen bearbeiten"
+              "label": "∙ Kanalschaltflächen bearbeiten",
+              "value": "edit-dynamic-channel-buttons"
             },
             {
-              "label": "∙ Verifizierte Rollen des Kanals bearbeiten"
+              "label": "∙ Verifizierte Rollen des Kanals bearbeiten",
+              "value": "edit-dynamic-channel-verified-roles"
             },
             {
-              "label": "∙ Team-Rollen des Kanals bearbeiten"
+              "label": "∙ Team-Rollen des Kanals bearbeiten",
+              "value": "edit-dynamic-channel-staff-roles"
             },
             {
-              "label": "∙ Sprachrolle des Kanals bearbeiten"
+              "label": "∙ Sprachrolle des Kanals bearbeiten",
+              "value": "edit-dynamic-channel-voice-role"
             },
             {
-              "label": "∙ Privatsphäre-Status bearbeiten"
+              "label": "∙ LFM bearbeiten",
+              "value": "edit-dynamic-channel-lfm-channels"
             },
             {
-              "label": "∙ Benutzerlimit bearbeiten"
+              "label": "∙ Privatsphäre-Status bearbeiten",
+              "value": "edit-dynamic-channel-default-privacy"
+            },
+            {
+              "label": "∙ Benutzerlimit bearbeiten",
+              "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
         }
@@ -1151,6 +1204,24 @@
               "description": "Wie lange ein verlassener Kanal wartet und wie lange abgestimmt wird"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 Kanal auswählen"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmChannelsSelectMenu",
+        "content": {
+          "placeholder": "🔎 ∙ LFM-Kanäle"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+        "content": {
+          "placeholder": "🔔 ∙ Zu pingende Rollen"
         }
       }
     ]
@@ -1702,7 +1773,8 @@
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
               "12": "🔀 ∙ **Transfer**",
-              "13": "📣 ∙ **Status**"
+              "13": "📣 ∙ **Status**",
+              "15": "🔎 ∙ **LFM**"
             }
           },
           "verifiedRoles": {
@@ -2100,7 +2172,9 @@
               "5": "👥 ∙ **Zugriff**",
               "6": "🔃 ∙ **Zurücksetzen**",
               "7": "😈 ∙ **Beanspruchen**",
-              "12": "🔀 ∙ **Übertragen**"
+              "12": "🔀 ∙ **Übertragen**",
+              "13": "📣 ∙ **Status**",
+              "15": "🔎 ∙ **LFM**"
             }
           }
         }
@@ -2356,7 +2430,7 @@
       "name": "VertixBot/UI-V2/SetupStep2Embed",
       "content": {
         "title": "Schritt 2 – Einrichtung dynamischer Kanäle",
-        "description": "Richte die Verwaltungsoberfläche für dynamische Kanäle ein.\n\n**_🎚 Button-Oberfläche_**\n\n{message}\n**_⚙️ Konfiguration_**\n\n> @ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n> ⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n> 📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `Next ▶` )** klickst.\n\nNicht sicher, was die Buttons tun? Sieh dir die [Erklärung](https://voicechannels.online/features/dynamic-channels-showcase) an.",
+        "description": "Richte die Verwaltungsoberfläche für dynamische Kanäle ein.\n\n**_🎚 Button-Oberfläche_**\n\n{message}\n**_⚙️ Konfiguration_**\n\n> @ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n> ⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n> 📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `Next ▶` )** klickst.\n\nNicht sicher, was die Buttons tun? Sieh dir die [Erklärung](https://voicechannels.online/features/dynamic-channel-v2) an.",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙An`",
@@ -2396,7 +2470,8 @@
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
               "12": "🔀 ∙ **Transfer**",
-              "13": "📣 ∙ **Status**"
+              "13": "📣 ∙ **Status**",
+              "15": "🔎 ∙ **LFM**"
             }
           }
         }
@@ -2406,7 +2481,7 @@
       "name": "VertixBot/UI-V3/SetupNewStep2Embed",
       "content": {
         "title": "Schritt 2 – Einrichtung dynamischer Kanäle",
-        "description": "Richte die Verwaltungsoberfläche für dynamische Kanäle ein.\n\n**_🎚 Button-Oberfläche_**\n\n{message}\n**_⚙️ Konfiguration_**\n\n> @ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n> ⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n> 📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `Next ▶` )** klickst.\n\nNicht sicher, was die Buttons tun? Sieh dir die [Erklärung](https://voicechannels.online/features/dynamic-channels-showcase) an.",
+        "description": "Richte die Verwaltungsoberfläche für dynamische Kanäle ein.\n\n**_🎚 Button-Oberfläche_**\n\n{message}\n**_⚙️ Konfiguration_**\n\n> @ ∙ Benutzer in der Hauptnachricht erwähnen: {configUserMention}\n> ⫸ ∙ Dynamische Kanäle automatisch speichern: {configAutoSave}\n> 📢 ∙ Automatischer Kanalstatus: {configAutoStatus}\n\nDu kannst die Standardeinstellungen beibehalten, indem du auf **( `Next ▶` )** klickst.\n\nNicht sicher, was die Buttons tun? Sieh dir die [Erklärung](https://voicechannels.online/features/dynamic-channel-v3) an.",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙An`",
@@ -3414,6 +3489,105 @@
           "defaultMarker": "*(Standard)*"
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostEmbed",
+      "content": {
+        "title": "🔎  {channelName} sucht Mitglieder",
+        "description": "{noteLine}{gameLine}**Mitglieder** {occupancy}\n**Host** <@{ownerId}>\n\nTritt ihnen in <#{channelId}> bei · schließt in `{elapsedTimeFormatFraction}`",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "Sekunde",
+            "units": "Sekunden"
+          },
+          "formatMinuteUnits": {
+            "unit": "Minute",
+            "units": "Minuten"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "gameLine": {
+            "{gameKnown}": "**Spielt** {gameName}\n",
+            "{gameUnknown}": ""
+          },
+          "noteLine": {
+            "{noteKnown}": "> {note}\n\n",
+            "{noteUnknown}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  Wohin damit?",
+        "description": "Wähle den Kanal, in dem dein Aufruf nach Mitgliedern erscheint.\n\nEr zeigt, wer hostet, was gespielt wird und wie viele drin sind, und wird entfernt, sobald dein Kanal voll oder leer ist."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  Dein Kanal steht auf der Liste",
+        "description": "In <#{lfmChannelId}> gepostet.\n\nDie Mitgliederzahl bleibt aktuell, und der Beitrag verschwindet von selbst, sobald dein Kanal voll oder leer ist."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  Noch nicht",
+        "description": "Dieser Server begrenzt, wie oft diese Kanäle werben, und der letzte Beitrag ist noch frisch. Der nächste kann in etwa {retryMinutes} Minuten erscheinen."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  Nichts zu posten",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "Es wurde noch kein Kanal für diese Beiträge eingerichtet. Ein Admin wählt ihn im Setup aus.",
+            "{reasonHidden}": "Dein Kanal ist versteckt, also würde ihn ohnehin niemand finden. Mach ihn zuerst sichtbar.",
+            "{reasonPrivate}": "Dein Kanal ist privat, also käme niemand herein, den du einlädst. Mach ihn zuerst öffentlich.",
+            "{reasonFull}": "Dein Kanal ist bereits voll.",
+            "{reasonAlreadyPosted}": "Dein Kanal steht bereits auf der Liste.",
+            "{reasonFailed}": "Beim Posten ist etwas schiefgelaufen. Versuche es gleich noch einmal."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmChannelsEmbed",
+      "content": {
+        "title": "🔎  LFM des Hauptkanals #{index} bearbeiten",
+        "description": "Ein Kanalbesitzer kann seinen Kanal in den hier gewählten Textkanälen bewerben, damit Mitglieder, die gerade im Chat lesen, einen Raum sehen, der Leute sucht, und beitreten.\n\nMitglieder wählen beim Posten zwischen diesen und erreichen keinen anderen Kanal.\n\nLeer lassen schaltet die Funktion für diesen Master-Kanal ab.\n\n**_Aktuelle LFM-Kanäle_**\n\n> {lfmChannelsDisplay}\n\n**_Gepingte Rollen_**\n\n> {pingRolesDisplay}\n\n**_Zeiten_**\n\n> Beitrags-Abklingzeit (alle Kanäle): {postCooldown}\n> Ping-Abklingzeit: {pingCooldown}\n> Beitragsdauer: {postExpiry}\n> Mitgliederzahl-Aktualisierung: {occupancyDebounce}",
+        "footer": "Hinweis: Der Bot braucht in jedem hier gewählten Kanal die Rechte Kanal ansehen, Nachrichten senden und Links einbetten.",
+        "options": {
+          "lfmChannelsDisplay": {
+            "{lfmChannels}": "{lfmChannels}",
+            "{lfmChannelsNone}": "**Keine** *(die Funktion ist aus)*"
+          },
+          "pingRolesDisplay": {
+            "{pingRoles}": "{pingRoles}",
+            "{pingRolesNone}": "**Keine** *(Beiträge erscheinen leise)*"
+          }
+        },
+        "arrayOptions": {
+          "lfmChannels": {
+            "format": "<#{value}>{separator}",
+            "separator": ", "
+          },
+          "pingRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3555,6 +3729,18 @@
       "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
       "content": {
         "title": "⏱️ Zeit pro Kandidat"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "Mitglieder gesucht"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
+      "content": {
+        "title": "⏱️ LFM-Zeiten des Hauptkanals #{index}"
       }
     }
   ]

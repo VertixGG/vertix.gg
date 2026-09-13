@@ -10,10 +10,21 @@ import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions"
 
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
-import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+import {
+    dynamicChannelLfmTimingIsWithinBounds,
+    dynamicChannelLfmTimingsResolve
+} from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 
 import { warnOnMissingLogsChannelPermissions } from "@vertix.gg/bot/src/ui/general/logs-channel/logs-channel-utils";
 import { warnOnUnassignableVoiceRole } from "@vertix.gg/bot/src/ui/general/server-options/voice-role-utils";
+import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+
+import {
+    MILLISECONDS_PER_MINUTE,
+    MILLISECONDS_PER_SECOND
+} from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-lfm-channels/setup-edit-lfm-timings-modal";
+
+import { warnOnMissingLfmChannelsPermissions } from "@vertix.gg/bot/src/ui/general/lfm/lfm-channels-utils";
 
 import {
     verifiedRolesFromEveryoneRole,
@@ -28,6 +39,9 @@ import { SCOPE_DEFAULT_VALUE } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-bu
 import { SetupEditComponent } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit-component";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+
+import type { TDynamicChannelLfmTimingsField }
+    from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 
 import type { MessageComponentInteraction, VoiceChannel } from "discord.js";
 
@@ -173,6 +187,10 @@ async function onSelectEditOptionSelected(
 
         case "edit-dynamic-channel-voice-role":
             await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVoiceRole" );
+            break;
+
+        case "edit-dynamic-channel-lfm-channels":
+            await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditLfmChannels" );
             break;
 
         case "edit-dynamic-channel-default-privacy":
@@ -707,6 +725,127 @@ async function onVoiceRoleSelected(
     await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditVoiceRole" );
 }
 
+async function onLfmChannelsSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectMenuChannelTextInteraction
+) {
+    const channelIds = [ ...interaction.values ];
+    const args = context.getArgs( interaction );
+
+    args.dynamicChannelLfmChannelIds = channelIds;
+
+    const masterChannelDB = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V2
+    } as ChannelExtended;
+
+    await MasterChannelDataManager.$.setChannelLfmChannelIds( masterChannelDB, channelIds );
+
+    context.setArgs( interaction, args );
+
+    await warnOnMissingLfmChannelsPermissions( interaction, channelIds );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditLfmChannels" );
+}
+
+async function onLfmPingRolesSelected(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultStringSelectRolesChannelTextInteraction
+) {
+    const roleIds = [ ...interaction.values ];
+    const args = context.getArgs( interaction );
+
+    args.dynamicChannelLfmPingRoleIds = roleIds;
+
+    const masterChannelDB = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V2
+    } as ChannelExtended;
+
+    await MasterChannelDataManager.$.setChannelLfmPingRoleIds( masterChannelDB, roleIds );
+
+    context.setArgs( interaction, args );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditLfmChannels" );
+}
+
+/**
+ * Function readTimingField() :: One field of the timings modal, in milliseconds.
+ *
+ * A field that cannot be read as a number in bounds keeps what the generator already had rather
+ * than falling to the built-in default: the modal arrives pre-filled with all four, so a typo in
+ * one is an accident in that field and not a request to reset it.
+ */
+function readTimingField(
+    interaction: UIDefaultModalChannelTextInteraction,
+    context: IExecutionAdapterContext<Interactions>,
+    inputName: string,
+    field: TDynamicChannelLfmTimingsField,
+    unitMs: number,
+    current: number
+) {
+    const inputId = context.customIdStrategy.generateId( `VertixBot/UI-V2/SetupEditAdapter:${ inputName }` );
+
+    const raw = interaction.fields.getTextInputValue( inputId ).trim().replace( ",", "." );
+
+    const parsed = Math.round( Number( raw ) * unitMs );
+
+    if ( "" === raw || ! dynamicChannelLfmTimingIsWithinBounds( field, parsed ) ) {
+        return current;
+    }
+
+    return parsed;
+}
+
+async function onLfmTimingsSubmitted(
+    context: IExecutionAdapterContext<Interactions>,
+    interaction: UIDefaultModalChannelTextInteraction
+) {
+    const args = context.getArgs( interaction );
+
+    const current = dynamicChannelLfmTimingsResolve( {
+        postCooldown: args.dynamicChannelLfmPostCooldownMs,
+        pingCooldown: args.dynamicChannelLfmPingCooldownMs,
+        postExpiry: args.dynamicChannelLfmPostExpiryMs,
+        occupancyDebounce: args.dynamicChannelLfmOccupancyDebounceMs
+    } );
+
+    const timings = {
+        postCooldown: readTimingField(
+            interaction, context, "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
+            "postCooldown", MILLISECONDS_PER_MINUTE, current.postCooldown
+        ),
+        pingCooldown: readTimingField(
+            interaction, context, "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
+            "pingCooldown", MILLISECONDS_PER_MINUTE, current.pingCooldown
+        ),
+        postExpiry: readTimingField(
+            interaction, context, "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
+            "postExpiry", MILLISECONDS_PER_MINUTE, current.postExpiry
+        ),
+        occupancyDebounce: readTimingField(
+            interaction, context, "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
+            "occupancyDebounce", MILLISECONDS_PER_SECOND, current.occupancyDebounce
+        )
+    };
+
+    const masterChannelDB = {
+        id: args.ChannelDBId,
+        version: VERSION_UI_V2
+    } as ChannelExtended;
+
+    await MasterChannelDataManager.$.setChannelLfmTimings( masterChannelDB, timings );
+
+    context.setArgs( interaction, {
+        dynamicChannelLfmPostCooldownMs: timings.postCooldown,
+        dynamicChannelLfmPingCooldownMs: timings.pingCooldown,
+        dynamicChannelLfmPostExpiryMs: timings.postExpiry,
+        dynamicChannelLfmOccupancyDebounceMs: timings.occupancyDebounce
+    } );
+
+    await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditLfmChannels" );
+}
+
 async function onStaffRolesSelected(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultStringSelectRolesChannelTextInteraction
@@ -815,6 +954,12 @@ async function onBackButtonClicked(
     }
 
     if ( "VertixBot/UI-V2/SetupEditVoiceRole" === context.getCurrentExecutionStep( interaction )?.name ) {
+        await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
+
+        return;
+    }
+
+    if ( "VertixBot/UI-V2/SetupEditLfmChannels" === context.getCurrentExecutionStep( interaction )?.name ) {
         await context.editReplyWithStep( interaction, "VertixBot/UI-V2/SetupEditMaster" );
 
         return;
@@ -931,6 +1076,12 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 elementsGroup: "VertixBot/UI-V2/SetupEditVoiceRoleElementsGroup",
                 embedsGroup: "VertixBot/UI-V2/SetupEditVoiceRoleEmbedGroup"
             } )
+            .addState( "LfmChannels", {
+                executionStep: "VertixBot/UI-V2/SetupEditLfmChannels",
+                previewDefaultVars: { view: "LFM channels configuration" },
+                elementsGroup: "VertixBot/UI-V2/SetupEditLfmChannelsElementsGroup",
+                embedsGroup: "VertixBot/UI-V2/SetupEditLfmChannelsEmbedGroup"
+            } )
             .addState( "StaffRoles", {
                 executionStep: "VertixBot/UI-V2/SetupEditStaffRoles",
                 previewDefaultVars: { view: "Staff roles configuration" },
@@ -943,6 +1094,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "OpenVerifiedRoles", { from: "MasterOverview", to: "VerifiedRoles" } )
             .addTransition( "OpenStaffRoles", { from: "MasterOverview", to: "StaffRoles" } )
             .addTransition( "OpenVoiceRole", { from: "MasterOverview", to: "VoiceRole" } )
+            .addTransition( "OpenLfmChannels", { from: "MasterOverview", to: "LfmChannels" } )
             .addTransition( "OpenDefaultPrivacy", { from: "MasterOverview", to: "DefaultPrivacy" } )
             .addTransition( "OpenDefaultUserLimit", { from: "MasterOverview", to: "DefaultUserLimit" } )
             .addTransition( "OpenNameModal", { from: "MasterOverview", to: "MasterOverview" } )
@@ -965,6 +1117,10 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "BackFromStaffRoles", { from: "StaffRoles", to: "MasterOverview" } )
             .addTransition( "VoiceRoleUpdated", { from: "VoiceRole", to: "VoiceRole" } )
             .addTransition( "BackFromVoiceRole", { from: "VoiceRole", to: "MasterOverview" } )
+            .addTransition( "LfmChannelsUpdated", { from: "LfmChannels", to: "LfmChannels" } )
+            .addTransition( "LfmPingRolesUpdated", { from: "LfmChannels", to: "LfmChannels" } )
+            .addTransition( "LfmTimingsUpdated", { from: "LfmChannels", to: "LfmChannels" } )
+            .addTransition( "BackFromLfmChannels", { from: "LfmChannels", to: "MasterOverview" } )
             .addTransition( "DefaultPrivacyUpdated", { from: "DefaultPrivacy", to: "DefaultPrivacy" } )
             .addTransition( "BackFromDefaultPrivacy", { from: "DefaultPrivacy", to: "MasterOverview" } )
             .addTransition( "DefaultUserLimitUpdated", { from: "DefaultUserLimit", to: "DefaultUserLimit" } )
@@ -1021,6 +1177,22 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 "VertixBot/UI-V2/LogChannelSelectMenu",
                 "LogChannelUpdated",
                 onLogChannelSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
+                "VertixBot/UI-V2/LfmChannelsSelectMenu",
+                "LfmChannelsUpdated",
+                onLfmChannelsSelected
+            )
+            .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
+                "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+                "LfmPingRolesUpdated",
+                onLfmPingRolesSelected
+            )
+            .bindModalWithButton<UIDefaultModalChannelTextInteraction>(
+                "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+                "VertixBot/UI-V2/SetupEditLfmTimingsModal",
+                "LfmTimingsUpdated",
+                onLfmTimingsSubmitted
             )
             .bindSelectMenu<UIDefaultStringSelectRolesChannelTextInteraction>(
                 "VertixBot/UI-General/StaffRolesMenu",
@@ -1108,7 +1280,10 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
         const masterChannelDB = argsFromManager?.masterChannelDB || availableArgs?.masterChannelDB;
 
         if ( masterChannelDB ) {
-            args.index = masterChannelDB.masterChannelIndex;
+            // A sibling of `masterChannelDB` rather than a field on it - the channel row knows
+            // nothing about its position in the list, and reading it from there left every title
+            // rendered through this path saying "#NaN".
+            args.index = argsFromManager?.masterChannelIndex ?? availableArgs?.masterChannelIndex ?? 0;
             args.ChannelDBId = masterChannelDB.id;
             args.masterChannelId = masterChannelDB.channelId;
 
@@ -1125,7 +1300,14 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 masterChannelKeys.dynamicChannelStaffRoles,
                 masterChannelKeys.dynamicChannelVoiceRoleId,
                 masterChannelKeys.dynamicChannelDefaultPrivacyState,
-                masterChannelKeys.dynamicChannelDefaultUserLimit
+                masterChannelKeys.dynamicChannelDefaultUserLimit,
+
+                // The timings modal is opened from a reply rather than from the stored step args,
+                // so anything it should arrive pre-filled with has to be selected here too.
+                masterChannelKeys.dynamicChannelLfmPostCooldownMs,
+                masterChannelKeys.dynamicChannelLfmPingCooldownMs,
+                masterChannelKeys.dynamicChannelLfmPostExpiryMs,
+                masterChannelKeys.dynamicChannelLfmOccupancyDebounceMs
             ];
 
             selectedKeys.forEach( ( key ) => {

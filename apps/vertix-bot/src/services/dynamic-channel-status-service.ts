@@ -111,7 +111,7 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
         const customStatus = await this.getCustomStatus( channel );
 
         if ( null !== customStatus ) {
-            return this.expandStatusVars( channel, customStatus );
+            return this.expandChannelVars( channel, customStatus );
         }
 
         if ( !( await this.isAutoStatusEnabled( channel ) ) ) {
@@ -336,7 +336,7 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function `expandStatusVars()` - Fills in the tokens a pinned status is allowed to carry.
+     * Function `expandChannelVars()` - Fills in the tokens a piece of owner written text may carry.
      *
      * Done on every write rather than once when the status is pinned, which is the whole point of
      * allowing them: a status reading `{game}` follows the room onto whatever it plays next, where
@@ -346,7 +346,7 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
      * A token nobody used costs nothing - the status is returned untouched, and the reads behind
      * each token only happen for the tokens actually present.
      */
-    private async expandStatusVars( channel: VoiceChannel, status: string ): Promise<string> {
+    public async expandChannelVars( channel: VoiceChannel, status: string ): Promise<string> {
         if ( !DYNAMIC_CHANNEL_STATUS_VARS.some( ( variable ) => status.includes( variable ) ) ) {
             return status;
         }

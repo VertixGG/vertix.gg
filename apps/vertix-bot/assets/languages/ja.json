@@ -467,6 +467,18 @@
         "content": {
           "label": "請求を編集"
         }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+        "content": {
+          "label": "タイミングを編集"
+        }
       }
     ],
     "textInputs": [
@@ -591,6 +603,36 @@
         "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
         "content": {
           "label": "秒数、空欄で既定値"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "どんなメンバーを探していますか"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
+        "content": {
+          "label": "投稿のクールダウン（分、0 でなし）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
+        "content": {
+          "label": "ping のクールダウン（分、0 でなし）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
+        "content": {
+          "label": "投稿の有効期限（分）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
+        "content": {
+          "label": "人数の更新遅延（秒）"
         }
       }
     ],
@@ -820,25 +862,36 @@
           "placeholder": "◎ ∙ 編集オプションを選択",
           "selectOptions": [
             {
-              "label": "∙ チャンネル名を編集"
+              "label": "∙ チャンネル名を編集",
+              "value": "edit-dynamic-channel-name"
             },
             {
-              "label": "∙ チャンネルボタンを編集"
+              "label": "∙ チャンネルボタンを編集",
+              "value": "edit-dynamic-channel-buttons"
             },
             {
-              "label": "∙ チャンネルの認証済みロールを編集"
+              "label": "∙ チャンネルの認証済みロールを編集",
+              "value": "edit-dynamic-channel-verified-roles"
             },
             {
-              "label": "∙ チャンネルのスタッフロールを編集"
+              "label": "∙ チャンネルのスタッフロールを編集",
+              "value": "edit-dynamic-channel-staff-roles"
             },
             {
-              "label": "∙ チャンネルのボイスロールを編集"
+              "label": "∙ チャンネルのボイスロールを編集",
+              "value": "edit-dynamic-channel-voice-role"
             },
             {
-              "label": "∙ プライバシー状態を編集"
+              "label": "∙ LFM を編集",
+              "value": "edit-dynamic-channel-lfm-channels"
             },
             {
-              "label": "∙ ユーザー上限を編集"
+              "label": "∙ プライバシー状態を編集",
+              "value": "edit-dynamic-channel-default-privacy"
+            },
+            {
+              "label": "∙ ユーザー上限を編集",
+              "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
         }
@@ -1151,6 +1204,24 @@
               "description": "放置されたチャンネルが待つ時間と、投票が続く時間"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 チャンネルを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmChannelsSelectMenu",
+        "content": {
+          "placeholder": "🔎 ∙ LFMチャンネル"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+        "content": {
+          "placeholder": "🔔 ∙ メンションするロール"
         }
       }
     ]
@@ -1574,7 +1645,9 @@
               "5": "👥 ∙ **アクセス**",
               "6": "🔃 ∙ **リセット**",
               "7": "😈 ∙ **引き継ぐ**",
-              "12": "🔀 ∙ **譲渡**"
+              "12": "🔀 ∙ **譲渡**",
+              "13": "📣 ∙ **ステータス**",
+              "15": "🔎 ∙ **LFM**"
             }
           }
         }
@@ -1696,7 +1769,8 @@
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
               "12": "🔀 ∙ **Transfer**",
-              "13": "📣 ∙ **ステータス**"
+              "13": "📣 ∙ **ステータス**",
+              "15": "🔎 ∙ **LFM**"
             }
           },
           "verifiedRoles": {
@@ -1882,7 +1956,7 @@
       "name": "VertixBot/UI-V3/SetupNewStep2Embed",
       "content": {
         "title": "ステップ 2 - ダイナミックチャンネルの設定",
-        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n> 📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channels-showcase)をご覧ください。",
+        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n> 📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channel-v3)をご覧ください。",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙オン`",
@@ -2038,7 +2112,7 @@
       "name": "VertixBot/UI-V2/SetupStep2Embed",
       "content": {
         "title": "ステップ 2 - ダイナミックチャンネルの設定",
-        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n> 📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channels-showcase)をご覧ください。",
+        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n> 📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channel-v2)をご覧ください。",
         "footer": "{footer}",
         "options": {
           "on": "`🟢∙オン`",
@@ -2078,7 +2152,8 @@
               "6": "🔃 ∙ **Reset**",
               "7": "😈 ∙ **Claim**",
               "12": "🔀 ∙ **Transfer**",
-              "13": "📣 ∙ **ステータス**"
+              "13": "📣 ∙ **ステータス**",
+              "15": "🔎 ∙ **LFM**"
             }
           }
         }
@@ -3414,6 +3489,105 @@
           "defaultMarker": "*(既定)*"
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostEmbed",
+      "content": {
+        "title": "🔎  {channelName} がメンバーを募集中",
+        "description": "{noteLine}{gameLine}**メンバー** {occupancy}\n**ホスト** <@{ownerId}>\n\n<#{channelId}> で合流しよう · `{elapsedTimeFormatFraction}` 後に終了",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "gameLine": {
+            "{gameKnown}": "**プレイ中** {gameName}\n",
+            "{gameUnknown}": ""
+          },
+          "noteLine": {
+            "{noteKnown}": "> {note}\n\n",
+            "{noteUnknown}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  どこに投稿しますか？",
+        "description": "メンバー募集を投稿するチャンネルを選んでください。\n\n誰がホストか、何をプレイしているか、何人いるかが表示され、チャンネルが満員になるか空になると取り下げられます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  募集を掲載しました",
+        "description": "<#{lfmChannelId}> に投稿しました。\n\nメンバー数は自動で更新され、チャンネルが満員になるか空になると自動で取り下げられます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  まだ投稿できません",
+        "description": "このサーバーではチャンネルの宣伝頻度が制限されており、直前に投稿されたばかりです。次の投稿は約 {retryMinutes} 分後に可能です。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  投稿できません",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "投稿先のチャンネルがまだ設定されていません。管理者が設定画面で選択します。",
+            "{reasonHidden}": "チャンネルが非表示のため、誰にも見つけてもらえません。先に表示に切り替えてください。",
+            "{reasonPrivate}": "チャンネルが非公開のため、招待しても誰も入れません。先に公開に切り替えてください。",
+            "{reasonFull}": "チャンネルはすでに満員です。",
+            "{reasonAlreadyPosted}": "このチャンネルはすでに掲載されています。",
+            "{reasonFailed}": "投稿中に問題が発生しました。少し待ってからもう一度お試しください。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmChannelsEmbed",
+      "content": {
+        "title": "🔎  マスターチャンネル #{index} の LFM を編集",
+        "description": "チャンネルのオーナーは、ここで選んだテキストチャンネルに自分のチャンネルを告知できます。チャットを読んでいるメンバーが、人を探している部屋を見つけて参加できるようになります。\n\nメンバーは投稿時にこの中から選び、それ以外のチャンネルには投稿できません。\n\n空のままにすると、このマスターチャンネルではこの機能が無効になります。\n\n**_現在のLFMチャンネル_**\n\n> {lfmChannelsDisplay}\n\n**_メンションされるロール_**\n\n> {pingRolesDisplay}\n\n**_タイミング_**\n\n> 投稿のクールダウン（全チャンネル）: {postCooldown}\n> ping のクールダウン: {pingCooldown}\n> 投稿の有効期限: {postExpiry}\n> 人数の更新間隔: {occupancyDebounce}",
+        "footer": "注意: ここで選んだすべてのチャンネルで、ボットにチャンネルを見る・メッセージを送信・リンクを埋め込む権限が必要です。",
+        "options": {
+          "lfmChannelsDisplay": {
+            "{lfmChannels}": "{lfmChannels}",
+            "{lfmChannelsNone}": "**なし** *(機能は無効です)*"
+          },
+          "pingRolesDisplay": {
+            "{pingRoles}": "{pingRoles}",
+            "{pingRolesNone}": "**なし** *(投稿は通知なしで掲載されます)*"
+          }
+        },
+        "arrayOptions": {
+          "lfmChannels": {
+            "format": "<#{value}>{separator}",
+            "separator": ", "
+          },
+          "pingRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3555,6 +3729,18 @@
       "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
       "content": {
         "title": "⏱️ 候補者ごとの追加時間"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "メンバー募集"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
+      "content": {
+        "title": "⏱️ マスターチャンネル #{index} の LFM タイミング"
       }
     }
   ]

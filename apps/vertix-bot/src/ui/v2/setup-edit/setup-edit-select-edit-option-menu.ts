@@ -51,6 +51,11 @@ export class SetupEditSelectEditOptionMenu extends UIElementStringSelectMenu {
                 emoji: "🎙️" as any
             },
             {
+                label: "∙ Edit LFM",
+                value: "edit-dynamic-channel-lfm-channels",
+                emoji: "🔎" as any
+            },
+            {
                 label: "∙ Edit Privacy State",
                 value: "edit-dynamic-channel-default-privacy",
                 emoji: "🛡️" as any

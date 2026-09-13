@@ -56,8 +56,42 @@ export const V2_BUTTONS = [
     { element: "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", id: "6", shared: "rest-channel" },
     { element: "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton", id: "7", shared: "claim-button" },
     { element: "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", id: "12", shared: "transfer" },
-    { element: "VertixBot/UI-V2/DynamicChannelMetaStatusButton", id: "13", shared: "status" }
+    { element: "VertixBot/UI-V2/DynamicChannelMetaStatusButton", id: "13", shared: "status" },
+    { element: "VertixBot/UI-V2/DynamicChannelLfmButton", id: "15", shared: "lfm" }
 ] as const;
+
+/**
+ * The full v2 set as it stood before the lfm button existed, in the order it was stored.
+ *
+ * A generator that never had its buttons curated stores exactly this - the defaults are the whole
+ * set, and opening the buttons screen and saving writes them back unchanged. Adding a button to
+ * the group therefore leaves those generators carrying a set that is complete for the version it
+ * was written under and short by one for this one, and the new button never draws.
+ *
+ * Held as a literal rather than computed, because it has to go on meaning what it meant then: it
+ * is the fingerprint of an untouched set, and a set derived from today's group would match today
+ * rather than the day it was written. Every further button added to v2 needs its own entry here
+ * for the same reason.
+ */
+export const V2_DEFAULT_BUTTONS_BEFORE_LFM: ReadonlyArray<string> = Object.freeze(
+    [ "0", "1", "2", "3", "4", "5", "6", "12", "13", "7" ]
+);
+
+/**
+ * Function isUntouchedV2DefaultSet() :: Whether a stored set is a default nobody has curated.
+ *
+ * Compared as a set rather than a sequence - the order is the row order and can be rearranged
+ * without the set itself being a choice about which buttons a generator carries.
+ */
+export function isUntouchedV2DefaultSet( buttons: ReadonlyArray<string> | null | undefined ): boolean {
+    if ( ! buttons || buttons.length !== V2_DEFAULT_BUTTONS_BEFORE_LFM.length ) {
+        return false;
+    }
+
+    const stored = new Set( buttons.map( ( button ) => String( button ) ) );
+
+    return V2_DEFAULT_BUTTONS_BEFORE_LFM.every( ( id ) => stored.has( id ) );
+}
 
 /**
  * The v3 slug each v2 button number means, derived from the table above.

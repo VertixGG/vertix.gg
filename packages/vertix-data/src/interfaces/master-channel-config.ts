@@ -26,6 +26,25 @@ export interface MasterChannelSettingsInterface {
      */
     dynamicChannelButtonsRowBreaks?: number[];
     dynamicChannelControlChannelId: string | null;
+    dynamicChannelLfmChannelIds?: string[];
+    /**
+     * The roles an lfm post is allowed to mention, chosen by an admin.
+     *
+     * Empty is the default and means no post ever pings. A member picks the destination but never
+     * the audience - a ping is the loudest thing the bot does on somebody else's behalf.
+     */
+    dynamicChannelLfmPingRoleIds?: string[];
+    /**
+     * The clocks this generator's lfm posts run on, in milliseconds.
+     *
+     * Absent means the generator never chose, and the shared fallback answers instead - which is
+     * why these are optional rather than defaulted here: a generator that is following the default
+     * should keep following it when the default moves.
+     */
+    dynamicChannelLfmPostCooldownMs?: number;
+    dynamicChannelLfmPingCooldownMs?: number;
+    dynamicChannelLfmPostExpiryMs?: number;
+    dynamicChannelLfmOccupancyDebounceMs?: number;
     dynamicChannelLogsChannelId: string | null;
     dynamicChannelMentionable: boolean;
     dynamicChannelNameTemplate: string;

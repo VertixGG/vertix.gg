@@ -1,6 +1,6 @@
 import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
-import { uiUtilsDynamicElementsRearrange } from "@vertix.gg/gui/src/ui-utils";
+import { uiUtilsDynamicElementsRearrange, uiUtilsHasUnresolvedTemplate, uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { UIElementBase } from "@vertix.gg/gui/src/bases/ui-element-base";
 
@@ -305,6 +305,30 @@ describe( "VertixGUI/UI-Utils", function() {
                 [ elements[ 1 ][ 0 ], elements[ 1 ][ 1 ], elements[ 1 ][ 2 ], elements[ 1 ][ 3 ], elements[ 1 ][ 4 ] ],
                 [ elements[ 2 ][ 0 ], elements[ 2 ][ 1 ] ],
             ] );
+        } );
+    } );
+
+    describe( "uiUtilsHasUnresolvedTemplate()", () => {
+        it( "should detect a variable that nothing filled in", () => {
+            // Act & Assert.
+            expect( uiUtilsHasUnresolvedTemplate( uiUtilsWrapAsTemplate( "avatarUrl" ) ) ).toBe( true );
+            expect( uiUtilsHasUnresolvedTemplate( "https://cdn.example.com/{avatarUrl}.webp" ) ).toBe( true );
+        } );
+
+        it( "should pass a string that carries no variables", () => {
+            // Act & Assert.
+            expect( uiUtilsHasUnresolvedTemplate( "https://cdn.example.com/1/2.webp" ) ).toBe( false );
+            expect( uiUtilsHasUnresolvedTemplate( "" ) ).toBe( false );
+        } );
+
+        it( "should not carry state between calls", () => {
+            // Arrange - a global regex would answer differently every other call.
+            const value = uiUtilsWrapAsTemplate( "avatarUrl" );
+
+            // Act & Assert.
+            expect( uiUtilsHasUnresolvedTemplate( value ) ).toBe( true );
+            expect( uiUtilsHasUnresolvedTemplate( value ) ).toBe( true );
+            expect( uiUtilsHasUnresolvedTemplate( value ) ).toBe( true );
         } );
     } );
 } );

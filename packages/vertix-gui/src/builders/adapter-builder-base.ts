@@ -13,6 +13,7 @@ import type {
     ButtonInteraction,
     MessageComponentInteraction,
     ModalSubmitInteraction,
+    BaseMessageOptions,
     Message,
     StringSelectMenuInteraction,
     UserSelectMenuInteraction
@@ -46,6 +47,7 @@ import type {
     BeforeBuildRunHandler,
     GenerateCustomIdForEntityHandler,
     GetCustomIdForEntityHandler,
+    GetMessageContentHandler,
     GetStartArgsHandler,
     IBinder,
     BeforeFinishHandler,
@@ -100,6 +102,7 @@ export class AdapterBuilderBase<
     protected getCustomIdForEntityHandler: GetCustomIdForEntityHandler<TInteraction, TArgs, TContext> | undefined;
     protected startArgsHandler: GetStartArgsHandler<TChannel, TInteraction, TArgs, TContext> | undefined;
     protected replyArgsHandler: GetReplyArgsHandler<TInteraction, TArgs, TContext> | undefined;
+    protected messageContentHandler: GetMessageContentHandler<TInteraction, TArgs, TContext> | undefined;
     protected editMessageArgsHandler: EditMessageArgsHandler<TContext, UIArgs> | undefined;
     protected beforeBuildHandler: BeforeBuildHandler<TInteraction, TArgs, TContext> | undefined;
     protected beforeBuildRunHandler: BeforeBuildRunHandler<TInteraction, TArgs, TContext> | undefined;
@@ -180,6 +183,11 @@ export class AdapterBuilderBase<
 
     public getReplyArgs( handler: GetReplyArgsHandler<TInteraction, TArgs, TContext> ): this {
         this.replyArgsHandler = handler;
+        return this;
+    }
+
+    public getMessageContent( handler: GetMessageContentHandler<TInteraction, TArgs, TContext> ): this {
+        this.messageContentHandler = handler;
         return this;
     }
 
@@ -339,6 +347,23 @@ export class AdapterBuilderBase<
                     }
 
                     return super.getStartArgs( channel, argsFromManager );
+                }
+
+                protected getMessage(
+                    from?: UIAdapterBuildSource,
+                    context?: TChannel | TInteraction,
+                    argsFromManager?: UIArgs
+                ): BaseMessageOptions {
+                    const message = super.getMessage( from, context, argsFromManager );
+
+                    if ( builder.messageContentHandler ) {
+                        message.content = builder.messageContentHandler(
+                            this.getContext(),
+                            argsFromManager as TArgs
+                        );
+                    }
+
+                    return message;
                 }
 
                 protected async getReplyArgs( interaction: TInteraction, argsFromManager?: UIArgs ): Promise<UIArgs> {

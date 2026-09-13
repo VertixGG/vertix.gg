@@ -154,6 +154,12 @@ export const DEFAULT_LOGS_CHANNEL_BOT_PERMISSIONS = new PermissionsBitField( [
     Flags.EmbedLinks
 ] );
 
+export const DEFAULT_LFM_CHANNEL_BOT_PERMISSIONS = new PermissionsBitField( [
+    Flags.ViewChannel,
+    Flags.SendMessages,
+    Flags.EmbedLinks
+] );
+
 export const DEFAULT_SETUP_PERMISSIONS = [
     PermissionsBitField.Flags.ManageGuild,
     PermissionsBitField.Flags.ManageChannels,

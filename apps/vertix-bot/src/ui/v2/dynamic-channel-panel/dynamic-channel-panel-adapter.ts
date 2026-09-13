@@ -204,6 +204,20 @@ async function onTransferOwnerButtonClicked(
     await uiService.get( "VertixBot/UI-V2/DynamicChannelTransferOwnerAdapter" )?.runInitial( interaction );
 }
 
+async function onLfmButtonClicked(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
+    interaction: UIDefaultButtonChannelVoiceInteraction
+) {
+    // Straight to the modal, the way the status button does it. Anything done before opening it -
+    // resolving the channel, reading the generator's settings - spends the three seconds discord
+    // allows for a first response, and a modal cannot be preceded by a deferral. The checks happen
+    // when the note comes back, on an interaction that is its own.
+    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+    await uiService
+        .get( "VertixBot/UI-V2/DynamicChannelLfmAdapter" )
+        ?.showModal( "VertixBot/UI-V2/DynamicChannelLfmNoteModal", interaction );
+}
+
 const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultButtonChannelVoiceInteraction>(
     "VertixBot/UI-V2/DynamicChannelPanelAdapter"
 )
@@ -228,6 +242,7 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
             .addTransition( "ResetChannel", { from: "Default", to: "Default" } )
             .addTransition( "ClaimChannel", { from: "Default", to: "Default" } )
             .addTransition( "TransferOwner", { from: "Default", to: "Default" } )
+            .addTransition( "OpenLfm", { from: "Default", to: "Default" } )
             // Handler bindings
             .bindButton( "VertixBot/UI-V2/DynamicChannelMetaRenameButton", "OpenRename", onRenameButtonClicked )
             .bindButton( "VertixBot/UI-V2/DynamicChannelMetaStatusButton", "OpenStatus", onStatusButtonClicked )
@@ -238,7 +253,8 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
             .bindButton( "VertixBot/UI-V2/DynamicChannelPermissionsAccessButton", "OpenAccess", onAccessButtonClicked )
             .bindButton( "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton", "ResetChannel", onResetChannelButtonClicked )
             .bindButton( "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton", "ClaimChannel", onClaimButtonClicked )
-            .bindButton( "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", "TransferOwner", onTransferOwnerButtonClicked );
+            .bindButton( "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", "TransferOwner", onTransferOwnerButtonClicked )
+            .bindButton( "VertixBot/UI-V2/DynamicChannelLfmButton", "OpenLfm", onLfmButtonClicked );
     } )
     .getStartArgs( async( context, channel, argsFromManager ) => {
         const resolvedChannel = await resolveChannelFromContext( channel, argsFromManager );

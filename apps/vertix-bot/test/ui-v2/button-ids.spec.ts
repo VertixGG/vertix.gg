@@ -1,6 +1,17 @@
+import fs from "node:fs";
+import path from "node:path";
+
+import { fileURLToPath } from "node:url";
+
 import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
-import { V2_BUTTONS, V2_ELEMENT_TO_V3_BUTTON_ID, V2_TO_V3_BUTTON_IDS } from "@vertix.gg/definitions/src/button-ids";
+import {
+    V2_BUTTONS,
+    V2_DEFAULT_BUTTONS_BEFORE_LFM,
+    V2_ELEMENT_TO_V3_BUTTON_ID,
+    V2_TO_V3_BUTTON_IDS,
+    isUntouchedV2DefaultSet
+} from "@vertix.gg/definitions/src/button-ids";
 
 /** What a button answers to, whichever version it belongs to. */
 interface ButtonLike {
@@ -69,12 +80,107 @@ describe( "VertixBot/Definitions/ButtonIds", () => {
         const v3Ids = new Set( v3Buttons.map( ( button ) => button.getId() ) );
 
         // V2 draws privacy as two buttons where v3 draws one, so `visibility` is v2's alone and has
-        // no v3 button behind it. Every other shared id must still exist.
-        const V2_ONLY = [ "visibility" ];
+        // no v3 button behind it. `lfm` is v2's alone for the other reason - v3 has not been given
+        // the button yet. Every other shared id must still exist.
+        const V2_ONLY = [ "visibility", "lfm" ];
 
         V2_BUTTONS
             .filter( ( button ) => ! V2_ONLY.includes( button.shared ) )
             .forEach( ( button ) => expect( v3Ids.has( button.shared ) ).toBe( true ) );
+    } );
+
+    /**
+     * The fingerprint of an untouched set is a literal, so nothing stops it drifting from the set
+     * it is meant to describe. Held against the group here: adding another v2 button without
+     * giving it its own fingerprint fails this rather than silently hiding the button from every
+     * generator that never curated its buttons.
+     */
+    it( "fingerprints the set as it stood before lfm", async() => {
+        const { v2Buttons } = await loadGroups();
+
+        const pickable = v2Buttons
+            .map( ( button ) => String( button.getId() ) )
+            .filter( ( id ) => V2_BUTTONS.some( ( button ) => button.id === id ) );
+
+        expect( [ ...V2_DEFAULT_BUTTONS_BEFORE_LFM ].sort() )
+            .toEqual( pickable.filter( ( id ) => "15" !== id ).sort() );
+    } );
+
+    describe( "isUntouchedV2DefaultSet()", () => {
+        it( "accepts the set as it was stored", () => {
+            expect( isUntouchedV2DefaultSet( [ ...V2_DEFAULT_BUTTONS_BEFORE_LFM ] ) ).toBe( true );
+        } );
+
+        it( "accepts it rearranged, since the order is rows rather than a choice", () => {
+            expect( isUntouchedV2DefaultSet( [ ...V2_DEFAULT_BUTTONS_BEFORE_LFM ].reverse() ) ).toBe( true );
+        } );
+
+        it( "rejects a set somebody curated", () => {
+            expect( isUntouchedV2DefaultSet( [ "0", "1", "2" ] ) ).toBe( false );
+        } );
+
+        it( "rejects a set that already carries the new button", () => {
+            expect( isUntouchedV2DefaultSet( [ ...V2_DEFAULT_BUTTONS_BEFORE_LFM, "15" ] ) ).toBe( false );
+        } );
+
+        it( "rejects nothing at all", () => {
+            expect( isUntouchedV2DefaultSet( [] ) ).toBe( false );
+            expect( isUntouchedV2DefaultSet( null ) ).toBe( false );
+            expect( isUntouchedV2DefaultSet( undefined ) ).toBe( false );
+        } );
+    } );
+
+    /**
+     * The exporter writes an options map once and never adds a key to one it has already written,
+     * so a button introduced after a map was baked renders as its own raw number - `( 15 )` where
+     * `( \u{1F50E} \u2219 **LFM** )` belongs, in every language at once. Held against the group
+     * here, because the only place the symptom shows is a setup screen a test run never opens.
+     */
+    it( "names every v2 button in every language", async() => {
+        const { v2Buttons } = await loadGroups();
+
+        const expected = v2Buttons.map( ( button ) => String( button.getId() ) ).sort();
+
+        const languagesPath = path.join(
+            path.dirname( fileURLToPath( import.meta.url ) ),
+            "..",
+            "..",
+            "assets",
+            "languages"
+        );
+
+        const files = fs.readdirSync( languagesPath ).filter( ( file ) => file.endsWith( ".json" ) );
+
+        expect( files.length ).toBeGreaterThan( 0 );
+
+        let checked = 0;
+
+        files.forEach( ( file ) => {
+            const locale = JSON.parse( fs.readFileSync( path.join( languagesPath, file ), "utf-8" ) ) as {
+                embeds?: { name: string; content?: { arrayOptions?: Record<string, { options?: Record<string, string> }> } }[];
+            };
+
+            locale.embeds?.forEach( ( embed ) => {
+                Object.entries( embed.content?.arrayOptions ?? {} ).forEach( ( [ key, spec ] ) => {
+                    const ids = Object.keys( spec?.options ?? {} );
+
+                    // Only the maps a v2 button number keys. The v3 lists are keyed by slug, and
+                    // the role lists carry no options at all.
+                    if ( ! ids.length || ! ids.every( ( id ) => /^\d+$/.test( id ) ) ) {
+                        return;
+                    }
+
+                    checked++;
+
+                    // The file and the embed ride along in the assertion so a failure says which
+                    // language and which screen, rather than only which numbers.
+                    expect( { file, embed: embed.name, key, ids: ids.sort() } )
+                        .toEqual( { file, embed: embed.name, key, ids: expected } );
+                } );
+            } );
+        } );
+
+        expect( checked ).toBeGreaterThan( 0 );
     } );
 
     it( "derives both maps from the one table", () => {

@@ -322,6 +322,7 @@ export async function registerServices() {
         import( "@vertix.gg/bot/src/services/channel-cleanup-service" ),
         import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),
         import( "@vertix.gg/bot/src/services/dynamic-channel-status-service" ),
+        import( "@vertix.gg/bot/src/services/dynamic-channel-lfm-service" ),
         import( "@vertix.gg/bot/src/services/master-channel-service" ),
         import( "@vertix.gg/bot/src/services/scaling-channel-service" ),
         import( "@vertix.gg/bot/src/services/management-ipc-service" ),

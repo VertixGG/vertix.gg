@@ -2026,6 +2026,17 @@
                             }
                         },
                         {
+                            "element": "VertixBot/UI-V2/DynamicChannelLfmButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelLfmButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "LFM",
+                                "style": "secondary",
+                                "emoji": "🔎"
+                            }
+                        },
+                        {
                             "element": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
                             "definition": {
                                 "name": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",
@@ -2128,6 +2139,279 @@
         "modals": [],
         "modalDefinitions": [],
         "defaultElementsGroup": "VertixBot/UI-V2/DynamicChannelElementsGroup",
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmChannelMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🔎 Select Channel"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "color": 3369963,
+                            "title": "🔎  Where should it go?",
+                            "description": "Pick the channel your call for members is posted to.\n\nIt shows who is hosting, what they are playing and how many are in, and it is taken down when your channel fills up or empties."
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔎  Your channel is on the board",
+                            "description": "Posted to <#{lfmChannelId}>.\n\nIt keeps its member count up to date, and comes down on its own when your channel fills up or empties.",
+                            "color": 16766720,
+                            "vars": {
+                                "lfmChannelId": "{lfmChannelId}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  lfmChannelId: args.lfmChannelId\n})"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔎  Not just yet",
+                            "description": "This server limits how often these channels advertise, and the last post went up recently. The next one can go up in about {retryMinutes} minutes.",
+                            "color": 16738560,
+                            "vars": {
+                                "retryMinutes": "{retryMinutes}"
+                            },
+                            "defaultVars": {
+                                "retryMinutes": "10"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  retryMinutes: args.retryMinutes\n})"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔎  Nothing to post",
+                            "description": "{reason}",
+                            "color": 16738560,
+                            "options": {
+                                "reason": {
+                                    "{reasonNotConfigured}": "Nobody has set up a channel for these posts yet. An admin picks one in the setup screen.",
+                                    "{reasonHidden}": "Your channel is hidden, so nobody could find it anyway. Show it first.",
+                                    "{reasonPrivate}": "Your channel is private, so nobody you invite could get in. Make it public first.",
+                                    "{reasonFull}": "Your channel is already full.",
+                                    "{reasonAlreadyPosted}": "Your channel is already on the board.",
+                                    "{reasonFailed}": "Something went wrong while posting. Try again in a moment."
+                                }
+                            },
+                            "vars": {
+                                "reason": "{reason}",
+                                "reasonNotConfigured": "{reasonNotConfigured}",
+                                "reasonHidden": "{reasonHidden}",
+                                "reasonPrivate": "{reasonPrivate}",
+                                "reasonFull": "{reasonFull}",
+                                "reasonAlreadyPosted": "{reasonAlreadyPosted}",
+                                "reasonFailed": "{reasonFailed}"
+                            },
+                            "defaultVars": {
+                                "reason": "{reasonNotConfigured}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  return {\n    reason: {\n      [DynamicChannelLfmPostResultCode.NotConfigured]: vars.reasonNotConfigured,\n      [DynamicChannelLfmPostResultCode.ChannelHidden]: vars.reasonHidden,\n      [DynamicChannelLfmPostResultCode.ChannelPrivate]: vars.reasonPrivate,\n      [DynamicChannelLfmPostResultCode.ChannelFull]: vars.reasonFull,\n      [DynamicChannelLfmPostResultCode.AlreadyPosted]: vars.reasonAlreadyPosted,\n      [DynamicChannelLfmPostResultCode.Error]: vars.reasonFailed\n    }[args.reasonCode] ?? vars.reasonFailed\n  };\n}",
+                                        "binds": [
+                                            "DynamicChannelLfmPostResultCode",
+                                            "vars"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [
+            "VertixBot/UI-V2/DynamicChannelLfmNoteModal"
+        ],
+        "modalDefinitions": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmNoteModal",
+                "title": "Looking for members",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-V2/DynamicChannelLfmNoteInput",
+                        "label": "WHO ARE YOU LOOKING FOR",
+                        "placeholder": "Need 2 for ranked, mic required",
+                        "style": "short",
+                        "minLength": 0,
+                        "maxLength": 128
+                    }
+                ]
+            }
+        ],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 4,
+                "withDefinition": 4,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmPostComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelLfmPostComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelLfmPostEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔎  {channelName} is looking for members",
+                            "description": "{noteLine}{gameLine}**Members** {occupancy}\n**Host** <@{ownerId}>\n\nJoin them in <#{channelId}> · closes in `{elapsedTimeFormatFraction}`",
+                            "thumbnail": "{ownerAvatarUrl}",
+                            "color": 3369963,
+                            "options": {
+                                "formatSecondUnits": {
+                                    "unit": "second",
+                                    "units": "seconds"
+                                },
+                                "formatMinuteUnits": {
+                                    "unit": "minute",
+                                    "units": "minutes"
+                                },
+                                "elapsedTimeFormat": {
+                                    "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+                                },
+                                "elapsedTimeFormatFraction": {
+                                    "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+                                    "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+                                },
+                                "gameLine": {
+                                    "{gameKnown}": "**Playing** {gameName}\n",
+                                    "{gameUnknown}": ""
+                                },
+                                "noteLine": {
+                                    "{noteKnown}": "> {note}\n\n",
+                                    "{noteUnknown}": ""
+                                }
+                            },
+                            "vars": {
+                                "elapsedTimeValue": "{elapsedTimeValue}",
+                                "elapsedTimeValueFraction": "{elapsedTimeValueFraction}",
+                                "elapsedTimeFormat": "{elapsedTimeFormat}",
+                                "elapsedTimeFormatFraction": "{elapsedTimeFormatFraction}",
+                                "formatMinuteUnits": "{formatMinuteUnits}",
+                                "formatSecondUnits": "{formatSecondUnits}",
+                                "channelId": "{channelId}",
+                                "channelName": "{channelName}",
+                                "ownerId": "{ownerId}",
+                                "ownerAvatarUrl": "{ownerAvatarUrl}",
+                                "occupancy": "{occupancy}",
+                                "gameName": "{gameName}",
+                                "gameLine": "{gameLine}",
+                                "gameKnown": "{gameKnown}",
+                                "gameUnknown": "{gameUnknown}",
+                                "note": "{note}",
+                                "noteLine": "{noteLine}",
+                                "noteKnown": "{noteKnown}",
+                                "noteUnknown": "{noteUnknown}"
+                            },
+                            "defaultVars": {
+                                "channelName": "Leo's Channel",
+                                "occupancy": "●●○○○  2/5",
+                                "gameName": "Valorant",
+                                "note": "Need 2 for ranked, mic required",
+                                "elapsedTimeFormatFraction": "30.0 minutes"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(Number(args.expiresAt))"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
         "defaultEmbedsGroup": null,
         "defaultMarkdownsGroup": null,
         "hooks": [],
@@ -2758,6 +3042,17 @@
                                 "label": "Status",
                                 "style": "secondary",
                                 "emoji": "📣"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelLfmButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelLfmButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "LFM",
+                                "style": "secondary",
+                                "emoji": "🔎"
                             }
                         },
                         {
@@ -3835,6 +4130,11 @@
                                         "emoji": "🎙️"
                                     },
                                     {
+                                        "label": "∙ Edit LFM",
+                                        "value": "edit-dynamic-channel-lfm-channels",
+                                        "emoji": "🔎"
+                                    },
+                                    {
                                         "label": "∙ Edit Privacy State",
                                         "value": "edit-dynamic-channel-default-privacy",
                                         "emoji": "🛡️"
@@ -4010,6 +4310,11 @@
                                     },
                                     {
                                         "label": "Claim",
+                                        "value": "15",
+                                        "emoji": "🔎"
+                                    },
+                                    {
+                                        "label": "Claim",
                                         "value": "7",
                                         "emoji": "😈"
                                     }
@@ -4167,6 +4472,56 @@
                                 "instanceType": "Dynamic",
                                 "label": "◀ Back",
                                 "style": "primary"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditLfmChannelsElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/LfmChannelsSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/LfmChannelsSelectMenu",
+                                "elementType": "channel-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🔎 ∙ LFM-Channels"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+                                "elementType": "role-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🔔 ∙ Roles to ping"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/WizardBackButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/WizardBackButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "◀ Back",
+                                "style": "primary"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Edit Timings",
+                                "style": "secondary",
+                                "emoji": "⏱️"
                             }
                         }
                     ]
@@ -4395,7 +4750,8 @@
                                         "6": "🔃 ∙ **Reset**",
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**",
-                                        "13": "📣 ∙ **Status**"
+                                        "13": "📣 ∙ **Status**",
+                                        "15": "🔎 ∙ **LFM**"
                                     }
                                 },
                                 "verifiedRoles": {
@@ -4519,7 +4875,8 @@
                                         "6": "🔃 ∙ **Reset**",
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**",
-                                        "13": "📣 ∙ **Status**"
+                                        "13": "📣 ∙ **Status**",
+                                        "15": "🔎 ∙ **LFM**"
                                     }
                                 }
                             },
@@ -4698,6 +5055,57 @@
                 ]
             },
             {
+                "name": "VertixBot/UI-V2/SetupEditLfmChannelsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/SetupEditLfmChannelsEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔎  Edit LFM Of Master Channel #{index}",
+                            "description": "A channel owner can advertise their channel to the text channels picked here, so members who are reading chat can see a room that is looking for people and join it.\n\nMembers choose between these when they post, and can reach no other channel.\n\nLeaving it empty turns the feature off for this master channel.\n\n**_Current LFM Channels_**\n\n> {lfmChannelsDisplay}\n\n**_Roles Pinged_**\n\n> {pingRolesDisplay}\n\n**_Timings_**\n\n> Post cooldown (all channels): {postCooldown}\n> Ping cooldown: {pingCooldown}\n> Post expiry: {postExpiry}\n> Member count refresh: {occupancyDebounce}",
+                            "footer": "Note: The bot needs to view, send messages and embed links in every channel picked here.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 3369963,
+                            "options": {
+                                "lfmChannelsDisplay": {
+                                    "{lfmChannels}": "{lfmChannels}",
+                                    "{lfmChannelsNone}": "**None** *(the feature is off)*"
+                                },
+                                "pingRolesDisplay": {
+                                    "{pingRoles}": "{pingRoles}",
+                                    "{pingRolesNone}": "**None** *(posts go up quietly)*"
+                                }
+                            },
+                            "arrayOptions": {
+                                "lfmChannels": {
+                                    "format": "<#{value}>{separator}",
+                                    "separator": ", "
+                                },
+                                "pingRoles": {
+                                    "format": "<@&{value}>{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "index": "{index}",
+                                "lfmChannels": "{lfmChannels}",
+                                "lfmChannelsDisplay": "{lfmChannelsDisplay}",
+                                "lfmChannelsNone": "{lfmChannelsNone}",
+                                "pingRoles": "{pingRoles}",
+                                "pingRolesDisplay": "{pingRolesDisplay}",
+                                "pingRolesNone": "{pingRolesNone}",
+                                "postCooldown": "{postCooldown}",
+                                "pingCooldown": "{pingCooldown}",
+                                "postExpiry": "{postExpiry}",
+                                "occupancyDebounce": "{occupancyDebounce}"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
                 "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbedGroup",
                 "items": [
                     {
@@ -4778,7 +5186,8 @@
         ],
         "modals": [
             "VertixBot/UI-General/ChannelNameTemplateModal",
-            "VertixBot/UI-General/DeleteConfirmModal"
+            "VertixBot/UI-General/DeleteConfirmModal",
+            "VertixBot/UI-V2/SetupEditLfmTimingsModal"
         ],
         "modalDefinitions": [
             {
@@ -4808,6 +5217,40 @@
                         "maxLength": 6
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
+                "title": "⏱️ LFM Timings Of Master Channel #{index}",
+                "inputs": [
+                    {
+                        "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
+                        "label": "Post cooldown (minutes, 0 for none)",
+                        "style": "short",
+                        "minLength": 1,
+                        "maxLength": 6
+                    },
+                    {
+                        "name": "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
+                        "label": "Ping cooldown (minutes, 0 for none)",
+                        "style": "short",
+                        "minLength": 1,
+                        "maxLength": 6
+                    },
+                    {
+                        "name": "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
+                        "label": "Post expiry (minutes)",
+                        "style": "short",
+                        "minLength": 1,
+                        "maxLength": 6
+                    },
+                    {
+                        "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
+                        "label": "Member count refresh delay (seconds)",
+                        "style": "short",
+                        "minLength": 1,
+                        "maxLength": 6
+                    }
+                ]
             }
         ],
         "defaultElementsGroup": "VertixBot/UI-V2/SetupEditElementsGroup",
@@ -4816,8 +5259,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 7,
-                "withDefinition": 7,
+                "total": 8,
+                "withDefinition": 8,
                 "missingDefinition": 0
             }
         }
@@ -4936,6 +5379,11 @@
                                         "label": "Status",
                                         "value": "13",
                                         "emoji": "📣"
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "15",
+                                        "emoji": "🔎"
                                     },
                                     {
                                         "label": "Claim",
@@ -5117,7 +5565,7 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupStep2Embed",
                         "definition": {
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -5132,7 +5580,8 @@
                                         "6": "🔃 ∙ **Reset**",
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**",
-                                        "13": "📣 ∙ **Status**"
+                                        "13": "📣 ∙ **Status**",
+                                        "15": "🔎 ∙ **LFM**"
                                     }
                                 }
                             },
@@ -5407,6 +5856,11 @@
                                     },
                                     {
                                         "label": "Claim",
+                                        "value": "15",
+                                        "emoji": "🔎"
+                                    },
+                                    {
+                                        "label": "Claim",
                                         "value": "7",
                                         "emoji": "😈"
                                     }
@@ -5463,7 +5917,7 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupStep2Embed",
                         "definition": {
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -5478,7 +5932,8 @@
                                         "6": "🔃 ∙ **Reset**",
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**",
-                                        "13": "📣 ∙ **Status**"
+                                        "13": "📣 ∙ **Status**",
+                                        "15": "🔎 ∙ **LFM**"
                                     }
                                 }
                             },
@@ -11141,7 +11596,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v3).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -11566,7 +12021,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channels-showcase).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v3).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {

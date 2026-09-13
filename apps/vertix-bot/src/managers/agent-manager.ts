@@ -38,6 +38,16 @@ const DEFAULT_DEEPSEEK_MODEL = "deepseek-v4-flash";
 const DEFAULT_CLAUDE_MODEL = "sonnet";
 // Claude Code prompts for permission on anything else, which would hang a non-interactive run.
 const DEFAULT_CLAUDE_TOOLS = "Read,Grep,Glob";
+
+/**
+ * What a run answering somebody untrusted may use.
+ *
+ * `Read` stays: an attachment is a local file and opening it is the whole point - the message
+ * handed to the model names the paths and tells it to. Searching a tree is what a stranger asking
+ * about voice channels has no use for, and the only tree there would be to search is the one the
+ * bot is checked out in.
+ */
+const UNTRUSTED_CLAUDE_TOOLS = "Read";
 const CLAUDE_MCP_SERVER_NAME = "vertix-mcp";
 const DEFAULT_CLAUDE_MCP_ALLOWED_TOOLS = `mcp__${ CLAUDE_MCP_SERVER_NAME }`;
 const VERTIX_MCP_ENTRYPOINT = "apps/vertix-mcp/src/index.ts";
@@ -85,6 +95,9 @@ export type AgentAttachment = {
     isImage: boolean;
 };
 
+/** Where a run is started, and so which files its tools can reach at all. */
+export type AgentWorkspace = "repo" | "isolated";
+
 export type AgentRunOptions = {
     includeLogs?: boolean;
     conversationId?: string;
@@ -108,6 +121,15 @@ export type AgentRunOptions = {
      * being handed the rest of the mutating surface along with it.
      */
     extraTools?: string[];
+    /**
+     * The repo the bot runs from, or a directory made empty for this one run.
+     *
+     * `isolated` unless a caller says otherwise, because the repo holds the `.env` the bot was
+     * started with - the bot token, the client secret, the deploy passwords - and a run answering
+     * a stranger has no business being able to open it. Attachments arrive through `--add-dir`
+     * either way, so isolating takes nothing away from a run that should have it.
+     */
+    workspace?: AgentWorkspace;
 };
 
 export type AgentChatOptions = Omit<AgentRunOptions, "includeLogs">;
@@ -568,8 +590,30 @@ export class AgentManager extends InitializeBase {
         return effort === "xhigh" ? "high" : effort;
     }
 
-    private getClaudeTools(): string {
+    private getClaudeTools( workspace: AgentWorkspace ): string {
+        // `AI_CHAT_CLAUDE_TOOLS` widens the trusted runs only. Letting it reach the untrusted ones
+        // would mean the grant this narrows could be handed back by an environment file.
+        if ( "isolated" === workspace ) {
+            return this.getConfiguredValue( [ "AI_CHAT_CLAUDE_UNTRUSTED_TOOLS" ] ) ?? UNTRUSTED_CLAUDE_TOOLS;
+        }
+
         return this.getConfiguredValue( [ "AI_CHAT_CLAUDE_TOOLS" ] ) ?? DEFAULT_CLAUDE_TOOLS;
+    }
+
+    /**
+     * Function createIsolatedWorkspace() :: An empty directory for a single run to start in.
+     *
+     * Null when it cannot be made, and the caller refuses the run rather than falling back to the
+     * repo: answering anyway out of the repo is the thing being prevented.
+     */
+    private createIsolatedWorkspace(): string | null {
+        try {
+            return fsNative.mkdtempSync( path.join( os.tmpdir(), "vertix-agent-" ) );
+        } catch( error ) {
+            this.logger.error( this.createIsolatedWorkspace, "Failed to create an isolated workspace", error );
+
+            return null;
+        }
     }
 
     private isClaudeMcpEnabled(): boolean {
@@ -771,7 +815,7 @@ export class AgentManager extends InitializeBase {
     }
 
     private async runClaude( prompt: string, options: AgentRunOptions = {} ): Promise<AgentRunResult> {
-        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort(), attachments = [], caller, extraTools = [] } = options;
+        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort(), attachments = [], caller, extraTools = [], workspace = "isolated" } = options;
         const claudeBinary = await this.getClaudeBinary();
 
         if ( ! claudeBinary ) {
@@ -780,6 +824,18 @@ export class AgentManager extends InitializeBase {
                 logs: EMPTY_LOGS
             };
         }
+
+        const isolatedWorkspace = "isolated" === workspace ? this.createIsolatedWorkspace() : null;
+
+        if ( "isolated" === workspace && ! isolatedWorkspace ) {
+            return {
+                response: "I couldn't generate a reply. The workspace for this run could not be prepared.",
+                logs: EMPTY_LOGS
+            };
+        }
+
+        // The repo only when a caller asked for it by name.
+        const workingDirectory = isolatedWorkspace ?? REPO_ROOT;
 
         // Written to a 0600 temp file (so its token never reaches `ps`) and removed
         // when the run settles.
@@ -790,7 +846,7 @@ export class AgentManager extends InitializeBase {
             "--output-format", "json",
             "--model", model,
             "--effort", this.getClaudeEffort( reasoningEffort ),
-            "--tools", this.getClaudeTools(),
+            "--tools", this.getClaudeTools( workspace ),
             ...this.getClaudeMcpArgs( mcpConfigPath ),
             ...this.getClaudeDirectoryArgs( attachments )
         ];
@@ -812,7 +868,7 @@ export class AgentManager extends InitializeBase {
 
         return await new Promise<AgentRunResult>( ( resolve ) => {
             const child = spawn( claudeBinary, args, {
-                cwd: REPO_ROOT,
+                cwd: workingDirectory,
                 env
             } );
 
@@ -842,6 +898,10 @@ export class AgentManager extends InitializeBase {
                 // Remove the temp MCP config (and the token in it) as soon as the run ends.
                 if ( mcpConfigPath ) {
                     void fs.rm( mcpConfigPath, { force: true } ).catch( () => undefined );
+                }
+
+                if ( isolatedWorkspace ) {
+                    void fs.rm( isolatedWorkspace, { recursive: true, force: true } ).catch( () => undefined );
                 }
 
                 const logs = includeLogs
@@ -928,7 +988,7 @@ export class AgentManager extends InitializeBase {
     }
 
     private async runCodex( prompt: string, options: AgentRunOptions = {} ): Promise<AgentRunResult> {
-        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort(), attachments = [] } = options;
+        const { includeLogs = false, conversationId, readOnly = false, model = this.getModel(), reasoningEffort = this.getReasoningEffort(), attachments = [], workspace = "isolated" } = options;
         const codexBinary = await this.getCodexBinary();
 
         if ( ! codexBinary ) {
@@ -937,6 +997,18 @@ export class AgentManager extends InitializeBase {
                 logs: EMPTY_LOGS
             };
         }
+
+        const isolatedWorkspace = "isolated" === workspace ? this.createIsolatedWorkspace() : null;
+
+        if ( "isolated" === workspace && ! isolatedWorkspace ) {
+            return {
+                response: "I couldn't generate a reply. The workspace for this run could not be prepared.",
+                logs: EMPTY_LOGS
+            };
+        }
+
+        // The repo only when a caller asked for it by name.
+        const workingDirectory = isolatedWorkspace ?? REPO_ROOT;
 
         const outputFile = path.join( os.tmpdir(), `codex-reply-${ crypto.randomUUID() }.txt` );
         const logsFile = includeLogs
@@ -961,7 +1033,7 @@ export class AgentManager extends InitializeBase {
                 : baseArgs;
 
             const child = spawn( codexBinary, args, {
-                cwd: REPO_ROOT,
+                cwd: workingDirectory,
                 env: {
                     ...process.env,
                     NODE_OPTIONS: "",
@@ -992,6 +1064,10 @@ export class AgentManager extends InitializeBase {
 
                 settled = true;
                 clearTimeout( timeout );
+
+                if ( isolatedWorkspace ) {
+                    void fs.rm( isolatedWorkspace, { recursive: true, force: true } ).catch( () => undefined );
+                }
 
                 const finalizeLogs = async() => {
                     if ( ! logsStream || ! logsFile ) {

@@ -153,6 +153,8 @@ export function mentionHandlerPrivate( client: Client ) {
                 const { response, conversationId } = await AgentManager.$.runChat( fullPrompt, {
                     conversationId: session.conversationId,
                     readOnly: false,
+                    // The owner's own assistant, on the owner's own machine - it reads the repo.
+                    workspace: "repo",
                     model: AgentManager.$.getPrivateModel(),
                     attachments: attachments.files,
                     caller: {
@@ -234,6 +236,7 @@ async function handleDynamicInteraction( client: Client, interaction: DynamicUII
             const { response, conversationId } = await AgentManager.$.runChat( prompt, {
                 conversationId: session.conversationId,
                 readOnly: false,
+                workspace: "repo",
                 model: AgentManager.$.getPrivateModel(),
                 caller: {
                     guildId,

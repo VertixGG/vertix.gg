@@ -63,11 +63,19 @@ export function editButtonsList( ids: readonly string[] ): string {
 /** The master channel every preview is written around. */
 export const MASTER_CHANNEL_ID = "1120213539064385597";
 
-/** `/setup` on a server where nothing has been set up yet. */
+/**
+ * `/setup` on a server where nothing has been set up yet.
+ *
+ * Every line of the screen, and each written the way the bot writes it - bold for a value it has
+ * nothing to put, and the note that says a role is standing in rather than chosen. The screen has
+ * five of these and only three were answered here, so the two roles lines printed their own tokens.
+ */
 export const SETUP_EMPTY_VARIABLES = {
-    masterChannelMessage: "None",
-    badwordsMessage: "None",
-    voiceRoleMessage: "None"
+    masterChannelMessage: "**None**",
+    badwordsMessage: "**None**",
+    voiceRoleMessage: "**None**",
+    verifiedRolesMessage: "**@everyone** *(default)*",
+    staffRolesMessage: "**None**"
 };
 
 /**
@@ -79,6 +87,7 @@ export const MASTER_CHANNEL_VARIABLES = {
     masterChannelId: MASTER_CHANNEL_ID,
     dynamicChannelNameTemplate: "{user}'s Channel",
     verifiedRoles: "@everyone",
+    verifiedRolesDisplay: "@everyone",
     dynamicChannelLogsChannelDisplay: "**None**",
     newChannelPrivacy: "🌐 Public",
     newChannelLimit: "Copied from the generator channel",
@@ -86,6 +95,7 @@ export const MASTER_CHANNEL_VARIABLES = {
     voiceRoleDisplay: "**None**",
     configUserMention: "`🟢∙On`",
     configAutoSave: "`🔴∙Off`",
+    configAutoStatus: "`🟢∙On`",
     configLogs: "`🔴∙Off`",
     configControlChannelAutoCreate: "`🟢∙On`"
 };

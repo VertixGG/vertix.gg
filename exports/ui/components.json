@@ -752,13 +752,6 @@
                                 "labelVersion": "▹ UI Version:",
                                 "labelScalingPrefix": "▹ Scaling Prefix:",
                                 "labelMaxMembers": "▹ Max Members:"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "async (args, vars) => {\n  const { settings } = ConfigManager.$.get(\"Vertix/Config/MasterChannel\", VERSION_UI_V3).data, scalingConfig = ConfigManager.$.get(\"Vertix/Config/ScalingChannel\", VERSION_SCALING_CHANNEL_UI_V1).data, scalingDefaultPrefix = scalingConfig.constants?.scalingChannelDefaultPrefix || scalingConfig.settings?.scalingChannelPrefix || \"\", channels = args?.masterChannels || [], masterChannels = await Promise.all(channels.map(async (channel, index) => {\n    const version = channel?.version || channel?.data?.[0]?.version || \"V2\";\n    if (version === VERSION_SCALING_CHANNEL_UI_V1) {\n      const scalingSettings = await ScalingChannelDataModel.$.getScalingSettings(channel.id), prefix = scalingSettings?.scalingChannelPrefix || scalingDefaultPrefix, maxMembers = scalingSettings?.scalingChannelMaxMembersPerChannel || 10;\n      return [\n        `**#${index + 1}**`,\n        `${vars.labelName} <#${channel.channelId}>`,\n        `${vars.labelChannelId} \\`${channel.channelId}\\``,\n        `${vars.labelScalingPrefix} \\`${prefix}\\``,\n        `${vars.labelMaxMembers} \\`${maxMembers}\\``,\n        `${vars.labelVersion} \\`${version}\\``\n      ];\n    }\n    const data = await MasterChannelDataManager.$.getAllSettings({\n      ...channel,\n      isDynamic: !1,\n      isMaster: !0\n    }), defaultButtons = version === VERSION_UI_V3 ? DynamicChannelPrimaryMessageElementsGroup.getAll().map((btn) => btn.getId()) : DynamicChannelElementsGroup.getAll().map((btn) => btn.getId()), usedButtons = data.dynamicChannelButtonsTemplate || defaultButtons, emojis = version === VERSION_UI_V3 ? DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis(usedButtons.map((b) => String(b))) : DynamicChannelElementsGroup.getEmbedEmojis(usedButtons.map((b) => typeof b === \"number\" ? b : Number(b))), buttonsDisplay = (emojis.length ? emojis : [\"\\u26A0\\uFE0F No emojis found\"]).join(\", \"), guildId = args?.guildId ?? \"\", storedVerified = data.dynamicChannelVerifiedRoles || [], ownVerified = storedVerified.length === 1 && guildId === storedVerified[0] ? [] : storedVerified, guildVerified = args?.verifiedRoleIds?.length ? args.verifiedRoleIds : [guildId], rolesDisplay = (ownVerified.length ? ownVerified : guildVerified).map((roleId) => `<@&${roleId}>`).join(\", \") + (ownVerified.length ? \"\" : ` ${vars.inherited}`), ownStaff = data.dynamicChannelStaffRoles || [], guildStaff = args?.staffRoleIds ?? [], resolvedStaff = ownStaff.length ? ownStaff : guildStaff, staffRolesDisplay = (resolvedStaff.length ? resolvedStaff.map((roleId) => `<@&${roleId}>`).join(\", \") : vars.none) + (ownStaff.length ? \"\" : ` ${vars.inherited}`), ownVoiceRoleId = data.dynamicChannelVoiceRoleId, resolvedVoiceRoleId = ownVoiceRoleId || args?.voiceRoleId, voiceRoleDisplay = (resolvedVoiceRoleId ? `<@&${resolvedVoiceRoleId}>` : vars.none) + (ownVoiceRoleId ? \"\" : ` ${vars.inherited}`), privacyState = data.dynamicChannelDefaultPrivacyState, privacyDisplay = privacyState === \"private\" ? vars.privacyPrivate : privacyState === \"hidden\" ? vars.privacyHidden : vars.privacyPublic, defaultUserLimit = data.dynamicChannelDefaultUserLimit ?? channel.userLimit ?? 0, userLimitDisplay = defaultUserLimit === 0 ? \"No limit\" : `${defaultUserLimit} users`, nameTemplate = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate, logsDisplay = data.dynamicChannelLogsChannelId ? `<#${data.dynamicChannelLogsChannelId}>` : vars.none, autoSaveDisplay = data.dynamicChannelAutoSave ? vars.autoSaveOn : vars.autoSaveOff;\n    return [\n      `**#${index + 1}**`,\n      `${vars.labelName} <#${channel.channelId}>`,\n      `${vars.labelChannelId} \\`${channel.channelId}\\``,\n      `${vars.labelDynamicChannelsName} \\`${nameTemplate}\\``,\n      `${vars.labelNewChannelPrivacy} ${privacyDisplay}`,\n      `${vars.labelNewChannelLimit} ${userLimitDisplay}`,\n      `${vars.labelButtons} **${buttonsDisplay}**`,\n      `${vars.labelVerifiedRoles} ${rolesDisplay}`,\n      `${vars.labelStaffRoles} ${staffRolesDisplay}`,\n      `${vars.labelVoiceRole} ${voiceRoleDisplay}`,\n      `${vars.labelLogsChannel} ${logsDisplay}`,\n      `${vars.labelAutoSave} ${autoSaveDisplay}`,\n      `${vars.labelVersion} \\`${version}\\``\n    ];\n  })), result = {};\n  if (masterChannels.length) {\n    result.masterChannels = masterChannels;\n    result.masterChannelMessage = vars.masterChannels;\n  } else\n    result.masterChannelMessage = vars.masterChannelMessageDefault;\n  if (args?.badwords?.length) {\n    result.badwords = args.badwords;\n    result.badwordsMessage = vars.badwords;\n  } else\n    result.badwordsMessage = vars.badwordsMessageDefault;\n  if (args?.voiceRoleId) {\n    result.voiceRoleId = args.voiceRoleId;\n    result.voiceRoleMessage = vars.voiceRoleId;\n  } else\n    result.voiceRoleMessage = vars.voiceRoleMessageDefault;\n  if (args?.verifiedRoleIds?.length) {\n    result.verifiedRoleIds = args.verifiedRoleIds;\n    result.verifiedRolesMessage = vars.verifiedRoleIds;\n  } else\n    result.verifiedRolesMessage = vars.verifiedRolesMessageDefault;\n  if (args?.staffRoleIds?.length) {\n    result.staffRoleIds = args.staffRoleIds;\n    result.staffRolesMessage = vars.staffRoleIds;\n  } else\n    result.staffRolesMessage = vars.staffRolesMessageDefault;\n  return result;\n}"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8028,13 +8021,6 @@
                                 "titleDisplayValue": "{titleDisplayValue}",
                                 "titleValue": "{titleValue}",
                                 "editPrimaryMessageEmoji": "{editPrimaryMessageEmoji}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "async (args) => {\n  const result = {}, { titleDisplayValue, titleDisplayDefault } = vars;\n  if (args.title) {\n    result.titleValue = args.title;\n    result.title = titleDisplayValue;\n  } else\n    result.title = titleDisplayDefault;\n  result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());\n  return result;\n}"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8063,13 +8049,6 @@
                                 "descriptionDisplayValue": "{descriptionDisplayValue}",
                                 "descriptionValue": "{descriptionValue}",
                                 "editPrimaryMessageEmoji": "{editPrimaryMessageEmoji}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "async (args) => {\n  const result = {}, { descriptionDisplayValue, descriptionDisplayDefault } = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS;\n  if (args.description) {\n    result.descriptionValue = args.description;\n    result.description = descriptionDisplayValue;\n  } else\n    result.description = descriptionDisplayDefault;\n  result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());\n  return result;\n}"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8193,13 +8172,6 @@
                                 "titleDisplayValue": "{titleDisplayValue}",
                                 "titleValue": "{titleValue}",
                                 "editPrimaryMessageEmoji": "{editPrimaryMessageEmoji}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "async (args) => {\n  const result = {}, { titleDisplayValue, titleDisplayDefault } = vars;\n  if (args.title) {\n    result.titleValue = args.title;\n    result.title = titleDisplayValue;\n  } else\n    result.title = titleDisplayDefault;\n  result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());\n  return result;\n}"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8286,13 +8258,6 @@
                                 "descriptionDisplayValue": "{descriptionDisplayValue}",
                                 "descriptionValue": "{descriptionValue}",
                                 "editPrimaryMessageEmoji": "{editPrimaryMessageEmoji}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "async (args) => {\n  const result = {}, { descriptionDisplayValue, descriptionDisplayDefault } = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS;\n  if (args.description) {\n    result.descriptionValue = args.description;\n    result.description = descriptionDisplayValue;\n  } else\n    result.description = descriptionDisplayDefault;\n  result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());\n  return result;\n}"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8617,7 +8582,10 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "async (args) => {\n  const result = {};\n  if (args.region)\n    result.region = vars[`region-${args.region}`];\n  else\n    result.region = vars[\"region-auto\"];\n  return result;\n}"
+                                        "source": "async (args) => {\n  const result = {};\n  if (args.region)\n    result.region = vars[`region-${args.region}`];\n  else\n    result.region = vars[\"region-auto\"];\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
                                     }
                                 ]
                             }
@@ -11252,7 +11220,10 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "async (args) => {\n  const vars = STEP_2_EMBED_VARS, buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;\n  return {\n    configUserMention: args.dynamicChannelMentionable ? vars.configUserMentionEnabled : vars.configUserMentionDisabled,\n    configAutoSave: args.dynamicChannelAutoSave ? vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,\n    configAutoStatus: args.dynamicChannelAutoStatus !== !1 ? vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,\n    configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ? vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,\n    message: buttonsLength ? vars.defaultMessage : vars.noButtonsMessage,\n    footer: buttonsLength ? vars.defaultFooter : vars.noButtonsFooter,\n    dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate\n  };\n}"
+                                        "source": "async (args) => {\n  const vars = STEP_2_EMBED_VARS, buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;\n  return {\n    configUserMention: args.dynamicChannelMentionable ? vars.configUserMentionEnabled : vars.configUserMentionDisabled,\n    configAutoSave: args.dynamicChannelAutoSave ? vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,\n    configAutoStatus: args.dynamicChannelAutoStatus !== !1 ? vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,\n    configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ? vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,\n    message: buttonsLength ? vars.defaultMessage : vars.noButtonsMessage,\n    footer: buttonsLength ? vars.defaultFooter : vars.noButtonsFooter,\n    dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate\n  };\n}",
+                                        "binds": [
+                                            "STEP_2_EMBED_VARS"
+                                        ]
                                     }
                                 ]
                             },
@@ -11674,7 +11645,10 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "async (args) => {\n  const vars = STEP_2_EMBED_VARS, buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;\n  return {\n    configUserMention: args.dynamicChannelMentionable ? vars.configUserMentionEnabled : vars.configUserMentionDisabled,\n    configAutoSave: args.dynamicChannelAutoSave ? vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,\n    configAutoStatus: args.dynamicChannelAutoStatus !== !1 ? vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,\n    configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ? vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,\n    message: buttonsLength ? vars.defaultMessage : vars.noButtonsMessage,\n    footer: buttonsLength ? vars.defaultFooter : vars.noButtonsFooter,\n    dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate\n  };\n}"
+                                        "source": "async (args) => {\n  const vars = STEP_2_EMBED_VARS, buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;\n  return {\n    configUserMention: args.dynamicChannelMentionable ? vars.configUserMentionEnabled : vars.configUserMentionDisabled,\n    configAutoSave: args.dynamicChannelAutoSave ? vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,\n    configAutoStatus: args.dynamicChannelAutoStatus !== !1 ? vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,\n    configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ? vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,\n    message: buttonsLength ? vars.defaultMessage : vars.noButtonsMessage,\n    footer: buttonsLength ? vars.defaultFooter : vars.noButtonsFooter,\n    dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate\n  };\n}",
+                                        "binds": [
+                                            "STEP_2_EMBED_VARS"
+                                        ]
                                     }
                                 ]
                             },

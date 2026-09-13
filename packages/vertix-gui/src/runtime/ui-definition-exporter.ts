@@ -655,9 +655,9 @@ export class UIDefinitionExporter extends UIBase {
             } );
         };
 
-        let embedsGroups = rawEmbedsGroups.map( ( group, index ) =>
+        let embedsGroups = await Promise.all( rawEmbedsGroups.map( ( group, index ) =>
             this.serializeEmbedsGroup( componentClass, group, index, recordEmbed )
-        );
+        ) );
 
         const modals = rawModals.map( ( modal ) => this.extractEntityName( modal ) );
         const modalDefinitions = await this.serializeModals( rawModals );
@@ -688,11 +688,13 @@ export class UIDefinitionExporter extends UIBase {
                     {
                         name: groupName,
                         resolver: undefined,
-                        items: directEmbeds.map( ( embed ) => {
-                            const reference = this.serializeEmbedReference( embed );
+                        items: await Promise.all( directEmbeds.map( async( embed ) => {
+                            const reference = await this.serializeEmbedReference( embed );
+
                             recordEmbed( reference, groupName );
+
                             return reference;
-                        } ),
+                        } ) ),
                         options: undefined
                     }
                 ];
@@ -1334,19 +1336,21 @@ export class UIDefinitionExporter extends UIBase {
         return undefined;
     }
 
-    private serializeEmbedsGroup(
+    private async serializeEmbedsGroup(
         componentClass: UIComponentTypeConstructor,
         group: typeof UIEmbedsGroupBase,
         index: number,
         recordEmbed?: ( reference: EmbedReference, groupName: string ) => void
-    ): EmbedsGroupDefinition {
+    ): Promise<EmbedsGroupDefinition> {
         const name = group.getName?.() ?? `${ componentClass.getName() }/EmbedsGroup/${ index }`;
         const itemsRaw = this.safeCall( () => group.getItems?.() ) ?? [];
-        const items = itemsRaw.map( ( embed ) => {
-            const reference = this.serializeEmbedReference( embed );
+        const items = await Promise.all( itemsRaw.map( async( embed ) => {
+            const reference = await this.serializeEmbedReference( embed );
+
             recordEmbed?.( reference, name );
+
             return reference;
-        } );
+        } ) );
 
         return {
             name,
@@ -1850,6 +1854,15 @@ export class UIDefinitionExporter extends UIBase {
         }
     }
 
+    /** The same, for something that fails by rejecting rather than by throwing. */
+    private async safeCallAsync<T>( fn: () => Promise<T> ): Promise<T | undefined> {
+        try {
+            return await fn();
+        } catch {
+            return undefined;
+        }
+    }
+
     private writeJson( filePath: string, payload: unknown ) {
         mkdirSync( path.dirname( filePath ), { recursive: true } );
 
@@ -1891,7 +1904,7 @@ export class UIDefinitionExporter extends UIBase {
         return Array.isArray( result ) ? ( result as T[] ) : undefined;
     }
 
-    private serializeEmbedReference( embed: unknown ): EmbedReference {
+    private async serializeEmbedReference( embed: unknown ): Promise<EmbedReference> {
         const embedName = this.extractEntityName( embed );
         let definition: EmbedContentDefinition | undefined;
 
@@ -1904,7 +1917,7 @@ export class UIDefinitionExporter extends UIBase {
                     `Embed '${ embedName }' is missing builder metadata.`
                 );
             }
-            definition = this.applyEmbedLanguageContent( this.buildEmbedDefinitionFromMetadata( metadata ), embedName );
+            definition = this.applyEmbedLanguageContent( await this.buildEmbedDefinitionFromMetadata( metadata ), embedName );
             if ( metadata && ( !definition || Object.keys( definition ).length === 0 ) ) {
                 this.logger.warn(
                     "serializeEmbedReference",
@@ -1953,9 +1966,9 @@ export class UIDefinitionExporter extends UIBase {
         return Object.keys( merged ).length ? merged : definition;
     }
 
-    private buildEmbedDefinitionFromMetadata<TArgs extends UIArgs, TVars extends Record<string, JsonValue>>(
+    private async buildEmbedDefinitionFromMetadata<TArgs extends UIArgs, TVars extends Record<string, JsonValue>>(
         metadata: EmbedBuilderMetadata<TArgs, TVars> | undefined
-    ): EmbedContentDefinition | undefined {
+    ): Promise<EmbedContentDefinition | undefined> {
         if ( !metadata ) {
             return undefined;
         }
@@ -2015,7 +2028,7 @@ export class UIDefinitionExporter extends UIBase {
             definition.defaultVars = this.serializePartialEmbedVars( metadata.defaultVars( vars ) );
         }
 
-        const logic = this.resolveEmbedLogic( metadata, vars );
+        const logic = await this.resolveEmbedLogic( metadata, vars );
 
         if ( logic ) {
             definition.logic = { ...definition.logic, ...logic as unknown as JsonObject };
@@ -2036,10 +2049,10 @@ export class UIDefinitionExporter extends UIBase {
      * out is not the same as runnable: whatever came back alive is written down, and whatever
      * reached for something only the bot has is left behind.
      */
-    private resolveEmbedLogic<TArgs extends UIArgs, TVars extends Record<string, JsonValue>>(
+    private async resolveEmbedLogic<TArgs extends UIArgs, TVars extends Record<string, JsonValue>>(
         metadata: EmbedBuilderMetadata<TArgs, TVars> | undefined,
         vars: TVars | undefined
-    ): UIEmbedLogic | undefined {
+    ): Promise<UIEmbedLogic | undefined> {
         const endTime = ( metadata as { endTime?: unknown } | undefined )?.endTime;
 
         /*
@@ -2051,18 +2064,17 @@ export class UIDefinitionExporter extends UIBase {
          * difference worth keeping: everything below is written down the same way and called the
          * same way, with an end time to hand whether or not it is wanted.
          */
-        const sources = [
+        const sources = ( await Promise.all( [
             endTime ? Reflect.get( UIEmbedElapsedTimeBase.prototype, "getElapsedTimeLogic" ) : undefined,
             metadata?.logic
-        ]
-            .map( ( logic ) => this.toResolveLogic( logic, vars ) )
+        ].map( ( logic ) => this.toResolveLogic( logic, vars ) ) ) )
             .filter( ( resolved ): resolved is UIEmbedLogicSource => undefined !== resolved );
 
         if ( !sources.length ) {
             return undefined;
         }
 
-        const resolvedEndTime = this.toResolveLogic( endTime, vars );
+        const resolvedEndTime = await this.toResolveLogic( endTime, vars );
 
         return resolvedEndTime ? { sources, endTime: resolvedEndTime } : { sources };
     }
@@ -2085,22 +2097,32 @@ export class UIDefinitionExporter extends UIBase {
      * Everything is run the one way, with arguments, vars and an end time to hand, so that whatever
      * shape a function was written in it comes out the one shape and is called the one way.
      */
-    private toResolveLogic<TVars extends Record<string, JsonValue>>(
+    private async toResolveLogic<TVars extends Record<string, JsonValue>>(
         logic: unknown,
         vars: TVars | undefined
-    ): UIEmbedLogicSource | undefined {
+    ): Promise<UIEmbedLogicSource | undefined> {
         if ( typeof logic !== "function" ) {
             return undefined;
         }
 
         const source = String( logic );
 
-        const walk = ( fn: unknown ) => ( fn as ( ...args: unknown[] ) => unknown )
+        /*
+         * Awaited, and that is the whole of why this is async.
+         *
+         * A good few of these bodies are themselves async, and an async body hands back a promise
+         * rather than an answer. Left unawaited the two sides of the comparison below are both
+         * promises, both serialise to `{}`, and agree with each other without either having run -
+         * so the body ships unread, and the `ReferenceError` naming what it closed over never
+         * surfaces to be bound. What reached the browser then was a function referring to things
+         * only the bot has.
+         */
+        const walk = async( fn: unknown ) => await ( fn as ( ...args: unknown[] ) => unknown )
             .call( { getEndTime: () => new Date() }, {}, vars );
 
         // A body that insists on being given something is one whose answer depends on a service,
         // and there is no answering for it out here.
-        const answer = this.safeCall( () => JSON.stringify( walk( logic ) ) );
+        const answer = await this.safeCallAsync( async() => JSON.stringify( await walk( logic ) ) );
 
         if ( undefined === answer ) {
             return undefined;
@@ -2112,7 +2134,7 @@ export class UIDefinitionExporter extends UIBase {
             try {
                 const built = compileEmbedLogic( source, binds, vars );
 
-                const ran = built && walk( built );
+                const ran = built && await walk( built );
 
                 if ( ran && "object" === typeof ran && JSON.stringify( ran ) === answer ) {
                     return binds.length ? { source, binds } : { source };

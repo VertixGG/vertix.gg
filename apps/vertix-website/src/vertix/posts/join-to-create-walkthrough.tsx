@@ -117,8 +117,8 @@ function getChannels( stage: Stage, joined: string | null ): DiscordChannelListI
         channels.push( {
             id: "dynamic-channel",
             // 🟢 is the mark a public channel wears, and a new one is public until its owner says
-            // otherwise. No occupancy pair beside it: nobody has set a limit, so Discord has no
-            // second number to show.
+            // otherwise. The timer stands where the occupancy pair would, which is what Discord
+            // puts on the channel you are actually in - the v3 pages show the same.
             name: `🟢 ${ DEMO_CHANNEL_NAME }`,
             active: true,
             timer: "00:03",
@@ -171,7 +171,8 @@ export default function JoinToCreateWalkthrough() {
                 channelName={ "created" === stage ? DEMO_CHANNEL_NAME : joinedChannel?.plainName }
                 sidebar={
                     <DiscordChannelList
-                        title="Voice Channels"
+                        title="༄ Dynamic Channels"
+                        collapsible={ true }
                         channels={ getChannels( stage, joined ) }
                         onChannelClick={ ( channel ) => {
                             if ( "generator" === channel.id ) {

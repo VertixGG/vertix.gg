@@ -10,6 +10,11 @@
 .vc-lifecycle {
     margin: 0;
     width: 100%;
+    /* Wider than the widest beat, so the box never resizes to its contents.
+     * Nothing here is a fixed size - the panel is as wide as the generator row and
+     * the caption is as wide as its sentence - so the column was stepping between
+     * 252px, 268px and 281px as the loop played, once every couple of seconds. */
+    min-width: 285px;
     max-width: 340px;
 }
 

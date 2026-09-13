@@ -103,7 +103,7 @@ export const ChannelLifecycle: React.FC = () => {
                 <div className="vc-lifecycle__channel vc-lifecycle__channel--generator"
                     data-hot={ isGeneratorHot }>
                     <SpeakerIcon/>
-                    <span className="vc-lifecycle__name">Join to Create</span>
+                    <span className="vc-lifecycle__name">＋ New Channel</span>
                     <span className="vc-lifecycle__hint">generator</span>
                 </div>
 

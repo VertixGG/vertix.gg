@@ -83,26 +83,27 @@ const BOT_COLUMNS = [ "VoiceChannels", "VoiceMaster", "TempVoice", "Astro" ] as 
  */
 const MATRIX: { capability: string, cells: ( string | null )[] }[] = [
     { capability: "Owner control panel", cells: [ "Buttons", "Interface", "Interface, /voice", "Interface" ] },
-    { capability: "Rename the room", cells: [ "Rename", "Name", "name", "Button" ] },
-    { capability: "Cap how many can join", cells: [ "User Limit", "Limit", "limit", "Button" ] },
-    { capability: "Lock or hide it", cells: [ "Privacy", "Lock, Ghost", "privacy", "Button" ] },
-    { capability: "Allow or block individuals", cells: [ "Access", "Permit", "trust, block", "Button" ] },
-    { capability: "Kick somebody out", cells: [ "Access", null, "kick", null ] },
-    { capability: "Take over an empty room", cells: [ "Claim", "Claim", "claim", null ] },
-    { capability: "Hand it to someone else", cells: [ "Transfer", null, "transfer", null ] },
-    { capability: "Ask to be let in", cells: [ "Knock", null, "waiting", "Waiting rooms" ] },
+    { capability: "Rename the room", cells: [ "Rename", "Name", "name", "Rename" ] },
+    { capability: "Cap how many can join", cells: [ "User Limit", "Limit", "limit", "Limit" ] },
+    { capability: "Lock or hide it", cells: [ "Privacy", "Lock, Ghost", "privacy", "Lock, Hide" ] },
+    { capability: "Allow or block individuals", cells: [ "Access", "Permit", "trust, block", "Permit, Ban" ] },
+    { capability: "Kick somebody out", cells: [ "Access", "reject", "kick", "Ban" ] },
+    { capability: "Take over an empty room", cells: [ "Claim", "Claim", "claim", "Claim" ] },
+    { capability: "Hand it to someone else", cells: [ "Transfer", "transfer", "transfer", "Transfer" ] },
+    { capability: "Ask to be let in", cells: [ "Knock", "request", "waiting", "Waiting" ] },
     { capability: "Enter with a password", cells: [ null, null, "password", null ] },
-    { capability: "Owner changes bitrate", cells: [ null, "Bitrate", "bitrate", null ] },
-    { capability: "Bitrate from the generator", cells: [ "Inherited", null, "Setting", null ] },
-    { capability: "Voice region", cells: [ "Region", null, "region", null ] },
+    { capability: "Owner changes bitrate", cells: [ null, "Bitrate", "bitrate", "Bitrate" ] },
+    { capability: "Bitrate from the generator", cells: [ "Inherited", null, "Setting", "Setting" ] },
+    { capability: "Voice region", cells: [ "Region", "region", "region", "Region" ] },
     { capability: "Text chat for the room", cells: [ "Discord's in-voice chat", "Text", "thread", "Private text chats" ] },
     { capability: "A text channel made for it", cells: [ null, "Text", "thread", "Private text chats" ] },
-    { capability: "Panel in voice chat, a text channel, or both", cells: [ "Both", null, "Both", "Text channel" ] },
-    { capability: "Role while in a room", cells: [ "Voice role", null, "Voice role", "Voice roles" ] },
+    { capability: "Panel in voice chat, a text channel, or both", cells: [ "Both", "interface", "Both", "Both" ] },
+    { capability: "Role while in a room", cells: [ "Voice role", "set role", "Voice role", "Voice roles" ] },
     { capability: "Name placeholders", cells: [ "Placeholders", "Predefined setup", "Placeholders", "Variables" ] },
-    { capability: "Activity in the name", cells: [ "{game}", null, "{ACTIVITY_NAME}", "Activity variables" ] },
-    { capability: "Activity log", cells: [ "Logs channel", null, "Moderation Log", null ] },
-    { capability: "Turn controls off per server", cells: [ "Enable features", null, "Toggle Features", null ] },
+    { capability: "Activity in the name", cells: [ "{game}", null, "{ACTIVITY_NAME}", "Ultimate only" ] },
+    { capability: "Activity log", cells: [ "Logs channel", "logs", "Moderation Log", null ] },
+    { capability: "Turn controls off", cells: [ "Per generator", "toggle set", "Toggle Features", "Interface buttons" ] },
+    { capability: "A different button set per role", cells: [ "Yes", null, null, null ] },
     { capability: "Reword the bot, per language", cells: [ "Dashboard", null, null, null ] },
     { capability: "Generators before paying", cells: [ "2, then $1 each", "Not published", "Not published", "2, then $3.99" ] },
     { capability: "Every feature on the free tier", cells: [ "Yes", null, null, null ] },
@@ -112,9 +113,10 @@ const MATRIX: { capability: string, cells: ( string | null )[] }[] = [
 const HONEST = [
     {
         name: "Pick VoiceMaster if",
-        body: "you want the room owner deciding bitrate themselves, or a text channel created "
-            + "per room. Here the bitrate is whatever the generator is set to, and the room talks "
-            + "in the in-voice chat Discord already gives it rather than one made alongside.",
+        body: "you want a choice of generator behaviours out of the box - it ships five setup "
+            + "types, from plain rooms to numbered ones to a pool made before anyone joins - or "
+            + "you want the room owner setting bitrate, or a text channel created per room. It "
+            + "is also on the most servers of the four by some margin.",
     },
     {
         name: "Pick TempVoice if",
@@ -123,9 +125,10 @@ const HONEST = [
     },
     {
         name: "Pick Astro if",
-        body: "you need more than one interface or more than three templates - caps only "
-            + "Astro lifts. On generators both stop at two, and past that Astro is $3.99 a "
-            + "month however many you add, against $1 each here.",
+        body: "you want the widest control panel of the four. Its default interface carries "
+            + "sixteen buttons and the server owner can add or drop any of them, and it does "
+            + "waiting rooms, per-room text chats and voice roles. Activity variables and "
+            + "numbered names need Ultimate.",
     },
 ];
 
@@ -234,15 +237,16 @@ export default function Comparison() {
             </div>
 
             <p className="text-vc-ice-dim text-fine mb-12">
-                Read in September 2026 from{ " " }
-                <a href="https://voicemaster.xyz/" target="_blank" rel="noreferrer nofollow">voicemaster.xyz</a>,{ " " }
-                <a href="https://easy.tempvoice.xyz/" target="_blank" rel="noreferrer nofollow">easy.tempvoice.xyz</a>,{ " " }
+                Read in September 2026 from each bot&rsquo;s own documentation, not its landing
+                page:{ " " }
+                <a href="https://voicemaster.xyz/en/docs/commands" target="_blank" rel="noreferrer nofollow">voicemaster.xyz/docs</a>,{ " " }
+                <a href="https://easy.tempvoice.xyz/" target="_blank" rel="noreferrer nofollow">easy.tempvoice.xyz</a>{ " " }
                 and{ " " }
-                <a href="https://astro-bot.space/" target="_blank" rel="noreferrer nofollow">astro-bot.space</a>.
-                One caveat worth stating: Astro&rsquo;s interface buttons are added and removed by
-                the server owner with <code>/interface add button</code>, and its guides do not
-                list which buttons exist - so its control rows say only that an interface does the
-                job, not which of these it can do. &ldquo;Not published&rdquo; marks a number none
+                <a href="https://astro-bot.space/guides" target="_blank" rel="noreferrer nofollow">astro-bot.space/guides</a>.
+                Astro&rsquo;s row is read off the default interface pictured in its own Interfaces
+                guide - Lock, Unlock, Hide, Unhide, Limit, Invite, Ban, Permit, Rename, Bitrate,
+                Region, Template, Chat, Waiting, Claim, Transfer - and the server owner can add or
+                remove any of them per interface. &ldquo;Not published&rdquo; marks a number none
                 of them state anywhere.
             </p>
 

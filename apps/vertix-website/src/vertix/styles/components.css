@@ -287,6 +287,52 @@
         }
     }
 
+    /* --- Pinned table headers ----------------------------------------------- */
+
+    /* A long table's own header, held at the top while its rows pass beneath.
+     * The colour is what the page slab already composites to over the nebula, so
+     * the band reads as part of the panel rather than a bar laid across it, and
+     * it is fully opaque — a row caught halfway under a translucent header reads
+     * as a rendering fault rather than as depth.
+     *
+     * Its edge is a shadow rather than a `border-bottom`, and that is not only a
+     * matter of taste: Preflight collapses table borders, and a collapsed border
+     * is painted by the table rather than by the cell — so it stays behind at
+     * the table's own header while the cell travels, and the pinned band arrives
+     * with no line under it at all. A shadow is the cell's own paint and goes
+     * where the cell goes.
+     *
+     * Two layers: a tight contact shadow that reads as the band's edge, and a
+     * soft fall-off that gives it height over the rows. The fall-off is kept
+     * short and pulled in by its spread, because a long one dims the row passing
+     * underneath and that is what makes an opaque header look see-through.
+     *
+     * No `backdrop-filter`: one filter box per column seams at every boundary
+     * the way the header bar's would.
+     *
+     * Pinning needs the wrapper's `overflow-x` to be `visible` — a scroll
+     * container of its own is what the header would otherwise stick to — so the
+     * page only asks for this once the table fits without sideways scrolling. */
+    .vc-table-head-cell {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+
+        background: #15181f;
+
+        box-shadow:
+            0 1px 2px rgb(6 7 10 / 0.55),
+            0 8px 12px -8px rgb(6 7 10 / 0.8);
+    }
+
+    @media (width < theme(--breakpoint-md)) {
+        /* The slab drops its own background on a phone, so the band would be the
+         * only opaque thing on the page. It has nothing to pin to there anyway. */
+        .vc-table-head-cell {
+            background: none;
+        }
+    }
+
     /* Framed media — screenshots, embeds, chat mock-ups. */
     .vc-frame,
     .vc-frame-box,

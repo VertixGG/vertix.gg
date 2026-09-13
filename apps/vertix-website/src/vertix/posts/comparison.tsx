@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 interface Contender {
     name: string;
     accent: string;
@@ -81,38 +83,155 @@ const GATING = [
 const BOT_COLUMNS = [ "VoiceChannels", "VoiceMaster", "TempVoice", "Astro" ] as const;
 
 /**
- * Each row is one capability, then one cell per bot in BOT_COLUMNS order. A cell is either what
- * that bot calls the feature, or null - meaning it appears nowhere in that bot's own documentation.
+ * How one cell reads, for both tables. Written once because the two say the same four things and
+ * a second copy is how they come to disagree about which colour means absent.
  */
-const MATRIX: { capability: string, cells: ( string | null )[] }[] = [
-    { capability: "Owner control panel", cells: [ "Buttons", "Interface", "Interface, /voice", "Interface" ] },
-    { capability: "Rename the room", cells: [ "Rename", "Name", "name", "Rename" ] },
-    { capability: "Cap how many can join", cells: [ "User Limit", "Limit", "limit", "Limit" ] },
-    { capability: "Lock it", cells: [ "Privacy", "Lock", "privacy", "Lock" ] },
-    { capability: "Hide it from the list", cells: [ "Privacy", "Paid", "privacy", "Hide" ] },
-    { capability: "Allow or block individuals", cells: [ "Access", "Permit", "trust, block", "Permit, Ban" ] },
-    { capability: "Kick somebody out", cells: [ "Access", "reject", "kick", "Ban" ] },
-    { capability: "Take over an empty room", cells: [ "Claim", "Claim", "claim", "Claim" ] },
-    { capability: "Hand it to someone else", cells: [ "Transfer", "Paid", "transfer", "Transfer" ] },
-    { capability: "Ask to be let in", cells: [ "Knock", "Paid", "waiting", "Paid" ] },
-    { capability: "Enter with a password", cells: [ null, null, "password", null ] },
-    { capability: "Owner changes bitrate", cells: [ null, "Paid", "bitrate", "Bitrate" ] },
-    { capability: "Bitrate from the generator", cells: [ "Inherited", null, "Setting", "Setting" ] },
-    { capability: "Voice region", cells: [ "Region", "Paid", "region", "Region" ] },
-    { capability: "Text chat for the room", cells: [ "In-voice chat", "Paid", "thread", "Paid" ] },
-    { capability: "A text channel made for it", cells: [ null, "Paid", "thread", "Paid" ] },
-    { capability: "Panel in voice chat, a text channel, or both", cells: [ "Both", "interface", "Both", "Both" ] },
-    { capability: "Role while in a room", cells: [ "Voice role", "Paid", "Voice role", "One free" ] },
-    { capability: "Name placeholders", cells: [ "Placeholders", "Paid", "Placeholders", "Variables" ] },
-    { capability: "Activity in the name", cells: [ "{game}", null, "Paid", "Paid" ] },
-    { capability: "Activity log", cells: [ "Logs channel", "logs", "Paid", null ] },
-    { capability: "Turn controls off", cells: [ "Per generator", "Paid", "Toggle Features", "Paid" ] },
-    { capability: "A different button set per role", cells: [ "Yes", "Paid", null, null ] },
-    { capability: "Reword the bot, per language", cells: [ "Dashboard", null, null, null ] },
-    { capability: "Generators on the free tier", cells: [ "2", "1", "Capped, not published", "2" ] },
-    { capability: "What it costs to add more", cells: [ "$1 each", "£3.99 a month", "EUR 4 a month", "$3.99 a month" ] },
-    { capability: "Every feature on the free tier", cells: [ "Yes", null, null, null ] },
-    { capability: "No vote-gated commands", cells: [ "Yes", null, null, null ] },
+function renderCell( cell: string | null | undefined ) {
+    if ( undefined === cell ) {
+        return <span className="text-vc-violet">Not checked</span>;
+    }
+
+    if ( null === cell ) {
+        return <span className="text-vc-crimson">Unavailable</span>;
+    }
+
+    if ( "Paid" === cell ) {
+        return <span className="text-vc-azure-soft">Paid only</span>;
+    }
+
+    if ( "Vote" === cell ) {
+        return <span className="text-vc-violet">Subscription</span>;
+    }
+
+    return cell;
+}
+
+/**
+ * A cell in the audit table. A string is what that bot calls the feature, `null` is absent
+ * entirely, and `undefined` is a row nobody has checked - which nothing is any more.
+ *
+ * The two gates are deliberately separate. `"Paid"` is a subscription and nothing else; `"Vote"`
+ * is a subscription or a vote on top.gg, which the bot hands back as a link. They are not the
+ * same offer - a vote costs nothing and wears off - and both bots that do it draw the line in the
+ * same place: room commands can be voted open, server settings cannot.
+ */
+type AuditCell = string | null | undefined;
+
+interface AuditRow {
+    capability: string;
+    cells: AuditCell[];
+}
+
+/**
+ * The matrix below was written from their documentation inwards: three bots were read, and the
+ * rows are the features those three chose to write about. This one is written the other way
+ * round - one row per thing v2 or v3 actually carries - so it is a checklist of this bot rather
+ * than an answer sheet to somebody else's.
+ *
+ * Rows the matrix had already been checked for keep their answers; the rest are unchecked, which
+ * is most of what v3 added and all of what shipped since.
+ */
+const AUDIT: { group: string, rows: AuditRow[] }[] = [
+    {
+        group: "What the owner of a room can do",
+        rows: [
+            { capability: "The room's control panel", cells: [ "Buttons, both places", "Interface", "Interface, /voice", "Interface" ] },
+            { capability: "Rename the room", cells: [ "Rename", "Name", "name", "Rename" ] },
+            { capability: "Cap how many can join", cells: [ "User Limit", "Limit", "limit", "Limit" ] },
+            { capability: "Lock it", cells: [ "Privacy", "Lock", "privacy", "Lock" ] },
+            { capability: "Hide it from the channel list", cells: [ "Privacy", "Vote", "privacy", "Hide" ] },
+            { capability: "Allow or block individuals", cells: [ "Access", "Permit", "trust, block", "Permit, Ban" ] },
+            { capability: "Kick somebody out", cells: [ "Access", "reject", "kick", "Ban" ] },
+            { capability: "Enter with a password", cells: [ null, null, "password", null ] },
+            { capability: "Wipe the room's chat", cells: [ "Clear Chat", null, null, null ] },
+            { capability: "Put it back the way the generator made it", cells: [ "Reset", null, "reset", null ] },
+            { capability: "Take over an empty room", cells: [ "Claim", "Claim", "claim", "Claim" ] },
+            { capability: "Hand it to someone else", cells: [ "Transfer", "Vote", "Vote", "Transfer" ] },
+            { capability: "Write the room's status line", cells: [ "Status", "Status", "Vote", null ] },
+            { capability: "Advertise the room for members", cells: [ "LFM", "Vote", null, null ] },
+            { capability: "Knock to be let in", cells: [ "Knock", "Vote", "Vote", "Paid" ] },
+            { capability: "Send an invite to the room", cells: [ "Invite", "Vote", "Vote", "Paid" ] },
+            { capability: "Change the voice region", cells: [ "Region", "Vote", "region", "Region" ] },
+            { capability: "Owner changes the bitrate", cells: [ null, "Vote", "bitrate", "Bitrate" ] },
+            { capability: "Text chat for the room", cells: [ "In-voice chat", "Vote", "Vote", "Paid" ] },
+            { capability: "Save the room as a template", cells: [ "Templates", null, null, "Template" ] },
+            { capability: "Reword the room's own panel", cells: [ "Edit Primary Message", "Paid", null, "Edit message" ] },
+        ],
+    },
+    {
+        group: "What you can configure on generator level",
+        rows: [
+            { capability: "Name new rooms from a pattern", cells: [ "Placeholders", "Paid", "Placeholders", "Variables" ] },
+            { capability: "Put what they are playing in the name", cells: [ "{game}", "Vote", "Paid", "Paid" ] },
+            { capability: "Choose which buttons a room carries", cells: [ "Per generator", "Paid", "Toggle Features", "Paid" ] },
+            { capability: "Arrange those buttons into rows", cells: [ "Interface editor", "Paid", "Drag to reorder", "Button order" ] },
+            { capability: "A different button set per role", cells: [ "Yes", "Paid", null, null ] },
+            { capability: "Start rooms public, private or hidden", cells: [ "Default privacy", "Lock by default", "Privacy mode", "Default state" ] },
+            { capability: "Start rooms at a set limit", cells: [ "Default limit", null, "User limit", "User limit" ] },
+            { capability: "Bitrate set by the generator", cells: [ "Inherited", null, "Setting", "Setting" ] },
+            { capability: "Roles that get in past the lock", cells: [ "Verified roles", null, "Access roles", "Moderator role" ] },
+            { capability: "Roles that can act on any room", cells: [ "Staff roles", null, null, "Moderator role" ] },
+            { capability: "A role while somebody is in a room", cells: [ "Voice role", null, "Paid", null ] },
+            { capability: "Remember each owner's settings", cells: [ "Auto save", "Global profile", "Recover settings", null ] },
+            { capability: "Let the bot write the status itself", cells: [ "Auto status", null, null, null ] },
+            { capability: "Mention the owner on the panel", cells: [ "Setting", "Paid", null, null ] },
+            { capability: "Panel in voice chat, a control-panel channel, or both", cells: [ "Both", "interface", "Both", "Both" ] },
+            { capability: "A text channel made for each room", cells: [ null, "Paid", "thread", "Paid" ] },
+            { capability: "Log what happens to a room", cells: [ "Logs channel", "logs", "Paid", null ] },
+            { capability: "Keep chosen words out of room names", cells: [ null, null, "Censor names", "Paid" ] },
+            { capability: "Where the ads go, and who they may ping", cells: [ "Per generator", "LFM channel", null, null ] },
+            { capability: "How long a generator waits between ads", cells: [ "Four timings", null, null, null ] },
+        ],
+    },
+    {
+        group: "What you can configure on guild level",
+        rows: [
+            { capability: "Roles that get in past the lock", cells: [ "Verified roles", "Paid", null, null ] },
+            { capability: "Roles that can act on any room", cells: [ "Staff roles", "Staff role", null, null ] },
+            { capability: "A role while somebody is in a room", cells: [ "Voice role", "Paid", null, "One free" ] },
+            { capability: "Keep chosen words out of room names", cells: [ "Badwords", "Blacklisted Words", null, null ] },
+            { capability: "Speak the member's own language", cells: [ "Seven languages", "Per server", "17 languages", null ] },
+            { capability: "Reword every message it sends", cells: [ "Dashboard", "Paid", null, null ] },
+            { capability: "How long a claim vote runs", cells: [ "Five timings", null, null, null ] },
+        ],
+    },
+    {
+        group: "How the bot itself behaves",
+        rows: [
+            { capability: "Vote for a new owner when one walks out", cells: [ "Claim vote", null, null, null ] },
+            { capability: "Rooms that scale with the crowd", cells: [ "Scaling channels", null, null, null ] },
+        ],
+    },
+    {
+        group: "What it costs",
+        rows: [
+            { capability: "Generators on the free tier", cells: [ "2", "1", "Capped, not published", "2" ] },
+            { capability: "What it costs to add more", cells: [ "$1 each", "\u00A33.99 a month", "EUR 4 a month", "$3.99 a month" ] },
+            { capability: "Every feature on the free tier", cells: [ "Yes", null, null, null ] },
+            { capability: "No vote-gated commands", cells: [ "Yes", null, null, null ] },
+        ],
+    },
+];
+
+/**
+ * The dashboards, which are a different product from the bots and worth their own table: two of
+ * the four put settings there that exist nowhere in discord, and one of them puts a whole feature
+ * there and nothing in discord at all.
+ *
+ * Read by opening each one against the same test server. A `null` here is a section the dashboard
+ * does not have, not a feature the bot lacks - Astro edits interfaces perfectly well, just never
+ * from its dashboard, which says so itself.
+ */
+const DASHBOARDS: { capability: string, cells: AuditCell[] }[] = [
+    { capability: "A dashboard outside discord", cells: [ "Yes", "Yes", "Yes", "Yes" ] },
+    { capability: "Set a generator up inside discord instead", cells: [ "Yes", "Yes", "Yes", null ] },
+    { capability: "Create a generator from the dashboard", cells: [ "Yes", "Yes", "Yes", "Yes" ] },
+    { capability: "Edit a generator's settings there", cells: [ "Yes", "Yes", "Yes", "Yes" ] },
+    { capability: "Add, remove and reorder rows there", cells: [ "Yes", "Paid", "Reorder only", null ] },
+    { capability: "Rewrite what the bot says", cells: [ "Yes", "Paid", null, null ] },
+    { capability: "Rewrite it per language", cells: [ "Yes", null, null, null ] },
+    { capability: "Rewrite it for one generator only", cells: [ "Yes", null, null, null ] },
+    { capability: "See the rooms that are open right now", cells: [ "Yes", null, null, null ] },
 ];
 
 const HONEST = [
@@ -206,22 +325,34 @@ export default function Comparison() {
             <h2 className="text-h5 mb-3">Everything, side by side</h2>
 
             <p className="text-vc-ice-dim mb-6">
-                One row per capability, one column per bot.{ " " }
-                <span className="text-vc-crimson">Unavailable</span> means the feature appears
-                nowhere in that bot&rsquo;s own documentation.{ " " }
-                <span className="text-vc-azure-soft">Paid only</span> means it exists but their
-                own pricing page puts it behind a subscription - which turned out to be the more
-                interesting column by far.
+                One row per capability, one column per bot. The rows are this bot&rsquo;s own
+                feature list, taken from both interface versions rather than from anybody&rsquo;s
+                marketing, so the table reads as a checklist of what exists rather than an answer
+                sheet to somebody else&rsquo;s.{ " " }
+                <span className="text-vc-crimson">Unavailable</span> means the capability appears
+                nowhere in that bot&rsquo;s commands, panel or documentation.{ " " }
+                <span className="text-vc-azure-soft">Paid only</span> means it exists and a
+                subscription is the only way to it.{ " " }
+                <span className="text-vc-violet">Subscription</span> means the same gate with a
+                second door: the bot offers a vote on top.gg as an alternative, which unlocks the
+                feature for a while and then closes again. Every cell was read from the bot or its
+                dashboard rather than from its marketing, and none are left unanswered.
             </p>
 
-            <div className="overflow-x-auto mb-4">
-                <table className="w-full text-sm">
+            <div className="overflow-x-auto xl:overflow-x-visible mb-4">
+                <table className="w-full text-sm table-fixed" style={ { minWidth: "64rem" } }>
+                    <colgroup>
+                        <col style={ { width: "40%" } } />
+                        { BOT_COLUMNS.map( ( bot ) => (
+                            <col key={ bot } style={ { width: "15%" } } />
+                        ) ) }
+                    </colgroup>
                     <thead>
-                        <tr className="border-b border-vc-hairline-bright text-left">
-                            <th className="py-3 pr-4 font-semibold">Capability</th>
+                        <tr className="text-left">
+                            <th className="vc-table-head-cell py-3 px-4 text-base font-bold">Capability</th>
                             { BOT_COLUMNS.map( ( bot, index ) => (
                                 <th key={ bot }
-                                    className={ `py-3 pr-4 font-semibold whitespace-nowrap ${
+                                    className={ `vc-table-head-cell py-3 px-4 text-base font-bold whitespace-nowrap ${
                                         0 === index ? "text-vc-mint" : "text-vc-ice-dim" }` }>
                                     { bot }
                                 </th>
@@ -229,16 +360,100 @@ export default function Comparison() {
                         </tr>
                     </thead>
                     <tbody>
-                        { MATRIX.map( ( row ) => (
+                        { AUDIT.map( ( section ) => (
+                            <Fragment key={ section.group }>
+                                <tr>
+                                    <th colSpan={ 1 + BOT_COLUMNS.length }
+                                        className="pt-8 pb-2 px-2 text-left text-fine uppercase tracking-wide text-vc-cyan">
+                                        { section.group }
+                                    </th>
+                                </tr>
+
+                                { section.rows.map( ( row ) => (
+                                    <tr key={ row.capability } className="border-b border-vc-hairline">
+                                        <td className="py-3 px-2 text-vc-ice whitespace-nowrap">{ row.capability }</td>
+                                        { row.cells.map( ( cell, index ) => (
+                                            <td key={ BOT_COLUMNS[ index ] } className="py-3 px-2 text-vc-starlight">
+                                                { renderCell( cell ) }
+                                            </td>
+                                        ) ) }
+                                    </tr>
+                                ) ) }
+                            </Fragment>
+                        ) ) }
+                    </tbody>
+                </table>
+            </div>
+
+            <p className="text-vc-ice-dim text-fine mb-12">
+                Every column is read off the thing itself rather than its marketing. VoiceChannels
+                from its own buttons and generator settings; the other three from the commands each
+                app registers with discord, the panels they post, and their dashboards -
+                Astro&rsquo;s one settings page, TempVoice&rsquo;s four tabs,
+                VoiceMaster&rsquo;s eight sections. Those lists are complete, so a capability
+                missing from all of them is marked unavailable rather than assumed.
+            </p>
+
+            <p className="text-vc-ice-dim text-fine mb-12">
+                Paid and subscription are the bots&rsquo; own words rather than a judgement: Astro
+                only ever offers Ultimate, while TempVoice and VoiceMaster both hand back a top.gg
+                vote as well. Each button was pressed from inside that bot&rsquo;s own temporary
+                channel, which matters - all three check where you are before they check what you
+                have paid for, so a gated button answers &ldquo;you need to be in a VC&rdquo; from
+                outside and reads as free. The dashboards settle the rest, badging their paid
+                settings inline: it is how TempVoice&rsquo;s voice role and VoiceMaster&rsquo;s
+                member role turn out to cost money when both look free from inside discord.
+            </p>
+
+            <p className="text-vc-ice-dim text-fine mb-12">
+                Read in September 2026 against one test server running all four. Anything nobody
+                could press comes from each bot&rsquo;s own documentation:{ " " }
+                <a href="https://voicemaster.xyz/en/docs/commands" target="_blank" rel="noreferrer nofollow">voicemaster.xyz/docs</a>,{ " " }
+                <a href="https://easy.tempvoice.xyz/" target="_blank" rel="noreferrer nofollow">easy.tempvoice.xyz</a>{ " " }
+                and{ " " }
+                <a href="https://astro-bot.space/guides" target="_blank" rel="noreferrer nofollow">astro-bot.space/guides</a>.
+                &ldquo;Not published&rdquo; marks a number none of them state.
+            </p>
+
+            <h2 className="text-h5 mb-3">The dashboards, side by side</h2>
+
+            <p className="text-vc-ice-dim mb-6">
+                Three of the four have a website you configure the bot from, and they are not the
+                same product as the bot. Astro puts generator settings there that exist nowhere in
+                discord - its <code>/generator</code> command does nothing but link to the site -
+                while its interface editor is the other way round, live in discord and
+                &ldquo;still under development&rdquo; on the dashboard. A row marked{ " " }
+                <span className="text-vc-crimson">Unavailable</span> here means the dashboard has
+                no such section, which is not the same as the bot lacking the feature.
+            </p>
+
+            <div className="overflow-x-auto xl:overflow-x-visible mb-4">
+                <table className="w-full text-sm table-fixed" style={ { minWidth: "64rem" } }>
+                    <colgroup>
+                        <col style={ { width: "40%" } } />
+                        { BOT_COLUMNS.map( ( bot ) => (
+                            <col key={ bot } style={ { width: "15%" } } />
+                        ) ) }
+                    </colgroup>
+                    <thead>
+                        <tr className="text-left">
+                            <th className="vc-table-head-cell py-3 px-4 text-base font-bold">On the dashboard</th>
+                            { BOT_COLUMNS.map( ( bot, index ) => (
+                                <th key={ bot }
+                                    className={ `vc-table-head-cell py-3 px-4 text-base font-bold whitespace-nowrap ${
+                                        0 === index ? "text-vc-mint" : "text-vc-ice-dim" }` }>
+                                    { bot }
+                                </th>
+                            ) ) }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { DASHBOARDS.map( ( row ) => (
                             <tr key={ row.capability } className="border-b border-vc-hairline">
-                                <td className="py-3 pr-4 text-vc-ice whitespace-nowrap">{ row.capability }</td>
+                                <td className="py-3 px-2 text-vc-ice whitespace-nowrap">{ row.capability }</td>
                                 { row.cells.map( ( cell, index ) => (
-                                    <td key={ BOT_COLUMNS[ index ] } className="py-3 pr-4 text-vc-ice-dim">
-                                        { null === cell
-                                            ? <span className="text-vc-crimson">Unavailable</span>
-                                            : "Paid" === cell
-                                                ? <span className="text-vc-azure-soft">Paid only</span>
-                                                : cell }
+                                    <td key={ BOT_COLUMNS[ index ] } className="py-3 px-2 text-vc-starlight">
+                                        { renderCell( cell ) }
                                     </td>
                                 ) ) }
                             </tr>
@@ -248,17 +463,13 @@ export default function Comparison() {
             </div>
 
             <p className="text-vc-ice-dim text-fine mb-12">
-                Read in September 2026 from each bot&rsquo;s own documentation, not its landing
-                page:{ " " }
-                <a href="https://voicemaster.xyz/en/docs/commands" target="_blank" rel="noreferrer nofollow">voicemaster.xyz/docs</a>,{ " " }
-                <a href="https://easy.tempvoice.xyz/" target="_blank" rel="noreferrer nofollow">easy.tempvoice.xyz</a>{ " " }
-                and{ " " }
-                <a href="https://astro-bot.space/guides" target="_blank" rel="noreferrer nofollow">astro-bot.space/guides</a>.
-                Astro&rsquo;s row is read off the default interface pictured in its own Interfaces
-                guide - Lock, Unlock, Hide, Unhide, Limit, Invite, Ban, Permit, Rename, Bitrate,
-                Region, Template, Chat, Waiting, Claim, Transfer - and the server owner can add or
-                remove any of them per interface. &ldquo;Not published&rdquo; marks a number none
-                of them state anywhere.
+                Astro&rsquo;s dashboard was opened against this same test server in September 2026
+                and carries six sections - Overview, Errors, Generators, Interfaces, Voice role and
+                Templates - so the rows it does not answer are absences rather than pages nobody
+                looked for. TempVoice and VoiceMaster were opened the same way. VoiceMaster&rsquo;s
+                own pages are the reason two of its rows read as paid: its Interface section is a
+                &ldquo;Custom Interface Creator&rdquo; behind VoiceMaster+, and so is its Bot
+                Profile. The VoiceChannels column is read off this project&rsquo;s own dashboard.
             </p>
 
             <h2 className="text-h5 mb-3">When not to pick this one</h2>

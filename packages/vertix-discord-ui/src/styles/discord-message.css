@@ -1,8 +1,9 @@
 @import "./discord-tokens.css";
 
+/* The chat a message sits on, so one rendered on its own still stands on Discord's own ground. */
 .discord-message-container {
     padding: 0;
-    background: transparent;
+    background-color: var(--discord-background-gradient-chat);
     font-family: var(--discord-font-primary);
 }
 
@@ -92,7 +93,7 @@
  * same shape Discord gives a message that mentions you - only the colour says which it is.
  */
 .discord-message.ephemeral {
-    background-color: rgba( 79, 98, 234, 0.051 );
+    background-color: rgba( 78, 98, 235, 0.051 );
 }
 
 .discord-message.ephemeral::before {

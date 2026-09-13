@@ -1,11 +1,15 @@
 /*
- * Discord's own dark palette, read off a running client rather than remembered.
+ * Discord's own dark palette, taken from the values Discord authors.
  *
- * Every colour below was measured in Discord itself - `getComputedStyle` on the element that wears
- * it, painted to a canvas to resolve the `oklab()` and `color-mix()` its variables are written in -
- * so the names here stand for the same things Discord's do. It moved on from the palette these
- * started life as: flat greys became translucent fills that take their tint from whatever is behind
- * them, and every surface got darker.
+ * Every colour marked below as authored is the `hsl()` its variable is actually written as, resolved
+ * once and written down here as sRGB. That distinction matters: reading the same colour back off a
+ * rendered element gives Chrome's `oklab()` serialisation of it, which is rounded, and converting
+ * that to sRGB lands up to one step away from the real value. Several of these were a step out for
+ * exactly that reason. Anything marked read-back came from an element rather than from a variable,
+ * and may still carry that error.
+ *
+ * The palette moved on from the one these started life as: flat greys became translucent fills that
+ * take their tint from whatever is behind them, and every surface got darker.
  *
  * Kept on the outermost class of each component that can be rendered on its own, so nothing here
  * leaks into the page around it.
@@ -30,57 +34,64 @@
 
     --discord-opacity-white-8: rgba(255, 255, 255, 0.08);
 
-    /* `--background-base-lower` is the chat a message sits on; `--chat-background-default` is the
-       box you type into, which is a shade lighter than the chat above it; `--background-surface-high`
-       is the card an embed or a modal is drawn on. */
-    --discord-background-gradient-chat: #1b1b1e;
-    --discord-background-composer: #222226;
-    --discord-background-surface-high: #252428;
-    /* `--background-base-lowest`, under the channel list and a dropdown. */
-    --discord-background-base-lowest: #131314;
+    /* Authored. `--background-base-lower` is the chat a message sits on; `--chat-background-default`
+       is the box you type into, a shade lighter than the chat above it; `--background-surface-high`
+       is the card an embed or a modal is drawn on; `--background-base-lowest` is the darkest thing
+       in the window, under the channel list and a dropdown. */
+    --discord-background-gradient-chat: #1a1a1e;
+    --discord-background-composer: #222327;
+    --discord-background-surface-high: #242429;
+    --discord-background-base-lowest: #121214;
 
-    /* Both are grey at low alpha rather than white: on a dark surface white reads blue-cold, and
-       these are what Discord draws an embed's hairline and a button's edge with. */
-    --discord-border-subtle: rgba(149, 148, 157, 0.12);
-    --discord-border-muted: rgba(153, 153, 153, 0.04);
-    /* `--border-normal`, the one Discord outlines a control or a scrap of code with. */
-    --discord-border-normal: rgba(151, 150, 161, 0.2);
+    /* Authored. All grey at low alpha rather than white: on a dark surface white reads blue-cold.
+       Subtle draws an embed's hairline, muted a button's edge, normal a control or a scrap of
+       code. */
+    --discord-border-subtle: rgba(148, 148, 156, 0.122);
+    --discord-border-muted: rgba(153, 153, 153, 0.039);
+    --discord-border-normal: rgba(150, 150, 160, 0.2);
 
-    --discord-text-default: #efeef0;
+    /* Authored. */
+    --discord-text-default: #efeff1;
+    --discord-text-muted: #96979e;
+    /* Read back. */
     --discord-text-strong: #fbfafa;
-    --discord-text-muted: #96969f;
-    /* `--chat-text-muted`, a step darker than the rest: timestamps and channel names wear it. */
+    /* Read back. `--chat-text-muted`, a step darker than the rest: timestamps and channel names. */
     --discord-chat-text-muted: #80838a;
+    /* Read back. */
     --discord-text-link: #4c96ef;
-    /* What an unopened menu names itself in - dimmer than muted, because it is a prompt. */
+    /* Read back. What an unopened menu names itself in - dimmer than muted, being a prompt. */
     --discord-select-placeholder: #8f9196;
 
-    /* The colour the VoiceChannels role carries, which is what its name is drawn in. */
+    /* Read back. The colour the VoiceChannels role carries, which its name is drawn in. */
     --discord-app-author-color: #206694;
 
-    /* `--interactive-icon-default`, what an idle icon in the chrome is drawn in. */
+    /* Read back. `--interactive-icon-default`, what an idle icon in the chrome is drawn in. */
     --discord-interactive-icon: #aaadb2;
 
-    /* What a row in a list takes on under the pointer, and once it is the one you are in. */
-    --discord-interactive-background-hover: rgba(149, 148, 157, 0.12);
-    --discord-interactive-background-selected: rgba(151, 150, 161, 0.2);
+    /* Authored. What a row in a list takes on under the pointer, and once it is the one you are
+       in - the same two tints a button uses. */
+    --discord-interactive-background-hover: rgba(148, 148, 156, 0.122);
+    --discord-interactive-background-selected: rgba(150, 150, 160, 0.2);
 
     --discord-white-500: #ffffff;
+    /* Authored. */
     --discord-brand-500: #5865f2;
     --discord-background-brand: #5865f2;
+    /* Read back. */
     --discord-mention-background: rgba(89, 101, 242, 0.24);
     --discord-mention-foreground: #a8baff;
 
     /*
-     * A secondary button is a tint of the surface it sits on, not a grey of its own.
+     * A secondary button is a tint of the surface it sits on, not a grey of its own. Authored.
      *
      * This is the change that shows most: these were `#4e5058` and lifted to `#6d6f78` on hover,
      * which now reads as a raised pill floating over the message. Discord's are translucent, so a
      * button on an embed and a button on the chat are each a shade of what is behind them.
      */
-    --discord-control-secondary-background-default: rgba(149, 148, 157, 0.12);
-    --discord-control-secondary-background-hover: rgba(149, 149, 162, 0.16);
-    --discord-control-secondary-background-active: rgba(151, 150, 161, 0.2);
+    --discord-control-secondary-background-default: rgba(148, 148, 156, 0.122);
+    --discord-control-secondary-background-hover: rgba(149, 149, 162, 0.161);
+    --discord-control-secondary-background-active: rgba(150, 150, 160, 0.2);
+    /* Read back. */
     --discord-control-secondary-text-default: #fbfafa;
 
     /* Discord transitions a button's fill and its text, and nothing else, over 0.17s. */

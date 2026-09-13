@@ -83,7 +83,13 @@ const DynamicChannelTransferOwnerAdapter = new DynamicExecutionAdapterBuilder<De
             .addTransition( "Confirm", { from: "UserSelected", to: "Success" } )
             .addTransition( "DisabledByClaim", { from: "UserSelected", to: "DisabledByClaim" } )
             .addTransition( "Error", { from: [ "SelectUser", "UserSelected" ], to: "Error" } )
-            .addTransition( "Cancel", { from: "UserSelected", to: "Cancelled" } )
+            .addTransition( "Cancel", {
+                from: "UserSelected",
+                to: "Cancelled",
+                // Saying no takes the whole exchange off the screen - see the handler below, which
+                // deletes the ephemeral it was being held in.
+                previewDeletesReply: true
+            } )
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
                 "Open",

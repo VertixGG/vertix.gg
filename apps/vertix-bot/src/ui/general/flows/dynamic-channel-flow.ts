@@ -48,14 +48,16 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ResetChannel",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClaimChannel",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner",
-                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates"
+                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates",
+                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenInvite",
+                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenKnock"
             ]
         };
     }
 
     public static getNextStates(): Record<string, string> {
         return {
-            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenRename": "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Initial",
+            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenRename": "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenStatus": "VertixBot/UI-V3/DynamicChannelStatusFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenLimit": "VertixBot/UI-V3/DynamicChannelLimitFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenPermissions": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Default",
@@ -66,7 +68,13 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ResetChannel": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClaimChannel": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser",
-            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/Menu"
+            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/Default",
+            // The invite adapter decides for itself which of three screens to open - pick a channel
+            // if you own several, a refusal if you own none - but the one it lands on for somebody
+            // standing in their own channel is where to choose who to let in.
+            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenInvite": "VertixBot/UI-V3/DynamicChannelInviteFlow/States/SelectUser",
+            // Knocking asks which channel first, unless there is nothing to knock on.
+            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenKnock": "VertixBot/UI-V3/DynamicChannelKnockFlow/States/SelectChannel"
         };
     }
 
@@ -179,6 +187,16 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 triggeringElementId: "VertixBot/UI-V3/DynamicChannelTemplatesButton",
                 transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates",
                 targetFlowName: "VertixBot/UI-V3/DynamicChannelTemplatesFlow"
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/DynamicChannelInviteButton",
+                transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenInvite",
+                targetFlowName: "VertixBot/UI-V3/DynamicChannelInviteFlow"
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/DynamicChannelKnockButton",
+                transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenKnock",
+                targetFlowName: "VertixBot/UI-V3/DynamicChannelKnockFlow"
             }
         ];
     }

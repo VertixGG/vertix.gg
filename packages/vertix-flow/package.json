@@ -1,0 +1,17 @@
+{
+    "name": "@vertix.gg/flow",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "type": "module",
+    "main": "src/index.ts",
+    "module": "src/index.ts",
+    "types": "src/index.ts",
+    "scripts": {
+        "vertix-flow:typecheck": "bunx --bun tsc --noEmit"
+    },
+    "dependencies": {
+        "@vertix.gg/definitions": "workspace:*"
+    },
+    "devDependencies": {
+        "@zenflux/tsconfig-to-swc": "0.1.21"
+    }
+}

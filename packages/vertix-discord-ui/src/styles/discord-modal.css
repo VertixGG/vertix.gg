@@ -177,3 +177,38 @@
 .discord-input:disabled {
     cursor: default;
 }
+
+/*
+ * Discord dims the channel and floats the modal over it rather than moving anything, so a
+ * demonstration that swaps one for the other has already stopped looking like Discord. The overlay
+ * covers whatever it is placed inside - the message it belongs to - not the whole page.
+ */
+.discord-modal-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 20;
+}
+
+.discord-modal-overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.72);
+    border-radius: inherit;
+}
+
+/*
+ * Everything except the backdrop sits above it. Matching the modal directly would miss one that a
+ * page has wrapped in a div of its own, and the backdrop - painted later - would then take the
+ * clicks meant for the buttons showing through it.
+ */
+.discord-modal-overlay > *:not( .discord-modal-overlay-backdrop ) {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

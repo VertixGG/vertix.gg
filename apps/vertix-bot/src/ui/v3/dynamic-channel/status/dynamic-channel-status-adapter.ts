@@ -45,13 +45,25 @@ const DynamicChannelStatusAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                 previewDefaultVars: { badword: "example" },
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbedGroup"
             } )
-            .addTransition( "SubmitSuccess", { from: "Default", to: "Success" } )
-            .addTransition( "SubmitCleared", { from: "Default", to: "Cleared" } )
+            // The preview conditions restate, for anything demonstrating this outside Discord, the
+            // branch the handler below takes on the service's answer. They are read in declaration
+            // order and the first that matches wins, so the unconditional one is the fallback and
+            // has to come last. Nothing in the bot consults them.
+            .addTransition( "SubmitCleared", {
+                from: "Default",
+                to: "Cleared",
+                previewCondition: { field: "status", operator: "empty" }
+            } )
             .addTransition( "SubmitBadword", {
                 from: "Default",
                 to: "Badword",
-                mutations: [ { type: "set", path: [ "badword" ] } ]
+                mutations: [ { type: "set", path: [ "badword" ] } ],
+                // Every server keeps its own list of words it will not have, and the bot checks
+                // against that list. There is no list to check outside the bot, so a demonstration
+                // needs one word it can promise will be refused.
+                previewCondition: { field: "status", operator: "contains", value: "noob" }
             } )
+            .addTransition( "SubmitSuccess", { from: "Default", to: "Success" } )
             .bindModal<UIDefaultModalChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelStatusModal",
                 "SubmitSuccess",

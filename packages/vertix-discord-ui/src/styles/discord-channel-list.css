@@ -1,6 +1,15 @@
 @import "./discord-tokens.css";
 
+/*
+ * The whole column scales from one number.
+ *
+ * Discord sets a channel name at 16px and everything else in proportion to it; those proportions
+ * are kept below in `em`, and this is the 16px. It is larger here on purpose - the list sits beside
+ * body text a good deal bigger than Discord's own chrome, and at Discord's literal size it reads as
+ * a thumbnail of a sidebar rather than as one.
+ */
 .discord-channel-list {
+    font-size: 18px;
     background-color: var(--discord-background-surface-high);
     border-radius: 4px;
     padding: 8px;
@@ -33,21 +42,36 @@
     display: flex;
     align-items: center;
     color: var(--discord-text-muted);
-    width: 16px;
-    height: 16px;
+    width: 1em;
+    height: 1em;
 }
 
 .discord-channel-list-icon-emoji {
-    font-size: 16px;
+    font-size: 1em;
     line-height: 1;
 }
 
+/*
+ * Discord prints a category under the name it was given and puts the collapse arrow right beside
+ * it, not shouted in capitals with the arrow shoved to the far end of the row. A category called
+ * "༄ Dynamic Channels" reads as that.
+ */
+/*
+ * The sidebar keeps its own two greys, read off Discord itself rather than borrowed from the
+ * message tokens: every quiet row is #80838a and the channel you are in is nearly white. The
+ * shared `--discord-text-muted` is a good deal brighter than that, which is what made this list
+ * read flat - all the rows at roughly one weight, with nothing standing out as the live one.
+ */
+.discord-channel-list {
+    --discord-channel-list-text-muted: #80838a;
+    --discord-channel-list-text-active: #f2f3f5;
+}
+
 .discord-channel-list-title {
-    flex: 1;
-    font-size: 0.75rem;
-    font-weight: var(--discord-font-weight-semibold);
-    color: var(--discord-text-muted);
-    text-transform: uppercase;
+    /* 0.875 of a channel name, as Discord sets a category header. */
+    font-size: 0.875em;
+    font-weight: var(--discord-font-weight-medium);
+    color: var(--discord-channel-list-text-muted);
     letter-spacing: 0.02em;
 }
 
@@ -67,7 +91,10 @@
     color: var(--discord-text-default);
 }
 
+/* The add button is the only thing that sits out at the end of the row. */
 .discord-channel-list-add-button {
+    margin-left: auto;
+
     background: none;
     border: none;
     color: var(--discord-text-muted);
@@ -109,6 +136,11 @@
     background-color: var(--discord-opacity-white-8);
 }
 
+/* The one you are sitting in is the only bright thing in the column. */
+.discord-channel-list-item-active .discord-channel-list-item-name {
+    color: var(--discord-channel-list-text-active);
+}
+
 .discord-channel-list-item-main {
     display: flex;
     align-items: center;
@@ -122,23 +154,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
+    width: 1.25em;
+    height: 1.25em;
     flex-shrink: 0;
+    transition: color 0.2s;
 }
 
-.discord-channel-list-item-speaker-emoji {
-    font-size: 20px;
-    line-height: 1;
-    display: inline-block;
-    filter: grayscale( 1 );
-    opacity: 0.6;
-    transition: filter 0.2s, opacity 0.2s;
+/*
+ * The speaker takes the same grey as the channel name beside it, and turns green on the one you are
+ * connected to - which is the only thing Discord uses that colour for in this column.
+ */
+.discord-channel-list-item-icon {
+    color: var(--discord-channel-list-text-muted);
 }
 
-.discord-channel-list-item-speaker-emoji.active {
-    filter: grayscale( 0 );
-    opacity: 1;
+.discord-channel-list-item-icon.active {
+    color: #23a55a;
 }
 
 .discord-channel-list-item-content {
@@ -152,9 +183,10 @@
 }
 
 .discord-channel-list-item-name {
-    font-size: 0.9375rem;
+    /* The size the rest of the column is measured against. */
+    font-size: 1em;
     font-weight: var(--discord-font-weight-medium);
-    color: var(--discord-text-default);
+    color: var(--discord-channel-list-text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -164,8 +196,8 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.75rem;
-    color: var(--discord-text-muted);
+    font-size: 0.75em;
+    color: var(--discord-channel-list-text-muted);
 }
 
 .discord-channel-list-item-status-edit {
@@ -189,11 +221,24 @@
     color: var(--discord-text-default);
 }
 
+/*
+ * How long you have been in the channel, which is what Discord shows on the one you are sitting in.
+ * It replaces the occupancy pair rather than joining it - Discord shows one or the other, never a
+ * count of who is in a channel you can already see the members of.
+ */
+.discord-channel-list-item-timer {
+    flex-shrink: 0;
+    font-size: 0.75em;
+    font-weight: var(--discord-font-weight-medium);
+    font-variant-numeric: tabular-nums;
+    color: #23a55a;
+}
+
 .discord-channel-list-item-count {
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.75rem;
+    font-size: 0.75em;
     font-weight: var(--discord-font-weight-medium);
     flex-shrink: 0;
 }
@@ -212,8 +257,13 @@
     background-color: var(--discord-control-secondary-background-hover);
 }
 
+/*
+ * The limit sits in a pill of its own, a shade behind the count - Discord draws two badges here,
+ * not a badge and a loose number, and the darker of the two is the one you are counting towards.
+ */
 .discord-channel-list-item-count-max {
-    color: var(--discord-text-muted);
+    background-color: var(--discord-control-secondary-background-default);
+    color: var(--discord-channel-list-text-muted);
     padding: 2px 6px;
     border-radius: 10px;
     min-width: 24px;
@@ -238,7 +288,7 @@
     gap: 6px;
     padding: 4px 8px;
     border-radius: 4px;
-    font-size: 0.8125rem;
+    font-size: 0.8125em;
     color: var(--discord-text-muted);
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
@@ -250,7 +300,7 @@
 }
 
 .discord-channel-list-item-invite-emoji {
-    font-size: 16px;
+    font-size: 1em;
     line-height: 1;
     display: inline-block;
 }
@@ -275,29 +325,29 @@
 }
 
 .discord-channel-list-item-user-avatar {
-    width: 24px;
-    height: 24px;
+    width: 1.5em;
+    height: 1.5em;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
 }
 
 .discord-channel-list-item-user-avatar-placeholder {
-    width: 24px;
-    height: 24px;
+    width: 1.5em;
+    height: 1.5em;
     border-radius: 50%;
     background-color: var(--discord-control-secondary-background-default);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.75em;
     font-weight: var(--discord-font-weight-semibold);
     color: var(--discord-text-default);
     flex-shrink: 0;
 }
 
 .discord-channel-list-item-user-name {
-    font-size: 0.875rem;
+    font-size: 0.875em;
     color: var(--discord-text-default);
     white-space: nowrap;
     overflow: hidden;

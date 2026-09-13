@@ -10,6 +10,12 @@ interface DiscordModalProps {
     showNotice?: boolean;
     noticeBotName?: string;
     children?: ReactNode;
+    /**
+     * Given a handler, the modal becomes one a person can actually press. Left off, it stays the
+     * picture it has always been - which is all most of the pages showing one want from it.
+     */
+    onSubmit?: () => void;
+    onCancel?: () => void;
 }
 
 interface DiscordInputProps {
@@ -18,10 +24,16 @@ interface DiscordInputProps {
     value?: string;
     style?: "short" | "paragraph";
     required?: boolean;
+    /** Given a handler, the field can be typed in. Without one it stays disabled, as it was. */
+    onChange?: ( value: string ) => void;
+    maxLength?: number;
 }
 
 export function DiscordModal( props: DiscordModalProps ) {
-    const { title, avatarUrl, submitLabel = "Submit", cancelLabel, showNotice, noticeBotName = "Vertix", children } = props;
+    const {
+        title, avatarUrl, submitLabel = "Submit", cancelLabel, showNotice,
+        noticeBotName = "Vertix", children, onSubmit, onCancel
+    } = props;
 
     return (
         <div className="discord-modal">
@@ -51,16 +63,18 @@ export function DiscordModal( props: DiscordModalProps ) {
             </div>
             <div className="discord-modal-footer">
                 { cancelLabel && (
-                    <button className="discord-modal-cancel">{ cancelLabel }</button>
+                    <button className="discord-modal-cancel" type="button" onClick={ onCancel }>{ cancelLabel }</button>
                 ) }
-                <button className="discord-modal-submit">{ submitLabel }</button>
+                <button className="discord-modal-submit" type="button" onClick={ onSubmit }>{ submitLabel }</button>
             </div>
         </div>
     );
 }
 
 export function DiscordInput( props: DiscordInputProps ) {
-    const { label, placeholder, value, style = "short", required } = props;
+    const { label, placeholder, value, style = "short", required, onChange, maxLength } = props;
+
+    const editable = undefined !== onChange;
 
     return (
         <div className="discord-input-wrapper">
@@ -74,14 +88,18 @@ export function DiscordInput( props: DiscordInputProps ) {
                     className="discord-input discord-input-short"
                     placeholder={ placeholder }
                     value={ value }
-                    disabled
+                    maxLength={ maxLength }
+                    disabled={ !editable }
+                    onChange={ ( event ) => onChange?.( event.target.value ) }
                 />
             ) : (
                 <textarea
                     className="discord-input discord-input-paragraph"
                     placeholder={ placeholder }
                     value={ value }
-                    disabled
+                    maxLength={ maxLength }
+                    disabled={ !editable }
+                    onChange={ ( event ) => onChange?.( event.target.value ) }
                     rows={ 3 }
                 />
             ) }

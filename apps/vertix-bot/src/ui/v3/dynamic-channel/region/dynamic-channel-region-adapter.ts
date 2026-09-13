@@ -33,7 +33,10 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             .addState( "Default", {
                 executionStep: "default",
                 navigationType: "editReply",
-                previewDefaultVars: { region: "us-west" },
+                // What the embed prints, not the value behind it: its own options map turns
+                // `us-west` into "US West", and that mapping is a function a preview cannot be
+                // handed. A channel nobody has touched is on the automatic one.
+                previewDefaultVars: { region: "Automatic" },
                 elementsGroup: DynamicChannelRegionComponent.getDefaultElementsGroup(),
                 embedsGroup: DynamicChannelRegionComponent.getDefaultEmbedsGroup()
             } )

@@ -46,6 +46,7 @@
         "vertix:discord-ui:typecheck": "cd packages/vertix-discord-ui && bun run vertix-embed:typecheck",
         "vertix:eslint": "time bunx --bun eslint .",
         "vertix:eslint:fix": "time bunx --bun eslint . --fix",
+        "vertix:flow:typecheck": "cd packages/vertix-flow && bun run vertix-flow:typecheck",
         "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
         "vertix:gui:jest": "cd packages/vertix-gui && bun run vertix-gui:jest",
         "vertix:gui:typecheck": "cd packages/vertix-gui && bun run vertix-gui:typecheck",

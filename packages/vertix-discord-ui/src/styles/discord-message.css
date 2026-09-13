@@ -6,6 +6,15 @@
     font-family: var(--discord-font-primary);
 }
 
+/*
+ * Discord leaves a gap between one message and the next, and without it two messages from the same
+ * bot run together and read as one. Applied between siblings rather than on every message, so a
+ * message standing on its own carries no stray margin into whatever is holding it.
+ */
+.discord-message-container + .discord-message-container {
+    margin-top: 16px;
+}
+
 .discord-interaction-reply {
     display: flex;
     align-items: center;

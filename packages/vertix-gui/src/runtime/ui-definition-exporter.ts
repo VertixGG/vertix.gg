@@ -10,6 +10,7 @@ import { ChannelType } from "discord.js";
 import { UIBase } from "@vertix.gg/gui/src/bases/ui-base";
 
 import { BUILDER_METADATA_SYMBOL } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+import { UIEmbedElapsedTimeBase } from "@vertix.gg/gui/src/bases/ui-embed-time-elapsed-base";
 import { UIAdapterExecutionStepsBase } from "@vertix.gg/gui/src/bases/ui-adapter-execution-steps-base";
 import { UIWizardAdapterBase } from "@vertix.gg/gui/src/bases/ui-wizard-adapter-base";
 import { VirtualFlowGenerator } from "@vertix.gg/gui/src/runtime/virtual-flow-generator";
@@ -71,6 +72,7 @@ import type { UIService } from "@vertix.gg/gui/src/ui-service";
 import type { UIModuleBase } from "@vertix.gg/gui/src/bases/ui-module-base";
 import type { TAdapterClassType } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
+import type { UIEmbedLogic, UIEmbedLogicSource } from "@vertix.gg/definitions/src/ui-export-definitions";
 import type { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base";
 import type { UIEmbedBase } from "@vertix.gg/gui/src/bases/ui-embed-base";
 import type {
@@ -218,6 +220,33 @@ type FlowTriggerRegistrar = (
     transition: string,
     trigger: FlowTriggerDefinition
 ) => void;
+
+/** How many times a body is allowed to name something it wanted before it is given up on. */
+const MAX_LOGIC_BINDS = 4;
+
+/**
+ * Function compileEmbedLogic() :: A written-out function, back in one piece.
+ *
+ * Two shapes come out of the bot. A `setLogic()` body is an expression and goes straight back in;
+ * a method is `name( args ) { … }`, which is only valid inside an object literal, so it goes back
+ * through one and the first method on it is the one - whatever the bot happens to call it.
+ *
+ * Anything it closed over is handed back as a parameter of that name, all of them pointing at the
+ * embed's own vars, which is the only thing these bodies ever reach for.
+ */
+function compileEmbedLogic(
+    source: string,
+    binds: ReadonlyArray<string> = [],
+    bound?: unknown
+): ( ( ...args: unknown[] ) => unknown ) | undefined {
+    const body = /^\s*(async\s+)?(function\b|\()/.test( source )
+        ? `return ( ${ source } );`
+        : `return Object.values( { ${ source } } )[ 0 ];`;
+
+    const built = new Function( ...binds, body )( ...binds.map( () => bound ) ) as unknown;
+
+    return "function" === typeof built ? built as ( ...args: unknown[] ) => unknown : undefined;
+}
 
 export class UIDefinitionExporter extends UIBase {
     private readonly logger: Logger;
@@ -1986,7 +2015,124 @@ export class UIDefinitionExporter extends UIBase {
             definition.defaultVars = this.serializePartialEmbedVars( metadata.defaultVars( vars ) );
         }
 
+        const logic = this.resolveEmbedLogic( metadata, vars );
+
+        if ( logic ) {
+            definition.logic = { ...definition.logic, ...logic as unknown as JsonObject };
+        }
+
         return Object.keys( definition ).length ? definition : undefined;
+    }
+
+    /**
+     * An embed's own working out, written out so that it can be done again elsewhere.
+     *
+     * An embed decides things about its arguments before it prints them - how many candidates there
+     * are, which of its sentences applies, how long is left - and names each answer by a token its
+     * options resolve to wording. The options are exported; the deciding is a function, and a
+     * function does not survive being written down as data.
+     *
+     * So it is written down as itself. Everything here is taken for a walk first, because written
+     * out is not the same as runnable: whatever came back alive is written down, and whatever
+     * reached for something only the bot has is left behind.
+     */
+    private resolveEmbedLogic<TArgs extends UIArgs, TVars extends Record<string, JsonValue>>(
+        metadata: EmbedBuilderMetadata<TArgs, TVars> | undefined,
+        vars: TVars | undefined
+    ): UIEmbedLogic | undefined {
+        const endTime = ( metadata as { endTime?: unknown } | undefined )?.endTime;
+
+        /*
+         * In the order the bot lays their answers over each other: what an embed inherits first,
+         * what it says for itself over the top.
+         *
+         * An embed that counts inherits its counting from the base they all share, and reaches for
+         * the end time through its own `this` rather than through the arguments. That is not a
+         * difference worth keeping: everything below is written down the same way and called the
+         * same way, with an end time to hand whether or not it is wanted.
+         */
+        const sources = [
+            endTime ? Reflect.get( UIEmbedElapsedTimeBase.prototype, "getElapsedTimeLogic" ) : undefined,
+            metadata?.logic
+        ]
+            .map( ( logic ) => this.toResolveLogic( logic, vars ) )
+            .filter( ( resolved ): resolved is UIEmbedLogicSource => undefined !== resolved );
+
+        if ( !sources.length ) {
+            return undefined;
+        }
+
+        const resolvedEndTime = this.toResolveLogic( endTime, vars );
+
+        return resolvedEndTime ? { sources, endTime: resolvedEndTime } : { sources };
+    }
+
+    /**
+     * Function toResolveLogic() :: One of an embed's functions, written out - if it survives it.
+     *
+     * Written out is not the same as runnable. Most of these bodies are written against the embed's
+     * own vars - the object of `{token}` names sitting beside them in the module - by closing over
+     * it rather than by taking the parameter that holds it, and nothing can see that from outside.
+     * So it is simply run: the first `ReferenceError` names what it wanted, that name is bound to
+     * the vars, and it is run again. What still cannot run after that wanted something the bot has
+     * and a browser has no business being handed.
+     *
+     * Guessing that a name means the vars is only a guess, and some of them mean something else
+     * entirely - a default language code, a limit. So the guess is marked against the original,
+     * which still has its closure and knows the real answer: what does not agree with it is left
+     * behind rather than shipped quietly wrong.
+     *
+     * Everything is run the one way, with arguments, vars and an end time to hand, so that whatever
+     * shape a function was written in it comes out the one shape and is called the one way.
+     */
+    private toResolveLogic<TVars extends Record<string, JsonValue>>(
+        logic: unknown,
+        vars: TVars | undefined
+    ): UIEmbedLogicSource | undefined {
+        if ( typeof logic !== "function" ) {
+            return undefined;
+        }
+
+        const source = String( logic );
+
+        const walk = ( fn: unknown ) => ( fn as ( ...args: unknown[] ) => unknown )
+            .call( { getEndTime: () => new Date() }, {}, vars );
+
+        // A body that insists on being given something is one whose answer depends on a service,
+        // and there is no answering for it out here.
+        const answer = this.safeCall( () => JSON.stringify( walk( logic ) ) );
+
+        if ( undefined === answer ) {
+            return undefined;
+        }
+
+        const binds: string[] = [];
+
+        for ( let attempt = 0; attempt <= MAX_LOGIC_BINDS; attempt++ ) {
+            try {
+                const built = compileEmbedLogic( source, binds, vars );
+
+                const ran = built && walk( built );
+
+                if ( ran && "object" === typeof ran && JSON.stringify( ran ) === answer ) {
+                    return binds.length ? { source, binds } : { source };
+                }
+
+                return undefined;
+            } catch( error ) {
+                const wanted = error instanceof ReferenceError
+                    ? /^(\w+) is not defined$/.exec( error.message )?.[ 1 ]
+                    : undefined;
+
+                if ( !wanted || binds.includes( wanted ) ) {
+                    return undefined;
+                }
+
+                binds.push( wanted );
+            }
+        }
+
+        return undefined;
     }
 
     private evaluateEmbedText<TVars>(

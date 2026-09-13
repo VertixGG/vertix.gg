@@ -29,6 +29,12 @@ type DefaultInteraction =
 
 const MAX_TEMPLATES = 5;
 
+/**
+ * The states that carry the three template buttons - the one you start on, and the three that
+ * report what just happened and then offer the same three buttons again.
+ */
+const TEMPLATE_MENU_STATES = [ "Default", "TemplateSaved", "TemplateApplied", "TemplateDeleted" ] as const;
+
 async function getCurrentChannelConfig( channel: VoiceChannel ) {
     const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
@@ -221,18 +227,31 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
             .addState( "TemplateDeleted", {
                 executionStep: "template-deleted",
                 navigationType: "editReply",
-                previewDefaultVars: { deletedTemplateName: "My Template" },
+                // The embed prints `templateName`; its own logic is what maps the deleted one onto
+                // that, and a preview cannot be handed a function, so it is told the answer.
+                previewDefaultVars: { templateName: "My Template" },
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbedGroup"
             } )
             // Transitions
-            .addTransition( "OpenApplyMenu", { from: "Default", to: "ApplyMenu" } )
-            .addTransition( "OpenManageMenu", { from: "Default", to: "ManageMenu" } )
+            //
+            // The three result states put the same three buttons back on screen as `Default` does,
+            // so what they reach is what `Default` reaches. Listing them is description, not
+            // behaviour - a transition resolves by name, whatever state it is triggered from - but
+            // anything reading the exported flow otherwise sees a result you cannot leave.
+            .addTransition( "OpenApplyMenu", { from: [ ...TEMPLATE_MENU_STATES ], to: "ApplyMenu" } )
+            .addTransition( "OpenManageMenu", { from: [ ...TEMPLATE_MENU_STATES ], to: "ManageMenu" } )
             .addTransition( "SelectTemplateToApply", { from: "ApplyMenu", to: "ApplyConfirm" } )
             .addTransition( "ConfirmApply", { from: "ApplyConfirm", to: "TemplateApplied" } )
             .addTransition( "SelectTemplateToDelete", { from: "ManageMenu", to: "DeleteConfirm" } )
             .addTransition( "ConfirmDelete", { from: "DeleteConfirm", to: "TemplateDeleted" } )
-            .addTransition( "SaveTemplate", { from: "Default", to: "TemplateSaved" } )
+            .addTransition( "SaveTemplate", {
+                from: [ ...TEMPLATE_MENU_STATES ],
+                to: "TemplateSaved",
+                // The name typed into the modal is what the saved message reads back - the handler
+                // below puts it in the args, and this is that said where the flow can be read.
+                mutations: [ { type: "set", path: [ "templateName" ] } ]
+            } )
             .addTransition( "BackToDefault", { from: [ "ApplyMenu", "ManageMenu", "TemplateSaved", "TemplateApplied", "TemplateDeleted" ], to: "Default" } )
             // Handler bindings (combines element-to-transition binding with handler)
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(

@@ -345,6 +345,66 @@
                 "items": [
                     [
                         {
+                            "element": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "⚙️ ∙ Select Edit Options",
+                                "selectOptions": [
+                                    {
+                                        "label": "Voice Role",
+                                        "value": "editVoiceRole",
+                                        "emoji": "🎙️",
+                                        "description": "The role given to members while they are in a voice channel"
+                                    },
+                                    {
+                                        "label": "Verified Roles",
+                                        "value": "editVerifiedRoles",
+                                        "emoji": "🛡️",
+                                        "description": "Who the dynamic channels are for"
+                                    },
+                                    {
+                                        "label": "Staff Roles",
+                                        "value": "editStaffRoles",
+                                        "emoji": "🔑",
+                                        "description": "Who may act on a channel they do not own"
+                                    },
+                                    {
+                                        "label": "Bad Words",
+                                        "value": "editBadwords",
+                                        "emoji": "🙊",
+                                        "description": "Words a member cannot put in a channel name"
+                                    },
+                                    {
+                                        "label": "Claim",
+                                        "value": "editClaim",
+                                        "emoji": "😈",
+                                        "description": "How long an abandoned channel waits, and how long the vote runs"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/DoneButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/DoneButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "✓ Done",
+                                "style": "success"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/VoiceRoleElementsGroup",
+                "items": [
+                    [
+                        {
                             "element": "VertixBot/UI-General/VoiceRoleMenu",
                             "definition": {
                                 "name": "VertixBot/UI-General/VoiceRoleMenu",
@@ -354,6 +414,35 @@
                             }
                         }
                     ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/VoiceRoleClearButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/VoiceRoleClearButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Clear",
+                                "style": "danger",
+                                "emoji": "🧹"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/ServerOptionsBackButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/ServerOptionsBackButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Back",
+                                "style": "secondary",
+                                "emoji": "◀"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/VerifiedRolesElementsGroup",
+                "items": [
                     [
                         {
                             "element": "VertixBot/UI-General/VerifiedRolesMenu",
@@ -367,6 +456,35 @@
                     ],
                     [
                         {
+                            "element": "VertixBot/UI-General/VerifiedRolesClearButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/VerifiedRolesClearButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Clear",
+                                "style": "danger",
+                                "emoji": "🧹"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/ServerOptionsBackButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/ServerOptionsBackButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Back",
+                                "style": "secondary",
+                                "emoji": "◀"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/StaffRolesElementsGroup",
+                "items": [
+                    [
+                        {
                             "element": "VertixBot/UI-General/StaffRolesMenu",
                             "definition": {
                                 "name": "VertixBot/UI-General/StaffRolesMenu",
@@ -376,6 +494,35 @@
                             }
                         }
                     ],
+                    [
+                        {
+                            "element": "VertixBot/UI-General/StaffRolesClearButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/StaffRolesClearButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Clear",
+                                "style": "danger",
+                                "emoji": "🧹"
+                            }
+                        },
+                        {
+                            "element": "VertixBot/UI-General/ServerOptionsBackButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/ServerOptionsBackButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Back",
+                                "style": "secondary",
+                                "emoji": "◀"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/BadwordsElementsGroup",
+                "items": [
                     [
                         {
                             "element": "VertixBot/UI-General/SetupBadwordsEditButton",
@@ -389,24 +536,25 @@
                             }
                         },
                         {
-                            "element": "VertixBot/UI-General/SetupTimingsEditButton",
+                            "element": "VertixBot/UI-General/BadwordsClearButton",
                             "definition": {
-                                "name": "VertixBot/UI-General/SetupTimingsEditButton",
+                                "name": "VertixBot/UI-General/BadwordsClearButton",
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
-                                "label": "Edit Claim",
-                                "style": "secondary",
-                                "emoji": "⏱️"
+                                "label": "Remove all",
+                                "style": "danger",
+                                "emoji": "🧹"
                             }
                         },
                         {
-                            "element": "VertixBot/UI-General/DoneButton",
+                            "element": "VertixBot/UI-General/ServerOptionsBackButton",
                             "definition": {
-                                "name": "VertixBot/UI-General/DoneButton",
+                                "name": "VertixBot/UI-General/ServerOptionsBackButton",
                                 "elementType": "button",
                                 "instanceType": "Dynamic",
-                                "label": "✓ Done",
-                                "style": "success"
+                                "label": "Back",
+                                "style": "secondary",
+                                "emoji": "◀"
                             }
                         }
                     ]
@@ -449,6 +597,17 @@
                         }
                     ],
                     [
+                        {
+                            "element": "VertixBot/UI-General/SetupClaimResetButton",
+                            "definition": {
+                                "name": "VertixBot/UI-General/SetupClaimResetButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Reset to defaults",
+                                "style": "danger",
+                                "emoji": "🧹"
+                            }
+                        },
                         {
                             "element": "VertixBot/UI-General/SetupClaimBackButton",
                             "definition": {
@@ -593,6 +752,13 @@
                                 "labelVersion": "▹ UI Version:",
                                 "labelScalingPrefix": "▹ Scaling Prefix:",
                                 "labelMaxMembers": "▹ Max Members:"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "async (args, vars) => {\n  const { settings } = ConfigManager.$.get(\"Vertix/Config/MasterChannel\", VERSION_UI_V3).data, scalingConfig = ConfigManager.$.get(\"Vertix/Config/ScalingChannel\", VERSION_SCALING_CHANNEL_UI_V1).data, scalingDefaultPrefix = scalingConfig.constants?.scalingChannelDefaultPrefix || scalingConfig.settings?.scalingChannelPrefix || \"\", channels = args?.masterChannels || [], masterChannels = await Promise.all(channels.map(async (channel, index) => {\n    const version = channel?.version || channel?.data?.[0]?.version || \"V2\";\n    if (version === VERSION_SCALING_CHANNEL_UI_V1) {\n      const scalingSettings = await ScalingChannelDataModel.$.getScalingSettings(channel.id), prefix = scalingSettings?.scalingChannelPrefix || scalingDefaultPrefix, maxMembers = scalingSettings?.scalingChannelMaxMembersPerChannel || 10;\n      return [\n        `**#${index + 1}**`,\n        `${vars.labelName} <#${channel.channelId}>`,\n        `${vars.labelChannelId} \\`${channel.channelId}\\``,\n        `${vars.labelScalingPrefix} \\`${prefix}\\``,\n        `${vars.labelMaxMembers} \\`${maxMembers}\\``,\n        `${vars.labelVersion} \\`${version}\\``\n      ];\n    }\n    const data = await MasterChannelDataManager.$.getAllSettings({\n      ...channel,\n      isDynamic: !1,\n      isMaster: !0\n    }), defaultButtons = version === VERSION_UI_V3 ? DynamicChannelPrimaryMessageElementsGroup.getAll().map((btn) => btn.getId()) : DynamicChannelElementsGroup.getAll().map((btn) => btn.getId()), usedButtons = data.dynamicChannelButtonsTemplate || defaultButtons, emojis = version === VERSION_UI_V3 ? DynamicChannelPrimaryMessageElementsGroup.getEmbedEmojis(usedButtons.map((b) => String(b))) : DynamicChannelElementsGroup.getEmbedEmojis(usedButtons.map((b) => typeof b === \"number\" ? b : Number(b))), buttonsDisplay = (emojis.length ? emojis : [\"\\u26A0\\uFE0F No emojis found\"]).join(\", \"), guildId = args?.guildId ?? \"\", storedVerified = data.dynamicChannelVerifiedRoles || [], ownVerified = storedVerified.length === 1 && guildId === storedVerified[0] ? [] : storedVerified, guildVerified = args?.verifiedRoleIds?.length ? args.verifiedRoleIds : [guildId], rolesDisplay = (ownVerified.length ? ownVerified : guildVerified).map((roleId) => `<@&${roleId}>`).join(\", \") + (ownVerified.length ? \"\" : ` ${vars.inherited}`), ownStaff = data.dynamicChannelStaffRoles || [], guildStaff = args?.staffRoleIds ?? [], resolvedStaff = ownStaff.length ? ownStaff : guildStaff, staffRolesDisplay = (resolvedStaff.length ? resolvedStaff.map((roleId) => `<@&${roleId}>`).join(\", \") : vars.none) + (ownStaff.length ? \"\" : ` ${vars.inherited}`), ownVoiceRoleId = data.dynamicChannelVoiceRoleId, resolvedVoiceRoleId = ownVoiceRoleId || args?.voiceRoleId, voiceRoleDisplay = (resolvedVoiceRoleId ? `<@&${resolvedVoiceRoleId}>` : vars.none) + (ownVoiceRoleId ? \"\" : ` ${vars.inherited}`), privacyState = data.dynamicChannelDefaultPrivacyState, privacyDisplay = privacyState === \"private\" ? vars.privacyPrivate : privacyState === \"hidden\" ? vars.privacyHidden : vars.privacyPublic, defaultUserLimit = data.dynamicChannelDefaultUserLimit ?? channel.userLimit ?? 0, userLimitDisplay = defaultUserLimit === 0 ? \"No limit\" : `${defaultUserLimit} users`, nameTemplate = data.dynamicChannelNameTemplate || settings.dynamicChannelNameTemplate, logsDisplay = data.dynamicChannelLogsChannelId ? `<#${data.dynamicChannelLogsChannelId}>` : vars.none, autoSaveDisplay = data.dynamicChannelAutoSave ? vars.autoSaveOn : vars.autoSaveOff;\n    return [\n      `**#${index + 1}**`,\n      `${vars.labelName} <#${channel.channelId}>`,\n      `${vars.labelChannelId} \\`${channel.channelId}\\``,\n      `${vars.labelDynamicChannelsName} \\`${nameTemplate}\\``,\n      `${vars.labelNewChannelPrivacy} ${privacyDisplay}`,\n      `${vars.labelNewChannelLimit} ${userLimitDisplay}`,\n      `${vars.labelButtons} **${buttonsDisplay}**`,\n      `${vars.labelVerifiedRoles} ${rolesDisplay}`,\n      `${vars.labelStaffRoles} ${staffRolesDisplay}`,\n      `${vars.labelVoiceRole} ${voiceRoleDisplay}`,\n      `${vars.labelLogsChannel} ${logsDisplay}`,\n      `${vars.labelAutoSave} ${autoSaveDisplay}`,\n      `${vars.labelVersion} \\`${version}\\``\n    ];\n  })), result = {};\n  if (masterChannels.length) {\n    result.masterChannels = masterChannels;\n    result.masterChannelMessage = vars.masterChannels;\n  } else\n    result.masterChannelMessage = vars.masterChannelMessageDefault;\n  if (args?.badwords?.length) {\n    result.badwords = args.badwords;\n    result.badwordsMessage = vars.badwords;\n  } else\n    result.badwordsMessage = vars.badwordsMessageDefault;\n  if (args?.voiceRoleId) {\n    result.voiceRoleId = args.voiceRoleId;\n    result.voiceRoleMessage = vars.voiceRoleId;\n  } else\n    result.voiceRoleMessage = vars.voiceRoleMessageDefault;\n  if (args?.verifiedRoleIds?.length) {\n    result.verifiedRoleIds = args.verifiedRoleIds;\n    result.verifiedRolesMessage = vars.verifiedRoleIds;\n  } else\n    result.verifiedRolesMessage = vars.verifiedRolesMessageDefault;\n  if (args?.staffRoleIds?.length) {\n    result.staffRoleIds = args.staffRoleIds;\n    result.staffRolesMessage = vars.staffRoleIds;\n  } else\n    result.staffRolesMessage = vars.staffRolesMessageDefault;\n  return result;\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -609,6 +775,13 @@
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  maxMasterChannels: args.maxMasterChannels\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -809,7 +982,7 @@
                             "title": "༄ VoiceChannels is here, let's get started!",
                             "description": "Welcome to VoiceChannels, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://voicechannels.online/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU",
                             "image": "https://i.imgur.com/x8jMguN.gif",
-                            "thumbnail": "https://voicechannels.online/assets/Robot-Dz6J42ZT.png",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "color": 3369963
                         }
                     }
@@ -851,6 +1024,13 @@
                             "color": 16732674,
                             "vars": {
                                 "masterChannelId": "{masterChannelId}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  masterChannelId: args?.masterChannelId\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -892,7 +1072,52 @@
                             "color": 16732674,
                             "vars": {
                                 "masterChannelId": "{masterChannelId}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  masterChannelId: args?.masterChannelId\n})"
+                                    }
+                                ]
                             }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/ClaimInChannelOnlyComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/ClaimInChannelOnlyComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "😈  Claim works inside the channel",
+                            "description": "This panel sits beside the generator rather than in any one channel, so there is nothing here to claim.\n\nJoin the voice channel you want to take over, open its chat, and press **Claim** on the message waiting there.",
+                            "color": 16732674
                         }
                     }
                 ]
@@ -987,6 +1212,13 @@
                             "vars": {
                                 "selectedChannelDisplay": "{selectedChannelDisplay}",
                                 "draftContentDisplay": "{draftContentDisplay}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const selectedChannelDisplay = typeof args.selectedChannelId === \"string\" && args.selectedChannelId.length ? `<#${args.selectedChannelId}>` : \"`none`\", cleanedDraft = typeof args.draftContent === \"string\" ? args.draftContent.trim() : \"\", escapedDraft = (cleanedDraft.length > 500 ? `${cleanedDraft.slice(0, 500)}...` : cleanedDraft).replaceAll(\"```\", \"``\\u200B`\"), draftContentDisplay = escapedDraft.length ? `\\`\\`\\`\n${escapedDraft}\n\\`\\`\\`` : \"`none`\";\n  return {\n    selectedChannelDisplay,\n    draftContentDisplay\n  };\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1057,6 +1289,16 @@
                             },
                             "defaultVars": {
                                 "masterChannelId": "123456789"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  masterChannelId: args.masterChannelId,\n  reason: args.isCategoryFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonCategoryFull : CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown\n})",
+                                        "binds": [
+                                            "CHANNEL_CREATE_FAILED_EMBED_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1103,6 +1345,13 @@
                             "defaultVars": {
                                 "roleId": "123456789",
                                 "reason": "the role is above the bot in the role list"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  roleId: args.roleId,\n  reason: args.reason\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1143,6 +1392,13 @@
                             "description": "Please be aware that if you don't return within **{absentMinutes}** minutes, the channel will once again become available for other members to claim.\n",
                             "vars": {
                                 "absentMinutes": "{absentMinutes}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  absentMinutes: (args.absentInterval / 60000).toFixed(1)\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1164,6 +1420,13 @@
                             "defaultVars": {
                                 "userDisplayName": "User",
                                 "userId": "123456789"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName,\n  userId: args.userId\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1185,6 +1448,13 @@
                             "defaultVars": {
                                 "userDisplayName": "User",
                                 "userId": "123456789"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName,\n  userId: args.userId\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1206,6 +1476,13 @@
                             "defaultVars": {
                                 "prevUserId": "123456789",
                                 "currentUserId": "987654321"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  prevUserId: args.prevUserId,\n  currentUserId: args.currentUserId\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1308,6 +1585,13 @@
                                 "ownerId": "{ownerId}",
                                 "ownerDisplayName": "{ownerDisplayName}",
                                 "absentMinutes": "{absentMinutes}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  ownerId: args.ownerId,\n  ownerDisplayName: args.ownerDisplayName,\n  absentMinutes: (args.absentInterval / 60000).toFixed(1)\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1429,6 +1713,19 @@
                                 "userInitiatorId": "123456789",
                                 "userInitiatorDisplayName": "User",
                                 "elapsedTimeFormatFraction": "1.0 minutes"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    },
+                                    {
+                                        "source": "(args) => {\n  return {\n    userInitiatorId: args.userInitiatorId,\n    userInitiatorDisplayName: args.userInitiatorDisplayName\n  };\n}"
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(args.timeEnd)"
+                                }
                             }
                         }
                     }
@@ -1498,6 +1795,22 @@
                                 "userInitiatorId": "123456789",
                                 "candidatesState": "🏅 <@123456789> - 1 Votes\n🏅 <@987654321> - 0 Votes",
                                 "elapsedTimeFormatFraction": "1.5 minutes"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    },
+                                    {
+                                        "source": "(args) => {\n  const result = {}, candidates = Object.entries(args.results || {}).map(([userId, votes]) => ({\n    userId,\n    votes\n  })).sort((a, b) => b.votes - a.votes);\n  result.candidatesCount = candidates.length;\n  result.userInitiatorId = args.userInitiatorId;\n  if (result.candidatesCount) {\n    result.candidates = candidates;\n    result.candidatesState = vars.candidates;\n  } else\n    result.candidatesState = vars.candidatesDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(args.timeEnd)"
+                                }
                             }
                         }
                     }
@@ -1564,6 +1877,16 @@
                                 "previousOwnerDisplayName": "Old Owner",
                                 "wonMessage": "wonSomeoneElse",
                                 "results": "resultsDefault"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(Date.now() + (args.elapsedTime || 0))"
+                                }
                             }
                         }
                     }
@@ -1868,6 +2191,13 @@
                             "defaultVars": {
                                 "ownerDisplayName": "User",
                                 "totalMessages": "0"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  ownerDisplayName: args.ownerDisplayName,\n  totalMessages: args.totalMessages\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1947,6 +2277,16 @@
                             },
                             "defaultVars": {
                                 "userLimit": "Unlimited"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  userLimit: args.userLimit === 0 ? vars.userLimitUnlimited : vars.userLimitValue,\n  userLimitValue: args.userLimit\n})",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -1968,6 +2308,13 @@
                             "defaultVars": {
                                 "minValue": "0",
                                 "maxValue": "99"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  minValue: args.minValue,\n  maxValue: args.maxValue\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2040,6 +2387,13 @@
                             "color": 16738560,
                             "vars": {
                                 "badword": "{badword}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  badword: args.badword\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2087,6 +2441,22 @@
                                 "masterChannelId": "{masterChannelId}",
                                 "masterChannelMessage": "{masterChannelMessage}",
                                 "masterChannelMessageDefault": "{masterChannelMessageDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    },
+                                    {
+                                        "source": "(args) => {\n  const result = {}, masterChannelId = typeof args.masterChannelId === \"string\" ? args.masterChannelId : \"\";\n  if (masterChannelId) {\n    result.masterChannelId = masterChannelId;\n    result.masterChannelMessage = vars.masterChannelId;\n  } else\n    result.masterChannelMessage = vars.masterChannelMessageDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(Date.now() + args.retryAfter * 1000)"
+                                }
                             }
                         }
                     }
@@ -2106,6 +2476,13 @@
                             },
                             "defaultVars": {
                                 "channelName": "New Channel Name"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  channelName: args.channelName\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2167,6 +2544,13 @@
                             },
                             "defaultVars": {
                                 "badword": "example"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  badword: args.badword\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2187,6 +2571,13 @@
                             },
                             "defaultVars": {
                                 "channelStatus": "Valorant · 3/5"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  channelStatus: args.channelStatus\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2207,6 +2598,13 @@
                             },
                             "defaultVars": {
                                 "channelStatus": "Ranked grind, need two"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  channelStatus: args.channelStatus\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2525,6 +2923,16 @@
                             "defaultVars": {
                                 "message": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
                                 "allowedUsersDisplay": "Currently no other user has access except you.\n"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.dynamicChannelButtonsIsAccessButtonAvailable)\n    result.message = vars.messageDefault;\n  else\n    result.message = vars.messageAccessNotAvailable;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2585,6 +2993,16 @@
                             "defaultVars": {
                                 "message": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
                                 "allowedUsersDisplay": "Currently no other user has access except you.\n"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.dynamicChannelButtonsIsAccessButtonAvailable)\n    result.message = vars.messageDefault;\n  else\n    result.message = vars.messageAccessNotAvailable;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2650,6 +3068,16 @@
                                 "userGrantedDisplayName": "User",
                                 "allowedUsersDisplay": "• <@123456789>",
                                 "blockedUsersDisplay": "Currently there are no blocked users."
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userGrantedDisplayName = args.userGrantedDisplayName;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2702,6 +3130,16 @@
                                 "userDeniedDisplayName": "User",
                                 "allowedUsersDisplay": "Currently there are no granted users.",
                                 "blockedUsersDisplay": "Currently there are no blocked users."
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userDeniedDisplayName = args.userDeniedDisplayName;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2754,6 +3192,16 @@
                                 "userBlockedDisplayName": "User",
                                 "allowedUsersDisplay": "Currently there are no granted users.",
                                 "blockedUsersDisplay": "• <@123456789>"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userBlockedDisplayName = args.userBlockedDisplayName;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2806,6 +3254,16 @@
                                 "userUnBlockedDisplayName": "User",
                                 "allowedUsersDisplay": "Currently there are no granted users.",
                                 "blockedUsersDisplay": "Currently there are no blocked users."
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userUnBlockedDisplayName = args.userUnBlockedDisplayName;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2858,6 +3316,16 @@
                                 "userKickedDisplayName": "User",
                                 "allowedUsersDisplay": "Currently there are no granted users.",
                                 "blockedUsersDisplay": "Currently there are no blocked users."
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userKickedDisplayName = args.userKickedDisplayName;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2908,6 +3376,16 @@
                             "defaultVars": {
                                 "allowedUsersDisplay": "Currently there are no granted users.\n",
                                 "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -2956,6 +3434,13 @@
                             },
                             "defaultVars": {
                                 "staffMemberDisplayName": "Example User"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  staffMemberDisplayName: args.staffMemberDisplayName ?? \"Unknown\"\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -3107,6 +3592,22 @@
                                 "blockedUsers": "None",
                                 "blockedUsersChanged": "(__unchanged__)",
                                 "rateLimited": ""
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    },
+                                    {
+                                        "source": "(args) => {\n  const {\n    changedDisplay,\n    unchangedDisplay,\n    userLimitUnlimited,\n    userLimitValue,\n    statePublic,\n    statePrivate,\n    visibilityStateShown,\n    visibilityStateHidden,\n    rateLimitedNone,\n    rateLimitedDisplay\n  } = vars, { newState, oldState } = args;\n  return {\n    name: newState?.name ?? null,\n    nameChanged: newState?.name !== oldState?.name ? changedDisplay : unchangedDisplay,\n    userLimit: newState?.userLimit === 0 ? userLimitUnlimited : userLimitValue,\n    userLimitChanged: newState?.userLimit !== oldState?.userLimit ? changedDisplay : unchangedDisplay,\n    userLimitValue: newState?.userLimit ?? 0,\n    state: newState?.state === \"public\" ? statePublic : statePrivate,\n    stateChanged: newState?.state !== oldState?.state ? changedDisplay : unchangedDisplay,\n    visibilityState: newState?.visibilityState === \"shown\" ? visibilityStateShown : visibilityStateHidden,\n    visibilityStateChanged: newState?.visibilityState !== oldState?.visibilityState ? changedDisplay : unchangedDisplay,\n    allowedUsers: newState?.allowedUserIds ?? [],\n    allowedUsersChanged: JSON.stringify(newState?.allowedUserIds) !== JSON.stringify(oldState?.allowedUserIds) ? changedDisplay : unchangedDisplay,\n    blockedUsers: newState?.blockedUserIds ?? [],\n    blockedUsersChanged: JSON.stringify(newState?.blockedUserIds) !== JSON.stringify(oldState?.blockedUserIds) ? changedDisplay : unchangedDisplay,\n    rateLimited: args.rateLimitRetryAfter ? rateLimitedDisplay : rateLimitedNone\n  };\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(Date.now() + (args.rateLimitRetryAfter || 30000) * 1000)"
+                                }
                             }
                         }
                     }
@@ -3225,6 +3726,13 @@
                             },
                             "defaultVars": {
                                 "userDisplayName": "User"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -4093,6 +4601,16 @@
                                 "verifiedRolesDefault": "{verifiedRolesDefault}",
                                 "verifiedRolesGuild": "{verifiedRolesGuild}",
                                 "index": "{index}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {\n    index: args.index + 1\n  }, ownRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [], guildRoles = Array.isArray(args.guildVerifiedRoleIds) ? args.guildVerifiedRoleIds : [];\n  if (ownRoles.length) {\n    result.verifiedRoles = ownRoles;\n    result.verifiedRolesDisplay = vars.verifiedRoles;\n  } else if (guildRoles.length) {\n    result.verifiedRoles = guildRoles;\n    result.verifiedRolesDisplay = vars.verifiedRolesGuild;\n  } else\n    result.verifiedRolesDisplay = vars.verifiedRolesDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -4131,6 +4649,16 @@
                                 "staffRolesNone": "{staffRolesNone}",
                                 "staffRolesGuild": "{staffRolesGuild}",
                                 "index": "{index}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {\n    index: args.index + 1\n  }, ownRoles = Array.isArray(args.dynamicChannelStaffRoles) ? args.dynamicChannelStaffRoles : [], guildRoles = Array.isArray(args.guildStaffRoleIds) ? args.guildStaffRoleIds : [];\n  if (ownRoles.length) {\n    result.staffRoles = ownRoles;\n    result.staffRolesDisplay = vars.staffRoles;\n  } else if (guildRoles.length) {\n    result.staffRoles = guildRoles;\n    result.staffRolesDisplay = vars.staffRolesGuild;\n  } else\n    result.staffRolesDisplay = vars.staffRolesNone;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -4161,6 +4689,16 @@
                                 "voiceRoleDisplay": "{voiceRoleDisplay}",
                                 "voiceRoleGuild": "{voiceRoleGuild}",
                                 "voiceRoleNone": "{voiceRoleNone}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const { dynamicChannelVoiceRoleId: roleId, guildVoiceRoleId: guildRoleId } = args, result = {\n    index: args.index + 1\n  };\n  if (roleId) {\n    result.voiceRoleId = roleId;\n    result.voiceRoleDisplay = vars.voiceRoleId;\n  } else if (guildRoleId) {\n    result.voiceRoleId = guildRoleId;\n    result.voiceRoleDisplay = vars.voiceRoleGuild;\n  } else\n    result.voiceRoleDisplay = vars.voiceRoleNone;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -4190,6 +4728,16 @@
                                 "privacyPublic": "{privacyPublic}",
                                 "privacyPrivate": "{privacyPrivate}",
                                 "privacyHidden": "{privacyHidden}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const state = args.dynamicChannelDefaultPrivacyState;\n  return {\n    index: args.index + 1,\n    privacyState: state === \"private\" ? vars.privacyPrivate : state === \"hidden\" ? vars.privacyHidden : vars.privacyPublic\n  };\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -4219,6 +4767,16 @@
                                 "userLimitInherit": "{userLimitInherit}",
                                 "userLimitUnlimited": "{userLimitUnlimited}",
                                 "userLimitValue": "{userLimitValue}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const own = args.dynamicChannelDefaultUserLimit, limit = (own === null || own === void 0 ? Number(args.masterChannelUserLimit) : own) || 0, result = {\n    index: args.index + 1,\n    userLimitDisplay: limit ? vars.userLimitValue : vars.userLimitUnlimited\n  };\n  if (limit)\n    result.userLimit = String(limit);\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -4628,6 +5186,16 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesDisplay": "{verifiedRolesDisplay}",
                                 "verifiedRolesEmpty": "{verifiedRolesDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {}, verifiedRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [];\n  if (verifiedRoles.length) {\n    result.verifiedRoles = verifiedRoles;\n    result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRoles;\n  } else\n    result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRolesEmpty;\n  return result;\n}",
+                                        "binds": [
+                                            "SETUP_STEP_3_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -4658,6 +5226,13 @@
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  maxMasterChannels: args.maxMasterChannels\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5023,6 +5598,16 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesDisplay": "{verifiedRolesDisplay}",
                                 "verifiedRolesEmpty": "{verifiedRolesDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {}, verifiedRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [];\n  if (verifiedRoles.length) {\n    result.verifiedRoles = verifiedRoles;\n    result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRoles;\n  } else\n    result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRolesEmpty;\n  return result;\n}",
+                                        "binds": [
+                                            "SETUP_STEP_3_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5063,6 +5648,13 @@
                             "description": "Please be aware that if you don't return within **{absentMinutes}** minutes, the channel will once again become available for other members to claim.\n",
                             "vars": {
                                 "absentMinutes": "{absentMinutes}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  absentMinutes: (args.absentInterval / 60000).toFixed(1)\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5080,6 +5672,13 @@
                             "vars": {
                                 "userDisplayName": "{userDisplayName}",
                                 "userId": "{userId}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName,\n  userId: args.userId\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5097,6 +5696,13 @@
                             "vars": {
                                 "userDisplayName": "{userDisplayName}",
                                 "userId": "{userId}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName,\n  userId: args.userId\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5114,6 +5720,13 @@
                             "vars": {
                                 "prevUserId": "{prevUserId}",
                                 "currentUserId": "{currentUserId}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  prevUserId: args.prevUserId,\n  currentUserId: args.currentUserId\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5216,6 +5829,13 @@
                                 "ownerId": "{ownerId}",
                                 "ownerDisplayName": "{ownerDisplayName}",
                                 "absentMinutes": "{absentMinutes}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const { ownerDisplayName, ownerId, absentInterval } = args;\n  return {\n    ownerId,\n    ownerDisplayName,\n    absentMinutes: (absentInterval / 60000).toFixed(1)\n  };\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5332,6 +5952,19 @@
                                 "formatSecondUnits": "{formatSecondUnits}",
                                 "userInitiatorId": "{userInitiatorId}",
                                 "userInitiatorDisplayName": "{userInitiatorDisplayName}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    },
+                                    {
+                                        "source": "(args) => ({\n  userInitiatorId: args.userInitiatorId,\n  userInitiatorDisplayName: args.userInitiatorDisplayName\n})"
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(args.timeEnd)"
+                                }
                             }
                         }
                     }
@@ -5395,6 +6028,22 @@
                                 "candidatesDefault": "{candidatesDefault}",
                                 "userId": "{userId}",
                                 "votes": "{votes}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    },
+                                    {
+                                        "source": "(args) => {\n  const candidates = Object.entries(args.results || {}).map(([userId, votes]) => ({\n    userId,\n    votes\n  })).sort((a, b) => b.votes - a.votes);\n  return {\n    candidatesCount: candidates.length,\n    userInitiatorId: args.userInitiatorId,\n    candidates: candidates.length ? candidates : [],\n    candidatesState: candidates.length ? CLAIM_VOTE_EMBED_VARS.candidates : CLAIM_VOTE_EMBED_VARS.candidatesDefault\n  };\n}",
+                                        "binds": [
+                                            "CLAIM_VOTE_EMBED_VARS"
+                                        ]
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(args.timeEnd)"
+                                }
                             }
                         }
                     }
@@ -5453,6 +6102,16 @@
                                 "results": "{results}",
                                 "resultsLink": "{resultsLink}",
                                 "resultsDefault": "{resultsDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(Date.now() + args.elapsedTime)"
+                                }
                             }
                         }
                     }
@@ -5955,6 +6614,16 @@
                                 "inviteEmoji": "<emoji name='InviteChannel'>",
                                 "invitedDisplayName": "Example User",
                                 "deliveryDisplay": "{deliveryDelivered}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  invitedDisplayName: args?.invitedDisplayName,\n  deliveryDisplay: args?.isInviteDelivered ? DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryDelivered : DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryBlocked\n})",
+                                        "binds": [
+                                            "DYNAMIC_CHANNEL_INVITE_SENT_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5993,6 +6662,13 @@
                             "color": 16732674,
                             "vars": {
                                 "masterChannelId": "{masterChannelId}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  masterChannelId: args?.masterChannelId\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6106,6 +6782,13 @@
                             "defaultVars": {
                                 "knockEmoji": "<emoji name='KnockChannel'>",
                                 "knockedChannelName": "Example Channel"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  knockedChannelName: args?.knockedChannelName\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6144,6 +6827,16 @@
                             "defaultVars": {
                                 "knockEmoji": "<emoji name='KnockChannel'>",
                                 "openChannelsDisplay": "{openChannelsDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const openChannels = Array.isArray(args?.openChannels) ? args.openChannels : [];\n  return {\n    openChannels,\n    openChannelsDisplay: openChannels.length ? vars.openChannels : vars.openChannelsDefault\n  };\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6255,6 +6948,13 @@
                                 "knockEmoji": "<emoji name='KnockChannel'>",
                                 "knockerId": "123456789",
                                 "knockerDisplayName": "Example User"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  knockerId: args?.knockerId,\n  knockerDisplayName: args?.knockerDisplayName\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6287,6 +6987,16 @@
                                 "knockEmoji": "<emoji name='KnockChannel'>",
                                 "knockerDisplayName": "Example User",
                                 "answerDisplay": "{answerAllowed}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  knockerDisplayName: args?.knockerDisplayName,\n  answerDisplay: args?.isKnockAllowed ? DYNAMIC_CHANNEL_KNOCK_ANSWERED_VARS.answerAllowed : DYNAMIC_CHANNEL_KNOCK_ANSWERED_VARS.answerDenied\n})",
+                                        "binds": [
+                                            "DYNAMIC_CHANNEL_KNOCK_ANSWERED_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6349,6 +7059,16 @@
                                 "userLimit": "{userLimit}",
                                 "userLimitValue": "{userLimitValue}",
                                 "userLimitUnlimited": "{userLimitUnlimited}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  userLimit: args.userLimit === 0 ? DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitUnlimited : DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitValue,\n  userLimitValue: args.userLimit\n})",
+                                        "binds": [
+                                            "DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6366,6 +7086,13 @@
                             "vars": {
                                 "minValue": "{minValue}",
                                 "maxValue": "{maxValue}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  minValue: args.minValue,\n  maxValue: args.maxValue\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6620,6 +7347,13 @@
                                 "value": "{value}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}",
                                 "dynamicChannelButtonsRowBreaks": "{dynamicChannelButtonsRowBreaks}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,\n  dynamicChannelButtonsRowBreaks: args.dynamicChannelButtonsRowBreaks ?? []\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6827,6 +7561,16 @@
                             },
                             "defaultVars": {
                                 "userDeniedDisplayName": "Example User"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const allowedUsers = Array.isArray(args.allowedUsers) ? args.allowedUsers.map((user) => user.id) : [], blockedUsers = Array.isArray(args.blockedUsers) ? args.blockedUsers.map((user) => user.id) : [];\n  return {\n    allowedUsers,\n    blockedUsers,\n    allowedUsersDisplay: allowedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS.allowedUsers : DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS.allowedUsersDefault,\n    blockedUsersDisplay: blockedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS.blockedUsers : DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS.blockedUsersDefault,\n    userDeniedDisplayName: args.userDeniedDisplayName ?? \"Unknown\"\n  };\n}",
+                                        "binds": [
+                                            "DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6876,6 +7620,16 @@
                             },
                             "defaultVars": {
                                 "userBlockedDisplayName": "Example User"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const allowedUsers = Array.isArray(args.allowedUsers) ? args.allowedUsers.map((user) => user.id) : [], blockedUsers = Array.isArray(args.blockedUsers) ? args.blockedUsers.map((user) => user.id) : [];\n  return {\n    allowedUsers,\n    blockedUsers,\n    allowedUsersDisplay: allowedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.allowedUsers : DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.allowedUsersDefault,\n    blockedUsersDisplay: blockedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.blockedUsers : DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.blockedUsersDefault,\n    userBlockedDisplayName: args.userBlockedDisplayName ?? \"Unknown\"\n  };\n}",
+                                        "binds": [
+                                            "DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6925,6 +7679,16 @@
                             },
                             "defaultVars": {
                                 "userUnBlockedDisplayName": "Example User"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const allowedUsers = Array.isArray(args.allowedUsers) ? args.allowedUsers.map((user) => user.id) : [], blockedUsers = Array.isArray(args.blockedUsers) ? args.blockedUsers.map((user) => user.id) : [];\n  return {\n    allowedUsers,\n    blockedUsers,\n    allowedUsersDisplay: allowedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS.allowedUsers : DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS.allowedUsersDefault,\n    blockedUsersDisplay: blockedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS.blockedUsers : DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS.blockedUsersDefault,\n    userUnBlockedDisplayName: args.userUnBlockedDisplayName ?? \"Unknown\"\n  };\n}",
+                                        "binds": [
+                                            "DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -6975,6 +7739,16 @@
                             },
                             "defaultVars": {
                                 "userKickedDisplayName": "Example User"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const allowedUsers = Array.isArray(args.allowedUsers) ? args.allowedUsers.map((user) => user.id) : [], blockedUsers = Array.isArray(args.blockedUsers) ? args.blockedUsers.map((user) => user.id) : [];\n  return {\n    allowedUsers,\n    blockedUsers,\n    allowedUsersDisplay: allowedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS.allowedUsers : DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS.allowedUsersDefault,\n    blockedUsersDisplay: blockedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS.blockedUsers : DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS.blockedUsersDefault,\n    userKickedDisplayName: args.userKickedDisplayName ?? \"Unknown\"\n  };\n}",
+                                        "binds": [
+                                            "DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7073,6 +7847,13 @@
                             },
                             "defaultVars": {
                                 "staffMemberDisplayName": "Example User"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  staffMemberDisplayName: args.staffMemberDisplayName ?? \"Unknown\"\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7247,6 +8028,13 @@
                                 "titleDisplayValue": "{titleDisplayValue}",
                                 "titleValue": "{titleValue}",
                                 "editPrimaryMessageEmoji": "{editPrimaryMessageEmoji}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "async (args) => {\n  const result = {}, { titleDisplayValue, titleDisplayDefault } = vars;\n  if (args.title) {\n    result.titleValue = args.title;\n    result.title = titleDisplayValue;\n  } else\n    result.title = titleDisplayDefault;\n  result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());\n  return result;\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7275,6 +8063,13 @@
                                 "descriptionDisplayValue": "{descriptionDisplayValue}",
                                 "descriptionValue": "{descriptionValue}",
                                 "editPrimaryMessageEmoji": "{editPrimaryMessageEmoji}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "async (args) => {\n  const result = {}, { descriptionDisplayValue, descriptionDisplayDefault } = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS;\n  if (args.description) {\n    result.descriptionValue = args.description;\n    result.description = descriptionDisplayValue;\n  } else\n    result.description = descriptionDisplayDefault;\n  result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());\n  return result;\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7398,6 +8193,13 @@
                                 "titleDisplayValue": "{titleDisplayValue}",
                                 "titleValue": "{titleValue}",
                                 "editPrimaryMessageEmoji": "{editPrimaryMessageEmoji}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "async (args) => {\n  const result = {}, { titleDisplayValue, titleDisplayDefault } = vars;\n  if (args.title) {\n    result.titleValue = args.title;\n    result.title = titleDisplayValue;\n  } else\n    result.title = titleDisplayDefault;\n  result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());\n  return result;\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7484,6 +8286,13 @@
                                 "descriptionDisplayValue": "{descriptionDisplayValue}",
                                 "descriptionValue": "{descriptionValue}",
                                 "editPrimaryMessageEmoji": "{editPrimaryMessageEmoji}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "async (args) => {\n  const result = {}, { descriptionDisplayValue, descriptionDisplayDefault } = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS;\n  if (args.description) {\n    result.descriptionValue = args.description;\n    result.description = descriptionDisplayValue;\n  } else\n    result.description = descriptionDisplayDefault;\n  result.editPrimaryMessageEmoji = await EmojiManager.$.getMarkdown(DynamicChannelPrimaryMessageEditButton.getBaseName());\n  return result;\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7640,6 +8449,16 @@
                                 "stateMessageHidden": "hidden",
                                 "allowedUsersDefault": "none",
                                 "blockedUsersDefault": "none"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  switch (args.state) {\n    default:\n    case \"public\":\n      result.state = vars.statePublic;\n      result.stateMessage = vars.stateMessagePublic;\n      break;\n    case \"private\":\n      result.state = vars.statePrivate;\n      result.stateMessage = vars.stateMessagePrivate;\n      break;\n    case \"shown\":\n      result.state = vars.stateShown;\n      result.stateMessage = vars.stateMessageShown;\n      break;\n    case \"hidden\":\n      result.state = vars.stateHidden;\n      result.stateMessage = vars.stateMessageHidden;\n      break;\n  }\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7794,6 +8613,13 @@
                             },
                             "defaultVars": {
                                 "regionEmoji": "<emoji name='ChannelRegion'>"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "async (args) => {\n  const result = {};\n  if (args.region)\n    result.region = vars[`region-${args.region}`];\n  else\n    result.region = vars[\"region-auto\"];\n  return result;\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7835,6 +8661,13 @@
                             "color": 16738560,
                             "vars": {
                                 "badword": "{badword}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  badword: args.badword\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -7882,6 +8715,22 @@
                                 "masterChannelId": "{masterChannelId}",
                                 "masterChannelMessage": "{masterChannelMessage}",
                                 "masterChannelMessageDefault": "{masterChannelMessageDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    },
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  if (args.masterChannelId) {\n    result.masterChannelId = args.masterChannelId;\n    result.masterChannelMessage = DYNAMIC_CHANNEL_RENAME_LIMITED_VARS.masterChannelId;\n  } else\n    result.masterChannelMessage = DYNAMIC_CHANNEL_RENAME_LIMITED_VARS.masterChannelMessageDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "DYNAMIC_CHANNEL_RENAME_LIMITED_VARS"
+                                        ]
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(Date.now() + args.retryAfter * 1000)"
+                                }
                             }
                         }
                     }
@@ -7898,6 +8747,13 @@
                             "color": 15248904,
                             "vars": {
                                 "channelName": "{channelName}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  channelName: args.channelName\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8074,6 +8930,22 @@
                                 "blockedUsersChanged": "(__unchanged__)",
                                 "rateLimited": "",
                                 "resetEmoji": "<emoji name='ResetChannel'>"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                    },
+                                    {
+                                        "source": "(args) => {\n  const {\n    changedDisplay,\n    unchangedDisplay,\n    userLimitUnlimited,\n    userLimitValue,\n    statePublic,\n    statePrivate,\n    visibilityStateShown,\n    visibilityStateHidden,\n    rateLimitedNone,\n    rateLimitedDisplay\n  } = vars, { newState, oldState } = args, primaryMessageChanged = () => {\n    const oldMessage = (oldState?.primaryMessageTitle || \"\") + (oldState?.primaryMessageDescription || \"\");\n    return (newState?.primaryMessageTitle || \"\") + (newState?.primaryMessageDescription || \"\") !== oldMessage ? changedDisplay : unchangedDisplay;\n  };\n  return {\n    name: newState?.name ?? null,\n    nameChanged: newState?.name !== oldState?.name ? changedDisplay : unchangedDisplay,\n    userLimit: newState?.userLimit === 0 ? userLimitUnlimited : userLimitValue,\n    userLimitChanged: newState?.userLimit !== oldState?.userLimit ? changedDisplay : unchangedDisplay,\n    userLimitValue: newState?.userLimit ?? 0,\n    state: newState?.state === \"public\" ? statePublic : statePrivate,\n    stateChanged: newState?.state !== oldState?.state ? changedDisplay : unchangedDisplay,\n    visibilityState: newState?.visibilityState === \"shown\" ? visibilityStateShown : visibilityStateHidden,\n    visibilityStateChanged: newState?.visibilityState !== oldState?.visibilityState ? changedDisplay : unchangedDisplay,\n    region: newState?.region ?? null,\n    regionChanged: newState?.region !== oldState?.region ? changedDisplay : unchangedDisplay,\n    primaryMessageChanged: primaryMessageChanged(),\n    allowedUsers: newState?.allowedUserIds ?? [],\n    allowedUsersChanged: JSON.stringify(newState?.allowedUserIds) !== JSON.stringify(oldState?.allowedUserIds) ? changedDisplay : unchangedDisplay,\n    blockedUsers: newState?.blockedUserIds ?? [],\n    blockedUsersChanged: JSON.stringify(newState?.blockedUserIds) !== JSON.stringify(oldState?.blockedUserIds) ? changedDisplay : unchangedDisplay,\n    rateLimited: args.rateLimitRetryAfter ? rateLimitedDisplay : rateLimitedNone\n  };\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(Date.now() + (args.rateLimitRetryAfter || 30000) * 1000)"
+                                }
                             }
                         }
                     }
@@ -8152,6 +9024,13 @@
                             },
                             "defaultVars": {
                                 "badword": "example"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  badword: args.badword\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8172,6 +9051,13 @@
                             },
                             "defaultVars": {
                                 "channelStatus": "Valorant · 3/5"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  channelStatus: args.channelStatus\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8192,6 +9078,13 @@
                             },
                             "defaultVars": {
                                 "channelStatus": "Ranked grind, need two"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  channelStatus: args.channelStatus\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8448,6 +9341,16 @@
                             },
                             "defaultVars": {
                                 "templatesEmoji": "<emoji name='ChannelTemplates'>"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  result.templatesCount = args.templates?.length ?? 0;\n  result.maxTemplates = args.maxTemplates ?? 5;\n  if (args.templates?.length) {\n    result.templatesList = args.templates.map((t) => t.name);\n    result.templatesListDisplay = vars.templatesList;\n  } else\n    result.templatesListDisplay = vars.templatesListDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8489,6 +9392,16 @@
                             },
                             "defaultVars": {
                                 "templatesEmoji": "<emoji name='ChannelTemplates'>"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const result = {};\n  result.templateName = args.templateName ?? \"Unknown\";\n  result.templatesCount = args.templates?.length ?? 0;\n  result.maxTemplates = args.maxTemplates ?? 5;\n  if (args.templates?.length) {\n    result.templatesList = args.templates.map((t) => t.name);\n    result.templatesListDisplay = vars.templatesList;\n  } else\n    result.templatesListDisplay = vars.templatesListDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "vars"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8530,6 +9443,13 @@
                                 "labelAutomatic": "Automatic",
                                 "labelUnknown": "Unknown",
                                 "labelNoSettings": "No settings applied"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, v) => {\n  const config = args.appliedTemplate?.config, settings = [];\n  if (config) {\n    if (config.nameTemplate)\n      settings.push(`${v.labelName} ${config.nameTemplate}`);\n    if (config.userLimit !== void 0)\n      settings.push(`${v.labelLimit} ${config.userLimit === 0 ? v.labelUnlimited : config.userLimit}`);\n    if (config.state)\n      settings.push(`${v.labelPrivacy} ${config.state}`);\n    if (config.visibilityState)\n      settings.push(`${v.labelVisibility} ${config.visibilityState}`);\n    if (typeof config.region === \"string\" && config.region.length)\n      settings.push(`${v.labelRegion} ${config.region === \"auto\" ? v.labelAutomatic : config.region}`);\n  }\n  return {\n    templateName: args.appliedTemplate?.name ?? v.labelUnknown,\n    appliedSettings: settings.length > 0 ? settings.join(`\n`) : v.labelNoSettings\n  };\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8553,6 +9473,13 @@
                             },
                             "defaultVars": {
                                 "templatesEmoji": "<emoji name='Close'>"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  templatesCount: args.templates?.length ?? 0,\n  maxTemplates: args.maxTemplates ?? 5\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8577,6 +9504,13 @@
                             },
                             "defaultVars": {
                                 "templatesEmoji": "<emoji name='Close'>"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  templateName: args.deletedTemplateName ?? \"Unknown\",\n  templatesCount: args.templates?.length ?? 0,\n  maxTemplates: args.maxTemplates ?? 5\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -8695,6 +9629,13 @@
                             "color": 3369963,
                             "vars": {
                                 "userDisplayName": "{userDisplayName}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -9702,6 +10643,13 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesDisplay": "{verifiedRolesDisplay}",
                                 "verifiedRolesGuild": "{verifiedRolesGuild}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, v) => {\n  const ownRoles = args.dynamicChannelVerifiedRoles || [], guildRoles = args.guildVerifiedRoleIds || [];\n  return {\n    index: (args.index || 0) + 1,\n    verifiedRoles: ownRoles.length ? ownRoles : guildRoles,\n    verifiedRolesDisplay: ownRoles.length ? v.verifiedRoles : v.verifiedRolesGuild\n  };\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -9740,6 +10688,13 @@
                                 "staffRolesDisplay": "{staffRolesDisplay}",
                                 "staffRolesGuild": "{staffRolesGuild}",
                                 "staffRolesNone": "{staffRolesNone}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, v) => {\n  const ownRoles = args.dynamicChannelStaffRoles || [], guildRoles = args.guildStaffRoleIds || [], staffRoles = ownRoles.length ? ownRoles : guildRoles;\n  return {\n    index: (args.index || 0) + 1,\n    ...staffRoles.length ? { staffRoles } : {},\n    staffRolesDisplay: ownRoles.length ? v.staffRoles : guildRoles.length ? v.staffRolesGuild : v.staffRolesNone\n  };\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -9770,6 +10725,13 @@
                                 "voiceRoleDisplay": "{voiceRoleDisplay}",
                                 "voiceRoleGuild": "{voiceRoleGuild}",
                                 "voiceRoleNone": "{voiceRoleNone}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, v) => {\n  const { dynamicChannelVoiceRoleId: roleId, guildVoiceRoleId: guildRoleId } = args, result = {\n    index: (args.index || 0) + 1\n  };\n  if (roleId) {\n    result.voiceRoleId = roleId;\n    result.voiceRoleDisplay = v.voiceRoleId;\n  } else if (guildRoleId) {\n    result.voiceRoleId = guildRoleId;\n    result.voiceRoleDisplay = v.voiceRoleGuild;\n  } else\n    result.voiceRoleDisplay = v.voiceRoleNone;\n  return result;\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -9799,6 +10761,13 @@
                                 "privacyPublic": "{privacyPublic}",
                                 "privacyPrivate": "{privacyPrivate}",
                                 "privacyHidden": "{privacyHidden}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, v) => {\n  const state = args.dynamicChannelDefaultPrivacyState;\n  return {\n    index: (args.index || 0) + 1,\n    privacyState: state === \"private\" ? v.privacyPrivate : state === \"hidden\" ? v.privacyHidden : v.privacyPublic\n  };\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -9828,6 +10797,13 @@
                                 "userLimitInherit": "{userLimitInherit}",
                                 "userLimitUnlimited": "{userLimitUnlimited}",
                                 "userLimitValue": "{userLimitValue}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args, v) => {\n  const own = args.dynamicChannelDefaultUserLimit, limit = (own === null || own === void 0 ? Number(args.masterChannelUserLimit) : own) || 0;\n  return {\n    index: (args.index || 0) + 1,\n    ...limit ? { userLimit: String(limit) } : {},\n    userLimitDisplay: limit ? v.userLimitValue : v.userLimitUnlimited\n  };\n}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -10273,6 +11249,13 @@
                                 "noButtonsFooter": "{noButtonsFooter}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
                             },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "async (args) => {\n  const vars = STEP_2_EMBED_VARS, buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;\n  return {\n    configUserMention: args.dynamicChannelMentionable ? vars.configUserMentionEnabled : vars.configUserMentionDisabled,\n    configAutoSave: args.dynamicChannelAutoSave ? vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,\n    configAutoStatus: args.dynamicChannelAutoStatus !== !1 ? vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,\n    configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ? vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,\n    message: buttonsLength ? vars.defaultMessage : vars.noButtonsMessage,\n    footer: buttonsLength ? vars.defaultFooter : vars.noButtonsFooter,\n    dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate\n  };\n}"
+                                    }
+                                ]
+                            },
                             "footer": "{footer}"
                         }
                     }
@@ -10306,6 +11289,16 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesEveryone": "{verifiedRolesEveryone}",
                                 "verifiedRolesDefault": "{verifiedRolesDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const vars = STEP_3_EMBED_VARS, result = {}, verifiedRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [];\n  if (verifiedRoles.length) {\n    result.verifiedRoles = verifiedRoles;\n    result.verifiedRolesDisplay = vars.verifiedRoles;\n  } else if (args.dynamicChannelIncludeEveryoneRole)\n    result.verifiedRolesDisplay = vars.verifiedRolesEveryone;\n  else\n    result.verifiedRolesDisplay = vars.verifiedRolesDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "STEP_3_EMBED_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }
@@ -10336,6 +11329,13 @@
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => ({\n  maxMasterChannels: args.maxMasterChannels\n})"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -10671,6 +11671,13 @@
                                 "noButtonsFooter": "{noButtonsFooter}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
                             },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "async (args) => {\n  const vars = STEP_2_EMBED_VARS, buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;\n  return {\n    configUserMention: args.dynamicChannelMentionable ? vars.configUserMentionEnabled : vars.configUserMentionDisabled,\n    configAutoSave: args.dynamicChannelAutoSave ? vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,\n    configAutoStatus: args.dynamicChannelAutoStatus !== !1 ? vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,\n    configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ? vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,\n    message: buttonsLength ? vars.defaultMessage : vars.noButtonsMessage,\n    footer: buttonsLength ? vars.defaultFooter : vars.noButtonsFooter,\n    dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate\n  };\n}"
+                                    }
+                                ]
+                            },
                             "footer": "{footer}"
                         }
                     }
@@ -10770,6 +11777,16 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesEveryone": "{verifiedRolesEveryone}",
                                 "verifiedRolesDefault": "{verifiedRolesDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args) => {\n  const vars = STEP_3_EMBED_VARS, result = {}, verifiedRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [];\n  if (verifiedRoles.length) {\n    result.verifiedRoles = verifiedRoles;\n    result.verifiedRolesDisplay = vars.verifiedRoles;\n  } else if (args.dynamicChannelIncludeEveryoneRole)\n    result.verifiedRolesDisplay = vars.verifiedRolesEveryone;\n  else\n    result.verifiedRolesDisplay = vars.verifiedRolesDefault;\n  return result;\n}",
+                                        "binds": [
+                                            "STEP_3_EMBED_VARS"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }

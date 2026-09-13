@@ -70,19 +70,42 @@ const ClaimResultAdapter = new ExecutionAdapterBuilder<
                 embedsGroup: "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbedGroup"
             } )
             // Transitions - triggered by external claim manager
-            .addTransition( "ShowOwnerStop", { from: "Default", to: "OwnerStop" } )
-            .addTransition( "ShowAddedSuccessfully", { from: "Default", to: "AddedSuccessfully" } )
-            .addTransition( "ShowAlreadyAdded", { from: "Default", to: "AlreadyAdded" } )
-            .addTransition( "ShowVoteAlreadySelfVoted", { from: "Default", to: "VoteAlreadySelfVoted" } )
+            //
+            // Nothing here is reached by pressing anything: the claim manager decides which of the
+            // seven answers a person gets and sends that one. The preview conditions restate that
+            // decision, keyed on the manager's own names for the outcomes, so a demonstration picks
+            // the same answer it would. The bot never reads them.
+            .addTransition( "ShowOwnerStop", {
+                from: "Default",
+                to: "OwnerStop",
+                previewCondition: { field: "claimResult", operator: "equals", value: "OwnerStop" }
+            } )
+            .addTransition( "ShowAddedSuccessfully", {
+                from: "Default",
+                to: "AddedSuccessfully",
+                previewCondition: { field: "claimResult", operator: "equals", value: "AddedSuccessfully" }
+            } )
+            .addTransition( "ShowAlreadyAdded", {
+                from: "Default",
+                to: "AlreadyAdded",
+                previewCondition: { field: "claimResult", operator: "equals", value: "AlreadyAdded" }
+            } )
+            .addTransition( "ShowVoteAlreadySelfVoted", {
+                from: "Default",
+                to: "VoteAlreadySelfVoted",
+                previewCondition: { field: "claimResult", operator: "equals", value: "VoteAlreadySelf" }
+            } )
             .addTransition( "ShowVotedSuccessfully", {
                 from: "Default",
                 to: "VotedSuccessfully",
-                mutations: [ { type: "set", path: [ "targetId" ] } ]
+                mutations: [ { type: "set", path: [ "targetId" ] } ],
+                previewCondition: { field: "claimResult", operator: "equals", value: "VoteSuccess" }
             } )
             .addTransition( "ShowVoteAlreadyVotedSame", {
                 from: "Default",
                 to: "VoteAlreadyVotedSame",
-                mutations: [ { type: "set", path: [ "targetId" ] } ]
+                mutations: [ { type: "set", path: [ "targetId" ] } ],
+                previewCondition: { field: "claimResult", operator: "equals", value: "VoteSameChoice" }
             } )
             .addTransition( "ShowVoteUpdatedSuccessfully", {
                 from: "Default",
@@ -90,7 +113,8 @@ const ClaimResultAdapter = new ExecutionAdapterBuilder<
                 mutations: [
                     { type: "set", path: [ "prevUserId" ] },
                     { type: "set", path: [ "currentUserId" ] }
-                ]
+                ],
+                previewCondition: { field: "claimResult", operator: "equals", value: "VoteUpdated" }
             } );
     } )
     .getStartArgs( async() => ( {} ) )

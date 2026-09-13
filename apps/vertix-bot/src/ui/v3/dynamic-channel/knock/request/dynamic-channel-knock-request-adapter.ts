@@ -84,7 +84,10 @@ const DynamicChannelKnockRequestAdapter = new DynamicExecutionAdapterBuilder<UID
             .addState( "Answered", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelKnockAnswered",
                 navigationType: "editReply",
-                previewDefaultVars: { knockerDisplayName: "User" },
+                // `answerDisplay` is one of the embed's own two sentences, named by the token it
+                // maps: which one applies is a function of the answer, and a preview says which
+                // rather than repeating the words.
+                previewDefaultVars: { knockerDisplayName: "User", answerDisplay: "{answerAllowed}" },
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbedGroup"
             } )
             .addState( "Error", {
@@ -92,15 +95,23 @@ const DynamicChannelKnockRequestAdapter = new DynamicExecutionAdapterBuilder<UID
                 navigationType: "ephemeral",
                 embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
+            // Both answers land on the same message; which button was pressed is what tells them
+            // apart, and `answerDisplay` is the sentence that says which it was.
             .addTransition( "Allow", {
                 from: "Default",
                 to: "Answered",
-                mutations: [ { type: "set", path: [ "knockerDisplayName" ] } ]
+                mutations: [
+                    { type: "set", path: [ "knockerDisplayName" ] },
+                    { type: "set", path: [ "answerDisplay" ] }
+                ]
             } )
             .addTransition( "Deny", {
                 from: "Default",
                 to: "Answered",
-                mutations: [ { type: "set", path: [ "knockerDisplayName" ] } ]
+                mutations: [
+                    { type: "set", path: [ "knockerDisplayName" ] },
+                    { type: "set", path: [ "answerDisplay" ] }
+                ]
             } )
             .addTransition( "Error", { from: "Default", to: "Error" } )
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(

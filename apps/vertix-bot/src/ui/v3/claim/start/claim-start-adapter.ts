@@ -41,7 +41,12 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
                     ownerDisplayName: "Owner",
                     absentInterval: "300000",
                     absentMinutes: "5.0"
-                }
+                },
+                // The component declares one of each and this state draws them, so naming them
+                // here changes nothing - except for whoever is reading the flow rather than
+                // running it, who otherwise cannot tell that this state is a message at all.
+                previewEmbedsGroup: "VertixBot/UI-V3/ClaimStartComponent/EmbedsGroup",
+                previewElementsGroup: "VertixBot/UI-V3/ClaimStartComponent/ElementsGroup"
             } )
             .addTransition( "RequestClaim", {
                 from: "Default",
@@ -51,12 +56,16 @@ const ClaimStartAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultInter
                 flowName: "VertixBot/UI-V3/ClaimResultFlow",
                 description: "Handoff to ClaimResult flow when claim button is clicked",
                 sourceState: "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                // Every one of that flow's answers leaves its entry state, and which one is picked
+                // depends on who pressed and what they had already done.
+                targetState: "VertixBot/UI-V3/ClaimResultFlow/States/Default",
                 transition: "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim"
             } )
             .addHandoffPoint( {
                 flowName: "VertixBot/UI-V3/ClaimVoteFlow",
                 description: "Handoff to ClaimVote flow when vote process starts",
                 sourceState: "VertixBot/UI-V3/ClaimStartFlow/States/Default",
+                targetState: "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn",
                 transition: "VertixBot/UI-V3/ClaimStartFlow/Transitions/RequestClaim"
             } )
             .addEdgeSourceMapping( {

@@ -37,6 +37,14 @@ const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefa
                 navigationType: "ephemeral",
                 embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
+            // The preview conditions restate, for anything demonstrating this outside Discord, the
+            // branch the handler below takes on what the clear actually deleted. Read in declaration
+            // order, first match wins, so the unconditional one comes last. The bot never reads them.
+            .addTransition( "ClearNothing", {
+                from: "Default",
+                to: "NothingToClear",
+                previewCondition: { field: "totalMessages", operator: "empty" }
+            } )
             .addTransition( "ClearSuccess", {
                 from: "Default",
                 to: "Success",
@@ -45,7 +53,6 @@ const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefa
                     { type: "set", path: [ "totalMessages" ] }
                 ]
             } )
-            .addTransition( "ClearNothing", { from: "Default", to: "NothingToClear" } )
             .addTransition( "ClearError", { from: "Default", to: "Error" } )
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelClearChatButton",

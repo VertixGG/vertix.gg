@@ -94,6 +94,8 @@ export class VirtualFlowGenerator {
                 }
             }
 
+            const previewElementsGroup = stateConfig.previewElementsGroup ?? stateConfig.elementsGroup;
+
             states.push( {
                 key: stateKey,
                 component: undefined,
@@ -103,7 +105,14 @@ export class VirtualFlowGenerator {
                     executionStep: stateConfig.executionStep,
                     ...( options.componentName && { component: options.componentName } ),
                     ...( stateConfig.previewDefaultVars && { previewDefaultVars: stateConfig.previewDefaultVars } ),
-                    ...( previewEmbedsGroup && { previewEmbedsGroup } )
+                    ...( previewEmbedsGroup && { previewEmbedsGroup } ),
+                    // The elements the state puts on screen, where it has any of its own. A state
+                    // that carries them is somewhere you act from, not only something the bot said.
+                    ...( previewElementsGroup && { previewElementsGroup } ),
+                    // How the bot delivers this state - an ephemeral reply only the presser sees, or
+                    // a message posted into the channel for everyone. A demonstration that always
+                    // says "only you can see this" is wrong about half of them.
+                    ...( stateConfig.navigationType && { navigationType: stateConfig.navigationType } )
                 }
             } );
         }
@@ -137,12 +146,23 @@ export class VirtualFlowGenerator {
 
             for ( const fromState of fromStates ) {
                 transitions.push( {
+                    name: transitionName,
                     from: fromState,
                     to: toState,
                     triggeredBy: VirtualFlowGenerator.generateTriggersForTransition(
                         definition,
                         transitionName
                     ),
+                    // Declared on the transition, so a transition nothing triggers - one the handler
+                    // fires itself once a service has answered - keeps them too.
+                    mutations: transitionConfig.mutations?.map( ( mutation ) => ( {
+                        type: mutation.type,
+                        path: [ ...mutation.path ]
+                    } ) ),
+                    ...( transitionConfig.previewDeletesReply && { previewDeletesReply: true } ),
+                    previewCondition: transitionConfig.previewCondition
+                        ? { ...transitionConfig.previewCondition }
+                        : undefined,
                     options: transitionConfig.requiredData?.length
                         ? { requiredData: transitionConfig.requiredData }
                         : undefined
@@ -201,6 +221,26 @@ export class VirtualFlowGenerator {
                 } );
                 addedElements.add( elementId );
             }
+        }
+
+        // An element the transition names itself, for one whose handling belongs to somebody else.
+        const declared = definition.transitions.get( transitionName )?.triggeredByElement;
+
+        if ( declared && !addedElements.has( declared ) ) {
+            const transition = definition.transitions.get( transitionName );
+            const targetState = transition?.to as string | undefined;
+            const stateConfig = targetState ? definition.states.get( targetState ) : undefined;
+
+            triggers.push( {
+                handlerId: `${ definition.flowName }/Handlers/${ declared }`,
+                sourceEntity: declared,
+                handlerKind: VirtualFlowGenerator.inferHandlerKind( declared ),
+                navigation: targetState
+                    ? { targetState, executionStep: stateConfig?.executionStep }
+                    : undefined,
+                mutations: transition?.mutations
+            } );
+            addedElements.add( declared );
         }
 
         // Then, add triggers from edgeSourceMappings for this flow's internal transitions

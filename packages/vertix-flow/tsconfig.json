@@ -1,0 +1,41 @@
+{
+    // Extends the configuration from "./tsconfig.paths.json"
+    "extends": "./tsconfig.paths.json",
+
+    // Compiler options
+    "compilerOptions": {
+        "incremental": true,
+        "typeRoots": [
+            "../../node_modules/@types",
+            "../vertix-prisma/types"
+        ],
+
+        "types": [
+            "node",
+            "prisma-bot-client.d.ts"
+        ],
+
+        "target": "ESNext",
+
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
+        "module": "ESNext",
+
+        "moduleResolution": "bundler",
+
+        "strict": true,
+
+        "pretty": true,
+
+        "esModuleInterop": true,
+
+        "allowSyntheticDefaultImports": true,
+
+        "downlevelIteration": true,
+
+        "skipLibCheck": true
+    }
+}

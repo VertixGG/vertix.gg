@@ -12,6 +12,8 @@
         "@types/react": "^18.3.31",
         "@types/react-dom": "^18.3.7",
         "@vertix.gg/assets": "workspace:*",
+        "@vertix.gg/base": "workspace:*",
+        "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/discord-ui": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "class-variance-authority": "^0.7.1",

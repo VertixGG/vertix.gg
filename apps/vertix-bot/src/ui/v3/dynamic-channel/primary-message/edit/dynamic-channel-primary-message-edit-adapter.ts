@@ -151,13 +151,36 @@ const DynamicChannelPrimaryMessageEditAdapter = new DynamicWizardAdapterBuilder<
             .addTransition( "Cancel", { from: "Confirm", to: "Confirm" } )
             .addTransition( "Proceed", { from: "Confirm", to: "EditTitle" } )
             // Transitions from EditTitle
+            //
+            // Back, Next and Finish belong to the wizard base, which walks the steps itself, so
+            // they are named here rather than bound - a binding would take their handling too.
+            // Saying which button a step leaves by is the only way the exported flow can know.
             .addTransition( "TitleEdited", { from: "EditTitle", to: "EditTitle", mutations: [ { type: "set", path: [ "title" ] } ] } )
-            .addTransition( "TitleToDescription", { from: "EditTitle", to: "EditDescription" } )
-            .addTransition( "TitleBack", { from: "EditTitle", to: "Confirm" } )
+            .addTransition( "TitleToDescription", {
+                from: "EditTitle",
+                to: "EditDescription",
+                triggeredByElement: "VertixBot/UI-General/WizardNextButton"
+            } )
+            .addTransition( "TitleBack", {
+                from: "EditTitle",
+                to: "Confirm",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             // Transitions from EditDescription
             .addTransition( "DescriptionEdited", { from: "EditDescription", to: "EditDescription", mutations: [ { type: "set", path: [ "description" ] } ] } )
-            .addTransition( "DescriptionBack", { from: "EditDescription", to: "EditTitle" } )
-            .addTransition( "Finish", { from: "EditDescription", to: "Confirm" } )
+            .addTransition( "DescriptionBack", {
+                from: "EditDescription",
+                to: "EditTitle",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
+            .addTransition( "Finish", {
+                from: "EditDescription",
+                to: "Confirm",
+                triggeredByElement: "VertixBot/UI-General/WizardFinishButton",
+                // Finishing deletes the wizard's own ephemeral - see `onAfterFinish` below - so
+                // what is left is the channel, with the panel carrying whatever was changed.
+                previewDeletesReply: true
+            } )
             // Element bindings with handlers
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(
                 "VertixBot/UI-General/NoButton",

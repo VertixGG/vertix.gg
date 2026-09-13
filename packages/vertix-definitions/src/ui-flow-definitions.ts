@@ -4,11 +4,9 @@ import type {
 
 import type { UIFlowBase } from "@vertix.gg/gui/src/bases/ui-flow-base";
 
-export interface UIFlowVisualConnection {
-    triggeringElementId: string;
-    transitionName: string;
-    targetFlowName: string;
-}
+import type { UIFlowVisualConnection } from "@vertix.gg/definitions/src/ui-export-definitions";
+
+export type { UIFlowVisualConnection };
 
 export interface UIFlowInputRequirementOption {
     value: string;

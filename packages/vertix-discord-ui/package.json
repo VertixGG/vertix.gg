@@ -13,13 +13,15 @@
         "react-dom": "^18.2.0"
     },
     "dependencies": {
+        "@radix-ui/react-slot": "^1.2.4",
+        "@vertix.gg/definitions": "workspace:*",
+        "@vertix.gg/flow": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "react-markdown": "^8.0.7",
         "rehype-raw": "^7.0.0",
         "remark-gfm": "^3.0.1",
-        "@radix-ui/react-slot": "^1.2.4",
         "tailwind-merge": "^3.4.0"
     },
     "devDependencies": {

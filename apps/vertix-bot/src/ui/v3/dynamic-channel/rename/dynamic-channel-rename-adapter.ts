@@ -51,15 +51,30 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             .addState( "RateLimited", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelRenameRateLimited",
                 navigationType: "ephemeral",
-                previewDefaultVars: { retryAfter: "300", masterChannelId: "123456789", elapsedTimeFormatFraction: "5.0 minutes" },
+                // `masterChannelMessage` is the embed's own optional tail - the offer of a fresh
+                // channel to go to instead. Its logic picks the empty one when there is no master
+                // channel to point at, and a preview has none, so it is declared empty here rather
+                // than left to print its own name back at the reader.
+                previewDefaultVars: {
+                    retryAfter: "300",
+                    masterChannelId: "123456789",
+                    masterChannelMessage: "",
+                    elapsedTimeFormatFraction: "5.0 minutes"
+                },
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbedGroup"
             } )
             // Transitions
-            .addTransition( "SubmitSuccess", { from: "Default", to: "Success" } )
+            // The preview conditions restate, for anything demonstrating this outside Discord, the
+            // branch the handler below takes on what the rename actually did. Read in declaration
+            // order, first match wins, so the unconditional one comes last. The bot never reads them.
             .addTransition( "SubmitBadword", {
                 from: "Default",
                 to: "Badword",
-                mutations: [ { type: "set", path: [ "badword" ] } ]
+                mutations: [ { type: "set", path: [ "badword" ] } ],
+                // Every server keeps its own list of words it will not have, and the bot checks
+                // against that list. There is no list to check outside the bot, so a demonstration
+                // needs one word it can promise will be refused.
+                previewCondition: { field: "name", operator: "contains", value: "noob" }
             } )
             .addTransition( "SubmitRateLimited", {
                 from: "Default",
@@ -67,8 +82,14 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                 mutations: [
                     { type: "set", path: [ "retryAfter" ] },
                     { type: "set", path: [ "masterChannelId" ] }
-                ]
+                ],
+                // Discord limits a channel to two renames every ten minutes, which is a clock and
+                // not something typed, and not one anything outside the bot can read. A
+                // demonstration counts the attempts instead, so the third one runs into the same
+                // wall a third rename would.
+                previewCondition: { field: "attempt", operator: "equals", value: "3" }
             } )
+            .addTransition( "SubmitSuccess", { from: "Default", to: "Success" } )
             // Handler bindings (combines element-to-transition binding with handler)
             .bindModal<UIDefaultModalChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelRenameModal",

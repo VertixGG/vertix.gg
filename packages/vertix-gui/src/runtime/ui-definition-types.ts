@@ -86,6 +86,27 @@ export interface FlowContextMutationDefinition {
     path: string[];
 }
 
+/**
+ * A rule a preview can evaluate to decide which transition a submission takes.
+ *
+ * The bot decides this by running the handler - a service call against the guild's data, and a
+ * result code. A demonstration has neither, so a transition can declare the shape of that decision
+ * in terms something outside the bot can evaluate against what a person typed. It is what the
+ * branch looks like, not what performs it: the bot ignores this entirely.
+ */
+export interface FlowPreviewConditionDefinition {
+    /** Which submitted value is being judged. */
+    field: string;
+    /** `out-of-range` holds for anything that is not a whole number within `min`..`max`. */
+    operator: "empty" | "not-empty" | "contains" | "equals" | "out-of-range";
+    value?: string;
+    /** Bounds for `out-of-range`, inclusive. */
+    min?: number;
+    max?: number;
+    /** The elements this branch belongs to, where a state has several that lead different ways. */
+    elements?: string[];
+}
+
 export interface FlowNavigationDefinition {
     targetState?: string;
     executionStep?: string;
@@ -190,9 +211,19 @@ export interface FlowStateDefinition {
 }
 
 export interface FlowTransitionDefinition {
+    /**
+     * What the transition is called - `SubmitBadword` and the like.
+     *
+     * Carried in its own field because `from` means two different things depending on which path
+     * emitted the transition, and neither of them reliably leaves the name anywhere.
+     */
+    name?: string;
     from: string;
     to: string;
     triggeredBy?: FlowTriggerDefinition[];
+    /** What the transition writes into the flow context, declared on the transition itself. */
+    mutations?: FlowContextMutationDefinition[];
+    previewCondition?: FlowPreviewConditionDefinition;
     options?: JsonObject;
 }
 

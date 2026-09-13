@@ -82,6 +82,34 @@
                 "hooks": []
             },
             {
+                "key": "VertixBot/UI-General/SetupVoiceRole",
+                "elementsGroup": "VertixBot/UI-General/VoiceRoleElementsGroup",
+                "embedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-General/SetupVerifiedRoles",
+                "elementsGroup": "VertixBot/UI-General/VerifiedRolesElementsGroup",
+                "embedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-General/SetupStaffRoles",
+                "elementsGroup": "VertixBot/UI-General/StaffRolesElementsGroup",
+                "embedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-General/SetupBadwords",
+                "elementsGroup": "VertixBot/UI-General/BadwordsElementsGroup",
+                "embedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
                 "key": "VertixBot/UI-General/SetupClaim",
                 "elementsGroup": "VertixBot/UI-General/SetupClaimElementsGroup",
                 "embedsGroup": "VertixBot/UI-General/SetupClaimEmbedGroup",
@@ -165,6 +193,22 @@
             {
                 "hook": "getReplyArgs",
                 "handler": "VertixBot/UI-General/NoActiveDynamicChannelAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-General/ClaimInChannelOnlyAdapter",
+        "adapterKind": "base",
+        "component": "VertixBot/UI-General/ClaimInChannelOnlyComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Dynamic",
+        "permissions": "0",
+        "executionSteps": [],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-General/ClaimInChannelOnlyAdapter/Hooks/GetReplyArgs"
             }
         ]
     },

@@ -12,9 +12,11 @@ export interface DiscordSelectMenuOption {
 export interface DiscordSelectMenuDropdownProps {
     options: ReadonlyArray<DiscordSelectMenuOption>;
     absolute?: boolean;
+    /** Given a handler, the options can be picked. Without one the list stays a picture. */
+    onSelect?: ( optionIndex: number ) => void;
 }
 
-export function DiscordSelectMenuDropdown( { options, absolute = false }: DiscordSelectMenuDropdownProps ) {
+export function DiscordSelectMenuDropdown( { options, absolute = false, onSelect }: DiscordSelectMenuDropdownProps ) {
     const className = absolute
         ? "discord-select-menu-dropdown discord-select-menu-dropdown-absolute"
         : "discord-select-menu-dropdown";
@@ -25,6 +27,7 @@ export function DiscordSelectMenuDropdown( { options, absolute = false }: Discor
                 <div
                     key={ index }
                     className={ `discord-select-menu-dropdown-item ${ option.selected ? "selected" : "" } ${ option.highlighted ? "highlighted" : "" }` }
+                    onClick={ onSelect ? () => onSelect( index ) : undefined }
                 >
                     <div className="discord-select-menu-dropdown-icon">
                         { option.iconEmoji ? (

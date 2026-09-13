@@ -17,6 +17,22 @@ import type {
 import type { Message, VoiceChannel } from "discord.js";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
+const PRIVACY_STATE_PUBLIC = "public",
+    PRIVACY_STATE_PRIVATE = "private",
+    PRIVACY_STATE_HIDDEN = "hidden";
+
+/**
+ * What each state reads as, for anything drawing this without a channel to ask.
+ *
+ * The same words the embed's own options put on screen - it maps the state onto them, and that
+ * mapping is a function, so a preview cannot be handed it and has to be told the answer instead.
+ */
+const PREVIEW_STATE_VARS = {
+    [ PRIVACY_STATE_PUBLIC ]: { state: "🌐 Public", stateMessage: "Everyone can join your channel." },
+    [ PRIVACY_STATE_PRIVATE ]: { state: "🚫 Private", stateMessage: "Only trusted users can join your channel." },
+    [ PRIVACY_STATE_HIDDEN ]: { state: "🙈 Hidden", stateMessage: "Only trusted users can see and join your channel." }
+};
+
 type DefaultInteraction =
     UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction |
     UIDefaultButtonChannelVoiceInteraction;
@@ -31,45 +47,50 @@ const DynamicChannelPrivacyAdapter = new DynamicExecutionAdapterBuilder<DefaultI
             .setInitialState( "Default" )
             .addState( "Default", {
                 executionStep: "default",
-                previewDefaultVars: { state: "Public", stateMessage: "Everyone can join" },
+                previewDefaultVars: PREVIEW_STATE_VARS.public,
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
             } )
             .addState( "Public", {
                 executionStep: "default",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "Public", stateMessage: "Everyone can join" },
+                previewDefaultVars: PREVIEW_STATE_VARS.public,
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
             } )
             .addState( "Private", {
                 executionStep: "default",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "Private", stateMessage: "Only allowed users can join" },
+                previewDefaultVars: PREVIEW_STATE_VARS.private,
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
             } )
             .addState( "Hidden", {
                 executionStep: "default",
                 navigationType: "editReply",
-                previewDefaultVars: { state: "Hidden", stateMessage: "Channel is hidden from others" },
+                previewDefaultVars: PREVIEW_STATE_VARS.hidden,
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyMenuGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPrivacyEmbedGroup"
             } )
+            // All three leave by the same menu, so what tells them apart is the option picked -
+            // `privacyState`, the value the menu carries. The bot never reads these.
             .addTransition( "SetPublic", {
                 from: [ "Default", "Private", "Hidden" ],
                 to: "Public",
-                mutations: [ { type: "set", path: [ "state" ] } ]
+                mutations: [ { type: "set", path: [ "state" ] } ],
+                previewCondition: { field: "privacyState", operator: "equals", value: PRIVACY_STATE_PUBLIC }
             } )
             .addTransition( "SetPrivate", {
                 from: [ "Default", "Public", "Hidden" ],
                 to: "Private",
-                mutations: [ { type: "set", path: [ "state" ] } ]
+                mutations: [ { type: "set", path: [ "state" ] } ],
+                previewCondition: { field: "privacyState", operator: "equals", value: PRIVACY_STATE_PRIVATE }
             } )
             .addTransition( "SetHidden", {
                 from: [ "Default", "Public", "Private" ],
                 to: "Hidden",
-                mutations: [ { type: "set", path: [ "state" ] } ]
+                mutations: [ { type: "set", path: [ "state" ] } ],
+                previewCondition: { field: "privacyState", operator: "equals", value: PRIVACY_STATE_HIDDEN }
             } )
             // Handler bindings (combines element-to-transition binding with handler)
             .bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceTextChannelInteraction>(

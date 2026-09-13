@@ -1,0 +1,96 @@
+@import "./discord-tokens.css";
+
+/*
+ * The two panes Discord actually shows: the channels down the side, and whatever is happening in
+ * the one you are in beside them. A message shown on its own is a screenshot with the context cut
+ * off - which channel is this, and what did it just do to the list?
+ */
+.discord-app-frame {
+    display: flex;
+    align-items: stretch;
+    background-color: var(--discord-background-gradient-chat);
+    border: 2px solid #21272e;
+    border-radius: 14px;
+    box-shadow: 2px 13px 14px 4px #0000002b;
+    overflow: hidden;
+    font-family: var(--discord-font-primary);
+    color: var(--discord-text-default);
+    width: 100%;
+}
+
+.discord-app-frame-sidebar {
+    /* The channel list is drawn for 300px; squeezing it below that truncates channel names. */
+    flex: 0 0 300px;
+    max-width: 300px;
+    background-color: var(--discord-background-surface-high);
+    padding: 8px 0;
+    overflow: hidden;
+}
+
+.discord-app-frame-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 12px 16px;
+
+    overflow-x: auto;
+}
+
+/*
+ * The frame owns the chrome now, so a chat container inside it drops its own - including the 1.25
+ * blow-up it uses standing alone, which it sets on itself and which therefore has to be unset here
+ * rather than on the pane around it. In here the interface is sharing width with a channel list.
+ */
+.discord-app-frame-main .discord-chat-container {
+    /*
+     * Drawn at the size it gets standing alone. There is room for it beside a 300px sidebar on any
+     * ordinary screen, and stepping it down below is what keeps it from overflowing on the ones
+     * where there is not.
+     */
+    --discord-ui-scale: 1.25;
+
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent;
+    max-width: none;
+    width: 100%;
+    display: block;
+}
+
+/* The list is the sidebar here, not a card sitting in one. */
+.discord-app-frame-sidebar .discord-channel-list {
+    background-color: transparent;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+}
+
+@media (max-width: 1280px) {
+    .discord-app-frame-main .discord-chat-container {
+        --discord-ui-scale: 1.1;
+    }
+}
+
+@media (max-width: 1080px) {
+    .discord-app-frame-main .discord-chat-container {
+        --discord-ui-scale: 1;
+    }
+}
+
+/*
+ * Below this the sidebar is taking width the interface beside it needs more, so the two stack and
+ * the message pane gets the whole of it rather than being squeezed into a scrolling strip.
+ */
+@media (max-width: 1024px) {
+    .discord-app-frame {
+        flex-direction: column;
+    }
+
+    .discord-app-frame-sidebar {
+        flex: 1 1 auto;
+        max-width: 100%;
+    }
+}

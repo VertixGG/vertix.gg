@@ -1,3 +1,5 @@
+import { flowResolveChoices, flowStateShortName } from "@vertix.gg/flow";
+
 import type { UIExportedFlow, UIExportedComponent } from "@vertix.gg/definitions/src/ui-export-definitions";
 
 export interface ButtonModalConnection {
@@ -21,49 +23,18 @@ export interface FlowStateComponent {
     transitions?: string[];
 }
 
+/**
+ * Function findButtonFlowConnections() :: Which button carries you out of this flow, and into what.
+ *
+ * The join itself lives in `@vertix.gg/definitions`, where the website's demonstrations read it
+ * from too - there is one answer to "what can be pressed here" and both surfaces should get it.
+ */
 export function findButtonFlowConnections( flow: UIExportedFlow ): ButtonFlowConnection[] {
-    const connections: ButtonFlowConnection[] = [];
-
-    if ( flow.edgeSourceMappings?.length ) {
-        flow.edgeSourceMappings.forEach( mapping => {
-            connections.push( {
-                buttonName: mapping.triggeringElementId,
-                targetFlowName: mapping.targetFlowName,
-                transition: mapping.transitionName
-            } );
-        } );
-
-        return connections;
-    }
-
-    if ( !flow.handoffPoints?.length ) {
-        return connections;
-    }
-
-    flow.handoffPoints.forEach( handoff => {
-        const handoffTransition = handoff.transition;
-        if ( !handoffTransition ) {
-            return;
-        }
-
-        flow.transitions?.forEach( transition => {
-            if ( transition.from !== handoffTransition ) {
-                return;
-            }
-
-            transition.triggeredBy?.forEach( trigger => {
-                if ( trigger.handlerKind === "button" ) {
-                    connections.push( {
-                        buttonName: trigger.sourceEntity,
-                        targetFlowName: handoff.flowName,
-                        transition: handoffTransition
-                    } );
-                }
-            } );
-        } );
-    } );
-
-    return connections;
+    return flowResolveChoices( flow ).map( ( choice ) => ( {
+        buttonName: choice.elementId,
+        targetFlowName: choice.targetFlow,
+        transition: choice.transition
+    } ) );
 }
 
 export function findButtonModalConnections(
@@ -173,7 +144,7 @@ export function getFlowStateComponents( flow: UIExportedFlow, allComponents: UIE
             return;
         }
 
-        const stateName = state.key.split( "/" ).pop() ?? state.key;
+        const stateName = flowStateShortName( state.key );
 
         stateComponents.push( {
             stateKey: state.key,

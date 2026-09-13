@@ -80,7 +80,10 @@ const DynamicChannelInviteAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             .addState( "Sent", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelInviteSent",
                 navigationType: "editReply",
-                previewDefaultVars: { invitedDisplayName: "User" },
+                // `deliveryDisplay` is one of the embed's own two answers, named by the token it
+                // maps: a preview cannot run the logic that picks between them, but it can say
+                // which was picked and let the embed supply the words.
+                previewDefaultVars: { invitedDisplayName: "User", deliveryDisplay: "{deliveryDelivered}" },
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelInviteSentEmbedGroup"
             } )
             .addState( "NothingChanged", {
@@ -104,9 +107,20 @@ const DynamicChannelInviteAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
             .addTransition( "Sent", {
                 from: "SelectUser",
                 to: "Sent",
-                mutations: [ { type: "set", path: [ "invitedDisplayName" ] } ]
+                mutations: [
+                    { type: "set", path: [ "invitedDisplayName" ] },
+                    // Whether the link reached them, which the invite message reports back.
+                    { type: "set", path: [ "deliveryDisplay" ] }
+                ]
             } )
-            .addTransition( "NothingChanged", { from: "SelectUser", to: "NothingChanged" } )
+            // Somebody who can already get in - or the owner picking themselves - is nothing to do.
+            // The preview condition restates the answer the service gives back; the bot never
+            // reads it.
+            .addTransition( "NothingChanged", {
+                from: "SelectUser",
+                to: "NothingChanged",
+                previewCondition: { field: "alreadyHasAccess", operator: "equals", value: "yes" }
+            } )
             .addTransition( "Error", { from: [ "SelectUser", "SelectChannel" ], to: "Error" } )
             .bindButton<UIDefaultButtonChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelInviteButton",

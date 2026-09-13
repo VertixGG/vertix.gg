@@ -46,7 +46,7 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
 
     public static getNextStates(): Record<string, string> {
         return {
-            "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenRename": "VertixBot/UI-V2/DynamicChannelMetaRenameFlow/States/Initial",
+            "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenRename": "VertixBot/UI-V2/DynamicChannelMetaRenameFlow/States/Default",
             "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenStatus": "VertixBot/UI-V2/DynamicChannelMetaStatusFlow/States/Default",
             "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenLimit": "VertixBot/UI-V2/DynamicChannelMetaLimitFlow/States/Default",
             "VertixBot/UI-V2/DynamicChannelFlow/Transitions/OpenPermissions": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Default",

@@ -146,13 +146,32 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
             } )
             // Transitions - triggered by vote manager based on vote state
             .addTransition( "StartVoting", { from: "StepIn", to: "VoteProcess" } )
-            .addTransition( "UpdateVotes", { from: "VoteProcess", to: "VoteProcess" } )
+            // Both buttons are on this state's own elements group, and both run the same handler
+            // wherever they are pressed - so from here they re-count the votes and leave the
+            // message where it is. The bindings below register that handler once, against the
+            // transition that leaves StepIn; this is the same pairing seen from the other state,
+            // which the exported flow would otherwise lose.
+            .addTransition( "UpdateVotes", {
+                from: "VoteProcess",
+                to: "VoteProcess",
+                triggeredByElement: "VertixBot/UI-V3/ClaimVoteAddButton"
+            } )
             .addTransition( "AnnounceWinner", { from: "VoteProcess", to: "VoteWon" } )
             .addHandoffPoint( {
                 flowName: "VertixBot/UI-V3/ClaimResultFlow",
                 description: "Handoff to ClaimResult flow when vote action produces a result",
                 sourceState: "VertixBot/UI-V3/ClaimVoteFlow/States/StepIn",
+                targetState: "VertixBot/UI-V3/ClaimResultFlow/States/Default",
                 transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/StartVoting"
+            } )
+            // Voting once the election is under way is answered the same way putting yourself
+            // forward is: privately, to whoever pressed, out of the claim result flow.
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-V3/ClaimResultFlow",
+                description: "Handoff to ClaimResult flow when a vote is cast during the vote process",
+                sourceState: "VertixBot/UI-V3/ClaimVoteFlow/States/VoteProcess",
+                targetState: "VertixBot/UI-V3/ClaimResultFlow/States/Default",
+                transition: "VertixBot/UI-V3/ClaimVoteFlow/Transitions/UpdateVotes"
             } )
             .addEdgeSourceMapping( {
                 triggeringElementId: "VertixBot/UI-V3/ClaimVoteStepInButton",
@@ -162,6 +181,16 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
             .addEdgeSourceMapping( {
                 triggeringElementId: "VertixBot/UI-V3/ClaimVoteAddButton",
                 transitionName: "StartVoting",
+                targetFlowName: "VertixBot/UI-V3/ClaimResultFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/ClaimVoteAddButton",
+                transitionName: "UpdateVotes",
+                targetFlowName: "VertixBot/UI-V3/ClaimResultFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-V3/ClaimVoteStepInButton",
+                transitionName: "UpdateVotes",
                 targetFlowName: "VertixBot/UI-V3/ClaimResultFlow"
             } )
             // Handler bindings (combines element-to-transition binding with handler)

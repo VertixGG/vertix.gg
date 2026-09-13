@@ -32,7 +32,10 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
             .addState( "InvalidInput", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelLimitInvalidInput",
                 navigationType: "ephemeral",
-                previewDefaultVars: { minValue: "0", maxValue: "99" },
+                previewDefaultVars: {
+                    minValue: String( DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH ),
+                    maxValue: String( DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH )
+                },
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbedGroup"
             } )
             .addState( "Success", {
@@ -46,13 +49,25 @@ const DynamicChannelLimitAdapter = new DynamicExecutionAdapterBuilder<
                 navigationType: "ephemeral",
                 embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
+            // The preview condition restates, for anything demonstrating this outside Discord, the
+            // fork the handler below makes on what was typed. Read in declaration order, first
+            // match wins, so the unconditional one comes last. The bot never reads it.
+            //
+            // `userLimitValue` is the number as typed - the embed's own name for it. What the embed
+            // prints is `userLimit`, which for a limit of zero is the word "Unlimited" instead.
             .addTransition( "SubmitInvalid", {
                 from: "Default",
                 to: "InvalidInput",
                 mutations: [
                     { type: "set", path: [ "minValue" ] },
                     { type: "set", path: [ "maxValue" ] }
-                ]
+                ],
+                previewCondition: {
+                    field: "userLimitValue",
+                    operator: "out-of-range",
+                    min: DYNAMIC_CHANNEL_META_LIMIT_MIN_INPUT_LENGTH,
+                    max: DYNAMIC_CHANNEL_META_LIMIT_MAX_INPUT_LENGTH
+                }
             } )
             .addTransition( "SubmitSuccess", {
                 from: "Default",

@@ -14,6 +14,7 @@ import type {
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type {
     FlowContextMutationDefinition,
+    FlowPreviewConditionDefinition,
     FlowIntegrationPointDefinition,
     FlowEdgeSourceMappingDefinition
 } from "@vertix.gg/gui/src/runtime/ui-definition-types";
@@ -91,6 +92,16 @@ export interface StateConfig {
      */
     previewEmbedsGroup?: string;
     /**
+     * Which elements group the state puts on screen, where nothing else in the state says so.
+     *
+     * A state naming its groups outright decides them at runtime too, which is wrong for one that
+     * only ever draws what its component already declares as its default - naming them there would
+     * pin a choice the adapter has never made. The pairing is still a fact about the state, and one
+     * a demonstration outside the bot has no other way of learning, so it is declared for preview
+     * alone. Declaring it changes nothing at runtime.
+     */
+    previewElementsGroup?: string;
+    /**
      * If true, this state is hidden from flow visualization.
      * Use for ephemeral error states or intermediate states that don't represent UI.
      */
@@ -102,6 +113,35 @@ export interface TransitionConfig {
     to: string;
     requiredData?: string[];
     mutations?: FlowContextMutationDefinition[];
+    /**
+     * How a preview should decide whether this is the branch taken.
+     *
+     * Only the demonstrations outside the bot read this. At runtime the handler decides, as it
+     * always has, by asking the service what actually happened.
+     */
+    previewCondition?: FlowPreviewConditionDefinition;
+    /**
+     * Which element fires this transition, where nothing else in the flow says so.
+     *
+     * A binding registers a handler as well, which is wrong for an element somebody else already
+     * handles - a wizard's Back, Next and Finish belong to the wizard base, which walks its own
+     * steps. The pairing is still a fact about the bot, and one the exported flow otherwise loses,
+     * so it is declared on the transition it fires. Declaring it changes nothing at runtime.
+     *
+     * It sits here rather than beside the element because the same button means different things
+     * in different places: Back out of the first step leaves the wizard, and out of the second it
+     * goes back one. A transition knows which state it leaves from; an element does not.
+     */
+    triggeredByElement?: string;
+    /**
+     * Whether taking this transition takes the reply the flow was being shown in off the screen.
+     *
+     * A wizard that finishes deletes its own ephemeral, so what is left is the channel as it was,
+     * carrying whatever the wizard changed. The deleting happens in a handler, which nothing
+     * reading the exported flow can see, so the transition says it. Declaring it changes nothing
+     * at runtime.
+     */
+    previewDeletesReply?: boolean;
 }
 
 /**
@@ -263,6 +303,9 @@ export class TransactionBuilder<TContext = unknown> {
         transitionName: string,
         handler: ( context: TContext, interaction: T ) => Promise<void>
     ): this {
+        // The button is what fires the transition, once the modal it opens comes back. Recorded
+        // like every other binding, or the exported flow has a transition nothing appears to reach.
+        this.elementBindings.set( buttonElement, this.fullTransitionName( transitionName ) );
         // Add to modalButtonBindings for visualization
         this.modalButtonBindings.push( {
             buttonElement,

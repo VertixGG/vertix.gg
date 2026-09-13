@@ -2,7 +2,7 @@ import { DiscordMessage } from "./discord-message";
 import { DiscordUIComponentRenderer } from "./discord-ui-component-renderer";
 import { useEmojiManifest } from "./emoji-manifest";
 
-import type { UIElementOverride, UIEmbedOverride, ExpandedSelectMenuConfig } from "./discord-ui-component-renderer";
+import type { UIElementOverride, UIEmbedOverride, ExpandedSelectMenus } from "./discord-ui-component-renderer";
 
 export interface DiscordUIComponentMessageProps {
     author?: string;
@@ -12,6 +12,8 @@ export interface DiscordUIComponentMessageProps {
     componentName: string;
     onElementClick?: ( elementName: string ) => void;
     variables?: Readonly<Record<string, string>>;
+    /** Placeholders the bot declared for a preview, which lose to the embed and to the caller. */
+    defaultVariables?: Readonly<Record<string, string>>;
     elementOverrides?: Readonly<Record<string, UIElementOverride>>;
     embedOverrides?: Readonly<Record<string, UIEmbedOverride>>;
     preferredEmbedsGroup?: string;
@@ -22,7 +24,8 @@ export interface DiscordUIComponentMessageProps {
     interactionUser?: string;
     interactionUserAvatar?: string;
     interactionCommand?: string;
-    expandedSelectMenu?: ExpandedSelectMenuConfig;
+    expandedSelectMenu?: ExpandedSelectMenus;
+    onSelectOption?: ( elementName: string, optionIndex: number ) => void;
 }
 
 export function DiscordUIComponentMessage( {
@@ -33,6 +36,7 @@ export function DiscordUIComponentMessage( {
     componentName,
     onElementClick,
     variables,
+    defaultVariables,
     elementOverrides,
     embedOverrides,
     preferredEmbedsGroup,
@@ -44,6 +48,7 @@ export function DiscordUIComponentMessage( {
     interactionUserAvatar,
     interactionCommand,
     expandedSelectMenu,
+    onSelectOption,
 }: DiscordUIComponentMessageProps ) {
     // The emojis below are resolved through the manifest module, which React cannot see changing.
     useEmojiManifest();
@@ -67,12 +72,14 @@ export function DiscordUIComponentMessage( {
                 componentName={ componentName }
                 onElementClick={ onElementClick }
                 variables={ variables }
+                defaultVariables={ defaultVariables }
                 elementOverrides={ elementOverrides }
                 embedOverrides={ embedOverrides }
                 preferredEmbedsGroup={ preferredEmbedsGroup }
                 preferredElementsGroup={ preferredElementsGroup }
                 hideElements={ hideElements }
                 expandedSelectMenu={ expandedSelectMenu }
+                onSelectOption={ onSelectOption }
             />
         </DiscordMessage>
     );

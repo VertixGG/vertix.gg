@@ -62,7 +62,7 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
             // IMPORTANT: Target flow initial state strings must be accurate!
             //            Assuming SetupFlow and HelpFlow will be created later.
             "VertixBot/Commands/Setup":   "VertixBot/UI-General/SetupFlow/States/Initial",
-            "VertixBot/Commands/Help":    "VertixBot/UI-General/FeedbackFlow/States/Initial",
+            "VertixBot/Commands/Help":    "VertixBot/UI-General/FeedbackFlow/States/Default",
             "VertixBot/Commands/Welcome": "VertixBot/UI-General/WelcomeFlow/States/Initial",
             // "VertixBot/Commands/Ping":    "VertixBot/Misc/PingFlow/States/Initial",       // Example
         };

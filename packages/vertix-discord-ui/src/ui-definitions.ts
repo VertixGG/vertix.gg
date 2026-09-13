@@ -1,3 +1,7 @@
+import type { UIEmbedLogic, UIEmbedLogicSource } from "@vertix.gg/definitions/src/ui-export-definitions";
+
+export type { UIEmbedLogic, UIEmbedLogicSource };
+
 export type JsonPrimitive = string | number | boolean | null;
 
 export type JsonObject = { [ key: string ]: JsonValue };
@@ -67,6 +71,16 @@ export interface UIElementsGroup {
     items: ReadonlyArray<UIElementsRow>;
 }
 
+/**
+ * What an embed says a variable stands for, in the two shapes it writes them.
+ *
+ * A map is a choice, keyed by the token the embed's own logic picks - `{ deliveryDisplay: {
+ * "{deliveryDelivered}": "They have been sent a link to it.", … } }`. A plain string is a variable
+ * with one fixed value, like `changedDisplay: "(__restored__)"`, which the embed then uses wherever
+ * it wants those words. The picking is a function the export cannot carry; the words are right here.
+ */
+export type UIEmbedOptions = Readonly<Record<string, string | Readonly<Record<string, string>>>>;
+
 export interface UIEmbedDefinition {
     instanceType?: UIInstanceType;
     title?: string;
@@ -75,6 +89,32 @@ export interface UIEmbedDefinition {
     image?: string;
     thumbnail?: string;
     footer?: string;
+    options?: UIEmbedOptions;
+    /**
+     * This embed's own working out, written out.
+     *
+     * What it decides about its arguments before printing them - which of its sentences applies,
+     * how many of something there are, how long is left - is a function, and the exporter sends
+     * the function rather than an answer. Running it is how a drawing here says what the bot
+     * would have said instead of guessing at it.
+     */
+    logic?: UIEmbedLogic;
+    /** The names the bot declares for this embed's variables, which its logic is written against. */
+    vars?: Readonly<Record<string, string>>;
+    /** How this embed writes out a variable that is a list rather than a single value. */
+    arrayOptions?: Readonly<Record<string, UIEmbedArrayOption>>;
+}
+
+/** How one list-valued variable is written out - around each entry, and between them. */
+export interface UIEmbedArrayOption {
+    /** What wraps one entry, written against `{value}` and `{separator}`. */
+    format: string;
+    /** What goes between entries. */
+    separator?: string;
+    /** What goes between entries that are made of several pieces each. */
+    multiSeparator?: string;
+    /** How each field of such an entry reads, where an entry is more than a single value. */
+    options?: Readonly<Record<string, string>>;
 }
 
 export interface UIEmbedItem {
@@ -87,12 +127,29 @@ export interface UIEmbedsGroup {
     items: ReadonlyArray<UIEmbedItem>;
 }
 
+/** One field of a modal, as the bot declares it on the input element. */
+export interface UIModalInputDefinition {
+    name: string;
+    label: string;
+    placeholder?: string;
+    style: "short" | "paragraph";
+    minLength?: number;
+    maxLength?: number;
+}
+
+export interface UIModalDefinition {
+    name: string;
+    title: string;
+    inputs: ReadonlyArray<UIModalInputDefinition>;
+}
+
 export interface UIComponent {
     name: string;
     type: UIComponentType;
     instanceType: UIInstanceType;
     elementsGroups: ReadonlyArray<UIElementsGroup>;
     embedsGroups: ReadonlyArray<UIEmbedsGroup>;
+    modalDefinitions: ReadonlyArray<UIModalDefinition>;
     defaultElementsGroup: string | null;
     defaultEmbedsGroup: string | null;
 }
@@ -125,6 +182,21 @@ export async function getUIComponentByName( componentName: string ): Promise<UIC
     for ( const component of components ) {
         if ( component.name === componentName ) {
             return component;
+        }
+    }
+
+    return null;
+}
+
+/** The modal the bot would open, as it declared it - title, fields, labels and bounds and all. */
+export async function getUIModalByName( modalName: string ): Promise<UIModalDefinition | null> {
+    const components = await fetchUIComponents();
+
+    for ( const component of components ) {
+        for ( const modal of component.modalDefinitions ) {
+            if ( modal.name === modalName ) {
+                return modal;
+            }
         }
     }
 
@@ -179,6 +251,7 @@ function parseUIComponent( value: JsonValue ): UIComponent | null {
 
     const elementsGroups = parseElementsGroups( value[ "elementsGroups" ] );
     const embedsGroups = parseEmbedsGroups( value[ "embedsGroups" ] );
+    const modalDefinitions = parseModalDefinitions( value[ "modalDefinitions" ] );
 
     return {
         name,
@@ -186,9 +259,67 @@ function parseUIComponent( value: JsonValue ): UIComponent | null {
         instanceType,
         elementsGroups,
         embedsGroups,
+        modalDefinitions,
         defaultElementsGroup: asNullableString( value[ "defaultElementsGroup" ] ),
         defaultEmbedsGroup: asNullableString( value[ "defaultEmbedsGroup" ] ),
     };
+}
+
+function parseModalDefinitions( value: JsonValue ): ReadonlyArray<UIModalDefinition> {
+    if ( !Array.isArray( value ) ) {
+        return [];
+    }
+
+    const modals: Array<UIModalDefinition> = [];
+
+    for ( const item of value ) {
+        if ( !isObject( item ) ) {
+            continue;
+        }
+
+        const name = asString( item[ "name" ] ),
+            title = asString( item[ "title" ] );
+
+        if ( !name || !title ) {
+            continue;
+        }
+
+        modals.push( { name, title, inputs: parseModalInputs( item[ "inputs" ] ) } );
+    }
+
+    return modals;
+}
+
+function parseModalInputs( value: JsonValue ): ReadonlyArray<UIModalInputDefinition> {
+    if ( !Array.isArray( value ) ) {
+        return [];
+    }
+
+    const inputs: Array<UIModalInputDefinition> = [];
+
+    for ( const item of value ) {
+        if ( !isObject( item ) ) {
+            continue;
+        }
+
+        const name = asString( item[ "name" ] ),
+            label = asString( item[ "label" ] );
+
+        if ( !name || !label ) {
+            continue;
+        }
+
+        inputs.push( {
+            name,
+            label,
+            placeholder: asString( item[ "placeholder" ] ) ?? undefined,
+            style: "paragraph" === asString( item[ "style" ] ) ? "paragraph" : "short",
+            minLength: asNumber( item[ "minLength" ] ) ?? undefined,
+            maxLength: asNumber( item[ "maxLength" ] ) ?? undefined
+        } );
+    }
+
+    return inputs;
 }
 
 function parseElementsGroups( value: JsonValue ): ReadonlyArray<UIElementsGroup> {
@@ -427,14 +558,150 @@ function parseEmbedDefinition( value: JsonObject ): UIEmbedDefinition {
         image: image ?? undefined,
         thumbnail: thumbnail ?? undefined,
         footer: footer ?? undefined,
+        options: parseEmbedOptions( value[ "options" ] ),
+        logic: parseEmbedLogic( value[ "logic" ] ),
+        vars: parseStringRecordOrUndefined( value[ "vars" ] ),
+        arrayOptions: parseEmbedArrayOptions( value[ "arrayOptions" ] ),
     };
 }
 
-function isObject( value: JsonValue ): value is JsonObject {
+/** How this embed writes out each of its list-valued variables, where it says. */
+function parseEmbedArrayOptions(
+    value: JsonValue | undefined
+): Record<string, UIEmbedArrayOption> | undefined {
+    if ( undefined === value || !isObject( value ) ) {
+        return undefined;
+    }
+
+    const parsed: Record<string, UIEmbedArrayOption> = {};
+
+    for ( const [ name, raw ] of Object.entries( value ) ) {
+        if ( !isObject( raw ) ) {
+            continue;
+        }
+
+        const format = asString( raw[ "format" ] );
+
+        if ( !format ) {
+            continue;
+        }
+
+        parsed[ name ] = {
+            format,
+            separator: asString( raw[ "separator" ] ) ?? undefined,
+            multiSeparator: asString( raw[ "multiSeparator" ] ) ?? undefined,
+            options: parseStringRecordOrUndefined( raw[ "options" ] )
+        };
+    }
+
+    return Object.keys( parsed ).length ? parsed : undefined;
+}
+
+/** The working out the exporter sent along with this embed, if it sent any. */
+function parseEmbedLogic( value: JsonValue | undefined ): UIEmbedLogic | undefined {
+    if ( undefined === value || !isObject( value ) || !Array.isArray( value[ "sources" ] ) ) {
+        return undefined;
+    }
+
+    const sources: UIEmbedLogicSource[] = [];
+
+    for ( const item of value[ "sources" ] ) {
+        if ( !isObject( item ) ) {
+            continue;
+        }
+
+        const source = asString( item[ "source" ] );
+
+        if ( !source ) {
+            continue;
+        }
+
+        const binds = item[ "binds" ];
+
+        sources.push( Array.isArray( binds )
+            ? { source, binds: binds.filter( ( bind ): bind is string => "string" === typeof bind ) }
+            : { source } );
+    }
+
+    if ( !sources.length ) {
+        return undefined;
+    }
+
+    const endTime = value[ "endTime" ] ?? null;
+
+    if ( isObject( endTime ) ) {
+        const source = asString( endTime[ "source" ] );
+
+        if ( source ) {
+            return { sources, endTime: { source } };
+        }
+    }
+
+    return { sources };
+}
+
+/** A flat bag of names, where the export carries one. */
+function parseStringRecordOrUndefined( value: JsonValue | undefined ): Record<string, string> | undefined {
+    if ( undefined === value || !isObject( value ) ) {
+        return undefined;
+    }
+
+    const record: Record<string, string> = {};
+
+    for ( const [ name, item ] of Object.entries( value ) ) {
+        const text = asString( item );
+
+        if ( null !== text ) {
+            record[ name ] = text;
+        }
+    }
+
+    return Object.keys( record ).length ? record : undefined;
+}
+
+function parseEmbedOptions( value: JsonValue | undefined ): UIEmbedOptions | undefined {
+    if ( undefined === value || !isObject( value ) ) {
+        return undefined;
+    }
+
+    const options: Record<string, string | Record<string, string>> = {};
+
+    for ( const [ name, choices ] of Object.entries( value ) ) {
+        const fixed = asString( choices );
+
+        if ( null !== fixed ) {
+            options[ name ] = fixed;
+
+            continue;
+        }
+
+        if ( !isObject( choices ) ) {
+            continue;
+        }
+
+        const mapped: Record<string, string> = {};
+
+        for ( const [ token, text ] of Object.entries( choices ) ) {
+            const resolved = asString( text );
+
+            if ( null !== resolved ) {
+                mapped[ token ] = resolved;
+            }
+        }
+
+        if ( Object.keys( mapped ).length ) {
+            options[ name ] = mapped;
+        }
+    }
+
+    return Object.keys( options ).length ? options : undefined;
+}
+
+export function isObject( value: JsonValue ): value is JsonObject {
     return typeof value === "object" && value !== null && !Array.isArray( value );
 }
 
-function asString( value: JsonValue ): string | null {
+export function asString( value: JsonValue ): string | null {
     return typeof value === "string" ? value : null;
 }
 

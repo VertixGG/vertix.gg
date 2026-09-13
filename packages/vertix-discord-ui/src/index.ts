@@ -14,4 +14,8 @@ export * from "./discord-ui-component-message";
 export * from "./discord-channel-list";
 export * from "./discord-channel-display";
 export * from "./discord-channel-wizard";
+export * from "./ui-flows";
+export * from "./discord-flow-simulator";
+export * from "./discord-flow-modal";
+export * from "./discord-app-frame";
 export * from "./ui-definitions";

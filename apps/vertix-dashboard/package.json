@@ -20,6 +20,7 @@
         "@tailwindcss/vite": "^4.3.3",
         "@vertix.gg/definitions": "workspace:*",
         "@vertix.gg/discord-ui": "workspace:*",
+        "@vertix.gg/flow": "workspace:*",
         "@vertix.gg/ui": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "@xyflow/react": "^12.11.6",

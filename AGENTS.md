@@ -26,6 +26,13 @@
 - Renaming a model therefore takes two changes, not one: the code, and a migration that carries the existing rows over. `scripts/migrate-data-model-keys.ts` does the carrying (dry run by default, `--apply` to write).
 - The same goes for any other persisted identifier — a settings key, an IPC action, a cache namespace. They are storage contracts that outlive the code that wrote them.
 
+## UI Entity Names
+- Everything a UI entity's `getName()` returns — a flow, a state, a transition, a button, a modal, an input, an embeds or elements group — is **written out in full at every place it is used**. No local `const` aliasing one, and no building one from a shared prefix with a template literal.
+- The literal is the only thing tying a use site back to the class that declares it. Spelled out, one search for `"VertixBot/UI-V3/DynamicChannelLimitModal"` finds the class, every adapter that binds it and every page that draws it. Behind an alias or a composed path it is invisible to that search, and an entity nobody can find every user of is one nobody can safely rename.
+- Nothing catches a mistake here. These names cross a wire — the bot exports them as JSON and the website and dashboard look them up as strings — so a name that does not match resolves to nothing rather than failing: a guidance entry that never shows, a step whose modal never opens, a transition comparison that is quietly always false.
+- `.cursor/rules/always-use-full-names.mdc` states the narrower half of this (flows, transitions, states). It applies to every `getName()` value.
+- This does not contradict `never-do-hard-coded-stuff`. That rule is about values that encode behaviour — a limit, a timeout, a word list. An entity name is an identifier, and the full spelling is the point of it.
+
 ## UI Copy & Translations
 - Any user-facing string in a UI entity (embed title/description/options, button label, select-menu placeholder) is snapshotted into `apps/vertix-bot/assets/languages/*.json` — **the snapshot wins at runtime**, so editing the code alone changes nothing users see.
 - Changing such a string is three edits, not one: the code, the seven language files, then re-run the export.

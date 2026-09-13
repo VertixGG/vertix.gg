@@ -89,12 +89,11 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 previewDefaultVars: { staffMemberDisplayName: "User" },
                 embedsGroup: "VertixBot/UI-General/StaffMemberEmbedGroup"
             } )
-            // Transitions - State changes
-            .addTransition( "SetPublic", { from: [ "Default", "Private" ], to: "Public" } )
-            .addTransition( "SetPrivate", { from: [ "Default", "Public" ], to: "Private" } )
-            .addTransition( "SetHidden", { from: [ "Default", "Shown" ], to: "Hidden" } )
-            .addTransition( "SetShown", { from: [ "Default", "Hidden" ], to: "Shown" } )
             // Transitions - User access
+            //
+            // Privacy and visibility used to live here, in v2. They have their own adapter now, and
+            // the transitions they left behind pointed at states this flow no longer declares - so
+            // they are gone rather than standing as edges to nowhere.
             .addTransition( "GrantSuccess", {
                 from: "Default",
                 to: "Granted",
@@ -121,12 +120,42 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 mutations: [ { type: "set", path: [ "userKickedDisplayName" ] } ]
             } )
             // Error transitions
+            //
+            // The preview conditions restate, for anything demonstrating this outside Discord, the
+            // answers the handlers below get back from the service. Five menus leave this one state,
+            // so each rule says which of them it belongs to; the others are not asked.
             .addTransition( "Error", { from: "Default", to: "Error" } )
-            .addTransition( "NothingChanged", { from: "Default", to: "NothingChanged" } )
+            .addTransition( "NothingChanged", {
+                from: "Default",
+                to: "NothingChanged",
+                // Taking away what was never given. `inTheList` is asked of the list the menu that
+                // was used manages - trusted for one, blocked for the other - which is the single
+                // "not-in-the-list" the service answers both of them with.
+                previewCondition: {
+                    field: "inTheList",
+                    operator: "equals",
+                    value: "no",
+                    elements: [
+                        "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
+                        "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu"
+                    ]
+                }
+            } )
             .addTransition( "StaffMember", {
                 from: "Default",
                 to: "StaffMember",
-                mutations: [ { type: "set", path: [ "staffMemberDisplayName" ] } ]
+                mutations: [ { type: "set", path: [ "staffMemberDisplayName" ] } ],
+                // Blocking and kicking are the two that refuse to touch a staff member; granting
+                // and denying never ask.
+                previewCondition: {
+                    field: "staff",
+                    operator: "equals",
+                    value: "yes",
+                    elements: [
+                        "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
+                        "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu"
+                    ]
+                }
             } )
             // Handler bindings (combines element-to-transition binding with handler)
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(

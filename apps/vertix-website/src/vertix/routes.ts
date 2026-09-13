@@ -31,6 +31,14 @@ const routes = [
         path: "/features/auto-scaling",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/auto-scaling" ) ),
     },
+    {
+        path: "/join-to-create",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/join-to-create" ) ),
+    },
+    {
+        path: "/voicemaster-alternative",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/voicemaster-alternative" ) ),
+    },
     // ---
     {
         path: "/changelog",
@@ -52,6 +60,10 @@ const routes = [
     {
         path: "/posts/how-to-setup-logs-channel",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix//posts/how-to-setup-logs-channel" ) ),
+    },
+    {
+        path: "/posts/how-to-create-a-voice-channel-in-discord",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/how-to-create-a-voice-channel-in-discord" ) ),
     },
     {
         path: "/posts/channel-name-placeholders",

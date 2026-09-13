@@ -78,6 +78,33 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.9,
     },
     {
+        path: "/join-to-create",
+        sourcePath: "src/vertix/pages/join-to-create.tsx",
+        title: "Join to Create Voice Channels in Discord | VoiceChannels",
+        description:
+            "How Join to Create works: one generator channel makes a room for whoever joins it, "
+            + "hands them the controls, and deletes it once everyone leaves.",
+        priority: 0.9,
+    },
+    {
+        path: "/voicemaster-alternative",
+        sourcePath: "src/vertix/pages/voicemaster-alternative.tsx",
+        title: "A Free VoiceMaster Alternative | VoiceChannels",
+        description:
+            "VoiceChannels compared with VoiceMaster and TempVoice, control by control - what "
+            + "each one advertises, where they differ, and what costs money.",
+        priority: 0.8,
+    },
+    {
+        path: "/posts/how-to-create-a-voice-channel-in-discord",
+        sourcePath: "src/vertix/posts/how-to-create-a-voice-channel-in-discord.tsx",
+        title: "How to Create a Voice Channel in Discord | VoiceChannels",
+        description:
+            "Make a voice channel on desktop and mobile, the permission you need, the settings "
+            + "worth changing - and what to do when permanent channels stop working for you.",
+        priority: 0.8,
+    },
+    {
         path: "/posts/how-to-setup",
         sourcePath: "src/vertix/posts/how-to-setup.tsx",
         title: "How to Set Up Temporary Voice Channels | VoiceChannels",

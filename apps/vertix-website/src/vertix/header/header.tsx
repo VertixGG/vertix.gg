@@ -195,12 +195,16 @@ export default function Header() {
                                 <NavbarItem title="Home" href="/"/>
 
                                 <NavbarDropdown title="Features" items={ [
+                                    { title: "Join to Create", href: "/join-to-create" },
                                     { title: "Dynamic Channels v2", href: "/features/dynamic-channel-v2" },
                                     { title: "Dynamic Channels v3", href: "/features/dynamic-channel-v3" },
                                     { title: "Auto-Scaling Channels", href: "/features/auto-scaling" },
+                                    { divider: true },
+                                    { title: "vs VoiceMaster", href: "/voicemaster-alternative" },
                                 ] }/>
 
                                 <NavbarDropdown title="How to" items={ [
+                                    { title: "Create a Voice Channel", href: "/posts/how-to-create-a-voice-channel-in-discord" },
                                     { title: "Setup", href: "/posts/how-to-setup" },
                                     { title: "Enable Logs", href: "/posts/how-to-setup-logs-channel" },
                                     { title: "Enable Features", href: "/posts/enable-features" },

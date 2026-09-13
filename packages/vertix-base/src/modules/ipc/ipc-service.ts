@@ -3,6 +3,8 @@ import { RedisClient } from "./redis-client";
 
 import { createIPCMessage, createIPCRequest, createIPCResponse } from "./ipc-messages";
 
+import { isIPCAuthConfigured, signIPCEnvelope, verifyIPCEnvelope } from "./ipc-auth";
+
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import type { IPCMessage, IPCRequest, IPCResponse } from "./ipc-messages";
@@ -32,6 +34,17 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
             await RedisClient.$.connect();
 
             this.initializationSucceeded = true;
+
+            // Said once, loudly, at boot: without the secret every message is refused at both
+            // ends, and the symptom on its own looks like Redis being down.
+            if ( ! isIPCAuthConfigured() ) {
+                this.logger.error(
+                    this.initialize,
+                    "'IPC_SHARED_SECRET' is not set - every IPC message will be refused. " +
+                    "Set the same value for vertix-bot, vertix-api and vertix-mcp."
+                );
+            }
+
             this.logger.info( this.initialize, "IPC Service initialized" );
         } catch {
             this.initializationSucceeded = false;
@@ -48,6 +61,9 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
 
     public async publish<T>( channel: TChannel, payload: T ): Promise<void> {
         const message = createIPCMessage( channel, payload );
+
+        message.signature = signIPCEnvelope( message );
+
         const serialized = JSON.stringify( message );
 
         await RedisClient.$.getClient().publish( channel, serialized );
@@ -68,6 +84,14 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
 
                 try {
                     const message = JSON.parse( messageStr ) as IPCMessage<T>;
+
+                    const verified = verifyIPCEnvelope( message );
+
+                    if ( ! verified.valid ) {
+                        this.logger.warn( this.subscribe, `Refused a message on ${ channel } - ${ verified.reason }` );
+
+                        return;
+                    }
 
                     this.logger.log( this.subscribe, `Received message on ${ channel }: ${ message.id }` );
 
@@ -124,6 +148,9 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
         await this.ensureResponseChannelSubscribed( responseChannel );
 
         const request = createIPCRequest( requestChannel, payload );
+
+        request.signature = signIPCEnvelope( request );
+
         const serialized = JSON.stringify( request );
 
         return new Promise<TRes>( ( resolve, reject ) => {
@@ -165,6 +192,14 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
             try {
                 const request = JSON.parse( messageStr ) as IPCRequest<TReq>;
 
+                const verified = verifyIPCEnvelope( request );
+
+                if ( ! verified.valid ) {
+                    this.logger.warn( this.onRequest, `Refused a request on ${ requestChannel } - ${ verified.reason }` );
+
+                    return;
+                }
+
                 this.logger.log( this.onRequest, `Received request ${ request.requestId } on ${ requestChannel }` );
 
                 const requestHandler = this.requestHandlers.get( requestChannel );
@@ -176,6 +211,9 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
                 try {
                     const result = await requestHandler( request );
                     const response = createIPCResponse( responseChannel, request.requestId, result, true );
+
+                    response.signature = signIPCEnvelope( response );
+
                     const serialized = JSON.stringify( response );
 
                     await RedisClient.$.getClient().publish( responseChannel, serialized );
@@ -184,6 +222,9 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
                 } catch( error ) {
                     const errorMessage = error instanceof Error ? error.message : "Unknown error";
                     const response = createIPCResponse( responseChannel, request.requestId, null, false, errorMessage );
+
+                    response.signature = signIPCEnvelope( response );
+
                     const serialized = JSON.stringify( response );
 
                     await RedisClient.$.getClient().publish( responseChannel, serialized );
@@ -214,6 +255,17 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
 
             try {
                 const response = JSON.parse( messageStr ) as IPCResponse<unknown>;
+
+                const verified = verifyIPCEnvelope( response );
+
+                if ( ! verified.valid ) {
+                    this.logger.warn(
+                        this.ensureResponseChannelSubscribed,
+                        `Refused a response on ${ responseChannel } - ${ verified.reason }`
+                    );
+
+                    return;
+                }
 
                 this.logger.log( this.ensureResponseChannelSubscribed, `Received response for ${ response.requestId }` );
 

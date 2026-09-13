@@ -114,52 +114,66 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
 
         this.logger.log( this.handleIPCMessage, `Received IPC message: ${ payload.action }` );
 
-        switch ( payload.action ) {
-            // Scaling-related actions -> ScalingChannelService
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP:
-                await this.services.scalingChannelService.handleCreateScalingSetup( payload.data );
-                break;
+        try {
+            switch ( payload.action ) {
+                // Scaling-related actions -> ScalingChannelService
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_SCALING_SETUP:
+                    await this.services.scalingChannelService.handleCreateScalingSetup( payload.data );
+                    break;
 
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS:
-                await this.services.scalingChannelService.handleUpdateScalingSettings( payload.data );
-                break;
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_SCALING_SETTINGS:
+                    await this.services.scalingChannelService.handleUpdateScalingSettings( payload.data );
+                    break;
 
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.TRIGGER_REINDEX:
-                await this.services.scalingChannelService.handleTriggerReindex( payload.data );
-                break;
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.TRIGGER_REINDEX:
+                    await this.services.scalingChannelService.handleTriggerReindex( payload.data );
+                    break;
 
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.TRIGGER_CLEANUP:
-                await this.services.scalingChannelService.handleTriggerCleanup( payload.data );
-                break;
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.TRIGGER_CLEANUP:
+                    await this.services.scalingChannelService.handleTriggerCleanup( payload.data );
+                    break;
 
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP:
-                await this.services.scalingChannelService.handleDeleteScalingSetup( payload.data );
-                break;
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_SCALING_SETUP:
+                    await this.services.scalingChannelService.handleDeleteScalingSetup( payload.data );
+                    break;
 
-            // Dynamic-related actions -> DynamicChannelService
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP:
-                await this.services.dynamicChannelService.handleCreateDynamicSetup( payload.data );
-                break;
+                // Dynamic-related actions -> DynamicChannelService
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.CREATE_DYNAMIC_SETUP:
+                    await this.services.dynamicChannelService.handleCreateDynamicSetup( payload.data );
+                    break;
 
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS:
-                await this.services.dynamicChannelService.handleUpdateDynamicSettings( payload.data );
-                break;
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS:
+                    await this.services.dynamicChannelService.handleUpdateDynamicSettings( payload.data );
+                    break;
 
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP:
-                await this.services.dynamicChannelService.handleDeleteDynamicSetup( payload.data );
-                break;
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP:
+                    await this.services.dynamicChannelService.handleDeleteDynamicSetup( payload.data );
+                    break;
 
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_GUILD_SETTINGS:
-                await this.services.dynamicChannelService.handleUpdateGuildSettings( payload.data );
-                break;
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_GUILD_SETTINGS:
+                    await this.services.dynamicChannelService.handleUpdateGuildSettings( payload.data );
+                    break;
 
-            // Customization-related actions -> DynamicChannelService
-            case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION:
-                await this.services.dynamicChannelService.handleRefreshCustomization( payload.data );
-                break;
+                // Customization-related actions -> DynamicChannelService
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION:
+                    await this.services.dynamicChannelService.handleRefreshCustomization( payload.data );
+                    break;
 
-            default:
-                this.logger.warn( this.handleIPCMessage, `Unknown action: ${ ( payload as DynamicChannelIPCManagementPayload ).action }` );
+                default:
+                    this.logger.warn( this.handleIPCMessage, `Unknown action: ${ ( payload as DynamicChannelIPCManagementPayload ).action }` );
+            }
+        } catch( error ) {
+            // Nothing travels back over this channel - the publish is fire-and-forget, so the
+            // dashboard reports success whether or not the action happened. This line is the only
+            // record that it was asked for and did not, and the transport's own catch names the
+            // channel alone, which is the same for every action there is.
+            const guildId = ( payload.data as { guildId?: string } | undefined )?.guildId ?? "unknown";
+
+            this.logger.error(
+                this.handleIPCMessage,
+                `Action '${ payload.action }' failed for guild '${ guildId }'`,
+                error
+            );
         }
     }
 

@@ -3,6 +3,12 @@ export interface IPCMessage<TPayload = unknown, TChannel = unknown> {
     timestamp: number;
     channel: TChannel;
     payload: TPayload;
+    /**
+     * Hmac over the rest of the envelope, added as the message goes out and checked as it comes
+     * in. See `ipc-auth`. Optional on the type only because the envelope is built before it is
+     * signed; anything arriving without one is refused.
+     */
+    signature?: string;
 }
 
 export interface IPCRequest<TPayload = unknown, TChannel = unknown> extends IPCMessage<TPayload, TChannel> {

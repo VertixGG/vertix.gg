@@ -53,6 +53,11 @@
 - Squash WIP commits and reference related issues or Discord tickets in the body.
 - PRs must state affected packages, schema/env updates, screenshots for GUI/website work, and the commands you ran (`vertix:jest`, `vertix:eslint`).
 
+## Running Instances
+- Two bots run against the **same database**: `VoiceChannels` is production on the box (`pm2`, `vertix-bot`), and `TestVC` is the maintainer's local checkout. Identical data, different code.
+- So a screenshot from `TestVC` proves nothing about what is deployed, and reading the database proves nothing about which code produced the screenshot. Establish which bot a report came from before diagnosing: a local instance can be behind the box by any number of commits while every row you query looks correct.
+- When behaviour and stored data disagree, check `git log -1` on the box against the commit that introduced the behaviour, and ask which bot was in the screenshot, before going further into the code.
+
 ## Configuration & Security Notes
 - The bot loads secrets via `dotenv`; keep `.env*` files local, exclude tokens or Prisma URLs from commits, and prefer `scripts/backup-bot-prisma.js` for encrypted backups.
 - Test Discord flows in isolated guilds and avoid posting invite links or member IDs in public trackers.

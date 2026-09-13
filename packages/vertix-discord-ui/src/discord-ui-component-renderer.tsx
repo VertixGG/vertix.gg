@@ -4,7 +4,7 @@ import { DiscordButton } from "./discord-button";
 import { DiscordEmbed } from "./discord-embed";
 import { DiscordSelectMenu } from "./discord-select-menu";
 import { DiscordSelectMenuDropdown } from "./discord-select-menu-dropdown";
-import { getDiscordEmojiIconSrc, isDiscordMarkup } from "./discord-emojis";
+import { getDiscordEmojiIconSrc, getDiscordEmojiLabel, isDiscordMarkup } from "./discord-emojis";
 
 import { findUIEmbedDefinition, getUIComponentByName } from "./ui-definitions";
 
@@ -799,8 +799,16 @@ function renderElement(
         const highlighted = override?.highlighted;
 
         const variant = mapButtonStyleToVariant( definition.style );
-        const icon = buildEmojiIcon( override?.emoji ?? definition.emoji, context.emojiIconSrcByUnicode );
-        const emoji = icon ? undefined : ( override?.emoji ?? definition.emoji );
+        const sourceEmoji = override?.emoji ?? definition.emoji;
+        const icon = buildEmojiIcon( sourceEmoji, context.emojiIconSrcByUnicode );
+        const emoji = icon ? undefined : sourceEmoji;
+
+        // A label the definition omits is never exported, so an icon-only button has nothing left
+        // to name itself with - the icon is drawn with an empty `alt` on purpose. Name it after the
+        // emoji the icon stands for, which is what a sighted reader is going by too.
+        const iconLabel = ! resolvedLabel && icon && sourceEmoji
+            ? getDiscordEmojiLabel( sourceEmoji )
+            : undefined;
 
         const onElementClick = context.onElementClick;
 
@@ -808,6 +816,7 @@ function renderElement(
             <DiscordButton
                 key={ item.element }
                 label={ resolvedLabel }
+                aria-label={ iconLabel }
                 emoji={ emoji }
                 icon={ icon }
                 variant={ variant }

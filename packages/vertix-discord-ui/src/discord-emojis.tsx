@@ -74,6 +74,33 @@ export function getDiscordEmojiIconSrc(
     return undefined;
 }
 
+/**
+ * Function getDiscordEmojiLabel() :: Resolves a single emoji to something a screen reader can
+ * usefully read out.
+ *
+ * A printable character is returned as-is - a reader announces it by its unicode name. Markup
+ * only has its name segment worth reading, `<:mic_on:123>` reads as `mic on`; the id and the
+ * syntax around it are noise.
+ */
+export function getDiscordEmojiLabel( emoji: string ): string | undefined {
+    if ( ! isDiscordMarkup( emoji ) ) {
+        return emoji || undefined;
+    }
+
+    const name = emoji.match( /<a?:([^:]+):(\d+)>/ )?.[ 1 ] ?? getEmojiTokenName( emoji );
+
+    if ( ! name ) {
+        return undefined;
+    }
+
+    // Emoji names are written for code, not for reading out - `ChannelRename` has to come apart
+    // into words before a reader makes a phrase of it rather than one run-on token.
+    return name
+        .replace( /[_-]+/g, " " )
+        .replace( /([a-z0-9])([A-Z])/g, "$1 $2" )
+        .trim() || undefined;
+}
+
 export function getDiscordEmojiIcon( emoji: string ): React.ReactNode | null {
     const src = getDiscordEmojiIconSrc( emoji );
 

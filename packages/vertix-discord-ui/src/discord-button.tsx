@@ -2,7 +2,7 @@ import * as React from "react";
 
 import "./styles/discord-button.css";
 
-import { isDiscordMarkup } from "./discord-emojis";
+import { getDiscordEmojiLabel, isDiscordMarkup } from "./discord-emojis";
 
 import { cn } from "@vertix.gg/discord-ui/src/lib/utils";
 
@@ -62,6 +62,16 @@ export const DiscordButton = React.forwardRef<HTMLButtonElement, DiscordButtonPr
     // markup, markdown or an `<emoji name='...'>` token, is dropped instead of printed raw.
     const displayEmoji = emoji && isDiscordMarkup( emoji ) ? undefined : emoji;
 
+    // An emoji-only button still has to name itself, or a reader announces a bare "button".
+    // Anything the caller said wins; otherwise the emoji is the only thing carrying meaning,
+    // and a printable one names the button just by being read instead of hidden.
+    const isNamedByCaller = Boolean( restProps[ "aria-label" ] || restProps[ "aria-labelledby" ] );
+    const needsName = ! hasLabel && ! isNamedByCaller;
+    const isNamedByEmoji = needsName && Boolean( displayEmoji );
+    const emojiLabel = needsName && ! isNamedByEmoji && emoji
+        ? getDiscordEmojiLabel( emoji )
+        : undefined;
+
     return (
         <button
             ref={ ref }
@@ -69,9 +79,10 @@ export const DiscordButton = React.forwardRef<HTMLButtonElement, DiscordButtonPr
             data-variant={ variant }
             data-size={ size }
             { ...restProps }
+            aria-label={ restProps[ "aria-label" ] ?? emojiLabel }
         >
             { displayEmoji && (
-                <span className="discord-button-emoji" aria-hidden="true">
+                <span className="discord-button-emoji" aria-hidden={ isNamedByEmoji ? undefined : "true" }>
                     { displayEmoji }
                 </span>
             ) }

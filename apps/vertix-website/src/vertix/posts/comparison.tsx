@@ -32,8 +32,8 @@ const CONTENDERS: Contender[] = [
         accent: "var(--color-vc-ice-dim)",
         servers: "504K",
         rating: "4.8",
-        price: "Premium",
-        priceNote: "Some commands need a vote",
+        price: "EUR 4",
+        priceNote: "per month, 1 server",
         isUs: false,
     },
     {
@@ -58,20 +58,23 @@ const GATING = [
     {
         name: "VoiceMaster",
         isUs: false,
-        body: "A free tier, then VoiceMaster+ at £3.99 a month for one server, £7.99 for three "
-            + "and £15.99 for ten. Annual and lifetime options per tier.",
+        body: "Their premium page is blunt about it: the free tier gets one generator, and Ghost, "
+            + "Bitrate, Text, Invite, Status, Region, LFM, NSFW, Transfer and Request are listed "
+            + "as premium commands. £3.99 a month for one server.",
     },
     {
         name: "TempVoice",
         isUs: false,
-        body: "Free to use, with a premium tier. In their own reply to a review on top.gg: "
-            + "“The other commands need a vote which is also free.”",
+        body: "EUR 4 a month buys custom interfaces, moderation logging, unlimited creator "
+            + "channels and, in their own words on the pricing page, “No Vote-locked Commands” - "
+            + "so the free tier is the vote-locked one.",
     },
     {
         name: "Astro",
         isUs: false,
-        body: "Ultimate is $3.99 a month for one server. Their pricing page lists "
-            + "“Bypass voting requirements in any server” as a premium feature.",
+        body: "$3.99 a month. Free stops at two generators, one interface, one voice role and "
+            + "three templates, and waiting rooms, per-room text chats and custom interfaces are "
+            + "all Ultimate - as is bypassing the voting requirement.",
     },
 ];
 
@@ -85,38 +88,40 @@ const MATRIX: { capability: string, cells: ( string | null )[] }[] = [
     { capability: "Owner control panel", cells: [ "Buttons", "Interface", "Interface, /voice", "Interface" ] },
     { capability: "Rename the room", cells: [ "Rename", "Name", "name", "Rename" ] },
     { capability: "Cap how many can join", cells: [ "User Limit", "Limit", "limit", "Limit" ] },
-    { capability: "Lock or hide it", cells: [ "Privacy", "Lock, Ghost", "privacy", "Lock, Hide" ] },
+    { capability: "Lock it", cells: [ "Privacy", "Lock", "privacy", "Lock" ] },
+    { capability: "Hide it from the list", cells: [ "Privacy", "Paid", "privacy", "Hide" ] },
     { capability: "Allow or block individuals", cells: [ "Access", "Permit", "trust, block", "Permit, Ban" ] },
     { capability: "Kick somebody out", cells: [ "Access", "reject", "kick", "Ban" ] },
     { capability: "Take over an empty room", cells: [ "Claim", "Claim", "claim", "Claim" ] },
-    { capability: "Hand it to someone else", cells: [ "Transfer", "transfer", "transfer", "Transfer" ] },
-    { capability: "Ask to be let in", cells: [ "Knock", "request", "waiting", "Waiting" ] },
+    { capability: "Hand it to someone else", cells: [ "Transfer", "Paid", "transfer", "Transfer" ] },
+    { capability: "Ask to be let in", cells: [ "Knock", "Paid", "waiting", "Paid" ] },
     { capability: "Enter with a password", cells: [ null, null, "password", null ] },
-    { capability: "Owner changes bitrate", cells: [ null, "Bitrate", "bitrate", "Bitrate" ] },
+    { capability: "Owner changes bitrate", cells: [ null, "Paid", "bitrate", "Bitrate" ] },
     { capability: "Bitrate from the generator", cells: [ "Inherited", null, "Setting", "Setting" ] },
-    { capability: "Voice region", cells: [ "Region", "region", "region", "Region" ] },
-    { capability: "Text chat for the room", cells: [ "Discord's in-voice chat", "Text", "thread", "Private text chats" ] },
-    { capability: "A text channel made for it", cells: [ null, "Text", "thread", "Private text chats" ] },
+    { capability: "Voice region", cells: [ "Region", "Paid", "region", "Region" ] },
+    { capability: "Text chat for the room", cells: [ "In-voice chat", "Paid", "thread", "Paid" ] },
+    { capability: "A text channel made for it", cells: [ null, "Paid", "thread", "Paid" ] },
     { capability: "Panel in voice chat, a text channel, or both", cells: [ "Both", "interface", "Both", "Both" ] },
-    { capability: "Role while in a room", cells: [ "Voice role", "set role", "Voice role", "Voice roles" ] },
-    { capability: "Name placeholders", cells: [ "Placeholders", "Predefined setup", "Placeholders", "Variables" ] },
-    { capability: "Activity in the name", cells: [ "{game}", null, "{ACTIVITY_NAME}", "Ultimate only" ] },
-    { capability: "Activity log", cells: [ "Logs channel", "logs", "Moderation Log", null ] },
-    { capability: "Turn controls off", cells: [ "Per generator", "toggle set", "Toggle Features", "Interface buttons" ] },
-    { capability: "A different button set per role", cells: [ "Yes", null, null, null ] },
+    { capability: "Role while in a room", cells: [ "Voice role", "Paid", "Voice role", "One free" ] },
+    { capability: "Name placeholders", cells: [ "Placeholders", "Paid", "Placeholders", "Variables" ] },
+    { capability: "Activity in the name", cells: [ "{game}", null, "Paid", "Paid" ] },
+    { capability: "Activity log", cells: [ "Logs channel", "logs", "Paid", null ] },
+    { capability: "Turn controls off", cells: [ "Per generator", "Paid", "Toggle Features", "Paid" ] },
+    { capability: "A different button set per role", cells: [ "Yes", "Paid", null, null ] },
     { capability: "Reword the bot, per language", cells: [ "Dashboard", null, null, null ] },
-    { capability: "Generators before paying", cells: [ "2, then $1 each", "Not published", "Not published", "2, then $3.99" ] },
+    { capability: "Generators on the free tier", cells: [ "2", "1", "Capped, not published", "2" ] },
+    { capability: "What it costs to add more", cells: [ "$1 each", "£3.99 a month", "EUR 4 a month", "$3.99 a month" ] },
     { capability: "Every feature on the free tier", cells: [ "Yes", null, null, null ] },
-    { capability: "No vote-gated commands", cells: [ "Yes", "Not published", null, null ] },
+    { capability: "No vote-gated commands", cells: [ "Yes", null, null, null ] },
 ];
 
 const HONEST = [
     {
         name: "Pick VoiceMaster if",
-        body: "you want a choice of generator behaviours out of the box - it ships five setup "
-            + "types, from plain rooms to numbered ones to a pool made before anyone joins - or "
-            + "you want the room owner setting bitrate, or a text channel created per room. It "
-            + "is also on the most servers of the four by some margin.",
+        body: "you will pay, and want the most setup styles for it - five, from plain rooms to "
+            + "numbered ones to a pool made before anyone joins. Most of what is listed above "
+            + "against its name comes with the subscription rather than the bot, but it is on "
+            + "the most servers of the four by some margin.",
     },
     {
         name: "Pick TempVoice if",
@@ -201,10 +206,12 @@ export default function Comparison() {
             <h2 className="text-h5 mb-3">Everything, side by side</h2>
 
             <p className="text-vc-ice-dim mb-6">
-                One row per capability, one column per bot. A cell in{ " " }
-                <span className="text-vc-crimson">red</span> means the feature appears nowhere in
-                that bot&rsquo;s own documentation - which is the closest thing to proof it is not
-                there, since a feature nobody documents is one nobody can find.
+                One row per capability, one column per bot.{ " " }
+                <span className="text-vc-crimson">Unavailable</span> means the feature appears
+                nowhere in that bot&rsquo;s own documentation.{ " " }
+                <span className="text-vc-azure-soft">Paid only</span> means it exists but their
+                own pricing page puts it behind a subscription - which turned out to be the more
+                interesting column by far.
             </p>
 
             <div className="overflow-x-auto mb-4">
@@ -227,7 +234,11 @@ export default function Comparison() {
                                 <td className="py-3 pr-4 text-vc-ice whitespace-nowrap">{ row.capability }</td>
                                 { row.cells.map( ( cell, index ) => (
                                     <td key={ BOT_COLUMNS[ index ] } className="py-3 pr-4 text-vc-ice-dim">
-                                        { cell ?? <span className="text-vc-crimson">Unavailable</span> }
+                                        { null === cell
+                                            ? <span className="text-vc-crimson">Unavailable</span>
+                                            : "Paid" === cell
+                                                ? <span className="text-vc-azure-soft">Paid only</span>
+                                                : cell }
                                     </td>
                                 ) ) }
                             </tr>

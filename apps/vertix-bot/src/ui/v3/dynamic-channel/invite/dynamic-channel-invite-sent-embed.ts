@@ -35,15 +35,33 @@ const DynamicChannelInviteSentEmbed = new EmbedBuilder<UIArgs, typeof DYNAMIC_CH
                 "Their direct messages are closed, so tell them yourself - the access is already theirs."
         }
     } ) )
-    .setLogic( ( args?: UIArgs ) => ( {
-        invitedDisplayName: args?.invitedDisplayName,
-        deliveryDisplay: args?.isInviteDelivered
-            ? DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryDelivered
-            : DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryBlocked
-    } ) )
+    /**
+     * Function setLogic() :: Answers the two questions the description asks, and never leaves one
+     * of them standing as its own token.
+     *
+     * `deliveryDisplay` is decided either way, so it always resolves. The name is read from the
+     * member who was invited and had been passed straight through - which prints the raw
+     * `{invitedDisplayName}` to the channel on any render that arrives without it, since a key
+     * set to undefined is still a key and the default never gets its turn.
+     */
+    .setLogic( ( args?: UIArgs ) => {
+        const result: Record<string, string> = {
+            deliveryDisplay: args?.isInviteDelivered
+                ? DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryDelivered
+                : DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryBlocked
+        };
+
+        if ( args?.invitedDisplayName ) {
+            result.invitedDisplayName = args.invitedDisplayName;
+        }
+
+        return result;
+    } )
     .setDefaultVars( () => ( {
         inviteEmoji: EmojiManager.$.getMarkdown( "InviteChannel" ),
-        invitedDisplayName: "Example User",
+        // Stands in on a render that never learned who was invited, which is a sentence that
+        // still reads rather than a token printed into somebody's channel.
+        invitedDisplayName: "The member",
         deliveryDisplay: DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryDelivered
     } ) )
     .build();

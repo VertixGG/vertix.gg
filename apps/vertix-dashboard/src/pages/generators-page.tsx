@@ -5,11 +5,13 @@ import { Navigate } from "react-router-dom";
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 import { withCommands } from "@zenflux/react-commander/with-commands";
 
-import { Layers, Radio, Loader2, Plus, RefreshCw, ChevronDown, AlertTriangle, X } from "lucide-react";
+import { Layers, Radio, Loader2, Plus, RefreshCw, ChevronDown, AlertTriangle } from "lucide-react";
 
 import { DiscordButton } from "@vertix.gg/discord-ui/src";
 
 import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
+
+import { Toast } from "@vertix.gg/dashboard/src/components/toast";
 
 import {
     GENERATORS_COMMANDS,
@@ -160,39 +162,42 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
         );
     }
 
-    const hasNoChannels =
-        generatorsDetails.scalingMasterChannels.length === 0 &&
-        generatorsDetails.dynamicMasterChannels.length === 0;
-
     /*
-     * How many generators this server may have, and how many it has.
+     * How many setups this server may have, and how many it has.
      *
-     * Only the dynamic ones count. The limit is on generators, and an auto-scaling setup is a pool
-     * of channels rather than one - the bot has never counted it here and neither does this.
+     * Both kinds count, against the one total. A generator and an auto-scaling pool are different
+     * things to run, but each is one setup somebody made and one category standing in the server,
+     * and the limit is on how many of those there are rather than on either kind in particular - so
+     * the last one available can be spent on either, and once it is gone neither is offered.
      *
      * The number comes out of the bot's configuration, carried here by the api rather than written
-     * down again, so moving it there moves it here. Null is the bot not having answered, and is
-     * left as not knowing: the count still shows, and nothing is refused on a limit that could not
-     * be read.
+     * down again, so moving it there moves it here.
+     *
+     * Anything that is not a number is not knowing: the bot did not answer and it arrived null, or
+     * an api that predates it answered without the field at all and it is missing. Both leave the
+     * count standing on its own and refuse nothing - there is no limit here to hold anybody to.
      */
-    const maxMasterChannels = generatorsDetails.settings.maxMasterChannels,
+    const limit = generatorsDetails.settings.maxMasterChannels,
+        maxMasterChannels = "number" === typeof limit ? limit : null,
         dynamicMastersCount = generatorsDetails.dynamicMasterChannels.length,
-        hasReachedDynamicLimit = null !== maxMasterChannels && dynamicMastersCount >= maxMasterChannels;
+        scalingMastersCount = generatorsDetails.scalingMasterChannels.length,
+        masterChannelsCount = dynamicMastersCount + scalingMastersCount,
+        hasReachedMasterLimit = null !== maxMasterChannels && masterChannelsCount >= maxMasterChannels;
 
-    const dynamicLimitReason = hasReachedDynamicLimit
-        ? `This server already has ${ dynamicMastersCount } of ${ maxMasterChannels } generators. ` +
+    const masterLimitReason = hasReachedMasterLimit
+        ? `This server already has ${ masterChannelsCount } of ${ maxMasterChannels } setups. ` +
             "Delete one before creating another."
         : undefined;
 
-    const handleShowDynamicModal = () => {
-        if ( hasReachedDynamicLimit ) {
+    const handleShowLimitedCreateModal = ( type: CreateModalType ) => {
+        if ( hasReachedMasterLimit ) {
             return;
         }
 
-        handleShowCreateModal( "dynamic" );
+        handleShowCreateModal( type );
     };
 
-    if ( hasNoChannels ) {
+    if ( 0 === masterChannelsCount ) {
         return (
             <>
                 <div className="flex-1 flex items-center justify-center p-8">
@@ -207,12 +212,12 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             { /* Reachable here only on a server that was given a limit of none, since
                                  this state is the one with nothing set up at all. Guarded anyway -
-                                 the two entry points offer the same thing and should refuse it for
+                                 every entry point spends from the same total and should refuse for
                                  the same reason. */ }
                             <button
-                                onClick={ handleShowDynamicModal }
-                                disabled={ hasReachedDynamicLimit }
-                                title={ dynamicLimitReason }
+                                onClick={ () => handleShowLimitedCreateModal( "dynamic" ) }
+                                disabled={ hasReachedMasterLimit }
+                                title={ masterLimitReason }
                                 className="text-left bg-surface border border-border hover:border-border-accent
                                     rounded-lg p-5 transition-colors disabled:opacity-50
                                     disabled:hover:border-border disabled:cursor-not-allowed"
@@ -220,21 +225,24 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                                 <Radio className="w-6 h-6 text-success mb-3" />
                                 <h2 className="text-text-primary font-semibold mb-1">Dynamic channels</h2>
                                 <p className="text-sm text-text-muted mb-0">
-                                    { dynamicLimitReason ?? "Members join one generator channel and get a channel " +
+                                    { masterLimitReason ?? "Members join one generator channel and get a channel " +
                                         "of their own, with a control panel to run it." }
                                 </p>
                             </button>
 
                             <button
-                                onClick={ () => handleShowCreateModal( "scaling" ) }
+                                onClick={ () => handleShowLimitedCreateModal( "scaling" ) }
+                                disabled={ hasReachedMasterLimit }
+                                title={ masterLimitReason }
                                 className="text-left bg-surface border border-border hover:border-border-accent
-                                    rounded-lg p-5 transition-colors"
+                                    rounded-lg p-5 transition-colors disabled:opacity-50
+                                    disabled:hover:border-border disabled:cursor-not-allowed"
                             >
                                 <Layers className="w-6 h-6 text-text-accent mb-3" />
                                 <h2 className="text-text-primary font-semibold mb-1">Auto-scaling channels</h2>
                                 <p className="text-sm text-text-muted mb-0">
-                                    A pool of channels that grows and shrinks with demand, so a busy server
-                                    never runs out of room.
+                                    { masterLimitReason ?? "A pool of channels that grows and shrinks with " +
+                                        "demand, so a busy server never runs out of room." }
                                 </p>
                             </button>
                         </div>
@@ -246,11 +254,15 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                 { state.showCreateModal && state.createModalType === "dynamic" && (
                     <CreateDynamicForm isCreating={ state.isCreating } />
                 ) }
+
+                { /* The same corner as on the page with a list in it - a create can be refused from
+                     either, and should be answered the same way from both. */ }
+                { state.error && (
+                    <Toast message={ state.error } onDismiss={ () => clearError.run( {} ) } />
+                ) }
             </>
         );
     }
-
-    const scalingCount = generatorsDetails.scalingMasterChannels.length;
 
     return (
         <>
@@ -258,36 +270,22 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                 <div className="px-6 py-4 border-b border-border">
                     <div>
                         <h1 className="text-2xl font-bold text-text-primary mb-1">Generators</h1>
-                        { /* The dynamic side is counted against its limit and the auto-scaling side
-                             is not, because only one of them has one. An unread limit drops back to
-                             the plain count rather than printing an "of" with nothing after it. */ }
+                        { /* The total leads, since that is what the limit is on, with the two kinds
+                             broken out behind it. An unread limit drops back to the plain total
+                             rather than printing an "of" with nothing after it. */ }
                         <p className="text-sm text-text-muted mb-0">
                             { null === maxMasterChannels
-                                ? `${ dynamicMastersCount } dynamic`
-                                : `${ dynamicMastersCount } of ${ maxMasterChannels } dynamic` }
-                            { 1 === ( maxMasterChannels ?? dynamicMastersCount ) ? " setup" : " setups" }
+                                ? `${ masterChannelsCount }`
+                                : `${ masterChannelsCount } of ${ maxMasterChannels }` }
+                            { 1 === ( maxMasterChannels ?? masterChannelsCount ) ? " setup" : " setups" }
                             { " · " }
-                            { scalingCount } auto-scaling
-                            { 1 === scalingCount ? " setup" : " setups" }
+                            { dynamicMastersCount } dynamic
+                            { " · " }
+                            { scalingMastersCount } auto-scaling
                         </p>
                     </div>
 
                 </div>
-
-                { state.error && (
-                    <div className="mx-6 mt-4 flex items-start gap-3 bg-error/10 border border-error/30
-                        rounded-lg px-4 py-3">
-                        <AlertTriangle className="w-4 h-4 text-error shrink-0 mt-0.5" />
-                        <span className="flex-1 text-sm text-error">{ state.error }</span>
-                        <button
-                            onClick={ () => clearError.run( {} ) }
-                            className="text-error hover:text-text-primary transition-colors"
-                            title="Dismiss"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
-                ) }
 
                 <div className="flex-1 flex overflow-hidden">
                     <div className="w-80 border-r border-border flex flex-col bg-surface/50">
@@ -325,30 +323,38 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                                     // Opens upward, there is nothing below it to open into.
                                     <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface
                                         border border-border rounded-lg shadow-lg z-10 overflow-hidden">
+                                        { /* The count is on the menu rather than on either entry: it
+                                             is one total spent from by both, and somebody about to
+                                             spend the last of it wants to know before they do. */ }
+                                        { null !== maxMasterChannels && (
+                                            <div className="px-3 py-2 border-b border-border flex items-center
+                                                justify-between text-xs text-text-muted">
+                                                <span>Setups used</span>
+                                                <span className="tabular-nums">
+                                                    { masterChannelsCount } / { maxMasterChannels }
+                                                </span>
+                                            </div>
+                                        ) }
                                         <button
-                                            onClick={ handleShowDynamicModal }
-                                            disabled={ hasReachedDynamicLimit }
-                                            title={ dynamicLimitReason }
+                                            onClick={ () => handleShowLimitedCreateModal( "dynamic" ) }
+                                            disabled={ hasReachedMasterLimit }
+                                            title={ masterLimitReason }
                                             className="w-full px-3 py-2 text-left text-sm text-text-primary
                                                 hover:bg-surface-elevated flex items-center gap-2
                                                 disabled:opacity-50 disabled:hover:bg-transparent
                                                 disabled:cursor-not-allowed"
                                         >
                                             <Radio className="w-4 h-4 text-success" />
-                                            <span className="flex-1">Dynamic Channel Setup</span>
-                                            { /* Worth showing whether or not it is reached: somebody
-                                                 about to make their second of two wants to know that
-                                                 before they make it, not after. */ }
-                                            { null !== maxMasterChannels && (
-                                                <span className="text-xs text-text-muted tabular-nums">
-                                                    { dynamicMastersCount } / { maxMasterChannels }
-                                                </span>
-                                            ) }
+                                            Dynamic Channel Setup
                                         </button>
                                         <button
-                                            onClick={ () => handleShowCreateModal( "scaling" ) }
+                                            onClick={ () => handleShowLimitedCreateModal( "scaling" ) }
+                                            disabled={ hasReachedMasterLimit }
+                                            title={ masterLimitReason }
                                             className="w-full px-3 py-2 text-left text-sm text-text-primary
-                                                hover:bg-surface-elevated flex items-center gap-2"
+                                                hover:bg-surface-elevated flex items-center gap-2
+                                                disabled:opacity-50 disabled:hover:bg-transparent
+                                                disabled:cursor-not-allowed"
                                         >
                                             <Layers className="w-4 h-4 text-text-accent" />
                                             Auto-Scaling Setup
@@ -406,6 +412,13 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
             ) }
             { state.showCreateModal && state.createModalType === "dynamic" && (
                 <CreateDynamicForm isCreating={ state.isCreating } />
+            ) }
+
+            { /* Last, so it is over everything including a form that is still up. The page it
+                 belongs to is unchanged underneath - an error here is something that did not
+                 happen, and nothing on screen should move to report it. */ }
+            { state.error && (
+                <Toast message={ state.error } onDismiss={ () => clearError.run( {} ) } />
             ) }
         </>
     );

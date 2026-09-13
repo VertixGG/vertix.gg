@@ -142,10 +142,10 @@ export interface GuildSettings {
     verifiedRoleIds: string[];
     staffRoleIds: string[];
     /**
-     * How many dynamic generators a server may have, out of the bot's own configuration.
+     * How many master channels a server may have, out of the bot's own configuration.
      *
-     * Only the dynamic ones are counted against it - an auto-scaling setup is a pool of channels
-     * rather than a generator, and the bot has never counted it here.
+     * Both kinds count against it together - a generator and an auto-scaling pool are different
+     * things to run, but each is one setup the server is carrying.
      *
      * Null when the api could not reach the bot to ask. Unknown rather than none: the screen shows
      * the count on its own and stops standing in the way, since a limit it had to invent would be

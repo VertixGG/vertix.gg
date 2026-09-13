@@ -37,9 +37,14 @@ export class CreateDynamicSetupCommand extends GeneratorsCommandBase<{ input: Cr
                 createModalType: null
             } );
         } catch( error ) {
+            // The form closes on the way out. What went wrong is said over the page rather than
+            // behind the form that asked for it, and a form left standing over its own refusal
+            // reads as though it is still waiting to be filled in differently.
             return this.setState( {
                 error: error instanceof Error ? error.message : "Failed to create dynamic setup",
-                isCreating: false
+                isCreating: false,
+                showCreateModal: false,
+                createModalType: null
             } );
         }
     }

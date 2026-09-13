@@ -4,15 +4,38 @@ import { RouteBase } from "@vertix.gg/api/src/bases/route-base";
 
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
-import { CREATE_DYNAMIC_SETUP_CODES } from "@vertix.gg/api/src/server/services/management-service";
+import { CREATE_MASTER_SETUP_CODES } from "@vertix.gg/api/src/server/services/management-service";
 
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import type {
+    CreateMasterSetupResult,
     ManagementService,
     UpdateScalingSettingsInput,
     UpdateDynamicSettingsInput,
     UpdateGuildSettingsInput
 } from "@vertix.gg/api/src/server/services/management-service";
+
+/**
+ * Function replyMasterSetupRefusal() :: Answers a create that had no room, and nothing else.
+ *
+ * Returns the reply when it took the request off the handler's hands, and undefined when there was
+ * nothing to refuse. 409 rather than 400 or 403: the request is well formed and the caller is
+ * allowed to make it, there is simply no room left - and a reason in `message` is what the screen
+ * puts in front of somebody instead of a failure with nothing to say.
+ *
+ * Both kinds of setup count towards the one total, so both are refused in the same words.
+ */
+function replyMasterSetupRefusal( result: CreateMasterSetupResult, reply: FastifyReply ) {
+    if ( CREATE_MASTER_SETUP_CODES.LIMIT_REACHED !== result.code ) {
+        return undefined;
+    }
+
+    return reply.status( 409 ).send( {
+        error: "Master channel limit reached",
+        message: `This server already has ${ result.masterChannelsCount } of ${ result.maxMasterChannels } ` +
+            "setups. Delete one before creating another."
+    } );
+}
 
 interface GuildParams {
     guildId: string;
@@ -138,9 +161,15 @@ export class ManagementRoute extends RouteBase {
                 return reply.status( 401 ).send( { error: "User not authenticated" } );
             }
 
-            const success = await service.createScalingSetup( guildId, userOwnerId, { prefix, maxMembers } );
+            const result = await service.createScalingSetup( guildId, userOwnerId, { prefix, maxMembers } );
 
-            if ( !success ) {
+            const refusal = replyMasterSetupRefusal( result, reply );
+
+            if ( refusal ) {
+                return refusal;
+            }
+
+            if ( CREATE_MASTER_SETUP_CODES.STARTED !== result.code ) {
                 return reply.status( 500 ).send( { error: "Failed to create scaling setup" } );
             }
 
@@ -381,17 +410,13 @@ export class ManagementRoute extends RouteBase {
 
             const result = await service.createDynamicSetup( guildId, userOwnerId, { version, nameTemplate, autoSave, mentionable } );
 
-            if ( CREATE_DYNAMIC_SETUP_CODES.LIMIT_REACHED === result.code ) {
-                // The request is well formed and the caller is allowed to make it; there is simply
-                // no room left, which is what 409 says and what lets the screen print the reason.
-                return reply.status( 409 ).send( {
-                    error: "Generator limit reached",
-                    message: `This server already has ${ result.masterChannelsCount } of ${ result.maxMasterChannels } ` +
-                        "generators. Delete one before creating another."
-                } );
+            const refusal = replyMasterSetupRefusal( result, reply );
+
+            if ( refusal ) {
+                return refusal;
             }
 
-            if ( CREATE_DYNAMIC_SETUP_CODES.STARTED !== result.code ) {
+            if ( CREATE_MASTER_SETUP_CODES.STARTED !== result.code ) {
                 return reply.status( 500 ).send( { error: "Failed to create dynamic setup" } );
             }
 

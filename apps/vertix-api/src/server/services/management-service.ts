@@ -86,6 +86,15 @@ const DISCORD_TEXT_CHANNEL_TYPES = [ 0, 5 ];
 /** The bot answers this out of what it already holds, so a round trip is the whole of it. */
 const CONFIG_LIMITS_REQUEST_TIMEOUT_MS = 5000;
 
+/**
+ * What counts as a master channel for the purpose of the limit.
+ *
+ * Both kinds. A generator and an auto-scaling pool are different things to run, but each is one
+ * setup somebody made and one category standing in the server, and the limit is on how many of
+ * those a server may have rather than on either kind in particular.
+ */
+const MASTER_CHANNEL_INTERNAL_TYPES = [ "MASTER_CREATE_CHANNEL", "MASTER_SCALING_CHANNEL" ] as const;
+
 const DYNAMIC_SETTINGS_KEYS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.key );
 const DYNAMIC_SETTINGS_VERSIONS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.version );
 
@@ -307,22 +316,22 @@ export interface GuildTimingsSettings {
 }
 
 /**
- * What became of a request for another generator.
+ * What became of a request for another master channel, of either kind.
  *
  * `STARTED` only says the bot was asked - it makes the channel out of process and reports nothing
- * back, so the dashboard watches for the generator to appear rather than waiting on an answer here.
+ * back, so the dashboard watches for the setup to appear rather than waiting on an answer here.
  */
-export const CREATE_DYNAMIC_SETUP_CODES = {
+export const CREATE_MASTER_SETUP_CODES = {
     STARTED: "started",
     GUILD_NOT_FOUND: "guild-not-found",
     LIMIT_REACHED: "limit-reached"
 } as const;
 
-export type TCreateDynamicSetupCode =
-    typeof CREATE_DYNAMIC_SETUP_CODES[ keyof typeof CREATE_DYNAMIC_SETUP_CODES ];
+export type TCreateMasterSetupCode =
+    typeof CREATE_MASTER_SETUP_CODES[ keyof typeof CREATE_MASTER_SETUP_CODES ];
 
-export interface CreateDynamicSetupResult {
-    code: TCreateDynamicSetupCode;
+export interface CreateMasterSetupResult {
+    code: TCreateMasterSetupCode;
     /** Both present when the limit was the reason, so the refusal can name the numbers. */
     maxMasterChannels?: number;
     masterChannelsCount?: number;
@@ -524,6 +533,41 @@ export class ManagementService extends ServiceWithDependenciesBase<{
 
             return null;
         }
+    }
+
+    /**
+     * Function findMasterChannelLimitRefusal() :: The reason to refuse another setup, if there is one.
+     *
+     * Counts both kinds together against the one limit, so a server's third setup is refused whether
+     * it would have been its third generator or its first auto-scaling pool.
+     *
+     * Null is no reason to refuse - either there is room, or the limit could not be read at all and
+     * there is nothing here to hold anybody to. The bot applies its own either way, so the worst
+     * case is the refusal arriving there instead of here.
+     */
+    private async findMasterChannelLimitRefusal( guildId: string ): Promise<CreateMasterSetupResult | null> {
+        const maxMasterChannels = await this.getMaxMasterChannels();
+
+        if ( null === maxMasterChannels ) {
+            return null;
+        }
+
+        const masterChannelsCount = await getClient().channel.count( {
+            where: {
+                guildId,
+                internalType: { in: [ ...MASTER_CHANNEL_INTERNAL_TYPES ] }
+            }
+        } );
+
+        if ( masterChannelsCount < maxMasterChannels ) {
+            return null;
+        }
+
+        return {
+            code: CREATE_MASTER_SETUP_CODES.LIMIT_REACHED,
+            maxMasterChannels,
+            masterChannelsCount
+        };
     }
 
     /**
@@ -1131,18 +1175,30 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         return true;
     }
 
+    /**
+     * Function createScalingSetup() :: Asks the bot for another pool, unless there is no room.
+     *
+     * Held to the same limit as a generator, and against the same total. One is a pool and the
+     * other a generator, but each is one setup the server is running, and the limit counts setups.
+     */
     public async createScalingSetup(
         guildId: string,
         userOwnerId: string,
         input: CreateScalingSetupInput
-    ): Promise<boolean> {
+    ): Promise<CreateMasterSetupResult> {
         const guild = await getClient().guild.findUnique( {
             where: { guildId },
             select: { id: true }
         } );
 
         if ( !guild ) {
-            return false;
+            return { code: CREATE_MASTER_SETUP_CODES.GUILD_NOT_FOUND };
+        }
+
+        const refusal = await this.findMasterChannelLimitRefusal( guildId );
+
+        if ( refusal ) {
+            return refusal;
         }
 
         await this.publishManagementMessage( {
@@ -1155,7 +1211,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             }
         } );
 
-        return true;
+        return { code: CREATE_MASTER_SETUP_CODES.STARTED };
     }
 
     /**
@@ -1171,32 +1227,20 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         guildId: string,
         userOwnerId: string,
         input: CreateDynamicSetupInput
-    ): Promise<CreateDynamicSetupResult> {
+    ): Promise<CreateMasterSetupResult> {
         const guild = await getClient().guild.findUnique( {
             where: { guildId },
             select: { id: true }
         } );
 
         if ( !guild ) {
-            return { code: CREATE_DYNAMIC_SETUP_CODES.GUILD_NOT_FOUND };
+            return { code: CREATE_MASTER_SETUP_CODES.GUILD_NOT_FOUND };
         }
 
-        const maxMasterChannels = await this.getMaxMasterChannels(),
-            masterChannelsCount = await getClient().channel.count( {
-                where: {
-                    guildId,
-                    internalType: "MASTER_CREATE_CHANNEL"
-                }
-            } );
+        const refusal = await this.findMasterChannelLimitRefusal( guildId );
 
-        // A limit nobody could tell us is not a limit to refuse on. The bot applies its own either
-        // way, so the worst case is the refusal arriving there rather than here.
-        if ( null !== maxMasterChannels && masterChannelsCount >= maxMasterChannels ) {
-            return {
-                code: CREATE_DYNAMIC_SETUP_CODES.LIMIT_REACHED,
-                maxMasterChannels,
-                masterChannelsCount
-            };
+        if ( refusal ) {
+            return refusal;
         }
 
         await this.publishManagementMessage( {
@@ -1211,7 +1255,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             }
         } );
 
-        return { code: CREATE_DYNAMIC_SETUP_CODES.STARTED };
+        return { code: CREATE_MASTER_SETUP_CODES.STARTED };
     }
 }
 

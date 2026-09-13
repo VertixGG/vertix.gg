@@ -217,6 +217,17 @@ export abstract class ModelDataOwnerBase<
         args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         method: Function
     ) {
+        // A `where` holding nothing cannot name an owner, and prisma answers that with a
+        // validation error rather than an empty result - which reaches the member as the
+        // interaction failing outright instead of as the owner being missing. Treated here as the
+        // missing owner it is, because every caller already knows what to do with that.
+        const where = ( args as { where?: Record<string, unknown> } | undefined )?.where;
+
+        if ( ! where || ! Object.values( where ).some( ( value ) => undefined !== value ) ) {
+            this.logger.error( method, `Owner cannot be identified: ${ util.inspect( args ) }` );
+            return null;
+        }
+
         const owner = await this.getModel().findUnique( args );
 
         if ( !owner ) {

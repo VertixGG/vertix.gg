@@ -679,7 +679,19 @@ export abstract class UIAdapterBase<
         await this.build( args, "show-modal", interaction as TInteraction );
 
         const argsId = this.argsManager.getArgsId( interaction as TInteraction );
-        this.argsManager.setInitialArgs( this, argsId, args, { overwrite: true, silent: true } );
+
+        // Laid over what the screen already knows rather than written in its place. These are the
+        // adapter's reply args, worked out fresh from the interaction alone, so they hold what any
+        // screen of this adapter starts with and nothing of what this one has since been told -
+        // the generator that was picked, the step it is on. Writing them flat would hand the modal
+        // a screen that had forgotten which generator it was editing, which is how a modal opened
+        // from a chosen master channel comes back with nothing to write it to.
+        this.argsManager.setInitialArgs(
+            this,
+            argsId,
+            { ... this.argsManager.getArgsById( this, argsId ), ... args },
+            { overwrite: true, silent: true }
+        );
 
         const entityMapped = this.getEntityMap( modalName ),
             modalInstance = this.getEntityInstance( entityMapped.entity ) as UIModalBase,

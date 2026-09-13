@@ -342,17 +342,17 @@ export default function Comparison() {
             <div className="overflow-x-auto xl:overflow-x-visible mb-4">
                 <table className="w-full text-sm table-fixed" style={ { minWidth: "64rem" } }>
                     <colgroup>
-                        <col style={ { width: "40%" } } />
+                        <col style={ { width: "36%" } } />
                         { BOT_COLUMNS.map( ( bot ) => (
-                            <col key={ bot } style={ { width: "15%" } } />
+                            <col key={ bot } style={ { width: "16%" } } />
                         ) ) }
                     </colgroup>
                     <thead>
                         <tr className="text-left">
-                            <th className="vc-table-head-cell py-3 px-4 text-base font-bold">Capability</th>
+                            <th className="vc-table-head-cell py-3 pr-4 pl-[5px] text-base font-bold">Capability</th>
                             { BOT_COLUMNS.map( ( bot, index ) => (
                                 <th key={ bot }
-                                    className={ `vc-table-head-cell py-3 px-4 text-base font-bold whitespace-nowrap ${
+                                    className={ `vc-table-head-cell py-3 pr-4 pl-[5px] text-base font-bold whitespace-nowrap ${
                                         0 === index ? "text-vc-mint" : "text-vc-ice-dim" }` }>
                                     { bot }
                                 </th>
@@ -364,16 +364,16 @@ export default function Comparison() {
                             <Fragment key={ section.group }>
                                 <tr>
                                     <th colSpan={ 1 + BOT_COLUMNS.length }
-                                        className="pt-8 pb-2 px-2 text-left text-fine uppercase tracking-wide text-vc-cyan">
+                                        className="pt-8 pb-2 pr-2 pl-[5px] text-left text-fine uppercase tracking-wide text-vc-cyan">
                                         { section.group }
                                     </th>
                                 </tr>
 
                                 { section.rows.map( ( row ) => (
                                     <tr key={ row.capability } className="border-b border-vc-hairline">
-                                        <td className="py-3 px-2 text-vc-ice whitespace-nowrap">{ row.capability }</td>
+                                        <td className="py-3 pr-2 pl-[5px] text-vc-ice whitespace-nowrap">{ row.capability }</td>
                                         { row.cells.map( ( cell, index ) => (
-                                            <td key={ BOT_COLUMNS[ index ] } className="py-3 px-2 text-vc-starlight">
+                                            <td key={ BOT_COLUMNS[ index ] } className="py-3 pr-2 pl-[5px] text-vc-starlight">
                                                 { renderCell( cell ) }
                                             </td>
                                         ) ) }
@@ -410,17 +410,17 @@ export default function Comparison() {
             <div className="overflow-x-auto xl:overflow-x-visible mb-4">
                 <table className="w-full text-sm table-fixed" style={ { minWidth: "64rem" } }>
                     <colgroup>
-                        <col style={ { width: "40%" } } />
+                        <col style={ { width: "36%" } } />
                         { BOT_COLUMNS.map( ( bot ) => (
-                            <col key={ bot } style={ { width: "15%" } } />
+                            <col key={ bot } style={ { width: "16%" } } />
                         ) ) }
                     </colgroup>
                     <thead>
                         <tr className="text-left">
-                            <th className="vc-table-head-cell py-3 px-4 text-base font-bold">On the dashboard</th>
+                            <th className="vc-table-head-cell py-3 pr-4 pl-[5px] text-base font-bold">On the dashboard</th>
                             { BOT_COLUMNS.map( ( bot, index ) => (
                                 <th key={ bot }
-                                    className={ `vc-table-head-cell py-3 px-4 text-base font-bold whitespace-nowrap ${
+                                    className={ `vc-table-head-cell py-3 pr-4 pl-[5px] text-base font-bold whitespace-nowrap ${
                                         0 === index ? "text-vc-mint" : "text-vc-ice-dim" }` }>
                                     { bot }
                                 </th>
@@ -430,9 +430,9 @@ export default function Comparison() {
                     <tbody>
                         { DASHBOARDS.map( ( row ) => (
                             <tr key={ row.capability } className="border-b border-vc-hairline">
-                                <td className="py-3 px-2 text-vc-ice whitespace-nowrap">{ row.capability }</td>
+                                <td className="py-3 pr-2 pl-[5px] text-vc-ice whitespace-nowrap">{ row.capability }</td>
                                 { row.cells.map( ( cell, index ) => (
-                                    <td key={ BOT_COLUMNS[ index ] } className="py-3 px-2 text-vc-starlight">
+                                    <td key={ BOT_COLUMNS[ index ] } className="py-3 pr-2 pl-[5px] text-vc-starlight">
                                         { renderCell( cell ) }
                                     </td>
                                 ) ) }

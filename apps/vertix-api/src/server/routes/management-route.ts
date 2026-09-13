@@ -4,6 +4,8 @@ import { RouteBase } from "@vertix.gg/api/src/bases/route-base";
 
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
+import { CREATE_DYNAMIC_SETUP_CODES } from "@vertix.gg/api/src/server/services/management-service";
+
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import type {
     ManagementService,
@@ -377,9 +379,19 @@ export class ManagementRoute extends RouteBase {
                 return reply.status( 401 ).send( { error: "User not authenticated" } );
             }
 
-            const success = await service.createDynamicSetup( guildId, userOwnerId, { version, nameTemplate, autoSave, mentionable } );
+            const result = await service.createDynamicSetup( guildId, userOwnerId, { version, nameTemplate, autoSave, mentionable } );
 
-            if ( !success ) {
+            if ( CREATE_DYNAMIC_SETUP_CODES.LIMIT_REACHED === result.code ) {
+                // The request is well formed and the caller is allowed to make it; there is simply
+                // no room left, which is what 409 says and what lets the screen print the reason.
+                return reply.status( 409 ).send( {
+                    error: "Generator limit reached",
+                    message: `This server already has ${ result.masterChannelsCount } of ${ result.maxMasterChannels } ` +
+                        "generators. Delete one before creating another."
+                } );
+            }
+
+            if ( CREATE_DYNAMIC_SETUP_CODES.STARTED !== result.code ) {
                 return reply.status( 500 ).send( { error: "Failed to create dynamic setup" } );
             }
 

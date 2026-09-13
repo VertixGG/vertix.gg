@@ -7,6 +7,10 @@ import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ip
 
 import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+
+import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
+
 import { ChannelType } from "discord.js";
 
 import type { NewsChannel, TextChannel } from "discord.js";
@@ -15,7 +19,8 @@ import type { IPCService, IPCMessage, IPCRequest } from "@vertix.gg/base/src/mod
 
 import type {
     IPCManagementRequestPayload,
-    GetGuildOptionsResponse
+    GetGuildOptionsResponse,
+    GetConfigLimitsResponse
 } from "@vertix.gg/definitions/src/ipc-definitions";
 
 import type { GetScalingChannelInfoResponse } from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
@@ -24,6 +29,8 @@ import type {
     GetDynamicChannelInfoResponse,
     DynamicChannelIPCManagementPayload
 } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
+
+import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
@@ -89,6 +96,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             await this.services.ipcService.onRequest<
                 IPCManagementRequestPayload,
                 GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
+                | GetConfigLimitsResponse
             >(
                 IPC_CHANNELS.MANAGEMENT_REQUEST,
                 IPC_CHANNELS.MANAGEMENT_RESPONSE,
@@ -193,9 +201,28 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         };
     }
 
+    /**
+     * Function getConfigLimits() :: The limits the configuration sets, read out of it.
+     *
+     * Out of the master channel config and nowhere else, which is where the number is written and
+     * what everything else already reads. It belongs to the configuration rather than to a guild,
+     * so it is the same answer for every one of them and nothing is passed in to ask about.
+     */
+    private getConfigLimits(): GetConfigLimitsResponse {
+        const { constants } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+            "Vertix/Config/MasterChannel",
+            VERSION_UI_V3
+        ).data;
+
+        return { maxMasterChannels: constants.masterChannelMaximumFreeChannels };
+    }
+
     private async handleIPCRequest(
         request: IPCRequest<IPCManagementRequestPayload>
-    ): Promise<GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse> {
+    ): Promise<
+        GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
+        | GetConfigLimitsResponse
+    > {
         const { payload } = request;
 
         this.logger.log( this.handleIPCRequest, `Received IPC request: ${ payload.action }` );
@@ -217,6 +244,9 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
 
             case IPC_REQUEST_ACTIONS.GET_GUILD_OPTIONS:
                 return this.getGuildOptions( payload.guildId );
+
+            case IPC_REQUEST_ACTIONS.GET_CONFIG_LIMITS:
+                return this.getConfigLimits();
 
             default:
                 throw new Error( `Unknown request action: ${ ( payload as IPCManagementRequestPayload ).action }` );

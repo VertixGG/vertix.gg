@@ -10,7 +10,8 @@ export const IPC_CHANNELS = {
 export const IPC_REQUEST_ACTIONS = {
     GET_SCALING_CHANNEL_INFO: "get_scaling_channel_info",
     GET_DYNAMIC_CHANNEL_INFO: "get_dynamic_channel_info",
-    GET_GUILD_OPTIONS: "get_guild_options"
+    GET_GUILD_OPTIONS: "get_guild_options",
+    GET_CONFIG_LIMITS: "get_config_limits"
 } as const;
 
 /**
@@ -41,6 +42,22 @@ export interface GetGuildOptionsResponse {
     textChannels: IPCGuildChannel[];
 }
 
+/**
+ * The limits the bot's configuration sets, asked of the bot rather than read a second time.
+ *
+ * They belong to the configuration and not to any guild, so the request names none. Asking is what
+ * keeps the configuration the only place they are written: the api holds no copy of a limit, and no
+ * copy of the key one is filed under, so neither can drift from what is being applied.
+ */
+export interface GetConfigLimitsRequest {
+    action: typeof IPC_REQUEST_ACTIONS.GET_CONFIG_LIMITS;
+}
+
+export interface GetConfigLimitsResponse {
+    /** How many dynamic generators a guild may have. */
+    maxMasterChannels: number;
+}
+
 export interface IPCDiscordChannelInfo {
     id: string;
     name: string;
@@ -58,4 +75,5 @@ export interface IPCDiscordChannelInfo {
 export type IPCManagementRequestPayload =
     | GetScalingChannelInfoRequest
     | GetDynamicChannelInfoRequest
-    | GetGuildOptionsRequest;
+    | GetGuildOptionsRequest
+    | GetConfigLimitsRequest;

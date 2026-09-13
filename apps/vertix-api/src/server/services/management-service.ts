@@ -36,7 +36,9 @@ import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
 import type {
     IPCDiscordChannelInfo,
     GetGuildOptionsRequest,
-    GetGuildOptionsResponse
+    GetGuildOptionsResponse,
+    GetConfigLimitsRequest,
+    GetConfigLimitsResponse
 } from "@vertix.gg/definitions/src/ipc-definitions";
 
 import type { ChannelPrivacyStateDefault } from "@vertix.gg/data/src/interfaces/master-channel-config";
@@ -80,6 +82,9 @@ const DYNAMIC_SETTINGS_BY_VERSION = {
 } as const;
 
 const DISCORD_TEXT_CHANNEL_TYPES = [ 0, 5 ];
+
+/** The bot answers this out of what it already holds, so a round trip is the whole of it. */
+const CONFIG_LIMITS_REQUEST_TIMEOUT_MS = 5000;
 
 const DYNAMIC_SETTINGS_KEYS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.key );
 const DYNAMIC_SETTINGS_VERSIONS = Object.values( DYNAMIC_SETTINGS_BY_VERSION ).map( ( entry ) => entry.version );
@@ -255,6 +260,14 @@ export interface GuildSettings {
     /** Empty means the guild never set its own, so the bot's built in list applies. */
     badwords: string[];
     timings: GuildTimingsSettings;
+    /**
+     * How many generators a guild may have, out of the bot's own configuration.
+     *
+     * Null when the bot could not be reached. Reported as unknown rather than filled in with a
+     * guess: the configuration is the only place this number is written, and a screen that invented
+     * one would be stopping people at a limit nothing is enforcing.
+     */
+    maxMasterChannels: number | null;
 }
 
 /**
@@ -291,6 +304,28 @@ function readTimingsOverrides( object: PrismaBot.Prisma.JsonValue | null ): TGui
 export interface GuildTimingsSettings {
     overrides: TGuildTimingsOverrides;
     defaults: GuildTimingsInterface;
+}
+
+/**
+ * What became of a request for another generator.
+ *
+ * `STARTED` only says the bot was asked - it makes the channel out of process and reports nothing
+ * back, so the dashboard watches for the generator to appear rather than waiting on an answer here.
+ */
+export const CREATE_DYNAMIC_SETUP_CODES = {
+    STARTED: "started",
+    GUILD_NOT_FOUND: "guild-not-found",
+    LIMIT_REACHED: "limit-reached"
+} as const;
+
+export type TCreateDynamicSetupCode =
+    typeof CREATE_DYNAMIC_SETUP_CODES[ keyof typeof CREATE_DYNAMIC_SETUP_CODES ];
+
+export interface CreateDynamicSetupResult {
+    code: TCreateDynamicSetupCode;
+    /** Both present when the limit was the reason, so the refusal can name the numbers. */
+    maxMasterChannels?: number;
+    masterChannelsCount?: number;
 }
 
 export interface UpdateGuildSettingsInput {
@@ -457,7 +492,42 @@ export class ManagementService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function readGuildSettings() :: The guild wide defaults, straight from the rows the bot writes.
+     * Function getMaxMasterChannels() :: How many generators a guild may have, asked of the bot.
+     *
+     * Asked rather than read again. The number is written in the master channel config and nowhere
+     * else, and the bot is the process that holds that config and refuses the next generator by it.
+     * Reading the row from here would be a second copy of the key it is filed under and of how it
+     * is interpreted, free to drift from the one being applied.
+     *
+     * Null when it could not be asked, which the screens report as unknown rather than as none.
+     */
+    private async getMaxMasterChannels(): Promise<number | null> {
+        if ( ! this.services.ipcService.isReady() ) {
+            return null;
+        }
+
+        try {
+            const request: GetConfigLimitsRequest = {
+                action: IPC_REQUEST_ACTIONS.GET_CONFIG_LIMITS
+            };
+
+            const limits = await this.services.ipcService.request<GetConfigLimitsRequest, GetConfigLimitsResponse>(
+                IPC_CHANNELS.MANAGEMENT_REQUEST,
+                IPC_CHANNELS.MANAGEMENT_RESPONSE,
+                request,
+                CONFIG_LIMITS_REQUEST_TIMEOUT_MS
+            );
+
+            return limits.maxMasterChannels;
+        } catch( error ) {
+            this.logger.warn( this.getMaxMasterChannels, "Failed to read the configured generator limit", error );
+
+            return null;
+        }
+    }
+
+    /**
+     * Function readGuildSettings() :: The guild wide defaults, from the rows the bot writes.
      *
      * A row is absent until a guild sets one, and it is deleted again when the list is emptied, so
      * a missing row is the unset state rather than an error.
@@ -492,7 +562,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             timings: {
                 overrides: readTimingsOverrides( timings ),
                 defaults: GuildTimingsConfig.$.getDefaults()
-            }
+            },
+            maxMasterChannels: await this.getMaxMasterChannels()
         };
     }
 
@@ -1087,18 +1158,45 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         return true;
     }
 
+    /**
+     * Function createDynamicSetup() :: Asks the bot for another generator, unless there is no room.
+     *
+     * The limit is checked here as well as in the bot. The bot is the one that enforces it - it is
+     * the process that would make the channel - but it is reached over a message it does not answer,
+     * so a request that is going to be refused would otherwise leave the dashboard waiting on a
+     * generator that was never going to appear. Refusing it in front of that is what lets the screen
+     * say why.
+     */
     public async createDynamicSetup(
         guildId: string,
         userOwnerId: string,
         input: CreateDynamicSetupInput
-    ): Promise<boolean> {
+    ): Promise<CreateDynamicSetupResult> {
         const guild = await getClient().guild.findUnique( {
             where: { guildId },
             select: { id: true }
         } );
 
         if ( !guild ) {
-            return false;
+            return { code: CREATE_DYNAMIC_SETUP_CODES.GUILD_NOT_FOUND };
+        }
+
+        const maxMasterChannels = await this.getMaxMasterChannels(),
+            masterChannelsCount = await getClient().channel.count( {
+                where: {
+                    guildId,
+                    internalType: "MASTER_CREATE_CHANNEL"
+                }
+            } );
+
+        // A limit nobody could tell us is not a limit to refuse on. The bot applies its own either
+        // way, so the worst case is the refusal arriving there rather than here.
+        if ( null !== maxMasterChannels && masterChannelsCount >= maxMasterChannels ) {
+            return {
+                code: CREATE_DYNAMIC_SETUP_CODES.LIMIT_REACHED,
+                maxMasterChannels,
+                masterChannelsCount
+            };
         }
 
         await this.publishManagementMessage( {
@@ -1113,7 +1211,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             }
         } );
 
-        return true;
+        return { code: CREATE_DYNAMIC_SETUP_CODES.STARTED };
     }
 }
 

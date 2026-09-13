@@ -164,6 +164,34 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
         generatorsDetails.scalingMasterChannels.length === 0 &&
         generatorsDetails.dynamicMasterChannels.length === 0;
 
+    /*
+     * How many generators this server may have, and how many it has.
+     *
+     * Only the dynamic ones count. The limit is on generators, and an auto-scaling setup is a pool
+     * of channels rather than one - the bot has never counted it here and neither does this.
+     *
+     * The number comes out of the bot's configuration, carried here by the api rather than written
+     * down again, so moving it there moves it here. Null is the bot not having answered, and is
+     * left as not knowing: the count still shows, and nothing is refused on a limit that could not
+     * be read.
+     */
+    const maxMasterChannels = generatorsDetails.settings.maxMasterChannels,
+        dynamicMastersCount = generatorsDetails.dynamicMasterChannels.length,
+        hasReachedDynamicLimit = null !== maxMasterChannels && dynamicMastersCount >= maxMasterChannels;
+
+    const dynamicLimitReason = hasReachedDynamicLimit
+        ? `This server already has ${ dynamicMastersCount } of ${ maxMasterChannels } generators. ` +
+            "Delete one before creating another."
+        : undefined;
+
+    const handleShowDynamicModal = () => {
+        if ( hasReachedDynamicLimit ) {
+            return;
+        }
+
+        handleShowCreateModal( "dynamic" );
+    };
+
     if ( hasNoChannels ) {
         return (
             <>
@@ -177,16 +205,23 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                         </p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            { /* Reachable here only on a server that was given a limit of none, since
+                                 this state is the one with nothing set up at all. Guarded anyway -
+                                 the two entry points offer the same thing and should refuse it for
+                                 the same reason. */ }
                             <button
-                                onClick={ () => handleShowCreateModal( "dynamic" ) }
+                                onClick={ handleShowDynamicModal }
+                                disabled={ hasReachedDynamicLimit }
+                                title={ dynamicLimitReason }
                                 className="text-left bg-surface border border-border hover:border-border-accent
-                                    rounded-lg p-5 transition-colors"
+                                    rounded-lg p-5 transition-colors disabled:opacity-50
+                                    disabled:hover:border-border disabled:cursor-not-allowed"
                             >
                                 <Radio className="w-6 h-6 text-success mb-3" />
                                 <h2 className="text-text-primary font-semibold mb-1">Dynamic channels</h2>
                                 <p className="text-sm text-text-muted mb-0">
-                                    Members join one generator channel and get a channel of their own, with a
-                                    control panel to run it.
+                                    { dynamicLimitReason ?? "Members join one generator channel and get a channel " +
+                                        "of their own, with a control panel to run it." }
                                 </p>
                             </button>
 
@@ -216,7 +251,6 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
     }
 
     const scalingCount = generatorsDetails.scalingMasterChannels.length;
-    const dynamicCount = generatorsDetails.dynamicMasterChannels.length;
 
     return (
         <>
@@ -224,9 +258,14 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                 <div className="px-6 py-4 border-b border-border">
                     <div>
                         <h1 className="text-2xl font-bold text-text-primary mb-1">Generators</h1>
+                        { /* The dynamic side is counted against its limit and the auto-scaling side
+                             is not, because only one of them has one. An unread limit drops back to
+                             the plain count rather than printing an "of" with nothing after it. */ }
                         <p className="text-sm text-text-muted mb-0">
-                            { dynamicCount } dynamic
-                            { 1 === dynamicCount ? " setup" : " setups" }
+                            { null === maxMasterChannels
+                                ? `${ dynamicMastersCount } dynamic`
+                                : `${ dynamicMastersCount } of ${ maxMasterChannels } dynamic` }
+                            { 1 === ( maxMasterChannels ?? dynamicMastersCount ) ? " setup" : " setups" }
                             { " · " }
                             { scalingCount } auto-scaling
                             { 1 === scalingCount ? " setup" : " setups" }
@@ -287,12 +326,24 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
                                     <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface
                                         border border-border rounded-lg shadow-lg z-10 overflow-hidden">
                                         <button
-                                            onClick={ () => handleShowCreateModal( "dynamic" ) }
+                                            onClick={ handleShowDynamicModal }
+                                            disabled={ hasReachedDynamicLimit }
+                                            title={ dynamicLimitReason }
                                             className="w-full px-3 py-2 text-left text-sm text-text-primary
-                                                hover:bg-surface-elevated flex items-center gap-2"
+                                                hover:bg-surface-elevated flex items-center gap-2
+                                                disabled:opacity-50 disabled:hover:bg-transparent
+                                                disabled:cursor-not-allowed"
                                         >
                                             <Radio className="w-4 h-4 text-success" />
-                                            Dynamic Channel Setup
+                                            <span className="flex-1">Dynamic Channel Setup</span>
+                                            { /* Worth showing whether or not it is reached: somebody
+                                                 about to make their second of two wants to know that
+                                                 before they make it, not after. */ }
+                                            { null !== maxMasterChannels && (
+                                                <span className="text-xs text-text-muted tabular-nums">
+                                                    { dynamicMastersCount } / { maxMasterChannels }
+                                                </span>
+                                            ) }
                                         </button>
                                         <button
                                             onClick={ () => handleShowCreateModal( "scaling" ) }

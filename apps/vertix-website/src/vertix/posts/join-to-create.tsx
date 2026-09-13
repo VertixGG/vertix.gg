@@ -1,167 +1,122 @@
-import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
+import { DiscordChannelList, DiscordCommandSuggestion } from "@vertix.gg/discord-ui";
 
-const HOW_IT_WORKS = [
-    {
-        mark: "1",
-        title: "One channel does the inviting",
-        body: "You keep a single voice channel in your list - the generator. It is the only "
-            + "one that stays there permanently, and nobody ever talks in it.",
-    },
-    {
-        mark: "2",
-        title: "Joining it creates a room",
-        body: "The moment somebody joins the generator, a fresh voice channel is made and they "
-            + "are moved into it. It is named after them, and they own it.",
-    },
-    {
-        mark: "3",
-        title: "Leaving it removes the room",
-        body: "When the last person leaves, the channel is deleted. Nothing is left behind for "
-            + "you to tidy up later.",
-    },
-] as const;
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
 
-const OWNER_GETS = [
-    { title: "Rename", body: "Call the room whatever the session is about." },
-    { title: "User limit", body: "Cap how many people can join." },
-    { title: "Privacy", body: "Public, private, or hidden from the channel list entirely." },
-    { title: "Access", body: "Allow or block individual members." },
-    { title: "Invite", body: "Send someone straight into the channel." },
-    { title: "Region", body: "Pick the voice server the channel runs on." },
-] as const;
+import DiscordDynamicChannelV3 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v3";
 
-const QUESTIONS = [
-    {
-        question: "Is Join to Create the same as a temporary voice channel?",
-        answer: "They are two halves of the same thing. \"Join to Create\" describes how the "
-            + "channel is made - somebody joins a generator and a room appears. \"Temporary\" "
-            + "describes how it ends - the room deletes itself once it empties out.",
-    },
-    {
-        question: "Do I need a separate generator for each kind of room?",
-        answer: "Only if you want different defaults. One generator is enough for most servers. "
-            + "Adding a second lets you give it its own name template, user limit and log "
-            + "channel, so a \"Duos\" generator can behave differently from a \"Full stack\" one.",
-    },
-    {
-        question: "What happens when the owner leaves but other people are still in the room?",
-        answer: "The channel stays, and anyone left inside can claim it. The claim button hands "
-            + "ownership to whoever presses it, so the room keeps its controls instead of "
-            + "becoming unmanageable.",
-    },
-    {
-        question: "Can members rename channels into something I do not want?",
-        answer: "Each control can be switched off per server. If renaming is not something you "
-            + "want members doing, turn it off and the button stops appearing for everybody.",
-    },
-] as const;
+import type { DiscordChannelListItem } from "@vertix.gg/discord-ui";
 
-const goToInvite = () => {
-    window.location.href = "/invite-vertix";
-};
+const GENERATOR_ONLY: DiscordChannelListItem[] = [
+    { id: "gen", name: "➕ New Channel" },
+];
+
+const AFTER_JOINING: DiscordChannelListItem[] = [
+    { id: "gen", name: "➕ New Channel" },
+    {
+        id: "leo",
+        name: "🟢 Leo's Channel",
+        active: true,
+        userCount: 2,
+        maxUsers: 5,
+        users: [
+            { id: "1", username: "Leo", avatar: "https://cdn.discordapp.com/embed/avatars/0.png" },
+            { id: "2", username: "Jordan", avatar: "https://cdn.discordapp.com/embed/avatars/1.png" },
+        ],
+    },
+    {
+        id: "sam",
+        name: "🔴 Sam's Channel",
+        locked: true,
+        userCount: 1,
+        maxUsers: 2,
+        users: [
+            { id: "3", username: "Sam", avatar: "https://cdn.discordapp.com/embed/avatars/2.png" },
+        ],
+    },
+];
 
 export default function JoinToCreate() {
     return (
         <div className="vc-container vc-page-panel">
-            <h1 className="text-center mb-6">Join to Create voice channels in Discord</h1>
+            <h1 className="text-h4">Join to Create voice channels in Discord</h1>
 
-            <section className="mb-12">
-                <p className="text-h5 text-vc-ice-dim text-center">
-                    One voice channel that makes a new one for whoever joins it, hands them the
-                    controls, and deletes the room once they are done. No moderator in the loop,
-                    and no abandoned channels piling up in your server.
-                </p>
-            </section>
+            <p className="text-vc-ice-dim mt-4">
+                One channel hands out the rest. Somebody joins it, gets a room of their own, and
+                the room disappears when they leave.
+            </p>
 
-            <section className="mb-12">
-                <h2 className="mb-4">How Join to Create works</h2>
+            <h2 className="text-h5 mt-10 mb-3">You keep one channel</h2>
 
-                <div className="grid gap-4 md:grid-cols-3">
-                    { HOW_IT_WORKS.map( ( step ) => (
-                        <div key={ step.mark }
-                            className="p-4 bg-vc-space rounded border border-vc-hairline-bright h-full">
-                            <h3 className="text-h5 text-vc-cyan mb-2">{ step.mark }. { step.title }</h3>
-                            <p className="text-vc-ice-dim mb-0 text-sm">{ step.body }</p>
-                        </div>
-                    ) ) }
-                </div>
-            </section>
+            <p className="text-vc-ice-dim mb-6">
+                Call it whatever you like. Nobody talks in it - joining is the whole point.
+            </p>
 
-            <section className="mb-12">
-                <h2 className="mb-4">What the person who made the room can do</h2>
+            <DiscordChannelList
+                title="Voice Channels"
+                channels={ GENERATOR_ONLY }
+            />
 
-                <p className="text-vc-ice-dim mb-6">
-                    Whoever creates a channel owns it, and gets a control panel inside the channel
-                    itself. They do not need a role, and they do not need you.
-                </p>
+            <h2 className="text-h5 mt-12 mb-3">Joining it makes a room</h2>
 
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    { OWNER_GETS.map( ( item ) => (
-                        <div key={ item.title }
-                            className="p-4 bg-vc-space rounded border border-vc-hairline-bright h-full">
-                            <h3 className="text-h6 text-vc-mint mb-1">{ item.title }</h3>
-                            <p className="text-vc-ice-dim mb-0 text-sm">{ item.body }</p>
-                        </div>
-                    ) ) }
-                </div>
+            <p className="text-vc-ice-dim mb-6">
+                Leo joined and was moved straight into a channel named after him. Sam did the same
+                and locked hers. Neither asked a moderator, and the generator is still sitting
+                there waiting for the next person.
+            </p>
 
-                <p className="text-vc-ice-dim mt-6 mb-0 text-sm">
-                    The full panel is on the{ " " }
-                    <a href="/features/dynamic-channel-v3">Dynamic Channel V3</a> page, and every
-                    button can be{ " " }
-                    <a href="/posts/enable-features">switched off per server</a>.
-                </p>
-            </section>
+            <DiscordChannelList
+                title="Voice Channels"
+                channels={ AFTER_JOINING }
+            />
 
-            <section className="mb-12">
-                <h2 className="mb-4">Setting it up</h2>
+            <p className="text-vc-ice-dim mt-6">
+                When the last person leaves a room, it is deleted. The list only ever shows
+                channels somebody is actually in.
+            </p>
 
-                <p className="text-vc-ice-dim">
-                    Add the bot, run <code>/setup</code>, and pick the channel that should act as
-                    the generator. That is the whole thing - the step-by-step version, with
-                    screenshots, is in the{ " " }
-                    <a href="/posts/how-to-setup">setup guide</a>.
-                </p>
+            <h2 className="text-h5 mt-12 mb-3">Whoever made it, controls it</h2>
 
-                <p className="text-vc-ice-dim mb-0">
-                    Two things are worth doing afterwards: give the generated channels a name
-                    template using{ " " }
-                    <a href="/posts/channel-name-placeholders">name placeholders</a>, and, if your
-                    server gets busy enough that people wait for a room,{ " " }
-                    <a href="/features/auto-scaling">turn on auto-scaling</a> so channels exist
-                    before anyone asks for them.
-                </p>
-            </section>
+            <p className="text-vc-ice-dim mb-6">
+                The owner gets this panel inside their own channel. No role, no commands.
+            </p>
 
-            <section className="mb-12">
-                <h2 className="mb-4">Common questions</h2>
+            <div className="vc-landing-chat mb-6 hidden justify-center lg:flex">
+                <DiscordDynamicChannelV3/>
+            </div>
 
-                { QUESTIONS.map( ( item ) => (
-                    <div key={ item.question } className="mb-6">
-                        <h3 className="text-h5 mb-2">{ item.question }</h3>
-                        <p className="text-vc-ice-dim mb-0">{ item.answer }</p>
-                    </div>
-                ) ) }
-            </section>
+            <p className="text-vc-ice-dim">
+                Rename it, cap how many can join, allow or block individual members, switch it
+                between public, private and hidden, move it to another voice region, or hand it to
+                somebody else. Every button can be{ " " }
+                <a href="/posts/enable-features">switched off per server</a> if you would rather
+                members did not have it.
+            </p>
 
-            <section className="mb-4">
-                <div className="p-6 bg-vc-space rounded border border-vc-hairline-bright text-center">
-                    <h2 className="mb-3">Try it on your server</h2>
-                    <p className="text-vc-ice-dim mb-6">
-                        Free to add, and set up with one command.
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-3">
-                        <button onClick={ goToInvite }
-                            className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
-                            Add to Discord
-                        </button>
-                        <button onClick={ () => window.open( DASHBOARD_URL ) }
-                            className="vc-btn vc-btn-lg">
-                            Open Dashboard
-                        </button>
-                    </div>
-                </div>
-            </section>
+            <h2 className="text-h5 mt-12 mb-3">Setting it up</h2>
+
+            <p className="text-vc-ice-dim mb-6">
+                Add the bot and run <code>/setup</code>. Pick the channel that should do the
+                handing out, and that is it.
+            </p>
+
+            <DiscordCommandSuggestion
+                searchTerm="/setup"
+                items={ [ {
+                    command: "/setup",
+                    description: "Displaying VoiceChannels setup wizard in ephemeral mode.",
+                    botName: "VoiceChannels",
+                    botAvatar: VertixAvatar,
+                } ] }
+            />
+
+            <p className="text-vc-ice-dim mt-6 mb-0">
+                The step-by-step version is in the{ " " }
+                <a href="/posts/how-to-setup">setup guide</a>. Afterwards, name the generated
+                channels with{ " " }
+                <a href="/posts/channel-name-placeholders">placeholders</a>, and if people start
+                waiting for a free room, turn on{ " " }
+                <a href="/features/auto-scaling">auto-scaling</a>.
+            </p>
         </div>
     );
 }

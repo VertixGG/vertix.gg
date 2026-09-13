@@ -91,8 +91,8 @@ export const ROUTE_META: readonly RouteMeta[] = [
         sourcePath: "src/vertix/posts/comparison.tsx",
         title: "Discord Temporary Voice Channel Bots Compared | VoiceChannels",
         description:
-            "VoiceChannels against VoiceMaster, TempVoice, Astro and ChannelBot - server counts, "
-            + "ratings, what each one charges for, and where their free tiers stop.",
+            "VoiceChannels against VoiceMaster, TempVoice and Astro, control by control - "
+            + "server counts, ratings, what each one charges for, and what needs a vote.",
         priority: 0.8,
     },
     {

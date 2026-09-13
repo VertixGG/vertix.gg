@@ -1,3 +1,17 @@
+import { DiscordAppFrame, DiscordCommandSuggestion, DiscordMessage, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
+
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
+
+import { DynamicChannelV3Sidebar } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-sidebar";
+import { useOpenDynamicChannelV3Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+
+import {
+    DEMO_CHANNEL_NAME,
+    DEMO_MEMBERS,
+    DEMO_OWNER,
+    DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES
+} from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
+
 const DESKTOP_STEPS = [
     "Find the category you want the channel to sit under in the left-hand channel list.",
     "Hover it and press the + that appears, or right-click the category and choose Create Channel.",
@@ -30,11 +44,30 @@ const AFTERWARDS = [
     },
 ] as const;
 
+const CHANNEL_CHATTER = [
+    {
+        id: "1",
+        author: "Alex",
+        avatar: DEMO_MEMBERS.alex.avatar,
+        time: "Today at 10:53 AM",
+        text: "did you have to ask a mod to make this?",
+    },
+    {
+        id: "2",
+        author: DEMO_OWNER,
+        avatar: DEMO_MEMBERS.owner.avatar,
+        time: "Today at 10:54 AM",
+        text: "nope, it made itself when I joined the one above",
+    },
+] as const;
+
 const goToInvite = () => {
     window.location.href = "/invite-vertix";
 };
 
 export default function HowToCreateAVoiceChannelInDiscord() {
+    const openFeature = useOpenDynamicChannelV3Feature();
+
     return (
         <div className="vc-container vc-page-panel">
             <h1 className="text-h4">How to create a voice channel in Discord</h1>
@@ -87,25 +120,86 @@ export default function HowToCreateAVoiceChannelInDiscord() {
 
             <h2 className="text-h5 mt-12 mb-3">Channels that create and delete themselves</h2>
 
-            <p className="text-vc-ice-dim">
-                The alternative is to make one channel whose whole job is to hand out others.
-                Somebody joins it, a room is created for them, and it is deleted the moment the
-                last person leaves. The channel list only ever shows rooms that people are
-                actually sitting in, and nobody has to ask a moderator to make one.
+            <p className="text-vc-ice-dim mb-6">
+                Here is the same server with a bot doing it instead. One generator sits in the list
+                permanently - <code>＋ New Channel</code> - and joining it made the room below it.
+                The person it was made for owns it, and the panel is theirs. Press a button to see
+                what it does.
             </p>
 
+            <div className="vc-landing-chat mb-6">
+                <DiscordAppFrame
+                    channelName={ DEMO_CHANNEL_NAME }
+                    sidebar={
+                        <DynamicChannelV3Sidebar
+                            channel={ {
+                                name: DEMO_CHANNEL_NAME,
+                                active: true,
+                                userCount: 2,
+                                maxUsers: 5,
+                                timer: "12:41",
+                                users: [ DEMO_MEMBERS.owner, DEMO_MEMBERS.alex ]
+                            } }
+                        />
+                    }
+                >
+                    <div className="discord-chat-container m-0">
+                        <DiscordUIComponentMessage
+                            author="VoiceChannels"
+                            avatar={ VertixAvatar }
+                            timestamp="Today at 10:52 AM"
+                            mentionUsername={ DEMO_OWNER }
+                            componentName="VertixBot/UI-V3/DynamicChannel"
+                            variables={ DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES }
+                            onElementClick={ openFeature }
+                        />
+
+                        { CHANNEL_CHATTER.map( ( message ) => (
+                            <DiscordMessage
+                                key={ message.id }
+                                author={ message.author }
+                                avatar={ message.avatar }
+                                timestamp={ message.time }
+                                app={ false }
+                            >
+                                { message.text }
+                            </DiscordMessage>
+                        ) ) }
+                    </div>
+                </DiscordAppFrame>
+            </div>
+
             <p className="text-vc-ice-dim">
-                The person who created the room gets the settings above - name, user limit, region,
-                who can join - as buttons inside the channel, without needing Manage Channels on
-                your server. That is what this bot does - the{ " " }
-                <a href="/posts/how-to-setup">setup guide</a> walks through it if you want to
-                try it.
+                Nobody needed Manage Channels for that, and when the last person leaves the room is
+                deleted. The list only ever shows channels somebody is actually in.
+            </p>
+
+            <h2 className="text-h5 mt-12 mb-3">Setting it up</h2>
+
+            <p className="text-vc-ice-dim mb-6">
+                Add the bot and run <code>/setup</code>. Pick the channel that should do the handing
+                out, and that is it.
+            </p>
+
+            <DiscordCommandSuggestion
+                searchTerm="/setup"
+                items={ [ {
+                    command: "/setup",
+                    description: "Displaying VoiceChannels setup wizard in ephemeral mode.",
+                    botName: "VoiceChannels",
+                    botAvatar: VertixAvatar,
+                } ] }
+            />
+
+            <p className="text-vc-ice-dim mt-6">
+                The step-by-step version is in the{ " " }
+                <a href="/posts/how-to-setup">setup guide</a>.
             </p>
 
             <div className="p-6 mt-10 bg-vc-space rounded border border-vc-hairline-bright text-center">
                 <h2 className="text-h5 mb-3">Stop making voice channels by hand</h2>
                 <p className="text-vc-ice-dim mb-6">
-                    Free to add, and set up with one command.
+                    Two generators free, and set up with one command.
                 </p>
                 <button onClick={ goToInvite }
                     className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">

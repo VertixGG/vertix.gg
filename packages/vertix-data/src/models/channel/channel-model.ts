@@ -27,6 +27,18 @@ type ChannelExtendedResult<T extends TDataType> =
     | undefined
     | null;
 
+/**
+ * Both kinds of master channel.
+ *
+ * A generator and an auto-scaling pool are different things to run, but each is one setup a guild
+ * made and one category standing in its server - so a question about what a guild has set up, or
+ * about how much of its allowance is spent, means both of them.
+ */
+const MASTER_INTERNAL_TYPES = [
+    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
+    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL
+];
+
 // TODO: Cache mechanism is not fully working, in order to fix it, its require to handle all possible keys.
 export class ChannelModel extends ModelWithDataBase<
     typeof clientChannelExtend.channel,
@@ -246,12 +258,7 @@ export class ChannelModel extends ModelWithDataBase<
     public async getMasters( guildId: string, dataKey?: string ) {
         const where: ChannelFindManyArgsWithDataIncludeKey[ "where" ] = {
             guildId,
-            internalType: {
-                in: [
-                    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-                    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL
-                ]
-            }
+            internalType: { in: MASTER_INTERNAL_TYPES }
         };
 
         const include: ChannelFindManyArgsWithDataIncludeKey[ "include" ] | undefined = dataKey
@@ -322,15 +329,21 @@ export class ChannelModel extends ModelWithDataBase<
         return await this.getByChannelId( dynamicChannelDB.ownerChannelId, cache );
     }
 
-    public async getTypeCount( guildId: string, internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {
+    /**
+     * Function getMastersCount() :: How many setups a guild is carrying, of both kinds.
+     *
+     * Counted together, because what asks is the allowance, and the allowance is on setups rather
+     * than on either kind of them.
+     */
+    public async getMastersCount( guildId: string ) {
         const total = await this.model.count( {
             where: {
                 guildId,
-                internalType
+                internalType: { in: MASTER_INTERNAL_TYPES }
             }
         } );
 
-        this.debugger.log( this.getTypeCount, `Guild id: '${ guildId }' - Total master channels for is '${ total }'` );
+        this.debugger.log( this.getMastersCount, `Guild id: '${ guildId }' - Total master channels is '${ total }'` );
 
         return total;
     }

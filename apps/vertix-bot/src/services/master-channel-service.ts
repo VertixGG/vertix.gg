@@ -725,16 +725,20 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
+    /**
+     * Function isReachedMasterLimit() :: Whether this guild has spent its allowance of setups.
+     *
+     * Both kinds are counted, against the one allowance. Only the generators used to be, which made
+     * the scaling button - which has always been held to this same check - refuse on a number it
+     * never contributed to: a guild could be stopped by two generators while carrying five pools,
+     * and five pools counted as nothing at all.
+     */
     public async isReachedMasterLimit( guildId: string, definedLimit?: number ) {
         const limit =
                 "number" === typeof definedLimit
                     ? definedLimit
                     : ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
-            hasReachedLimit =
-                ( await ChannelModel.$.getTypeCount(
-                    guildId,
-                    PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL
-                ) ) >= limit;
+            hasReachedLimit = ( await ChannelModel.$.getMastersCount( guildId ) ) >= limit;
 
         if ( hasReachedLimit ) {
             this.debugger.log(

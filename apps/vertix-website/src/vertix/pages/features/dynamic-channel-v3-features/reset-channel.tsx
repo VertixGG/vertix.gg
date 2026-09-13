@@ -111,6 +111,7 @@ export default function ResetChannel() {
 
                     <div className="mb-6">
                         <DiscordAppFrame
+                            channelName={ channel.name }
                             sidebar={
                                 <DynamicChannelV3Sidebar
                                     channel={ {

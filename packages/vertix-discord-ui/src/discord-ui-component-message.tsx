@@ -2,6 +2,7 @@ import { DiscordMessage } from "./discord-message";
 import { DiscordUIComponentRenderer } from "./discord-ui-component-renderer";
 import { useEmojiManifest } from "./emoji-manifest";
 
+import type { DiscordMessageReply } from "./discord-message";
 import type { UIElementOverride, UIEmbedOverride, ExpandedSelectMenus } from "./discord-ui-component-renderer";
 
 export interface DiscordUIComponentMessageProps {
@@ -21,6 +22,17 @@ export interface DiscordUIComponentMessageProps {
     hideElements?: boolean;
     app?: boolean;
     ephemeral?: boolean;
+    /** The message this one answers, previewed above it. */
+    reply?: DiscordMessageReply;
+    /**
+     * Whether the mention in this message is aimed at the person reading the page.
+     *
+     * A demonstration puts the reader in the owner's chair, so a panel addressed to them is one
+     * addressed to you, and Discord washes it amber - which is why carrying a mention is taken to
+     * mean it by default. Somewhere the reader is only being shown a panel rather than standing in
+     * front of their own, say so and the wash stays off.
+     */
+    mentioned?: boolean;
     interactionUser?: string;
     interactionUserAvatar?: string;
     interactionCommand?: string;
@@ -44,6 +56,8 @@ export function DiscordUIComponentMessage( {
     hideElements,
     app = true,
     ephemeral = false,
+    reply,
+    mentioned,
     interactionUser,
     interactionUserAvatar,
     interactionCommand,
@@ -60,6 +74,12 @@ export function DiscordUIComponentMessage( {
             app={ app }
             timestamp={ timestamp }
             ephemeral={ ephemeral }
+            reply={ reply }
+            // This component is the application speaking, and Discord draws a name in the
+            // colour of its highest role - which for this one is the role it carries in its
+            // own server.
+            authorColor="var(--discord-app-author-color)"
+            mentioned={ mentioned ?? Boolean( mentionUsername ) }
             interactionUser={ interactionUser }
             interactionUserAvatar={ interactionUserAvatar }
             interactionCommand={ interactionCommand }

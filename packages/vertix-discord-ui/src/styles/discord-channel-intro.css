@@ -1,0 +1,50 @@
+@import "./discord-tokens.css";
+
+/*
+ * The block Discord opens a channel with, measured off a running client.
+ *
+ * The circle is 68px with a 42px mark inside it, the welcome is the largest type anywhere in a
+ * channel, and the whole thing sits 16px in from every edge - the same 16px the messages under it
+ * are indented by, so the mark lines up with the avatars below.
+ */
+.discord-channel-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* No air above it: the icon carries its own 16px, and the channel starts at the top. */
+    margin: 0 16px 16px;
+    font-family: var(--discord-font-primary);
+}
+
+.discord-channel-intro-icon {
+    width: 68px;
+    height: 68px;
+    margin-top: 16px;
+    border-radius: 50%;
+    background-color: rgba(153, 152, 152, 0.078);
+    color: var(--discord-text-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.discord-channel-intro-heading {
+    margin: 8px 0;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+    color: var(--discord-text-strong);
+}
+
+.discord-channel-intro-subtitle {
+    margin: 0;
+    font-size: 16px;
+    font-weight: var(--discord-font-weight-normal);
+    line-height: 22px;
+    color: var(--discord-text-default);
+}
+
+.discord-channel-intro-actions {
+    margin-top: 8px;
+}

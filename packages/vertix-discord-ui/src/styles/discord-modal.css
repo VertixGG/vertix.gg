@@ -1,5 +1,5 @@
 .discord-modal {
-    background-color: #313338;
+    background-color: var(--discord-background-gradient-chat);
     border-radius: 8px;
     min-width: 280px;
     max-width: 440px;
@@ -32,7 +32,7 @@
 .discord-modal-title {
     font-size: 20px;
     font-weight: 600;
-    color: #f2f3f5;
+    color: var(--discord-text-strong);
     line-height: 24px;
     font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -60,13 +60,13 @@
 
 .discord-modal-footer {
     padding: 16px;
-    background-color: #2b2d31;
+    background-color: var(--discord-background-surface-high);
     display: flex;
     gap: 8px;
 }
 
 .discord-modal-cancel {
-    background-color: #4e5058;
+    background-color: var(--discord-control-secondary-background-default);
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -80,7 +80,7 @@
 }
 
 .discord-modal-cancel:hover {
-    background-color: #6d6f78;
+    background-color: var(--discord-control-secondary-background-hover);
 }
 
 .discord-modal-submit {
@@ -104,7 +104,7 @@
 .discord-modal-notice {
     background-color: rgba(240, 178, 50, 0.1);
     border: 1px solid rgba(240, 178, 50, 0.5);
-    color: #dbdee1;
+    color: var(--discord-text-default);
     padding: 10px 12px;
     border-radius: 8px;
     display: flex;
@@ -127,7 +127,7 @@
 
 .discord-modal-notice strong {
     font-weight: 600;
-    color: #f2f3f5;
+    color: var(--discord-text-strong);
 }
 
 .discord-input-wrapper {
@@ -140,7 +140,7 @@
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #dbdee1;
+    color: var(--discord-text-default);
     font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     letter-spacing: 0.02em;
 }
@@ -151,10 +151,10 @@
 }
 
 .discord-input {
-    background-color: #1e1f22;
+    background-color: var(--discord-background-base-lowest);
     border: 1px solid #3f4147;
     border-radius: 3px;
-    color: #dbdee1;
+    color: var(--discord-text-default);
     font-size: 16px;
     padding: 10px;
     font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;

@@ -1,0 +1,42 @@
+@import "./discord-tokens.css";
+
+/*
+ * A hairline across the channel with the day sitting on it.
+ *
+ * The label is not in a gap in the line - it is drawn over it, filled with the chat's own
+ * background, which is how Discord keeps the rule meeting the text however long the date runs.
+ */
+.discord-date-divider {
+    position: relative;
+    height: 0;
+    /*
+     * 17px underneath rather than Discord's 8px, because Discord gets the rest from the message:
+     * every group starts 17px below whatever is above it, and the two margins collapse. Ours only
+     * puts that margin between one message and the next, so the first one in a channel has none -
+     * and without this the date sits right on top of it.
+     */
+    margin: 24px 14px 17px 16px;
+    border-top: 1px solid var(--discord-border-subtle);
+    font-family: var(--discord-font-primary);
+    text-align: center;
+}
+
+/*
+ * Centred on the rule rather than nudged up off it.
+ *
+ * Sitting inline in a zero-height box, the label hangs its whole height below the line and lands on
+ * the message underneath. Half of it belongs above and half below, whatever height the type gives
+ * it, which is what the shift does.
+ */
+.discord-date-divider-label {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate( -50%, -50% );
+    padding: 2px 4px;
+    background-color: var(--discord-background-gradient-chat);
+    color: var(--discord-text-muted);
+    font-size: 12px;
+    font-weight: var(--discord-font-weight-semibold);
+    line-height: 13px;
+}

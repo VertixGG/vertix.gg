@@ -1,0 +1,48 @@
+@import "./discord-tokens.css";
+
+/*
+ * The box at the foot of a channel, measured off Discord's own: a shade lighter than the chat it
+ * sits under, an 8px corner, a hairline around it, and 8px of air beneath.
+ */
+.discord-composer {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 56px;
+    margin: 16px 16px 8px;
+    padding: 0 16px;
+    border: 1px solid var(--discord-border-subtle);
+    border-radius: 8px;
+    background-color: var(--discord-background-composer);
+    font-family: var(--discord-font-primary);
+    user-select: none;
+}
+
+.discord-composer-attach,
+.discord-composer-actions {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    color: var(--discord-interactive-icon);
+}
+
+.discord-composer-attach {
+    margin-inline-end: 10px;
+}
+
+.discord-composer-actions {
+    gap: 8px;
+    margin-inline-start: 10px;
+}
+
+/* Discord's placeholder is a step darker than muted - it is a prompt, not a message. */
+.discord-composer-placeholder {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+    line-height: 1.375rem;
+    color: #6c6c77;
+}

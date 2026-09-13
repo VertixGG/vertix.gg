@@ -271,6 +271,7 @@ export default function ClaimChannel() {
     /** A screen, from one person's side of the same channel. */
     const screenFor = ( person: string ) => (
         <DiscordAppFrame
+            channelName={ DEMO_CHANNEL_NAME }
             sidebar={
                 <DynamicChannelV3Sidebar
                     channel={ {

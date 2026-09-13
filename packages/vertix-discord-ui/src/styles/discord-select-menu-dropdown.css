@@ -1,7 +1,7 @@
 @import "./discord-tokens.css";
 
 .discord-select-menu-dropdown {
-    background-color: #2b2d31;
+    background-color: var(--discord-background-surface-high);
     border-radius: 4px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -80,7 +80,7 @@
 
 .discord-select-menu-dropdown-description {
     font-size: 12px;
-    color: #949ba4;
+    color: var(--discord-text-muted);
 }
 
 .discord-select-menu-dropdown-checkbox {

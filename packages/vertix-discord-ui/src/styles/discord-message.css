@@ -12,7 +12,7 @@
  * message standing on its own carries no stray margin into whatever is holding it.
  */
 .discord-message-container + .discord-message-container {
-    margin-top: 16px;
+    margin-top: 17px;
 }
 
 .discord-interaction-reply {
@@ -22,7 +22,7 @@
     margin-left: 18px;
     opacity: 0.85;
     font-size: 0.875rem;
-    color: #b9bbbe;
+    color: var(--discord-text-muted);
 }
 
 .interaction-avatar {
@@ -41,27 +41,58 @@
 
 .interaction-user {
     font-weight: 600;
-    color: #f2f3f5;
+    color: var(--discord-text-strong);
 }
 
 .interaction-command {
     font-weight: 600;
-    color: #5f6efb;
+    color: var(--discord-text-link);
 }
 
+/*
+ * Discord's own message box: 2px of air above and below, and 72px of indent on the left, which is
+ * the 16px gutter plus the 40px avatar plus the 16px between it and the text. That is why the avatar
+ * can be taken out of the flow and hung at 16px - the padding is holding its place.
+ */
 .discord-message {
     box-sizing: border-box;
     color: var(--discord-text-default);
     margin-bottom: 0.0625rem;
     padding-block: 0.125rem;
-    padding-inline-end: 1rem;
+    padding-inline-end: 1.5rem;
     padding-inline-start: 4.5rem;
     position: relative;
     word-wrap: break-word;
 }
 
+/*
+ * A message that names the person reading it.
+ *
+ * Discord washes it amber and runs a bar down its left edge, and rounds off only the right corners
+ * so the bar stays square against the edge of the channel. Both colours are its own
+ * `--message-mentioned-background-default` and the border it draws beside it.
+ */
+.discord-message.discord-message-mentioned {
+    background-color: rgba(243, 167, 0, 0.078);
+    border-radius: 0 4px 4px 0;
+}
+
+.discord-message.discord-message-mentioned::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #ea9800;
+}
+
+/*
+ * An ephemeral reply: a 5% wash of the brand and a 2px bar of it down the left edge, which is the
+ * same shape Discord gives a message that mentions you - only the colour says which it is.
+ */
 .discord-message.ephemeral {
-    background-color: rgba(38, 68, 255, 0.08);
+    background-color: rgba( 79, 98, 234, 0.051 );
 }
 
 .discord-message.ephemeral::before {
@@ -70,8 +101,109 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 3px;
-    background-color: #2142ff;
+    width: 2px;
+    background-color: var(--discord-brand-500);
+}
+
+/*
+ * The message being answered, previewed above the answer.
+ *
+ * Sits inside the message rather than above it, because the hook that joins the two is measured
+ * from this row's own left edge back to the centre of the avatar below - and that avatar's place is
+ * set by this padding. Discord's numbers throughout: 14px text on an 18px line, the row 4px clear
+ * of the message, and everything in it 4px apart.
+ */
+.discord-message-reply {
+    --discord-reply-row-height: 1.125rem;
+    --discord-reply-spacing: 4px;
+    --discord-reply-meta-space: 0.25rem;
+
+    align-items: center;
+    color: var(--discord-text-default);
+    display: flex;
+    font-size: 0.875rem;
+    line-height: var(--discord-reply-row-height);
+    margin-bottom: var(--discord-reply-spacing);
+    position: relative;
+    user-select: none;
+    white-space: pre;
+}
+
+/*
+ * The hook: two borders and a rounded corner, nothing else.
+ *
+ * It reaches left as far as the middle of the avatar - half of it, plus the gap between the avatar
+ * and the text - and drops from the middle of this row to the bottom of it, so it meets the top of
+ * the message underneath.
+ */
+.discord-message-reply-spine {
+    --discord-spine-width: 2px;
+    --discord-chat-avatar-size: 2.5rem;
+    --discord-message-gutter: 1rem;
+
+    position: absolute;
+    top: 50%;
+    bottom: 0;
+    inset-inline: calc( ( var(--discord-chat-avatar-size) / 2 + var(--discord-message-gutter) ) * -1 ) 100%;
+    border-style: solid;
+    border-color: #464951;
+    border-block-width: var(--discord-spine-width) 0;
+    border-inline-width: var(--discord-spine-width) 0;
+    border-start-start-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* In a header the badge trails the name; in a preview it leads it, and sits on the line. */
+.discord-message-reply .discord-message-bot-tag {
+    margin-top: 0;
+    margin-left: 0;
+    margin-inline-end: var(--discord-reply-meta-space);
+}
+
+.discord-message-reply-avatar {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    margin-inline-end: var(--discord-reply-meta-space);
+    object-fit: cover;
+}
+
+/* Discord dims the name rather than recolouring it, so a role colour still reads through. */
+.discord-message-reply-author {
+    flex-shrink: 0;
+    font-size: inherit;
+    line-height: inherit;
+    margin-inline-end: var(--discord-reply-meta-space);
+    opacity: 0.64;
+}
+
+.discord-message-reply-preview {
+    flex: 0 1 auto;
+    overflow: hidden;
+    max-height: 1.25em;
+    text-overflow: ellipsis;
+}
+
+.discord-message-reply-edited {
+    flex: 0 0 auto;
+    font-size: 0.625rem;
+    font-weight: var(--discord-font-weight-normal);
+    line-height: 1;
+    margin-inline-start: var(--discord-reply-meta-space);
+    color: var(--discord-text-muted);
+}
+
+.discord-message-reply-attachment {
+    display: inline-flex;
+    flex: 0 0 auto;
+    margin-inline-start: var(--discord-reply-meta-space);
+    color: var(--discord-text-muted);
+}
+
+/* A reply row stands where the top of the message would be, so the avatar starts under it. */
+.discord-message.discord-message-has-reply .discord-message-avatar {
+    top: calc( 0.25rem + 1.125rem + 4px );
 }
 
 .discord-message-avatar {
@@ -105,13 +237,14 @@
     flex-wrap: wrap;
     line-height: 1.375rem;
     min-height: 1.375rem;
-    color: #72767d;
+    color: var(--discord-text-muted);
 }
 
+/* A name carries whatever colour its highest role gives it, and falls back to plain white. */
 .discord-message-author {
     font-size: 1rem;
     font-weight: 500;
-    color: #f2f3f5;
+    color: var(--discord-text-strong);
     margin-right: 0.25rem;
 }
 
@@ -121,7 +254,7 @@
     gap: 4px;
     margin-top: 4px;
     font-size: 0.75rem;
-    color: #72767d;
+    color: var(--discord-text-muted);
     user-select: none;
 }
 
@@ -130,7 +263,7 @@
 }
 
 .ephemeral-dismiss {
-    color: #00aff4;
+    color: var(--discord-text-link);
     cursor: pointer;
 }
 
@@ -168,8 +301,9 @@
 
 .discord-message-timestamp {
     font-size: 0.75rem;
+    font-weight: var(--discord-font-weight-medium);
     margin-left: 0.25rem;
-    color: #72767d;
+    color: var(--discord-chat-text-muted);
 }
 
 .discord-message-body {
@@ -177,12 +311,12 @@
     line-height: 1.375rem;
     white-space: normal;
     word-wrap: break-word;
-    color: #dcddde;
+    color: var(--discord-text-default);
     margin-top: 0;
 }
 
 .discord-message-body a {
-    color: #00A8FC;
+    color: var(--discord-text-link);
     text-decoration: none;
 }
 
@@ -219,17 +353,3 @@
     background: var(--discord-brand-500);
     color: var(--discord-white-500);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

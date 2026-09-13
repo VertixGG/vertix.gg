@@ -230,17 +230,6 @@ export function DiscordUIComponentRenderer( {
 
     const elementsGroup = selectElementsGroup( component, preferredElementsGroup, hideElements );
 
-    const hasSelectMenus = Boolean(
-        elementsGroup?.items.some(
-            ( row ) => row.some( ( item ) =>
-                item.definition.elementType === "select-menu"
-                || item.definition.elementType === "user-select"
-                || item.definition.elementType === "channel-select"
-                || item.definition.elementType === "role-select"
-            )
-        )
-    );
-
     return (
         <>
             { resolvedEmbeds.map( ( embed, index ) => (
@@ -257,7 +246,7 @@ export function DiscordUIComponentRenderer( {
             ) ) }
 
             { elementsGroup && (
-                <div className={ hasSelectMenus ? "discord-action-rows discord-action-rows-has-select" : "discord-action-rows" }>
+                <div className="discord-action-rows">
                     { renderElementRows( elementsGroup.items, {
                         variables: variables,
                         elementOverrides: elementOverrides,

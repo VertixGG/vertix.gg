@@ -1,4 +1,4 @@
-import { DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
+import { DiscordUIComponentMessage, DiscordChannelIntro, DiscordDateDivider } from "@vertix.gg/discord-ui";
 import VertixAvatar from "@vertix.gg/assets/brand/vc.png";
 
 import { useOpenDynamicChannelV2Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
@@ -16,6 +16,9 @@ export default function ButtonsInterface() {
                 <div className="col-span-12">
                     <div className="mb-6">
                         <div className="discord-chat-container vc-frame-box m-0" style={ { minHeight: "300px" } }>
+                            <DiscordChannelIntro channelName="iNewLegend's Channel"/>
+                            <DiscordDateDivider/>
+
                             <DiscordUIComponentMessage
                                 author="VoiceChannels"
                                 avatar={ VertixAvatar }

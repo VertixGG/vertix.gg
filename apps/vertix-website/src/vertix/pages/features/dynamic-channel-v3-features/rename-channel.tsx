@@ -114,6 +114,7 @@ export default function RenameChannel() {
 
                     <div className="mb-6">
                         <DiscordAppFrame
+                            channelName={ channelName }
                             sidebar={
                                 <DynamicChannelV3Sidebar
                                     channel={ {
@@ -153,11 +154,10 @@ export default function RenameChannel() {
                                     "VertixBot/UI-V3/DynamicChannelRenameFlow/States/Default": {
                                         title: "Type a new name, then submit",
                                         body: <>
-                                            A name can carry placeholders — <code>{ VAR_DYNAMIC_CHANNEL_USER }</code> is
-                                            already in there, and the ones below all work. Empty the field to take the
-                                            server&apos;s own template instead, use the word <code>noob</code> to see a
-                                            server&apos;s bad-word list refuse it, or rename three times to run into
-                                            Discord&apos;s own limit.
+                                            <code>{ VAR_DYNAMIC_CHANNEL_USER }</code> is already in there and will fill
+                                            itself in. Empty the field to take the server&apos;s own template instead,
+                                            use the word <code>noob</code> to see a server&apos;s bad-word list refuse
+                                            it, or rename three times to run into Discord&apos;s own limit.
                                         </>
                                     },
                                     Success: { title: "The channel is renamed, in the list beside it too" },
@@ -219,24 +219,13 @@ export default function RenameChannel() {
                         </DiscordAppFrame>
                     </div>
 
-                    { /* Drawn from the very map the demonstration substitutes with, so what is
-                         listed here and what a name comes out as cannot drift apart. */ }
                     <div className="text-h5 text-vc-ice-dim">
-                        <p className="mb-3">
-                            <strong className="text-vc-ice">Placeholders you can put in the name</strong>
-                            { " " }— each becomes this, for this channel and its owner:
-                        </p>
-
-                        <div className="flex flex-wrap gap-x-6 gap-y-2 mb-3">
-                            { Object.entries( NAME_TOKEN_VALUES ).map( ( [ token, becomes ] ) => (
-                                <span key={ token }>
-                                    <code>{ token }</code> → { becomes }
-                                </span>
-                            ) ) }
-                        </div>
-
                         <p className="mb-0">
-                            A token the name does not understand is left standing exactly as you typed it.{ " " }
+                            A name can carry placeholders, and the field above fills them in the way the bot does —{ " " }
+                            <code>{ VAR_DYNAMIC_CHANNEL_USER }</code> for whoever owns the channel,{ " " }
+                            <code>{ VAR_DYNAMIC_CHANNEL_GAME }</code> for what they are playing,{ " " }
+                            <code>{ VAR_DYNAMIC_CHANNEL_INDEX }</code> for where it comes in the list. A token the name
+                            does not understand is left standing exactly as you typed it.{ " " }
                             <a href="/posts/channel-name-placeholders">What each one means in full</a>.
                         </p>
                     </div>

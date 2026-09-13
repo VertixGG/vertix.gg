@@ -18,4 +18,7 @@ export * from "./ui-flows";
 export * from "./discord-flow-simulator";
 export * from "./discord-flow-modal";
 export * from "./discord-app-frame";
+export * from "./discord-channel-intro";
+export * from "./discord-composer";
+export * from "./discord-date-divider";
 export * from "./ui-definitions";

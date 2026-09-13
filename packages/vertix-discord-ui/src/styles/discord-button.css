@@ -165,10 +165,6 @@
     width: 100%;
 }
 
-.discord-action-rows.discord-action-rows-has-select {
-    row-gap: 4px;
-}
-
 .discord-action-rows .discord-embed-button-row:first-child {
     margin-top: 0;
 }

@@ -16,6 +16,9 @@ export default function DiscordDynamicChannelV3() {
                 avatar={ VertixAvatar }
                 timestamp="10:52 AM"
                 mentionUsername="iNewLegend"
+                // The reader here is being shown somebody else's panel, not standing in front of
+                // their own, so it is not addressed to them and carries no wash.
+                mentioned={ false }
                 componentName="VertixBot/UI-V3/DynamicChannel"
                 variables={ {
                     title: "༄ Manage your Dynamic Channel",

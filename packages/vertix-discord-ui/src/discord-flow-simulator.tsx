@@ -14,6 +14,7 @@ import { getUIComponentByName, isUISelectElementType } from "./ui-definitions";
 
 import type { UIFlow, UIFlowChoice, UIFlowState } from "./ui-flows";
 import type { UIComponent, UISelectMenuDefinition, UISelectOptionDefinition } from "./ui-definitions";
+import type { DiscordMessageReply } from "./discord-message";
 import type { UIElementOverride } from "./discord-ui-component-renderer";
 
 /**
@@ -853,6 +854,25 @@ export function DiscordFlowSimulator( {
         }
         : null;
 
+    /**
+     * The panel, as it is previewed above anything the bot says back about it.
+     *
+     * Both of the messages below answer a press on it, so both hang off it the way Discord hangs a
+     * reply - and what shows of a panel is who it was addressed to, because it says nothing itself.
+     * It is marked edited and carrying a picture because it is both: the bot rewrites it as the
+     * channel changes, and the legend naming its buttons is an image inside it.
+     */
+    const answeringPanel: DiscordMessageReply = {
+        author,
+        avatar,
+        app: true,
+        edited: true,
+        hasAttachment: true,
+        preview: entry.mentionUser
+            ? <span className="discord-mention-pill">@{ entry.mentionUser }</span>
+            : undefined
+    };
+
     return (
         <>
             { /*
@@ -893,6 +913,7 @@ export function DiscordFlowSimulator( {
                         variables={ { ...entry.variables, ...surface.variables } }
                         defaultVariables={ surfaceState.options.previewDefaultVars }
                         ephemeral={ null === opened && "silent" !== surfaceState.options.navigationType }
+                        reply={ "silent" !== surfaceState.options.navigationType ? answeringPanel : undefined }
                         interactionUser={ interactionUser }
                         interactionUserAvatar={ interactionUserAvatar }
                         expandedSelectMenu={ deskMenus }
@@ -912,6 +933,7 @@ export function DiscordFlowSimulator( {
                         variables={ { ...entry.variables, ...position.variables } }
                         defaultVariables={ state?.options?.previewDefaultVars }
                         ephemeral={ reply.ephemeral }
+                        reply={ reply.ephemeral ? answeringPanel : undefined }
                         interactionUser={ interactionUser }
                         interactionUserAvatar={ interactionUserAvatar }
                     />

@@ -1,7 +1,7 @@
 @import "./discord-tokens.css";
 
 .discord-button-select-dropdown {
-    background-color: #1e1f22;
+    background-color: var(--discord-background-base-lowest);
     border-radius: 4px;
     overflow: hidden;
     font-family: var(--discord-font-primary);

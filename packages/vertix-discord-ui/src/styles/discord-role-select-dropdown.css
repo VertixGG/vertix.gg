@@ -1,7 +1,7 @@
 @import "./discord-tokens.css";
 
 .discord-role-select-dropdown {
-    background-color: #1e1f22;
+    background-color: var(--discord-background-base-lowest);
     border-radius: 4px;
     overflow: hidden;
     font-family: var(--discord-font-primary);
@@ -49,14 +49,14 @@
     align-items: center;
     gap: 4px;
     font-size: 14px;
-    color: #949ba4;
+    color: var(--discord-text-muted);
 }
 
 .discord-role-select-checkbox {
     width: 22px;
     height: 22px;
     border-radius: 6px;
-    border: 2px solid #4e5058;
+    border: 2px solid var(--discord-control-secondary-background-default);
     flex-shrink: 0;
     display: flex;
     align-items: center;

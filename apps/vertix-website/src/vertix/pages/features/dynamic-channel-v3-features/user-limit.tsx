@@ -80,6 +80,7 @@ export default function UserLimit() {
 
                     <div className="mb-6">
                         <DiscordAppFrame
+                            channelName={ DEMO_CHANNEL_NAME }
                             sidebar={
                                 <DynamicChannelV3Sidebar
                                     channel={ {

@@ -1,5 +1,6 @@
+/* Discord's own chat surface, the same one the app frame paints. */
 .discord-chat-container {
-    background-color: #313338;
+    background-color: var(--discord-background-gradient-chat);
     box-sizing: border-box;
     display: inline-block;
     margin: 15px;

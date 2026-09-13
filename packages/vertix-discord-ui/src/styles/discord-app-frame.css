@@ -22,16 +22,20 @@
     /* The channel list is drawn for 300px; squeezing it below that truncates channel names. */
     flex: 0 0 300px;
     max-width: 300px;
-    background-color: var(--discord-background-surface-high);
+    background-color: var(--discord-background-base-lowest);
     padding: 8px 0;
     overflow: hidden;
 }
 
+/*
+ * No padding of its own. Everything inside carries the gutter Discord gives it - a message in its
+ * 72px indent, the intro and the composer in their 16px margins - and a pane that added more would
+ * push the mention and ephemeral bars off the edge they are supposed to sit on.
+ */
 .discord-app-frame-main {
     flex: 1 1 auto;
     min-width: 0;
-    padding: 12px 16px;
-
+    padding: 0;
     overflow-x: auto;
 }
 

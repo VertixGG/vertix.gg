@@ -104,6 +104,7 @@ export default function Status() {
 
                     <div className="mb-6">
                         <DiscordAppFrame
+                            channelName={ channel.name }
                             sidebar={
                                 <DynamicChannelV3Sidebar
                                     channel={ {

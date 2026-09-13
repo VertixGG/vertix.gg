@@ -124,6 +124,7 @@ export default function Permissions() {
 
                     <div className="mb-6">
                         <DiscordAppFrame
+                            channelName={ DEMO_CHANNEL_NAME }
                             sidebar={
                                 <DynamicChannelV3Sidebar
                                     channel={ {

@@ -116,7 +116,7 @@ export default function KnockChannel() {
                     </p>
 
                     <div className="mb-6">
-                        <DiscordAppFrame sidebar={ knockerSidebar }>
+                        <DiscordAppFrame channelName={ DEMO_CHANNEL_NAME } sidebar={ knockerSidebar }>
                             <DiscordFlowSimulator
                                 key={ `knocker-${ runKey }` }
                                 onGuidance={ setGuidance }
@@ -180,7 +180,7 @@ export default function KnockChannel() {
                     </p>
 
                     <div className="mb-6">
-                        <DiscordAppFrame sidebar={ ownerSidebar }>
+                        <DiscordAppFrame channelName={ DEMO_CHANNEL_NAME } sidebar={ ownerSidebar }>
                             {
                                 /*
                                  * Always drawn, knock or no knock: the panel is a message sitting in

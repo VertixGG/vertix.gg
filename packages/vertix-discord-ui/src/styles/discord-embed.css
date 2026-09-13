@@ -154,18 +154,29 @@
     width: 18px;
 }
 
+/*
+ * A scrap of code in a line of prose, from Discord's own `.markup code` and `code.inline`.
+ *
+ * It is outlined as well as filled - the border is what makes it read as a lifted chip rather than
+ * a highlight - and the padding is horizontal only, with a negative margin the same size pulling
+ * the line back to where it would have been. That is what keeps a line of text with code in it the
+ * same height as the lines around it.
+ */
 .discord-embed-code {
-    background-color: #1e1f22;
-    border-radius: 3px;
-    padding: 0.2em 0.4em;
-    font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
-    font-size: 0.875em;
+    background-color: var(--discord-background-base-lowest);
+    border: 1px solid var(--discord-border-normal);
+    border-radius: 4px;
+    margin: -0.2em 0;
+    padding: 0 0.2em;
+    font-family: var(--discord-font-code);
+    font-size: 85%;
+    line-height: 1.125rem;
     white-space: pre-wrap;
-    color: #dbdee1;
+    color: var(--discord-text-default);
 }
 
 .discord-embed-link {
-    color: #00aff4;
+    color: var(--discord-text-link);
     text-decoration: none;
 }
 

@@ -34,6 +34,7 @@ export default function ButtonsInterface() {
                 <div className="col-span-12">
                     <div className="mb-6">
                         <DiscordAppFrame
+                            channelName={ DEMO_CHANNEL_NAME }
                             sidebar={
                                 <DynamicChannelV3Sidebar
                                     channel={ {

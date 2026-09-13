@@ -78,8 +78,8 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.9,
     },
     {
-        path: "/join-to-create",
-        sourcePath: "src/vertix/pages/join-to-create.tsx",
+        path: "/posts/join-to-create",
+        sourcePath: "src/vertix/posts/join-to-create.tsx",
         title: "Join to Create Voice Channels in Discord | VoiceChannels",
         description:
             "How Join to Create works: one generator channel makes a room for whoever joins it, "

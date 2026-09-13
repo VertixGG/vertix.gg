@@ -193,7 +193,12 @@ export abstract class UIAdapterBase<
             for ( const id in messageData ) {
                 const channelData = messageData[ id ];
 
-                if ( Date.now() - channelData.updatedAt.getTime() > ADAPTER_CLEANUP_STATIC_ARGS_TIMEOUT ) {
+                // Counted from the last time the screen was read rather than the last time it was
+                // written to. A member who opens a menu and works down it without submitting
+                // anything never writes, and evicting on the write would take their state out from
+                // under a screen they are still using - which reads as the screen losing what it
+                // knew, because that is exactly what happened.
+                if ( Date.now() - channelData.accessedAt.getTime() > ADAPTER_CLEANUP_STATIC_ARGS_TIMEOUT ) {
                     UIAdapterBase.staticArgs.deleteArgs( messageId, id );
                     UIAdapterBase.staticSystemArgs.deleteArgs( messageId, id );
                 }

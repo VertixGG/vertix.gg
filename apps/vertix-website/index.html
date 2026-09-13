@@ -20,6 +20,18 @@
 	<link rel="icon" href="/vc-naked.ico"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
+	<!-- Brand + body faces. These live here rather than as an `@import` in the CSS
+	     bundle so the preload scanner finds them while the HTML is still parsing.
+	     An `@import` is only discovered after the bundle has downloaded and begun
+	     parsing, which serialises two cross-origin round trips ahead of first
+	     paint and was costing the hero heading seconds of render delay. -->
+	<link rel="preconnect" href="https://fonts.googleapis.com"/>
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+	<link
+		rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;600;700&amp;family=Red+Hat+Display:wght@300;400;500;700&amp;display=swap"
+	/>
+
 	<!-- Baseline tags. `seo/use-document-meta.ts` rewrites these per route once
 	     the app boots, but crawlers and link unfurlers that don't run JavaScript
 	     (Discord's included) only ever see what is written here. -->

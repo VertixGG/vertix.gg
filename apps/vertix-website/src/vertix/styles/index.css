@@ -1,5 +1,6 @@
-/* Brand + body faces. Must precede every other rule in the bundle. */
-@import url("https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;600;700&family=Red+Hat+Display:wght@300;400;500;700&display=swap");
+/* Brand + body faces are loaded via `<link>` in `index.html`; an `@import`
+ * here is invisible to the preload scanner and serialises two cross-origin
+ * round trips ahead of first paint. */
 
 /* Scope class detection to the app's own sources. Tailwind's automatic scan
  * also walks `dist/`, so utilities from previous bundles leak into each new

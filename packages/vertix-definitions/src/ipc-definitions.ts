@@ -43,14 +43,16 @@ export interface GetGuildOptionsResponse {
 }
 
 /**
- * The limits the bot's configuration sets, asked of the bot rather than read a second time.
+ * The limits that apply to one guild, asked of the bot rather than read a second time.
  *
- * They belong to the configuration and not to any guild, so the request names none. Asking is what
- * keeps the configuration the only place they are written: the api holds no copy of a limit, and no
- * copy of the key one is filed under, so neither can drift from what is being applied.
+ * Named per guild because a limit is not the configuration's alone: a guild that was granted its
+ * own allowance carries it, and the configured number is what the rest fall back to. Asking is
+ * what keeps that in one place - the api holds no copy of a limit, no copy of the key one is filed
+ * under, and no copy of which of the two wins, so none of them can drift from what is applied.
  */
 export interface GetConfigLimitsRequest {
     action: typeof IPC_REQUEST_ACTIONS.GET_CONFIG_LIMITS;
+    guildId: string;
 }
 
 export interface GetConfigLimitsResponse {

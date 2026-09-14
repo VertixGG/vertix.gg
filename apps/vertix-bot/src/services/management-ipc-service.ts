@@ -7,9 +7,7 @@ import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ip
 
 import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
-import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
-
-import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
 import { ChannelType } from "discord.js";
 
@@ -29,8 +27,6 @@ import type {
     GetDynamicChannelInfoResponse,
     DynamicChannelIPCManagementPayload
 } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
-
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
@@ -218,17 +214,16 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
     /**
      * Function getConfigLimits() :: The limits the configuration sets, read out of it.
      *
-     * Out of the master channel config and nowhere else, which is where the number is written and
-     * what everything else already reads. It belongs to the configuration rather than to a guild,
-     * so it is the same answer for every one of them and nothing is passed in to ask about.
+     * Through `GuildDataManager`, which is the one place a guild's own allowance and the configured
+     * default are reconciled: a guild that was granted one carries a row, and one that was not
+     * falls back to the config. Read straight out of the config here instead, this answered the
+     * same number for every guild - so an allowance granted to a server applied in discord, where
+     * the bot reads the row, and not in the dashboard, which asks this.
      */
-    private getConfigLimits(): GetConfigLimitsResponse {
-        const { constants } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-            "Vertix/Config/MasterChannel",
-            VERSION_UI_V3
-        ).data;
+    private async getConfigLimits( guildId: string ): Promise<GetConfigLimitsResponse> {
+        const { maxMasterChannels } = await GuildDataManager.$.getAllSettings( guildId );
 
-        return { maxMasterChannels: constants.masterChannelMaximumFreeChannels };
+        return { maxMasterChannels };
     }
 
     private async handleIPCRequest(
@@ -260,7 +255,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 return this.getGuildOptions( payload.guildId );
 
             case IPC_REQUEST_ACTIONS.GET_CONFIG_LIMITS:
-                return this.getConfigLimits();
+                return this.getConfigLimits( payload.guildId );
 
             default:
                 throw new Error( `Unknown request action: ${ ( payload as IPCManagementRequestPayload ).action }` );

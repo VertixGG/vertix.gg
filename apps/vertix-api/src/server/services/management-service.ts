@@ -409,7 +409,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             return null;
         }
 
-        const settings = await this.readGuildSettings( guild.id );
+        const settings = await this.readGuildSettings( guild.id, guildId );
 
         const [ scalingMasters, dynamicMasters ] = await Promise.all( [
             getClient().channel.findMany( {
@@ -503,21 +503,23 @@ export class ManagementService extends ServiceWithDependenciesBase<{
     /**
      * Function getMaxMasterChannels() :: How many generators a guild may have, asked of the bot.
      *
-     * Asked rather than read again. The number is written in the master channel config and nowhere
-     * else, and the bot is the process that holds that config and refuses the next generator by it.
-     * Reading the row from here would be a second copy of the key it is filed under and of how it
-     * is interpreted, free to drift from the one being applied.
+     * Asked rather than read again, and asked about this guild rather than in general. A guild may
+     * have been granted an allowance of its own, and the bot is the process that holds both that
+     * row and the configured default it falls back to, and that refuses the next generator by
+     * whichever applies. Resolving it here would be a second copy of the key the row is filed
+     * under, of the default, and of which of them wins - free to drift from the one being applied.
      *
      * Null when it could not be asked, which the screens report as unknown rather than as none.
      */
-    private async getMaxMasterChannels(): Promise<number | null> {
+    private async getMaxMasterChannels( guildId: string ): Promise<number | null> {
         if ( ! this.services.ipcService.isReady() ) {
             return null;
         }
 
         try {
             const request: GetConfigLimitsRequest = {
-                action: IPC_REQUEST_ACTIONS.GET_CONFIG_LIMITS
+                action: IPC_REQUEST_ACTIONS.GET_CONFIG_LIMITS,
+                guildId
             };
 
             const limits = await this.services.ipcService.request<GetConfigLimitsRequest, GetConfigLimitsResponse>(
@@ -546,7 +548,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
      * case is the refusal arriving there instead of here.
      */
     private async findMasterChannelLimitRefusal( guildId: string ): Promise<CreateMasterSetupResult | null> {
-        const maxMasterChannels = await this.getMaxMasterChannels();
+        const maxMasterChannels = await this.getMaxMasterChannels( guildId );
 
         if ( null === maxMasterChannels ) {
             return null;
@@ -576,7 +578,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
      * A row is absent until a guild sets one, and it is deleted again when the list is emptied, so
      * a missing row is the unset state rather than an error.
      */
-    private async readGuildSettings( guildOwnerId: string ): Promise<GuildSettings> {
+    private async readGuildSettings( guildOwnerId: string, guildId: string ): Promise<GuildSettings> {
         const rows = await getClient().guildData.findMany( {
             where: {
                 ownerId: guildOwnerId,
@@ -607,7 +609,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 overrides: readTimingsOverrides( timings ),
                 defaults: GuildTimingsConfig.$.getDefaults()
             },
-            maxMasterChannels: await this.getMaxMasterChannels()
+            maxMasterChannels: await this.getMaxMasterChannels( guildId )
         };
     }
 
@@ -626,7 +628,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             return null;
         }
 
-        return this.readGuildSettings( guild.id );
+        return this.readGuildSettings( guild.id, guildId );
     }
 
     /**

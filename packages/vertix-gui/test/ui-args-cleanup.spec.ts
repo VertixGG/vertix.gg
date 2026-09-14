@@ -8,7 +8,7 @@ import type { UIArgsManager } from "@vertix.gg/gui/src/bases/ui-args-manager";
 
 import type { UIBase } from "@vertix.gg/gui/src/bases/ui-base";
 
-import type { UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 const OWNER = { getName: () => "VertixGUI/Test/CleanupAdapter" } as unknown as UIBase,
     MESSAGE_ID = "message-id";

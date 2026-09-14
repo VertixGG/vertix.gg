@@ -7,3 +7,4 @@ export { messageHandler } from "./message-handler";
 export { presenceHandler } from "./presence-handler";
 export { mentionHandlerPublic } from "./mention-handler-public";
 export { mentionHandlerPrivate } from "./mention-handler-private";
+export { memberJoinHandler } from "./member-join-handler";

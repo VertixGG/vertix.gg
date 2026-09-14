@@ -9,6 +9,11 @@ export type AIChannelPromptChange = {
     current: string | null;
 };
 
+export type AIChannelPromptRecord = {
+    channelId: string;
+    prompt: string;
+};
+
 /**
  * The per-channel instruction the AI Chat bot appends to its base system prompt.
  *
@@ -48,17 +53,39 @@ export class AIChannelPromptModel extends ModelBase<PrismaBot.PrismaClient> {
         channelId: string,
         guildId: string,
         prompt: string,
-        updatedBy: string
+        updatedBy: string,
+        onMemberJoin?: boolean
     ): Promise<AIChannelPromptChange> {
         const previous = await this.get( channelId );
 
+        // Left alone when not mentioned, so rewording a prompt does not silently switch off the
+        // greeting that was set up separately.
+        const joinFlag = undefined === onMemberJoin ? {} : { onMemberJoin };
+
         await this.prisma.aIChannelPrompt.upsert( {
             where: { channelId },
-            create: { channelId, guildId, prompt, updatedBy },
-            update: { guildId, prompt, updatedBy }
+            create: { channelId, guildId, prompt, updatedBy, onMemberJoin: true === onMemberJoin },
+            update: { guildId, prompt, updatedBy, ...joinFlag }
         } );
 
         return { previous, current: prompt };
+    }
+
+    public async isJoinGreetingEnabled( channelId: string ): Promise<boolean> {
+        const row = await this.prisma.aIChannelPrompt.findUnique( {
+            where: { channelId },
+            select: { onMemberJoin: true }
+        } );
+
+        return true === row?.onMemberJoin;
+    }
+
+    /** The channels in a guild that asked to be woken when somebody joins it. */
+    public async findJoinChannels( guildId: string ): Promise<AIChannelPromptRecord[]> {
+        return await this.prisma.aIChannelPrompt.findMany( {
+            where: { guildId, onMemberJoin: true },
+            select: { channelId: true, prompt: true }
+        } );
     }
 
     /** Returns the prompt that was removed, or `null` when there was nothing to remove. */

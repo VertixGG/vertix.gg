@@ -17,7 +17,8 @@ const ChannelPromptSchema = z.object( {
 
 const SetChannelPromptSchema = z.object( {
     prompt: z.string(),
-    channelId: z.string().optional()
+    channelId: z.string().optional(),
+    onMemberJoin: z.boolean().optional()
 } );
 
 export async function executeAIPromptTool( name: string, args: Record<string, unknown> | undefined ): Promise<unknown> {
@@ -44,19 +45,22 @@ export async function executeAIPromptTool( name: string, args: Record<string, un
         }
 
         case AI_PROMPT_IPC_ACTIONS.SET_CHANNEL_PROMPT: {
-            const { prompt, channelId } = SetChannelPromptSchema.parse( args ?? {} );
+            const { prompt, channelId, onMemberJoin } = SetChannelPromptSchema.parse( args ?? {} );
 
             const response = await requestAIPrompt<AISetChannelPromptResponse>( {
                 action: AI_PROMPT_IPC_ACTIONS.SET_CHANNEL_PROMPT,
                 caller,
                 channelId,
-                prompt
+                prompt,
+                onMemberJoin
             } );
 
             return {
                 ...response,
                 state: `Saved. From the next message in #${ response.channelName } onwards, this is appended ` +
-                    "to the base system prompt."
+                    "to the base system prompt. " + ( response.onMemberJoin
+                    ? "Somebody joining the server also wakes this channel."
+                    : "Joins do not wake this channel - pass onMemberJoin true if they should." )
             };
         }
 

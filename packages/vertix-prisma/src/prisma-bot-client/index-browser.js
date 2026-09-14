@@ -242,6 +242,7 @@ exports.Prisma.AIChannelPromptScalarFieldEnum = {
   channelId: 'channelId',
   guildId: 'guildId',
   prompt: 'prompt',
+  onMemberJoin: 'onMemberJoin',
   updatedBy: 'updatedBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

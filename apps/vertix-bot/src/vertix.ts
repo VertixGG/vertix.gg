@@ -190,7 +190,9 @@ export default async function Main( { enableListeners }: {
             }
 
             // Both mention handlers run on the AI client, not main client
-            if ( handler === handlers.mentionHandlerPublic || handler === handlers.mentionHandlerPrivate ) {
+            if ( handler === handlers.mentionHandlerPublic
+                || handler === handlers.mentionHandlerPrivate
+                || handler === handlers.memberJoinHandler ) {
                 continue;
             }
 
@@ -211,7 +213,12 @@ export default async function Main( { enableListeners }: {
                     "Guilds",
                     "GuildMessages",
                     "MessageContent",
-                    "DirectMessages"
+                    "DirectMessages",
+                    // Privileged, and the switch is in Discord's Developer Portal rather than
+                    // here: asking for it while it is off there does not degrade, it refuses the
+                    // login outright. Hence the kill switch - set AI_CHAT_MEMBER_INTENT=false and
+                    // the bot comes back up without the join greeting.
+                    ... ( "false" === process.env.AI_CHAT_MEMBER_INTENT?.trim() ? [] : [ "GuildMembers" as const ] )
                 ],
                 partials: [ Partials.Channel ],
                 shards: "auto"
@@ -279,6 +286,12 @@ export default async function Main( { enableListeners }: {
                 logger.log( onAiLogin, "Registering mentionHandlerPrivate on AI client..." );
                 await handlers.mentionHandlerPrivate( aiClient as Client<true> );
                 logger.log( onAiLogin, "mentionHandlerPrivate registered on AI client" );
+
+                if ( "false" !== process.env.AI_CHAT_MEMBER_INTENT?.trim() ) {
+                    logger.log( onAiLogin, "Registering memberJoinHandler on AI client..." );
+                    await handlers.memberJoinHandler( aiClient as Client<true> );
+                    logger.log( onAiLogin, "memberJoinHandler registered on AI client" );
+                }
 
                 logger.log( onAiLogin, "Registering interactionHandler on AI client..." );
                 await handlers.interactionHandler( aiClient as Client<true> );

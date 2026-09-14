@@ -12238,6 +12238,7 @@ export namespace Prisma {
     channelId: string | null
     guildId: string | null
     prompt: string | null
+    onMemberJoin: boolean | null
     updatedBy: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -12248,6 +12249,7 @@ export namespace Prisma {
     channelId: string | null
     guildId: string | null
     prompt: string | null
+    onMemberJoin: boolean | null
     updatedBy: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -12258,6 +12260,7 @@ export namespace Prisma {
     channelId: number
     guildId: number
     prompt: number
+    onMemberJoin: number
     updatedBy: number
     createdAt: number
     updatedAt: number
@@ -12270,6 +12273,7 @@ export namespace Prisma {
     channelId?: true
     guildId?: true
     prompt?: true
+    onMemberJoin?: true
     updatedBy?: true
     createdAt?: true
     updatedAt?: true
@@ -12280,6 +12284,7 @@ export namespace Prisma {
     channelId?: true
     guildId?: true
     prompt?: true
+    onMemberJoin?: true
     updatedBy?: true
     createdAt?: true
     updatedAt?: true
@@ -12290,6 +12295,7 @@ export namespace Prisma {
     channelId?: true
     guildId?: true
     prompt?: true
+    onMemberJoin?: true
     updatedBy?: true
     createdAt?: true
     updatedAt?: true
@@ -12373,6 +12379,7 @@ export namespace Prisma {
     channelId: string
     guildId: string
     prompt: string
+    onMemberJoin: boolean
     updatedBy: string
     createdAt: Date
     updatedAt: Date
@@ -12400,6 +12407,7 @@ export namespace Prisma {
     channelId?: boolean
     guildId?: boolean
     prompt?: boolean
+    onMemberJoin?: boolean
     updatedBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -12412,12 +12420,13 @@ export namespace Prisma {
     channelId?: boolean
     guildId?: boolean
     prompt?: boolean
+    onMemberJoin?: boolean
     updatedBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AIChannelPromptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channelId" | "guildId" | "prompt" | "updatedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["aIChannelPrompt"]>
+  export type AIChannelPromptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channelId" | "guildId" | "prompt" | "onMemberJoin" | "updatedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["aIChannelPrompt"]>
 
   export type $AIChannelPromptPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AIChannelPrompt"
@@ -12427,6 +12436,13 @@ export namespace Prisma {
       channelId: string
       guildId: string
       prompt: string
+      /**
+       * Whether a member joining the guild wakes this channel.
+       * 
+       * Off unless asked for: a prompt that only shapes how the bot answers should not also cost an
+       * agent run every time somebody joins.
+       */
+      onMemberJoin: boolean
       /**
        * Who set it, for the admin log - Discord user id.
        */
@@ -12829,6 +12845,7 @@ export namespace Prisma {
     readonly channelId: FieldRef<"AIChannelPrompt", 'String'>
     readonly guildId: FieldRef<"AIChannelPrompt", 'String'>
     readonly prompt: FieldRef<"AIChannelPrompt", 'String'>
+    readonly onMemberJoin: FieldRef<"AIChannelPrompt", 'Boolean'>
     readonly updatedBy: FieldRef<"AIChannelPrompt", 'String'>
     readonly createdAt: FieldRef<"AIChannelPrompt", 'DateTime'>
     readonly updatedAt: FieldRef<"AIChannelPrompt", 'DateTime'>
@@ -14344,6 +14361,7 @@ export namespace Prisma {
     channelId: 'channelId',
     guildId: 'guildId',
     prompt: 'prompt',
+    onMemberJoin: 'onMemberJoin',
     updatedBy: 'updatedBy',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -15265,6 +15283,7 @@ export namespace Prisma {
     channelId?: StringFilter<"AIChannelPrompt"> | string
     guildId?: StringFilter<"AIChannelPrompt"> | string
     prompt?: StringFilter<"AIChannelPrompt"> | string
+    onMemberJoin?: BoolFilter<"AIChannelPrompt"> | boolean
     updatedBy?: StringFilter<"AIChannelPrompt"> | string
     createdAt?: DateTimeFilter<"AIChannelPrompt"> | Date | string
     updatedAt?: DateTimeFilter<"AIChannelPrompt"> | Date | string
@@ -15275,6 +15294,7 @@ export namespace Prisma {
     channelId?: SortOrder
     guildId?: SortOrder
     prompt?: SortOrder
+    onMemberJoin?: SortOrder
     updatedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15288,6 +15308,7 @@ export namespace Prisma {
     NOT?: AIChannelPromptWhereInput | AIChannelPromptWhereInput[]
     guildId?: StringFilter<"AIChannelPrompt"> | string
     prompt?: StringFilter<"AIChannelPrompt"> | string
+    onMemberJoin?: BoolFilter<"AIChannelPrompt"> | boolean
     updatedBy?: StringFilter<"AIChannelPrompt"> | string
     createdAt?: DateTimeFilter<"AIChannelPrompt"> | Date | string
     updatedAt?: DateTimeFilter<"AIChannelPrompt"> | Date | string
@@ -15298,6 +15319,7 @@ export namespace Prisma {
     channelId?: SortOrder
     guildId?: SortOrder
     prompt?: SortOrder
+    onMemberJoin?: SortOrder
     updatedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15314,6 +15336,7 @@ export namespace Prisma {
     channelId?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
     guildId?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
     prompt?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
+    onMemberJoin?: BoolWithAggregatesFilter<"AIChannelPrompt"> | boolean
     updatedBy?: StringWithAggregatesFilter<"AIChannelPrompt"> | string
     createdAt?: DateTimeWithAggregatesFilter<"AIChannelPrompt"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AIChannelPrompt"> | Date | string
@@ -16227,6 +16250,7 @@ export namespace Prisma {
     channelId: string
     guildId: string
     prompt: string
+    onMemberJoin?: boolean
     updatedBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16237,6 +16261,7 @@ export namespace Prisma {
     channelId: string
     guildId: string
     prompt: string
+    onMemberJoin?: boolean
     updatedBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16246,6 +16271,7 @@ export namespace Prisma {
     channelId?: StringFieldUpdateOperationsInput | string
     guildId?: StringFieldUpdateOperationsInput | string
     prompt?: StringFieldUpdateOperationsInput | string
+    onMemberJoin?: BoolFieldUpdateOperationsInput | boolean
     updatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16255,6 +16281,7 @@ export namespace Prisma {
     channelId?: StringFieldUpdateOperationsInput | string
     guildId?: StringFieldUpdateOperationsInput | string
     prompt?: StringFieldUpdateOperationsInput | string
+    onMemberJoin?: BoolFieldUpdateOperationsInput | boolean
     updatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16265,6 +16292,7 @@ export namespace Prisma {
     channelId: string
     guildId: string
     prompt: string
+    onMemberJoin?: boolean
     updatedBy: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16274,6 +16302,7 @@ export namespace Prisma {
     channelId?: StringFieldUpdateOperationsInput | string
     guildId?: StringFieldUpdateOperationsInput | string
     prompt?: StringFieldUpdateOperationsInput | string
+    onMemberJoin?: BoolFieldUpdateOperationsInput | boolean
     updatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16283,6 +16312,7 @@ export namespace Prisma {
     channelId?: StringFieldUpdateOperationsInput | string
     guildId?: StringFieldUpdateOperationsInput | string
     prompt?: StringFieldUpdateOperationsInput | string
+    onMemberJoin?: BoolFieldUpdateOperationsInput | boolean
     updatedBy?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17045,6 +17075,7 @@ export namespace Prisma {
     channelId?: SortOrder
     guildId?: SortOrder
     prompt?: SortOrder
+    onMemberJoin?: SortOrder
     updatedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17055,6 +17086,7 @@ export namespace Prisma {
     channelId?: SortOrder
     guildId?: SortOrder
     prompt?: SortOrder
+    onMemberJoin?: SortOrder
     updatedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17065,6 +17097,7 @@ export namespace Prisma {
     channelId?: SortOrder
     guildId?: SortOrder
     prompt?: SortOrder
+    onMemberJoin?: SortOrder
     updatedBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder

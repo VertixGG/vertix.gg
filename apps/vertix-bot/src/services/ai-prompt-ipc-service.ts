@@ -140,7 +140,8 @@ export class AIPromptIPCService extends ServiceWithDependenciesBase<{
         return {
             channelId: target.channelId,
             channelName: target.channelName,
-            prompt: await AIChannelPromptModel.$.get( target.channelId )
+            prompt: await AIChannelPromptModel.$.get( target.channelId ),
+            onMemberJoin: await AIChannelPromptModel.$.isJoinGreetingEnabled( target.channelId )
         };
     }
 
@@ -166,7 +167,8 @@ export class AIPromptIPCService extends ServiceWithDependenciesBase<{
             target.channelId,
             target.guildId,
             prompt,
-            payload.caller.userId
+            payload.caller.userId,
+            payload.onMemberJoin
         );
 
         this.applyImmediately( target );
@@ -182,7 +184,8 @@ export class AIPromptIPCService extends ServiceWithDependenciesBase<{
             channelId: target.channelId,
             channelName: target.channelName,
             previous: change.previous,
-            current: prompt
+            current: prompt,
+            onMemberJoin: await AIChannelPromptModel.$.isJoinGreetingEnabled( target.channelId )
         };
     }
 

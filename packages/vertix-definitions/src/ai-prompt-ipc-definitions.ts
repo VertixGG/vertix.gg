@@ -55,6 +55,13 @@ export interface AISetChannelPromptRequest extends AIPromptScopedRequest {
     action: typeof AI_PROMPT_IPC_ACTIONS.SET_CHANNEL_PROMPT;
     /** Replaces whatever the channel had - the caller composes the merge, not the store. */
     prompt: string;
+    /**
+     * Whether somebody joining the guild should wake this channel.
+     *
+     * Left as it was when omitted, so rewording a prompt cannot quietly switch off a greeting that
+     * was turned on separately.
+     */
+    onMemberJoin?: boolean;
 }
 
 export interface AIResetChannelPromptRequest extends AIPromptScopedRequest {
@@ -73,11 +80,13 @@ export interface AIPromptTarget {
 
 export interface AIGetChannelPromptResponse extends AIPromptTarget {
     prompt: string | null;
+    onMemberJoin: boolean;
 }
 
 export interface AISetChannelPromptResponse extends AIPromptTarget {
     previous: string | null;
     current: string;
+    onMemberJoin: boolean;
 }
 
 export interface AIResetChannelPromptResponse extends AIPromptTarget {

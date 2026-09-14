@@ -51,7 +51,7 @@ type ChannelSession = {
  * challenge and have an answer checked, and the role behind a correct answer is handed over by the
  * bot against what the prompt names, never by this assistant deciding somebody deserves it.
  */
-const CHANNEL_PROMPT_EXTRA_TOOLS = [
+export const CHANNEL_PROMPT_EXTRA_TOOLS = [
     AI_CAPTCHA_IPC_ACTIONS.SEND_CHALLENGE,
     AI_CAPTCHA_IPC_ACTIONS.VERIFY_ANSWER
 ];
@@ -84,6 +84,29 @@ async function buildSystemPrompt( channelId: string, botName: string ): Promise<
 export function resetPublicChannelSession( guildId: string, channelId: string ): void {
     channelSessions.delete( getSessionKey( guildId, channelId ) );
 }
+
+/**
+ * The channel's running conversation, started if there is none.
+ *
+ * Shared with the join greeting on purpose: the turn that posts a challenge and the turn that
+ * reads the answer are the same conversation, so the bot knows it asked.
+ */
+export function takePublicSession( guildId: string, channelId: string ): ChannelSession {
+    const key = getSessionKey( guildId, channelId );
+
+    let session = channelSessions.get( key );
+
+    if ( ! session || Date.now() - session.lastActivity > SESSION_TIMEOUT_MS ) {
+        session = { lastActivity: Date.now() };
+        channelSessions.set( key, session );
+    }
+
+    session.lastActivity = Date.now();
+
+    return session;
+}
+
+export { buildSystemPrompt as buildPublicChannelPrompt };
 
 const channelSessions = new Map<string, ChannelSession>();
 const SESSION_TIMEOUT_MS = 300000;
@@ -153,15 +176,7 @@ export function mentionHandlerPublic( client: Client ) {
 
             GlobalLogger.$.log( mentionHandlerPublic, `[PUBLIC] Processing mention from ${ message.author.username } in ${ message.guild.name }` );
 
-            const sessionKey = getSessionKey( guildId ?? "", message.channelId );
-            let session = channelSessions.get( sessionKey );
-
-            if ( ! session || Date.now() - session.lastActivity > SESSION_TIMEOUT_MS ) {
-                session = { lastActivity: Date.now() };
-                channelSessions.set( sessionKey, session );
-            }
-
-            session.lastActivity = Date.now();
+            const session = takePublicSession( guildId ?? "", message.channelId );
 
             const attachments = await AttachmentManager.$.download( message );
             const stopTyping = startTypingHeartbeat( message.channel );

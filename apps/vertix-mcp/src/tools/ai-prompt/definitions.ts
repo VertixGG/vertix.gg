@@ -47,7 +47,14 @@ export const aiPromptToolDefinitions: Tool[] = [
                     type: "string",
                     description: "The complete instruction for this channel, written as instructions to yourself"
                 },
-                channelId: { type: "string", description: CHANNEL_ID_DESCRIPTION }
+                channelId: { type: "string", description: CHANNEL_ID_DESCRIPTION },
+                onMemberJoin: {
+                    type: "boolean",
+                    description:
+                        "Whether somebody joining the server should wake this channel so you can act on them " +
+                        "arriving. Set it true when the instructions describe what to do when a member joins; " +
+                        "leave it out to keep the current setting"
+                }
             },
             required: [ "prompt" ]
         }

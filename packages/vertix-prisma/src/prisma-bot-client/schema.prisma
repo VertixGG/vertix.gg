@@ -248,18 +248,24 @@ model UserChannelData {
 /// Appended to the base system prompt, never replacing it - a channel can shape how the
 /// bot answers, but cannot talk it out of its own instructions.
 model AIChannelPrompt {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  channelId String   @unique
-  guildId   String
+  channelId    String   @unique
+  guildId      String
   // ---
-  prompt    String
+  prompt       String
+  // ---
+  /// Whether a member joining the guild wakes this channel.
+  ///
+  /// Off unless asked for: a prompt that only shapes how the bot answers should not also cost an
+  /// agent run every time somebody joins.
+  onMemberJoin Boolean  @default(false)
   // ---
   /// Who set it, for the admin log - Discord user id.
-  updatedBy String
+  updatedBy    String
   // ---
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([guildId])
 }

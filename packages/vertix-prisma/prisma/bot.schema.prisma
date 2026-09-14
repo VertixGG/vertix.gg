@@ -255,6 +255,12 @@ model AIChannelPrompt {
   // ---
   prompt    String
   // ---
+  /// Whether a member joining the guild wakes this channel.
+  ///
+  /// Off unless asked for: a prompt that only shapes how the bot answers should not also cost an
+  /// agent run every time somebody joins.
+  onMemberJoin Boolean @default(false)
+  // ---
   /// Who set it, for the admin log - Discord user id.
   updatedBy String
   // ---

@@ -41,7 +41,10 @@ export function DiscordSelectMenu( {
             type="button"
             className={ highlighted ? "discord-select-menu discord-select-menu-highlighted" : "discord-select-menu" }
             disabled={ disabled }
-            aria-label={ placeholder }
+            // The button shows the selection once there is one, but was still named after the
+            // placeholder - so what a reader heard and what the screen said were different things.
+            // The name keeps the placeholder for context and adds what is actually shown.
+            aria-label={ selectedLabel ? `${ placeholder ?? "" } ${ selectedLabel }`.trim() : placeholder }
             onClick={ onClick }
         >
             <span

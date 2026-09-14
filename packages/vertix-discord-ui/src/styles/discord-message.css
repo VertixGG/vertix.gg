@@ -319,13 +319,15 @@
     margin-top: 0;
 }
 
+/*
+ * Underlined at rest. These sit in running message text, so colour was the only thing telling them
+ * apart from the words around them - and this rule is more specific than the embed link's, so it
+ * was deciding for those too.
+ */
 .discord-message-body a {
     color: var(--discord-text-link);
-    text-decoration: none;
-}
-
-.discord-message-body a:hover {
     text-decoration: underline;
+    text-underline-offset: 0.2em;
 }
 
 /* Discord applies one set of list metrics to every markup block, embeds included: 4px above the

@@ -173,7 +173,8 @@
      * by where they sit rather than by what colour they are, and keep the clean look. A link that
      * brought its own class is styled by that class and is left alone here. */
     p a:not([class]),
-    li a:not([class]) {
+    li a:not([class]),
+    .vc-toast a:not([class]) {
         text-decoration: underline;
         text-underline-offset: 0.2em;
     }

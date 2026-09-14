@@ -175,13 +175,15 @@
     color: var(--discord-text-default);
 }
 
+/*
+ * Underlined at rest, not only under the pointer. These sit inside a paragraph of embed text, so
+ * colour was the only thing separating them from the words either side - and hovering is not a
+ * thing everybody can do to find out.
+ */
 .discord-embed-link {
     color: var(--discord-text-link);
-    text-decoration: none;
-}
-
-.discord-embed-link:hover {
     text-decoration: underline;
+    text-underline-offset: 0.2em;
 }
 
 .discord-embed-fields {

@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
+	<!-- First, and before anything that can grow. A browser stops looking for the encoding after
+	     the first 1024 bytes and starts guessing, and everything below here - the measurement
+	     queue, the font links, the meta block - is free to get longer over time. This page is full
+	     of dashes, curly quotes and emoji, so guessing wrong is not cosmetic. -->
+	<meta charset="utf-8"/>
 	<!-- Google tag (gtag.js).
 
 	     The queue is built here and the calls are made here, so nothing said before
@@ -66,7 +71,6 @@
 		} )();
 	</script>
 
-	<meta charset="utf-8"/>
 	<link rel="icon" href="/vc-naked.ico"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 

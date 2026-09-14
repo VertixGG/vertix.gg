@@ -27,6 +27,24 @@ export interface GetGuildOptionsRequest {
     guildId: string;
 }
 
+/**
+ * Why the bot cannot hand a role out.
+ *
+ * Codes rather than sentences, because the two screens that report this say it differently: the
+ * missing permission is named as a permission in discord and as a reason in the dashboard. The
+ * code is the part that has to agree, and it is what `isRoleAssignable()` answers with.
+ */
+export const ROLE_UNASSIGNABLE_REASONS = {
+    UNKNOWN_BOT_MEMBER: "unknown-bot-member",
+    MISSING_MANAGE_ROLES: "missing-manage-roles",
+    MANAGED_ROLE: "managed-role",
+    EVERYONE_ROLE: "everyone-role",
+    ROLE_ABOVE_BOT: "role-above-bot"
+} as const;
+
+export type TRoleUnassignableReason =
+    typeof ROLE_UNASSIGNABLE_REASONS[ keyof typeof ROLE_UNASSIGNABLE_REASONS ];
+
 export interface IPCGuildRole {
     id: string;
     name: string;
@@ -40,6 +58,17 @@ export interface IPCGuildRole {
      * free to, and `Nitro Booster` is managed.
      */
     managed: boolean;
+    /**
+     * Whether the bot could actually give this role to somebody, and why not when it could not.
+     *
+     * Wider than `managed`: it also covers the permission the bot needs, the everyone role, and a
+     * role sitting above the bot in the list. Only the bot can answer it - the api's own token may
+     * belong to an application that was never invited to the guild, so it cannot resolve the bot's
+     * member or its highest role - which is why both are optional. Absent is "not known", and a
+     * picker should allow rather than refuse on it; the bot checks again before it assigns.
+     */
+    assignable?: boolean;
+    reason?: TRoleUnassignableReason;
 }
 
 export interface IPCGuildChannel {

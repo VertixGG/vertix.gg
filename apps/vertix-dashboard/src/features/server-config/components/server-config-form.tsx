@@ -8,7 +8,11 @@ import { DiscordButton } from "@vertix.gg/discord-ui/src";
 import { badwordsIsMatch } from "@vertix.gg/definitions/src/badwords-match";
 import { GUILD_TIMINGS_BOUNDS } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
-import { RoleCheckList, RoleRadioList } from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
+import {
+    RoleCheckList,
+    RoleRadioList,
+    voiceRoleUnavailableReason
+} from "@vertix.gg/dashboard/src/features/generators/components/settings-list";
 
 import type { ServerConfig, GuildDiscordOptions } from "@vertix.gg/dashboard/src/features/server-config/types";
 import type { TGuildTimingsField, TGuildTimingsOverrides } from "@vertix.gg/definitions/src/guild-timings-definitions";
@@ -248,13 +252,6 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
     // the shape is checked rather than assumed.
     const roles = Array.isArray( discordOptions?.roles ) ? discordOptions.roles : [];
 
-    // The bot gives a member the voice role and takes it back, and discord refuses to let anybody
-    // hand out a role it owns - so a managed one is left out of that picker alone. Verified and
-    // staff roles are written into a channel's permissions rather than given to anyone, which a
-    // managed role does perfectly well, and a set of buttons only asks whether an owner already
-    // holds a role - so neither has a reason to hide them.
-    const assignableRoles = roles.filter( ( role ) => ! role.managed );
-
     const fieldClassName = "w-full px-3 py-2 bg-background border border-border rounded-md text-text-primary "
         + "placeholder-text-muted focus:outline-none focus:border-border-accent";
 
@@ -272,7 +269,8 @@ export function ServerConfigForm( { config, discordOptions, guildId, isSaving }:
                     <RoleRadioList
                         label="Voice role"
                         hint="Held only while a member sits in a dynamic channel"
-                        roles={ assignableRoles }
+                        roles={ roles }
+                        unavailableReason={ voiceRoleUnavailableReason }
                         selected={ voiceRoleId }
                         disabled={ isSaving }
                         emptyLabel="Roles could not be loaded from Discord"

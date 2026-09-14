@@ -15,6 +15,8 @@ import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version
 
 import { ChannelType } from "discord.js";
 
+import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
+
 import type { NewsChannel, TextChannel } from "discord.js";
 
 import type { IPCService, IPCMessage, IPCRequest } from "@vertix.gg/base/src/modules/ipc";
@@ -209,12 +211,21 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             // in and is named rather than shown by whatever discord calls it.
             roles: guild.roles.cache
                 .sort( ( a, b ) => b.position - a.position )
-                .map( ( role ) => ( {
-                    id: role.id,
-                    name: role.id === guildId ? "@everyone" : role.name,
-                    color: role.color,
-                    managed: role.managed
-                } ) ),
+                .map( ( role ) => {
+                    // Answered here rather than worked out again on the other side: this is the
+                    // same rule the bot applies before it hands the role to anybody, so a picker
+                    // that greys a role out and the join that would have failed cannot disagree.
+                    const { assignable, reason } = VoiceRoleManager.$.isRoleAssignable( role );
+
+                    return {
+                        id: role.id,
+                        name: role.id === guildId ? "@everyone" : role.name,
+                        color: role.color,
+                        managed: role.managed,
+                        assignable,
+                        reason
+                    };
+                } ),
 
             textChannels: guild.channels.cache
                 .filter( ( channel ): channel is TextChannel | NewsChannel =>

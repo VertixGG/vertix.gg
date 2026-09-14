@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from "react";
 
 import { Info } from "lucide-react";
 
+import { ROLE_UNASSIGNABLE_REASONS } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import type { TRoleUnassignableReason } from "@vertix.gg/definitions/src/ipc-definitions";
+
 import type { ReactNode } from "react";
 import type { GuildDiscordRole, GuildDiscordChannel } from "@vertix.gg/dashboard/src/features/generators/types";
 
@@ -192,12 +196,15 @@ function SelectRow( {
     marker,
     name,
     disabled,
+    note,
     children
 }: {
     /** What sits between the control and the name - a role's colour, a channel's `#`. */
     marker: React.ReactNode;
     name: string;
     disabled?: boolean;
+    /** Why this row cannot be picked, said beside it rather than by leaving the row out. */
+    note?: string | null;
     children: React.ReactNode;
 } ) {
     return (
@@ -208,6 +215,9 @@ function SelectRow( {
             { children }
             { marker }
             <span className="text-text-primary truncate">{ name }</span>
+            { note && (
+                <span className="ml-auto shrink-0 text-xs text-text-muted">{ note }</span>
+            ) }
         </label>
     );
 }
@@ -277,6 +287,45 @@ export function ChannelRadioList( {
     );
 }
 
+/**
+ * Why the bot could not hand a role out, in the words a picker says it in.
+ *
+ * Its own wording rather than the bot's: discord names the missing permission as a permission, in
+ * a message about permissions, while a greyed row has one line to say what is wrong with this
+ * role. The reason code is the part both sides agree on.
+ */
+const VOICE_ROLE_UNAVAILABLE_MESSAGES: Record<TRoleUnassignableReason, string> = {
+    [ ROLE_UNASSIGNABLE_REASONS.UNKNOWN_BOT_MEMBER ]: "the bot is not in this server",
+    [ ROLE_UNASSIGNABLE_REASONS.MISSING_MANAGE_ROLES ]: "the bot is missing Manage Roles",
+    [ ROLE_UNASSIGNABLE_REASONS.MANAGED_ROLE ]: "another app owns this role",
+    [ ROLE_UNASSIGNABLE_REASONS.EVERYONE_ROLE ]: "everyone cannot be handed out",
+    [ ROLE_UNASSIGNABLE_REASONS.ROLE_ABOVE_BOT ]: "above the bot in the role list"
+};
+
+/**
+ * Function voiceRoleUnavailableReason() :: Why this role cannot be the voice role, if it cannot.
+ *
+ * For the one setting that has the bot give a member a role and take it back again. Verified and
+ * staff roles are written into a channel's permissions instead, and a set of buttons only asks
+ * whether an owner already holds a role - neither needs the bot to be able to hand anything out.
+ *
+ * `managed` is read on its own because both sides can answer it, while `assignable` is the bot's
+ * to work out and is simply absent when the api had to answer over rest. Absent is "nobody knows"
+ * rather than "no": refusing on it would grey out a role that works, and the bot checks again
+ * before it assigns either way.
+ */
+export function voiceRoleUnavailableReason( role: GuildDiscordRole ): string | null {
+    if ( role.managed ) {
+        return VOICE_ROLE_UNAVAILABLE_MESSAGES[ ROLE_UNASSIGNABLE_REASONS.MANAGED_ROLE ];
+    }
+
+    if ( false !== role.assignable ) {
+        return null;
+    }
+
+    return ( role.reason && VOICE_ROLE_UNAVAILABLE_MESSAGES[ role.reason ] ) || "the bot cannot hand it out";
+}
+
 interface RoleRadioListProps {
     label: string;
     hint: string;
@@ -285,6 +334,14 @@ interface RoleRadioListProps {
     disabled?: boolean;
     emptyLabel: string;
     noneLabel: string;
+    /**
+     * Why a role cannot be used here, for the roles that cannot.
+     *
+     * A row with a reason is drawn and greyed rather than left out: a role an admin came looking
+     * for and cannot find tells them nothing, while the same role with `above the bot in the role
+     * list` beside it tells them what to go and change.
+     */
+    unavailableReason?: ( role: GuildDiscordRole ) => string | null;
     onChange: ( value: string | null ) => void;
 }
 
@@ -302,6 +359,7 @@ export function RoleRadioList( {
     disabled,
     emptyLabel,
     noneLabel,
+    unavailableReason,
     onChange
 }: RoleRadioListProps ) {
     return (
@@ -316,17 +374,30 @@ export function RoleRadioList( {
                 />
             </SelectRow>
 
-            { roles.map( ( role ) => (
-                <SelectRow key={ role.id } marker={ <RoleSwatch color={ role.color } /> } name={ role.name } disabled={ disabled }>
-                    <input
-                        type="radio"
-                        checked={ selected === role.id }
-                        disabled={ disabled }
-                        onChange={ () => onChange( role.id ) }
-                        className="accent-accent"
-                    />
-                </SelectRow>
-            ) ) }
+            { roles.map( ( role ) => {
+                const unavailable = unavailableReason?.( role ) ?? null;
+
+                return (
+                    <SelectRow
+                        key={ role.id }
+                        marker={ <RoleSwatch color={ role.color } /> }
+                        name={ role.name }
+                        disabled={ disabled || Boolean( unavailable ) }
+                        note={ unavailable }
+                    >
+                        <input
+                            type="radio"
+                            // Still drawn as chosen when it is the one stored, even where it can no
+                            // longer be used - that pairing is the whole explanation of why the
+                            // setting is doing nothing, and hiding it would leave the row blank.
+                            checked={ selected === role.id }
+                            disabled={ disabled || Boolean( unavailable ) }
+                            onChange={ () => onChange( role.id ) }
+                            className="accent-accent"
+                        />
+                    </SelectRow>
+                );
+            } ) }
         </SelectListFrame>
     );
 }

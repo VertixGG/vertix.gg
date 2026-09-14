@@ -1,3 +1,5 @@
+import type { TRoleUnassignableReason } from "@vertix.gg/definitions/src/ipc-definitions";
+
 export interface ScalingSettings {
     scalingChannelPrefix: string;
     scalingChannelMaxMembersPerChannel: number;
@@ -49,10 +51,19 @@ export interface GuildDiscordRole {
     /**
      * Whether discord or an app owns this role, and so whether anybody can hand it out.
      *
-     * A picker that makes the bot give somebody a role has to leave these out; one that only asks
+     * A picker that makes the bot give somebody a role has to refuse these; one that only asks
      * whether a member already holds a role does not, and `Nitro Booster` is managed.
      */
     managed: boolean;
+    /**
+     * Whether the bot could give this role to somebody, and why not when it could not.
+     *
+     * Wider than `managed` - it also covers the permission the bot needs, the everyone role, and a
+     * role sitting above the bot in the list. Absent means nobody could answer, which a picker
+     * should read as "allow": only the bot can work it out, and it checks again before assigning.
+     */
+    assignable?: boolean;
+    reason?: TRoleUnassignableReason;
 }
 
 export interface GuildDiscordChannel {

@@ -7,6 +7,10 @@ import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-ch
 
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 
+import { ROLE_UNASSIGNABLE_REASONS } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import type { TRoleUnassignableReason } from "@vertix.gg/definitions/src/ipc-definitions";
+
 import type { Guild, GuildMember, Role, Snowflake, VoiceState } from "discord.js";
 
 export class VoiceRoleManager extends InitializeBase {
@@ -104,27 +108,27 @@ export class VoiceRoleManager extends InitializeBase {
      * Used by the pickers so an admin is told at the moment they choose, rather than the feature
      * failing silently on every join afterwards.
      */
-    public isRoleAssignable( role: Role ): { assignable: boolean; reason?: string } {
+    public isRoleAssignable( role: Role ): { assignable: boolean; reason?: TRoleUnassignableReason } {
         const botMember = role.guild.members.me;
 
         if ( ! botMember ) {
-            return { assignable: false, reason: "unknown-bot-member" };
+            return { assignable: false, reason: ROLE_UNASSIGNABLE_REASONS.UNKNOWN_BOT_MEMBER };
         }
 
         if ( ! botMember.permissions.has( PermissionsBitField.Flags.ManageRoles ) ) {
-            return { assignable: false, reason: "missing-manage-roles" };
+            return { assignable: false, reason: ROLE_UNASSIGNABLE_REASONS.MISSING_MANAGE_ROLES };
         }
 
         if ( role.managed ) {
-            return { assignable: false, reason: "managed-role" };
+            return { assignable: false, reason: ROLE_UNASSIGNABLE_REASONS.MANAGED_ROLE };
         }
 
         if ( role.id === role.guild.id ) {
-            return { assignable: false, reason: "everyone-role" };
+            return { assignable: false, reason: ROLE_UNASSIGNABLE_REASONS.EVERYONE_ROLE };
         }
 
         if ( botMember.roles.highest.comparePositionTo( role ) <= 0 ) {
-            return { assignable: false, reason: "role-above-bot" };
+            return { assignable: false, reason: ROLE_UNASSIGNABLE_REASONS.ROLE_ABOVE_BOT };
         }
 
         return { assignable: true };

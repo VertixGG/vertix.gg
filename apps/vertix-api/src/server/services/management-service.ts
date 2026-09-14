@@ -39,7 +39,8 @@ import type {
     GetConfigLimitsRequest,
     GetConfigLimitsResponse,
     GetGeneratorDefaultsRequest,
-    GetGeneratorDefaultsResponse
+    GetGeneratorDefaultsResponse,
+    TRoleUnassignableReason
 } from "@vertix.gg/definitions/src/ipc-definitions";
 
 import type { ChannelPrivacyStateDefault } from "@vertix.gg/data/src/interfaces/master-channel-config";
@@ -221,6 +222,14 @@ export interface GuildDiscordRole {
     color: number;
     /** Whether discord or an app owns this role, and so whether anybody can hand it out. */
     managed: boolean;
+    /**
+     * Whether the bot could give this role to somebody, and why not when it could not.
+     *
+     * Only the bot can answer it, so it is absent whenever this fell back to rest - absent being
+     * "not known" rather than "no".
+     */
+    assignable?: boolean;
+    reason?: TRoleUnassignableReason;
 }
 
 export interface GuildDiscordChannel {
@@ -1111,6 +1120,11 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             // Managed roles stay in and say so, the way the bot answers this - whether one can be
             // used is the caller's to decide, since handing a role out needs an unmanaged one and
             // asking whether a member already holds it does not.
+            //
+            // Whether the bot could hand one out is left unanswered here, which is not the same as
+            // answering no: this path runs because the bot could not be reached, and the api's own
+            // token may belong to an application that was never invited to the guild - so it can
+            // resolve neither the bot's member nor where its highest role sits.
             //
             // `@everyone` carries the guild's own id and is the default verified role, so it stays
             // in and is named rather than shown by whatever discord calls it.

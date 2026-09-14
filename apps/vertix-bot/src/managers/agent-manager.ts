@@ -948,8 +948,17 @@ export class AgentManager extends InitializeBase {
                 // Once, rather than for every chunk that keeps arriving after it.
                 this.logger.error(
                     this.runClaude,
-                    `Claude wrote more than ${ MAX_AGENT_STDOUT_LENGTH } characters to stdout - the rest is dropped.`
+                    `Claude wrote more than ${ MAX_AGENT_STDOUT_LENGTH } characters to stdout - stopping the run.`
                 );
+
+                // Nothing is recoverable from here. The payload is already cut, so it will not
+                // parse, and the branch that catches an unparseable payload answers with the first
+                // 1900 characters of it - which would post a fragment of json into the channel as
+                // though it were the reply. Ending it here says so plainly instead, and stops a run
+                // that has clearly lost the thread from holding its ten minutes open.
+                child.kill();
+
+                settle( "I couldn't generate a reply. Claude produced far more output than a reply should." );
             } );
 
             child.stderr.on( "data", ( data: Buffer ) => {

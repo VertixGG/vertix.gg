@@ -209,6 +209,8 @@ export function DiscordEmbed( {
                         <img
                             src={ thumbnail.url }
                             alt="Thumbnail"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </div>
                 ) }
@@ -288,6 +290,8 @@ export function DiscordEmbed( {
                         <img
                             src={ image.url }
                             alt="Embed"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </div>
                 ) }

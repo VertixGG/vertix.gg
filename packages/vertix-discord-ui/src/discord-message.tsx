@@ -124,7 +124,7 @@ export const DiscordMessage: React.FC<DiscordMessageProps> = ( {
 
                 { avatar && (
                     <div className="discord-message-avatar">
-                        <img src={ avatar } alt={ author } />
+                        <img src={ avatar } alt={ author } loading="lazy" decoding="async" />
                     </div>
                 ) }
                 <div className="discord-message-content">

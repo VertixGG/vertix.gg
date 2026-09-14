@@ -21,7 +21,10 @@
     align-items: center;
     margin-bottom: 8px;
     margin-left: 18px;
-    opacity: 0.85;
+    /* 0.86 rather than 0.85: the row is dimmed by opacity, so the link inside it lands at 4.47:1
+       against the chat - just under the 4.5:1 it needs. A hundredth of opacity buys 4.58 and is
+       not a difference anybody sees. */
+    opacity: 0.86;
     font-size: 0.875rem;
     color: var(--discord-text-muted);
 }

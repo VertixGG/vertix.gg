@@ -26,7 +26,10 @@
 }
 
 .discord-channel-wizard-step-number {
-    color: #5865f2;
+    /* Discord's blurple is #5865f2, 3.35:1 against the card this header sits on - and bold at
+       16px is still ordinary text as far as the threshold goes. Lightness 65% to 71%; the blurple
+       backgrounds further down keep the brand value, since white on them is a different sum. */
+    color: #7580f4;
     font-weight: 700;
 }
 

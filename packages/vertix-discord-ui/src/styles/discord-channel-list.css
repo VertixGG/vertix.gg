@@ -64,6 +64,11 @@
  */
 .discord-channel-list {
     --discord-channel-list-text-muted: #80838a;
+    /* Quiet text on a row that is lifted off the column's near-black: the pills, and the row you
+       are sitting in. The column's own grey is picked against that near-black and falls under
+       4.5:1 as soon as a surface rises off it. This clears it on all three the list uses - the
+       selected row, the pill, and the hover - at 5.96, 4.92 and 4.54. */
+    --discord-channel-list-text-on-raised: #a8abaf;
     --discord-channel-list-text-active: var(--discord-text-strong);
 }
 
@@ -145,6 +150,16 @@
     color: var(--discord-channel-list-text-active);
 }
 
+/*
+ * The row you are sitting in is lifted a fifth of the way towards white, and the column's grey is
+ * picked against the near-black the other rows sit on - on this one it falls to 3.61:1. The name
+ * above already answers this by going bright; the line under it takes the raised grey, which reads
+ * as secondary to a near-white name while still being legible on the row it sits on.
+ */
+.discord-channel-list-item-active .discord-channel-list-item-status {
+    color: var(--discord-channel-list-text-on-raised);
+}
+
 .discord-channel-list-item-main {
     display: flex;
     align-items: center;
@@ -176,7 +191,9 @@
 }
 
 .discord-channel-list-item-icon.active {
-    color: #23a55a;
+    /* Discord's connected green is #23a55a, 4.32:1 on the row behind it. Lightness 39% to 40% - a
+       shade the eye does not catch, and the difference between passing and not. */
+    color: #24a95c;
 }
 
 .discord-channel-list-item-content {
@@ -238,7 +255,9 @@
     font-size: 0.75em;
     font-weight: var(--discord-font-weight-medium);
     font-variant-numeric: tabular-nums;
-    color: #23a55a;
+    /* The same lifted green as the connected icon: on the raised row this sits on it is 4.32:1
+       before the lift, 4.51 after. */
+    color: #24a95c;
 }
 
 .discord-channel-list-item-count {
@@ -268,9 +287,15 @@
  * The limit sits in a pill of its own, a shade behind the count - Discord draws two badges here,
  * not a badge and a loose number, and the darker of the two is the one you are counting towards.
  */
+/*
+ * The limit pill is a raised surface, so it does not take the column's grey: that grey is chosen
+ * against the near-black behind the rows, and on a pill lifted 12% towards white it falls to
+ * 2.99:1. Text on a raised surface is brighter than text on the base by the same reasoning that
+ * makes the base grey dim, so this one has its own.
+ */
 .discord-channel-list-item-count-max {
     background-color: var(--discord-control-secondary-background-default);
-    color: var(--discord-channel-list-text-muted);
+    color: var(--discord-channel-list-text-on-raised);
     padding: 2px 6px;
     border-radius: 10px;
     min-width: 24px;

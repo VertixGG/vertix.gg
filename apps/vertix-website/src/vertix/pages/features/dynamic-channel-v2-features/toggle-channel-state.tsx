@@ -17,7 +17,7 @@ export default function ToggleChannelState() {
                     </div>
                     <div className="mb-6">
                         <div className="discord-chat-container vc-frame-box m-0" style={ { minHeight: "500px" } }>
-                            <div className="discord-date-header" style={ { textAlign: "center", color: "#72767d", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
+                            <div className="discord-date-header" style={ { textAlign: "center", color: "#9fa2a7", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
                                 <span style={ { background: "#36393f", padding: "0 8px" } }>June 25, 2023</span>
                             </div>
                             <DiscordUIComponentMessage
@@ -65,7 +65,7 @@ export default function ToggleChannelState() {
                         </div>
                     </div>
                     <div className="discord-chat-container vc-frame-box m-0" style={ { minHeight: "500px" } }>
-                        <div className="discord-date-header" style={ { textAlign: "center", color: "#72767d", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
+                        <div className="discord-date-header" style={ { textAlign: "center", color: "#9fa2a7", fontSize: "12px", padding: "8px 0", borderBottom: "1px solid #4f545c", marginBottom: "16px" } }>
                             <span style={ { background: "#36393f", padding: "0 8px" } }>June 25, 2023</span>
                         </div>
                         <DiscordUIComponentMessage

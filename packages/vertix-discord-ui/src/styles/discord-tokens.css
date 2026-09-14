@@ -62,10 +62,15 @@
 
     /* Authored. */
     --discord-text-default: #efeff1;
-    --discord-text-muted: #96979e;
+    /* Lifted from Discord's own #96979e, which reaches 4.09:1 on the suggestion card it is drawn
+       on - under the 4.5:1 a 14px line needs. Hue and saturation are unchanged; lightness 60% to
+       63%, the least that clears it. */
+    --discord-text-muted: #9e9fa5;
     --discord-text-strong: #fbfbfb;
     /* Read back. `--chat-text-muted`, a step darker than the rest: timestamps and channel names. */
-    --discord-chat-text-muted: #80838a;
+    /* Lifted from Discord's own #80838a, 4.36:1 against the message it timestamps. Lightness
+       52% to 53%, hue and saturation untouched. */
+    --discord-chat-text-muted: #83868c;
     /* Read back. */
     --discord-text-link: #4c96ef;
     /* Authored. `--text-feedback-warning`, which a form notice uses for fill, edge and words. */

@@ -49,7 +49,10 @@
     --color-vc-cyan-soft: #9beefd;
     --color-vc-mint: #3ee0a6;
     --color-vc-mint-soft: #96ffd2;
-    --color-vc-violet: #7a4dd8;
+    /* Lifted from #7a4dd8, which reads 3.28:1 on the page behind it. It is only ever ink - the
+       comparison table's "Subscription" and "Not checked" - and never a fill, so there is no white
+       on it to lose by brightening. Lightness 57% to 65%, hue and saturation held. */
+    --color-vc-violet: #916bdf;
     --color-vc-magenta: #c04ce0;
 
     /* Text — neutral greys rather than blue-tinted ones, so body copy stops

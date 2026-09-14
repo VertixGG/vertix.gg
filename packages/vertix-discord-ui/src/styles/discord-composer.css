@@ -44,5 +44,7 @@
     white-space: nowrap;
     font-size: 1rem;
     line-height: 1.375rem;
-    color: #6c6c77;
+    /* Lifted from Discord's #6c6c77, which is 3.03:1 on the box it sits in. Placeholder text is
+       text somebody has to read to know what the box is for. Lightness 45% to 56%. */
+    color: #898994;
 }

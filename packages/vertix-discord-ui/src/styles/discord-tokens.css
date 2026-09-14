@@ -75,8 +75,17 @@
     /* Read back. What an unopened menu names itself in - dimmer than muted, being a prompt. */
     --discord-select-placeholder: #8f9196;
 
-    /* Read back. The colour the VoiceChannels role carries, which its name is drawn in. */
-    --discord-app-author-color: #206694;
+    /* The colour the VoiceChannels role carries, which its name is drawn in - lightened from the
+       #206694 the role actually holds. Read back, that reaches 2.8:1 against the chat behind it,
+       where a name at 16px needs 4.5:1 to be read by somebody who cannot pick a dim blue out of a
+       dark grey. Discord draws role colours exactly as they are set and inherits the problem; a
+       page about the bot is not obliged to.
+
+       Hue and saturation are the role's own, untouched at 204deg and 64%; only lightness moves,
+       35% to 52%. That is the least that clears 4.5:1 on every surface a message is drawn on -
+       4.52 on the lightest of them, 5.35 on the chat itself. Changing the role's colour in Discord
+       means recomputing this rather than copying the new value straight across. */
+    --discord-app-author-color: #3796d4;
 
     /* Read back. `--interactive-icon-default`, what an idle icon in the chrome is drawn in. */
     --discord-interactive-icon: #aaadb2;

@@ -164,6 +164,17 @@
         color: var(--color-vc-cyan-soft);
     }
 
+    /* A link sitting inside running text is told apart from the text around it by colour alone,
+     * which leaves a reader who cannot separate the two with nothing to go on. Links embedded in
+     * prose carry an underline; the ones that stand on their own - nav, cards, buttons - are found
+     * by where they sit rather than by what colour they are, and keep the clean look. A link that
+     * brought its own class is styled by that class and is left alone here. */
+    p a:not([class]),
+    li a:not([class]) {
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+
     b, strong {
         font-weight: 700;
     }

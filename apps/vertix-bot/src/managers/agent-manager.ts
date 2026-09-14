@@ -19,6 +19,17 @@ const REPO_ROOT = path.resolve( __dirname, "../../../../" );
 
 const MAX_DISCORD_RESPONSE_LENGTH = 1900;
 const MAX_LOG_BUFFER_LENGTH = 8000;
+
+/**
+ * The ceiling on what one Claude run may hold in memory from its stdout.
+ *
+ * Separate from the log buffer, and far larger, because this stream is not a log: `--output-format
+ * json` returns the reply itself here, so a limit sized for diagnostics would cut a legitimate
+ * answer in half. What this is guarding against is the other end - a run that never stops writing
+ * taking the bot's memory with it. A reply measured against Discord's 1900 characters does not come
+ * close to this, so nothing real is ever clipped by it.
+ */
+const MAX_AGENT_STDOUT_LENGTH = 5000000;
 const HELP_TIMEOUT_MS = 3000;
 const AGENT_TIMEOUT_MS = 600000;
 const DEFAULT_DEEPSEEK_BASE_URL = "https://api.deepseek.com";
@@ -882,8 +893,11 @@ export class AgentManager extends InitializeBase {
                 child.kill();
             }, AGENT_TIMEOUT_MS );
 
-            // Kept uncapped, the JSON payload holds the whole reply.
+            // Capped, but generously: the JSON payload holds the whole reply, so the limit is
+            // there to bound a run that will not stop writing, not to trim an answer.
             const stdoutChunks: string[] = [];
+            let stdoutLength = 0;
+            let stdoutTruncated = false;
             let stderr = "";
             let settled = false;
 
@@ -912,7 +926,30 @@ export class AgentManager extends InitializeBase {
             };
 
             child.stdout.on( "data", ( data: Buffer ) => {
-                stdoutChunks.push( data.toString() );
+                if ( stdoutTruncated ) {
+                    return;
+                }
+
+                const chunk = data.toString();
+                const remaining = MAX_AGENT_STDOUT_LENGTH - stdoutLength;
+
+                if ( chunk.length < remaining ) {
+                    stdoutChunks.push( chunk );
+                    stdoutLength += chunk.length;
+
+                    return;
+                }
+
+                stdoutChunks.push( chunk.slice( 0, remaining ) );
+
+                stdoutLength = MAX_AGENT_STDOUT_LENGTH;
+                stdoutTruncated = true;
+
+                // Once, rather than for every chunk that keeps arriving after it.
+                this.logger.error(
+                    this.runClaude,
+                    `Claude wrote more than ${ MAX_AGENT_STDOUT_LENGTH } characters to stdout - the rest is dropped.`
+                );
             } );
 
             child.stderr.on( "data", ( data: Buffer ) => {

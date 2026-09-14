@@ -21,7 +21,7 @@ interface IHowToSetupStep2Props {
 export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
     return (
         <>
-            <li>
+            <section>
                 {
                     props.displayStep ? (
                         <h2 id="step-2" className="text-h4">Step 2</h2>
@@ -65,8 +65,8 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                         } }
                     />
                 </div>
-            </li>
-            <br/>
+            
+            <br/></section>
             <p>
                 Select buttons you wish to enable in your temporary dynamic channels that created by joining
                 this <b>Master Channel</b>.

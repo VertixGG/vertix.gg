@@ -76,26 +76,41 @@
 
 .discord-channel-wizard-indicators {
     display: flex;
-    gap: 8px;
+    gap: 0;
 }
 
+/*
+ * The dot is 8px because that is what Discord draws, but a dot is not a target: at 8px with 8px
+ * between them, a finger aiming at one is as likely to get its neighbour. The button is 24px square
+ * and the dot is drawn inside it, so what you see is unchanged and what you can hit is the whole
+ * square - which is also what puts 24px between their centres, the distance the guidance is about.
+ */
 .discord-channel-wizard-indicator {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.discord-channel-wizard-indicator::before {
+    content: "";
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: #4f545c;
-    border: none;
-    cursor: pointer;
-    padding: 0;
     transition: background 150ms ease, transform 150ms ease;
 }
 
-.discord-channel-wizard-indicator:hover {
+.discord-channel-wizard-indicator:hover::before {
     background: var(--discord-control-secondary-background-hover);
     transform: scale(1.2);
 }
 
-.discord-channel-wizard-indicator.active {
+.discord-channel-wizard-indicator.active::before {
     background: #5865f2;
     transform: scale(1.25);
 }

@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 import "@vertix.gg/discord-ui/src/styles/discord-modal.css";
 
 import type { ReactNode } from "react";
@@ -76,14 +78,21 @@ export function DiscordInput( props: DiscordInputProps ) {
 
     const editable = undefined !== onChange;
 
+    // The label was already drawn above the field and already said the right thing; it just was not
+    // attached to it, so a reader announcing the field had nothing to announce it as. An id pairs
+    // the two rather than repeating the text into an aria-label, which would then have two places
+    // to keep saying the same thing.
+    const fieldId = useId();
+
     return (
         <div className="discord-input-wrapper">
-            <label className="discord-input-label">
+            <label className="discord-input-label" htmlFor={ fieldId }>
                 { label }
                 { required && <span className="discord-input-required">*</span> }
             </label>
             { style === "short" ? (
                 <input
+                    id={ fieldId }
                     type="text"
                     className="discord-input discord-input-short"
                     placeholder={ placeholder }
@@ -94,6 +103,7 @@ export function DiscordInput( props: DiscordInputProps ) {
                 />
             ) : (
                 <textarea
+                    id={ fieldId }
                     className="discord-input discord-input-paragraph"
                     placeholder={ placeholder }
                     value={ value }

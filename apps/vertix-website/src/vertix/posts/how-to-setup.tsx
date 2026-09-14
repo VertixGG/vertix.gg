@@ -30,6 +30,13 @@ export default function HowToSetup() {
                             } ] }
                         />
                     </li>
+                </ul>
+
+                { /* The steps are sections, not entries in the list above - they were sitting inside
+                     it beside the rules and breaks that separate them, which makes a reader announce
+                     a four item list whose items are mostly nothing. They keep the list's text size
+                     so the page reads as it did. */ }
+                <div className="text-h5">
                     <hr/>
                     <br/>
                     <HowToSetupStep1 displayStep={ true } />
@@ -41,7 +48,7 @@ export default function HowToSetup() {
                     <hr/>
                     <br/>
                     <HowToSetupStep3 displayStep={ true } />
-                </ul>
+                </div>
 
                 <hr/>
                 <br/>

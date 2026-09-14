@@ -89,8 +89,8 @@ export default function EnableFeatures() {
                             ] }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Select the <b>Master Channel</b> you want to turn the feature on for.
                     <br />
@@ -118,8 +118,8 @@ export default function EnableFeatures() {
                             } }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Select <b>Edit Channel's Buttons</b> option.
                     <br />
@@ -146,8 +146,8 @@ export default function EnableFeatures() {
                             } }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Click on <svg aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z"></path></svg> down arrow.
                     <br />
@@ -171,8 +171,8 @@ export default function EnableFeatures() {
                             } }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Tick the feature you want to turn on — <b>🔀 Transfer</b> here, as an example.
                     Anything you tick is added, anything you untick is removed.
@@ -201,8 +201,8 @@ export default function EnableFeatures() {
                             } }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Your pick is saved straight away — the list in the message updates to include it.
                     <br />

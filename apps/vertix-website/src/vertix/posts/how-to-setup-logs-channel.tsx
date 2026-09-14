@@ -51,8 +51,8 @@ export default function HowToSetupLogsChannel() {
                             ] }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Please select the Master Channel from which you would like to receive logs for the associated dynamic channels.
                     <br />
@@ -77,8 +77,8 @@ export default function HowToSetupLogsChannel() {
                             } }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Click on <svg aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z"></path></svg> down arrow.
                     <br />
@@ -102,8 +102,8 @@ export default function HowToSetupLogsChannel() {
                             } }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Please choose the channel where you would like to display the logs.
                     <br />
@@ -132,8 +132,8 @@ export default function HowToSetupLogsChannel() {
                             } }
                         />
                     </div>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     Verify that <b>"</b><small>▹ ✎ ∙ Send logs to custom channel</small><b>"</b> is <code>🟢 On</code>.
                     <br />
@@ -165,8 +165,8 @@ export default function HowToSetupLogsChannel() {
                         <li>For better security alignment, it is recommended to ensure that the role and permissions of the logs channel match your security requirements.</li>
                         <li>To ensure optimal organization and clarity, it is advisable to utilize a separate log channel for each master channel.</li>
                     </ul>
-                </li>
-                <br />
+                
+                <br /></li>
                 <li>
                     At this point, the logs channel is ready to receive logs from the associated dynamic channels.
                     <br />

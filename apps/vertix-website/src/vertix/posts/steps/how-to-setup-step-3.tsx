@@ -14,7 +14,7 @@ interface IHowToSetupStep3Props {
 export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
     return (
         <>
-            <li>
+            <section>
                 {
                     props.displayStep ? (
                         <h2 id="step-3" className="text-h4">Step 3</h2>
@@ -61,7 +61,9 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                     ] }
                 />
 
-                <ul className="pt-12">
+                { /* A question and the answers under it - the wrapper was a list holding a paragraph and
+                     another list, neither of which is an item. */ }
+                <div className="pt-12">
                     <p>Do I need to set <b>Verified Roles</b>?</p>
                     <ul>
                         <li>
@@ -73,13 +75,13 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                             visible and <b>Verified Role</b> tagged as <code>@everyone</code>, new members will
                             be able to <b>join/see</b> the channel, which may not be what you intended. This is
                             where the <b>Verified Role selection</b> comes into play.
-                        </li>
-                        <br/>
+                        
+                        <br/></li>
                         <li><b>Tip:</b> In most cases, one <b>verified role</b> is sufficient, and its
                             recommended to use <code>@everyone</code> role.
                         </li>
                     </ul>
-                </ul>
+                </div>
 
                 <br/>
                 Press <b>( ✔ Finish )</b> to generate your <b>Master Channel.</b>
@@ -127,7 +129,7 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                     />
                 </div>
                 <br/>
-            </li>
+            </section>
         </>
     );
 }

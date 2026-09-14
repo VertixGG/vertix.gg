@@ -86,6 +86,8 @@ export interface DiscordUIComponentRendererProps {
     preferredEmbedsGroup?: string;
     preferredElementsGroup?: string;
     hideElements?: boolean;
+    /** Screens an embed's image is worth fetching on; see `DiscordEmbedProps["image"]`. */
+    imageMedia?: string;
     expandedSelectMenu?: ExpandedSelectMenus;
     /**
      * Called with the menu and the option picked from it. Without it a dropdown stays a picture,
@@ -114,6 +116,7 @@ export function DiscordUIComponentRenderer( {
     preferredEmbedsGroup,
     preferredElementsGroup,
     hideElements,
+    imageMedia,
     expandedSelectMenu,
     onSelectOption,
 }: DiscordUIComponentRendererProps ) {
@@ -238,7 +241,7 @@ export function DiscordUIComponentRenderer( {
                     title={ embed.title }
                     description={ embed.description }
                     thumbnail={ embed.thumbnail ? { url: embed.thumbnail } : undefined }
-                    image={ embed.image ? { url: embed.image } : undefined }
+                    image={ embed.image ? { url: embed.image, media: imageMedia } : undefined }
                     color={ embed.color }
                     footer={ embed.footer ? { text: embed.footer } : undefined }
                     emojiIconSrcByUnicode={ emojiIconSrcByUnicode }

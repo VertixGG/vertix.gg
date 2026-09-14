@@ -20,6 +20,8 @@ export interface DiscordUIComponentMessageProps {
     preferredEmbedsGroup?: string;
     preferredElementsGroup?: string;
     hideElements?: boolean;
+    /** Screens an embed's image is worth fetching on; see `DiscordEmbedProps["image"]`. */
+    imageMedia?: string;
     app?: boolean;
     ephemeral?: boolean;
     /** The message this one answers, previewed above it. */
@@ -54,6 +56,7 @@ export function DiscordUIComponentMessage( {
     preferredEmbedsGroup,
     preferredElementsGroup,
     hideElements,
+    imageMedia,
     app = true,
     ephemeral = false,
     reply,
@@ -98,6 +101,7 @@ export function DiscordUIComponentMessage( {
                 preferredEmbedsGroup={ preferredEmbedsGroup }
                 preferredElementsGroup={ preferredElementsGroup }
                 hideElements={ hideElements }
+                imageMedia={ imageMedia }
                 expandedSelectMenu={ expandedSelectMenu }
                 onSelectOption={ onSelectOption }
             />

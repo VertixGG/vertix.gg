@@ -20,6 +20,11 @@ export default function DiscordDynamicChannelV3() {
                 // their own, so it is not addressed to them and carries no wash.
                 mentioned={ false }
                 componentName="VertixBot/UI-V3/DynamicChannel"
+                // The panel is only drawn from `lg` up - home.tsx keeps it in a `hidden lg:flex`
+                // wrapper - and its embed image is the button sheet, the heaviest thing the landing
+                // page asks for. Saying so here keeps a phone from fetching a third of a megabyte
+                // for a section it will never show.
+                imageMedia="(min-width: 1024px)"
                 variables={ {
                     title: "༄ Manage your Dynamic Channel",
                     description: "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\nPlease be advised that the privilege to make alterations is vested solely of the channel owner.",

@@ -68,13 +68,30 @@ const discordEmbedContentVariants = cva(
 
 type BaseProps = Omit<React.HTMLAttributes<HTMLDivElement>, "color">;
 
+/**
+ * A 1x1 transparent gif, for the `<img>` inside a `<picture>` whose sources are all conditional.
+ *
+ * An `<img>` must carry a src, and the browser fetches it when no `<source>` matches - so it has
+ * to be something that costs nothing. Inline, it costs no request either. Nothing is ever drawn
+ * from it: the layouts that skip the real image hide the embed entirely.
+ */
+const BLANK_IMAGE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
 export interface DiscordEmbedProps
     extends BaseProps,
     Omit<VariantProps<typeof discordEmbedVariants>, "variant"> {
     title?: string;
     description?: string | React.ReactNode;
     thumbnail?: { url: string };
-    image?: { url: string };
+    /**
+     * The embed's image, and the screens it is worth fetching on.
+     *
+     * A `media` condition is honoured by the preload scanner, so an image the layout will never
+     * show is never asked for. Hiding the embed in css cannot do that: an element with no box
+     * cannot be measured against the viewport, so `loading="lazy"` gives the browser nothing to
+     * decide on and it fetches the image anyway.
+     */
+    image?: { url: string; media?: string };
     color?: string | number;
     footer?: { text: string; icon_url?: string };
     author?: { name: string; icon_url?: string; url?: string };
@@ -287,12 +304,30 @@ export function DiscordEmbed( {
 
                 { image?.url && (
                     <div className="discord-embed-image">
-                        <img
-                            src={ image.url }
-                            alt="Embed"
-                            loading="lazy"
-                            decoding="async"
-                        />
+                        { image.media ? (
+                            <picture>
+                                <source media={ image.media } srcSet={ image.url }/>
+                                { /* Eager on purpose, where the plain image below is lazy. The blank
+                                     is one transparent pixel, so an `<img>` waiting on it has no
+                                     height, and a box with no height never crosses into view for the
+                                     lazy loader to act on - the real image would simply never be
+                                     fetched, on any screen. The media condition is what keeps this
+                                     off the screens that do not draw it, and it does that before the
+                                     request rather than after. */ }
+                                <img
+                                    src={ BLANK_IMAGE }
+                                    alt=""
+                                    decoding="async"
+                                />
+                            </picture>
+                        ) : (
+                            <img
+                                src={ image.url }
+                                alt="Embed"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        ) }
                     </div>
                 ) }
 

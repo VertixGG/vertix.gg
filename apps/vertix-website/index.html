@@ -53,7 +53,9 @@
 	<meta name="twitter:card" content="summary_large_image"/>
 	<meta name="twitter:image" content="https://voicechannels.online/og-card.png"/>
 
-	<link rel="apple-touch-icon" href="/vc-naked.png"/>
+	<!-- Apple wants 180x180 here. The square brand art is 500x500, and pointing at it meant
+	     every page pulled 75KiB of icon it could only ever draw a fifth of. -->
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 	<link rel="manifest" href="/manifest.json"/>
 	<title>Discord Temporary Voice Channels — Join to Create Bot | VoiceChannels</title>
 

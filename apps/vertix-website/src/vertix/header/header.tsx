@@ -2,7 +2,7 @@ import React from "react";
 
 import { useLocation } from "react-router-dom";
 
-import VCBrand from "@vertix.gg/assets/brand/vc-naked.png";
+import VCBrandHeader from "@vertix.gg/assets/brand/vc-naked-header.png";
 
 const NAV_LINK_BASE =
     "relative block px-4 py-2 font-body text-lg text-vc-ice transition-colors " +
@@ -154,10 +154,16 @@ export default function Header() {
 
                     <a className="vc-header-bar flex shrink-0 items-center" href="/">
                         { /* 324x192 is the mark's own band inside the square source
-                            art; the stylesheet crops to it, so reserve that box here. */ }
+                            art; the stylesheet crops to it, so reserve that box here.
+
+                            The header draws the mark at 112px at its widest, so it takes the
+                            264px cut of the source rather than the 500px one the welcome page
+                            needs - a third of the bytes for a logo that loads above the fold on
+                            every page. Both are cut from the same art and have to be re-cut
+                            together if it ever changes. */ }
                         <img className="vc-logo w-[88px] select-none lg:w-[112px]"
                             width="112" height="66"
-                            src={ VCBrand } alt="VoiceChannels"/>
+                            src={ VCBrandHeader } alt="VoiceChannels"/>
                     </a>
 
                     <button

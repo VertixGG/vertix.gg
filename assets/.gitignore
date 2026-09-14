@@ -1,1 +1,11 @@
+# Source art - screenshots, exports, working files - which is kept here for
+# convenience and is nobody's build input.
 *.png
+
+# Except the art the apps actually import. These are build inputs rather than
+# source material: without them a fresh checkout cannot build the website, so
+# they are tracked despite the rule above. Anything imported through
+# `@vertix.gg/assets` belongs in this list.
+!brand/user-avatar.png
+!brand/vc-naked.png
+!brand/vc-naked-header.png

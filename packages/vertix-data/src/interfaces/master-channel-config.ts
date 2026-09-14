@@ -60,7 +60,6 @@ export interface MasterChannelConstantsInterface {
     dynamicChannelStatePrivate: string;
     dynamicChannelStatePublic: string;
 
-    masterChannelMaximumFreeChannels: number;
     masterChannelName: string;
 }
 

@@ -1,6 +1,5 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { VERSION_UI_V2 } from "@vertix.gg/definitions/src/version";
 
 import {
     DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
@@ -23,6 +22,8 @@ import { GUILD_TIMINGS_FIELDS } from "@vertix.gg/definitions/src/guild-timings-d
 
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
+import { VERSION_GUILD_CONFIG_V1 } from "@vertix.gg/data/src/config/guild-config";
+
 import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
 
 import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
@@ -34,7 +35,7 @@ import type {
     TGuildTimingsOverrides
 } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
-import type { MasterChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
+import type { GuildConfigInterface } from "@vertix.gg/data/src/interfaces/guild-config";
 import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 import type { Guild } from "discord.js";
 
@@ -71,9 +72,9 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             return data.object;
         }
 
-        const { constants } = ConfigManager.$.get<MasterChannelConfigInterface>(
-            "Vertix/Config/MasterChannel",
-            VERSION_UI_V2
+        const { constants } = ConfigManager.$.get<GuildConfigInterface>(
+            "Vertix/Config/Guild",
+            VERSION_GUILD_CONFIG_V1
         ).data;
 
         return {

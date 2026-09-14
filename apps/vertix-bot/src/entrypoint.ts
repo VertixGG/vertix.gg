@@ -425,7 +425,8 @@ async function registerConfigs() {
     const configs = await Promise.all( [
         import( "@vertix.gg/bot/src/config/master-channel-config" ),
         import( "@vertix.gg/bot/src/config/master-channel-config-v3" ),
-        import( "@vertix.gg/data/src/config/scaling-channel-config" )
+        import( "@vertix.gg/data/src/config/scaling-channel-config" ),
+        import( "@vertix.gg/data/src/config/guild-config" )
     ] );
 
     await Promise.all(

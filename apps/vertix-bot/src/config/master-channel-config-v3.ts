@@ -66,7 +66,6 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
                     "diligently customizing it according to your discerning preferences.\n\n" +
                     "Please be advised that the privilege to make alterations is vested solely of the channel owner.",
 
-                masterChannelMaximumFreeChannels: 2,
                 masterChannelName: "➕ New Channel"
             }
         };

@@ -72,14 +72,7 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             return data.object;
         }
 
-        const { globals } = ConfigManager.$.get<GuildConfigInterface>(
-            "Vertix/Config/Guild",
-            VERSION_GUILD_CONFIG_V1
-        ).data;
-
-        return {
-            maxMasterChannels: globals.masterChannelMaximumFreeChannels
-        };
+        return ConfigManager.$.get<GuildConfigInterface>( "Vertix/Config/Guild", VERSION_GUILD_CONFIG_V1 ).data;
     }
 
     public async getBadwords( guildId: string ): Promise<string[]> {

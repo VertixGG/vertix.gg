@@ -161,7 +161,7 @@ const DynamicChannelRenameAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                 } else {
                     args.defaultChannelName = ConfigManager.$
                         .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V3 )
-                        .get( "settings" ).dynamicChannelNameTemplate;
+                        .data.dynamicChannelNameTemplate;
                 }
             }
             // fallthrough

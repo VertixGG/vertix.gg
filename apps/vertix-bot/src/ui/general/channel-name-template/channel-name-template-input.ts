@@ -29,14 +29,14 @@ export class ChannelNameTemplateInput extends UIElementInputBase {
     }
 
     protected async getPlaceholder(): Promise<string> {
-        return this.config.data.settings.dynamicChannelNameTemplate;
+        return this.config.data.dynamicChannelNameTemplate;
     }
 
     protected async getValue(): Promise<string> {
         return (
             this.uiArgs?.dynamicChannelNameTemplate ||
             this.content?.placeholder ||
-            this.config.data.settings.dynamicChannelNameTemplate
+            this.config.data.dynamicChannelNameTemplate
         );
     }
 

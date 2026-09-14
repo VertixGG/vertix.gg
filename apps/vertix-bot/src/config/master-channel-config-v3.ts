@@ -23,51 +23,36 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
 
     protected getDefaults(): MasterChannelConfigInterfaceV3[ "defaults" ] {
         return {
-            settings: {
-                dynamicChannelAutoSave: false,
+            // Copied into a generator's own row when it is created, and read from there
+            // afterwards - which is also what makes this list the only thing a generator's row is
+            // allowed to hold. Changing one reaches the generators made next, and none of the ones
+            // already standing: they are carrying the answer they were given.
+            dynamicChannelAutoSave: false,
 
-                dynamicChannelAutoStatus: true,
+            dynamicChannelAutoStatus: true,
 
-                dynamicChannelDefaultPrivacyState: "public",
+            dynamicChannelDefaultPrivacyState: "public",
 
-                dynamicChannelDefaultUserLimit: null,
+            dynamicChannelDefaultUserLimit: null,
 
-                dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( i ) =>
-                    i.getId().toString()
-                ),
+            dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( i ) =>
+                i.getId().toString()
+            ),
 
-                dynamicChannelButtonsTemplateByRole: {},
+            dynamicChannelButtonsTemplateByRole: {},
 
-                dynamicChannelControlChannelId: null,
+            dynamicChannelControlChannelId: null,
 
-                dynamicChannelLogsChannelId: null,
+            dynamicChannelLogsChannelId: null,
 
-                dynamicChannelMentionable: true,
+            dynamicChannelMentionable: true,
 
-                dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
+            dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
 
-                dynamicChannelStaffRoles: [],
-                dynamicChannelVerifiedRoles: [],
+            dynamicChannelStaffRoles: [],
+            dynamicChannelVerifiedRoles: [],
 
-                dynamicChannelVoiceRoleId: null
-            },
-
-            globals: {
-                dynamicChannelsCategoryName: "༄ Dynamic Channels",
-
-                dynamicChannelControlChannelName: "✨・control-panel",
-
-                dynamicChannelStatePrivate: "🔴",
-                dynamicChannelStatePublic: "🟢",
-
-                dynamicChannelPrimaryMessageTitle: "༄ Manage your Dynamic Channel",
-                dynamicChannelPrimaryMessageDescription:
-                    "Embrace the responsibility of overseeing your dynamic channel," +
-                    "diligently customizing it according to your discerning preferences.\n\n" +
-                    "Please be advised that the privilege to make alterations is vested solely of the channel owner.",
-
-                masterChannelName: "➕ New Channel"
-            }
+            dynamicChannelVoiceRoleId: null
         };
     }
 }

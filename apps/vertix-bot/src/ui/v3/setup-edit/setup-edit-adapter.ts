@@ -952,7 +952,7 @@ async function onTemplateEditModalSubmitted(
     const value = interaction.fields.getTextInputValue( channelNameInputId ),
         args = context.getArgs( interaction );
 
-    const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+    const settings = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
         "Vertix/Config/MasterChannel",
         VERSION_UI_V3
     ).data;
@@ -1440,7 +1440,7 @@ async function onDefaultPrivacyResetClicked(
 ) {
     const args: UIArgs = context.getArgs( interaction );
 
-    const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+    const settings = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
         "Vertix/Config/MasterChannel",
         VERSION_UI_V3
     ).data;
@@ -1937,7 +1937,7 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
                 } as any );
             }
 
-            const { settings: globalDefaults } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+            const globalDefaults = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
                 "Vertix/Config/MasterChannel",
                 VERSION_UI_V3
             ).data;

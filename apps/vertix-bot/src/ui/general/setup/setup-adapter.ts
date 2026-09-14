@@ -263,7 +263,7 @@ async function onCreateMasterChannelClicked<TInteraction extends SetupMessageCom
         return;
     }
 
-    const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3 | MasterChannelConfigInterface>(
+    const settings = ConfigManager.$.get<MasterChannelConfigInterfaceV3 | MasterChannelConfigInterface>(
         "Vertix/Config/MasterChannel",
         version
     ).data;
@@ -714,7 +714,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         };
     } )
     .setLogic( async( args, vars ) => {
-        const { settings } = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
+        const settings = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
             "Vertix/Config/MasterChannel",
             VERSION_UI_V3
         ).data;
@@ -722,7 +722,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             "Vertix/Config/ScalingChannel",
             VERSION_SCALING_CHANNEL_UI_V1
         ).data;
-        const scalingDefaultPrefix = scalingConfig.settings.scalingChannelPrefix;
+        const scalingDefaultPrefix = scalingConfig.scalingChannelPrefix;
 
         const channels = args?.masterChannels || [];
 
@@ -734,7 +734,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
                 const prefix = scalingSettings?.scalingChannelPrefix || scalingDefaultPrefix;
                 const maxMembers = scalingSettings?.scalingChannelMaxMembersPerChannel
-                    || scalingConfig.settings.scalingChannelMaxMembersPerChannel;
+                    || scalingConfig.scalingChannelMaxMembersPerChannel;
 
                 return [
                     `**#${ index + 1 }**`,

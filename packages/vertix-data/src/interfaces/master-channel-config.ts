@@ -54,39 +54,15 @@ export interface MasterChannelSettingsInterface {
 }
 
 /**
- * What a generator reads live, rather than what it was given.
+ * A generator's configuration is the settings it is created with, and nothing else.
  *
- * The other half of a configuration is `settings`, which is copied into each generator's own row
- * at creation. Which of the two a value belongs in decides what happens when somebody changes it:
- * a global reaches every server at the next restart, a setting reaches only the generators made
- * after it.
+ * That is not only a grouping: the same list is the whitelist `setStrictData()` filters a write
+ * through, so what the configuration carries is exactly what a generator's own row may hold. The
+ * names the bot gives what it creates used to sit beside it and are their own configuration now.
  */
-export interface MasterChannelGlobalsInterface {
-    dynamicChannelsCategoryName: string;
-    dynamicChannelControlChannelName: string;
+export interface MasterChannelConfigInterface extends ConfigBaseInterface<MasterChannelSettingsInterface> {}
 
-    dynamicChannelStatePrivate: string;
-    dynamicChannelStatePublic: string;
-
-    masterChannelName: string;
-}
-
-export interface MasterChannelGlobalsInterfaceV3 extends MasterChannelGlobalsInterface {
-    dynamicChannelPrimaryMessageTitle: string;
-    dynamicChannelPrimaryMessageDescription: string;
-}
-
-export interface MasterChannelConfigInterface
-    extends ConfigBaseInterface<{
-        globals: MasterChannelGlobalsInterface;
-        settings: MasterChannelSettingsInterface;
-    }> {}
-
-export interface MasterChannelConfigInterfaceV3
-    extends ConfigBaseInterface<{
-        globals: MasterChannelGlobalsInterfaceV3;
-        settings: MasterChannelSettingsInterface;
-    }> {}
+export interface MasterChannelConfigInterfaceV3 extends ConfigBaseInterface<MasterChannelSettingsInterface> {}
 
 export interface ScalingChannelSettingsInterface {
     scalingChannelPrefix: string;
@@ -95,13 +71,4 @@ export interface ScalingChannelSettingsInterface {
     scalingChannelCategoryId: string | null;
 }
 
-export interface ScalingChannelGlobalsInterface {
-    scalingChannelCategoryName: string;
-    masterChannelName: string;
-}
-
-export interface ScalingChannelConfigInterface
-    extends ConfigBaseInterface<{
-        globals: ScalingChannelGlobalsInterface;
-        settings: ScalingChannelSettingsInterface;
-    }> {}
+export interface ScalingChannelConfigInterface extends ConfigBaseInterface<ScalingChannelSettingsInterface> {}

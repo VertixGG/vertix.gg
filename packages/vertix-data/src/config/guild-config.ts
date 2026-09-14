@@ -29,9 +29,7 @@ export class GuildConfig extends ConfigBase<GuildConfigInterface> {
 
     protected getDefaults(): GuildConfigInterface[ "defaults" ] {
         return {
-            globals: {
-                masterChannelMaximumFreeChannels: 2
-            }
+            maxMasterChannels: 2
         };
     }
 }

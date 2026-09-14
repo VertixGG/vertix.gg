@@ -7,23 +7,25 @@ import type { TDataDefaultResult } from "@vertix.gg/data/src/factory/data-type-f
 import type { TBaseModelStub } from "@vertix.gg/data/src/interfaces/base-model-stub";
 
 /**
- * TODO: Refactor for readability, currently its hard to understand the interaction between config and settings.
- * And... there is no validation of selected slice of config against the settings in the data collection.
+ * An owner whose stored settings are described by a configuration.
+ *
+ * The configuration is the whole of it: what it carries is what the row may hold, which is what
+ * `setStrictData()` filters a write against, and what an unset setting falls back to. It used to
+ * be one named slice of a configuration that also held other things, so the two had to be kept in
+ * step by hand and nothing checked that they were.
  */
 export abstract class ModelDataOwnerConfigBase<
     TModel extends TBaseModelStub,
     TDataModel extends TBaseModelStub,
     TDataModelResult extends TDataDefaultResult,
     TDataModelUniqueKeys extends TDataOwnerDefaultUniqueKeys,
-    TDataConfig extends ConfigBaseInterface,
-    TDataConfigSlice extends keyof TDataConfig[ "data" ],
-    TDataSlice extends TDataConfig[ "data" ][ TDataConfigSlice ] = TDataConfig[ "data" ][ TDataConfigSlice ]
+    TDataConfig extends ConfigBaseInterface
 > extends ModelDataOwnerStrictDataBase<
         TModel,
         TDataModel,
         TDataModelResult,
         TDataModelUniqueKeys,
-        TDataConfig[ "data" ][ TDataConfigSlice ]
+        TDataConfig[ "data" ]
     > {
     public static getName() {
         return "VertixData/Bases/ModelDataOwnerConfigBase";
@@ -31,10 +33,8 @@ export abstract class ModelDataOwnerConfigBase<
 
     protected abstract getConfig(): ConfigBase<TDataConfig>;
 
-    protected abstract getConfigSlice(): TDataConfigSlice;
-
-    protected getStrictDataFactor(): TDataSlice {
-        return this.getConfig().data[ this.getConfigSlice() ];
+    protected getStrictDataFactor(): TDataConfig[ "data" ] {
+        return this.getConfig().data;
     }
 
     protected async getSliceData(
@@ -53,7 +53,7 @@ export abstract class ModelDataOwnerConfigBase<
     protected async setSliceData(
         args: Parameters<TModel[ "findUnique" ]>[ 0 ],
         key: string,
-        data: Partial<TDataConfig[ "data" ][ TDataConfigSlice ]>,
+        data: Partial<TDataConfig[ "data" ]>,
         assignDefaults = true
     ) {
         const keys = { key } as TDataModelUniqueKeys;
@@ -77,15 +77,15 @@ export abstract class ModelDataOwnerConfigBase<
     public async getSettings(
         id: string,
         cache = true,
-        returnDefaults: ( ( result: Partial<TDataSlice> | null ) => TDataSlice ) | boolean = false
-    ): Promise<TDataSlice | null> {
+        returnDefaults: ( ( result: Partial<TDataConfig[ "data" ]> | null ) => TDataConfig[ "data" ] ) | boolean = false
+    ): Promise<TDataConfig[ "data" ] | null> {
         const isReturnDefaultCallback = "function" === typeof returnDefaults;
 
-        const defaultSettings = !isReturnDefaultCallback && returnDefaults ? this.getConfig().data.settings : null;
+        const defaultSettings = !isReturnDefaultCallback && returnDefaults ? this.getConfig().data : null;
 
         const queryArgs = { where: { id } };
 
-        let result = await this.getSliceData( queryArgs, "settings", cache, false ) as TDataSlice | null;
+        let result = await this.getSliceData( queryArgs, "settings", cache, false ) as TDataConfig[ "data" ] | null;
 
         if ( defaultSettings ) {
             result = Object.assign( {}, defaultSettings, result );
@@ -101,7 +101,7 @@ export abstract class ModelDataOwnerConfigBase<
         return result;
     }
 
-    public async setSettings( id: string, settings: Partial<TDataSlice>, assignDefaults = false ) {
+    public async setSettings( id: string, settings: Partial<TDataConfig[ "data" ]>, assignDefaults = false ) {
         const queryArgs = { where: { id } };
 
         return this.setSliceData( queryArgs, "settings", settings, assignDefaults );

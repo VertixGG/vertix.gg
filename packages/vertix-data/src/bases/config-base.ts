@@ -138,14 +138,16 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
         return <TConfig[ "data" ]> this.config.data;
     }
 
-    public getKeys<
-        TSectionKey extends keyof TConfig[ "defaults" ],
-        TSectionKeys extends keyof TConfig[ "defaults" ][ TSectionKey ]
-    >( section: TSectionKey ) {
-        return Object.fromEntries( Object.entries( this.defaults[ section ] ).map( ( [ key ] ) => [ key, key ] ) ) as Record<
-            TSectionKeys,
-            TSectionKeys
-        >;
+    /**
+     * Function `getKeys()` - The settings this configuration carries, as a map of name to name.
+     *
+     * Spelling a setting through this rather than as a string is what makes a rename a compile
+     * error at every use site instead of a lookup that silently finds nothing.
+     */
+    public getKeys<TKeys extends keyof TConfig[ "defaults" ]>() {
+        return Object.fromEntries(
+            Object.entries( this.defaults ).map( ( [ key ] ) => [ key, key ] )
+        ) as Record<TKeys, TKeys>;
     }
 
     private get $$() {

@@ -1,3 +1,4 @@
+import { getNaming } from "@vertix.gg/data/src/config/naming";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-definitions";
 
@@ -124,8 +125,8 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             renameEmoji: DynamicChannelRenameButton.getEmoji(),
             limitEmoji: DynamicChannelLimitMetaButton.getEmoji(),
             privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
-            title: args.title || configV3.data.globals.dynamicChannelPrimaryMessageTitle,
-            description: args.description || configV3.data.globals.dynamicChannelPrimaryMessageDescription,
+            title: args.title || getNaming().dynamicChannelPrimaryMessageTitle,
+            description: args.description || getNaming().dynamicChannelPrimaryMessageDescription,
             region: resolveRegionVar( args.region ),
             regionEmoji: DynamicChannelRegionButton.getEmoji(),
             dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
@@ -167,8 +168,8 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             statePrivate: "private",
             stateShown: "shown",
             stateHidden: "hidden",
-            title: configV3.data.globals.dynamicChannelPrimaryMessageTitle,
-            description: configV3.data.globals.dynamicChannelPrimaryMessageDescription,
+            title: getNaming().dynamicChannelPrimaryMessageTitle,
+            description: getNaming().dynamicChannelPrimaryMessageDescription,
         };
     } )
     // Renders the buttons-template array as a comma-joined id list for the image

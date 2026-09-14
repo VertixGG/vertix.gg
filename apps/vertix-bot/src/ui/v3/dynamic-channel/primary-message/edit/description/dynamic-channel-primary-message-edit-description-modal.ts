@@ -1,3 +1,4 @@
+import { getNaming } from "@vertix.gg/data/src/config/naming";
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
@@ -32,7 +33,7 @@ class DynamicChannelPrimaryMessageEditModalDescription extends UIElementInputBas
     }
 
     protected async getValue(): Promise<string> {
-        return this.uiArgs?.description || this.configV3.data.globals.dynamicChannelPrimaryMessageDescription;
+        return this.uiArgs?.description || getNaming().dynamicChannelPrimaryMessageDescription;
     }
 
     protected async getMinLength(): Promise<number> {

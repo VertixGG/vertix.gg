@@ -195,7 +195,7 @@ const SetupStep1Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep1Embed", 
     .setLogic( ( args ) => ( {
         dynamicChannelNameTemplate:
             args?.dynamicChannelNameTemplate ||
-            ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V3 ).data.settings.dynamicChannelNameTemplate
+            ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V3 ).data.dynamicChannelNameTemplate
     } ) )
     .build();
 
@@ -535,7 +535,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" );
 
         const args = context.getArgs( interaction ) || {};
-        const templateName: string = args.dynamicChannelNameTemplate || configV3.settings.dynamicChannelNameTemplate;
+        const templateName: string = args.dynamicChannelNameTemplate || configV3.dynamicChannelNameTemplate;
         const templateButtons: string[] = args.dynamicChannelButtonsTemplate?.length ?
             args.dynamicChannelButtonsTemplate :
             DynamicChannelPrimaryMessageElementsGroup.sortIds(

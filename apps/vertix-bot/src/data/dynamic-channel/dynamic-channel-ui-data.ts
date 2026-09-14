@@ -1,3 +1,4 @@
+import { getNaming } from "@vertix.gg/data/src/config/naming";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { UserMasterChannelDataModel } from "@vertix.gg/data/src/models/data/user-master-channel-data-model";
 import { MasterChannelDataModelV3 } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model-v3";
@@ -156,7 +157,7 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
             }
 
             const resolvedButtons = roleButtons
-                ?? ( templateButtons?.length ? templateButtons : configV3.settings.dynamicChannelButtonsTemplate );
+                ?? ( templateButtons?.length ? templateButtons : configV3.dynamicChannelButtonsTemplate );
 
             // Left in the order it was saved in, which is the order the channel draws its buttons
             // and its legend in. The stored list carries its own row divisions, so those are taken
@@ -174,12 +175,12 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
 
             args.masterChannelId = masterChannelDB.channelId;
             args.dynamicChannelNameTemplate = masterChannelSettings?.dynamicChannelNameTemplate
-                ?? configV3.settings.dynamicChannelNameTemplate;
+                ?? configV3.dynamicChannelNameTemplate;
             args.dynamicChannelLogsChannelId = masterChannelSettings?.dynamicChannelLogsChannelId ?? null;
             args.dynamicChannelMentionable = masterChannelSettings?.dynamicChannelMentionable
-                ?? configV3.settings.dynamicChannelMentionable;
+                ?? configV3.dynamicChannelMentionable;
             args.dynamicChannelAutoSave = masterChannelSettings?.dynamicChannelAutoSave
-                ?? configV3.settings.dynamicChannelAutoSave;
+                ?? configV3.dynamicChannelAutoSave;
 
             if ( guildId ) {
                 const verifiedRoles = await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, guildId );
@@ -208,8 +209,8 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
                     masterChannelDB.id
                 );
 
-                args.title = primaryMessage?.title || configV3.globals.dynamicChannelPrimaryMessageTitle;
-                args.description = primaryMessage?.description || configV3.globals.dynamicChannelPrimaryMessageDescription;
+                args.title = primaryMessage?.title || getNaming().dynamicChannelPrimaryMessageTitle;
+                args.description = primaryMessage?.description || getNaming().dynamicChannelPrimaryMessageDescription;
             }
         } else {
             args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );

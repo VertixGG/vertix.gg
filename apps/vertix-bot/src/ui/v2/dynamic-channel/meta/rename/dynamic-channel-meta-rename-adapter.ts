@@ -132,7 +132,7 @@ const DynamicChannelMetaRenameAdapter = new DynamicExecutionAdapterBuilder<Defau
                 } else {
                     args.defaultChannelName = ConfigManager.$
                         .get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 )
-                        .get( "settings" ).dynamicChannelNameTemplate;
+                        .data.dynamicChannelNameTemplate;
                 }
 
             case "VertixBot/UI-V2/DynamicChannelMetaRenameSuccess":

@@ -1,3 +1,4 @@
+import { getNaming } from "@vertix.gg/data/src/config/naming";
 import "@vertix.gg/prisma/bot-client";
 
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
@@ -627,7 +628,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             member: member ?? null
         };
 
-        const { settings } = this.config.data;
+        const settings = this.config.data;
 
         if ( newName?.length ) {
             const index = await this.getDynamicChannelTemplateIndex(
@@ -704,11 +705,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userDisplayName = "",
             indexValue = "";
 
-        const { globals } = this.config.data;
+        const globals = getNaming();
 
         if ( args.state ) {
             state =
-                args.state === "private" ? globals.dynamicChannelStatePrivate : globals.dynamicChannelStatePublic;
+                args.state === "private" ? globals.dynamicChannelPrivatePrefix : globals.dynamicChannelPublicPrefix;
         }
 
         if ( args.userDisplayName ) {
@@ -2585,7 +2586,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             if ( options.includePrimaryMessage ) {
                 const { dynamicChannelPrimaryMessageTitle, dynamicChannelPrimaryMessageDescription } =
-                    this.configV3.data.globals;
+                    getNaming();
 
                 // TODO: `UserMasterChannelDataModel.$.setPrimaryMessageDefaults`
                 // await UserChannelDataModelV3.$.setPrimaryMessage( userOwnerId, master.db.id, {

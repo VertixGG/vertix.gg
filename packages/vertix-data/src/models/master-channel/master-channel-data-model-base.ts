@@ -12,8 +12,7 @@ export abstract class MasterChannelDataModelBase<T extends ConfigBaseInterface> 
     typeof client.channelData,
     PrismaBot.UserData,
     TDataOwnerDefaultUniqueKeys,
-    T,
-    "settings"
+    T
 > {
     public static getName() {
         return "VertixData/Models/MasterChannelDataModelBase";
@@ -29,9 +28,5 @@ export abstract class MasterChannelDataModelBase<T extends ConfigBaseInterface> 
 
     protected getDataUniqueKeyName() {
         return "ownerId_key_version";
-    }
-
-    protected getConfigSlice() {
-        return "settings" as const;
     }
 }

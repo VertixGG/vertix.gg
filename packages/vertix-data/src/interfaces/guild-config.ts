@@ -8,12 +8,9 @@ import type { ConfigBaseInterface } from "@vertix.gg/data/src/bases/config-base"
  * across every setup a guild has, of either kind. Held there, the same number had to be written
  * twice and only one of the two was ever read.
  */
-export interface GuildGlobalsInterface {
+export interface GuildConfigDefaultsInterface {
     /** How many generators a guild may have, counting both kinds together. */
-    masterChannelMaximumFreeChannels: number;
+    maxMasterChannels: number;
 }
 
-export interface GuildConfigInterface
-    extends ConfigBaseInterface<{
-        globals: GuildGlobalsInterface;
-    }> {}
+export interface GuildConfigInterface extends ConfigBaseInterface<GuildConfigDefaultsInterface> {}

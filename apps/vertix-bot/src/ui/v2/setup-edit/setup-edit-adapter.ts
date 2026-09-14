@@ -214,7 +214,7 @@ async function onTemplateEditModalSubmitted(
     const value = interaction.fields.getTextInputValue( channelNameInputId );
     const args = context.getArgs( interaction );
 
-    const { settings } = ConfigManager.$.get<MasterChannelConfigInterface>(
+    const settings = ConfigManager.$.get<MasterChannelConfigInterface>(
         "Vertix/Config/MasterChannel",
         VERSION_UI_V2
     ).data;
@@ -665,7 +665,7 @@ async function onDefaultPrivacyResetClicked(
 ) {
     const args = context.getArgs( interaction );
 
-    const { settings } = ConfigManager.$.get<MasterChannelConfigInterface>(
+    const settings = ConfigManager.$.get<MasterChannelConfigInterface>(
         "Vertix/Config/MasterChannel",
         VERSION_UI_V2
     ).data;

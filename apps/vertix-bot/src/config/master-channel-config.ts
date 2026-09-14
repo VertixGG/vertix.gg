@@ -23,60 +23,46 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
 
     protected getDefaults(): MasterChannelConfigInterface[ "defaults" ] {
         return {
-            // Read live, by everything, everywhere. Changing one of these changes what every
-            // server sees as soon as the bot restarts, because nothing holds a copy of it.
-            globals: {
-                dynamicChannelsCategoryName: "༄ Dynamic Channels",
+            // Copied into a generator's own row when it is created, and read from there
+            // afterwards - which is also what makes this list the only thing a generator's row is
+            // allowed to hold. Changing one reaches the generators made next, and none of the ones
+            // already standing: they are carrying the answer they were given.
+            dynamicChannelAutoSave: false,
 
-                dynamicChannelControlChannelName: "✨・control-panel",
+            dynamicChannelAutoStatus: true,
 
-                dynamicChannelStatePrivate: "🔴",
-                dynamicChannelStatePublic: "🟢",
+            dynamicChannelDefaultPrivacyState: "public",
 
-                masterChannelName: "➕ New Channel"
-            },
+            dynamicChannelDefaultUserLimit: null,
 
-            // Copied into a generator's own row when it is created, and read from there afterwards.
-            // Changing one of these reaches the generators made next, and none of the ones that
-            // already exist - they are carrying the answer they were given.
-            settings: {
-                dynamicChannelAutoSave: false,
+            dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getDefaults().map( ( i ) => i.getId().toString() ),
 
-                dynamicChannelAutoStatus: true,
+            dynamicChannelButtonsTemplateByRole: {},
 
-                dynamicChannelDefaultPrivacyState: "public",
+            dynamicChannelControlChannelId: null,
 
-                dynamicChannelDefaultUserLimit: null,
+            dynamicChannelLfmChannelIds: [],
 
-                dynamicChannelButtonsTemplate: DynamicChannelElementsGroup.getDefaults().map( ( i ) => i.getId().toString() ),
+            dynamicChannelLfmPingRoleIds: [],
 
-                dynamicChannelButtonsTemplateByRole: {},
+            dynamicChannelLfmPostCooldownMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.postCooldown,
 
-                dynamicChannelControlChannelId: null,
+            dynamicChannelLfmPingCooldownMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.pingCooldown,
 
-                dynamicChannelLfmChannelIds: [],
+            dynamicChannelLfmPostExpiryMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.postExpiry,
 
-                dynamicChannelLfmPingRoleIds: [],
+            dynamicChannelLfmOccupancyDebounceMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.occupancyDebounce,
 
-                dynamicChannelLfmPostCooldownMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.postCooldown,
+            dynamicChannelLogsChannelId: null,
 
-                dynamicChannelLfmPingCooldownMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.pingCooldown,
+            dynamicChannelMentionable: true,
 
-                dynamicChannelLfmPostExpiryMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.postExpiry,
+            dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
 
-                dynamicChannelLfmOccupancyDebounceMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.occupancyDebounce,
+            dynamicChannelStaffRoles: [],
+            dynamicChannelVerifiedRoles: [],
 
-                dynamicChannelLogsChannelId: null,
-
-                dynamicChannelMentionable: true,
-
-                dynamicChannelNameTemplate: uiUtilsWrapAsTemplate( "user" ) + "'s Channel",
-
-                dynamicChannelStaffRoles: [],
-                dynamicChannelVerifiedRoles: [],
-
-                dynamicChannelVoiceRoleId: null
-            }
+            dynamicChannelVoiceRoleId: null
         };
     }
 }

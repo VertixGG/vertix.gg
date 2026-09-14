@@ -37,7 +37,7 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
     }
 
     public async getAllScalingSettings() {
-        type Settings = ScalingChannelConfigInterface[ "data" ][ "settings" ];
+        type Settings = ScalingChannelConfigInterface[ "data" ];
 
         const key = `${ this.getName() }/settings`;
 
@@ -71,7 +71,7 @@ export class ScalingChannelDataModel extends MasterChannelDataModelBase<ScalingC
         return this.setSettings( ownerId, { scalingChannelCategoryId: categoryId } );
     }
 
-    public async setAllSettings( ownerId: string, settings: Partial<ScalingChannelConfigInterface[ "data" ][ "settings" ]> ) {
+    public async setAllSettings( ownerId: string, settings: Partial<ScalingChannelConfigInterface[ "data" ]> ) {
         return this.setSettings( ownerId, settings );
     }
     protected getDataVersion() {

@@ -1,3 +1,4 @@
+import { getNaming } from "@vertix.gg/data/src/config/naming";
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
@@ -35,7 +36,7 @@ const DynamicChannelPrimaryMessageEditTitleEmbed = new EmbedBuilder<UIArgs, type
         return {
             title: {
                 [ vars.titleDisplayValue ]: vars.titleValue,
-                [ vars.titleDisplayDefault ]: configV3.data.globals.dynamicChannelPrimaryMessageTitle
+                [ vars.titleDisplayDefault ]: getNaming().dynamicChannelPrimaryMessageTitle
             }
         };
     } )

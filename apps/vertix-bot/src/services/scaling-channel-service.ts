@@ -1,3 +1,4 @@
+import { getNaming } from "@vertix.gg/data/src/config/naming";
 import "@vertix.gg/prisma/bot-client";
 
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
@@ -286,7 +287,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
     public async ensureScalingChannelsForMaster(
         guild: Guild,
         master: ChannelExtended,
-        settings: ScalingChannelConfigInterface[ "data" ][ "settings" ]
+        settings: ScalingChannelConfigInterface[ "data" ]
     ) {
         const { scalingChannelCategoryId, scalingChannelPrefix, scalingChannelMaxMembersPerChannel } = settings;
 
@@ -719,14 +720,15 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         this.logger.info( this.createScalingMasterChannel, `Creating scaling master channel for guild ${ guild.name } (${ guildId })` );
 
         const config = ConfigManager.$.get<ScalingChannelConfigInterface>( "Vertix/Config/ScalingChannel", VERSION_SCALING_CHANNEL_UI_V1 );
-        const { globals, settings } = config.data;
+        const settings = config.data,
+            globals = getNaming();
 
         const effectivePrefix = prefix || settings.scalingChannelPrefix;
         const effectiveMaxMembers = maxMembers || settings.scalingChannelMaxMembersPerChannel;
 
         const category = await CategoryManager.$.create( {
             guild,
-            name: globals.scalingChannelCategoryName
+            name: globals.scalingChannelsCategoryName
         } ).catch( ( error: Error ) => {
             this.logger.error( this.createScalingMasterChannel, "Failed to create category", error );
             return null;
@@ -739,7 +741,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         const masterResult = await this.services.channelService.create( {
             guild,
             parent: category,
-            name: globals.masterChannelName,
+            name: globals.scalingChannelGeneratorName,
             userOwnerId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL,
             version: VERSION_SCALING_CHANNEL_UI_V1,

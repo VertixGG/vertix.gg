@@ -34,7 +34,7 @@ const SetupStep1Embed = new EmbedBuilder<UIArgs, typeof SETUP_STEP_1_VARS>(
     .setLogic( ( args: UIArgs ) => {
         const template = typeof args.dynamicChannelNameTemplate === "string" && args.dynamicChannelNameTemplate.length
             ? args.dynamicChannelNameTemplate
-            : setupConfig.data.settings.dynamicChannelNameTemplate;
+            : setupConfig.data.dynamicChannelNameTemplate;
 
         return {
             dynamicChannelNameTemplate: template

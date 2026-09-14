@@ -24,14 +24,14 @@ import type {
 import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
 export type MasterChannelSettingsAllVersions =
-    MasterChannelConfigInterface[ "data" ][ "settings" ] & Partial<MasterChannelConfigInterfaceV3[ "data" ][ "settings" ]>;
+    MasterChannelConfigInterface[ "data" ] & Partial<MasterChannelConfigInterfaceV3[ "data" ]>;
 
 export class MasterChannelDataManager extends InitializeBase {
     private static instance: MasterChannelDataManager;
 
     public config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
-    public keys = this.config.getKeys( "settings" );
+    public keys = this.config.getKeys();
 
     public static getName() {
         return "VertixData/Managers/MasterChannelData";
@@ -68,7 +68,7 @@ export class MasterChannelDataManager extends InitializeBase {
         defaultSettings: Partial<MasterChannelSettingsAllVersions> = {}
     ): Promise<MasterChannelSettingsAllVersions> {
         const settings = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, false, false );
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
 
         if ( !settings ) {
             return { ...defaults, ...defaultSettings } as MasterChannelSettingsAllVersions;
@@ -79,7 +79,7 @@ export class MasterChannelDataManager extends InitializeBase {
 
     public async setAllSettings(
         masterChannelDB: ChannelExtended,
-        settings: MasterChannelConfigInterface[ "defaults" ][ "settings" ]
+        settings: MasterChannelConfigInterface[ "defaults" ]
     ) {
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, settings );
     }
@@ -102,7 +102,7 @@ export class MasterChannelDataManager extends InitializeBase {
             ?.dynamicChannelButtonsTemplate;
 
         if ( isV2Version( masterChannelDB.version ) && isUntouchedV2DefaultSet( stored ) ) {
-            return this.config.data.settings.dynamicChannelButtonsTemplate;
+            return this.config.data.dynamicChannelButtonsTemplate;
         }
 
         return stored;
@@ -268,7 +268,7 @@ export class MasterChannelDataManager extends InitializeBase {
      * before it and their stored settings simply have no such key.
      */
     public async getChannelAutoStatus( masterChannelDB: ChannelExtended, cache = true ): Promise<boolean> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -308,7 +308,7 @@ export class MasterChannelDataManager extends InitializeBase {
         guildId: string,
         cache = true
     ): Promise<string[]> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -348,7 +348,7 @@ export class MasterChannelDataManager extends InitializeBase {
      * `getChannelOwnVerifiedRoles()`.
      */
     public async getChannelOwnStaffRoles( masterChannelDB: ChannelExtended, cache = true ): Promise<string[]> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -386,7 +386,7 @@ export class MasterChannelDataManager extends InitializeBase {
      * it defers to the guild wide default.
      */
     public async getChannelVoiceRoleId( masterChannelDB: ChannelExtended, cache = true ): Promise<string | null> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -421,7 +421,7 @@ export class MasterChannelDataManager extends InitializeBase {
         masterChannelDB: ChannelExtended,
         cache = true
     ): Promise<ChannelPrivacyStateDefault> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -459,7 +459,7 @@ export class MasterChannelDataManager extends InitializeBase {
         masterChannelDB: ChannelExtended,
         cache = true
     ): Promise<number | null> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, cache, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -488,7 +488,7 @@ export class MasterChannelDataManager extends InitializeBase {
     }
 
     public async getChannelLogsChannelId( masterChannelDB: ChannelExtended ) {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -496,7 +496,7 @@ export class MasterChannelDataManager extends InitializeBase {
     }
 
     public async getChannelLfmChannelIds( masterChannelDB: ChannelExtended ): Promise<string[]> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -505,7 +505,7 @@ export class MasterChannelDataManager extends InitializeBase {
     }
 
     public async getChannelLfmPingRoleIds( masterChannelDB: ChannelExtended ): Promise<string[]> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );
@@ -522,7 +522,7 @@ export class MasterChannelDataManager extends InitializeBase {
     public async getChannelLfmTimings(
         masterChannelDB: ChannelExtended
     ): Promise<DynamicChannelLfmTimingsInterface> {
-        const defaults = this.config.data.settings;
+        const defaults = this.config.data;
         const result = await this.getModel( masterChannelDB ).getSettings( masterChannelDB.id, true, ( res ) =>
             res ? { ...defaults, ...res } : defaults
         );

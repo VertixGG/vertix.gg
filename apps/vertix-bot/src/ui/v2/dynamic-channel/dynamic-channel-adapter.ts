@@ -4,8 +4,11 @@ import { splitTemplate } from "@vertix.gg/utils/src/button-rows";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
+
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
+
+import { pickRoleButtons } from "@vertix.gg/bot/src/utils/dynamic-channel-buttons";
 
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/dynamic-execution-adapter-builder";
 
@@ -86,16 +89,13 @@ async function resolveButtonsTemplate(
 ): Promise<string[]> {
     const byRole = await MasterChannelDataManager.$.getChannelButtonsTemplateOverrides( masterChannelDB );
 
-    for ( const roleId of ownerRoleIds ) {
-        if ( roleId === guildId ) {
-            continue;
-        }
+    // Both interfaces answer this the same way, so they answer it with the same function - the
+    // rule is what would go wrong silently if one of them were changed alone. What is left here
+    // is v2's own: its buttons, read through its own model and falling back to its own defaults.
+    const roleButtons = pickRoleButtons( byRole, ownerRoleIds, guildId );
 
-        const override = byRole[ roleId ];
-
-        if ( Array.isArray( override ) && override.length ) {
-            return override;
-        }
+    if ( roleButtons ) {
+        return roleButtons;
     }
 
     return ( await MasterChannelDataManager.$.getChannelButtonsTemplate( masterChannelDB, true ) ) ?? [];

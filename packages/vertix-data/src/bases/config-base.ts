@@ -148,15 +148,18 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
     }
 
     /**
-     * Function `syncWithDefaults()` - Brings a stored row back in line with the defaults it mirrors.
+     * Function `syncWithDefaults()` - Gives the stored row the shape the defaults have, and leaves
+     * every value it already held.
      *
-     * Nothing writes a config row but this, so a row that differs from `getDefaults()` was left
-     * behind by a release rather than chosen by anyone. A setting added since the row was written
-     * is simply missing from it, and everything reading the stored config sees it as unset - which
-     * is how a button added to the interface never reached the channels created from it.
+     * The defaults decide which settings exist; the row decides what they are. A setting added
+     * since the row was written is missing from it, and everything reading the config sees it as
+     * unset - which is how a button added to the interface never reached the channels created from
+     * it. One the defaults no longer carry is dead weight, and goes.
      *
-     * The row is rewritten rather than merged for the same reason: the defaults are the whole
-     * truth, so a key they no longer carry is dead weight rather than something to preserve.
+     * What the row says a setting *is*, though, is left exactly as it is. That is the reason for
+     * the row: changing a default in the source is a release, and changing it in the database is
+     * how this deployment is set - a sync that rewrote values would undo the second every time the
+     * bot restarted.
      *
      * Answers whether it rewrote, so the caller can read back what it now holds.
      */
@@ -189,10 +192,10 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
 
         // Dropped and written again rather than updated: `update()` deep merges with what is
         // there, which would keep a setting the defaults no longer carry for as long as the row
-        // lives. `initialize()` writes it back immediately, and would write it back on the next
-        // boot regardless - the defaults are the only source it has ever been built from.
+        // lives. What goes back is the defaults' shape carrying the stored values, so the keys are
+        // the source's and the answers are the row's.
         await this.model.delete( keys );
-        await this.model.create<TConfig[ "defaults" ]>( keys, defaults );
+        await this.model.create<TConfig[ "defaults" ]>( keys, this.reshapeToDefaults( defaults, stored ) );
 
         this.logger.info( this.syncWithDefaults, `Config '${ keys.key }' brought up to date` );
 
@@ -205,6 +208,39 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
      *
      * Leaves are compared rather than whole objects, so an array that gained an entry reads as the
      * one index that appeared rather than as the whole array having changed.
+     */
+    /**
+     * Function `reshapeToDefaults()` - The defaults' shape, answered with what the row already said.
+     *
+     * Walked from the defaults, so a setting they dropped is left behind by not being asked for,
+     * and one they added arrives carrying the value the source gives it. Everything else keeps
+     * what the row held, including a value somebody set by hand.
+     */
+    private reshapeToDefaults( defaults: Record<string, any>, stored: Record<string, any> ): Record<string, any> {
+        const reshaped: Record<string, any> = {};
+
+        Object.entries( defaults ).forEach( ( [ key, value ] ) => {
+            const held = ( stored as Record<string, any> )?.[ key ];
+
+            if ( value && "object" === typeof value && !Array.isArray( value ) ) {
+                reshaped[ key ] = this.reshapeToDefaults( value, held ?? {} );
+
+                return;
+            }
+
+            reshaped[ key ] = undefined === held ? value : held;
+        } );
+
+        return reshaped;
+    }
+
+    /**
+     * Function `compareToDefaults()` - Which settings the stored row is missing, and which it holds
+     * that no longer exist.
+     *
+     * Paths only. A value that differs from the default is the whole point of the row being in the
+     * database rather than in the source: it is what somebody set, and reporting it as drift would
+     * be the first step to overwriting it.
      */
     private compareToDefaults( defaults: Record<string, any>, stored: Record<string, any> ) {
         const flatten = ( value: Record<string, any>, prefix = "" ): Array<[ string, unknown ]> =>
@@ -219,11 +255,9 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
 
         const changes: string[] = [];
 
-        expected.forEach( ( value, path ) => {
+        expected.forEach( ( _value, path ) => {
             if ( !actual.has( path ) ) {
                 changes.push( `added '${ path }'` );
-            } else if ( actual.get( path ) !== value ) {
-                changes.push( `changed '${ path }'` );
             }
         } );
 

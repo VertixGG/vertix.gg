@@ -14,7 +14,7 @@ export class UpdateDynamicSettingsCommand extends GeneratorsCommandBase<{
         return "Dashboard/Generators/UpdateDynamicSettings";
     }
 
-    protected async run( args: {
+    protected async perform( args: {
         masterChannelId: string;
         settings: Partial<DynamicSettings>;
     } ) {

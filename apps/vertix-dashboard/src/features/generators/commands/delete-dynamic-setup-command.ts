@@ -9,7 +9,7 @@ export class DeleteDynamicSetupCommand extends GeneratorsCommandBase<{ masterCha
         return "Dashboard/Generators/DeleteDynamicSetup";
     }
 
-    protected async run( args: { masterChannelId: string } ) {
+    protected async perform( args: { masterChannelId: string } ) {
         const generatorsDetails = this.generatorsDetails;
 
         if ( !generatorsDetails ) {

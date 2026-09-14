@@ -11,7 +11,7 @@ export class RefreshSelectedCommand extends GeneratorsCommandBase {
         return "Dashboard/Generators/RefreshSelected";
     }
 
-    protected async run() {
+    protected async perform() {
         const { selectedMasterChannelId, selectedMasterChannelType } = this.state;
         const generatorsDetails = this.generatorsDetails;
 

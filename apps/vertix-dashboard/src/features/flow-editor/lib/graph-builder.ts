@@ -201,7 +201,7 @@ class PreviewResolver {
         return result;
     }
 
-    private static pickOptionValue( option: UIExportEmbedDefinition[ "options" ][ string ] | undefined ): string | undefined {
+    private static pickOptionValue( option: NonNullable<UIExportEmbedDefinition[ "options" ]>[ string ] | undefined ): string | undefined {
         if ( !option || typeof option !== "object" || Array.isArray( option ) ) {
             return undefined;
         }
@@ -817,24 +817,6 @@ class EdgeBuilder {
         return "button";
     }
 
-    private addFallbackEdgesForUnconnected( sourceCompId: string, connectedTargets: Set<string> ): void {
-        const directlyReachable = new Set(
-            this.context.flow.transitions
-                .filter( t => t.from === this.context.initialStateKey )
-                .map( t => t.to )
-        );
-
-        this.context.stateComponents.slice( 1 ).forEach( stateComp => {
-            if ( connectedTargets.has( stateComp.stateKey ) || this.context.wizardConnectedTargets.has( stateComp.stateKey ) || !directlyReachable.has( stateComp.stateKey ) ) {
-                return;
-            }
-
-            const targetCompId = this.context.stateKeyToCompId.get( stateComp.stateKey );
-            if ( targetCompId ) {
-                this.addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, this.context.flow.name, stateComp.stateName ) );
-            }
-        } );
-    }
 }
 
 class FlowPatternDetector {

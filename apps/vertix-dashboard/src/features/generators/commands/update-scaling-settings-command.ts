@@ -18,7 +18,7 @@ export class UpdateScalingSettingsCommand extends GeneratorsCommandBase<{
         return "Dashboard/Generators/UpdateScalingSettings";
     }
 
-    protected async run( args: {
+    protected async perform( args: {
         masterChannelId: string;
         settings: {
             scalingChannelPrefix?: string;

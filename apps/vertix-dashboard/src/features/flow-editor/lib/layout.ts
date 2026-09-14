@@ -190,7 +190,6 @@ function positionSatelliteModals(
  */
 function resolveModalOverlaps(
     layoutedNodesById: Map<string, Node>,
-    satelliteModals: Node[],
     parentToModalIds: Map<string, string[]>,
     mainNodes: Node[],
     opts: Required<LayoutOptions>
@@ -597,7 +596,7 @@ export function getLayoutedElements(
     } );
 
     positionSatelliteModals( layoutedNodesById, satelliteModals, parentToModalIds, opts );
-    resolveModalOverlaps( layoutedNodesById, satelliteModals, parentToModalIds, mainNodes, opts );
+    resolveModalOverlaps( layoutedNodesById, parentToModalIds, mainNodes, opts );
 
     // --- Phase 6: Assemble final node list preserving original order ---
     const finalNodes = nodes

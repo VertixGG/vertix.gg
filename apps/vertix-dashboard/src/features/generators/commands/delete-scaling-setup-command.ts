@@ -9,7 +9,7 @@ export class DeleteScalingSetupCommand extends GeneratorsCommandBase<{ masterCha
         return "Dashboard/Generators/DeleteScalingSetup";
     }
 
-    protected async run( args: { masterChannelId: string } ) {
+    protected async perform( args: { masterChannelId: string } ) {
         const generatorsDetails = this.generatorsDetails;
 
         if ( !generatorsDetails ) {

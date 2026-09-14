@@ -1,4 +1,5 @@
 import { CommandBase } from "@zenflux/react-commander/command-base";
+import type { DCommandArgs } from "@zenflux/react-commander/definitions";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
 import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generators/query/guild-generators-query";
@@ -53,7 +54,16 @@ export const GENERATORS_INITIAL_STATE: GeneratorsState = {
  * Base command for generators commands that require a guild ID.
  * Automatically validates guildId before executing the command.
  */
-export abstract class GeneratorsCommandBase<TArgs = void> extends CommandBase<GeneratorsState, TArgs> {
+/**
+ * A generators command, with the guild checked before it runs.
+ *
+ * The default arguments are the registry's own rather than `void`. A command declared as taking
+ * nothing is not one that takes the registry's arguments - contravariantly it is the opposite -
+ * so the three that declare none could not be registered alongside the ones that do, which the
+ * registry only tolerated because nothing was checking. They are called with `{}` regardless.
+ */
+export abstract class GeneratorsCommandBase<TArgs extends DCommandArgs = DCommandArgs>
+    extends CommandBase<GeneratorsState, TArgs> {
     protected get guildId(): string {
         return this.state.guildId!;
     }
@@ -67,10 +77,17 @@ export abstract class GeneratorsCommandBase<TArgs = void> extends CommandBase<Ge
             return this.setState( { error: "No guild selected" } );
         }
 
-        return this.run( args );
+        return this.perform( args );
     }
 
-    protected abstract run( args: TArgs ): unknown;
+    /**
+     * What the command actually does, once there is a guild to do it to.
+     *
+     * Not `run` or `execute`: the library's bases declare both - a no argument `run()` and an
+     * `execute( emitter, args, options )` - so a protected one of either name is a collision
+     * rather than an override, and they were only ever compatible because nothing was checking.
+     */
+    protected abstract perform( args: TArgs ): unknown;
 
     protected async pollForSetupCompletion(
         type: "scaling" | "dynamic",

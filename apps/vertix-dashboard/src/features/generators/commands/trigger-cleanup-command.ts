@@ -11,7 +11,7 @@ export class TriggerCleanupCommand extends GeneratorsCommandBase<{ masterChannel
         return "Dashboard/Generators/TriggerCleanup";
     }
 
-    protected async run( args: { masterChannelId: string } ) {
+    protected async perform( args: { masterChannelId: string } ) {
         const generatorsDetails = this.generatorsDetails;
 
         if ( !generatorsDetails ) {

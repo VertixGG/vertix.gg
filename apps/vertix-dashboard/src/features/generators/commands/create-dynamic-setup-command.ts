@@ -11,7 +11,7 @@ export class CreateDynamicSetupCommand extends GeneratorsCommandBase<{ input: Cr
         return "Dashboard/Generators/CreateDynamicSetup";
     }
 
-    protected async run( args: { input: CreateDynamicSetupInput } ) {
+    protected async perform( args: { input: CreateDynamicSetupInput } ) {
         const initialCount = this.generatorsDetails?.dynamicMasterChannels.length ?? 0;
 
         this.setState( {

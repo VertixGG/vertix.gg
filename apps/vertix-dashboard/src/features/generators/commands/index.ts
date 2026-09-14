@@ -1,6 +1,10 @@
 // Generators Commands - Single source of truth for all generator related commands
 
 // Import commands from individual files
+import type { DCommandNewInstanceWithArgs } from "@zenflux/react-commander/definitions";
+
+import type { GeneratorsState } from "@vertix.gg/dashboard/src/features/generators/commands/base";
+
 import { LoadGuildCommand } from "./load-guild-command";
 import { CreateScalingSetupCommand } from "./create-scaling-setup-command";
 import { CreateDynamicSetupCommand } from "./create-dynamic-setup-command";
@@ -118,7 +122,16 @@ export {
 
 export type { CreateDynamicFormState } from "./create-dynamic-form/create-dynamic-form-commands";
 
-export const GENERATORS_COMMANDS = [
+/**
+ * The commands this feature registers.
+ *
+ * Typed as the library asks for them rather than as themselves. Each carries the arguments it
+ * actually takes - `apply( args: UpdateDynamicSettingsArgs )` and so on - while the registry wants
+ * a command whose arguments are the library's own, and a method that accepts less than the base
+ * promises is not a subtype of it. The library resolves the same tension the same way one line
+ * into `execute()`, where the args it hands on are cast before `apply()` sees them.
+ */
+export const GENERATORS_COMMANDS: DCommandNewInstanceWithArgs<GeneratorsState>[] = [
     LoadGuildCommand,
     CreateScalingSetupCommand,
     CreateDynamicSetupCommand,

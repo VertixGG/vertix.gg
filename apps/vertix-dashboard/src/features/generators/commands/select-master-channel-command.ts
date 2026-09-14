@@ -27,7 +27,7 @@ export class SelectMasterChannelCommand extends GeneratorsCommandBase<{
         return super.apply( args );
     }
 
-    protected async run( args: { masterChannelId: string | null; type: MasterChannelType | null } ) {
+    protected async perform( args: { masterChannelId: string | null; type: MasterChannelType | null } ) {
         this.setState( {
             selectedMasterChannelId: args.masterChannelId,
             selectedMasterChannelType: args.type,

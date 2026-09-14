@@ -11,7 +11,7 @@ export class CreateScalingSetupCommand extends GeneratorsCommandBase<{ input: Cr
         return "Dashboard/Generators/CreateScalingSetup";
     }
 
-    protected async run( args: { input: CreateScalingSetupInput } ) {
+    protected async perform( args: { input: CreateScalingSetupInput } ) {
         const initialCount = this.generatorsDetails?.scalingMasterChannels.length ?? 0;
 
         this.setState( {

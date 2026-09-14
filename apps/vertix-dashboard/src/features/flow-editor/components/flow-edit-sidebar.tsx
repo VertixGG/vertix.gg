@@ -20,6 +20,7 @@ import {
 } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 import { useEditorScopeStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-scope";
+import { ButtonScopePicker } from "@vertix.gg/dashboard/src/features/flow-editor/components/button-scope-picker";
 import { EditedText, EditedTextArea } from "@vertix.gg/dashboard/src/components/edited-text";
 
 import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
@@ -1204,6 +1205,22 @@ export function FlowEditSidebar() {
                                         </span>
                                     ) }
                                 </h3>
+
+                                { /* Above the rows because it decides what they are: the same drag
+                                     arranges the default set or one role's, and nothing else on
+                                     the screen says which of the two is being written. */ }
+                                { arranged.isArranged && (
+                                    <div className="mb-2">
+                                        <ButtonScopePicker
+                                            byRole={ arranged.byRole }
+                                            roleId={ arranged.roleId }
+                                            disabled={ arranged.isSaving }
+                                            onChange={ arranged.setRole }
+                                            onClear={ arranged.clearRole }
+                                        />
+                                    </div>
+                                ) }
+
                                 <div className="space-y-2">
                                     { arranged.rows.map( ( row, rowIndex ) => {
                                         const rowHasSelectedElement = row.some(

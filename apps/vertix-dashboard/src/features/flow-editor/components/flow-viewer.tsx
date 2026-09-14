@@ -19,7 +19,7 @@ import { useButtonCatalogue } from "@vertix.gg/dashboard/src/features/generators
 import { useEditorGenerator } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-generator";
 import { useEditorScopeStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-scope";
 import { useButtonArrangementStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-button-arrangement-store";
-import { arrangeElementRows, buttonIdsOf } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
+import { arrangeElementRows, buttonIdsOf, scopedTemplate } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-arranged-element-rows";
 import { dynamicChannelFlowFor } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
 
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
@@ -131,6 +131,7 @@ export function FlowViewer() {
     const { selected: generator } = useEditorGenerator();
     const { catalogue } = useButtonCatalogue( generator?.version );
     const arrangementDraft = useButtonArrangementStore( ( state ) => state.draft );
+    const arrangementRoleId = useButtonArrangementStore( ( state ) => state.roleId );
 
     // The component a generator's channels are drawn by, which is named per interface version. A v2
     // generator matched against v3's name found nothing, so its set was never arranged and the
@@ -340,7 +341,10 @@ export function FlowViewer() {
                 const currentElementRows =
                     ( updatedData.elementRows ?? node.data?.elementRows ) as SchemaElement[][] | undefined;
 
-                const stored = splitTemplate( generator.settings?.dynamicChannelButtonsTemplate ?? [] );
+                // The set the scope names, so the message on the canvas is the one the members
+                // being edited for actually see - a role's buttons previewed under the default's
+                // would be a picture of a channel nobody gets.
+                const stored = splitTemplate( scopedTemplate( generator.settings, arrangementRoleId ) );
 
                 const arranged = currentElementRows && arrangeElementRows( {
                     schemaRows: currentElementRows,
@@ -406,6 +410,7 @@ export function FlowViewer() {
         generator,
         catalogue,
         arrangementDraft,
+        arrangementRoleId,
         dynamicChannelComponent
     ] );
 

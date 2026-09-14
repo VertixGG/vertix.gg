@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { BUTTON_ROW_LIMITS, joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
 import { isV2Version, toV2ButtonIds, toV3ButtonIds } from "@vertix.gg/definitions/src/button-ids";
@@ -9,11 +9,19 @@ import { useEditorGenerator } from "@vertix.gg/dashboard/src/features/flow-edito
 import { useButtonCatalogue } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
 import { useButtonArrangementStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-button-arrangement-store";
 
+import type { DynamicSettings } from "@vertix.gg/dashboard/src/features/generators/types";
+
 /** `move()` target meaning "out of the rows entirely" - the buttons this generator does not carry. */
 export const OMITTED_ROW = -1;
 
 /** Marks a drag as ours, so a stray drop from elsewhere on the page is ignored. */
 export const ELEMENT_DRAG_MIME = "application/x-vertix-element";
+
+/** The settings a save writes - one of the two, never both, since a scope is one or the other. */
+interface ButtonsUpdateBody {
+    dynamicChannelButtonsTemplate?: string[];
+    dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
+}
 
 /** One element as the flow schema describes it - only the parts the arrangement cares about. */
 export interface SchemaElement {
@@ -67,6 +75,30 @@ function buttonIdOf(
     const name = emojiBaseName( element.definition?.emoji );
 
     return name ? idByEmojiName.get( name ) : undefined;
+}
+
+/**
+ * Function scopedTemplate() :: The stored set a scope reads.
+ *
+ * The one place that choice is made, so the panel arranging a set and the canvas previewing it
+ * cannot end up showing two different scopes' buttons on the same screen.
+ *
+ * A role with no set of its own reads the default, because the default is what its members are
+ * actually getting - a role set replaces the default rather than adding to it, so what an admin
+ * starts from when narrowing one is the default itself. An empty entry is a removed set rather
+ * than a set of no buttons, and reads the same way; that is the rule the bot resolves by, and a
+ * screen that disagreed with it would be describing channels that do not exist.
+ */
+export function scopedTemplate( settings: DynamicSettings | null | undefined, roleId: string | null ): string[] {
+    const template = settings?.dynamicChannelButtonsTemplate ?? [];
+
+    if ( ! roleId ) {
+        return template;
+    }
+
+    const override = settings?.dynamicChannelButtonsTemplateByRole?.[ roleId ];
+
+    return override?.length ? override : template;
 }
 
 /**
@@ -182,6 +214,10 @@ function locate( rows: SchemaElement[][], name: string ): { row: number; at: num
  * applied to a known set - so the schema's own rows are handed back untouched and the section reads
  * as it always did. With one, the rows become that generator's, and the elements it does not carry
  * are set aside rather than drawn among the ones it does.
+ *
+ * Which of that generator's sets is being arranged comes from the scope: the default one, or a
+ * role's. A role's set stands in place of the default for the owners who hold it rather than
+ * adding to it, so it is the same gesture applied to a different set - not a second kind of edit.
  */
 export function useArrangedElementRows( elementRows: SchemaElement[][] | null | undefined ) {
     const { selected: generator, refresh } = useEditorGenerator();
@@ -194,18 +230,31 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
 
     const draftNames = useButtonArrangementStore( ( state ) => state.draft );
     const setDraftNames = useButtonArrangementStore( ( state ) => state.setDraft );
+    const roleId = useButtonArrangementStore( ( state ) => state.roleId );
+    const setRoleId = useButtonArrangementStore( ( state ) => state.setRoleId );
 
     const [ isSaving, setIsSaving ] = useState( false );
     const [ error, setError ] = useState<string | null>( null );
+
+    // A role's set belongs to the generator it was chosen under, so the scope goes back to the
+    // default whenever the generator does change. Without this, switching generators - from the
+    // picker above the canvas, or by going back to a link naming another one - would leave the
+    // panel arranging a role's buttons on a generator nobody chose that role for, and a save
+    // would write them there.
+    useEffect( () => {
+        setRoleId( null );
+    }, [ generator?.id, setRoleId ] );
 
     const schemaRows = elementRows ?? [];
 
     const settings = generator?.settings;
 
+    const byRole = settings?.dynamicChannelButtonsTemplateByRole ?? {};
+
     // The stored list carries its own row divisions, so there is one thing to read and one to
     // write - and no second field that can fail to come back.
     const { ids: storedIds, rowBreaks: storedBreaks } =
-        splitTemplate( settings?.dynamicChannelButtonsTemplate ?? [] );
+        splitTemplate( scopedTemplate( settings, roleId ) );
 
     // Both catalogues are keyed by the v3 slug, so a v2 generator's stored numbers are read into
     // that vocabulary before anything is matched against it.
@@ -216,6 +265,9 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
     if ( ! isArranged ) {
         return {
             isArranged: false as const,
+            roleId,
+            byRole,
+            setRole: setRoleId,
             rows: schemaRows,
             omitted: [] as SchemaElement[],
             hasChanges: false,
@@ -223,6 +275,7 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
             error: null as string | null,
             move: () => undefined,
             save: () => undefined,
+            clearRole: () => undefined,
             reset: () => undefined
         };
     }
@@ -264,6 +317,9 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
     if ( ! saved.length ) {
         return {
             isArranged: false as const,
+            roleId,
+            byRole,
+            setRole: setRoleId,
             rows: schemaRows,
             omitted: [] as SchemaElement[],
             hasChanges: false,
@@ -271,6 +327,7 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
             error: null as string | null,
             move: () => undefined,
             save: () => undefined,
+            clearRole: () => undefined,
             reset: () => undefined
         };
     }
@@ -341,19 +398,38 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
         setDraft( withoutEmpty( next ) );
     };
 
+    /**
+     * Function write() :: Send a change to the generator's buttons and redraw from what came back.
+     *
+     * Shared by saving an arrangement and by removing a role's set, so the two cannot disagree
+     * about when the draft is let go: only once the settings have been re-read, since dropping it
+     * any earlier falls back to the settings loaded at mount and shows the save undone.
+     */
+    const write = ( body: ButtonsUpdateBody, failure: string, onSaved?: () => void ) => {
+        setIsSaving( true );
+        setError( null );
+
+        void apiClient.put( `/management/guild/${ guildId }/dynamic/${ generator!.id }`, body )
+            .then( () => refresh() )
+            .then( () => {
+                setDraftNames( null );
+                onSaved?.();
+            } )
+            .catch( () => setError( failure ) )
+            .finally( () => setIsSaving( false ) );
+    };
+
     const save = () => {
         const ids = rows.map( ( row ) =>
             row.map( ( element ) => buttonIdOf( element, idByElement, idByEmojiName ) ).filter( Boolean ) as string[] );
 
         // An empty set is the bot's word for "every button", so writing one would quietly undo the
         // generator's choice instead of saving an arrangement of it. Refused rather than sent.
+        // For a role it reads as no set at all, which is the removal - and that has its own button.
         if ( ! ids.flat().length ) {
             setError( "A generator has to carry at least one button" );
             return;
         }
-
-        setIsSaving( true );
-        setError( null );
 
         // Written in the vocabulary the generator's own version reads: v2 channels match a stored
         // entry by number, so saving one as slugs left it drawing no buttons at all against a bot
@@ -364,19 +440,51 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
 
         // The set and its breaks travel together: the breaks are indices into the set, so one
         // without the other would describe rows that no longer line up with the buttons.
-        void apiClient.put( `/management/guild/${ guildId }/dynamic/${ generator!.id }`, {
-            dynamicChannelButtonsTemplate: joinTemplate( stored )
-        } )
-            // Re-read before letting go of the draft: dropping it first would fall back to the
-            // settings loaded at mount, which is the arrangement as it was before the save.
-            .then( () => refresh() )
-            .then( () => setDraftNames( null ) )
-            .catch( () => setError( "The rows could not be saved" ) )
-            .finally( () => setIsSaving( false ) );
+        const template = joinTemplate( stored );
+
+        // A role's set is sent as the whole map. The api replaces it wholesale rather than merging
+        // - being absent from it is how a role's set gets removed - so sending only the role being
+        // edited would take every other role's set away with it.
+        write(
+            roleId
+                ? { dynamicChannelButtonsTemplateByRole: { ...byRole, [ roleId ]: template } }
+                : { dynamicChannelButtonsTemplate: template },
+            "The rows could not be saved"
+        );
+    };
+
+    /**
+     * Function clearRole() :: Hand this role's members back the set everybody else gets.
+     *
+     * Left out of the map rather than written empty, since the api already turns the one into the
+     * other, and the bot reads both as the same thing: a role with nothing stored against it falls
+     * through to the default.
+     *
+     * The scope returns to the default afterwards because the role it was pointed at no longer has
+     * a set to look at - staying on it would leave the panel showing the default set while naming
+     * a role, which is the one reading that is never true.
+     */
+    const clearRole = () => {
+        if ( ! roleId ) {
+            return;
+        }
+
+        const next = { ...byRole };
+
+        delete next[ roleId ];
+
+        write(
+            { dynamicChannelButtonsTemplateByRole: next },
+            "The role's buttons could not be removed",
+            () => setRoleId( null )
+        );
     };
 
     return {
         isArranged: true as const,
+        roleId,
+        byRole,
+        setRole: setRoleId,
         rows,
         omitted,
         hasChanges,
@@ -384,6 +492,7 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
         error,
         move,
         save,
+        clearRole,
         reset: () => setDraftNames( null )
     };
 }

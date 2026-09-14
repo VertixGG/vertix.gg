@@ -12,10 +12,25 @@ interface ButtonArrangementState {
      * looking it up again keeps a stale copy from outliving an edit to its label or artwork.
      */
     draft: string[][] | null;
+    /**
+     * The role whose set is being arranged, or null for the one everybody else gets.
+     *
+     * Beside the draft rather than anywhere else because the two only mean anything together: the
+     * same rows describe a different set depending on what they are being written about, so a
+     * scope that could change without the draft following it would save one role's arrangement
+     * onto another.
+     */
+    roleId: string | null;
     setDraft: ( draft: string[][] | null ) => void;
+    setRoleId: ( roleId: string | null ) => void;
 }
 
 export const useButtonArrangementStore = create<ButtonArrangementState>( ( set ) => ( {
     draft: null,
-    setDraft: ( draft ) => set( { draft } )
+    roleId: null,
+    setDraft: ( draft ) => set( { draft } ),
+
+    // The draft is dropped rather than carried across: it was arranged against the set the old
+    // scope reads, and a role's set is a different set - not a different view of the same one.
+    setRoleId: ( roleId ) => set( { roleId, draft: null } )
 } ) );

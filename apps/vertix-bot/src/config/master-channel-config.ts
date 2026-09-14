@@ -39,6 +39,13 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
 
             dynamicChannelButtonsTemplateByRole: {},
 
+            // Empty means the set has no arrangement of its own and prints in rows of the width
+            // the version draws at. Carried here because this list is the whitelist a write to a
+            // generator's row is filtered against: absent, `setChannelButtonsRowBreaks()` was
+            // dropped on the floor, and the arrangement survived only because the api writes the
+            // row itself before telling the bot.
+            dynamicChannelButtonsRowBreaks: [],
+
             dynamicChannelControlChannelId: null,
 
             dynamicChannelLfmChannelIds: [],

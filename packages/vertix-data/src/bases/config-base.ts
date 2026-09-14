@@ -250,11 +250,21 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
      * be the first step to overwriting it.
      */
     private compareToDefaults( defaults: Record<string, any>, stored: Record<string, any> ) {
+        // An empty object or list is a setting like any other, and walking into one produces no
+        // paths at all - so a default that starts out empty was invisible here, and one added to
+        // the source never reached a row that had been written before it. Six of the settings on a
+        // generator start empty, and the first of them to be added after the fact found out.
         const flatten = ( value: Record<string, any>, prefix = "" ): Array<[ string, unknown ]> =>
             Object.entries( value ).flatMap( ( [ key, entry ] ) => {
                 const path = prefix ? `${ prefix }.${ key }` : key;
 
-                return entry && "object" === typeof entry ? flatten( entry, path ) : [ [ path, entry ] as [ string, unknown ] ];
+                if ( ! entry || "object" !== typeof entry ) {
+                    return [ [ path, entry ] as [ string, unknown ] ];
+                }
+
+                const nested = flatten( entry, path );
+
+                return nested.length ? nested : [ [ path, Array.isArray( entry ) ? "[]" : "{}" ] as [ string, unknown ] ];
             } );
 
         const expected = new Map( flatten( defaults ) ),

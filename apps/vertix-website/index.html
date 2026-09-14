@@ -24,13 +24,27 @@
 	     bundle so the preload scanner finds them while the HTML is still parsing.
 	     An `@import` is only discovered after the bundle has downloaded and begun
 	     parsing, which serialises two cross-origin round trips ahead of first
-	     paint and was costing the hero heading seconds of render delay. -->
+	     paint and was costing the hero heading seconds of render delay.
+
+	     The sheet is fetched at stylesheet priority by the preload and applied on
+	     load rather than before first paint: `print` matches no screen, so it does
+	     not hold render, and the onload hands it back to every medium. The faces
+	     already carry `display=swap`, so the heading was always going to paint in
+	     the fallback and swap when they arrived - waiting on the sheet bought the
+	     reader nothing and cost 780ms of blocked render. Without javascript the
+	     noscript copy applies it the ordinary blocking way. -->
 	<link rel="preconnect" href="https://fonts.googleapis.com"/>
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+	<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;600;700&amp;family=Red+Hat+Display:wght@300;400;500;700&amp;display=swap"/>
 	<link
 		rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;600;700&amp;family=Red+Hat+Display:wght@300;400;500;700&amp;display=swap"
+		media="print"
+		onload="this.media=&#39;all&#39;"
 	/>
+	<noscript>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;600;700&amp;family=Red+Hat+Display:wght@300;400;500;700&amp;display=swap"/>
+	</noscript>
 
 	<!-- Baseline tags. `seo/use-document-meta.ts` rewrites these per route once
 	     the app boots, but crawlers and link unfurlers that don't run JavaScript

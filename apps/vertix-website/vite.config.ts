@@ -231,6 +231,24 @@ async function startPrerenderServer( rootDir: string ) {
     };
 }
 
+/**
+ * Function restoreDeferredStyles() :: Puts a deferred stylesheet back the way the source wrote it.
+ *
+ * A stylesheet that is kept off the critical path carries `media="print"` and an onload that hands
+ * it back to every medium once it has arrived. Prerendering runs that onload like any other, and
+ * `page.content()` serialises the dom it left behind - so the html that ships says `media="all"`
+ * and blocks the first paint again, which is the one thing the attribute existed to avoid.
+ *
+ * Only links still carrying that exact onload are rewound, so a stylesheet that genuinely means
+ * `all` is left alone.
+ */
+function restoreDeferredStyles( html: string ): string {
+    return html.replace(
+        /media="all"(\s+onload="this\.media='all'")/g,
+        "media=\"print\"$1"
+    );
+}
+
 function toOutputPath( outDir: string, routePath: string ): string {
     if ( "/" === routePath ) {
         return path.join( outDir, "index.html" );
@@ -266,7 +284,7 @@ function prerenderPlugin(): Plugin {
                         timeout: PRERENDER_READY_TIMEOUT_MS,
                     } );
 
-                    rendered.push( { routePath: route.path, html: await page.content() } );
+                    rendered.push( { routePath: route.path, html: restoreDeferredStyles( await page.content() ) } );
                 }
             } finally {
                 await browser.close();

@@ -298,6 +298,14 @@ export default defineConfig( ( { mode } ) => {
 
     return {
         plugins: [ react(), exportsAssetsPlugin(), sitemapPlugin(), prerenderPlugin() ],
+        build: {
+            // Every stylesheet a route pulls in blocks the first paint, and a split one costs a
+            // whole round trip to say very little: the chat container is 0.7KiB and the home page
+            // 3.2KiB, each holding render as long as the 73.5KiB bundle they sit beside. Folding
+            // them in adds four kilobytes to a file already being fetched and takes two blocking
+            // requests off the critical path.
+            cssCodeSplit: false,
+        },
         define: {
             "import.meta.env.VITE_DASHBOARD_URL": JSON.stringify( dashboardUrl ),
             "import.meta.env.API_PUBLIC_URL": JSON.stringify( apiBaseUrl ),

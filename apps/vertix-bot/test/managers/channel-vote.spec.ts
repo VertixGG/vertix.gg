@@ -12,6 +12,13 @@ import type { RawAnonymousGuildData, RawMessageComponentInteractionData } from "
 
 import type { Client } from "discord.js";
 
+// Real snowflakes rather than the "1"/"2" the older tests use, so a vote reads the way one does in
+// a guild: ids above 2^32 are ordinary string keys and stay in the order they were added, where
+// small numeric ones are reordered numerically by the object holding them.
+const OWNER_ID = "830000000000000001",
+    VOTER_ID = "830000000000000002",
+    RIVAL_ID = "830000000000000003";
+
 class MockDynamicChannelVoteManager extends DynamicChannelVoteManager {
     public getLogger() {
         return this.logger;
@@ -98,6 +105,14 @@ describe( "VertixBot/Managers/ChannelVote", () => {
         jest.clearAllTimers();
         jest.clearAllMocks();
     } );
+
+    const interactionFor = ( userId: string ) => {
+        const interaction = new MessageComponentInteractionForVote( client, { channel, user: { id: userId } } );
+
+        interaction.channelId = channel.id;
+
+        return interaction;
+    };
 
     describe( "integration tests", () => {
 
@@ -254,11 +269,22 @@ describe( "VertixBot/Managers/ChannelVote", () => {
 
     describe( "unit tests", () => {
         beforeEach( () => {
+            // Stands in for what `start()` would have left behind. Carries the timings it settles
+            // too, taken from the manager under test rather than repeated as numbers - anything
+            // that extends the vote reads them, and an event without them throws rather than
+            // reporting the thing being tested.
+            const { runTime, addTime, timerIntervalTime } = manager.getTimeSettings();
+
             manager.getEvents()[ channel.id ] = {
                 channel,
                 state: "active",
                 isInitialInterval: false,
                 isInitialCandidate: false,
+                timings: {
+                    voteTimeout: runTime,
+                    voteAddTime: addTime,
+                    voteTimerInterval: timerIntervalTime,
+                },
             };
         } );
 
@@ -491,6 +517,40 @@ describe( "VertixBot/Managers/ChannelVote", () => {
 
                 // Assert.
                 expect( results ).toEqual( expectedResults );
+            } );
+        } );
+
+        describe( "getWinnerId()", () => {
+            // As `startVote()` leaves it: whoever opened the vote is entered as a candidate right
+            // after it starts, which is also what puts them on the board to be voted for. Nobody
+            // can be voted for before that, so there is no arrangement where a name in the tally
+            // arrived any other way.
+            beforeEach( () => {
+                manager.getEvents()[ channel.id ].initiatorInteraction = interactionFor( OWNER_ID );
+
+                manager.addCandidate( interactionFor( OWNER_ID ) );
+            } );
+
+            it( "should declare the person with the most votes the winner, not the initiator", () => {
+                // Arrange - somebody else steps in.
+                manager.addCandidate( interactionFor( RIVAL_ID ) );
+
+                // Act - a vote for the rival. Nobody votes for the person who opened it.
+                manager.addVote( interactionFor( VOTER_ID ), RIVAL_ID );
+
+                // Assert.
+                expect( manager.getResults( channel.id )[ RIVAL_ID ] ).toBe( 1 );
+                expect( manager.getResults( channel.id )[ OWNER_ID ] ).toBe( 0 );
+
+                expect( manager.getWinnerId( channel.id ) ).toBe( RIVAL_ID );
+            } );
+
+            it( "should hand a tie to whoever opened the vote", () => {
+                // Arrange - both on the board, neither voted for.
+                manager.addCandidate( interactionFor( RIVAL_ID ) );
+
+                // Assert.
+                expect( manager.getWinnerId( channel.id ) ).toBe( OWNER_ID );
             } );
         } );
     } );

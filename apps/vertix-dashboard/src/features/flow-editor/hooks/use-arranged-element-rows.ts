@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 
 import { BUTTON_ROW_LIMITS, joinTemplate, splitTemplate, toRows } from "@vertix.gg/utils/src/button-rows";
-import { isV2Version, toV2ButtonIds, toV3ButtonIds } from "@vertix.gg/definitions/src/button-ids";
+import {
+    DYNAMIC_CHANNEL_COMPONENT,
+    DYNAMIC_CHANNEL_PANEL_COMPONENT,
+    isV2Version,
+    toV2ButtonIds,
+    toV3ButtonIds
+} from "@vertix.gg/definitions/src/button-ids";
 
 import { apiClient } from "@vertix.gg/dashboard/src/lib/api-client";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
@@ -75,6 +81,35 @@ function buttonIdOf(
     const name = emojiBaseName( element.definition?.emoji );
 
     return name ? idByEmojiName.get( name ) : undefined;
+}
+
+/**
+ * Function isButtonsComponent() :: Whether this component's elements are a generator's buttons.
+ *
+ * Two are: the message inside a channel, and the control panel beside the generator. Both draw the
+ * set the generator stores, so arranging either arranges that one list.
+ *
+ * Nothing else is, however much it looks like it. A confirmation screen reuses the very button it
+ * confirms - the same element, under the same name - so the arrangement matched it, resolved the
+ * generator's whole set down to that one button, and offered to rearrange a set of one. Which read
+ * as though a flow had buttons of its own to arrange.
+ */
+function isButtonsComponent( componentName: string | null | undefined, version?: string | null ): boolean {
+    const isV2 = isV2Version( version );
+
+    return componentName === ( isV2 ? DYNAMIC_CHANNEL_COMPONENT.V2 : DYNAMIC_CHANNEL_COMPONENT.V3 )
+        || componentName === ( isV2 ? DYNAMIC_CHANNEL_PANEL_COMPONENT.V2 : DYNAMIC_CHANNEL_PANEL_COMPONENT.V3 );
+}
+
+/**
+ * Function isRoleScopableComponent() :: Whether a role's set means anything on this component.
+ *
+ * Only the message inside a channel. The panel carries the default set and nothing else - a role's
+ * set is resolved from the channel's owner, and the panel has none - so offering a role there
+ * would promise a screen the panel can never draw.
+ */
+function isRoleScopableComponent( componentName: string | null | undefined, version?: string | null ): boolean {
+    return componentName === ( isV2Version( version ) ? DYNAMIC_CHANNEL_COMPONENT.V2 : DYNAMIC_CHANNEL_COMPONENT.V3 );
 }
 
 /**
@@ -219,7 +254,10 @@ function locate( rows: SchemaElement[][], name: string ): { row: number; at: num
  * role's. A role's set stands in place of the default for the owners who hold it rather than
  * adding to it, so it is the same gesture applied to a different set - not a second kind of edit.
  */
-export function useArrangedElementRows( elementRows: SchemaElement[][] | null | undefined ) {
+export function useArrangedElementRows(
+    elementRows: SchemaElement[][] | null | undefined,
+    componentName?: string | null
+) {
     const { selected: generator, refresh } = useEditorGenerator();
 
     // This generator's own version, so the sidebar reads the same catalogue the preview does. Asked
@@ -230,26 +268,32 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
 
     const draftNames = useButtonArrangementStore( ( state ) => state.draft );
     const setDraftNames = useButtonArrangementStore( ( state ) => state.setDraft );
-    const roleId = useButtonArrangementStore( ( state ) => state.roleId );
+    const storedRoleId = useButtonArrangementStore( ( state ) => state.roleId );
     const setRoleId = useButtonArrangementStore( ( state ) => state.setRoleId );
 
     const [ isSaving, setIsSaving ] = useState( false );
     const [ error, setError ] = useState<string | null>( null );
 
-    // A role's set belongs to the generator it was chosen under, so the scope goes back to the
-    // default whenever the generator does change. Without this, switching generators - from the
-    // picker above the canvas, or by going back to a link naming another one - would leave the
-    // panel arranging a role's buttons on a generator nobody chose that role for, and a save
-    // would write them there.
+    const isRoleScopable = isRoleScopableComponent( componentName, generator?.version );
+
+    // A role's set belongs to the generator it was chosen under, and to the one component that can
+    // draw it. The scope goes back to the default whenever either changes - otherwise switching
+    // generators, or clicking onto the control panel, would leave a role chosen with nothing on
+    // screen saying so, and the canvas previewing that role's buttons under a component that only
+    // ever draws the default.
     useEffect( () => {
         setRoleId( null );
-    }, [ generator?.id, setRoleId ] );
+    }, [ generator?.id, isRoleScopable, setRoleId ] );
 
     const schemaRows = elementRows ?? [];
 
     const settings = generator?.settings;
 
     const byRole = settings?.dynamicChannelButtonsTemplateByRole ?? {};
+
+    // Read through the gate rather than straight off the store, so a scope that outlived the
+    // component it was chosen on cannot quietly decide what gets read and written.
+    const roleId = isRoleScopable ? storedRoleId : null;
 
     // The stored list carries its own row divisions, so there is one thing to read and one to
     // write - and no second field that can fail to come back.
@@ -260,11 +304,15 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
     // that vocabulary before anything is matched against it.
     const template = toV3ButtonIds( storedIds );
 
-    const isArranged = Boolean( generator ) && catalogue.length > 0 && template.length > 0;
+    const isArranged = Boolean( generator )
+        && isButtonsComponent( componentName, generator?.version )
+        && catalogue.length > 0
+        && template.length > 0;
 
     if ( ! isArranged ) {
         return {
             isArranged: false as const,
+            isRoleScopable,
             roleId,
             byRole,
             setRole: setRoleId,
@@ -317,6 +365,7 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
     if ( ! saved.length ) {
         return {
             isArranged: false as const,
+            isRoleScopable,
             roleId,
             byRole,
             setRole: setRoleId,
@@ -482,6 +531,7 @@ export function useArrangedElementRows( elementRows: SchemaElement[][] | null | 
 
     return {
         isArranged: true as const,
+        isRoleScopable,
         roleId,
         byRole,
         setRole: setRoleId,

@@ -121,6 +121,18 @@ export const DYNAMIC_CHANNEL_COMPONENT = {
 } as const;
 
 /**
+ * The component that draws a generator's control panel, per version.
+ *
+ * Named beside the one above because it carries the same buttons and is laid out by the same
+ * stored list - but only ever the default set. A role's set is resolved from a channel's owner,
+ * and a panel belongs to the generator rather than to anybody, so it has no owner to resolve from.
+ */
+export const DYNAMIC_CHANNEL_PANEL_COMPONENT = {
+    V2: "VertixBot/UI-V2/DynamicChannelPanel",
+    V3: "VertixBot/UI-V3/DynamicChannelPanel"
+} as const;
+
+/**
  * How many buttons a version prints in a row when the generator arranged none.
  *
  * Discord allows five, and v3 uses all five; v2 has always drawn four and its exported schema is

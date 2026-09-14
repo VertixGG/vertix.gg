@@ -1048,8 +1048,10 @@ export function FlowEditSidebar() {
         : null;
 
     // The elements again, but in the rows the generator being looked at actually prints them in.
-    // Without a generator this hands back the schema's own rows, so the section is unchanged.
-    const arranged = useArrangedElementRows( elementRows );
+    // Without a generator this hands back the schema's own rows, so the section is unchanged - and
+    // so it does on a component whose elements are not a generator's buttons, however much one of
+    // them looks like a button the generator carries.
+    const arranged = useArrangedElementRows( elementRows, selectedNode?.data?.component as string | undefined );
 
     // Selection still addresses the schema's own layout, so a chip drawn in an arranged row has to
     // say where it came from rather than where it now sits.
@@ -1208,8 +1210,12 @@ export function FlowEditSidebar() {
 
                                 { /* Above the rows because it decides what they are: the same drag
                                      arranges the default set or one role's, and nothing else on
-                                     the screen says which of the two is being written. */ }
-                                { arranged.isArranged && (
+                                     the screen says which of the two is being written.
+
+                                     Not on the control panel, which carries the default set and
+                                     only ever that - a role's is resolved from a channel's owner,
+                                     and the panel has none. */ }
+                                { arranged.isArranged && arranged.isRoleScopable && (
                                     <div className="mb-2">
                                         <ButtonScopePicker
                                             byRole={ arranged.byRole }

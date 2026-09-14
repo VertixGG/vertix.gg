@@ -8,9 +8,16 @@
 			"type": "image/x-icon"
 		},
 		{
+			"src": "icon-192.png",
+			"type": "image/png",
+			"sizes": "192x192",
+			"purpose": "any"
+		},
+		{
 			"src": "vc-naked.png",
 			"type": "image/png",
-			"sizes": "500x500"
+			"sizes": "500x500",
+			"purpose": "any"
 		}
 	],
 	"start_url": ".",

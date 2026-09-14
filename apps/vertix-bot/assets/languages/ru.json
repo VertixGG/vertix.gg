@@ -3754,7 +3754,7 @@
     {
       "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
       "content": {
-        "title": "⏱️ Тайминги LFM главного канала #{index}"
+        "title": "⏱️ Тайминги LFM"
       }
     }
   ]

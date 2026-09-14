@@ -3754,7 +3754,7 @@
     {
       "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
       "content": {
-        "title": "⏱️ Tiempos LFM del Canal Maestro #{index}"
+        "title": "⏱️ Tiempos LFM"
       }
     }
   ]

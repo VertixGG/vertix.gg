@@ -6,7 +6,7 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS } from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 
-import type { UIArgs, UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIInputStyleTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 export const MILLISECONDS_PER_MINUTE = 60 * 1000,
     MILLISECONDS_PER_SECOND = 1000;
@@ -161,8 +161,6 @@ export class SetupEditLfmOccupancyDebounceInput extends LfmTimingInputBase {
 }
 
 export class SetupEditLfmTimingsModal extends UIModalBase {
-    private buildArgs: UIArgs | undefined;
-
     public static getName() {
         return "VertixBot/UI-V2/SetupEditLfmTimingsModal";
     }
@@ -180,19 +178,15 @@ export class SetupEditLfmTimingsModal extends UIModalBase {
         ];
     }
 
-    public async build( args?: UIArgs ) {
-        this.buildArgs = args;
-
-        return super.build( args );
-    }
-
+    /**
+     * A modal title is a plain string.
+     *
+     * Modals hang off `UIPortableBase`, which carries none of the template composition the embeds
+     * branch has, so a var written into one is printed as itself rather than resolved - which is
+     * what `#{index}` did here. Nothing is lost by leaving the number out: the screen this opens
+     * from says which generator it belongs to in its own title, and that one is an embed.
+     */
     protected getTitle() {
-        const index = this.buildArgs?.index;
-
-        if ( "number" === typeof index || "string" === typeof index ) {
-            return `⏱️ LFM Timings Of Master Channel #${ Number( index ) + 1 }`;
-        }
-
         return "⏱️ LFM Timings";
     }
 }

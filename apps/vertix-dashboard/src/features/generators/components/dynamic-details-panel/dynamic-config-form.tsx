@@ -35,7 +35,7 @@ export interface DynamicConfigFormProps {
     masterChannelId: string;
     /** The interface version the generator was set up with, which decides the flow it links at. */
     masterChannelVersion?: string | null;
-    settings: DynamicSettings | null;
+    settings: DynamicSettings;
     discordOptions: GuildDiscordOptions | null;
     /** The generator's own limit, which an empty field copies. `0` is Discord's word for none. */
     generatorUserLimit: number | undefined;
@@ -99,16 +99,16 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     }, [] );
 
     const hasChanges =
-        state.nameTemplate !== ( settings?.dynamicChannelNameTemplate || "{user}'s Channel" ) ||
-        state.autoSave !== ( settings?.dynamicChannelAutoSave ?? true ) ||
-        state.autoStatus !== ( settings?.dynamicChannelAutoStatus ?? true ) ||
-        state.mentionable !== ( settings?.dynamicChannelMentionable ?? false ) ||
-        state.defaultPrivacyState !== ( settings?.dynamicChannelDefaultPrivacyState ?? "public" ) ||
-        state.defaultUserLimit !== ( settings?.dynamicChannelDefaultUserLimit ?? null ) ||
-        state.voiceRoleId !== ( settings?.dynamicChannelVoiceRoleId ?? null ) ||
-        state.logsChannelId !== ( settings?.dynamicChannelLogsChannelId ?? null ) ||
-        !sameRoles( state.verifiedRoles, settings?.dynamicChannelVerifiedRoles ?? [] ) ||
-        !sameRoles( state.staffRoles, settings?.dynamicChannelStaffRoles ?? [] );
+        state.nameTemplate !== ( settings.dynamicChannelNameTemplate ) ||
+        state.autoSave !== ( settings.dynamicChannelAutoSave ) ||
+        state.autoStatus !== ( settings.dynamicChannelAutoStatus ) ||
+        state.mentionable !== ( settings.dynamicChannelMentionable ) ||
+        state.defaultPrivacyState !== ( settings.dynamicChannelDefaultPrivacyState ) ||
+        state.defaultUserLimit !== ( settings.dynamicChannelDefaultUserLimit ) ||
+        state.voiceRoleId !== ( settings.dynamicChannelVoiceRoleId ) ||
+        state.logsChannelId !== ( settings.dynamicChannelLogsChannelId ) ||
+        !sameRoles( state.verifiedRoles, settings.dynamicChannelVerifiedRoles ) ||
+        !sameRoles( state.staffRoles, settings.dynamicChannelStaffRoles );
 
     const handleSave = () => {
         updateDynamicSettings.run( {

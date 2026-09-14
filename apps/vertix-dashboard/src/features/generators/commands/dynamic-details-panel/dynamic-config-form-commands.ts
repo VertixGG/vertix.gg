@@ -45,20 +45,29 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
         return "Dashboard/Generators/DynamicConfigForm/Initialize";
     }
 
-    public apply( args: { settings: DynamicSettings | null } ) {
+    /**
+     * The settings as the api answered them, with nothing filled in here.
+     *
+     * The api resolves an unset setting against the bot's own configuration before it answers, so
+     * every value below is what that generator would actually do. Filling a blank here instead
+     * would be a third opinion about what a generator defaults to - and the one that had it wrong:
+     * auto save and mentionable were both written the opposite way round from the bot, and this is
+     * the state a save writes back.
+     */
+    public apply( args: { settings: DynamicSettings } ) {
         return this.setState( {
-            nameTemplate: args.settings?.dynamicChannelNameTemplate || "{user}'s Channel",
-            autoSave: args.settings?.dynamicChannelAutoSave ?? true,
-            autoStatus: args.settings?.dynamicChannelAutoStatus ?? true,
-            mentionable: args.settings?.dynamicChannelMentionable ?? false,
-            defaultPrivacyState: args.settings?.dynamicChannelDefaultPrivacyState ?? "public",
-            defaultUserLimit: args.settings?.dynamicChannelDefaultUserLimit ?? null,
-            verifiedRoles: args.settings?.dynamicChannelVerifiedRoles ?? [],
-            staffRoles: args.settings?.dynamicChannelStaffRoles ?? [],
-            voiceRoleId: args.settings?.dynamicChannelVoiceRoleId ?? null,
-            logsChannelId: args.settings?.dynamicChannelLogsChannelId ?? null,
-            buttons: args.settings?.dynamicChannelButtonsTemplate ?? [],
-            buttonRowBreaks: args.settings?.dynamicChannelButtonsRowBreaks ?? []
+            nameTemplate: args.settings.dynamicChannelNameTemplate,
+            autoSave: args.settings.dynamicChannelAutoSave,
+            autoStatus: args.settings.dynamicChannelAutoStatus,
+            mentionable: args.settings.dynamicChannelMentionable,
+            defaultPrivacyState: args.settings.dynamicChannelDefaultPrivacyState,
+            defaultUserLimit: args.settings.dynamicChannelDefaultUserLimit,
+            verifiedRoles: args.settings.dynamicChannelVerifiedRoles,
+            staffRoles: args.settings.dynamicChannelStaffRoles,
+            voiceRoleId: args.settings.dynamicChannelVoiceRoleId,
+            logsChannelId: args.settings.dynamicChannelLogsChannelId,
+            buttons: args.settings.dynamicChannelButtonsTemplate,
+            buttonRowBreaks: args.settings.dynamicChannelButtonsRowBreaks
         } );
     }
 }

@@ -11,7 +11,8 @@ export const IPC_REQUEST_ACTIONS = {
     GET_SCALING_CHANNEL_INFO: "get_scaling_channel_info",
     GET_DYNAMIC_CHANNEL_INFO: "get_dynamic_channel_info",
     GET_GUILD_OPTIONS: "get_guild_options",
-    GET_CONFIG_LIMITS: "get_config_limits"
+    GET_CONFIG_LIMITS: "get_config_limits",
+    GET_GENERATOR_DEFAULTS: "get_generator_defaults"
 } as const;
 
 /**
@@ -64,6 +65,29 @@ export interface GetConfigLimitsRequest {
     guildId: string;
 }
 
+/**
+ * What a generator of this interface version is created with, asked of the bot.
+ *
+ * Asked rather than written down a second time. The api fills a form with these wherever a
+ * generator has never stored a choice of its own, so a copy kept here would be a second set of
+ * defaults that nobody compares - and the two did drift: the api had auto save on and mentionable
+ * off while the bot had the opposite, which a dashboard saving that form would have written in.
+ *
+ * Per version, because v2 and v3 are created with different sets.
+ */
+export interface GetGeneratorDefaultsRequest {
+    action: typeof IPC_REQUEST_ACTIONS.GET_GENERATOR_DEFAULTS;
+    version: string;
+}
+
+export interface GetGeneratorDefaultsResponse {
+    /**
+     * The configuration as the bot holds it, unshaped: it is the bot's to describe, and the api
+     * reads the handful of keys it shows the way it already reads a stored row.
+     */
+    settings: Record<string, unknown>;
+}
+
 export interface GetConfigLimitsResponse {
     /** How many dynamic generators a guild may have. */
     maxMasterChannels: number;
@@ -87,4 +111,5 @@ export type IPCManagementRequestPayload =
     | GetScalingChannelInfoRequest
     | GetDynamicChannelInfoRequest
     | GetGuildOptionsRequest
-    | GetConfigLimitsRequest;
+    | GetConfigLimitsRequest
+    | GetGeneratorDefaultsRequest;

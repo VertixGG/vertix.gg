@@ -9,6 +9,10 @@ import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/s
 
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
+import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+
+import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
+
 import { ChannelType } from "discord.js";
 
 import type { NewsChannel, TextChannel } from "discord.js";
@@ -18,8 +22,14 @@ import type { IPCService, IPCMessage, IPCRequest } from "@vertix.gg/base/src/mod
 import type {
     IPCManagementRequestPayload,
     GetGuildOptionsResponse,
-    GetConfigLimitsResponse
+    GetConfigLimitsResponse,
+    GetGeneratorDefaultsResponse
 } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import type {
+    MasterChannelConfigInterface,
+    MasterChannelConfigInterfaceV3
+} from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { GetScalingChannelInfoResponse } from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
 
@@ -92,7 +102,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             await this.services.ipcService.onRequest<
                 IPCManagementRequestPayload,
                 GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
-                | GetConfigLimitsResponse
+                | GetConfigLimitsResponse | GetGeneratorDefaultsResponse
             >(
                 IPC_CHANNELS.MANAGEMENT_REQUEST,
                 IPC_CHANNELS.MANAGEMENT_RESPONSE,
@@ -232,11 +242,26 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         return { maxMasterChannels };
     }
 
+    /**
+     * Function getGeneratorDefaults() :: What a generator of this version is created with.
+     *
+     * The configuration as it stands, which is the row as this deployment set it rather than what
+     * the source ships - the same answer the bot itself creates a generator from, so a dashboard
+     * filling a form with it fills it with what would actually happen.
+     */
+    private getGeneratorDefaults( version: string ): GetGeneratorDefaultsResponse {
+        const config = VERSION_UI_V3 === version
+            ? ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 )
+            : ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
+
+        return { settings: { ... config.data } };
+    }
+
     private async handleIPCRequest(
         request: IPCRequest<IPCManagementRequestPayload>
     ): Promise<
         GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
-        | GetConfigLimitsResponse
+        | GetConfigLimitsResponse | GetGeneratorDefaultsResponse
     > {
         const { payload } = request;
 
@@ -262,6 +287,9 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
 
             case IPC_REQUEST_ACTIONS.GET_CONFIG_LIMITS:
                 return this.getConfigLimits( payload.guildId );
+
+            case IPC_REQUEST_ACTIONS.GET_GENERATOR_DEFAULTS:
+                return this.getGeneratorDefaults( payload.version );
 
             default:
                 throw new Error( `Unknown request action: ${ ( payload as IPCManagementRequestPayload ).action }` );

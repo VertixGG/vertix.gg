@@ -20,7 +20,6 @@ import { GUILD_TIMINGS_FIELDS } from "@vertix.gg/definitions/src/guild-timings-d
 
 import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
 
-import { getButtonCatalogue } from "@vertix.gg/api/src/server/services/button-emoji-source";
 
 import type {
     GuildTimingsInterface,
@@ -38,7 +37,9 @@ import type {
     GetGuildOptionsRequest,
     GetGuildOptionsResponse,
     GetConfigLimitsRequest,
-    GetConfigLimitsResponse
+    GetConfigLimitsResponse,
+    GetGeneratorDefaultsRequest,
+    GetGeneratorDefaultsResponse
 } from "@vertix.gg/definitions/src/ipc-definitions";
 
 import type { ChannelPrivacyStateDefault } from "@vertix.gg/data/src/interfaces/master-channel-config";
@@ -122,32 +123,35 @@ function getDynamicSettingsObject(
  * falls back to is what the dashboard must show - otherwise a form would save a value the admin
  * never chose.
  *
- * `version` is the generator's own, because the two interfaces carry a different set of buttons -
- * a v2 generator with no set of its own falls back to v2's, not to every button v3 ships.
+ * Those defaults are asked of the bot rather than written down here. Written down, they were a
+ * second set nobody compared, and the two had drifted: this said auto save on and mentionable off
+ * while the bot has the opposite, so a dashboard filling a form for a generator that had never
+ * stored either would have offered to save both wrong.
+ *
+ * `defaults` is the generator's own version, because v2 and v3 are created with different sets.
  */
-function readDynamicSettings( settingsData: Record<string, unknown>, version?: string | null ): DynamicSettings {
+function readDynamicSettings( settingsData: Record<string, unknown>, defaults: Record<string, unknown> ): DynamicSettings {
+    const read = <T>( key: keyof DynamicSettings ) => ( settingsData[ key ] ?? defaults[ key ] ) as T;
+
     return {
-        dynamicChannelNameTemplate: ( settingsData.dynamicChannelNameTemplate as string ) || "{user}'s Channel",
-        dynamicChannelAutoSave: ( settingsData.dynamicChannelAutoSave as boolean ) ?? true,
-        dynamicChannelAutoStatus: ( settingsData.dynamicChannelAutoStatus as boolean ) ?? true,
-        dynamicChannelMentionable: ( settingsData.dynamicChannelMentionable as boolean ) ?? false,
-        dynamicChannelDefaultPrivacyState:
-            ( settingsData.dynamicChannelDefaultPrivacyState as ChannelPrivacyStateDefault ) ?? "public",
-        dynamicChannelDefaultUserLimit: ( settingsData.dynamicChannelDefaultUserLimit as number | null ) ?? null,
-        dynamicChannelVerifiedRoles: ( settingsData.dynamicChannelVerifiedRoles as string[] ) || [],
-        dynamicChannelStaffRoles: ( settingsData.dynamicChannelStaffRoles as string[] ) || [],
-        dynamicChannelVoiceRoleId: ( settingsData.dynamicChannelVoiceRoleId as string | null ) ?? null,
-        dynamicChannelLogsChannelId: ( settingsData.dynamicChannelLogsChannelId as string | null ) ?? null,
-        // Absent means the generator predates any choice, and the bot falls back to every button
-        // there is - which is exactly what the catalogue holds.
-        dynamicChannelButtonsTemplate: ( settingsData.dynamicChannelButtonsTemplate as string[] )
-            ?? getButtonCatalogue( version ).map( ( button ) => button.value ),
-        dynamicChannelButtonsTemplateByRole:
-            ( settingsData.dynamicChannelButtonsTemplateByRole as Record<string, string[]> ) ?? {},
-        // Absent means no arrangement of its own, which the bot draws as rows of five.
+        dynamicChannelNameTemplate: read( "dynamicChannelNameTemplate" ),
+        dynamicChannelAutoSave: read( "dynamicChannelAutoSave" ),
+        dynamicChannelAutoStatus: read( "dynamicChannelAutoStatus" ),
+        dynamicChannelMentionable: read( "dynamicChannelMentionable" ),
+        dynamicChannelDefaultPrivacyState: read<ChannelPrivacyStateDefault>( "dynamicChannelDefaultPrivacyState" ),
+        dynamicChannelDefaultUserLimit: read<number | null>( "dynamicChannelDefaultUserLimit" ) ?? null,
+        dynamicChannelVerifiedRoles: read<string[]>( "dynamicChannelVerifiedRoles" ) ?? [],
+        dynamicChannelStaffRoles: read<string[]>( "dynamicChannelStaffRoles" ) ?? [],
+        dynamicChannelVoiceRoleId: read<string | null>( "dynamicChannelVoiceRoleId" ) ?? null,
+        dynamicChannelLogsChannelId: read<string | null>( "dynamicChannelLogsChannelId" ) ?? null,
+        dynamicChannelButtonsTemplate: read<string[]>( "dynamicChannelButtonsTemplate" ) ?? [],
+        dynamicChannelButtonsTemplateByRole: read<Record<string, string[]>>( "dynamicChannelButtonsTemplateByRole" ) ?? {},
+        // Not a setting the bot's configuration carries: absent means no arrangement of its own,
+        // which it draws as rows of five.
         dynamicChannelButtonsRowBreaks: ( settingsData.dynamicChannelButtonsRowBreaks as number[] ) ?? []
     };
 }
+
 
 export interface DynamicSettings {
     dynamicChannelNameTemplate: string;
@@ -483,6 +487,10 @@ export class ManagementService extends ServiceWithDependenciesBase<{
 
                 const settingsData = getDynamicSettingsObject( master );
 
+                const defaults = settingsData
+                    ? await this.getGeneratorDefaults( master.version )
+                    : null;
+
                 return {
                     id: master.id,
                     channelId: master.channelId,
@@ -490,7 +498,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     createdAt: master.createdAt,
                     dynamicChannelsCount,
                     version: master.version || VERSION_UI_V3,
-                    settings: settingsData ? readDynamicSettings( settingsData, master.version ) : null
+                    settings: settingsData && defaults ? readDynamicSettings( settingsData, defaults ) : null
                 };
             } )
         );
@@ -500,6 +508,40 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             dynamicMasterChannels,
             settings
         };
+    }
+
+
+    /**
+     * Function getGeneratorDefaults() :: What a generator of this version is created with, from the bot.
+     *
+     * Null when the bot could not be asked, which the callers report as settings nobody knows rather
+     * than as settings that are the built in ones - a dashboard showing a guess it cannot tell from an
+     * answer is how the wrong value gets saved back.
+     */
+    private async getGeneratorDefaults( version?: string | null ): Promise<Record<string, unknown> | null> {
+        if ( ! this.services.ipcService.isReady() ) {
+            return null;
+        }
+
+        try {
+            const request: GetGeneratorDefaultsRequest = {
+                action: IPC_REQUEST_ACTIONS.GET_GENERATOR_DEFAULTS,
+                version: version || VERSION_UI_V3
+            };
+
+            const response = await this.services.ipcService.request<GetGeneratorDefaultsRequest, GetGeneratorDefaultsResponse>(
+                IPC_CHANNELS.MANAGEMENT_REQUEST,
+                IPC_CHANNELS.MANAGEMENT_RESPONSE,
+                request,
+                CONFIG_LIMITS_REQUEST_TIMEOUT_MS
+            );
+
+            return response.settings;
+        } catch( error ) {
+            this.logger.warn( this.getGeneratorDefaults, "Failed to read the generator defaults", error );
+
+            return null;
+        }
     }
 
     /**
@@ -856,6 +898,10 @@ export class ManagementService extends ServiceWithDependenciesBase<{
 
         const settingsData = getDynamicSettingsObject( master );
 
+        const defaults = settingsData
+            ? await this.getGeneratorDefaults( master.version )
+            : null;
+
         // Create a map of Discord channel info by channel ID
         const discordChannelMap = new Map<string, IPCDiscordChannelInfo>();
 
@@ -871,7 +917,7 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 createdAt: master.createdAt,
                 dynamicChannelsCount: dynamicChannels.length,
                 version: master.version || VERSION_UI_V3,
-                settings: settingsData ? readDynamicSettings( settingsData, master.version ) : null
+                settings: settingsData && defaults ? readDynamicSettings( settingsData, defaults ) : null
             },
             dynamicChannels: dynamicChannels.map( ( channel ) => ( {
                 id: channel.id,

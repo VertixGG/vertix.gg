@@ -285,7 +285,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                 <Settings className="w-4 h-4 text-accent-muted" />
                                 Configuration
                             </h3>
-                            { !state.isEditing && (
+                            { !state.isEditing && settings && (
                                 <DiscordButton
                                     variant="primary"
                                     size="sm"
@@ -298,7 +298,13 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                         </header>
 
                         <div className="p-4">
-                            { state.isEditing ? (
+                            { !settings ? (
+                                <p className="text-sm text-text-muted">
+                                    These settings could not be read - the bot was not reachable. Nothing is shown
+                                    rather than what it might have been, because a form filled with a guess saves
+                                    the guess.
+                                </p>
+                            ) : state.isEditing ? (
                                 <DynamicConfigForm
                                     masterChannelId={ master.id }
                                     masterChannelVersion={ master.version }
@@ -314,23 +320,23 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                     <SettingsGroup title="New channels">
                                         <SettingRow
                                             label="Name template"
-                                            value={ settings?.dynamicChannelNameTemplate || "{user}'s Channel" }
+                                            value={ settings.dynamicChannelNameTemplate }
                                             mono
                                         />
                                         <SettingRow
                                             label="Privacy"
-                                            value={ PRIVACY_STATE_LABELS[ settings?.dynamicChannelDefaultPrivacyState ?? "public" ] }
-                                            note={ "public" === ( settings?.dynamicChannelDefaultPrivacyState ?? "public" )
+                                            value={ PRIVACY_STATE_LABELS[ settings.dynamicChannelDefaultPrivacyState ] }
+                                            note={ "public" === settings.dynamicChannelDefaultPrivacyState
                                                 ? PUBLIC_PRIVACY_NOTE
                                                 : undefined }
                                         />
                                         <SettingRow
                                             label="User limit"
                                             value={ formatUserLimit(
-                                                settings?.dynamicChannelDefaultUserLimit ?? null,
+                                                settings.dynamicChannelDefaultUserLimit,
                                                 details.discord?.masterChannel?.userLimit
                                             ) }
-                                            note={ null === ( settings?.dynamicChannelDefaultUserLimit ?? null )
+                                            note={ null === settings.dynamicChannelDefaultUserLimit
                                                 ? COPIED_LIMIT_NOTE
                                                 : undefined }
                                         />
@@ -339,15 +345,15 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                     <SettingsGroup title="Behaviour">
                                         <SettingRow
                                             label="Auto-save"
-                                            value={ settings?.dynamicChannelAutoSave ? "Enabled" : "Disabled" }
+                                            value={ settings.dynamicChannelAutoSave ? "Enabled" : "Disabled" }
                                         />
                                         <SettingRow
                                             label="Automatic status"
-                                            value={ ( settings?.dynamicChannelAutoStatus ?? true ) ? "Enabled" : "Disabled" }
+                                            value={ settings.dynamicChannelAutoStatus ? "Enabled" : "Disabled" }
                                         />
                                         <SettingRow
                                             label="Mentionable"
-                                            value={ settings?.dynamicChannelMentionable ? "Enabled" : "Disabled" }
+                                            value={ settings.dynamicChannelMentionable ? "Enabled" : "Disabled" }
                                         />
                                     </SettingsGroup>
 
@@ -355,39 +361,39 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                         <SettingRow
                                             label="Verified roles"
                                             value={ formatInherited(
-                                                settings?.dynamicChannelVerifiedRoles ?? [],
+                                                settings.dynamicChannelVerifiedRoles,
                                                 guildSettings?.verifiedRoleIds ?? [],
                                                 discordOptions,
                                                 "@everyone"
                                             ) }
-                                            note={ ( settings?.dynamicChannelVerifiedRoles ?? [] ).length
+                                            note={ settings.dynamicChannelVerifiedRoles.length
                                                 ? undefined
                                                 : INHERITED_NOTE }
                                         />
                                         <SettingRow
                                             label="Staff roles"
                                             value={ formatInherited(
-                                                settings?.dynamicChannelStaffRoles ?? [],
+                                                settings.dynamicChannelStaffRoles,
                                                 guildSettings?.staffRoleIds ?? [],
                                                 discordOptions,
                                                 "None"
                                             ) }
-                                            note={ ( settings?.dynamicChannelStaffRoles ?? [] ).length
+                                            note={ settings.dynamicChannelStaffRoles.length
                                                 ? undefined
                                                 : INHERITED_NOTE }
                                         />
                                         <SettingRow
                                             label="Voice role"
                                             value={ formatRole(
-                                                settings?.dynamicChannelVoiceRoleId ?? guildSettings?.voiceRoleId ?? null,
+                                                settings.dynamicChannelVoiceRoleId ?? guildSettings?.voiceRoleId ?? null,
                                                 discordOptions,
                                                 "None"
                                             ) }
-                                            note={ settings?.dynamicChannelVoiceRoleId ? undefined : INHERITED_NOTE }
+                                            note={ settings.dynamicChannelVoiceRoleId ? undefined : INHERITED_NOTE }
                                         />
                                         <SettingRow
                                             label="Logs channel"
-                                            value={ formatChannel( settings?.dynamicChannelLogsChannelId ?? null, discordOptions ) }
+                                            value={ formatChannel( settings.dynamicChannelLogsChannelId, discordOptions ) }
                                         />
                                     </SettingsGroup>
 
@@ -400,7 +406,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                                 value={
                                                     <span className="flex flex-col gap-1.5 items-start">
                                                         <ButtonsSummary
-                                                            selected={ settings?.dynamicChannelButtonsTemplate ?? [] }
+                                                            selected={ settings.dynamicChannelButtonsTemplate }
                                                             version={ master.version }
                                                             masterChannelId={ master.channelId }
                                                         />

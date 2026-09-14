@@ -1,5 +1,34 @@
-# https://www.robotstxt.org/robotstxt.html
+# Content signals: a Content-Signal of "yes" grants permission for the
+# corresponding use, "no" withholds it, and a use left unlisted is neither
+# granted nor restricted. Restrictions expressed here are express reservations
+# of rights under Article 4 of EU Directive 2019/790.
+#
+# search:   building a search index and returning links and short excerpts.
+# ai-input: taking content into a model at answer time - grounding, retrieval
+#           augmented generation, generative search answers.
+# ai-train: training or fine-tuning models.
+# use:      how an AI system may consume the content.
+
 User-agent: *
+Content-Signal: search=yes,ai-input=yes,ai-train=yes,use=reference
 Allow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
 
 Sitemap: https://voicechannels.online/sitemap.xml

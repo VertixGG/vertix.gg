@@ -11,6 +11,7 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 const vars = {
     reason: uiUtilsWrapAsTemplate( "reason" ),
     reasonNotConfigured: uiUtilsWrapAsTemplate( "reasonNotConfigured" ),
+    reasonDestinationUnavailable: uiUtilsWrapAsTemplate( "reasonDestinationUnavailable" ),
     reasonHidden: uiUtilsWrapAsTemplate( "reasonHidden" ),
     reasonPrivate: uiUtilsWrapAsTemplate( "reasonPrivate" ),
     reasonFull: uiUtilsWrapAsTemplate( "reasonFull" ),
@@ -30,6 +31,8 @@ const DynamicChannelLfmUnavailableEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         reason: {
             [ vars.reasonNotConfigured ]:
                 "Nobody has set up a channel for these posts yet. An admin picks one in the setup screen.",
+            [ vars.reasonDestinationUnavailable ]:
+                "The channels these posts go to are not ones you can see. An admin picks them in the setup screen.",
             [ vars.reasonHidden ]:
                 "Your channel is hidden, so nobody could find it anyway. Show it first.",
             [ vars.reasonPrivate ]:
@@ -45,6 +48,7 @@ const DynamicChannelLfmUnavailableEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setLogic( ( args: UIArgs ) => {
         const byCode: Partial<Record<DynamicChannelLfmPostResultCode, string>> = {
             [ DynamicChannelLfmPostResultCode.NotConfigured ]: vars.reasonNotConfigured,
+            [ DynamicChannelLfmPostResultCode.DestinationUnavailable ]: vars.reasonDestinationUnavailable,
             [ DynamicChannelLfmPostResultCode.ChannelHidden ]: vars.reasonHidden,
             [ DynamicChannelLfmPostResultCode.ChannelPrivate ]: vars.reasonPrivate,
             [ DynamicChannelLfmPostResultCode.ChannelFull ]: vars.reasonFull,

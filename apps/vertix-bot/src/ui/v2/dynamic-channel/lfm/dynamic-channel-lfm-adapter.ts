@@ -119,9 +119,14 @@ async function onNoteSubmitted(
 
     const destinations = await lfmService.getDestinations( interaction.channel, interaction.member );
 
+    // Not `NotConfigured`: eligibility answers that first and returns above, so a generator that
+    // got this far has destinations. An empty list here is them being filtered out - the member
+    // cannot see any of them, which `getDestinations()` does on purpose, or the channel they name
+    // is gone. Either way somebody did set this up, and saying otherwise sends an admin looking
+    // for a switch that is already on.
     if ( ! destinations.length ) {
         await context.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelLfmUnavailable", {
-            reasonCode: DynamicChannelLfmPostResultCode.NotConfigured
+            reasonCode: DynamicChannelLfmPostResultCode.DestinationUnavailable
         } );
 
         return;

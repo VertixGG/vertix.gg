@@ -3566,6 +3566,7 @@
         "options": {
           "reason": {
             "{reasonNotConfigured}": "Todavía nadie ha configurado un canal para estas publicaciones. Un administrador lo elige en la pantalla de configuración.",
+            "{reasonDestinationUnavailable}": "Los canales a los que van estas publicaciones no son visibles para ti. Un administrador los elige en la pantalla de configuración.",
             "{reasonHidden}": "Tu canal está oculto, así que nadie lo encontraría igualmente. Muéstralo primero.",
             "{reasonPrivate}": "Tu canal es privado, así que nadie a quien invites podría entrar. Hazlo público primero.",
             "{reasonFull}": "Tu canal ya está lleno.",

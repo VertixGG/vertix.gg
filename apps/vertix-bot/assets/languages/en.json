@@ -3566,6 +3566,7 @@
         "options": {
           "reason": {
             "{reasonNotConfigured}": "Nobody has set up a channel for these posts yet. An admin picks one in the setup screen.",
+            "{reasonDestinationUnavailable}": "The channels these posts go to are not ones you can see. An admin picks them in the setup screen.",
             "{reasonHidden}": "Your channel is hidden, so nobody could find it anyway. Show it first.",
             "{reasonPrivate}": "Your channel is private, so nobody you invite could get in. Make it public first.",
             "{reasonFull}": "Your channel is already full.",

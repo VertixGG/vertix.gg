@@ -57,6 +57,7 @@ export enum DynamicChannelLfmPostResultCode {
     NotConfigured = "not-configured",
     Cooldown = "cooldown",
     AlreadyPosted = "already-posted",
+    DestinationUnavailable = "destination-unavailable",
     ChannelHidden = "channel-hidden",
     ChannelPrivate = "channel-private",
     ChannelFull = "channel-full"

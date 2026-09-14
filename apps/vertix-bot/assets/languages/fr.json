@@ -3566,6 +3566,7 @@
         "options": {
           "reason": {
             "{reasonNotConfigured}": "Aucun salon n'a encore été configuré pour ces messages. Un administrateur le choisit dans l'écran de configuration.",
+            "{reasonDestinationUnavailable}": "Les salons où vont ces annonces ne sont pas visibles pour toi. Un admin les choisit dans l'écran de configuration.",
             "{reasonHidden}": "Votre salon est masqué, personne ne le trouverait de toute façon. Affichez-le d'abord.",
             "{reasonPrivate}": "Votre salon est privé, personne que vous invitez ne pourrait entrer. Rendez-le public d'abord.",
             "{reasonFull}": "Votre salon est déjà plein.",

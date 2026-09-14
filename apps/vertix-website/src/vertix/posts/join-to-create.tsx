@@ -4,10 +4,6 @@ import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
 
 import JoinToCreateWalkthrough from "@vertix.gg/website/src/vertix/posts/join-to-create-walkthrough";
 
-const goToInvite = () => {
-    window.location.href = "/invite-vertix";
-};
-
 export default function JoinToCreate() {
     return (
         <div className="vc-container vc-page-panel">
@@ -65,10 +61,10 @@ export default function JoinToCreate() {
                 <p className="text-vc-ice-dim mb-6">
                     Two generators free, and set up with one command.
                 </p>
-                <button onClick={ goToInvite }
+                <a href="/invite-vertix"
                     className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
                     Add to Discord
-                </button>
+                </a>
             </div>
         </div>
     );

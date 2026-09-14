@@ -169,10 +169,6 @@ const PLATFORM = [
     },
 ] as const;
 
-const goToInvite = () => {
-    window.location.href = "/invite-vertix";
-};
-
 export default function Home() {
     return (
         <>
@@ -191,10 +187,10 @@ export default function Home() {
                         </p>
 
                         <div className="flex flex-wrap gap-3">
-                            <button id="add-to-server" onClick={ goToInvite }
+                            <a id="add-to-server" href="/invite-vertix"
                                 className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
                                 Add to Discord
-                            </button>
+                            </a>
                             <button onClick={ () => window.open( DASHBOARD_URL ) }
                                 className="vc-btn vc-btn-lg">
                                 Open Dashboard
@@ -343,10 +339,10 @@ export default function Home() {
                     </div>
 
                     <div className="mx-auto grid w-full max-w-[640px] grid-cols-1 gap-3 sm:grid-cols-2">
-                        <button onClick={ goToInvite }
+                        <a href="/invite-vertix"
                             className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect w-full">
                             Add to Discord
-                        </button>
+                        </a>
                         <a href="/posts/how-to-setup" className="vc-btn vc-btn-lg w-full">
                             Read the setup guide
                         </a>

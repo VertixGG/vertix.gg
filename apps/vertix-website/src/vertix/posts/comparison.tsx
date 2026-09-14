@@ -470,10 +470,10 @@ export default function Comparison() {
                     Nothing stops you setting up a generator here while another bot keeps doing what
                     it does, and removing whichever you like less.
                 </p>
-                <button onClick={ () => { window.location.href = "/invite-vertix"; } }
+                <a href="/invite-vertix"
                     className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
                     Add to Discord
-                </button>
+                </a>
             </div>
         </div>
     );

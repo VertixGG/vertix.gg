@@ -135,10 +135,6 @@ const NavbarDropdown: React.FC<{
     );
 };
 
-export const onAddToServerClick = () => {
-    window.location.href = "/invite-vertix";
-};
-
 export default function Header() {
     const [ isNavbarOpen, setNavbarOpen ] = React.useState( false ),
         toggleNavbar = () => setNavbarOpen( ! isNavbarOpen );
@@ -218,10 +214,10 @@ export default function Header() {
                         </NavbarDropdownGroup>
 
                         <div className="mt-4 flex flex-col gap-3 nav:mt-0 nav:flex-row nav:gap-4">
-                            <button id="add-to-server" onClick={ () => onAddToServerClick() }
+                            <a id="add-to-server" href="/invite-vertix"
                                 className="vc-btn vc-btn-primary vc-btn-effect w-full nav:w-auto">
                                 Invite
-                            </button>
+                            </a>
                             <button id="dashboard"
                                 onClick={ () => window.open( import.meta.env.VITE_DASHBOARD_URL || "https://dashboard.voicechannels.online" ) }
                                 className="vc-btn w-full nav:w-auto">

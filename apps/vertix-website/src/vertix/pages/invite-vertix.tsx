@@ -19,22 +19,22 @@ export const onAddToServerClick = ( type: "recommended" | "optimal" ) => {
 export default function InviteVertix() {
     return (
         <div className="vc-container vc-page-panel pt-12 text-center">
-            <h2>
+            <h1 className="text-h2">
                 Invite VoiceChannels to your server
-            </h2>
-            <h4 className="text-center">
+            </h1>
+            <h2 className="text-center text-h4">
                 Select the option that best suits your needs, you can always change the permissions later.
-            </h4>
+            </h2>
             <div className="grid grid-cols-12 p-12">
                 <div className="col-span-12 xl:col-span-6 mb-4">
                     <button onClick={ () => onAddToServerClick( "recommended" ) } className="vc-btn vc-btn-lg vc-btn-cyan vc-btn-effect h-full w-full flex-col gap-1 p-10" type="button">
-                        <h2 className="mb-0 text-h4">Recommended Permissions</h2>
+                        <h3 className="mb-0 text-h4">Recommended Permissions</h3>
                         <p className="mb-0 text-base opacity-80">The best practice</p>
                     </button>
                 </div>
                 <div className="col-span-12 xl:col-span-6 mb-4">
                     <button onClick={ () => onAddToServerClick( "optimal" ) } className="vc-btn vc-btn-lg vc-btn-crimson vc-btn-effect h-full w-full flex-col gap-1 p-10" type="button">
-                        <h2 className="mb-0 text-h4">Minimal Permissions</h2>
+                        <h3 className="mb-0 text-h4">Minimal Permissions</h3>
                         <p className="mb-0 text-base opacity-80">For advanced users</p>
                     </button>
                 </div>

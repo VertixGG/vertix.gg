@@ -107,6 +107,21 @@ function formatRole( id: string | null, options: GuildDiscordOptions | null, fal
     return options?.roles?.find( ( role ) => role.id === id )?.name ?? id;
 }
 
+const ROLE_BUTTONS_NOTE = (
+    <>
+        This <strong className="font-semibold">role</strong> carries a set of its own, so its members
+        get it <strong className="font-semibold">instead of</strong> the default rather than as well
+        as it. An owner holding more than one of these roles gets the highest one's.
+    </>
+);
+
+const DEFAULT_BUTTONS_NOTE = (
+    <>
+        What an owner gets when none of their roles carries a set of its own. The control panel
+        beside the generator always draws this one, whoever is looking at it.
+    </>
+);
+
 const INHERITED_NOTE = (
     <>
         This <strong className="font-semibold">generator</strong> has no list of its own, so it follows
@@ -147,6 +162,36 @@ function formatInherited(
     }
 
     return guild.length ? formatRoles( guild, options ) : unsetLabel;
+}
+
+/**
+ * Function buttonsRolesInPrecedenceOrder() :: The roles carrying a button set, highest role first.
+ *
+ * The order is the rule rather than a way of arranging the rows: an owner's roles are walked from
+ * the top and the first one carrying a set decides what their channel draws, outright. Sorted any
+ * other way, the role that actually wins would sit somewhere in the middle of the list with
+ * nothing marking it.
+ *
+ * A set stored against an id the server no longer has can reach nobody, so it leads rather than
+ * being dropped - it is the only row here that needs the admin to do something.
+ */
+function buttonsRolesInPrecedenceOrder(
+    byRole: Record<string, string[]>,
+    options: GuildDiscordOptions | null
+): Array<{ id: string; buttons: string[]; isMissing: boolean }> {
+    // An empty entry is a removed set rather than a set of no buttons, and the bot falls through
+    // it to the default - so it is not one of these rows either.
+    const configured = Object.keys( byRole ).filter( ( id ) => byRole[ id ]?.length );
+
+    const known = ( options?.roles ?? [] )
+        .filter( ( role ) => configured.includes( role.id ) )
+        .map( ( role ) => ( { id: role.id, buttons: byRole[ role.id ], isMissing: false } ) );
+
+    const missing = configured
+        .filter( ( id ) => ! known.some( ( role ) => role.id === id ) )
+        .map( ( id ) => ( { id, buttons: byRole[ id ], isMissing: true } ) );
+
+    return [ ...missing, ...known ];
 }
 
 function formatChannel( id: string | null, options: GuildDiscordOptions | null ): string {
@@ -235,6 +280,11 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
     };
 
     const settings = master.settings;
+
+    const roleButtonSets = buttonsRolesInPrecedenceOrder(
+        settings?.dynamicChannelButtonsTemplateByRole ?? {},
+        discordOptions
+    );
 
     return (
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -401,8 +451,38 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                          the rows it prints in are one thing. */ }
                                     <div className="md:col-span-2">
                                         <SettingsGroup title="Buttons">
+                                            { /* Above the default and in the order the bot resolves
+                                                 them, because that order decides which of them a
+                                                 member actually gets. */ }
+                                            { roleButtonSets.map( ( role ) => (
+                                                <SettingRow
+                                                    key={ role.id }
+                                                    label={ formatRole( role.id, discordOptions, role.id ) }
+                                                    value={
+                                                        <span className="flex flex-col gap-1.5 items-start">
+                                                            { role.isMissing && (
+                                                                <span className="text-text-muted">
+                                                                    No role here carries this id any more,
+                                                                    so this set reaches nobody
+                                                                </span>
+                                                            ) }
+                                                            <ButtonsSummary
+                                                                selected={ role.buttons }
+                                                                version={ master.version }
+                                                                masterChannelId={ master.channelId }
+                                                            />
+                                                        </span>
+                                                    }
+                                                    note={ ROLE_BUTTONS_NOTE }
+                                                />
+                                            ) ) }
+
                                             <SettingRow
-                                                label="Shown to users"
+                                                // Only true while it is the only set there is. Once
+                                                // a role carries one, the honest name for this row
+                                                // is who it is left for.
+                                                label={ roleButtonSets.length ? "Everyone else" : "Shown to users" }
+                                                note={ roleButtonSets.length ? DEFAULT_BUTTONS_NOTE : undefined }
                                                 value={
                                                     <span className="flex flex-col gap-1.5 items-start">
                                                         <ButtonsSummary

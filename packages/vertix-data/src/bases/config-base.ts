@@ -108,12 +108,17 @@ export abstract class ConfigBase<TConfig extends ConfigBaseInterface> extends In
     }
 
     /**
-     * Function `defaults()` - Retrieves configuration defaults
+     * Function `defaults()` - What the source ships, before this deployment was set.
      *
-     * @note: The difference between `defaults()` and `data()` is that `defaults()` returns the initial hardcoded defaults
-     * while `data()` returns the current configuration from the database.
+     * Not public, and that is the point of it: outside this class there is one configuration, and
+     * it is the row. A setting read from here would be the value before anybody changed it, which
+     * is never the question being asked - every caller that used to read it was after what a
+     * generator gets when nothing else says otherwise, and that is what the row holds.
+     *
+     * Kept for the two things that are genuinely about the source: bringing a row into the shape
+     * the code has, and naming the keys a section carries.
      */
-    public get defaults() {
+    protected get defaults() {
         return <TConfig[ "defaults" ]> this.config.defaults;
     }
 

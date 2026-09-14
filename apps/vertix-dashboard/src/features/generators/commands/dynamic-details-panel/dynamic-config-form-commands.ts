@@ -15,10 +15,6 @@ export interface DynamicConfigFormState {
     /** Null defers to the guild wide voice role. */
     voiceRoleId: string | null;
     logsChannelId: string | null;
-    /** Empty until the catalogue lands, which is why the form initialises from the settings. */
-    buttons: string[];
-    /** Where `buttons` is divided into rows; empty means rows of five. */
-    buttonRowBreaks: number[];
 }
 
 /**
@@ -35,9 +31,7 @@ export const DYNAMIC_CONFIG_FORM_INITIAL_STATE: DynamicConfigFormState = {
     verifiedRoles: [],
     staffRoles: [],
     voiceRoleId: null,
-    logsChannelId: null,
-    buttons: [],
-    buttonRowBreaks: []
+    logsChannelId: null
 };
 
 export class InitializeCommand extends CommandBase<DynamicConfigFormState, { settings: DynamicSettings | null }> {
@@ -65,9 +59,7 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
             verifiedRoles: args.settings.dynamicChannelVerifiedRoles,
             staffRoles: args.settings.dynamicChannelStaffRoles,
             voiceRoleId: args.settings.dynamicChannelVoiceRoleId,
-            logsChannelId: args.settings.dynamicChannelLogsChannelId,
-            buttons: args.settings.dynamicChannelButtonsTemplate,
-            buttonRowBreaks: args.settings.dynamicChannelButtonsRowBreaks
+            logsChannelId: args.settings.dynamicChannelLogsChannelId
         } );
     }
 }
@@ -172,21 +164,6 @@ export class UpdateLogsChannelCommand extends CommandBase<DynamicConfigFormState
     }
 }
 
-export class UpdateButtonsCommand extends CommandBase<
-    DynamicConfigFormState,
-    { value: string[]; rowBreaks: number[] }
-> {
-    public static getName() {
-        return "Dashboard/Generators/DynamicConfigForm/UpdateButtons";
-    }
-
-    // The set and its rows travel together: the breaks are indices into the set, so saving one
-    // without the other would describe rows that no longer line up with the buttons.
-    public apply( args: { value: string[]; rowBreaks: number[] } ) {
-        return this.setState( { buttons: args.value, buttonRowBreaks: args.rowBreaks } );
-    }
-}
-
 export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     InitializeCommand,
     UpdateNameTemplateCommand,
@@ -198,6 +175,5 @@ export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     UpdateVerifiedRolesCommand,
     UpdateStaffRolesCommand,
     UpdateVoiceRoleCommand,
-    UpdateLogsChannelCommand,
-    UpdateButtonsCommand
+    UpdateLogsChannelCommand
 ] as const;

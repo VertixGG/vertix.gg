@@ -242,6 +242,39 @@ async function startPrerenderServer( rootDir: string ) {
  * Only links still carrying that exact onload are rewound, so a stylesheet that genuinely means
  * `all` is left alone.
  */
+/**
+ * Function stripRuntimeTags() :: Drops the tags a running page added for itself.
+ *
+ * Anything the page injects to keep off the critical path - the analytics library is fetched once
+ * the page has settled, rather than beside it - is in the dom by the time prerendering is done, and
+ * would ship as an ordinary eager tag for every reader. A tag that asked to be added at runtime
+ * carries `data-vc-runtime` and is taken back out here, so the shipped html only holds what the
+ * source wrote.
+ */
+function stripRuntimeTags( html: string ): string {
+    return html
+        .replace( /<script[^>]*\sdata-vc-runtime(?:="[^"]*")?[^>]*><\/script>/g, "" )
+        // The tag library loads more of itself once it is running: the ads tag as a second script
+        // from the tag manager, and a conversion beacon from doubleclick, neither carrying a marker
+        // of ours. The source writes no measurement script at all any more, only the inline queue,
+        // so anything from these hosts was added while the page ran.
+        //
+        // The beacon is the one that matters beyond weight. Its url carries the random and the
+        // timestamp of the moment it was built, so shipping it sends every reader a conversion ping
+        // frozen at build time - the same one, from whenever the site was last released.
+        .replace(
+            /<script[^>]*src="[^"]*(?:googletagmanager\.com|doubleclick\.net|googleadservices\.com|google-analytics\.com)[^"]*"[^>]*><\/script>/g,
+            ""
+        );
+}
+
+/**
+ * Function undoRuntimeMutations() :: Everything prerendering has to put back before it writes.
+ */
+function undoRuntimeMutations( html: string ): string {
+    return stripRuntimeTags( restoreDeferredStyles( html ) );
+}
+
 function restoreDeferredStyles( html: string ): string {
     return html.replace(
         /media="all"(\s+onload="this\.media='all'")/g,
@@ -284,7 +317,7 @@ function prerenderPlugin(): Plugin {
                         timeout: PRERENDER_READY_TIMEOUT_MS,
                     } );
 
-                    rendered.push( { routePath: route.path, html: restoreDeferredStyles( await page.content() ) } );
+                    rendered.push( { routePath: route.path, html: undoRuntimeMutations( await page.content() ) } );
                 }
             } finally {
                 await browser.close();

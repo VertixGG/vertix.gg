@@ -1,8 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
-	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-B87MBQLL99"></script>
+	<!-- Google tag (gtag.js).
+
+	     The queue is built here and the calls are made here, so nothing said before
+	     the library arrives is lost: gtag() only pushes onto dataLayer, and the
+	     library drains whatever is waiting the moment it loads.
+
+	     The library itself is the heaviest thing the page asks for - 537KiB across
+	     its three requests and a quarter second of main thread - and none of it is
+	     needed to draw the page. It is fetched once the page has settled instead of
+	     racing the content for bandwidth: on the reader's first interaction, or
+	     shortly after load for a reader who only reads.
+
+	     The cost is that somebody who leaves inside that window is not counted.
+	     That is why the window closes on the first touch rather than on a timer
+	     alone, and why it is short. -->
 	<script>
 		window.dataLayer = window.dataLayer || [];
 
@@ -14,6 +27,43 @@
 
 		gtag( 'config', 'G-B87MBQLL99' ); // Analytics.
 		gtag( 'config', 'AW-993508183' ); // Ads.
+
+		( function () {
+			var requested = false;
+
+			function request() {
+				if ( requested ) {
+					return;
+				}
+
+				requested = true;
+
+				var tag = document.createElement( 'script' );
+
+				tag.async = true;
+				tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-B87MBQLL99';
+
+				// Prerendering serialises whatever the dom holds when it is done, and this
+				// tag would be baked into the shipped html as an ordinary head script -
+				// loading eagerly for every reader, which is the one thing it is here to
+				// avoid. The build strips anything carrying this attribute on its way out.
+				tag.setAttribute( 'data-vc-runtime', '' );
+
+				document.head.appendChild( tag );
+			}
+
+			[ 'pointerdown', 'keydown', 'touchstart', 'scroll' ].forEach( function ( event ) {
+				window.addEventListener( event, request, { once: true, passive: true } );
+			} );
+
+			window.addEventListener( 'load', function () {
+				if ( window.requestIdleCallback ) {
+					window.requestIdleCallback( request, { timeout: 1500 } );
+				} else {
+					setTimeout( request, 1500 );
+				}
+			} );
+		} )();
 	</script>
 
 	<meta charset="utf-8"/>

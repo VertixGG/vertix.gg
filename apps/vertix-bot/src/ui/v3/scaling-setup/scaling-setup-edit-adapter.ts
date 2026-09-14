@@ -58,7 +58,7 @@ const getDefaultScalingPrefix = () => {
         VERSION_SCALING_CHANNEL_UI_V1
     ).data;
 
-    return config.constants?.scalingChannelDefaultPrefix || config.settings?.scalingChannelPrefix || "";
+    return config.settings.scalingChannelPrefix;
 };
 
 const ScalingSetupEditEmbed = new EmbedBuilder<UIArgs, typeof SCALING_SETUP_EDIT_VARS>(

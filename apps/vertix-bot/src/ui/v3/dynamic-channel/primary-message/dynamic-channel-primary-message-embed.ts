@@ -124,8 +124,8 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             renameEmoji: DynamicChannelRenameButton.getEmoji(),
             limitEmoji: DynamicChannelLimitMetaButton.getEmoji(),
             privacyEmoji: DynamicChannelPrivacyButton.getEmoji(),
-            title: args.title || configV3.data.constants.dynamicChannelPrimaryMessageTitle,
-            description: args.description || configV3.data.constants.dynamicChannelPrimaryMessageDescription,
+            title: args.title || configV3.data.globals.dynamicChannelPrimaryMessageTitle,
+            description: args.description || configV3.data.globals.dynamicChannelPrimaryMessageDescription,
             region: resolveRegionVar( args.region ),
             regionEmoji: DynamicChannelRegionButton.getEmoji(),
             dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
@@ -167,8 +167,8 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             statePrivate: "private",
             stateShown: "shown",
             stateHidden: "hidden",
-            title: configV3.data.constants.dynamicChannelPrimaryMessageTitle,
-            description: configV3.data.constants.dynamicChannelPrimaryMessageDescription,
+            title: configV3.data.globals.dynamicChannelPrimaryMessageTitle,
+            description: configV3.data.globals.dynamicChannelPrimaryMessageDescription,
         };
     } )
     // Renders the buttons-template array as a comma-joined id list for the image

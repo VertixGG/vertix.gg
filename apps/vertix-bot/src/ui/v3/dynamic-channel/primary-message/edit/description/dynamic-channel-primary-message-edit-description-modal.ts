@@ -32,7 +32,7 @@ class DynamicChannelPrimaryMessageEditModalDescription extends UIElementInputBas
     }
 
     protected async getValue(): Promise<string> {
-        return this.uiArgs?.description || this.configV3.data.constants.dynamicChannelPrimaryMessageDescription;
+        return this.uiArgs?.description || this.configV3.data.globals.dynamicChannelPrimaryMessageDescription;
     }
 
     protected async getMinLength(): Promise<number> {

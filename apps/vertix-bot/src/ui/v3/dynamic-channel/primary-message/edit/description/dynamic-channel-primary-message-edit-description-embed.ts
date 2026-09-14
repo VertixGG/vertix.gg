@@ -36,7 +36,7 @@ const DynamicChannelPrimaryMessageEditDescriptionEmbed = new EmbedBuilder<UIArgs
         return {
             description: {
                 [ vars.descriptionDisplayValue ]: vars.descriptionValue,
-                [ vars.descriptionDisplayDefault ]: configV3.data.constants.dynamicChannelPrimaryMessageDescription
+                [ vars.descriptionDisplayDefault ]: configV3.data.globals.dynamicChannelPrimaryMessageDescription
             }
         };
     } )

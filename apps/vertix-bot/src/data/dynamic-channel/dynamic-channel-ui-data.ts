@@ -208,8 +208,8 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
                     masterChannelDB.id
                 );
 
-                args.title = primaryMessage?.title || configV3.constants.dynamicChannelPrimaryMessageTitle;
-                args.description = primaryMessage?.description || configV3.constants.dynamicChannelPrimaryMessageDescription;
+                args.title = primaryMessage?.title || configV3.globals.dynamicChannelPrimaryMessageTitle;
+                args.description = primaryMessage?.description || configV3.globals.dynamicChannelPrimaryMessageDescription;
             }
         } else {
             args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );

@@ -722,8 +722,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             "Vertix/Config/ScalingChannel",
             VERSION_SCALING_CHANNEL_UI_V1
         ).data;
-        const scalingDefaultPrefix =
-            scalingConfig.constants?.scalingChannelDefaultPrefix || scalingConfig.settings?.scalingChannelPrefix || "";
+        const scalingDefaultPrefix = scalingConfig.settings.scalingChannelPrefix;
 
         const channels = args?.masterChannels || [];
 
@@ -734,7 +733,8 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 const scalingSettings = await ScalingChannelDataModel.$.getScalingSettings( channel.id );
 
                 const prefix = scalingSettings?.scalingChannelPrefix || scalingDefaultPrefix;
-                const maxMembers = scalingSettings?.scalingChannelMaxMembersPerChannel || 10;
+                const maxMembers = scalingSettings?.scalingChannelMaxMembersPerChannel
+                    || scalingConfig.settings.scalingChannelMaxMembersPerChannel;
 
                 return [
                     `**#${ index + 1 }**`,

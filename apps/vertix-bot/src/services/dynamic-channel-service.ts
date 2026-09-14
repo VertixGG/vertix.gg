@@ -704,11 +704,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userDisplayName = "",
             indexValue = "";
 
-        const { constants } = this.config.data;
+        const { globals } = this.config.data;
 
         if ( args.state ) {
             state =
-                args.state === "private" ? constants.dynamicChannelStatePrivate : constants.dynamicChannelStatePublic;
+                args.state === "private" ? globals.dynamicChannelStatePrivate : globals.dynamicChannelStatePublic;
         }
 
         if ( args.userDisplayName ) {
@@ -2082,7 +2082,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             // if ( masterChannelDB ) {
             //     const channelNameTemplate = await MasterChannelDataManager.$.getChannelNameTemplate( masterChannelDB.id, false );
             //
-            //     if ( channelNameTemplate?.includes( this.config.defaults.constants.dynamicChannelStateVar ) ) {
+            //     if ( channelNameTemplate?.includes( this.config.defaults.globals.dynamicChannelStateVar ) ) {
             //         const channelName = await this.assembleChannelNameTemplate( channelNameTemplate, {
             //             userDisplayName: await guildGetMemberDisplayName( channel.guild, initiator.user.id ),
             //             state: newState,
@@ -2585,7 +2585,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             if ( options.includePrimaryMessage ) {
                 const { dynamicChannelPrimaryMessageTitle, dynamicChannelPrimaryMessageDescription } =
-                    this.configV3.data.constants;
+                    this.configV3.data.globals;
 
                 // TODO: `UserMasterChannelDataModel.$.setPrimaryMessageDefaults`
                 // await UserChannelDataModelV3.$.setPrimaryMessage( userOwnerId, master.db.id, {

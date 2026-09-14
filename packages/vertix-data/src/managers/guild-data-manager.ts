@@ -72,13 +72,13 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
             return data.object;
         }
 
-        const { constants } = ConfigManager.$.get<GuildConfigInterface>(
+        const { globals } = ConfigManager.$.get<GuildConfigInterface>(
             "Vertix/Config/Guild",
             VERSION_GUILD_CONFIG_V1
         ).data;
 
         return {
-            maxMasterChannels: constants.masterChannelMaximumFreeChannels
+            maxMasterChannels: globals.masterChannelMaximumFreeChannels
         };
     }
 

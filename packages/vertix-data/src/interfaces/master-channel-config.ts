@@ -53,7 +53,15 @@ export interface MasterChannelSettingsInterface {
     dynamicChannelVoiceRoleId: string | null;
 }
 
-export interface MasterChannelConstantsInterface {
+/**
+ * What a generator reads live, rather than what it was given.
+ *
+ * The other half of a configuration is `settings`, which is copied into each generator's own row
+ * at creation. Which of the two a value belongs in decides what happens when somebody changes it:
+ * a global reaches every server at the next restart, a setting reaches only the generators made
+ * after it.
+ */
+export interface MasterChannelGlobalsInterface {
     dynamicChannelsCategoryName: string;
     dynamicChannelControlChannelName: string;
 
@@ -63,20 +71,20 @@ export interface MasterChannelConstantsInterface {
     masterChannelName: string;
 }
 
-export interface MasterChannelConstantsInterfaceV3 extends MasterChannelConstantsInterface {
+export interface MasterChannelGlobalsInterfaceV3 extends MasterChannelGlobalsInterface {
     dynamicChannelPrimaryMessageTitle: string;
     dynamicChannelPrimaryMessageDescription: string;
 }
 
 export interface MasterChannelConfigInterface
     extends ConfigBaseInterface<{
-        constants: MasterChannelConstantsInterface;
+        globals: MasterChannelGlobalsInterface;
         settings: MasterChannelSettingsInterface;
     }> {}
 
 export interface MasterChannelConfigInterfaceV3
     extends ConfigBaseInterface<{
-        constants: MasterChannelConstantsInterfaceV3;
+        globals: MasterChannelGlobalsInterfaceV3;
         settings: MasterChannelSettingsInterface;
     }> {}
 
@@ -87,15 +95,13 @@ export interface ScalingChannelSettingsInterface {
     scalingChannelCategoryId: string | null;
 }
 
-export interface ScalingChannelConstantsInterface {
-    scalingChannelDefaultPrefix: string;
-    scalingChannelDefaultMaxMembers: number;
+export interface ScalingChannelGlobalsInterface {
     scalingChannelCategoryName: string;
     masterChannelName: string;
 }
 
 export interface ScalingChannelConfigInterface
     extends ConfigBaseInterface<{
-        constants: ScalingChannelConstantsInterface;
+        globals: ScalingChannelGlobalsInterface;
         settings: ScalingChannelSettingsInterface;
     }> {}

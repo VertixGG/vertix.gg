@@ -52,7 +52,7 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
                 dynamicChannelVoiceRoleId: null
             },
 
-            constants: {
+            globals: {
                 dynamicChannelsCategoryName: "༄ Dynamic Channels",
 
                 dynamicChannelControlChannelName: "✨・control-panel",

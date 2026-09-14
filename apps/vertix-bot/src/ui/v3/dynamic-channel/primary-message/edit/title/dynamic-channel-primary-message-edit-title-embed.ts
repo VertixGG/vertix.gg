@@ -35,7 +35,7 @@ const DynamicChannelPrimaryMessageEditTitleEmbed = new EmbedBuilder<UIArgs, type
         return {
             title: {
                 [ vars.titleDisplayValue ]: vars.titleValue,
-                [ vars.titleDisplayDefault ]: configV3.data.constants.dynamicChannelPrimaryMessageTitle
+                [ vars.titleDisplayDefault ]: configV3.data.globals.dynamicChannelPrimaryMessageTitle
             }
         };
     } )

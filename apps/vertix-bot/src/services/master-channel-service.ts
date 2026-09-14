@@ -342,7 +342,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 ? ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 )
                 : ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
-        const constants = args.version === VERSION_UI_V3 ? config.get( "constants" ) : config.data.constants;
+        const globals = args.version === VERSION_UI_V3 ? config.get( "globals" ) : config.data.globals;
         const defaultSettings = args.version === VERSION_UI_V3 ? config.get( "settings" ) : config.data.settings;
 
         const buttonsTemplate = settings.dynamicChannelButtonsTemplate || defaultSettings.dynamicChannelButtonsTemplate;
@@ -359,7 +359,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             version: args.version,
             userOwnerId: masterChannelDB.userOwnerId,
             masterChannel: masterChannel as GuildChannel,
-            controlChannelName: constants.dynamicChannelControlChannelName,
+            controlChannelName: globals.dynamicChannelControlChannelName,
             buttonsTemplate,
             verifiedRoles: await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, guild.id )
         } );
@@ -691,7 +691,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const masterCategory = await CategoryManager.$.create( {
             guild,
-            name: config.data.constants.dynamicChannelsCategoryName,
+            name: config.data.globals.dynamicChannelsCategoryName,
             permissionOverwrites: this.getAudiencePermissions(
                 guild,
                 await this.resolveVerifiedRoles( guild, args.dynamicChannelVerifiedRoles )
@@ -814,7 +814,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             VERSION_UI_V3
         );
 
-        const constants = config.get( "constants" );
+        const globals = config.get( "globals" );
 
         const settings = config.get( "settings" );
 
@@ -861,7 +861,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             userOwnerId: args.userOwnerId,
             version: args.version,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: constants.masterChannelName,
+            name: globals.masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: masterChannelPermissions,
             // TODO: Should be configurable.
@@ -887,7 +887,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 version: args.version,
                 userOwnerId: args.userOwnerId,
                 masterChannel,
-                controlChannelName: constants.dynamicChannelControlChannelName,
+                controlChannelName: globals.dynamicChannelControlChannelName,
                 buttonsTemplate: args.dynamicChannelButtonsTemplate || settings.dynamicChannelButtonsTemplate,
                 verifiedRoles: newVerifiedRoles
             } );
@@ -931,7 +931,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         const { guild, parent } = args;
 
-        const { settings, constants } = config.data;
+        const { settings, globals } = config.data;
 
         /**
          * The following block of code initializes various dynamic channel settings using
@@ -993,7 +993,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             version: args.version,
             userOwnerId: args.userOwnerId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: constants.masterChannelName,
+            name: globals.masterChannelName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: masterChannelPermissions,
             // TODO: Should be configurable.
@@ -1015,7 +1015,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 version: args.version,
                 userOwnerId: args.userOwnerId,
                 masterChannel,
-                controlChannelName: constants.dynamicChannelControlChannelName,
+                controlChannelName: globals.dynamicChannelControlChannelName,
                 buttonsTemplate: newButtons,
                 verifiedRoles: newVerifiedRoles
             } );

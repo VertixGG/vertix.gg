@@ -26,9 +26,7 @@ export class ScalingChannelConfig extends ConfigBase<ScalingChannelConfigInterfa
                 scalingChannelCategoryId: null
             },
 
-            constants: {
-                scalingChannelDefaultPrefix: "### Room - {index} ###",
-                scalingChannelDefaultMaxMembers: 10,
+            globals: {
                 scalingChannelCategoryName: "༄ Auto Scaling Channels",
                 masterChannelName: "⤢⤡ Join free channels"
             }

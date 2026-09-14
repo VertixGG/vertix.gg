@@ -17,7 +17,7 @@ const getDefaultScalingPrefix = () => {
         VERSION_SCALING_CHANNEL_UI_V1
     ).data;
 
-    return config.constants?.scalingChannelDefaultPrefix || config.settings?.scalingChannelPrefix || "";
+    return config.settings.scalingChannelPrefix;
 };
 
 export class SetupScalingPrefixInput extends UIElementInputBase {

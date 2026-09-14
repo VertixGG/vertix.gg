@@ -23,8 +23,9 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
 
     protected getDefaults(): MasterChannelConfigInterface[ "defaults" ] {
         return {
-            // Constants will be used globally for the entire bot.
-            constants: {
+            // Read live, by everything, everywhere. Changing one of these changes what every
+            // server sees as soon as the bot restarts, because nothing holds a copy of it.
+            globals: {
                 dynamicChannelsCategoryName: "༄ Dynamic Channels",
 
                 dynamicChannelControlChannelName: "✨・control-panel",
@@ -35,7 +36,9 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
                 masterChannelName: "➕ New Channel"
             },
 
-            // The default values/data structure for a newly created “master” channel will be per MasterChannel.
+            // Copied into a generator's own row when it is created, and read from there afterwards.
+            // Changing one of these reaches the generators made next, and none of the ones that
+            // already exist - they are carrying the answer they were given.
             settings: {
                 dynamicChannelAutoSave: false,
 

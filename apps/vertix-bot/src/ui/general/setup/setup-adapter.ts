@@ -329,23 +329,17 @@ async function onScalingConfigModalSubmitted(
     const parsedMaxMembers = parseInt( maxMembersStr, 10 );
     const maxMembers = Number.isNaN( parsedMaxMembers ) ? 10 : parsedMaxMembers;
 
-    const args = context.getArgs( interaction );
-
-    if ( args?.scalingEditMasterChannelId ) {
-        await scalingChannelService.updateScalingSettings( {
-            guild: interaction.guild,
-            masterChannelId: args.scalingEditMasterChannelId,
-            prefix,
-            maxMembers
-        } );
-    } else {
-        await scalingChannelService.createScalingMasterChannel( {
-            guildId: interaction.guild.id,
-            userOwnerId: interaction.user.id,
-            prefix,
-            maxMembers
-        } );
-    }
+    // Always a new one. The only way to this modal is the create button above, which asks the
+    // guild's allowance first, and `scalingEditMasterChannelId` is never written on this adapter's
+    // args - editing an existing pool is `ScalingSetupEditAdapter`, which opens its own modal and
+    // answers it with `updateScalingSettings()`. Args are held per adapter, so the id that one
+    // stores was never visible here, and the branch that read it could not run.
+    await scalingChannelService.createScalingMasterChannel( {
+        guildId: interaction.guild.id,
+        userOwnerId: interaction.user.id,
+        prefix,
+        maxMembers
+    } );
 
     await context.editReply( interaction, {} );
 

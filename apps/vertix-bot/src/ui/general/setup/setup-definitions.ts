@@ -24,7 +24,6 @@ export interface ISetupArgs extends UIArgs {
     /** Also the `@everyone` role id, which is how a generator that narrowed nothing is spotted. */
     guildId?: string;
     maxMasterChannels?: number;
-    scalingEditMasterChannelId?: string;
     scalingPrefix?: string;
     scalingMaxMembers?: number;
     scalingMasterChannelIndex?: string | number;

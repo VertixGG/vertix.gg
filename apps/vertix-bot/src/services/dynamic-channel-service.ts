@@ -705,11 +705,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             userDisplayName = "",
             indexValue = "";
 
-        const globals = getNaming();
+        const naming = getNaming();
 
         if ( args.state ) {
             state =
-                args.state === "private" ? globals.dynamicChannelPrivatePrefix : globals.dynamicChannelPublicPrefix;
+                args.state === "private" ? naming.dynamicChannelPrivatePrefix : naming.dynamicChannelPublicPrefix;
         }
 
         if ( args.userDisplayName ) {

@@ -1,6 +1,4 @@
 import { getNaming } from "@vertix.gg/data/src/config/naming";
-import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
-import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -8,7 +6,6 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import { DynamicChannelPrimaryMessageEditButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-button";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS = {
@@ -29,10 +26,6 @@ const DynamicChannelPrimaryMessageEditDescriptionEmbed = new EmbedBuilder<UIArgs
     .setTitle( () => `${ DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.editPrimaryMessageEmoji }  •  Edit description of your channel` )
     .setDescription( () => "\n _Description_:\n `" + DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS.description + "`\n" + "\n### Do you want to change it?" )
     .setOptions( () => {
-        const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>(
-            "Vertix/Config/MasterChannel",
-            VERSION_UI_V3
-        );
         const vars = DYNAMIC_CHANNEL_PRIMARY_MESSAGE_EDIT_DESCRIPTION_VARS;
         return {
             description: {

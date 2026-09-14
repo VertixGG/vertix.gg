@@ -372,14 +372,14 @@ export class DynamicChannelStatusService extends ServiceWithDependenciesBase<{
         }
 
         if ( status.includes( VAR_DYNAMIC_CHANNEL_STATE ) ) {
-            const globals = getNaming();
+            const naming = getNaming();
 
             // Public and private only, the same two the channel name tells apart - a hidden channel
             // reads as private, since that is what it is to anyone who could not find it.
             replacements[ VAR_DYNAMIC_CHANNEL_STATE ] =
                 "private" === await this.services.dynamicChannelService.getChannelState( channel )
-                    ? globals.dynamicChannelPrivatePrefix
-                    : globals.dynamicChannelPublicPrefix;
+                    ? naming.dynamicChannelPrivatePrefix
+                    : naming.dynamicChannelPublicPrefix;
         }
 
         return varsReplaceTokens( status, replacements );

@@ -5,9 +5,7 @@ import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-defin
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
-import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
-import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 import { getButtonSheetImageUrl } from "@vertix.gg/bot/src/definitions/button-sheet";
@@ -22,7 +20,6 @@ import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-cha
 import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
 import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-button";
 
-import type { MasterChannelConfigInterfaceV3 } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -116,7 +113,6 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setLogic( ( args: UIArgs ) => {
         const { limitDisplayValue, limitDisplayUnlimited } = vars;
 
-        const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
 
         const logic: Record<string, any> = {
             name: args.channelName,
@@ -154,7 +150,6 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         return logic;
     } )
     .setDefaultVars( () => {
-        const configV3 = ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 );
 
         return {
             renameEmoji: DynamicChannelRenameButton.getEmoji(),

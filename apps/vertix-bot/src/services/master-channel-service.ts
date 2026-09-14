@@ -343,7 +343,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 ? ConfigManager.$.get<MasterChannelConfigInterfaceV3>( "Vertix/Config/MasterChannel", VERSION_UI_V3 )
                 : ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", VERSION_UI_V2 );
 
-        const globals = args.version === VERSION_UI_V3 ? getNaming() : getNaming();
+        const naming = getNaming();
         const defaultSettings = args.version === VERSION_UI_V3 ? config.data : config.data;
 
         const buttonsTemplate = settings.dynamicChannelButtonsTemplate || defaultSettings.dynamicChannelButtonsTemplate;
@@ -360,7 +360,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             version: args.version,
             userOwnerId: masterChannelDB.userOwnerId,
             masterChannel: masterChannel as GuildChannel,
-            controlChannelName: globals.dynamicChannelControlPanelName,
+            controlChannelName: naming.dynamicChannelControlPanelName,
             buttonsTemplate,
             verifiedRoles: await MasterChannelDataManager.$.getChannelVerifiedRoles( masterChannelDB, guild.id )
         } );
@@ -815,7 +815,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             VERSION_UI_V3
         );
 
-        const globals = getNaming();
+        const naming = getNaming();
 
         const settings = config.data;
 
@@ -862,7 +862,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             userOwnerId: args.userOwnerId,
             version: args.version,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: globals.dynamicChannelGeneratorName,
+            name: naming.dynamicChannelGeneratorName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: masterChannelPermissions,
             // TODO: Should be configurable.
@@ -888,7 +888,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 version: args.version,
                 userOwnerId: args.userOwnerId,
                 masterChannel,
-                controlChannelName: globals.dynamicChannelControlPanelName,
+                controlChannelName: naming.dynamicChannelControlPanelName,
                 buttonsTemplate: args.dynamicChannelButtonsTemplate || settings.dynamicChannelButtonsTemplate,
                 verifiedRoles: newVerifiedRoles
             } );
@@ -933,7 +933,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         const { guild, parent } = args;
 
         const settings = config.data,
-            globals = getNaming();
+            naming = getNaming();
 
         /**
          * The following block of code initializes various dynamic channel settings using
@@ -995,7 +995,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             version: args.version,
             userOwnerId: args.userOwnerId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
-            name: globals.dynamicChannelGeneratorName,
+            name: naming.dynamicChannelGeneratorName,
             type: ChannelType.GuildVoice,
             permissionOverwrites: masterChannelPermissions,
             // TODO: Should be configurable.
@@ -1017,7 +1017,7 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
                 version: args.version,
                 userOwnerId: args.userOwnerId,
                 masterChannel,
-                controlChannelName: globals.dynamicChannelControlPanelName,
+                controlChannelName: naming.dynamicChannelControlPanelName,
                 buttonsTemplate: newButtons,
                 verifiedRoles: newVerifiedRoles
             } );

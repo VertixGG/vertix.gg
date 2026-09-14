@@ -721,14 +721,14 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
 
         const config = ConfigManager.$.get<ScalingChannelConfigInterface>( "Vertix/Config/ScalingChannel", VERSION_SCALING_CHANNEL_UI_V1 );
         const settings = config.data,
-            globals = getNaming();
+            naming = getNaming();
 
         const effectivePrefix = prefix || settings.scalingChannelPrefix;
         const effectiveMaxMembers = maxMembers || settings.scalingChannelMaxMembersPerChannel;
 
         const category = await CategoryManager.$.create( {
             guild,
-            name: globals.scalingChannelsCategoryName
+            name: naming.scalingChannelsCategoryName
         } ).catch( ( error: Error ) => {
             this.logger.error( this.createScalingMasterChannel, "Failed to create category", error );
             return null;
@@ -741,7 +741,7 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         const masterResult = await this.services.channelService.create( {
             guild,
             parent: category,
-            name: globals.scalingChannelGeneratorName,
+            name: naming.scalingChannelGeneratorName,
             userOwnerId,
             internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL,
             version: VERSION_SCALING_CHANNEL_UI_V1,

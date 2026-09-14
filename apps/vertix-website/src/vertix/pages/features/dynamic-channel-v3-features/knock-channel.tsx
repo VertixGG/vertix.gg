@@ -78,7 +78,7 @@ export default function KnockChannel() {
                         fallback="🚪"
                         className="text-h2 mr-4"
                     />
-                    <h3 className="mb-0">Knock on a Channel</h3>
+                    <h2 className="text-h3 mb-0">Knock on a Channel</h2>
                 </div>
 
                 <button

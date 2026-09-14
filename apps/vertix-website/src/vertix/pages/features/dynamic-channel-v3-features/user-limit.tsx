@@ -46,7 +46,7 @@ export default function UserLimit() {
                         fallback="✋"
                         className="text-h2 mr-4"
                     />
-                    <h3 className="mb-0">User Limit</h3>
+                    <h2 className="text-h3 mb-0">User Limit</h2>
                 </div>
 
                 <button

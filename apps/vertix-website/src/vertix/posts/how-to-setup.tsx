@@ -48,7 +48,7 @@ export default function HowToSetup() {
 
                 <ul className="text-h5">
                     <li>
-                        <h4>Create the dynamic channel</h4>
+                        <h2 className="text-h4">Create the dynamic channel</h2>
                         <br/>
                         Join <b>Master Channel (➕ New Channel )</b>
                         <br/>

@@ -17,8 +17,8 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
             <li>
                 {
                     props.displayStep ? (
-                        <h4 id="step-1">Step 1</h4>
-                    ) : <h3>Channel's default name</h3>
+                        <h2 id="step-1" className="text-h4">Step 1</h2>
+                    ) : <h2 className="text-h3">Channel's default name</h2>
                 }
                 <br/>
                 Select <b>( ➕ ∙ Create Master Channel )</b> menu to create a new master channel.
@@ -84,7 +84,7 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
             </li>
             <br/>
             <li>
-                <h4 id="set-default-channels-name-template">Set default channel's name template</h4>
+                <h2 id="set-default-channels-name-template" className="text-h4">Set default channel's name template</h2>
                 Edit by pressing <div className="vc-btn vc-btn-sm pointer-events-none">#️⃣ Edit Channel
                     Name</div> button or
                 continue with <code>default = { "{user}" }'s channel</code>

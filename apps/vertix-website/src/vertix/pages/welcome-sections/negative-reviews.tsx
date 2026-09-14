@@ -1,7 +1,7 @@
 export default function NegativeReviews() {
     return (
         <div className="mb-12">
-            <h4 className="mb-4">A Note on Competition 🤝</h4>
+            <h2 className="text-h4 mb-4">A Note on Competition 🤝</h2>
             <div className="text-h5 text-vc-ice-dim">
                 <p>
                     We believe in our product and our community. While we take all genuine feedback seriously,

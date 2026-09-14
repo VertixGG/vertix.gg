@@ -51,7 +51,7 @@ export default function TransferChannel() {
                         fallback="🔀"
                         className="text-h2 mr-4"
                     />
-                    <h3 className="mb-0">Transfer Ownership</h3>
+                    <h2 className="text-h3 mb-0">Transfer Ownership</h2>
                 </div>
 
                 <button

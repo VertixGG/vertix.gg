@@ -113,7 +113,7 @@ export default function ChannelNamePlaceholders() {
             <hr />
 
             <section className="mb-12">
-                <h3 className="mb-4">Where placeholders work</h3>
+                <h2 className="text-h3 mb-4">Where placeholders work</h2>
 
                 <p className="text-h5">
                     Placeholders are <b>not</b> the same everywhere. Each place below understands its own set, and a
@@ -146,7 +146,7 @@ export default function ChannelNamePlaceholders() {
             <hr />
 
             <section className="mb-12">
-                <h3 className="mb-4">Dynamic channel names</h3>
+                <h2 className="text-h3 mb-4">Dynamic channel names</h2>
 
                 <p className="text-h5">
                     These work in the name template of a master channel, set with <code>/setup</code> →{ " " }
@@ -212,7 +212,7 @@ export default function ChannelNamePlaceholders() {
             <hr />
 
             <section className="mb-12">
-                <h3 className="mb-4">Auto-scaling channel prefix</h3>
+                <h2 className="text-h3 mb-4">Auto-scaling channel prefix</h2>
 
                 <p className="text-h5">
                     Auto-scaling channels are numbered, so their prefix understands the index family and nothing
@@ -250,7 +250,7 @@ export default function ChannelNamePlaceholders() {
             <hr />
 
             <section className="mb-12">
-                <h3 className="mb-4">Channel status</h3>
+                <h2 className="text-h3 mb-4">Channel status</h2>
 
                 <p className="text-h5">
                     The status is the line Discord shows under a channel&apos;s name. The owner pins one from the
@@ -340,7 +340,7 @@ export default function ChannelNamePlaceholders() {
             <hr />
 
             <section className="mb-12">
-                <h3 className="mb-4">Examples</h3>
+                <h2 className="text-h3 mb-4">Examples</h2>
 
                 <div className="overflow-x-auto">
                     <table className="vc-table">

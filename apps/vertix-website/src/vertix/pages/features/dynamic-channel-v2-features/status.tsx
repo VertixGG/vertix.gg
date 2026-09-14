@@ -23,7 +23,7 @@ export default function Status() {
         <div className="mb-12">
             <div className="flex items-center mb-4">
                 <span className="text-h2 mr-4">📣</span>
-                <h3 className="mb-0">Channel Status</h3>
+                <h2 className="text-h3 mb-0">Channel Status</h2>
             </div>
             <div className="grid grid-cols-12 gap-12">
                 <div className="col-span-12">
@@ -92,14 +92,14 @@ export default function Status() {
                     <div className="mb-6">
                         <div className="grid grid-cols-12 gap-6">
                             <div className="col-span-12 md:col-span-6">
-                                <h5 className="text-vc-ice-dim mb-2">Without a status</h5>
+                                <h3 className="text-h5 text-vc-ice-dim mb-2">Without a status</h3>
                                 <DiscordChannelList
                                     title="༄ Dynamic Channels"
                                     channels={ [ channel ] }
                                 />
                             </div>
                             <div className="col-span-12 md:col-span-6">
-                                <h5 className="text-vc-ice-dim mb-2">With your status</h5>
+                                <h3 className="text-h5 text-vc-ice-dim mb-2">With your status</h3>
                                 <DiscordChannelList
                                     title="༄ Dynamic Channels"
                                     channels={ [ { ...channel, status: { text: customStatus } } ] }

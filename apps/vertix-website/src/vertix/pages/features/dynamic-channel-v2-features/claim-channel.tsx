@@ -6,7 +6,7 @@ export default function ClaimChannel() {
         <div className="mb-12">
             <div className="flex items-center mb-4">
                 <span className="text-h2 mr-4">😈</span>
-                <h3 className="mb-0">Claim Channel</h3>
+                <h2 className="text-h3 mb-0">Claim Channel</h2>
             </div>
             <div className="grid grid-cols-12 gap-12">
                 <div className="col-span-12">

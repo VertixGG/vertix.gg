@@ -17,13 +17,13 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
             <li>
                 {
                     props.displayStep ? (
-                        <h4 id="step-3">Step 3</h4>
-                    ) : <h4>Set verified roles</h4>
+                        <h2 id="step-3" className="text-h4">Step 3</h2>
+                    ) : <h2 className="text-h4">Set verified roles</h2>
                 }
                 <br/>
                 {
                     props.displayStep ? (
-                        <h4>Set verified roles</h4>
+                        <h2 className="text-h4">Set verified roles</h2>
                     ) : null
                 }
                 Or continue with <b>( <code>default = @everyone</code> recommended! )</b>
@@ -106,7 +106,7 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                 </div>
                 <br/>
                 <br/>
-                <h4>Its done, the <b>Master Channel</b> created!</h4>
+                <h2 className="text-h4">Its done, the <b>Master Channel</b> created!</h2>
                 <br/>
                 <div className="discord-chat-container vc-frame-box m-0">
                     <DiscordUIComponentMessage

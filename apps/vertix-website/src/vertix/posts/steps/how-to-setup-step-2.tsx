@@ -24,12 +24,12 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
             <li>
                 {
                     props.displayStep ? (
-                        <h4 id="step-2">Step 2</h4>
-                    ) :  <h4>Set temporary dynamic channel's button interface</h4>
+                        <h2 id="step-2" className="text-h4">Step 2</h2>
+                    ) :  <h2 className="text-h4">Set temporary dynamic channel's button interface</h2>
                 }
                 <br/>
                 {
-                    props.displayStep ?  <h4>Set temporary dynamic channel's button interface</h4> : null
+                    props.displayStep ?  <h2 className="text-h4">Set temporary dynamic channel's button interface</h2> : null
                 }
                 Click on ( <div className="vc-btn vc-btn-sm pointer-events-none"><ArrowDown/></div> ) down arrow to edit or
                 continue with <b>( <code>default = All Buttons Enabled</code> )</b> by
@@ -71,7 +71,7 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                 Select buttons you wish to enable in your temporary dynamic channels that created by joining
                 this <b>Master Channel</b>.
             </p>
-            <h5>What the buttons do?</h5>
+            <h3 className="text-h5">What the buttons do?</h3>
 
             <p><b>Basic Controls:</b></p>
             <ul>

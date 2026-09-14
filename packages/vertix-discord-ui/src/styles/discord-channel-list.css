@@ -63,7 +63,11 @@
  * read flat - all the rows at roughly one weight, with nothing standing out as the live one.
  */
 .discord-channel-list {
-    --discord-channel-list-text-muted: #80838a;
+    /* Discord's own #80838a, lifted one step. The column is drawn on more than one base - the
+       near-black of the sidebar, and the darker greys the feature pages sit it on - and on the
+       lighter of those it falls to 4.32:1. This clears every one of them, 5.13 down to 4.50, and
+       stays far below the shared muted grey so the column still reads quieter than the chat. */
+    --discord-channel-list-text-muted: #83868c;
     /* Quiet text on a row that is lifted off the column's near-black: the pills, and the row you
        are sitting in. The column's own grey is picked against that near-black and falls under
        4.5:1 as soon as a surface rises off it. This clears it on all three the list uses - the

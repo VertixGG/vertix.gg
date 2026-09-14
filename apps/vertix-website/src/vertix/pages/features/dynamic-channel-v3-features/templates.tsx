@@ -139,7 +139,7 @@ export default function Templates() {
                         fallback="📂"
                         className="text-h2 mr-4"
                     />
-                    <h3 className="mb-0">Channel Templates</h3>
+                    <h2 className="text-h3 mb-0">Channel Templates</h2>
                 </div>
 
                 <button

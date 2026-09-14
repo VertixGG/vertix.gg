@@ -24,11 +24,11 @@ export default function AutoScalingPage() {
 
             { /* Channel Types */ }
             <section className="mb-12">
-                <h3 className="mb-4">Channel Types</h3>
+                <h2 className="text-h3 mb-4">Channel Types</h2>
                 <div className="grid grid-cols-12 gap-4 mb-6">
                     <div className="col-span-12 md:col-span-6">
                         <div className="p-4 bg-vc-space rounded border border-vc-hairline-bright h-full">
-                            <h5 className="text-vc-azure-soft">Master Channel</h5>
+                            <h3 className="text-h5 text-vc-azure-soft">Master Channel</h3>
                             <p className="text-vc-ice-dim mb-0 text-sm">
                                 Entry point for routing. Users join here and are instantly moved to an available scaled channel.
                             </p>
@@ -36,7 +36,7 @@ export default function AutoScalingPage() {
                     </div>
                     <div className="col-span-12 md:col-span-6">
                         <div className="p-4 bg-vc-space rounded border border-vc-hairline-bright h-full">
-                            <h5 className="text-vc-mint">Scaled Channels</h5>
+                            <h3 className="text-h5 text-vc-mint">Scaled Channels</h3>
                             <p className="text-vc-ice-dim mb-0 text-sm">
                                 Voice channels where users communicate. Created automatically based on demand.
                             </p>
@@ -69,7 +69,7 @@ export default function AutoScalingPage() {
 
             { /* How It Works */ }
             <section className="mb-12">
-                <h3 className="mb-4">How It Works</h3>
+                <h2 className="text-h3 mb-4">How It Works</h2>
                 <DiscordChannelWizard
                     steps={ autoScalingWizardSteps }
                     autoPlay={ true }
@@ -84,12 +84,12 @@ export default function AutoScalingPage() {
 
             { /* Setup */ }
             <section className="mb-12">
-                <h3 className="mb-4">Setup</h3>
+                <h2 className="text-h3 mb-4">Setup</h2>
                 <p className="text-vc-ice-dim mb-6">
                     Create auto-scaling channels using the <code>/setup</code> command.
                 </p>
 
-                <h5 className="text-vc-cyan mb-4">Step 1: Run /setup and select Auto-Scaling</h5>
+                <h3 className="text-h5 text-vc-cyan mb-4">Step 1: Run /setup and select Auto-Scaling</h3>
                 <div className="discord-chat-container m-0 mb-6">
                     <DiscordUIComponentMessage
                         author="VoiceChannels"
@@ -131,7 +131,7 @@ export default function AutoScalingPage() {
                     />
                 </div>
 
-                <h5 className="text-vc-cyan mb-4">Step 2: Configure scaling options</h5>
+                <h3 className="text-h5 text-vc-cyan mb-4">Step 2: Configure scaling options</h3>
                 <p className="text-vc-ice-dim mb-4">Set the channel name prefix and max members per channel:</p>
                 <DiscordModal title="📈 Configure Scaling Channel" showNotice={ false } cancelLabel="Cancel">
                     <DiscordInput
@@ -149,7 +149,7 @@ export default function AutoScalingPage() {
 
             { /* Scaling Trigger */ }
             <section className="mb-12">
-                <h3 className="mb-4">Scaling Trigger</h3>
+                <h2 className="text-h3 mb-4">Scaling Trigger</h2>
                 <p className="text-vc-ice-dim">
                     New channels are created when <strong>either</strong> condition is met:
                 </p>
@@ -164,7 +164,7 @@ export default function AutoScalingPage() {
 
             { /* Configuration */ }
             <section className="mb-12">
-                <h3 className="mb-4">Configuration</h3>
+                <h2 className="text-h3 mb-4">Configuration</h2>
                 <div className="overflow-x-auto">
                     <table className="vc-table">
                         <thead>
@@ -209,10 +209,10 @@ export default function AutoScalingPage() {
 
             { /* Maintenance */ }
             <section className="mb-12">
-                <h3 className="mb-4">Maintenance</h3>
+                <h2 className="text-h3 mb-4">Maintenance</h2>
                 <div className="grid grid-cols-12 gap-6">
                     <div className="col-span-12 lg:col-span-6">
-                        <h5>Auto Reindex</h5>
+                        <h3 className="text-h5">Auto Reindex</h3>
                         <p className="text-vc-ice-dim text-sm">
                             Every 5 minutes, channels are renumbered to maintain consistent naming.
                         </p>
@@ -226,7 +226,7 @@ export default function AutoScalingPage() {
                         />
                     </div>
                     <div className="col-span-12 lg:col-span-6">
-                        <h5>Auto Cleanup</h5>
+                        <h3 className="text-h5">Auto Cleanup</h3>
                         <p className="text-vc-ice-dim text-sm">
                             When users leave, excess empty channels are removed. At least one empty channel is always kept as a buffer.
                         </p>

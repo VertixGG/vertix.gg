@@ -385,7 +385,7 @@ export default function ClaimChannel() {
                         fallback="👑"
                         className="text-h2 mr-4"
                     />
-                    <h3 className="mb-0">Claim a Channel</h3>
+                    <h2 className="text-h3 mb-0">Claim a Channel</h2>
                 </div>
 
                 <div className="flex items-center gap-3">

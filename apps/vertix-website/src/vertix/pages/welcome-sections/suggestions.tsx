@@ -1,7 +1,7 @@
 export default function Suggestions() {
     return (
         <div className="mb-12">
-            <h4 id="suggestions" className="mb-4">We Listen to You! 💡</h4>
+            <h2 id="suggestions" className="text-h4 mb-4">We Listen to You! 💡</h2>
             <div className="text-h5 text-vc-ice-dim">
                 <p>
                     Most of the best features in <strong>VoiceChannels</strong> started as a spark of an idea from someone like you.

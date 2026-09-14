@@ -160,7 +160,7 @@ export default function HowToSetupLogsChannel() {
                     </div>
                     <br />
                     <ul>
-                        <h5>Note:</h5>
+                        <h2 className="text-h5">Note:</h2>
                         <li>You can always turn it off "<small>⌘ ∙ Configuration</small>" menu.</li>
                         <li>For better security alignment, it is recommended to ensure that the role and permissions of the logs channel match your security requirements.</li>
                         <li>To ensure optimal organization and clarity, it is advisable to utilize a separate log channel for each master channel.</li>

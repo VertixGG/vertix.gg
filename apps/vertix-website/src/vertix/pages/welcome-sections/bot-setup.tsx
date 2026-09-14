@@ -6,7 +6,7 @@ import "../../components/discord/discord-chat-container.css";
 export default function BotSetup() {
     return (
         <div className="mb-12">
-            <h4 id="bot-setup" className="mb-6">Getting Started is a Breeze! ✨</h4>
+            <h2 id="bot-setup" className="text-h4 mb-6">Getting Started is a Breeze! ✨</h2>
             <div className="text-h5 text-vc-ice-dim">
                 <p className="mb-6">
                     Ready to launch? Follow these simple steps to set up your first Master Channel and transform your server:

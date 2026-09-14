@@ -12,7 +12,7 @@ export default function TemporaryVoiceChannelsFeatures() {
 
     return (
         <div className="mb-12">
-            <h4 id="temporary-voice-channels-features">Temporary Voice Channels V2 Features</h4>
+            <h2 id="temporary-voice-channels-features" className="text-h4">Temporary Voice Channels V2 Features</h2>
             <div className="mb-6">
                 <div className="discord-chat-container m-0" style={ { minHeight: "300px" } }>
                     <DiscordUIComponentMessage
@@ -63,7 +63,7 @@ export default function TemporaryVoiceChannelsFeatures() {
 
             <hr className="my-12" />
 
-            <h4 id="temporary-voice-channels-v3" className="mb-6">Experience the Future: Temporary Voice Channels V3 🚀</h4>
+            <h2 id="temporary-voice-channels-v3" className="text-h4 mb-6">Experience the Future: Temporary Voice Channels V3 🚀</h2>
             <p className="text-h5 text-vc-ice-dim mb-6">
                 V3 brings a more modern, intuitive, and lightning-fast interface to your Discord server.
             </p>

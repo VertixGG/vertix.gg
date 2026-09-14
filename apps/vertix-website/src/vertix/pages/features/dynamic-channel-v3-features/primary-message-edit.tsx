@@ -61,7 +61,7 @@ export default function PrimaryMessageEdit() {
                         fallback="📝"
                         className="text-h2 mr-4"
                     />
-                    <h3 className="mb-0">Edit Primary Message</h3>
+                    <h2 className="text-h3 mb-0">Edit Primary Message</h2>
                 </div>
 
                 <button

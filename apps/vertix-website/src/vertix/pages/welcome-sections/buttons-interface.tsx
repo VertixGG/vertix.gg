@@ -6,7 +6,7 @@ export default function ButtonsInterface() {
         <div className="mb-12">
             <div className="flex items-center mb-4">
                 <span className="text-h2 mr-4">🎚</span>
-                <h4 id="buttons-interface" className="mb-0">Buttons Interface</h4>
+                <h2 id="buttons-interface" className="text-h4 mb-0">Buttons Interface</h2>
             </div>
             <div className="grid grid-cols-12 gap-12 items-center">
                 <div className="col-span-12">

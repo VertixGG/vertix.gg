@@ -26,6 +26,14 @@ const SHEET_DEFAULTS: SheetConfig = {
 
 const MAX_PIXELS = 8000 * 8000;
 
+// A sheet is a pure function of the query and the button list, and the whole query is in the url -
+// two sheets that differ already have different urls. The button list is the one input a stable url
+// cannot see, and it only moves on a deploy, so the cache may answer for a day outright and then
+// keep answering from the stale copy for a week while it refreshes behind the reader. An hour of
+// freshness bought nothing: it had every client re-fetching a third of a megabyte that had not
+// changed.
+const SHEET_CACHE_CONTROL = "public, max-age=86400, stale-while-revalidate=604800";
+
 interface SheetQuery {
     cols?: string;
     scale?: string;
@@ -120,7 +128,7 @@ const buttonSheetRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstan
 
         return await reply
             .type( "image/png" )
-            .header( "Cache-Control", "public, max-age=3600" )
+            .header( "Cache-Control", SHEET_CACHE_CONTROL )
             .send( rendered.asPng() );
     } );
 };

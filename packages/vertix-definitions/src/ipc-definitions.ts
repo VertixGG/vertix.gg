@@ -30,6 +30,15 @@ export interface IPCGuildRole {
     id: string;
     name: string;
     color: number;
+    /**
+     * Whether discord or an app owns this role, and so whether anybody can hand it out.
+     *
+     * Carried rather than filtered on, because whether it disqualifies a role depends on what is
+     * being asked of it - and only the caller knows that. A setting the bot gives a member a role
+     * for cannot use a managed one; a setting that only asks whether a member already holds one is
+     * free to, and `Nitro Booster` is managed.
+     */
+    managed: boolean;
 }
 
 export interface IPCGuildChannel {

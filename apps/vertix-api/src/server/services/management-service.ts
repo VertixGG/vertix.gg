@@ -215,6 +215,8 @@ export interface GuildDiscordRole {
     id: string;
     name: string;
     color: number;
+    /** Whether discord or an app owns this role, and so whether anybody can hand it out. */
+    managed: boolean;
 }
 
 export interface GuildDiscordChannel {
@@ -1060,15 +1062,19 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         ] );
 
         return {
+            // Managed roles stay in and say so, the way the bot answers this - whether one can be
+            // used is the caller's to decide, since handing a role out needs an unmanaged one and
+            // asking whether a member already holds it does not.
+            //
             // `@everyone` carries the guild's own id and is the default verified role, so it stays
-            // in; roles a bot or an integration owns cannot be handed out, so they do not.
+            // in and is named rather than shown by whatever discord calls it.
             roles: roles
-                .filter( ( role ) => !role.managed )
                 .sort( ( a, b ) => b.position - a.position )
                 .map( ( role ) => ( {
                     id: role.id,
                     name: role.id === guildId ? "@everyone" : role.name,
-                    color: role.color
+                    color: role.color,
+                    managed: role.managed
                 } ) ),
 
             textChannels: channels

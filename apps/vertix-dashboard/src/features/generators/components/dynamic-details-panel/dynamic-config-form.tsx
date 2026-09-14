@@ -181,6 +181,13 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
     // The api answers with an error body rather than a rejection when it cannot reach Discord, so
     // the shape is checked rather than assumed.
     const roles = Array.isArray( discordOptions?.roles ) ? discordOptions.roles : [];
+
+    // The bot gives a member the voice role and takes it back, and discord refuses to let anybody
+    // hand out a role it owns - so a managed one is left out of that picker alone. Verified and
+    // staff roles are written into a channel's permissions rather than given to anyone, which a
+    // managed role does perfectly well, and a set of buttons only asks whether an owner already
+    // holds a role - so neither has a reason to hide them.
+    const assignableRoles = roles.filter( ( role ) => ! role.managed );
     const textChannels = Array.isArray( discordOptions?.textChannels ) ? discordOptions.textChannels : [];
 
     const fieldClassName = "w-full px-3 py-2 bg-background border border-border rounded-md text-text-primary "
@@ -251,7 +258,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 <RoleRadioList
                     label="Voice role"
                     hint="Given to a member while they sit in one of these channels"
-                    roles={ roles }
+                    roles={ assignableRoles }
                     selected={ state.voiceRoleId }
                     disabled={ isSaving }
                     emptyLabel="Roles could not be loaded from Discord"

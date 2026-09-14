@@ -189,15 +189,21 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         }
 
         return {
-            // `@everyone` carries the guild's own id and is the default verified role, so it stays;
-            // a role an integration owns cannot be handed out, so it does not.
+            // Every role the guild has, each saying whether it is managed, rather than the managed
+            // ones being dropped here. Whether that disqualifies a role is the caller's to decide:
+            // a setting the bot hands a role out for cannot use one, while a setting that only
+            // asks whether a member already holds it can - which is how a generator gives its
+            // boosters their own buttons.
+            //
+            // `@everyone` carries the guild's own id and is the default verified role, so it stays
+            // in and is named rather than shown by whatever discord calls it.
             roles: guild.roles.cache
-                .filter( ( role ) => !role.managed )
                 .sort( ( a, b ) => b.position - a.position )
                 .map( ( role ) => ( {
                     id: role.id,
                     name: role.id === guildId ? "@everyone" : role.name,
-                    color: role.color
+                    color: role.color,
+                    managed: role.managed
                 } ) ),
 
             textChannels: guild.channels.cache

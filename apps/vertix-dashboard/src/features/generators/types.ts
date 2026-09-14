@@ -46,6 +46,13 @@ export interface GuildDiscordRole {
     id: string;
     name: string;
     color: number;
+    /**
+     * Whether discord or an app owns this role, and so whether anybody can hand it out.
+     *
+     * A picker that makes the bot give somebody a role has to leave these out; one that only asks
+     * whether a member already holds a role does not, and `Nitro Booster` is managed.
+     */
+    managed: boolean;
 }
 
 export interface GuildDiscordChannel {

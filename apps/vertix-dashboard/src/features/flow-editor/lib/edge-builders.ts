@@ -4,13 +4,27 @@ import { EDGE_COLORS, EDGE_STYLES, MARKER_SIZES, Z_INDEX } from "@vertix.gg/dash
 
 import type { Edge } from "@xyflow/react";
 
-export function createModuleToFlowEdge( moduleNodeId: string, flowId: string, flowName: string ): Edge {
+export function createModuleToFlowEdge(
+    moduleNodeId: string,
+    flowId: string,
+    flowName: string,
+    isRoutedElsewhere = false
+): Edge {
     return {
         id: `edge-module-${ flowName }`,
         source: moduleNodeId,
         target: flowId,
         style: { stroke: EDGE_COLORS.MODULE_TO_FLOW, ...EDGE_STYLES.DEFAULT },
-        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.MODULE_TO_FLOW, ...MARKER_SIZES.MEDIUM }
+        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.MODULE_TO_FLOW, ...MARKER_SIZES.MEDIUM },
+        /*
+         * Whether a router already explains how this flow is arrived at.
+         *
+         * Drawn all the same while nothing is selected - with no particular thing being read, the
+         * module reaching its flows is the shape of the module, and a canvas of flows attached to
+         * nothing reads worse than one saying the same arrival twice. Once somebody has picked
+         * something out, the second telling is in the way and goes.
+         */
+        data: { isRoutedElsewhere }
     };
 }
 
@@ -63,8 +77,15 @@ export function createComponentToFlowEdge(
         target: targetFlowId,
         sourceHandle: `btn-${ buttonName }`,
         zIndex: Z_INDEX.EDGE_OVERLAY,
+        // The button is the interaction. It was known all along - the flow declares which element
+        // opens which flow - and the canvas drew the line without ever saying which press it was.
+        label: buttonName.split( "/" ).pop(),
         style: { stroke: EDGE_COLORS.COMPONENT_TO_FLOW, ...EDGE_STYLES.DEFAULT },
         markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.COMPONENT_TO_FLOW, ...MARKER_SIZES.MEDIUM },
+        labelStyle: { fill: EDGE_COLORS.COMPONENT_TO_FLOW, fontSize: 10, fontWeight: 600 },
+        labelBgStyle: { fill: "#18181b" },
+        labelBgPadding: [ 4, 2 ] as [ number, number ],
+        labelBgBorderRadius: 3,
         animated: true
     };
 }
@@ -219,5 +240,55 @@ export function createSystemFlowTransitionEdge(
         labelBgPadding: [ 6, 2 ],
         labelStyle: { fill: color, fontSize: 10, fontWeight: 600 },
         animated: true
+    };
+}
+
+/**
+ * Function createDeclaredTransitionEdge() :: One move the flow says it makes, drawn as it is written.
+ *
+ * Read off the flow's own transitions rather than worked out from the shape of the screens. The
+ * label is the element that causes it, because that is the interaction - "this menu opens that
+ * screen" is the whole fact, and an unlabelled arrow between two boxes is the half of it nobody
+ * needed.
+ *
+ * A transition nothing is bound to is drawn faintly and says so. Forty-five percent of them are
+ * like that, and inventing a cause for those is what had the editor asserting things the bot never
+ * said. Better a thin line admitting the gap than a confident one that is wrong.
+ */
+export function createDeclaredTransitionEdge(
+    sourceId: string,
+    targetId: string,
+    fromStateKey: string,
+    toStateKey: string,
+    triggerName: string | undefined,
+    outcomeCondition?: string
+): Edge {
+    /*
+     * A move with nobody pressing anything is not always a gap.
+     *
+     * Some of them are outcomes - the bot looked at what happened and took this branch - and the
+     * flow says so, in the condition it declares for the branch. Those read as the condition and
+     * are drawn in the colour the canvas already uses for what the bot does on its own. Only a move
+     * with neither a trigger nor a condition is genuinely undescribed, and only that one says so.
+     */
+    const label = triggerName ?? outcomeCondition ?? "not attributed",
+        isUndescribed = ! triggerName && ! outcomeCondition,
+        color = triggerName ? EDGE_COLORS.STEP_TRANSITION : EDGE_COLORS.PROGRAMMATIC_TRANSITION;
+
+    return {
+        id: `edge-transition-${ fromStateKey }-${ toStateKey }-${ label }`,
+        source: sourceId,
+        target: targetId,
+        label,
+        style: {
+            stroke: color,
+            ...( triggerName ? EDGE_STYLES.DEFAULT : EDGE_STYLES.DASHED_TRANSITION ),
+            ...( isUndescribed ? { opacity: 0.45 } : {} )
+        },
+        markerEnd: { type: MarkerType.ArrowClosed, color, ...MARKER_SIZES.MEDIUM },
+        labelStyle: { fill: color, fontSize: 10, fontWeight: 600, opacity: isUndescribed ? 0.5 : 1 },
+        labelBgStyle: { fill: "#18181b" },
+        labelBgPadding: [ 4, 2 ] as [ number, number ],
+        labelBgBorderRadius: 3
     };
 }

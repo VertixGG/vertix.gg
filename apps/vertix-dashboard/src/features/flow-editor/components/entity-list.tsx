@@ -9,8 +9,8 @@ import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hook
 import { entityListAnchor } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
 import { computeReachableFlows } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 import { isForeignTo } from "@vertix.gg/dashboard/src/features/flow-editor/lib/module-scope";
-import { useExtraModulesStore } from "@vertix.gg/dashboard/src/hooks/use-extra-modules-store";
-import { ExtraModulesToggle } from "@vertix.gg/dashboard/src/features/flow-editor/components/extra-modules-toggle";
+import { useCanvasFiltersStore } from "@vertix.gg/dashboard/src/hooks/use-canvas-filters-store";
+import { CanvasFilters } from "@vertix.gg/dashboard/src/features/flow-editor/components/canvas-filters";
 
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
@@ -64,7 +64,8 @@ export function EntityList() {
 
     const selectEntity = useCommand( "Dashboard/FlowEditor/SelectEntity" );
 
-    const showsExtraModules = useExtraModulesStore( ( state ) => state.showsExtraModules );
+    const showsExtraModules = useCanvasFiltersStore( ( state ) => state.showsExtraModules );
+    const hiddenSystemFlows = useCanvasFiltersStore( ( state ) => state.hiddenSystemFlows );
 
     const handleEntitySelect = ( entityType: EntityType, entityName: string ) => {
         selectEntity.run( { entityType, entityName } );
@@ -105,7 +106,9 @@ export function EntityList() {
                 label: "System Flows",
                 type: "systemFlow" as EntityType,
                 color: MINIMAP_COLORS.SYSTEM_FLOW,
-                items: moduleFlowsData.systemFlows.filter( ( f ) => drawn( f.name ) ).map( ( f ) => f.name )
+                items: moduleFlowsData.systemFlows
+                    .filter( ( f ) => drawn( f.name ) && ! hiddenSystemFlows.includes( f.name ) )
+                    .map( ( f ) => f.name )
             },
             {
                 label: "Components",
@@ -120,7 +123,7 @@ export function EntityList() {
                 items: Array.from( modals )
             }
         ].filter( ( group ) => group.items.length > 0 );
-    }, [ moduleFlowsData, showsExtraModules ] );
+    }, [ moduleFlowsData, showsExtraModules, hiddenSystemFlows ] );
 
     const filteredGroups = useMemo( () => {
         if ( !searchTerm.trim() ) {
@@ -165,7 +168,7 @@ export function EntityList() {
                     ) }
                 </div>
 
-                <ExtraModulesToggle />
+                <CanvasFilters systemFlowNames={ ( moduleFlowsData.systemFlows ?? [] ).map( ( f ) => f.name ) } />
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">

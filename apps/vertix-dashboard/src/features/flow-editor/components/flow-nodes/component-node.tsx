@@ -54,6 +54,7 @@ type ComponentNodeData = Record<
         | ButtonModalTrigger[]
         | ButtonFlowTrigger[]
         | StateTransitionTrigger[]
+        | string[]
         | undefined
 > & {
     label: string;
@@ -65,6 +66,8 @@ type ComponentNodeData = Record<
     buttonModalTriggers?: ButtonModalTrigger[];
     buttonFlowTriggers?: ButtonFlowTrigger[];
     stateTransitionTriggers?: StateTransitionTrigger[];
+    /** What this screen's own controls do without leaving it. */
+    selfTransitions?: string[];
 };
 
 /**
@@ -237,7 +240,7 @@ type ComponentNodeType = Node<ComponentNodeData, "componentNode">;
 
 export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
     const { data, selected } = props;
-    const { label, embed, buttonModalTriggers, buttonFlowTriggers, stateTransitionTriggers } = data;
+    const { label, embed, buttonModalTriggers, buttonFlowTriggers, stateTransitionTriggers, selfTransitions } = data;
 
     // What a channel will actually draw: the generator's arrangement when the editor is scoped to
     // one, and the component's own rows otherwise.
@@ -522,6 +525,31 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                         ) }
                     </DiscordMessage>
                 </div>
+
+                { /* What this screen's own controls do without leaving it. Drawn here rather than
+                     as arrows leaving the box and coming straight back: a fifth of everything a
+                     flow declares is one of these, and a loop shows nobody anything. */ }
+                { selfTransitions && selfTransitions.length > 0 && (
+                    <div className="px-3 py-2 border-t border-purple-500/30 bg-purple-600/5">
+                        <div className="text-[9px] uppercase tracking-wider text-purple-300/70 mb-1">
+                            Stays on this screen
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                            { selfTransitions.map( ( name ) => (
+                                <span
+                                    key={ name }
+                                    className={ `text-[10px] rounded px-1.5 py-0.5 border ${
+                                        "not attributed" === name
+                                            ? "text-zinc-500 border-zinc-700 italic"
+                                            : "text-emerald-300/90 border-emerald-500/30"
+                                    }` }
+                                >
+                                    { name }
+                                </span>
+                            ) ) }
+                        </div>
+                    </div>
+                ) }
             </div>
 
             <Handle type="source" position={ Position.Bottom } id="bottom" className="bg-purple-400! w-2! h-2!" />

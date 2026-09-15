@@ -12,7 +12,7 @@ import {
     createComponentToStateFallbackEdge,
     createProgrammaticTransitionEdge,
     createModalToComponentEdge,
-    createStepTransitionEdge,
+    createDeclaredTransitionEdge,
     createSystemFlowTransitionEdge
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/edge-builders";
 import {
@@ -835,19 +835,32 @@ class EdgeBuilder {
 }
 
 class FlowPatternDetector {
-    public static detectModalFirst( flow: UIExportedFlow, initialStateKey: string, initialStateOptions?: Record<string, unknown> ): { isModalFirst: boolean; modalName: string | null } {
+    public static detectModalFirst(
+        flow: UIExportedFlow,
+        initialStateKey: string,
+        initialStateOptions?: Record<string, unknown>
+    ): { isModalFirst: boolean; modalName: string | null; targetStateKey: string | null } {
         const executionStep = initialStateOptions?.[ "executionStep" ];
         if ( executionStep !== "default" ) {
-            return { isModalFirst: false, modalName: null };
+            return { isModalFirst: false, modalName: null, targetStateKey: null };
         }
 
-        const modalTriggerFromInitial = flow.transitions.find( t =>
+        const transitionFromInitial = flow.transitions.find( t =>
             t.from === initialStateKey && t.triggeredBy?.some( tr => tr.handlerKind === "modal" )
-        )?.triggeredBy?.find( tr => tr.handlerKind === "modal" );
+        );
 
+        const modalTriggerFromInitial = transitionFromInitial?.triggeredBy?.find( tr => tr.handlerKind === "modal" );
+
+        // Where that modal leads, kept alongside it. Without it the entry was drawn reaching every
+        // state in the flow - the modal opens one of them, and saying it opens all of them is not a
+        // busier picture of the same thing but a different and untrue one.
         return modalTriggerFromInitial
-            ? { isModalFirst: true, modalName: modalTriggerFromInitial.sourceEntity }
-            : { isModalFirst: false, modalName: null };
+            ? {
+                isModalFirst: true,
+                modalName: modalTriggerFromInitial.sourceEntity,
+                targetStateKey: transitionFromInitial?.to ?? null
+            }
+            : { isModalFirst: false, modalName: null, targetStateKey: null };
     }
 
     public static detectFanOut( flow: UIExportedFlow, stateKeys: Set<string>, initialStateKey: string ): { isFanOut: boolean; targetStateKeys: string[] } {
@@ -907,8 +920,6 @@ class MultiStateFlowBuilder {
     private readonly wizardAnalyzer: WizardAnalyzer;
     private readonly connectedCompIds: Set<string> = new Set();
 
-    private initialCompId?: string;
-    private initialElementRows?: ElementData[][];
     private readonly initialStateTransitionTriggers: StateTransitionTrigger[] = [];
 
     public constructor( allNodes: Node[], addEdge: ( edge: Edge ) => void, context: FlowContext ) {
@@ -941,19 +952,82 @@ class MultiStateFlowBuilder {
             modalFirstNodeId = this.createModalFirstEntry( modalFirst.modalName );
         }
 
-        this.buildStateNodes( modalFirst.isModalFirst, modalFirstNodeId, useSelectMenu, useFanOut );
+        this.buildStateNodes( modalFirst.isModalFirst, modalFirstNodeId, modalFirst.targetStateKey );
 
         this.computeWizardConnectedTargets();
 
-        if ( useSelectMenu && this.initialCompId && this.initialElementRows ) {
-            this.edgeBuilder.addSelectMenuEdges( this.initialCompId, this.initialElementRows );
-        } else if ( useFanOut && this.initialCompId ) {
-            this.edgeBuilder.addFanOutEdges( this.initialCompId );
-        }
+        this.addDeclaredTransitionEdges( modalFirstNodeId );
+    }
 
-        this.edgeBuilder.addWizardEdges();
-        this.edgeBuilder.addIntermediateStateEdges();
-        this.edgeBuilder.addOrphanedStateEdges( this.connectedCompIds );
+    /**
+     * Every move the flow says it makes, drawn as the flow writes it.
+     *
+     * This replaces working the moves out from the shape of the screens - which menus a state has,
+     * which buttons look like a wizard's, which state nothing else reached. That guessing is what
+     * had the canvas asserting things the bot never said: one modal opening nine screens, buttons
+     * leaving components that do not draw them, six facts drawn thirty-five times.
+     *
+     * A transition with nothing bound to it is still drawn, faintly and saying so. Nearly half of
+     * them are like that, and the gap is worth seeing - it is where the flow definitions have not
+     * said what causes the move, and no amount of looking at the screens will tell anybody.
+     *
+     * Self transitions are left out here. They are the commonest interaction of all and an arrow
+     * leaving a box for itself shows none of them; they belong on the screen they act upon.
+     */
+    /**
+     * The moves this state makes to itself, named by what causes them.
+     *
+     * Deduplicated: the same control can be declared more than once against a state, and the screen
+     * only needs telling about it once.
+     */
+    private getSelfTransitionsFor( stateKey: string ): string[] {
+        const names = ( this.context.flow.transitions ?? [] )
+            .filter( ( transition ) => transition.from === stateKey && transition.to === stateKey )
+            .map( ( transition ) => transition.triggeredBy?.[ 0 ]?.sourceEntity?.split( "/" ).pop() ?? "not attributed" );
+
+        return [ ...new Set( names ) ];
+    }
+
+    private addDeclaredTransitionEdges( modalFirstNodeId?: string ): void {
+        ( this.context.flow.transitions ?? [] ).forEach( ( transition ) => {
+            const { from, to } = transition;
+
+            if ( ! from || ! to || from === to ) {
+                return;
+            }
+
+            if ( ! this.context.stateKeys.has( from ) || ! this.context.stateKeys.has( to ) ) {
+                return;
+            }
+
+            /*
+             * A flow that opens on a modal has no component for its first state - the modal stands
+             * in for it, and the state is never drawn. Moves out of that state are still moves, so
+             * they leave from the thing that is standing there.
+             *
+             * Without this they left from nothing and were dropped, which stranded every screen the
+             * first state is the only route to: a rename's Badword and RateLimited, a status's
+             * Cleared, an lfm's Cooldown. Twenty-three of them across v2 and v3, floating.
+             */
+            const sourceId = this.context.stateKeyToCompId.get( from )
+                    ?? ( from === this.context.initialStateKey ? modalFirstNodeId : undefined ),
+                targetId = this.context.stateKeyToCompId.get( to );
+
+            if ( ! sourceId || ! targetId ) {
+                return;
+            }
+
+            const triggerName = transition.triggeredBy?.[ 0 ]?.sourceEntity?.split( "/" ).pop();
+
+            // What the bot looked at to take this branch, where nobody pressed anything. Declared
+            // beside the transition, so a branch reads as its condition rather than as an omission.
+            const condition = transition.previewCondition,
+                outcomeCondition = condition
+                    ? `${ condition.field } = ${ condition.value ?? condition.operator }`
+                    : undefined;
+
+            this.addEdge( createDeclaredTransitionEdge( sourceId, targetId, from, to, triggerName, outcomeCondition ) );
+        } );
     }
 
     private precomputeElementRows(): void {
@@ -998,9 +1072,11 @@ class MultiStateFlowBuilder {
         return modalId;
     }
 
-    private buildStateNodes( isModalFirst: boolean, modalFirstNodeId: string | undefined, useSelectMenu: boolean, useFanOut: boolean ): void {
-        let prevCompId: string | null = null;
-
+    private buildStateNodes(
+        isModalFirst: boolean,
+        modalFirstNodeId: string | undefined,
+        modalFirstTargetStateKey: string | null
+    ): void {
         this.context.stateComponents.forEach( ( stateComp, stepIndex ) => {
             if ( isModalFirst && stepIndex === 0 ) {
                 return;
@@ -1039,10 +1115,11 @@ class MultiStateFlowBuilder {
                 stateTransitionTriggers,
                 `${ stateComp.stateName }\n${ stateComp.component.name }`,
                 stateComp.stateKey,
-                this.context.flow.name
+                this.context.flow.name,
+                this.getSelfTransitionsFor( stateComp.stateKey )
             ) );
 
-            this.addEdgesForState( stepIndex, compId, prevCompId, isModalFirst, modalFirstNodeId, useSelectMenu, useFanOut, stateComp );
+            this.addEdgesForState( stepIndex, compId, isModalFirst, modalFirstNodeId, stateComp, modalFirstTargetStateKey );
 
             if ( !isModalFirst ) {
                 this.edgeBuilder.addModalEdges( this.allNodes, compId, compPreview, buttonModalConnections, stateComp.stateKey );
@@ -1050,7 +1127,6 @@ class MultiStateFlowBuilder {
             this.edgeBuilder.addSelfTransitionModalEdges( this.allNodes, stateComp.stateKey, compId, compPreview );
             this.edgeBuilder.addButtonFlowEdges( compId, buttonFlowTriggers );
 
-            prevCompId = compId;
         } );
     }
 
@@ -1144,50 +1220,21 @@ class MultiStateFlowBuilder {
     private addEdgesForState(
         stepIndex: number,
         compId: string,
-        prevCompId: string | null,
         isModalFirst: boolean,
         modalFirstNodeId: string | undefined,
-        useSelectMenu: boolean,
-        useFanOut: boolean,
-        stateComp: FlowStateComponent
+        stateComp: FlowStateComponent,
+        modalFirstTargetStateKey: string | null
     ): void {
-        if ( isModalFirst && modalFirstNodeId ) {
+        // Only the state the modal actually transitions to. The flow being modal first says nothing
+        // about any of the others, and drawing it at each of them had one entry claiming to open
+        // every screen in the flow.
+        if ( isModalFirst && modalFirstNodeId && stateComp.stateKey === modalFirstTargetStateKey ) {
             this.addEdge( createModalToComponentEdge( modalFirstNodeId, compId, this.context.flow.name, stateComp.stateName ) );
         } else if ( stepIndex === 0 ) {
             this.addEdge( createFlowToComponentEdge( this.context.flowId, compId, this.context.flow.name, stateComp.component.name ) );
-            this.initialCompId = compId;
-            this.initialElementRows = this.context.stateKeyToElementRows.get( stateComp.stateKey );
-        } else if ( !useSelectMenu && !useFanOut && prevCompId ) {
-            const sourceHandle = this.findTransitionHandle( stepIndex, stateComp.stateKey ) ?? "bottom";
-            this.addEdge( createStepTransitionEdge( prevCompId, compId, this.context.flow.name, stepIndex, sourceHandle ) );
         }
     }
 
-    private findTransitionHandle( stepIndex: number, _toStateKey: string ): string | null {
-        const prevState = this.context.stateComponents[ stepIndex - 1 ];
-        const prevOptions = prevState?.options as Record<string, unknown> | undefined;
-        const prevTransitions = prevState?.transitions;
-
-        if ( !prevTransitions?.length ) {
-            return null;
-        }
-
-        const handles = prevOptions?.transitionHandles;
-        if ( typeof handles === "object" && handles !== null ) {
-            for ( const name of prevTransitions ) {
-                const handle = ( handles as Record<string, string> )[ name ];
-                if ( handle ) {
-                    return `btn-${ handle }`;
-                }
-            }
-        }
-
-        const mapping = this.context.flow.edgeSourceMappings?.find( m =>
-            prevTransitions.includes( m.transitionName ) && m.targetFlowName === this.context.flow.name
-        );
-
-        return mapping ? `btn-${ mapping.triggeringElementId }` : null;
-    }
 }
 
 class SingleComponentFlowBuilder {
@@ -1251,16 +1298,19 @@ class SingleComponentFlowBuilder {
 class FlowGraphBuilder {
     private readonly data: ModuleFlowsResponse;
     private readonly includesExtraModules: boolean;
+    private readonly hiddenSystemFlows: Set<string>;
     private readonly allNodes: Node[] = [];
     private readonly allEdges: Edge[] = [];
     private readonly edgeIds = new Set<string>();
     private readonly flowIdMap = new Map<string, string>();
     private readonly systemFlowCompIds = new Map<string, string>();
     private readonly reachableFlows = new Set<string>();
+    private readonly routedFlows = new Set<string>();
 
     public constructor( data: ModuleFlowsResponse, options?: FlowGraphOptions ) {
         this.data = data;
         this.includesExtraModules = options?.includesExtraModules ?? false;
+        this.hiddenSystemFlows = new Set( options?.hiddenSystemFlows ?? [] );
     }
 
     /**
@@ -1276,6 +1326,7 @@ class FlowGraphBuilder {
 
     public build(): { nodes: Node[]; edges: Edge[] } {
         this.computeReachableFlows();
+        this.computeRoutedFlows();
         this.buildModuleNode();
         this.buildSystemFlowNodes();
         this.buildFlowNodes();
@@ -1290,6 +1341,46 @@ class FlowGraphBuilder {
         const result = computeReachableFlows( this.data );
 
         result.forEach( name => this.reachableFlows.add( name ) );
+    }
+
+    private isSystemFlowDrawn( flowName: string ): boolean {
+        return ! this.hiddenSystemFlows.has( flowName );
+    }
+
+    /**
+     * The flows a router already reaches, so the module does not claim them twice.
+     *
+     * A module node joined to every flow said nothing the layout did not already say, and drew the
+     * same arrival twice over wherever a router got there first. What is left is the flows nothing
+     * routes to - which is the only case where the module is the thing that explains them.
+     *
+     * Counted from the routers actually drawn: put one away and the flows it was reaching fall back
+     * to the module, rather than floating with nothing attached.
+     */
+    private computeRoutedFlows(): void {
+        this.data.systemFlows
+            .filter( ( flow ) => this.isSystemFlowDrawn( flow.name ) )
+            .forEach( ( flow ) => {
+                flow.transitions?.forEach( ( transition ) => {
+                    const target = transition.to?.split( "/States/" )[ 0 ];
+
+                    if ( target ) {
+                        this.routedFlows.add( target );
+                    }
+                } );
+
+                flow.handoffPoints?.forEach( ( handoff ) => {
+                    if ( handoff.flowName ) {
+                        this.routedFlows.add( handoff.flowName );
+                    }
+                } );
+
+                flow.edgeSourceMappings?.forEach( ( mapping ) => {
+                    if ( mapping.targetFlowName ) {
+                        this.routedFlows.add( mapping.targetFlowName );
+                    }
+                } );
+            } );
     }
 
     private addEdge( edge: Edge ): void {
@@ -1308,7 +1399,7 @@ class FlowGraphBuilder {
     private buildSystemFlowNodes(): void {
         const moduleNodeId = this.allNodes[ 0 ].id;
 
-        this.data.systemFlows.forEach( flow => {
+        this.data.systemFlows.filter( ( flow ) => this.isSystemFlowDrawn( flow.name ) ).forEach( flow => {
             const flowNode = createFlowNode( flow, true );
             this.flowIdMap.set( flow.name, flowNode.id );
             this.allNodes.push( flowNode );
@@ -1331,12 +1422,20 @@ class FlowGraphBuilder {
             const flowNode = createFlowNode( flow, false );
             this.flowIdMap.set( flow.name, flowNode.id );
             this.allNodes.push( flowNode );
-            this.addEdge( createModuleToFlowEdge( moduleNodeId, flowNode.id, flow.name ) );
+
+            // Always drawn, and marked when a router already explains this flow. What becomes of
+            // the marked ones is a question of what is being read, which the canvas answers.
+            this.addEdge( createModuleToFlowEdge(
+                moduleNodeId,
+                flowNode.id,
+                flow.name,
+                this.routedFlows.has( flow.name )
+            ) );
         } );
     }
 
     private buildSystemFlowComponents(): void {
-        this.data.systemFlows.forEach( flow => {
+        this.data.systemFlows.filter( ( flow ) => this.isSystemFlowDrawn( flow.name ) ).forEach( flow => {
             const flowId = this.flowIdMap.get( flow.name )!;
             const initialComp = getInitialComponent( flow, this.data.components );
 
@@ -1437,7 +1536,7 @@ class FlowGraphBuilder {
     }
 
     private buildSystemFlowTransitions(): void {
-        this.data.systemFlows.forEach( systemFlow => {
+        this.data.systemFlows.filter( ( flow ) => this.isSystemFlowDrawn( flow.name ) ).forEach( systemFlow => {
             const systemFlowId = this.flowIdMap.get( systemFlow.name );
             if ( !systemFlowId || systemFlow.edgeSourceMappings?.length ) {
                 return;
@@ -1537,6 +1636,15 @@ export function computeReachableFlows( data: Pick<ModuleFlowsResponse, "flows" |
 export interface FlowGraphOptions {
     /** Whether to draw the flows this module hands off to, which other modules own. */
     includesExtraModules?: boolean;
+
+    /**
+     * The routers to leave out, by name.
+     *
+     * A system flow is the way in from outside the interface - a slash command, a guild event, the
+     * control panel. Each reaches many flows by its nature, so each is a screen's worth of noise on
+     * its own, and they are put away one at a time rather than all together.
+     */
+    hiddenSystemFlows?: string[];
 }
 
 export function buildFlowGraph(

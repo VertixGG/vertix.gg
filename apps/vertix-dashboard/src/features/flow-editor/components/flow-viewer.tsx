@@ -14,7 +14,7 @@ import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-cu
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
-import { useExtraModulesStore } from "@vertix.gg/dashboard/src/hooks/use-extra-modules-store";
+import { useCanvasFiltersStore } from "@vertix.gg/dashboard/src/hooks/use-canvas-filters-store";
 import { EdgeLegend } from "@vertix.gg/dashboard/src/features/flow-editor/components/edge-legend";
 import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
 import { TOUR_ANCHORS } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
@@ -68,7 +68,8 @@ export function FlowViewer() {
     const { isEditMode, editingFlowName, enterEditMode, exitEditMode } = useEditMode();
     const guildId = useSelectedGuildId();
 
-    const showsExtraModules = useExtraModulesStore( ( state ) => state.showsExtraModules );
+    const showsExtraModules = useCanvasFiltersStore( ( state ) => state.showsExtraModules );
+    const hiddenSystemFlows = useCanvasFiltersStore( ( state ) => state.hiddenSystemFlows );
 
     // Up here because the button it belongs to is built inside a closure further down, which is no
     // place to draw a hook from.
@@ -155,7 +156,8 @@ export function FlowViewer() {
         }
 
         const { nodes: allNodes, edges: allEdges } = buildFlowGraph( moduleFlowsData, {
-            includesExtraModules: showsExtraModules
+            includesExtraModules: showsExtraModules,
+            hiddenSystemFlows
         } );
 
         // Filter nodes and edges when in edit mode
@@ -194,6 +196,7 @@ export function FlowViewer() {
         isEditMode,
         editingFlowName,
         showsExtraModules,
+        hiddenSystemFlows,
         LAYOUT_OPTIONS.DIRECTION,
         LAYOUT_OPTIONS.RANK_SEPARATION,
         LAYOUT_OPTIONS.NODE_SEPARATION
@@ -471,6 +474,24 @@ export function FlowViewer() {
             } ) )
         );
     }, [ selectedNodeId, setNodes ] );
+
+    /*
+     * The module's line to a flow a router already reaches, kept while nothing is picked out.
+     *
+     * With nothing selected the canvas is being read as a whole, and the module reaching its flows
+     * is the shape of it - a flow attached to nothing reads worse than an arrival told twice. Once
+     * something is selected the reader is following one thread, and the second telling is in the
+     * way, so it goes. Hidden rather than rebuilt: the graph is laid out once and a selection must
+     * not move anything.
+     */
+    useEffect( () => {
+        setEdges( ( currentEdges ) =>
+            currentEdges.map( ( edge ) => edge.data?.isRoutedElsewhere
+                ? { ...edge, hidden: Boolean( selectedNodeId ) }
+                : edge
+            )
+        );
+    }, [ selectedNodeId, setEdges ] );
 
     // Arriving from a generator's settings means the admin came here to edit that flow's buttons,
     // so the component is opened for them rather than left behind a "click a component" prompt.

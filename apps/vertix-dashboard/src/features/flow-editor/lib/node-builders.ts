@@ -67,7 +67,8 @@ export function createComponentNode(
     stateTransitionTriggers: StateTransitionTrigger[] = [],
     label?: string,
     stateKey?: string,
-    flowName?: string
+    flowName?: string,
+    selfTransitions: string[] = []
 ): Node {
     return {
         id: compId,
@@ -90,6 +91,15 @@ export function createComponentNode(
             buttonModalTriggers,
             buttonFlowTriggers,
             stateTransitionTriggers,
+            /*
+             * The moves this screen makes to itself.
+             *
+             * Carried on the screen rather than drawn beside it: a fifth of everything a flow
+             * declares is a transition whose from and to are the same state - picking an option,
+             * clearing an override, updating channels. They are the commonest thing a member does
+             * and an arrow from a box back to itself shows none of them.
+             */
+            selfTransitions,
             stateKey,
             flowName
         }

@@ -242,39 +242,6 @@ async function startPrerenderServer( rootDir: string ) {
  * Only links still carrying that exact onload are rewound, so a stylesheet that genuinely means
  * `all` is left alone.
  */
-/**
- * Function stripRuntimeTags() :: Drops the tags a running page added for itself.
- *
- * Anything the page injects to keep off the critical path - the analytics library is fetched once
- * the page has settled, rather than beside it - is in the dom by the time prerendering is done, and
- * would ship as an ordinary eager tag for every reader. A tag that asked to be added at runtime
- * carries `data-vc-runtime` and is taken back out here, so the shipped html only holds what the
- * source wrote.
- */
-function stripRuntimeTags( html: string ): string {
-    return html
-        .replace( /<script[^>]*\sdata-vc-runtime(?:="[^"]*")?[^>]*><\/script>/g, "" )
-        // The tag library loads more of itself once it is running: the ads tag as a second script
-        // from the tag manager, and a conversion beacon from doubleclick, neither carrying a marker
-        // of ours. The source writes no measurement script at all any more, only the inline queue,
-        // so anything from these hosts was added while the page ran.
-        //
-        // The beacon is the one that matters beyond weight. Its url carries the random and the
-        // timestamp of the moment it was built, so shipping it sends every reader a conversion ping
-        // frozen at build time - the same one, from whenever the site was last released.
-        .replace(
-            /<script[^>]*src="[^"]*(?:googletagmanager\.com|doubleclick\.net|googleadservices\.com|google-analytics\.com)[^"]*"[^>]*><\/script>/g,
-            ""
-        );
-}
-
-/**
- * Function undoRuntimeMutations() :: Everything prerendering has to put back before it writes.
- */
-function undoRuntimeMutations( html: string ): string {
-    return stripRuntimeTags( restoreDeferredStyles( html ) );
-}
-
 function restoreDeferredStyles( html: string ): string {
     return html.replace(
         /media="all"(\s+onload="this\.media='all'")/g,
@@ -317,7 +284,31 @@ function prerenderPlugin(): Plugin {
                         timeout: PRERENDER_READY_TIMEOUT_MS,
                     } );
 
-                    rendered.push( { routePath: route.path, html: undoRuntimeMutations( await page.content() ) } );
+                    // Take back what the page added for itself, in the page, where the dom can say what
+                    // belongs to what. A regex cannot be trusted to find the end of a nested element,
+                    // and one of these is a whole section rather than a self closing tag.
+                    await page.evaluate( () => {
+                        document.querySelectorAll( "[data-vc-runtime]" ).forEach( ( node ) => node.remove() );
+
+                        // Prerendering mounts the panel, because it runs at a desktop size, and vite
+                        // preloads the chunks behind a dynamic import as it takes it - by adding
+                        // link tags to the head. Those are as baked in as anything else the page
+                        // did, and a preload is a fetch, so leaving them puts the chat back on
+                        // every phone by the other door.
+                        document.querySelectorAll( "link[rel='modulepreload'][href]" ).forEach( ( node ) => {
+                            if ( /(discord-chat-container|react-markdown)-/.test( node.getAttribute( "href" ) ?? "" ) ) {
+                                node.remove();
+                            }
+                        } );
+
+                        document.querySelectorAll( "script[src]" ).forEach( ( node ) => {
+                            if ( /googletagmanager\.com|doubleclick\.net|googleadservices\.com|google-analytics\.com/.test( node.getAttribute( "src" ) ?? "" ) ) {
+                                node.remove();
+                            }
+                        } );
+                    } );
+
+                    rendered.push( { routePath: route.path, html: restoreDeferredStyles( await page.content() ) } );
                 }
             } finally {
                 await browser.close();
@@ -356,6 +347,25 @@ export default defineConfig( ( { mode } ) => {
             // them in adds four kilobytes to a file already being fetched and takes two blocking
             // requests off the critical path.
             cssCodeSplit: false,
+            modulePreload: {
+                /*
+                 * A module the page may decide not to mount must not be preloaded by the html.
+                 *
+                 * The landing page only draws the v3 panel from `lg` up and imports it after it
+                 * knows the viewport, but vite can see the import statically and lists the chunks
+                 * behind it - the chat, and the markdown renderer inside it - in the document head.
+                 * A preload is a fetch, so a phone was pulling a quarter of a megabyte for a panel
+                 * it never mounts, which is the whole thing the import was deferred to avoid.
+                 *
+                 * Only the html list is trimmed. When the import does run, vite preloads the same
+                 * chunks from javascript, so a desktop still gets them in one go rather than
+                 * discovering them one import deep at a time.
+                 */
+                resolveDependencies: ( _filename, deps, { hostType } ) =>
+                    hostType === "html"
+                        ? deps.filter( ( dep ) => ! /(discord-chat-container|react-markdown)-/.test( dep ) )
+                        : deps,
+            },
         },
         define: {
             "import.meta.env.VITE_DASHBOARD_URL": JSON.stringify( dashboardUrl ),

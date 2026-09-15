@@ -4,8 +4,61 @@ import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
+import * as React from "react";
+
 import ChannelLifecycle from "@vertix.gg/website/src/vertix/components/landing/channel-lifecycle";
-import DiscordDynamicChannelV3 from "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v3";
+
+/**
+ * The v3 panel, which this page only draws from `lg` up.
+ *
+ * It is the heaviest thing the page can pull: the chat it is drawn in carries a markdown renderer
+ * and a whole html parser, because embed descriptions are markdown with html inside them. On a
+ * phone none of that is ever shown, and a stylesheet cannot stop a module being fetched - the
+ * import decides that long before any layout does.
+ *
+ * So it is imported only once a viewport that draws it is confirmed, which is also why it is not
+ * in the prerendered html: that is captured at a desktop size, and markup for a panel this page
+ * has decided not to mount would leave the two disagreeing about what is on the page. The build
+ * takes the wrapper out by the attribute below.
+ */
+const DiscordDynamicChannelV3 = React.lazy(
+    () => import( "@vertix.gg/website/src/vertix/components/discord/discord-dynamic-channel-v3" )
+);
+
+const LANDING_CHAT_MEDIA = "(min-width: 1024px)";
+
+function LandingChat() {
+    const [ isDrawn, setDrawn ] = React.useState( false );
+
+    React.useEffect( () => {
+        const query = window.matchMedia( LANDING_CHAT_MEDIA ),
+            onChange = ( event: MediaQueryList | MediaQueryListEvent ) => {
+                if ( event.matches ) {
+                    setDrawn( true );
+                }
+            };
+
+        onChange( query );
+
+        // Only ever upward: a window narrowed after the panel is up keeps it, hidden by the
+        // stylesheet the way it always was, rather than tearing down what is already fetched.
+        query.addEventListener( "change", onChange );
+
+        return () => query.removeEventListener( "change", onChange );
+    }, [] );
+
+    if ( ! isDrawn ) {
+        return null;
+    }
+
+    return (
+        <div className="vc-landing-chat mb-12 hidden justify-center lg:flex" data-vc-runtime="">
+            <React.Suspense fallback={ null }>
+                <DiscordDynamicChannelV3/>
+            </React.Suspense>
+        </div>
+    );
+}
 import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
 
 /** One place for the ramp the explainer cards and feature grid walk through. */
@@ -241,9 +294,7 @@ export default function Home() {
                     width, so it gets the full measure rather than a column
                     beside the copy — squeezed into half, the control grid
                     inside it wraps into an unreadable stack. */ }
-                <div className="vc-landing-chat mb-12 hidden justify-center lg:flex">
-                    <DiscordDynamicChannelV3/>
-                </div>
+                <LandingChat/>
 
                 <div className="grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
                     { OWNER_CONTROLS.map( ( control ) => (

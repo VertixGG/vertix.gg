@@ -1,5 +1,46 @@
 # Changelog
 
+**Version: 0.0.19 ~ 15/09/2026**
+- New Features:
+    - **Commands For Everything**: Every button on a channel's panel is now a slash command as well. `/voice rename`, `limit`, `privacy`, `status`, `access`, `invite`, `knock`, `claim`, `transfer`, `region`, `templates`, `message`, `reset`, `clear-chat` and `panel` open the same screens the buttons do, so a member can reach them without the panel in front of them. The admin screens gather under `/manage` - setup, new-generator, edit, roles, server-options, badwords and language. Where an older generator has no such screen, the command says so instead of opening the wrong one.
+    - **LFM - Looking For Members**: An owner presses LFM, writes a line about who they are after, and the bot posts it in a channel you pick. The post says who is hosting, what they are playing and how many are in, keeps the count up to date, and comes down on its own when the room fills, empties or the post expires - so nobody is left clearing out stale calls in general chat. Four timings sit on each generator: how often one of its rooms may advertise, how long before a pinged role may be pinged again, how long a post stands, and how often the count is redrawn. It arrives switched off on new generators, because a post needs somewhere to go first.
+    - **Channel Status**: Set the status Discord shows on a voice channel, or let the bot compose one from what the room is playing. A status can carry `{user}`, `{game}` and `{state}`, and they are filled in again every time the channel changes rather than frozen at the moment somebody typed them. The bad word list now covers the line the bot composes for itself, not only what an owner typed.
+    - **Claim Timings Per Server**: How long an owner may be away before their channel can be claimed, and how long the vote runs, are your server's settings now rather than ours - `/setup` -> `Server Options` -> `Edit Claim`, or the same four fields on the dashboard. Leave one empty and it follows the bot's own default.
+    - **Buttons From The Dashboard**: Which buttons a generator carries, what order they sit in and where the rows break are all set in the interface editor, and a role can be given a set of its own there too. A change redraws the control panel and every channel already open, so nobody has to reopen theirs.
+    - **Word One Generator Differently**: Wording and artwork belonged to the whole server, so renaming a button on the gaming generator renamed it on the study one beside it. An override can now name a single generator, and anything you have not worded separately still falls back to the server's text.
+    - **A Screen For Each Server Setting**: The voice role, verified roles, staff roles, bad words and claim timings each open on a screen of their own, with room to say what the setting does - and a button to empty it. Emptying a verified list hands its channels back to `@everyone`; emptying a voice role stops it being handed out.
+- Improvements:
+    - **A Channel You Can Join Is One You Can Talk In**: Dynamic channels now grant chat and history alongside view and connect, so members no longer arrive somewhere they can see, can enter, and cannot read a word of. Channels that already exist keep the permissions they were created with.
+    - **Verified Roles Apply The Same Way Everywhere**: A narrow audience shapes the generator, its category, the control panel and the channels identically, and the generator is included - so a server that verifies its members no longer offers join-to-create to the ones it did not. Overwrites you set yourself are left alone.
+    - **The Dashboard Stops At Your Limits**: How many setups a server may have is shown in the header and beside the buttons that make one, and the way to make another is greyed out once it is spent. Auto-scaling pools count towards it too. A refusal now arrives as a message saying why, instead of a form left waiting on a setup that was never coming.
+    - **How Full A Category Is**: Discord allows fifty channels in one category, and a generator keeps its own channel, its control panel and everything it creates in the same one. Each generator's bar measures against that fifty now, turning amber at eighty percent and red at the limit.
+    - **The Dashboard Says When The Bot Is Not There**: Picking a server the bot was never added to used to open a dashboard full of zeroes and buttons that could not work. It says so now, and offers you another server.
+    - **Roles The Bot Cannot Hand Out Are Marked**: Picking a voice role the bot cannot assign used to save cleanly and then do nothing on every join. Both `/setup` and the dashboard now say which roles those are, and why.
+    - **Knock Points At What Is Open**: A member with nothing to knock on is shown the channels of that generator that are open to them, rather than a dead end.
+    - **Claim From The Control Panel**: Claim sat greyed out there permanently with no way to say why. It answers now with where claiming happens - join the channel you want, open its chat, press Claim on the message waiting there.
+    - **A Slow Change Says It Is Thinking**: A setting that has to be rewritten across every channel following it locks its screen and shows Discord's thinking indicator, instead of reporting that the bot did not respond.
+    - **Seven Languages, Again**: Fourteen screens that were still English in every language - the new setup screens, the claim notices, and what a command says when it can open nothing - are translated. Regions read as `US West` rather than `us-west`.
+- Fixes:
+    - **Claim Works Again**: A claim vote moves through its own steps, answers the presses it gets, announces a winner and actually hands the channel over. It had been sitting on its first screen, counting down to nothing.
+    - **Joining A Brand New Generator**: For about a second after a generator was made, anyone joining it was told their channel could not be created and that the server had probably hit a Discord limit, which it had not. Its settings are written before it can be joined now, in both interface versions.
+    - **The Older Interface Draws The Buttons You Arranged**: A v2 generator ignored which buttons were picked, the order and the row breaks - and so did the control panel every time it was redrawn.
+    - **Screens Stop Forgetting**: Opening a modal wiped everything the screen behind it knew, and a menu somebody was reading without changing anything was swept out from under them after ten minutes.
+    - **A Screen About A Channel That Is Gone**: Left open after the channel was deleted, it used to fall through and quietly edit whichever channel you were sitting in by then. It says the channel is gone now, and takes its own buttons away.
+    - **Placeholders Stop Reaching People**: `{invitedDisplayName}` in the invite confirmation, `{ownerDisplayName}` and `{totalMessages}` in the cleared chat notice, and `#{index}` in the title of the timings modal.
+    - **Names In The Buttons Menu**: LFM was listed as a second `Claim`, `Invite` was offered as a second `Privacy`, and `Status` printed its raw id. Every option is named by the button it belongs to now.
+    - **The Timings Modal Opens On Your Numbers**: It showed the shared defaults, so an admin who opened it to change one field wrote those defaults over the rest.
+    - **A Shortened LFM Cooldown Takes Effect**: Shortening it, or switching it off, used to leave the rooms already waiting on the old one - including the setting an admin reaches for to unblock a server.
+    - **Choosing Server Wide Roles**: Picking verified or staff roles rewrites every channel under every generator, which outran the three seconds Discord allows, so the screen reported that the bot had not responded while the roles had in fact saved.
+    - **Clearing Chat Answers The Click**, and the notice afterwards names who cleared it.
+    - **Knock And Invite From A Control Panel** act for the generator whose panel was pressed, rather than for whichever channel the presser happened to be sitting in.
+    - **The Welcome Message Has Its Logo Back**.
+- Security:
+    - **Deleting A Setup Needs Authorisation**: Three operations the dashboard guards behind a login - deleting a generator, deleting a scaling pool, and changing a server's settings - could also be reached by anything able to publish on the internal message bus, with no check at all on who sent it.
+- On The Site:
+    - New guides: a walkthrough of Join to Create you press rather than read, a page on making a voice channel in Discord at all, and a comparison against the four bots people weigh us against - every cell established on a test server running all four. The placeholders page now covers the channel status and the tokens it takes.
+
+---
+
 **Version: 0.0.18 ~ 09/09/2026**
 - New Features:
     - **Knock**: Ask the owner of a private channel to let you in. Press it inside the channel you want and its owner is asked straight away; from the control panel you pick which channel first. Only channels you can see but cannot join are offered - a hidden channel stays hidden. Either answer reaches you, and ignoring a request lets it expire on its own.

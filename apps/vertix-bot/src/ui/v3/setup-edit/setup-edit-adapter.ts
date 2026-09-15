@@ -1730,8 +1730,16 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "OpenEditVerifiedRoles", { from: "EditMaster", to: "EditVerifiedRoles" } )
             .addTransition( "OpenEditStaffRoles", { from: "EditMaster", to: "EditStaffRoles" } )
             .addTransition( "OpenEditVoiceRole", { from: "EditMaster", to: "EditVoiceRole" } )
-            .addTransition( "OpenEditDefaultPrivacy", { from: "EditMaster", to: "EditDefaultPrivacy" } )
-            .addTransition( "OpenEditDefaultUserLimit", { from: "EditMaster", to: "EditDefaultUserLimit" } )
+            .addTransition( "OpenEditDefaultPrivacy", {
+                from: "EditMaster",
+                to: "EditDefaultPrivacy",
+                triggeredByElement: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu"
+            } )
+            .addTransition( "OpenEditDefaultUserLimit", {
+                from: "EditMaster",
+                to: "EditDefaultUserLimit",
+                triggeredByElement: "VertixBot/UI-V3/SetupEditSelectEditOptionMenu"
+            } )
             .addTransition( "EditChannelName", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "ConfigExtrasChanged", { from: "EditMaster", to: "EditMaster" } )
             .addTransition( "LogChannelChanged", { from: "EditMaster", to: "EditMaster" } )
@@ -1743,22 +1751,42 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "ButtonsRoleSelected", { from: "EditButtons", to: "EditButtons" } )
             .addTransition( "ClearRoleOverride", { from: "EditButtons", to: "EditButtons" } )
             .addTransition( "UpdateExistingChannels", { from: "EditButtons", to: "EditButtons" } )
-            .addTransition( "ButtonsBack", { from: "EditButtons", to: "EditMaster" } )
+            .addTransition( "ButtonsBack", {
+                from: "EditButtons",
+                to: "EditMaster",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             // Transitions from EditVerifiedRoles
             .addTransition( "VerifiedRolesSelected", { from: "EditVerifiedRoles", to: "EditVerifiedRoles" } )
             .addTransition( "VerifiedRolesBack", { from: "EditVerifiedRoles", to: "EditMaster" } )
             .addTransition( "VerifiedRolesFinish", { from: "EditVerifiedRoles", to: "EditMaster" } )
             // Transitions from EditStaffRoles
             .addTransition( "StaffRolesChanged", { from: "EditStaffRoles", to: "EditStaffRoles" } )
-            .addTransition( "StaffRolesBack", { from: "EditStaffRoles", to: "EditMaster" } )
+            .addTransition( "StaffRolesBack", {
+                from: "EditStaffRoles",
+                to: "EditMaster",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             // Transitions from EditVoiceRole
             .addTransition( "VoiceRoleChanged", { from: "EditVoiceRole", to: "EditVoiceRole" } )
-            .addTransition( "VoiceRoleBack", { from: "EditVoiceRole", to: "EditMaster" } )
+            .addTransition( "VoiceRoleBack", {
+                from: "EditVoiceRole",
+                to: "EditMaster",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             // Transitions from the creation defaults
             .addTransition( "DefaultPrivacyChanged", { from: "EditDefaultPrivacy", to: "EditDefaultPrivacy" } )
-            .addTransition( "DefaultPrivacyBack", { from: "EditDefaultPrivacy", to: "EditMaster" } )
+            .addTransition( "DefaultPrivacyBack", {
+                from: "EditDefaultPrivacy",
+                to: "EditMaster",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             .addTransition( "DefaultUserLimitChanged", { from: "EditDefaultUserLimit", to: "EditDefaultUserLimit" } )
-            .addTransition( "DefaultUserLimitBack", { from: "EditDefaultUserLimit", to: "EditMaster" } )
+            .addTransition( "DefaultUserLimitBack", {
+                from: "EditDefaultUserLimit",
+                to: "EditMaster",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             .addTransition( "DefaultPrivacyReset", { from: "EditDefaultPrivacy", to: "EditDefaultPrivacy" } )
             .addTransition( "DefaultUserLimitInherit", { from: "EditDefaultUserLimit", to: "EditDefaultUserLimit" } )
             .addEdgeSourceMapping( {

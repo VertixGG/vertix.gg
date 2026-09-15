@@ -229,17 +229,37 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
             .addTransition( "StartWizard", { from: "Default", to: "Step1" } )
             // Step 1 transitions
             .addTransition( "EditTemplateName", { from: "Step1", to: "Step1" } )
-            .addTransition( "Step1ToStep2", { from: "Step1", to: "Step2" } )
+            .addTransition( "Step1ToStep2", {
+                from: "Step1",
+                to: "Step2",
+                triggeredByElement: "VertixBot/UI-General/WizardNextButton"
+            } )
             // Step 2 transitions
             .addTransition( "SelectButtons", { from: "Step2", to: "Step2" } )
             .addTransition( "SelectConfigExtras", { from: "Step2", to: "Step2" } )
-            .addTransition( "Step2ToStep1", { from: "Step2", to: "Step1" } )
-            .addTransition( "Step2ToStep3", { from: "Step2", to: "Step3" } )
+            .addTransition( "Step2ToStep1", {
+                from: "Step2",
+                to: "Step1",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
+            .addTransition( "Step2ToStep3", {
+                from: "Step2",
+                to: "Step3",
+                triggeredByElement: "VertixBot/UI-General/WizardNextButton"
+            } )
             // Step 3 transitions
             .addTransition( "SelectVerifiedRoles", { from: "Step3", to: "Step3" } )
             .addTransition( "SelectEveryoneRole", { from: "Step3", to: "Step3" } )
-            .addTransition( "Step3ToStep2", { from: "Step3", to: "Step2" } )
-            .addTransition( "Finish", { from: "Step3", to: "Default" } )
+            .addTransition( "Step3ToStep2", {
+                from: "Step3",
+                to: "Step2",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
+            .addTransition( "Finish", {
+                from: "Step3",
+                to: "Default",
+                triggeredByElement: "VertixBot/UI-General/WizardFinishButton"
+            } )
             // Error transitions
             .addTransition( "ShowMaxChannels", { from: "Step3", to: "MaxMasterChannels" } )
             .addTransition( "ShowError", { from: "Step3", to: "Error" } )

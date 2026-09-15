@@ -1091,12 +1091,36 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             // Transitions
             .addTransition( "SelectMaster", { from: "SelectMaster", to: "MasterOverview" } )
             .addTransition( "OpenButtons", { from: "MasterOverview", to: "Buttons" } )
-            .addTransition( "OpenVerifiedRoles", { from: "MasterOverview", to: "VerifiedRoles" } )
-            .addTransition( "OpenStaffRoles", { from: "MasterOverview", to: "StaffRoles" } )
-            .addTransition( "OpenVoiceRole", { from: "MasterOverview", to: "VoiceRole" } )
-            .addTransition( "OpenLfmChannels", { from: "MasterOverview", to: "LfmChannels" } )
-            .addTransition( "OpenDefaultPrivacy", { from: "MasterOverview", to: "DefaultPrivacy" } )
-            .addTransition( "OpenDefaultUserLimit", { from: "MasterOverview", to: "DefaultUserLimit" } )
+            .addTransition( "OpenVerifiedRoles", {
+                from: "MasterOverview",
+                to: "VerifiedRoles",
+                triggeredByElement: "VertixBot/UI-V2/SetupEditSelectEditOptionMenu"
+            } )
+            .addTransition( "OpenStaffRoles", {
+                from: "MasterOverview",
+                to: "StaffRoles",
+                triggeredByElement: "VertixBot/UI-V2/SetupEditSelectEditOptionMenu"
+            } )
+            .addTransition( "OpenVoiceRole", {
+                from: "MasterOverview",
+                to: "VoiceRole",
+                triggeredByElement: "VertixBot/UI-V2/SetupEditSelectEditOptionMenu"
+            } )
+            .addTransition( "OpenLfmChannels", {
+                from: "MasterOverview",
+                to: "LfmChannels",
+                triggeredByElement: "VertixBot/UI-V2/SetupEditSelectEditOptionMenu"
+            } )
+            .addTransition( "OpenDefaultPrivacy", {
+                from: "MasterOverview",
+                to: "DefaultPrivacy",
+                triggeredByElement: "VertixBot/UI-V2/SetupEditSelectEditOptionMenu"
+            } )
+            .addTransition( "OpenDefaultUserLimit", {
+                from: "MasterOverview",
+                to: "DefaultUserLimit",
+                triggeredByElement: "VertixBot/UI-V2/SetupEditSelectEditOptionMenu"
+            } )
             .addTransition( "OpenNameModal", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "NameTemplateSubmitted", { from: "MasterOverview", to: "MasterOverview" } )
             .addTransition( "ConfigExtrasUpdated", { from: "MasterOverview", to: "MasterOverview" } )
@@ -1108,23 +1132,47 @@ const SetupEditAdapter = new AdminExecutionAdapterBuilder<VoiceChannel, Interact
             .addTransition( "ButtonsRoleSelected", { from: "Buttons", to: "Buttons" } )
             .addTransition( "ClearRoleOverride", { from: "Buttons", to: "Buttons" } )
             .addTransition( "UpdateExistingChannels", { from: "Buttons", to: "Buttons" } )
-            .addTransition( "BackFromButtons", { from: "Buttons", to: "MasterOverview" } )
+            .addTransition( "BackFromButtons", {
+                from: "Buttons",
+                to: "MasterOverview",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             .addTransition( "VerifiedRolesUpdated", { from: "VerifiedRoles", to: "VerifiedRoles" } )
             .addTransition( "VerifiedRolesEveryoneToggled", { from: "VerifiedRoles", to: "VerifiedRoles" } )
             .addTransition( "BackFromVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
             .addTransition( "FinishVerifiedRoles", { from: "VerifiedRoles", to: "MasterOverview" } )
             .addTransition( "StaffRolesUpdated", { from: "StaffRoles", to: "StaffRoles" } )
-            .addTransition( "BackFromStaffRoles", { from: "StaffRoles", to: "MasterOverview" } )
+            .addTransition( "BackFromStaffRoles", {
+                from: "StaffRoles",
+                to: "MasterOverview",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             .addTransition( "VoiceRoleUpdated", { from: "VoiceRole", to: "VoiceRole" } )
-            .addTransition( "BackFromVoiceRole", { from: "VoiceRole", to: "MasterOverview" } )
+            .addTransition( "BackFromVoiceRole", {
+                from: "VoiceRole",
+                to: "MasterOverview",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             .addTransition( "LfmChannelsUpdated", { from: "LfmChannels", to: "LfmChannels" } )
             .addTransition( "LfmPingRolesUpdated", { from: "LfmChannels", to: "LfmChannels" } )
             .addTransition( "LfmTimingsUpdated", { from: "LfmChannels", to: "LfmChannels" } )
-            .addTransition( "BackFromLfmChannels", { from: "LfmChannels", to: "MasterOverview" } )
+            .addTransition( "BackFromLfmChannels", {
+                from: "LfmChannels",
+                to: "MasterOverview",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             .addTransition( "DefaultPrivacyUpdated", { from: "DefaultPrivacy", to: "DefaultPrivacy" } )
-            .addTransition( "BackFromDefaultPrivacy", { from: "DefaultPrivacy", to: "MasterOverview" } )
+            .addTransition( "BackFromDefaultPrivacy", {
+                from: "DefaultPrivacy",
+                to: "MasterOverview",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             .addTransition( "DefaultUserLimitUpdated", { from: "DefaultUserLimit", to: "DefaultUserLimit" } )
-            .addTransition( "BackFromDefaultUserLimit", { from: "DefaultUserLimit", to: "MasterOverview" } )
+            .addTransition( "BackFromDefaultUserLimit", {
+                from: "DefaultUserLimit",
+                to: "MasterOverview",
+                triggeredByElement: "VertixBot/UI-General/WizardBackButton"
+            } )
             .addTransition( "DefaultPrivacyReset", { from: "DefaultPrivacy", to: "DefaultPrivacy" } )
             .addTransition( "DefaultUserLimitInherit", { from: "DefaultUserLimit", to: "DefaultUserLimit" } )
             // Handler bindings

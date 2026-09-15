@@ -4277,32 +4277,98 @@
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVerifiedRoles",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/VerifiedRoles"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/VerifiedRoles",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/VerifiedRoles",
+                            "executionStep": "VertixBot/UI-V2/SetupEditVerifiedRoles"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenStaffRoles",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
+                            "executionStep": "VertixBot/UI-V2/SetupEditStaffRoles"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenVoiceRole",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
+                            "executionStep": "VertixBot/UI-V2/SetupEditVoiceRole"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenLfmChannels",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
+                            "executionStep": "VertixBot/UI-V2/SetupEditLfmChannels"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenDefaultPrivacy",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
+                            "executionStep": "VertixBot/UI-V2/SetupEditDefaultPrivacy"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenDefaultUserLimit",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
+                            "executionStep": "VertixBot/UI-V2/SetupEditDefaultUserLimit"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/OpenNameModal",
@@ -4472,7 +4538,18 @@
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromButtons",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/VerifiedRolesUpdated",
@@ -4557,7 +4634,18 @@
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromStaffRoles",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/VoiceRoleUpdated",
@@ -4578,7 +4666,18 @@
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromVoiceRole",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/LfmChannelsUpdated",
@@ -4631,7 +4730,18 @@
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromLfmChannels",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/DefaultPrivacyUpdated",
@@ -4652,7 +4762,18 @@
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromDefaultPrivacy",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultPrivacy",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/DefaultUserLimitUpdated",
@@ -4673,7 +4794,18 @@
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/BackFromDefaultUserLimit",
                 "from": "VertixBot/UI-V2/SetupEditFlow/States/DefaultUserLimit",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview"
+                "to": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
+                            "executionStep": "VertixBot/UI-V2/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupEditFlow/Transitions/DefaultPrivacyReset",
@@ -4876,7 +5008,18 @@
             {
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/Step1ToStep2",
                 "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1",
-                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step2"
+                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step2",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardNextButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardNextButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step2",
+                            "executionStep": "VertixBot/UI-V2/SetupStep2Component"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/SelectButtons",
@@ -4913,12 +5056,34 @@
             {
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/Step2ToStep1",
                 "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step2",
-                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1"
+                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1",
+                            "executionStep": "VertixBot/UI-V2/SetupStep1Component"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/Step2ToStep3",
                 "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step2",
-                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step3"
+                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step3",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardNextButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardNextButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step3",
+                            "executionStep": "VertixBot/UI-V2/SetupStep3Component"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/SelectVerifiedRoles",
@@ -4955,12 +5120,34 @@
             {
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/Step3ToStep2",
                 "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step3",
-                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step2"
+                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step2",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step2",
+                            "executionStep": "VertixBot/UI-V2/SetupStep2Component"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/Finish",
                 "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step3",
-                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Default"
+                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardFinishButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardFinishButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/SetupNewWizardFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/ShowMaxChannels",
@@ -11086,12 +11273,34 @@
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditDefaultPrivacy",
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy"
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
+                            "executionStep": "VertixBot/UI-V3/SetupEditDefaultPrivacy"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/OpenEditDefaultUserLimit",
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit"
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                        "sourceEntity": "VertixBot/UI-V3/SetupEditSelectEditOptionMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
+                            "executionStep": "VertixBot/UI-V3/SetupEditDefaultUserLimit"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/EditChannelName",
@@ -11274,7 +11483,18 @@
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/ButtonsBack",
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                            "executionStep": "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/VerifiedRolesSelected",
@@ -11352,7 +11572,18 @@
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/StaffRolesBack",
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                            "executionStep": "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/VoiceRoleChanged",
@@ -11373,7 +11604,18 @@
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/VoiceRoleBack",
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                            "executionStep": "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultPrivacyChanged",
@@ -11394,7 +11636,18 @@
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultPrivacyBack",
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultPrivacy",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                            "executionStep": "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultUserLimitChanged",
@@ -11415,7 +11668,18 @@
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultUserLimitBack",
                 "from": "VertixBot/UI-V3/SetupEditFlow/States/EditDefaultUserLimit",
-                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster"
+                "to": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
+                            "executionStep": "VertixBot/UI-V3/SetupEditMaster"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupEditFlow/Transitions/DefaultPrivacyReset",
@@ -11625,7 +11889,18 @@
             {
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/Step1ToStep2",
                 "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1",
-                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2"
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardNextButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardNextButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2",
+                            "executionStep": "VertixBot/UI-V3/SetupStep2Component"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectButtons",
@@ -11662,12 +11937,34 @@
             {
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/Step2ToStep1",
                 "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2",
-                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1"
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1",
+                            "executionStep": "VertixBot/UI-V3/SetupStep1Component"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/Step2ToStep3",
                 "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2",
-                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3"
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardNextButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardNextButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3",
+                            "executionStep": "VertixBot/UI-V3/SetupStep3Component"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/SelectVerifiedRoles",
@@ -11704,12 +12001,34 @@
             {
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/Step3ToStep2",
                 "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3",
-                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2"
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardBackButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardBackButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step2",
+                            "executionStep": "VertixBot/UI-V3/SetupStep2Component"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/Finish",
                 "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3",
-                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Default"
+                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/VertixBot/UI-General/WizardFinishButton",
+                        "sourceEntity": "VertixBot/UI-General/WizardFinishButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Default",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
             },
             {
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/ShowMaxChannels",

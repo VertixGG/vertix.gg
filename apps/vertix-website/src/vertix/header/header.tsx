@@ -2,7 +2,7 @@ import React from "react";
 
 import { useLocation } from "react-router-dom";
 
-import VCBrandHeader from "@vertix.gg/assets/brand/vc-naked-header.png";
+import VCBrandHeader from "@vertix.gg/assets/brand/vc-naked-header.webp";
 
 const NAV_LINK_BASE =
     "relative block px-4 py-2 font-body text-lg text-vc-ice transition-colors " +

@@ -1,5 +1,5 @@
 import { DiscordUIComponentMessage, DiscordMessage, DiscordAppFrame } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 
 import { useOpenDynamicChannelV3Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 

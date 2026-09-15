@@ -1,5 +1,5 @@
-import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
-import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
+import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";

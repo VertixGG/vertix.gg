@@ -1,7 +1,7 @@
 import React from "react";
 
 import { DiscordFlowSimulator, DiscordFlowModal, DiscordAppFrame } from "@vertix.gg/discord-ui";
-import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.png";
+import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 
 import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 

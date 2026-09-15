@@ -27,3 +27,8 @@ declare module "@vertix.gg/assets/*.png" {
     const content: string;
     export default content;
 }
+
+declare module "@vertix.gg/assets/*.webp" {
+    const content: string;
+    export default content;
+}

@@ -24,19 +24,19 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                 Select <b>( ➕ ∙ Create Master Channel )</b> menu to create a new master channel.
                 <ul>
                     <li>What is a <b>Master Channel</b>?
-                    <ul>
-                        <li>A voice channel that generate dynamic temporary voice channels, his name will be <b>(
-                            ➕ New Channel )</b></li>
-                    </ul>
+                        <ul>
+                            <li>A voice channel that generate dynamic temporary voice channels, his name will be <b>(
+                                ➕ New Channel )</b></li>
+                        </ul>
 
-                    <br/></li>
+                        <br/></li>
 
                     <li>How i generate new temporary dynamic channel?
-                    <ul>
-                        <li>Simply just join the <b>Master Channel ( ➕ New Channel )</b> and you will be
-                            automatically moved to new temporary voice channel
-                        </li>
-                    </ul></li>
+                        <ul>
+                            <li>Simply just join the <b>Master Channel ( ➕ New Channel )</b> and you will be
+                                automatically moved to new temporary voice channel
+                            </li>
+                        </ul></li>
                 </ul>
                 <br/>
                 <div className="discord-chat-container vc-frame-box m-0 box-normalize">
@@ -81,8 +81,8 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                 </div>
                 <br/>
                 <p>Select <b>Dynamic Channel (V2)</b> to continue with the classic setup.</p>
-            
-            <br/></section>
+
+                <br/></section>
             <section>
                 <h2 id="set-default-channels-name-template" className="text-h4">Set default channel's name template</h2>
                 Edit by pressing <div className="vc-btn vc-btn-sm pointer-events-none">#️⃣ Edit Channel
@@ -93,10 +93,10 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                 <br/>
                 <ul>
                     <li>What is <b>Default Channel's Name Template?</b>
-                    <ul>
-                        <li>Its the name that will be used to create the temporary voice channels, that are
-                            created by joining this <b>Master Channel.</b></li>
-                    </ul></li>
+                        <ul>
+                            <li>Its the name that will be used to create the temporary voice channels, that are
+                                created by joining this <b>Master Channel.</b></li>
+                        </ul></li>
                 </ul>
                 <br/>
                 <div className="discord-chat-container vc-frame-box m-0">
@@ -120,20 +120,20 @@ export default function HowToSetupStep1( props: IHowToSetupStep1Props ) {
                         } }
                     />
                 </div>
-            
-            <br/>
 
-            <ul>
-                <li>What is <code>{ "{user}" }</code>?
+                <br/>
+
                 <ul>
-                    <li>Its name <b>Placeholder</b> that will be used to create the temporary voice
-                        channels, that are created by joining this <b>Master Channel.</b></li>
-                    <li>Assume your name in discord is <b>Bob</b>, And the placeholder is: <code>{ "{User}" }'s
-                        Channel</code> by
-                        joining to the <b>Master Channel</b> newly created temporary channel's name
-                        will be <code>Bob's Channel</code></li>
-                </ul></li>
-            </ul></section>
+                    <li>What is <code>{ "{user}" }</code>?
+                        <ul>
+                            <li>Its name <b>Placeholder</b> that will be used to create the temporary voice
+                                channels, that are created by joining this <b>Master Channel.</b></li>
+                            <li>Assume your name in discord is <b>Bob</b>, And the placeholder is: <code>{ "{User}" }'s
+                                Channel</code> by
+                                joining to the <b>Master Channel</b> newly created temporary channel's name
+                                will be <code>Bob's Channel</code></li>
+                        </ul></li>
+                </ul></section>
             <br/>
             <DiscordModal title="Set dynamic channels name" showNotice={ true } cancelLabel="Cancel">
                 <DiscordInput

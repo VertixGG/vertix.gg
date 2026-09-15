@@ -1,8 +1,10 @@
 import { CommandBase } from "@zenflux/react-commander/command-base";
-import type { DCommandArgs } from "@zenflux/react-commander/definitions";
+
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
 import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generators/query/guild-generators-query";
+
+import type { DCommandArgs } from "@zenflux/react-commander/definitions";
 
 import type {
     GuildGeneratorsDetails,

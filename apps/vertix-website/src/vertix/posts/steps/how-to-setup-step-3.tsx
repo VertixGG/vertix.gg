@@ -75,8 +75,8 @@ export default function HowToSetupStep3( props: IHowToSetupStep3Props ) {
                             visible and <b>Verified Role</b> tagged as <code>@everyone</code>, new members will
                             be able to <b>join/see</b> the channel, which may not be what you intended. This is
                             where the <b>Verified Role selection</b> comes into play.
-                        
-                        <br/></li>
+
+                            <br/></li>
                         <li><b>Tip:</b> In most cases, one <b>verified role</b> is sufficient, and its
                             recommended to use <code>@everyone</code> role.
                         </li>

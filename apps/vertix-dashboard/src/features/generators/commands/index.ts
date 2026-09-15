@@ -1,9 +1,6 @@
 // Generators Commands - Single source of truth for all generator related commands
 
 // Import commands from individual files
-import type { DCommandNewInstanceWithArgs } from "@zenflux/react-commander/definitions";
-
-import type { GeneratorsState } from "@vertix.gg/dashboard/src/features/generators/commands/base";
 
 import { LoadGuildCommand } from "./load-guild-command";
 import { CreateScalingSetupCommand } from "./create-scaling-setup-command";
@@ -19,6 +16,9 @@ import { DeleteDynamicSetupCommand } from "./delete-dynamic-setup-command";
 import { ClearErrorCommand } from "./clear-error-command";
 import { ShowCreateModalCommand } from "./show-create-modal-command";
 import { HideCreateModalCommand } from "./hide-create-modal-command";
+
+import type { GeneratorsState } from "@vertix.gg/dashboard/src/features/generators/commands/base";
+import type { DCommandNewInstanceWithArgs } from "@zenflux/react-commander/definitions";
 
 // State and types from base
 export { GENERATORS_INITIAL_STATE } from "./base";

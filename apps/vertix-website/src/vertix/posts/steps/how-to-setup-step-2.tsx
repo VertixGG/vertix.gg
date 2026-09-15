@@ -65,8 +65,8 @@ export default function HowToSetupStep2( props: IHowToSetupStep2Props ) {
                         } }
                     />
                 </div>
-            
-            <br/></section>
+
+                <br/></section>
             <p>
                 Select buttons you wish to enable in your temporary dynamic channels that created by joining
                 this <b>Master Channel</b>.

@@ -1,12 +1,13 @@
 import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
+import * as React from "react";
+
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
-import * as React from "react";
-
 import ChannelLifecycle from "@vertix.gg/website/src/vertix/components/landing/channel-lifecycle";
+import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
 
 /**
  * The v3 panel, which this page only draws from `lg` up.
@@ -59,7 +60,6 @@ function LandingChat() {
         </div>
     );
 }
-import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
 
 /** One place for the ramp the explainer cards and feature grid walk through. */
 const CRIMSON = "var(--color-vc-crimson)",

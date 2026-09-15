@@ -20,7 +20,6 @@ import { GUILD_TIMINGS_FIELDS } from "@vertix.gg/definitions/src/guild-timings-d
 
 import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
 
-
 import type {
     GuildTimingsInterface,
     TGuildTimingsOverrides
@@ -152,7 +151,6 @@ function readDynamicSettings( settingsData: Record<string, unknown>, defaults: R
         dynamicChannelButtonsRowBreaks: ( settingsData.dynamicChannelButtonsRowBreaks as number[] ) ?? []
     };
 }
-
 
 export interface DynamicSettings {
     dynamicChannelNameTemplate: string;
@@ -518,7 +516,6 @@ export class ManagementService extends ServiceWithDependenciesBase<{
             settings
         };
     }
-
 
     /**
      * Function getGeneratorDefaults() :: What a generator of this version is created with, from the bot.

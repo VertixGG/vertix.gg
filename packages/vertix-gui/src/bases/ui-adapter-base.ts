@@ -957,31 +957,47 @@ export abstract class UIAdapterBase<
         }
     }
 
+    /**
+     * Function deleteRelatedComponentMessagesInternal() :: Takes down what this adapter left standing.
+     *
+     * It used to look for its own name at the front of a component's custom id as written. Both
+     * interface modules hash their ids, so the name is not there to find and this matched nothing -
+     * it has been walking channels and deleting none of them for as long as the hashing has been on.
+     * `ownsComponentsOf` asks the question the way the id was made.
+     */
     public async deleteRelatedComponentMessagesInternal( channel: TChannel ) {
         const supported = channel instanceof BaseGuildTextChannel || channel instanceof BaseGuildVoiceChannel;
 
-        if ( supported ) {
-            const messages = await channel.messages.fetch().catch( ( e ) => {
-                this.$$.staticLogger.error( this.deleteRelatedComponentMessagesInternal, "", e );
-            } );
-
-            if ( !messages ) {
-                return;
-            }
-
-            // Remove all messages that have adapter's components.
-            const messagesToDelete = messages.filter( ( message ) => {
-                const json = message.toJSON() as any;
-
-                if ( json?.components ) {
-                    return json.components.some( ( row: any ) =>
-                        row.components.some( ( component: any ) => component.custom_id?.startsWith( this.getName() ) )
-                    );
-                }
-            } );
-
-            await channel.bulkDelete( messagesToDelete );
+        if ( !supported ) {
+            return;
         }
+
+        const messages = await channel.messages.fetch().catch( ( e ) => {
+            this.$$.staticLogger.error( this.deleteRelatedComponentMessagesInternal, "", e );
+        } );
+
+        if ( !messages ) {
+            return;
+        }
+
+        // Remove all messages that have adapter's components.
+        const messagesToDelete = messages.filter( ( message ) => this.ownsComponentsOf( message ) );
+
+        if ( !messagesToDelete.size ) {
+            return;
+        }
+
+        /**
+         * Old messages are passed over rather than allowed to throw.
+         *
+         * Discord refuses to bulk delete anything over a fortnight old, and this is walked down a
+         * list of every channel there is on startup - one message too old would have ended the walk
+         * where it stood and left every channel after it untouched. That cost nothing while the
+         * match above found nothing; now that it finds things, it would.
+         */
+        await channel.bulkDelete( messagesToDelete, true ).catch( ( e ) => {
+            this.$$.staticLogger.error( this.deleteRelatedComponentMessagesInternal, "", e );
+        } );
     }
 
     public async deleteRelatedEphemeralInteractionsInternal(

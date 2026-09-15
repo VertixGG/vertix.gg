@@ -46,6 +46,20 @@ export const DYNAMIC_CHANNEL_V2_FEATURE_BY_ELEMENT: Readonly<Record<string, stri
 };
 
 /**
+ * Every v3 button, in the order the panel prints them.
+ *
+ * The legend above the buttons is an image the api draws from a list this passes it, and left
+ * unsaid it falls back to whichever list the api was deployed with - which is how a panel came to
+ * draw fifteen buttons under a legend naming fourteen. Said here once, because two pages draw this
+ * panel and a list written twice is a list that ends up disagreeing with itself.
+ */
+export const DYNAMIC_CHANNEL_V3_BUTTON_ORDER: ReadonlyArray<string> = [
+    "rename", "limit", "access", "invite", "privacy",
+    "region", "edit-primary-message", "clear-chat", "rest-channel", "transfer",
+    "templates", "status", "knock", "lfm", "claim-button"
+];
+
+/**
  * The feature each button of the v3 primary message stands for, by element name.
  *
  * Keyed the way the exported UI definitions name their elements, so a press in a rendered

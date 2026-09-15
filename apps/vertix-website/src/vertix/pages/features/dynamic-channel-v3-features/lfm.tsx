@@ -4,7 +4,10 @@ import { DiscordFlowSimulator, DiscordFlowModal, DiscordAppFrame, DiscordChannel
 import OwnerAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 
-import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+import {
+    DYNAMIC_CHANNEL_V3_BUTTON_ORDER,
+    DYNAMIC_CHANNEL_V3_EMOJI_NAMES
+} from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
 import {
     DEMO_CHANNEL_NAME,
@@ -23,18 +26,6 @@ const LFM_CHANNELS = [
 
 const EXAMPLE_NOTE = "Need 2 for ranked, mic required";
 
-/**
- * The panel this demonstration draws, in the order the group prints them.
- *
- * Named rather than left to the sheet's own fallback. The legend is an image the api draws from
- * whichever button list it was deployed with, so a generator that carries Lfm - which is the only
- * kind that could press it - has to say so, or the drawing disagrees with the buttons under it.
- */
-const PANEL_BUTTONS = [
-    "rename", "limit", "access", "invite", "privacy",
-    "region", "edit-primary-message", "clear-chat", "rest-channel", "transfer",
-    "templates", "status", "knock", "lfm", "claim-button"
-];
 
 /** A room with a seat or two left in it, which is the only kind worth advertising. */
 const CHANNEL_MEMBERS = [ DEMO_MEMBERS.owner, DEMO_MEMBERS.alex ];
@@ -215,7 +206,7 @@ export default function Lfm() {
                                         name: DEMO_CHANNEL_NAME,
                                         limit: "4",
                                         memberCount: String( CHANNEL_MEMBERS.length ),
-                                        dynamicChannelButtonsTemplate: PANEL_BUTTONS.join( "," ),
+                                        dynamicChannelButtonsTemplate: DYNAMIC_CHANNEL_V3_BUTTON_ORDER.join( "," ),
                                         dynamicChannelButtonsRowBreaks: "",
                                         // Stands in until a board is picked, so the closing
                                         // screen names one either way - a server with a single

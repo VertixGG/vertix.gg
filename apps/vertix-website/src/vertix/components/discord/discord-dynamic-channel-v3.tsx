@@ -4,7 +4,10 @@ import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 
 import "./discord-chat-container.css";
 
-import { useOpenDynamicChannelV3Feature } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+import {
+    DYNAMIC_CHANNEL_V3_BUTTON_ORDER,
+    useOpenDynamicChannelV3Feature
+} from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
 export default function DiscordDynamicChannelV3() {
     const openFeature = useOpenDynamicChannelV3Feature();
@@ -36,6 +39,11 @@ export default function DiscordDynamicChannelV3() {
                     limitEmoji: "<emoji name='UserLimit'>",
                     privacyEmoji: "<emoji name='ChannelPrivacy'>",
                     regionEmoji: "<emoji name='ChannelRegion'>",
+                    // The legend names what is drawn under it. Unsaid, the sheet falls back to the
+                    // api's own list and the two disagree by whatever the api has not been
+                    // deployed with yet.
+                    dynamicChannelButtonsTemplate: DYNAMIC_CHANNEL_V3_BUTTON_ORDER.join( "," ),
+                    dynamicChannelButtonsRowBreaks: "",
                 } }
                 onElementClick={ openFeature }
             />

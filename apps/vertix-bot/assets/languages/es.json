@@ -752,23 +752,28 @@
           "selectOptions": [
             {
               "label": "Rol de voz",
-              "description": "El rol que reciben los miembros mientras están en un canal de voz"
+              "description": "El rol que reciben los miembros mientras están en un canal de voz",
+              "value": "editVoiceRole"
             },
             {
               "label": "Roles verificados",
-              "description": "Para quién son los canales dinámicos"
+              "description": "Para quién son los canales dinámicos",
+              "value": "editVerifiedRoles"
             },
             {
               "label": "Roles del staff",
-              "description": "Quién puede actuar en un canal que no es suyo"
+              "description": "Quién puede actuar en un canal que no es suyo",
+              "value": "editStaffRoles"
             },
             {
               "label": "Palabras prohibidas",
-              "description": "Palabras que no pueden ir en el nombre de un canal"
+              "description": "Palabras que no pueden ir en el nombre de un canal",
+              "value": "editBadwords"
             },
             {
               "label": "Reclamar",
-              "description": "Cuánto espera un canal abandonado y cuánto dura la votación"
+              "description": "Cuánto espera un canal abandonado y cuánto dura la votación",
+              "value": "editClaim"
             }
           ]
         }
@@ -779,16 +784,20 @@
           "placeholder": "◎ ∙ Selecciona un valor para editar",
           "selectOptions": [
             {
-              "label": "∙ Ausencia antes de reclamar"
+              "label": "∙ Ausencia antes de reclamar",
+              "value": "claim-owner-away"
             },
             {
-              "label": "∙ Frecuencia de comprobación"
+              "label": "∙ Frecuencia de comprobación",
+              "value": "claim-check-interval"
             },
             {
-              "label": "∙ Duración de la votación"
+              "label": "∙ Duración de la votación",
+              "value": "vote-duration"
             },
             {
-              "label": "∙ Tiempo por candidato"
+              "label": "∙ Tiempo por candidato",
+              "value": "vote-time-per-candidate"
             }
           ]
         }
@@ -1149,13 +1158,16 @@
           "placeholder": "⛉ ∙ Seleccionar estado de privacidad",
           "selectOptions": [
             {
-              "label": "Público"
+              "label": "Público",
+              "value": "public"
             },
             {
-              "label": "Privado"
+              "label": "Privado",
+              "value": "private"
             },
             {
-              "label": "Oculto"
+              "label": "Oculto",
+              "value": "hidden"
             }
           ]
         }
@@ -1166,46 +1178,60 @@
           "placeholder": "⌖ ∙ Seleccionar región",
           "selectOptions": [
             {
-              "label": "Automático"
+              "label": "Automático",
+              "value": "auto"
             },
             {
-              "label": "Brasil"
+              "label": "Brasil",
+              "value": "brazil"
             },
             {
-              "label": "Hong Kong"
+              "label": "Hong Kong",
+              "value": "hongkong"
             },
             {
-              "label": "India"
+              "label": "India",
+              "value": "india"
             },
             {
-              "label": "Japón"
+              "label": "Japón",
+              "value": "japan"
             },
             {
-              "label": "Róterdam"
+              "label": "Róterdam",
+              "value": "rotterdam"
             },
             {
-              "label": "Rusia"
+              "label": "Rusia",
+              "value": "russia"
             },
             {
-              "label": "Singapur"
+              "label": "Singapur",
+              "value": "singapore"
             },
             {
-              "label": "Sudáfrica"
+              "label": "Sudáfrica",
+              "value": "southafrica"
             },
             {
-              "label": "Sídney"
+              "label": "Sídney",
+              "value": "sydney"
             },
             {
-              "label": "EE.UU. Centro"
+              "label": "EE.UU. Centro",
+              "value": "us-central"
             },
             {
-              "label": "EE.UU. Este"
+              "label": "EE.UU. Este",
+              "value": "us-east"
             },
             {
-              "label": "EE.UU. Sur"
+              "label": "EE.UU. Sur",
+              "value": "us-south"
             },
             {
-              "label": "EE.UU. Oeste"
+              "label": "EE.UU. Oeste",
+              "value": "us-west"
             }
           ]
         }
@@ -1258,25 +1284,32 @@
           "placeholder": "◎ ∙ Seleccionar opción de edición",
           "selectOptions": [
             {
-              "label": "∙ Editar nombre del canal"
+              "label": "∙ Editar nombre del canal",
+              "value": "edit-dynamic-channel-name"
             },
             {
-              "label": "∙ Editar botones del canal"
+              "label": "∙ Editar botones del canal",
+              "value": "edit-dynamic-channel-buttons"
             },
             {
-              "label": "∙ Editar roles verificados del canal"
+              "label": "∙ Editar roles verificados del canal",
+              "value": "edit-dynamic-channel-verified-roles"
             },
             {
-              "label": "∙ Editar roles del staff del canal"
+              "label": "∙ Editar roles del staff del canal",
+              "value": "edit-dynamic-channel-staff-roles"
             },
             {
-              "label": "∙ Editar el rol de voz del canal"
+              "label": "∙ Editar el rol de voz del canal",
+              "value": "edit-dynamic-channel-voice-role"
             },
             {
-              "label": "∙ Editar estado de privacidad"
+              "label": "∙ Editar estado de privacidad",
+              "value": "edit-dynamic-channel-default-privacy"
             },
             {
-              "label": "∙ Editar límite de usuarios"
+              "label": "∙ Editar límite de usuarios",
+              "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
         }

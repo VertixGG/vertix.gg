@@ -752,23 +752,28 @@
           "selectOptions": [
             {
               "label": "Голосовая роль",
-              "description": "Роль, которую участники получают, пока находятся в голосовом канале"
+              "description": "Роль, которую участники получают, пока находятся в голосовом канале",
+              "value": "editVoiceRole"
             },
             {
               "label": "Проверенные роли",
-              "description": "Для кого предназначены динамические каналы"
+              "description": "Для кого предназначены динамические каналы",
+              "value": "editVerifiedRoles"
             },
             {
               "label": "Роли персонала",
-              "description": "Кто может управлять чужим каналом"
+              "description": "Кто может управлять чужим каналом",
+              "value": "editStaffRoles"
             },
             {
               "label": "Запрещённые слова",
-              "description": "Слова, которые нельзя использовать в названии канала"
+              "description": "Слова, которые нельзя использовать в названии канала",
+              "value": "editBadwords"
             },
             {
               "label": "Забрать",
-              "description": "Сколько ждёт покинутый канал и сколько длится голосование"
+              "description": "Сколько ждёт покинутый канал и сколько длится голосование",
+              "value": "editClaim"
             }
           ]
         }
@@ -779,16 +784,20 @@
           "placeholder": "◎ ∙ Выберите значение для изменения",
           "selectOptions": [
             {
-              "label": "∙ Отсутствие до захвата"
+              "label": "∙ Отсутствие до захвата",
+              "value": "claim-owner-away"
             },
             {
-              "label": "∙ Интервал проверки"
+              "label": "∙ Интервал проверки",
+              "value": "claim-check-interval"
             },
             {
-              "label": "∙ Длительность голосования"
+              "label": "∙ Длительность голосования",
+              "value": "vote-duration"
             },
             {
-              "label": "∙ Время за кандидата"
+              "label": "∙ Время за кандидата",
+              "value": "vote-time-per-candidate"
             }
           ]
         }
@@ -1149,13 +1158,16 @@
           "placeholder": "⛉ ∙ Выберите состояние приватности",
           "selectOptions": [
             {
-              "label": "Публичный"
+              "label": "Публичный",
+              "value": "public"
             },
             {
-              "label": "Приватный"
+              "label": "Приватный",
+              "value": "private"
             },
             {
-              "label": "Скрытый"
+              "label": "Скрытый",
+              "value": "hidden"
             }
           ]
         }
@@ -1166,46 +1178,60 @@
           "placeholder": "⌖ ∙ Выберите регион",
           "selectOptions": [
             {
-              "label": "Автоматически"
+              "label": "Автоматически",
+              "value": "auto"
             },
             {
-              "label": "Бразилия"
+              "label": "Бразилия",
+              "value": "brazil"
             },
             {
-              "label": "Гонконг"
+              "label": "Гонконг",
+              "value": "hongkong"
             },
             {
-              "label": "Индия"
+              "label": "Индия",
+              "value": "india"
             },
             {
-              "label": "Япония"
+              "label": "Япония",
+              "value": "japan"
             },
             {
-              "label": "Роттердам"
+              "label": "Роттердам",
+              "value": "rotterdam"
             },
             {
-              "label": "Россия"
+              "label": "Россия",
+              "value": "russia"
             },
             {
-              "label": "Сингапур"
+              "label": "Сингапур",
+              "value": "singapore"
             },
             {
-              "label": "Южная Африка"
+              "label": "Южная Африка",
+              "value": "southafrica"
             },
             {
-              "label": "Сидней"
+              "label": "Сидней",
+              "value": "sydney"
             },
             {
-              "label": "США Центр"
+              "label": "США Центр",
+              "value": "us-central"
             },
             {
-              "label": "США Восток"
+              "label": "США Восток",
+              "value": "us-east"
             },
             {
-              "label": "США Юг"
+              "label": "США Юг",
+              "value": "us-south"
             },
             {
-              "label": "США Запад"
+              "label": "США Запад",
+              "value": "us-west"
             }
           ]
         }
@@ -1258,25 +1284,32 @@
           "placeholder": "◎ ∙ Выберите опцию редактирования",
           "selectOptions": [
             {
-              "label": "∙ Изменить название канала"
+              "label": "∙ Изменить название канала",
+              "value": "edit-dynamic-channel-name"
             },
             {
-              "label": "∙ Изменить кнопки канала"
+              "label": "∙ Изменить кнопки канала",
+              "value": "edit-dynamic-channel-buttons"
             },
             {
-              "label": "∙ Изменить проверенные роли канала"
+              "label": "∙ Изменить проверенные роли канала",
+              "value": "edit-dynamic-channel-verified-roles"
             },
             {
-              "label": "∙ Изменить роли персонала канала"
+              "label": "∙ Изменить роли персонала канала",
+              "value": "edit-dynamic-channel-staff-roles"
             },
             {
-              "label": "∙ Изменить голосовую роль канала"
+              "label": "∙ Изменить голосовую роль канала",
+              "value": "edit-dynamic-channel-voice-role"
             },
             {
-              "label": "∙ Изменить состояние приватности"
+              "label": "∙ Изменить состояние приватности",
+              "value": "edit-dynamic-channel-default-privacy"
             },
             {
-              "label": "∙ Изменить лимит пользователей"
+              "label": "∙ Изменить лимит пользователей",
+              "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
         }

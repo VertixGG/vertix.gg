@@ -752,23 +752,28 @@
           "selectOptions": [
             {
               "label": "ボイスロール",
-              "description": "ボイスチャンネルにいる間メンバーに付与されるロール"
+              "description": "ボイスチャンネルにいる間メンバーに付与されるロール",
+              "value": "editVoiceRole"
             },
             {
               "label": "認証済みロール",
-              "description": "ダイナミックチャンネルを使える人"
+              "description": "ダイナミックチャンネルを使える人",
+              "value": "editVerifiedRoles"
             },
             {
               "label": "スタッフロール",
-              "description": "自分のものではないチャンネルを操作できる人"
+              "description": "自分のものではないチャンネルを操作できる人",
+              "value": "editStaffRoles"
             },
             {
               "label": "禁止ワード",
-              "description": "チャンネル名に使えない単語"
+              "description": "チャンネル名に使えない単語",
+              "value": "editBadwords"
             },
             {
               "label": "取得",
-              "description": "放置されたチャンネルが待つ時間と、投票が続く時間"
+              "description": "放置されたチャンネルが待つ時間と、投票が続く時間",
+              "value": "editClaim"
             }
           ]
         }
@@ -779,16 +784,20 @@
           "placeholder": "◎ ∙ 編集する値を選択",
           "selectOptions": [
             {
-              "label": "∙ 請求までの不在時間"
+              "label": "∙ 請求までの不在時間",
+              "value": "claim-owner-away"
             },
             {
-              "label": "∙ チェック間隔"
+              "label": "∙ チェック間隔",
+              "value": "claim-check-interval"
             },
             {
-              "label": "∙ 投票の継続時間"
+              "label": "∙ 投票の継続時間",
+              "value": "vote-duration"
             },
             {
-              "label": "∙ 候補者ごとの追加時間"
+              "label": "∙ 候補者ごとの追加時間",
+              "value": "vote-time-per-candidate"
             }
           ]
         }
@@ -1149,13 +1158,16 @@
           "placeholder": "⛉ ∙ プライバシー状態を選択",
           "selectOptions": [
             {
-              "label": "公開"
+              "label": "公開",
+              "value": "public"
             },
             {
-              "label": "非公開"
+              "label": "非公開",
+              "value": "private"
             },
             {
-              "label": "非表示"
+              "label": "非表示",
+              "value": "hidden"
             }
           ]
         }
@@ -1166,46 +1178,60 @@
           "placeholder": "⌖ ∙ リージョンを選択",
           "selectOptions": [
             {
-              "label": "自動"
+              "label": "自動",
+              "value": "auto"
             },
             {
-              "label": "ブラジル"
+              "label": "ブラジル",
+              "value": "brazil"
             },
             {
-              "label": "香港"
+              "label": "香港",
+              "value": "hongkong"
             },
             {
-              "label": "インド"
+              "label": "インド",
+              "value": "india"
             },
             {
-              "label": "日本"
+              "label": "日本",
+              "value": "japan"
             },
             {
-              "label": "ロッテルダム"
+              "label": "ロッテルダム",
+              "value": "rotterdam"
             },
             {
-              "label": "ロシア"
+              "label": "ロシア",
+              "value": "russia"
             },
             {
-              "label": "シンガポール"
+              "label": "シンガポール",
+              "value": "singapore"
             },
             {
-              "label": "南アフリカ"
+              "label": "南アフリカ",
+              "value": "southafrica"
             },
             {
-              "label": "シドニー"
+              "label": "シドニー",
+              "value": "sydney"
             },
             {
-              "label": "米国中部"
+              "label": "米国中部",
+              "value": "us-central"
             },
             {
-              "label": "米国東部"
+              "label": "米国東部",
+              "value": "us-east"
             },
             {
-              "label": "米国南部"
+              "label": "米国南部",
+              "value": "us-south"
             },
             {
-              "label": "米国西部"
+              "label": "米国西部",
+              "value": "us-west"
             }
           ]
         }
@@ -1258,25 +1284,32 @@
           "placeholder": "◎ ∙ 編集オプションを選択",
           "selectOptions": [
             {
-              "label": "∙ チャンネル名を編集"
+              "label": "∙ チャンネル名を編集",
+              "value": "edit-dynamic-channel-name"
             },
             {
-              "label": "∙ チャンネルボタンを編集"
+              "label": "∙ チャンネルボタンを編集",
+              "value": "edit-dynamic-channel-buttons"
             },
             {
-              "label": "∙ チャンネルの認証済みロールを編集"
+              "label": "∙ チャンネルの認証済みロールを編集",
+              "value": "edit-dynamic-channel-verified-roles"
             },
             {
-              "label": "∙ チャンネルのスタッフロールを編集"
+              "label": "∙ チャンネルのスタッフロールを編集",
+              "value": "edit-dynamic-channel-staff-roles"
             },
             {
-              "label": "∙ チャンネルのボイスロールを編集"
+              "label": "∙ チャンネルのボイスロールを編集",
+              "value": "edit-dynamic-channel-voice-role"
             },
             {
-              "label": "∙ プライバシー状態を編集"
+              "label": "∙ プライバシー状態を編集",
+              "value": "edit-dynamic-channel-default-privacy"
             },
             {
-              "label": "∙ ユーザー上限を編集"
+              "label": "∙ ユーザー上限を編集",
+              "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
         }

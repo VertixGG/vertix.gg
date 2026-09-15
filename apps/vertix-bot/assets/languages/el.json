@@ -752,23 +752,28 @@
           "selectOptions": [
             {
               "label": "Ρόλος φωνής",
-              "description": "Ο ρόλος που παίρνουν τα μέλη όσο βρίσκονται σε φωνητικό κανάλι"
+              "description": "Ο ρόλος που παίρνουν τα μέλη όσο βρίσκονται σε φωνητικό κανάλι",
+              "value": "editVoiceRole"
             },
             {
               "label": "Επαληθευμένοι ρόλοι",
-              "description": "Για ποιους είναι τα δυναμικά κανάλια"
+              "description": "Για ποιους είναι τα δυναμικά κανάλια",
+              "value": "editVerifiedRoles"
             },
             {
               "label": "Ρόλοι προσωπικού",
-              "description": "Ποιοι μπορούν να δράσουν σε κανάλι που δεν τους ανήκει"
+              "description": "Ποιοι μπορούν να δράσουν σε κανάλι που δεν τους ανήκει",
+              "value": "editStaffRoles"
             },
             {
               "label": "Απαγορευμένες λέξεις",
-              "description": "Λέξεις που δεν επιτρέπονται σε όνομα καναλιού"
+              "description": "Λέξεις που δεν επιτρέπονται σε όνομα καναλιού",
+              "value": "editBadwords"
             },
             {
               "label": "Διεκδίκηση",
-              "description": "Πόσο περιμένει ένα εγκαταλελειμμένο κανάλι και πόσο διαρκεί η ψηφοφορία"
+              "description": "Πόσο περιμένει ένα εγκαταλελειμμένο κανάλι και πόσο διαρκεί η ψηφοφορία",
+              "value": "editClaim"
             }
           ]
         }
@@ -779,16 +784,20 @@
           "placeholder": "◎ ∙ Επιλέξτε τιμή για επεξεργασία",
           "selectOptions": [
             {
-              "label": "∙ Απουσία πριν τη διεκδίκηση"
+              "label": "∙ Απουσία πριν τη διεκδίκηση",
+              "value": "claim-owner-away"
             },
             {
-              "label": "∙ Συχνότητα ελέγχου"
+              "label": "∙ Συχνότητα ελέγχου",
+              "value": "claim-check-interval"
             },
             {
-              "label": "∙ Διάρκεια ψηφοφορίας"
+              "label": "∙ Διάρκεια ψηφοφορίας",
+              "value": "vote-duration"
             },
             {
-              "label": "∙ Χρόνος ανά υποψήφιο"
+              "label": "∙ Χρόνος ανά υποψήφιο",
+              "value": "vote-time-per-candidate"
             }
           ]
         }
@@ -1149,13 +1158,16 @@
           "placeholder": "⛉ ∙ Επιλέξτε κατάσταση απορρήτου",
           "selectOptions": [
             {
-              "label": "Δημόσιο"
+              "label": "Δημόσιο",
+              "value": "public"
             },
             {
-              "label": "Ιδιωτικό"
+              "label": "Ιδιωτικό",
+              "value": "private"
             },
             {
-              "label": "Κρυφό"
+              "label": "Κρυφό",
+              "value": "hidden"
             }
           ]
         }
@@ -1166,46 +1178,60 @@
           "placeholder": "⌖ ∙ Επιλέξτε περιοχή",
           "selectOptions": [
             {
-              "label": "Αυτόματο"
+              "label": "Αυτόματο",
+              "value": "auto"
             },
             {
-              "label": "Βραζιλία"
+              "label": "Βραζιλία",
+              "value": "brazil"
             },
             {
-              "label": "Χονγκ Κονγκ"
+              "label": "Χονγκ Κονγκ",
+              "value": "hongkong"
             },
             {
-              "label": "Ινδία"
+              "label": "Ινδία",
+              "value": "india"
             },
             {
-              "label": "Ιαπωνία"
+              "label": "Ιαπωνία",
+              "value": "japan"
             },
             {
-              "label": "Ρότερνταμ"
+              "label": "Ρότερνταμ",
+              "value": "rotterdam"
             },
             {
-              "label": "Ρωσία"
+              "label": "Ρωσία",
+              "value": "russia"
             },
             {
-              "label": "Σιγκαπούρη"
+              "label": "Σιγκαπούρη",
+              "value": "singapore"
             },
             {
-              "label": "Νότια Αφρική"
+              "label": "Νότια Αφρική",
+              "value": "southafrica"
             },
             {
-              "label": "Σίδνεϊ"
+              "label": "Σίδνεϊ",
+              "value": "sydney"
             },
             {
-              "label": "ΗΠΑ Κέντρο"
+              "label": "ΗΠΑ Κέντρο",
+              "value": "us-central"
             },
             {
-              "label": "ΗΠΑ Ανατολή"
+              "label": "ΗΠΑ Ανατολή",
+              "value": "us-east"
             },
             {
-              "label": "ΗΠΑ Νότος"
+              "label": "ΗΠΑ Νότος",
+              "value": "us-south"
             },
             {
-              "label": "ΗΠΑ Δύση"
+              "label": "ΗΠΑ Δύση",
+              "value": "us-west"
             }
           ]
         }
@@ -1258,25 +1284,32 @@
           "placeholder": "◎ ∙ Επιλέξτε επιλογή επεξεργασίας",
           "selectOptions": [
             {
-              "label": "∙ Επεξεργασία ονόματος καναλιού"
+              "label": "∙ Επεξεργασία ονόματος καναλιού",
+              "value": "edit-dynamic-channel-name"
             },
             {
-              "label": "∙ Επεξεργασία κουμπιών καναλιού"
+              "label": "∙ Επεξεργασία κουμπιών καναλιού",
+              "value": "edit-dynamic-channel-buttons"
             },
             {
-              "label": "∙ Επεξεργασία επαληθευμένων ρόλων καναλιού"
+              "label": "∙ Επεξεργασία επαληθευμένων ρόλων καναλιού",
+              "value": "edit-dynamic-channel-verified-roles"
             },
             {
-              "label": "∙ Επεξεργασία ρόλων προσωπικού καναλιού"
+              "label": "∙ Επεξεργασία ρόλων προσωπικού καναλιού",
+              "value": "edit-dynamic-channel-staff-roles"
             },
             {
-              "label": "∙ Επεξεργασία ρόλου φωνής καναλιού"
+              "label": "∙ Επεξεργασία ρόλου φωνής καναλιού",
+              "value": "edit-dynamic-channel-voice-role"
             },
             {
-              "label": "∙ Επεξεργασία κατάστασης απορρήτου"
+              "label": "∙ Επεξεργασία κατάστασης απορρήτου",
+              "value": "edit-dynamic-channel-default-privacy"
             },
             {
-              "label": "∙ Επεξεργασία ορίου χρηστών"
+              "label": "∙ Επεξεργασία ορίου χρηστών",
+              "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
         }

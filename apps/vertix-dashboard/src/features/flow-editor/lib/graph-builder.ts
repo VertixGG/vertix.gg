@@ -448,97 +448,6 @@ class EdgeBuilder {
         } );
     }
 
-    public addIntermediateStateEdges(): void {
-        const { flow, initialStateKey, stateKeys, stateKeyToCompId, stateKeyToElementRows, wizardConnectedTargets } = this.context;
-
-        const stateDepth = this.computeStateDepths();
-
-        const matchesElement = ( elementRows: ElementData[][], sourceEntity: string ): string | null => {
-            const elementFullNames = new Set( elementRows.flat().map( el => el.name ) );
-            return elementFullNames.has( sourceEntity ) ? sourceEntity : null;
-        };
-
-        flow.transitions.forEach( transition => {
-            if ( transition.from === initialStateKey ) {
-                return;
-            }
-
-            if ( !stateKeys.has( transition.from ) || !stateKeys.has( transition.to ) ) {
-                return;
-            }
-
-            const sourceCompId = stateKeyToCompId.get( transition.from );
-            const targetCompId = stateKeyToCompId.get( transition.to );
-
-            if ( !sourceCompId || !targetCompId ) {
-                return;
-            }
-
-            const label = transition.to.split( "/" ).pop() ?? transition.to;
-
-            const trigger = ( transition.triggeredBy ?? [] ).find( t =>
-                [ "string-select", "button", "user-select" ].includes( t.handlerKind )
-            );
-
-            const elementRows = stateKeyToElementRows.get( transition.from );
-            if ( !elementRows ) {
-                return;
-            }
-
-            // Skip self-transitions (same state to same state) - these create visual loops
-            if ( transition.from === transition.to ) {
-                return;
-            }
-
-            if ( wizardConnectedTargets.has( transition.to ) ) {
-                return;
-            }
-
-            const fromDepth = stateDepth.get( transition.from ) ?? 0;
-            const toDepth = stateDepth.get( transition.to ) ?? 0;
-
-            if ( toDepth <= fromDepth ) {
-                return;
-            }
-
-            if ( trigger?.sourceEntity ) {
-                const matchedElement = matchesElement( elementRows, trigger.sourceEntity );
-                if ( matchedElement ) {
-                    logger.debug( this.addIntermediateStateEdges, `edge: ${ label }, sourceHandle: btn-${ matchedElement }, source: ${ trigger.sourceEntity }` );
-                    this.addEdge( createComponentToComponentEdge( sourceCompId, targetCompId, flow.name, matchedElement, label ) );
-                    return;
-                }
-            }
-
-            logger.debug( this.addIntermediateStateEdges, `fallback-edge: ${ label }` );
-            this.addEdge( createComponentToStateFallbackEdge( sourceCompId, targetCompId, flow.name, label ) );
-        } );
-    }
-
-    private computeStateDepths(): Map<string, number> {
-        const { flow, initialStateKey, stateKeys } = this.context;
-        const depths = new Map<string, number>();
-        const queue: string[] = [ initialStateKey ];
-
-        depths.set( initialStateKey, 0 );
-
-        while ( queue.length > 0 ) {
-            const current = queue.shift()!;
-            const currentDepth = depths.get( current ) ?? 0;
-
-            flow.transitions
-                .filter( t => t.from === current && stateKeys.has( t.to ) )
-                .forEach( t => {
-                    if ( !depths.has( t.to ) ) {
-                        depths.set( t.to, currentDepth + 1 );
-                        queue.push( t.to );
-                    }
-                } );
-        }
-
-        return depths;
-    }
-
     public addSelectMenuEdges( initialCompId: string, initialElementRows: ElementData[][] ): void {
         const elementFullNames = new Set( initialElementRows.flat().map( el => el.name ) );
 
@@ -917,6 +826,15 @@ class MultiStateFlowBuilder {
     /** Every node either end of an edge of this flow's has landed on. */
     private readonly wiredNodeIds: Set<string> = new Set();
 
+    /** How many moves from the flow's first screen each screen is, at the fewest. */
+    private readonly stateDepths: Map<string, number>;
+
+    /** Per screen, the chrome it carries whose line is drawn from somewhere else. */
+    private readonly sharedControls: Map<string, string[]> = new Map();
+
+    /** The moves bundled onto a screen instead of drawn, keyed from, to and trigger. */
+    private readonly bundledMoves: Set<string> = new Set();
+
     private readonly initialStateTransitionTriggers: StateTransitionTrigger[] = [];
 
     public constructor( allNodes: Node[], addEdge: ( edge: Edge ) => void, context: FlowContext ) {
@@ -932,6 +850,107 @@ class MultiStateFlowBuilder {
 
         this.addEdge = trackingAddEdge;
         this.edgeBuilder = new EdgeBuilder( trackingAddEdge, context );
+
+        this.stateDepths = MultiStateFlowBuilder.computeStateDepths( context );
+
+        this.bundleSharedControls();
+    }
+
+    /**
+     * How far each screen is from the one the flow opens at.
+     *
+     * Breadth first, so a screen's depth is the fewest moves that reach it. Used to tell a move
+     * that goes on through the flow from one that returns to somewhere it has already been, which
+     * is what decides both whether the layout should rank by it and, of several screens carrying
+     * the same control, which one the line gets drawn from.
+     */
+    private static computeStateDepths( context: FlowContext ): Map<string, number> {
+        const depths = new Map<string, number>( [ [ context.initialStateKey, 0 ] ] ),
+            queue: string[] = [ context.initialStateKey ];
+
+        while ( queue.length > 0 ) {
+            const current = queue.shift()!,
+                currentDepth = depths.get( current ) ?? 0;
+
+            ( context.flow.transitions ?? [] )
+                .filter( ( transition ) => transition.from === current && context.stateKeys.has( transition.to ) )
+                .forEach( ( transition ) => {
+                    if ( depths.has( transition.to ) ) {
+                        return;
+                    }
+
+                    depths.set( transition.to, currentDepth + 1 );
+                    queue.push( transition.to );
+                } );
+        }
+
+        return depths;
+    }
+
+    /**
+     * The flow's chrome, drawn once instead of from every screen that carries it.
+     *
+     * A control on four or more of a flow's screens that leads to the same one place from each of
+     * them is not a step in the flow, it is the frame around it. The templates panel has four of
+     * these - Apply, Manage, Capture and Back - on every screen it owns, which was twenty lines
+     * saying four things, each drawn the height of the canvas.
+     *
+     * Four rather than three, because at three a flow is often the state machine itself rather than
+     * chrome around one: the privacy menu's public, private and hidden all reach each other, and
+     * those lines are the whole shape of the thing. By four screens a control is plainly the frame.
+     *
+     * The line is kept from the screen nearest the way in, where it reads as going somewhere rather
+     * than coming back. Every other screen carrying it says so on the screen itself.
+     */
+    private bundleSharedControls(): void {
+        const SHARED_CONTROL_SCREENS = 4;
+
+        const sources = new Map<string, { trigger: string; to: string; from: string[] }>();
+
+        ( this.context.flow.transitions ?? [] ).forEach( ( transition ) => {
+            const { from, to } = transition;
+
+            if ( ! from || ! to || from === to || ! this.context.stateKeys.has( to ) ) {
+                return;
+            }
+
+            const trigger = transition.triggeredBy?.[ 0 ]?.sourceEntity;
+
+            if ( ! trigger ) {
+                return;
+            }
+
+            const key = `${ trigger }|${ to }`,
+                existing = sources.get( key ) ?? { trigger, to, from: [] };
+
+            if ( ! existing.from.includes( from ) ) {
+                existing.from.push( from );
+            }
+
+            sources.set( key, existing );
+        } );
+
+        sources.forEach( ( { trigger, to, from } ) => {
+            if ( from.length < SHARED_CONTROL_SCREENS ) {
+                return;
+            }
+
+            const nearest = [ ...from ].sort( ( a, b ) =>
+                ( this.stateDepths.get( a ) ?? Number.MAX_SAFE_INTEGER ) - ( this.stateDepths.get( b ) ?? Number.MAX_SAFE_INTEGER )
+            )[ 0 ];
+
+            const shortTrigger = trigger.split( "/" ).pop() ?? trigger,
+                shortTarget = to.split( "/" ).pop() ?? to;
+
+            from.filter( ( stateKey ) => stateKey !== nearest ).forEach( ( stateKey ) => {
+                this.bundledMoves.add( `${ stateKey }|${ to }|${ trigger }` );
+
+                const carried = this.sharedControls.get( stateKey ) ?? [];
+
+                carried.push( `${ shortTrigger } → ${ shortTarget }` );
+                this.sharedControls.set( stateKey, carried );
+            } );
+        } );
     }
 
     public build(): void {
@@ -1048,7 +1067,20 @@ class MultiStateFlowBuilder {
                 return;
             }
 
-            const triggerName = transition.triggeredBy?.[ 0 ]?.sourceEntity?.split( "/" ).pop();
+            const trigger = transition.triggeredBy?.[ 0 ]?.sourceEntity;
+
+            // Chrome this screen carries but does not get the line for - it is listed on the screen
+            // instead, and drawn once from the screen nearest the way in.
+            if ( trigger && this.bundledMoves.has( `${ from }|${ to }|${ trigger }` ) ) {
+                return;
+            }
+
+            // Where the move goes back to somewhere the flow has already been, so the layout can
+            // stop ranking by it. Equal depth counts: two screens a control moves between sideways
+            // rank each other in a circle, which a ranking cannot satisfy either.
+            const isBackEdge = ( this.stateDepths.get( to ) ?? 0 ) <= ( this.stateDepths.get( from ) ?? 0 );
+
+            const triggerName = trigger?.split( "/" ).pop();
 
             // What the bot looked at to take this branch, where nobody pressed anything. Declared
             // beside the transition, so a branch reads as its condition rather than as an omission.
@@ -1057,7 +1089,7 @@ class MultiStateFlowBuilder {
                     ? `${ condition.field } = ${ condition.value ?? condition.operator }`
                     : undefined;
 
-            this.addEdge( createDeclaredTransitionEdge( sourceId, targetId, from, to, triggerName, outcomeCondition ) );
+            this.addEdge( createDeclaredTransitionEdge( sourceId, targetId, from, to, triggerName, outcomeCondition, isBackEdge ) );
         } );
     }
 
@@ -1147,7 +1179,8 @@ class MultiStateFlowBuilder {
                 `${ stateComp.stateName }\n${ stateComp.component.name }`,
                 stateComp.stateKey,
                 this.context.flow.name,
-                this.getSelfTransitionsFor( stateComp.stateKey )
+                this.getSelfTransitionsFor( stateComp.stateKey ),
+                this.sharedControls.get( stateComp.stateKey ) ?? []
             ) );
 
             this.addEdgesForState( stepIndex, compId, isModalFirst, modalFirstNodeId, stateComp, modalFirstTargetStateKey );

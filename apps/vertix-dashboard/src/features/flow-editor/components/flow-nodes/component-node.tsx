@@ -68,6 +68,8 @@ type ComponentNodeData = Record<
     stateTransitionTriggers?: StateTransitionTrigger[];
     /** What this screen's own controls do without leaving it. */
     selfTransitions?: string[];
+    /** The flow's chrome standing on this screen, whose line is drawn from another one. */
+    sharedControls?: string[];
 };
 
 /**
@@ -240,7 +242,7 @@ type ComponentNodeType = Node<ComponentNodeData, "componentNode">;
 
 export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
     const { data, selected } = props;
-    const { label, embed, buttonModalTriggers, buttonFlowTriggers, stateTransitionTriggers, selfTransitions } = data;
+    const { label, embed, buttonModalTriggers, buttonFlowTriggers, stateTransitionTriggers, selfTransitions, sharedControls } = data;
 
     // What a channel will actually draw: the generator's arrangement when the editor is scoped to
     // one, and the component's own rows otherwise.
@@ -543,6 +545,29 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                             ? "text-zinc-500 border-zinc-700 italic"
                                             : "text-emerald-300/90 border-emerald-500/30"
                                     }` }
+                                >
+                                    { name }
+                                </span>
+                            ) ) }
+                        </div>
+                    </div>
+                ) }
+
+                { /* The flow's frame, standing here and drawn elsewhere. A templates panel carries
+                     Apply, Manage, Capture and Back on every screen it has: drawn from each, that
+                     is twenty lines for four facts, every one of them running the height of the
+                     canvas. The line is drawn once from the screen nearest the way in, and the rest
+                     say it here, which is what those lines were telling anybody anyway. */ }
+                { sharedControls && sharedControls.length > 0 && (
+                    <div className="px-3 py-2 border-t border-purple-500/30 bg-purple-600/5">
+                        <div className="text-[9px] uppercase tracking-wider text-purple-300/70 mb-1">
+                            Also on this screen
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                            { sharedControls.map( ( name ) => (
+                                <span
+                                    key={ name }
+                                    className="text-[10px] rounded px-1.5 py-0.5 border text-emerald-300/70 border-emerald-500/20"
                                 >
                                     { name }
                                 </span>

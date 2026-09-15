@@ -68,7 +68,8 @@ export function createComponentNode(
     label?: string,
     stateKey?: string,
     flowName?: string,
-    selfTransitions: string[] = []
+    selfTransitions: string[] = [],
+    sharedControls: string[] = []
 ): Node {
     return {
         id: compId,
@@ -100,6 +101,20 @@ export function createComponentNode(
              * and an arrow from a box back to itself shows none of them.
              */
             selfTransitions,
+            /*
+             * The flow's chrome: controls standing on this screen whose line is drawn from another.
+             *
+             * A control on four or more of a flow's screens, leading to the same one place from
+             * each, is the frame around the flow rather than a step in it - a templates panel's
+             * Apply, Manage, Capture and Back sit on every screen it has. Drawn from each of them
+             * it was five lines saying one thing, running the height of the canvas because the
+             * screens they leave are the ones laid out furthest from what they lead to.
+             *
+             * So the line is drawn once, from the screen the flow reaches first, and every other
+             * screen says here what it carries. Which is the whole of what was being read off those
+             * lines anyway: that this button is on this screen, and where it goes.
+             */
+            sharedControls,
             stateKey,
             flowName
         }

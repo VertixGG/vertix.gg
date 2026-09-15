@@ -235,7 +235,8 @@ export function createDeclaredTransitionEdge(
     fromStateKey: string,
     toStateKey: string,
     triggerName: string | undefined,
-    outcomeCondition?: string
+    outcomeCondition?: string,
+    isBackEdge = false
 ): Edge {
     /*
      * A move with nobody pressing anything is not always a gap.
@@ -263,6 +264,17 @@ export function createDeclaredTransitionEdge(
         labelStyle: { fill: color, fontSize: 10, fontWeight: 600, opacity: isUndescribed ? 0.5 : 1 },
         labelBgStyle: { fill: "#18181b" },
         labelBgPadding: [ 4, 2 ] as [ number, number ],
-        labelBgBorderRadius: 3
+        labelBgBorderRadius: 3,
+        /*
+         * Whether this move returns to a screen the flow has already been through.
+         *
+         * The layout reads it and leaves the move out of its ranking. Ranked, a Back button is an
+         * instruction to put the screen it returns to below the screen it leaves - so a flow whose
+         * every screen can go back to the first one gets stretched into a column as tall as it has
+         * screens, and then every one of those Backs is drawn the whole height of it.
+         *
+         * The move is still drawn. It is only the ordering that stops listening to it.
+         */
+        data: { isBackEdge }
     };
 }

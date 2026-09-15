@@ -8,6 +8,7 @@ import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategi
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 import { DynamicChannelFlow } from "@vertix.gg/bot/src/ui/general/flows/dynamic-channel-flow";
+import { CommandsFlow } from "@vertix.gg/bot/src/ui/v3/flows/commands-flow";
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
 import * as adapters from "@vertix.gg/bot/src/ui/v3/ui-adapters-index";
@@ -41,7 +42,8 @@ export class UIModuleV3 extends UIModuleBase {
 
     public static override getSystemFlows() {
         return [
-            DynamicChannelFlow
+            DynamicChannelFlow,
+            CommandsFlow
         ];
     }
 

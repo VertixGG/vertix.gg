@@ -2198,10 +2198,7 @@
                                     {
                                         "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(Date.now() + (args.elapsedTime || 0))"
-                                }
+                                ]
                             }
                         }
                     }

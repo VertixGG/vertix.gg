@@ -307,6 +307,21 @@ class CleanupWorker extends InitializeBase {
         await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL );
         await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL );
         await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL );
+
+        /**
+         * Last, and the only one that was never swept.
+         *
+         * A control panel is written as a default channel, so every generator ever made leaves one of
+         * these behind when its channel goes - and nothing collected them. A guild the end-to-end
+         * suite runs against had a hundred and nineteen, one per run.
+         *
+         * It is also where a row lands when nothing said what it was: the column defaults to this, so
+         * anything written before the column meant anything reads as a default channel whatever it
+         * actually is. Sweeping on "discord says this channel does not exist" is the same question for
+         * all of them, and it is only asked of rows whose channel is genuinely gone - but it is the
+         * reason this one is worth being careful about, and the reason it goes last.
+         */
+        await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.DEFAULT_CHANNEL );
     }
 
     private async handleGuilds( client: Client ) {

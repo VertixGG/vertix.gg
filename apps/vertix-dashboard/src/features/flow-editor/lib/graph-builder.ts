@@ -811,8 +811,38 @@ class FlowPatternDetector {
             return { isModalFirst: false, modalName: null, targetStateKey: null };
         }
 
-        const transitionFromInitial = flow.transitions.find( t =>
-            t.from === initialStateKey && t.triggeredBy?.some( tr => tr.handlerKind === "modal" )
+        const fromInitial = flow.transitions.filter( ( transition ) => transition.from === initialStateKey );
+
+        /*
+         * Anything else on the first screen that somebody presses and gets somewhere.
+         *
+         * A flow opens on a modal when its first state is nothing but the way to that modal - the
+         * state is never drawn, because there is nothing on it to draw. So a move out of that state
+         * attributed to something which is not a modal is proof the state has a screen of its own,
+         * and the modal is one of the things standing on it rather than the thing standing in for
+         * it.
+         *
+         * A move with nothing attributed is not evidence either way: those are the outcome branches
+         * a submission lands on - a rename's Badword, a status's Cleared - which is exactly the
+         * shape a modal-first flow has.
+         *
+         * Setup is the flow this was wrong about. Its first screen carries two menus, a language
+         * button, a server-options button and a bad-words button, and because one of the things it
+         * can open is a modal the whole screen was being left undrawn and the modal put in its
+         * place - so `/setup` appeared to open a bad words box, and the five things that screen
+         * leads to appeared to leave one.
+         */
+        const hasOtherWayOut = fromInitial.some( ( transition ) =>
+            transition.triggeredBy?.length
+            && ! transition.triggeredBy.some( ( trigger ) => trigger.handlerKind === "modal" )
+        );
+
+        if ( hasOtherWayOut ) {
+            return { isModalFirst: false, modalName: null, targetStateKey: null };
+        }
+
+        const transitionFromInitial = fromInitial.find( ( transition ) =>
+            transition.triggeredBy?.some( ( trigger ) => trigger.handlerKind === "modal" )
         );
 
         const modalTriggerFromInitial = transitionFromInitial?.triggeredBy?.find( tr => tr.handlerKind === "modal" );

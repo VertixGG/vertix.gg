@@ -14,6 +14,8 @@ import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-cu
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
+import { useExtraModulesStore } from "@vertix.gg/dashboard/src/hooks/use-extra-modules-store";
+import { EdgeLegend } from "@vertix.gg/dashboard/src/features/flow-editor/components/edge-legend";
 import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
 import { TOUR_ANCHORS } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
 
@@ -65,6 +67,8 @@ export function FlowViewer() {
     const selectNode = useCommand( "Dashboard/FlowEditor/SelectNode" );
     const { isEditMode, editingFlowName, enterEditMode, exitEditMode } = useEditMode();
     const guildId = useSelectedGuildId();
+
+    const showsExtraModules = useExtraModulesStore( ( state ) => state.showsExtraModules );
 
     // Up here because the button it belongs to is built inside a closure further down, which is no
     // place to draw a hook from.
@@ -150,7 +154,9 @@ export function FlowViewer() {
             return { layoutedNodes: [] as Node[], layoutedEdges: [] as Edge[] };
         }
 
-        const { nodes: allNodes, edges: allEdges } = buildFlowGraph( moduleFlowsData );
+        const { nodes: allNodes, edges: allEdges } = buildFlowGraph( moduleFlowsData, {
+            includesExtraModules: showsExtraModules
+        } );
 
         // Filter nodes and edges when in edit mode
         let nodesToLayout = allNodes;
@@ -187,6 +193,7 @@ export function FlowViewer() {
         moduleFlowsData,
         isEditMode,
         editingFlowName,
+        showsExtraModules,
         LAYOUT_OPTIONS.DIRECTION,
         LAYOUT_OPTIONS.RANK_SEPARATION,
         LAYOUT_OPTIONS.NODE_SEPARATION
@@ -647,6 +654,8 @@ export function FlowViewer() {
                     maskColor={ MINIMAP_COLORS.MASK }
                 />
             </ReactFlow>
+
+            <EdgeLegend />
 
             <div className="absolute bottom-4 right-4 mb-[120px] px-2 py-1 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-300">
                 { Math.round( zoom * 100 ) }%

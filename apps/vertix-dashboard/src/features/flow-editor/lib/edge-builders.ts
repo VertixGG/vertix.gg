@@ -45,10 +45,20 @@ export function createComponentToFlowEdge(
     compId: string,
     targetFlowId: string,
     buttonName: string,
-    targetFlowName: string
+    targetFlowName: string,
+    sourceFlowName: string
 ): Edge {
     return {
-        id: `edge-btn-flow-${ compId }-${ buttonName }-${ targetFlowName }`,
+        /*
+         * Named after the flow the button belongs to rather than the component drawing it.
+         *
+         * A flow with several states draws its component once per state, and every copy carries the
+         * same buttons - so a name carrying the copy made one button leading out of a flow into one
+         * line per state. The general module drew thirty-five of these to say six things, each of
+         * them several thousand pixels long. There is one fact here - this button leads to that
+         * flow - and this is one line for it.
+         */
+        id: `edge-btn-flow-${ sourceFlowName }-${ buttonName }-${ targetFlowName }`,
         source: compId,
         target: targetFlowId,
         sourceHandle: `btn-${ buttonName }`,

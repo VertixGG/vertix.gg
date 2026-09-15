@@ -1,6 +1,7 @@
 import zCore from "@zenflux/core";
 
 import { createModuleNode, createFlowNode, createComponentNode, createModalNode } from "@vertix.gg/dashboard/src/features/flow-editor/lib/node-builders";
+import { isForeignTo } from "@vertix.gg/dashboard/src/features/flow-editor/lib/module-scope";
 import {
     createModuleToFlowEdge,
     createFlowToComponentEdge,
@@ -229,17 +230,31 @@ class TriggerBuilder {
     ): { buttonModalTriggers: ButtonModalTrigger[]; buttonFlowTriggers: ButtonFlowTrigger[] } {
         const totalRows = elementRows.length;
 
+        /*
+         * Whether this component draws the button at all.
+         *
+         * A flow's connections belong to the flow, and a flow with several states draws its
+         * component once per state - so every copy was handed every connection, including for
+         * buttons only some other state puts on screen. An edge leaving a button the component does
+         * not draw has no handle to leave from and is dropped where it is drawn, so the ones that
+         * survived were whichever copies happened to carry the button.
+         */
+        const drawsButton = ( buttonName: string ) =>
+            elementRows.some( ( row ) => row.some( ( element ) => element.name === buttonName ) );
+
         return {
             buttonModalTriggers: buttonModalConnections.map( c => ( {
                 buttonName: c.buttonName,
                 modalName: c.modalName,
                 handlePosition: getButtonHandlePosition( c.buttonName, elementRows, totalRows )
             } ) ),
-            buttonFlowTriggers: buttonFlowConnections.map( c => ( {
-                buttonName: c.buttonName,
-                targetFlowName: c.targetFlowName,
-                handlePosition: getButtonHandlePosition( c.buttonName, elementRows, totalRows )
-            } ) )
+            buttonFlowTriggers: buttonFlowConnections
+                .filter( ( c ) => drawsButton( c.buttonName ) )
+                .map( c => ( {
+                    buttonName: c.buttonName,
+                    targetFlowName: c.targetFlowName,
+                    handlePosition: getButtonHandlePosition( c.buttonName, elementRows, totalRows )
+                } ) )
         };
     }
 }
@@ -265,7 +280,7 @@ class EdgeBuilder {
 
             const targetFlowId = this.context.flowIdMap.get( trigger.targetFlowName );
             if ( targetFlowId ) {
-                this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
+                this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName, this.context.flow.name ) );
             }
         } );
     }
@@ -1214,7 +1229,7 @@ class SingleComponentFlowBuilder {
             }
             const targetFlowId = this.flowIdMap.get( trigger.targetFlowName );
             if ( targetFlowId ) {
-                this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
+                this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName, this.flow.name ) );
             }
         } );
 
@@ -1235,6 +1250,7 @@ class SingleComponentFlowBuilder {
 
 class FlowGraphBuilder {
     private readonly data: ModuleFlowsResponse;
+    private readonly includesExtraModules: boolean;
     private readonly allNodes: Node[] = [];
     private readonly allEdges: Edge[] = [];
     private readonly edgeIds = new Set<string>();
@@ -1242,8 +1258,20 @@ class FlowGraphBuilder {
     private readonly systemFlowCompIds = new Map<string, string>();
     private readonly reachableFlows = new Set<string>();
 
-    public constructor( data: ModuleFlowsResponse ) {
+    public constructor( data: ModuleFlowsResponse, options?: FlowGraphOptions ) {
         this.data = data;
+        this.includesExtraModules = options?.includesExtraModules ?? false;
+    }
+
+    /**
+     * Whether a flow is somebody else's and the reader has not asked to see those.
+     *
+     * A module's canvas pulls in whatever it hands off to, and that belongs to another module. It
+     * is worth drawing when somebody is following the path across and worth leaving out when they
+     * are reading this module, so it is a question rather than a rule.
+     */
+    private isHiddenExtraModule( flowName: string ): boolean {
+        return ! this.includesExtraModules && isForeignTo( flowName, this.data.module );
     }
 
     public build(): { nodes: Node[]; edges: Edge[] } {
@@ -1296,6 +1324,10 @@ class FlowGraphBuilder {
                 return;
             }
 
+            if ( this.isHiddenExtraModule( flow.name ) ) {
+                return;
+            }
+
             const flowNode = createFlowNode( flow, false );
             this.flowIdMap.set( flow.name, flowNode.id );
             this.allNodes.push( flowNode );
@@ -1329,7 +1361,7 @@ class FlowGraphBuilder {
                 }
                 const targetFlowId = this.flowIdMap.get( trigger.targetFlowName );
                 if ( targetFlowId ) {
-                    this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName ) );
+                    this.addEdge( createComponentToFlowEdge( compId, targetFlowId, trigger.buttonName, trigger.targetFlowName, flow.name ) );
                 }
             } );
 
@@ -1351,6 +1383,10 @@ class FlowGraphBuilder {
     private buildFlowComponents(): void {
         this.data.flows.forEach( flow => {
             if ( this.reachableFlows.size > 0 && !this.reachableFlows.has( flow.name ) ) {
+                return;
+            }
+
+            if ( this.isHiddenExtraModule( flow.name ) ) {
                 return;
             }
 
@@ -1498,6 +1534,14 @@ export function computeReachableFlows( data: Pick<ModuleFlowsResponse, "flows" |
     return reachableFlows;
 }
 
-export function buildFlowGraph( moduleFlowsData: ModuleFlowsResponse ): { nodes: Node[]; edges: Edge[] } {
-    return new FlowGraphBuilder( moduleFlowsData ).build();
+export interface FlowGraphOptions {
+    /** Whether to draw the flows this module hands off to, which other modules own. */
+    includesExtraModules?: boolean;
+}
+
+export function buildFlowGraph(
+    moduleFlowsData: ModuleFlowsResponse,
+    options?: FlowGraphOptions
+): { nodes: Node[]; edges: Edge[] } {
+    return new FlowGraphBuilder( moduleFlowsData, options ).build();
 }

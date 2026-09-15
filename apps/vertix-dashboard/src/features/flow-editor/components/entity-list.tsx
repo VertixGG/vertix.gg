@@ -8,6 +8,9 @@ import { MINIMAP_COLORS } from "@vertix.gg/dashboard/src/features/flow-editor/li
 import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
 import { entityListAnchor } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
 import { computeReachableFlows } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
+import { isForeignTo } from "@vertix.gg/dashboard/src/features/flow-editor/lib/module-scope";
+import { useExtraModulesStore } from "@vertix.gg/dashboard/src/hooks/use-extra-modules-store";
+import { ExtraModulesToggle } from "@vertix.gg/dashboard/src/features/flow-editor/components/extra-modules-toggle";
 
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
@@ -61,6 +64,8 @@ export function EntityList() {
 
     const selectEntity = useCommand( "Dashboard/FlowEditor/SelectEntity" );
 
+    const showsExtraModules = useExtraModulesStore( ( state ) => state.showsExtraModules );
+
     const handleEntitySelect = ( entityType: EntityType, entityName: string ) => {
         selectEntity.run( { entityType, entityName } );
     };
@@ -75,11 +80,17 @@ export function EntityList() {
 
         const reachable = computeReachableFlows( moduleFlowsData );
 
+        // The list offers what the canvas draws. Without this it would offer to select a flow that
+        // is not there, and selecting it would do nothing at all.
+        const drawn = ( name: string ) => showsExtraModules || ! isForeignTo( name, moduleFlowsData.module );
+
         const modals = new Set<string>();
 
-        moduleFlowsData.components.forEach( ( component ) => {
-            component.modals.forEach( ( modal ) => modals.add( modal ) );
-        } );
+        moduleFlowsData.components
+            .filter( ( component ) => drawn( component.name ) )
+            .forEach( ( component ) => {
+                component.modals.filter( drawn ).forEach( ( modal ) => modals.add( modal ) );
+            } );
 
         return [
             {
@@ -87,20 +98,20 @@ export function EntityList() {
                 type: "flow" as EntityType,
                 color: MINIMAP_COLORS.FLOW,
                 items: moduleFlowsData.flows
-                    .filter( ( f ) => reachable.size === 0 || reachable.has( f.name ) )
+                    .filter( ( f ) => ( reachable.size === 0 || reachable.has( f.name ) ) && drawn( f.name ) )
                     .map( ( f ) => f.name )
             },
             {
                 label: "System Flows",
                 type: "systemFlow" as EntityType,
                 color: MINIMAP_COLORS.SYSTEM_FLOW,
-                items: moduleFlowsData.systemFlows.map( ( f ) => f.name )
+                items: moduleFlowsData.systemFlows.filter( ( f ) => drawn( f.name ) ).map( ( f ) => f.name )
             },
             {
                 label: "Components",
                 type: "component" as EntityType,
                 color: MINIMAP_COLORS.COMPONENT,
-                items: moduleFlowsData.components.map( ( c ) => c.name )
+                items: moduleFlowsData.components.filter( ( c ) => drawn( c.name ) ).map( ( c ) => c.name )
             },
             {
                 label: "Modals",
@@ -109,7 +120,7 @@ export function EntityList() {
                 items: Array.from( modals )
             }
         ].filter( ( group ) => group.items.length > 0 );
-    }, [ moduleFlowsData ] );
+    }, [ moduleFlowsData, showsExtraModules ] );
 
     const filteredGroups = useMemo( () => {
         if ( !searchTerm.trim() ) {
@@ -153,6 +164,8 @@ export function EntityList() {
                         </button>
                     ) }
                 </div>
+
+                <ExtraModulesToggle />
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">

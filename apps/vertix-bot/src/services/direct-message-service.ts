@@ -16,11 +16,32 @@ const OWNER_COMMAND_SYNTAX = {
     edit_embed: "!edit_embed <#channel_id> <message_id> <https://message_url.com>"
 };
 
+/**
+ * How long somebody handed the feedback screen is left alone before being handed it again.
+ *
+ * In the environment because it is a judgement about how often a person should hear the same thing
+ * from us, not something the code depends on. A day: long enough that writing three lines in a row
+ * is answered once, short enough that somebody coming back tomorrow is answered at all rather than
+ * met with silence - and silence is what this used to be, for as long as the process happened to
+ * live.
+ */
+const FEEDBACK_COOLDOWN = Number( process.env.DIRECT_MESSAGE_FEEDBACK_COOLDOWN ) || 86400000; // 24 hours.
+
 export class DirectMessageService extends ServiceWithDependenciesBase<{
     appService: AppService;
     uiService: UIService;
 }> {
-    private feedbackSentIds: Map<string, string> = new Map();
+    /**
+     * When each member was last handed the feedback screen.
+     *
+     * A time rather than the bare set of ids it was. A set never let anybody go: somebody answered
+     * once was never answered again while the process lived, and it grew by one for every new
+     * person who ever wrote in, with nothing that could ever take one out.
+     *
+     * Held rather than written down, because what it prevents is a burst. Losing it on a restart
+     * costs somebody one more copy of a screen they were due to be shown again anyway.
+     */
+    private feedbackSentAt: Map<string, number> = new Map();
 
     public static getName() {
         return "VertixBot/Services/DirectMessage";
@@ -61,7 +82,7 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
             return this.onOwnerMessage( message );
         }
 
-        if ( this.feedbackSentIds.has( message.author.id ) ) {
+        if ( this.wasFeedbackSentRecently( message.author.id ) ) {
             return;
         }
 
@@ -72,10 +93,52 @@ export class DirectMessageService extends ServiceWithDependenciesBase<{
             return;
         }
 
-        this.feedbackSentIds.set( message.author.id, message.author.id );
+        this.rememberFeedbackSent( message.author.id );
 
         // Check what happens with zero
         await adapter.sendToUser( "direct-message", message.author.id, {} );
+    }
+
+    /**
+     * Function wasFeedbackSentRecently() :: Whether this member has already been answered lately.
+     *
+     * Drops the entry it finds expired on the way past, so somebody who comes back after a day is
+     * not left taking up room for a second one.
+     */
+    private wasFeedbackSentRecently( userId: string ) {
+        const sentAt = this.feedbackSentAt.get( userId );
+
+        if ( undefined === sentAt ) {
+            return false;
+        }
+
+        if ( Date.now() - sentAt < FEEDBACK_COOLDOWN ) {
+            return true;
+        }
+
+        this.feedbackSentAt.delete( userId );
+
+        return false;
+    }
+
+    /**
+     * Function rememberFeedbackSent() :: Notes that this member has just been answered.
+     *
+     * Everyone whose day is up goes at the same time. Swept here rather than on a timer because
+     * somebody writing in is the only thing that ever adds to this, so it is also the only moment
+     * there is anything new to tidy - and a bot nobody is writing to should not be waking up to
+     * sweep an empty room.
+     */
+    private rememberFeedbackSent( userId: string ) {
+        const now = Date.now();
+
+        for ( const [ id, sentAt ] of this.feedbackSentAt ) {
+            if ( now - sentAt >= FEEDBACK_COOLDOWN ) {
+                this.feedbackSentAt.delete( id );
+            }
+        }
+
+        this.feedbackSentAt.set( userId, now );
     }
 
     public async onOwnerMessage( message: Message ) {

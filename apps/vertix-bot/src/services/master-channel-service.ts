@@ -133,6 +133,15 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 }> {
     private debugger: Debugger;
 
+    /**
+     * How recently each member asked for a channel, which is what tells somebody in a hurry from
+     * somebody leaning on the generator.
+     *
+     * An entry stops meaning anything `MAX_TIMEOUT_PER_CREATE` after the time in it - past that the
+     * member is not too fast, whatever it says - so one is only worth keeping for that long. It was
+     * kept forever, one for every member who ever joined a generator, which on a bot that stays up
+     * is a list of everyone it has ever seen.
+     */
     private requestedChannelMap: Map<
         string,
         {
@@ -374,6 +383,24 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
         return controlChannelResult.channelId;
     }
 
+    /**
+     * Function forgetStaleChannelRequests() :: Drops the members who are no longer in a hurry.
+     *
+     * Swept where a request is recorded rather than on a timer, because joining a generator is the
+     * only thing that ever adds to this - so it is also the only moment there is anything new to
+     * drop, and a quiet bot has no reason to be woken to look.
+     *
+     * Nothing about who is refused changes: an entry this drops is one the check above already
+     * reads as not too fast.
+     */
+    private forgetStaleChannelRequests( now: number ) {
+        for ( const [ memberId, request ] of this.requestedChannelMap ) {
+            if ( now - request.timestamp >= MAX_TIMEOUT_PER_CREATE ) {
+                this.requestedChannelMap.delete( memberId );
+            }
+        }
+    }
+
     public async onJoinMasterChannel( args: IChannelEnterGenericArgs ) {
         const { displayName, channelName, oldState, newState } = { ...args },
             { guild } = newState;
@@ -444,6 +471,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
             return;
         }
+
+        this.forgetStaleChannelRequests( timestamp );
 
         // Set a new timestamp.
         this.requestedChannelMap.set( newState.member.id, {

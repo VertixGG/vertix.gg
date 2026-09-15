@@ -643,6 +643,32 @@ export abstract class UIAdapterBase<
             const args = await this.getArgsInternal( interaction as TInteraction );
 
             await this.build( args, "run", interaction as TInteraction );
+
+            /**
+             * What was just worked out is put where the press can read it, when there is nothing
+             * there already.
+             *
+             * These args were only ever built to draw with, and drawing is not what a press does -
+             * a handler reads the screen's args through the manager, and after a restart the
+             * manager holds none: the note is written by whatever sent the message, and this
+             * process sent nothing. So a handler reaching for a field got `undefined.field` and
+             * threw, which the interaction handler catches - leaving the press unanswered and
+             * whoever made it looking at "this interaction failed".
+             *
+             * What comes back cannot always be the whole screen. An adapter rebuilds from the
+             * channel, and anything that only ever arrived in the args the message was sent with -
+             * who knocked, say - is not there to rebuild. But an adapter reading a field it has no
+             * answer for takes its own path for not knowing, which is a screen saying so; reading
+             * a field off nothing at all is a throw and silence.
+             *
+             * Only where nothing is stored. Args that exist are the screen's own and may hold what
+             * no rebuild could produce, so they are not written over on the strength of a press.
+             */
+            const argsId = this.argsManager.getArgsId( interaction as TInteraction );
+
+            if ( !this.argsManager.getArgsById( this, argsId ) ) {
+                this.argsManager.setInitialArgs( this, argsId, args, { overwrite: true, silent: true } );
+            }
         }
 
         await this.runEntityCallback( entityName, interaction as TInteraction );

@@ -12,7 +12,7 @@ import { Api } from "@top-gg/sdk";
 
 import type TopGG from "@top-gg/sdk";
 
-import type { Client, MessageComponentInteraction } from "discord.js";
+import type { Client, CommandInteraction, MessageComponentInteraction } from "discord.js";
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 
 const TOP_GG_TIMER_INTERVAL = 1000 * 60 * 60, // 1 hour
@@ -82,7 +82,9 @@ export class TopGGManager extends CacheBase<Date> {
         return embed;
     }
 
-    public async sendVoteEmbed( interaction: MessageComponentInteraction<"cached"> ) {
+    public async sendVoteEmbed(
+        interaction: MessageComponentInteraction<"cached"> | CommandInteraction<"cached">
+    ) {
         return await interaction
             .reply( {
                 embeds: [ TopGGManager.$.getVoteEmbed() ],

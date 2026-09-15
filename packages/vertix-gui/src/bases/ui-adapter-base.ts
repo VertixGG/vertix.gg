@@ -45,6 +45,7 @@ import type {
     ButtonInteraction,
     ChannelType,
     Client,
+    CommandInteraction,
     InteractionEditReplyOptions,
     MessageComponentInteraction,
     ModalComponentData,
@@ -84,6 +85,36 @@ const ADAPTER_INTERACTION_TOKEN_LIFETIME = Number( process.env.ADAPTER_INTERACTI
  * TChannel - The channel type that will be used if the adapter starts interaction.
  * TInteraction - The channel type that will be used if the adapter replies to interaction.
  */
+/**
+ * Function fillGapsFrom() :: What the caller handed in, under what the adapter worked out.
+ *
+ * An adapter's `getReplyArgs()` is free to answer with only what it knows, and most do - they
+ * rebuild the screen from the channel every time, which is why they can be trusted over anything
+ * held from before. What they cannot know is whatever exists only in the press that is being
+ * answered: which member was picked, which way an owner answered a knock, which channels there were
+ * to choose between. That arrives here as the args the caller passed, and an adapter that named
+ * none of it used to drop it.
+ *
+ * Nothing about that failed. The screen rendered, having been given args it could build from, and
+ * an embed handed no answer prints the branch for no answer - so somebody let into a channel was
+ * told they had not been.
+ *
+ * Gaps rather than a merge in either direction: the adapter wins every key it actually answered,
+ * and a key it answered as `undefined` is not an answer. Assigning either object wholesale over the
+ * other gets one of those two wrong.
+ */
+export function fillGapsFrom( args: UIArgs, argsFromManager?: UIArgs ): UIArgs {
+    const filled: UIArgs = Object.assign( {}, args );
+
+    for ( const [ key, value ] of Object.entries( argsFromManager ?? {} ) ) {
+        if ( undefined === filled[ key ] ) {
+            filled[ key ] = value;
+        }
+    }
+
+    return filled;
+}
+
 export abstract class UIAdapterBase<
     // TODO: Generic are useless...
     TChannel extends UIAdapterStartContext,
@@ -440,32 +471,26 @@ export abstract class UIAdapterBase<
             return;
         }
 
-        if ( this.isDynamic() ) {
-            const argsId = this.argsManager.getArgsId( interaction ),
-                currentArgs = this.getArgsManager().getArgsById( this, argsId ),
-                shouldRefreshArgs = !currentArgs || newArgs,
-                resolvedArgs = shouldRefreshArgs
-                    ? await this.getArgsInternal( interaction as TInteraction, newArgs )
-                    : null;
+        const argsId = this.argsManager.getArgsId( interaction ),
+            currentArgs = this.getArgsManager().getArgsById( this, argsId ),
+            // Args are kept per message, so an adapter asked to replace a screen it did not draw -
+            // a notice taking over the message a press came from - looks under an id it never wrote
+            // under, and finds nothing. Resolving its own, which is what `ephemeral()` does for the
+            // same adapter on the same press, is the difference between a sentence and a press that
+            // dies unanswered: `build` refuses `undefined` args, and `getMessage` is then left with
+            // no schema to read. A static adapter that does have args stored keeps using them;
+            // only the empty case is new.
+            shouldRefreshArgs = ! currentArgs || ( this.isDynamic() && !! newArgs );
 
-            if ( resolvedArgs ) {
-                // Preserve system-internal args from newArgs that getArgsInternal may not return
-                // (e.g., the customization target set by triggerTransition, _step set by editReplyWithStep)
-                if ( newArgs ) {
-                    if ( newArgs._customizationComponent ) {
-                        resolvedArgs._customizationComponent = newArgs._customizationComponent;
-                        resolvedArgs._customizationState = newArgs._customizationState;
-                    }
-                    if ( newArgs._step ) {
-                        resolvedArgs._step = newArgs._step;
-                    }
-                }
+        if ( shouldRefreshArgs ) {
+            const resolvedArgs = await this.getArgsInternal( interaction as TInteraction, newArgs );
 
-                if ( currentArgs ) {
-                    this.getArgsManager().setArgs( this, interaction, resolvedArgs );
-                } else {
-                    this.getArgsManager().setInitialArgs( this, argsId, resolvedArgs );
-                }
+            this.preserveSystemArgs( resolvedArgs, newArgs );
+
+            if ( currentArgs ) {
+                this.getArgsManager().setArgs( this, interaction, resolvedArgs );
+            } else {
+                this.getArgsManager().setInitialArgs( this, argsId, resolvedArgs );
             }
         }
 
@@ -608,20 +633,11 @@ export abstract class UIAdapterBase<
         sendArgs?: UIArgs,
         deletePreviousInteraction = this.shouldDeletePreviousReply?.() || false
     ) {
-        const args = await this.getArgsInternal( interaction, sendArgs ),
+        const args = this.preserveSystemArgs(
+                await this.getArgsInternal( interaction, sendArgs ),
+                sendArgs
+            ),
             caller = this.ephemeral.name;
-
-        // Preserve system-internal args from sendArgs that getArgsInternal may not return
-        // (e.g., the customization target set by triggerTransition, _step set by ephemeralWithStep)
-        if ( sendArgs ) {
-            if ( sendArgs._customizationComponent ) {
-                args._customizationComponent = sendArgs._customizationComponent;
-                args._customizationState = sendArgs._customizationState;
-            }
-            if ( sendArgs._step ) {
-                args._step = sendArgs._step;
-            }
-        }
 
         await this.build( args, "reply", interaction );
 
@@ -644,10 +660,29 @@ export abstract class UIAdapterBase<
         return interaction
             .reply( {
                 ...message,
-                ephemeral: true
+                ephemeral: true,
+                withResponse: true
             } )
-            .then( ( _result ) => {
+            .then( ( result ) => {
                 this.setScreenOwner( interaction.user.id, interaction );
+
+                // The reply is a message in its own right, and every component drawn on it arrives
+                // naming it rather than whatever was pressed to open it. Args are kept per message,
+                // so without this the first press on a fresh ephemeral asks for an id nothing was
+                // ever stored under - it lands as `ArgsNotFound`, and whatever that press meant to
+                // record is dropped.
+                //
+                // `send()` has always stored against the message it created; this is that, for the
+                // message a reply creates. Asked for with the reply rather than fetched after it,
+                // so the screen costs one call as it always did.
+                const reply = result?.resource?.message;
+
+                if ( reply ) {
+                    this.argsManager.setInitialArgs( this, reply.id, args, {
+                        overwrite: true,
+                        silent: true
+                    } );
+                }
 
                 if ( shouldDeletePreviousInteraction ) {
                     this.$$.ephemeralInteractions[ interactionInternalId ] = {
@@ -661,9 +696,18 @@ export abstract class UIAdapterBase<
             } );
     }
 
-    // TODO: Determine which interaction available showModal, and use it instead of MessageComponentInteraction.
     // TODO: Method does not favor dynamic/static approach.
-    public async showModal( modalName: string, interaction: MessageComponentInteraction<"cached"> ) {
+    /**
+     * Function showModal() :: Puts a modal in front of whoever asked for one.
+     *
+     * Takes a command interaction as well as a component one, because a modal is how a slash
+     * command asks for a line of text just as much as a button is - discord lets either open one,
+     * and the two used to differ here only because a button was the only thing that ever did.
+     */
+    public async showModal(
+        modalName: string,
+        interaction: MessageComponentInteraction<"cached"> | CommandInteraction<"cached">
+    ): Promise<boolean> {
         const args = await this.getArgsInternal( interaction as TInteraction, {} );
 
         // const entity = this.$$.getComponent()
@@ -693,11 +737,20 @@ export abstract class UIAdapterBase<
             modalInstance = this.getEntityInstance( entityMapped.entity ) as UIModalBase,
             modal = this.buildModal( modalInstance );
 
-        await interaction
+        // Answers whether the modal is actually on screen.
+        //
+        // It used to swallow the failure into the log and return as though it had worked, which
+        // left the interaction unanswered - and an unanswered interaction is discord's own error
+        // to show, in discord's own words. Whoever asked to rename their channel got a bare red
+        // "Missing Permissions" from discord, where every other refusal in the bot is an embed
+        // that says what to do about it.
+        return interaction
             .showModal( modal )
-            .catch( ( error ) => this.$$.staticLogger.error( this.showModal, "", error ) )
-            .then( () => {
-                // this.deleteArgs( this.getArgsId( interaction as TInteraction ) );
+            .then( () => true )
+            .catch( ( error ) => {
+                this.$$.staticLogger.error( this.showModal, "", error );
+
+                return false;
             } );
     }
 
@@ -1057,6 +1110,35 @@ export abstract class UIAdapterBase<
         return true;
     }
 
+    /**
+     * Function preserveSystemArgs() :: Carries across a rebuild the args no adapter hands back.
+     *
+     * `getArgsInternal()` returns whatever the adapter's own `getReplyArgs()` builds, and those
+     * build a fresh object naming their own fields - `clear-chat` returns `{}` - so anything the
+     * framework put on the args going in is gone by the time they come back. The customization
+     * target worked out by `triggerTransition()` and the step asked for by name are both that, and
+     * both were meant, so they are laid back over the top.
+     *
+     * The state travels with the component rather than on its own: an override is written about one
+     * screen of one component, and either half says nothing without the other.
+     */
+    private preserveSystemArgs( resolvedArgs: UIArgs, sourceArgs?: UIArgs ): UIArgs {
+        if ( ! sourceArgs ) {
+            return resolvedArgs;
+        }
+
+        if ( sourceArgs._customizationComponent ) {
+            resolvedArgs._customizationComponent = sourceArgs._customizationComponent;
+            resolvedArgs._customizationState = sourceArgs._customizationState;
+        }
+
+        if ( sourceArgs._step ) {
+            resolvedArgs._step = sourceArgs._step;
+        }
+
+        return resolvedArgs;
+    }
+
     private async getArgsInternal(
         context: TChannel | TInteraction | Message<true>,
         argsFromManager?: UIArgs
@@ -1079,7 +1161,7 @@ export abstract class UIAdapterBase<
                 break;
 
             case "reply":
-                args = await this.getReplyArgs( context as TInteraction, argsFromManager );
+                args = fillGapsFrom( await this.getReplyArgs( context as TInteraction, argsFromManager ), argsFromManager );
                 break;
 
             case "edit-message":

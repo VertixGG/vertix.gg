@@ -4,11 +4,18 @@ import {
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import { ChannelType, PermissionsBitField, PermissionFlagsBits } from "discord.js";
 
+import { getAllCommandDefinitions } from "@vertix.gg/bot/src/commands/definitions";
+
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type {
     UIFlowIntegrationPointBase
 } from "@vertix.gg/gui/src/bases/ui-flow-base";
 import type { UIFlowVisualConnection, UIFlowDataBase } from "@vertix.gg/definitions/src/ui-flow-definitions";
+
+const COMMANDS_FLOW_STATES = {
+    INITIAL: "VertixBot/CommandsFlow/States/Initial",
+    UNKNOWN_COMMAND: "VertixBot/CommandsFlow/States/UnknownCommand"
+} as const;
 
 /**
  * A declarative flow definition mapping slash command names (as transitions)
@@ -40,15 +47,14 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
      */
     public static getFlowTransitions(): Record<string, string[]> {
         return {
-            "VertixBot/CommandsFlow/States/Initial": [
-                // Naming convention: VertixBot/Commands/<CommandNameInPascalCase>
-                "VertixBot/Commands/Setup",
-                "VertixBot/Commands/Help",
-                "VertixBot/Commands/Welcome",
-                // "VertixBot/Commands/Ping", // Example if ping command existed and had a flow
-            ],
-            // Define transitions for the error state (if any needed, maybe allow restarting?)
-            "VertixBot/CommandsFlow/States/UnknownCommand": [] // No transitions out of error by default
+            // Read off the command definitions rather than listed again here. A command that is
+            // registered but missing from this router is a command the flow graph cannot show a
+            // path to, and keeping one list meant keeping them from drifting by hand.
+            [ COMMANDS_FLOW_STATES.INITIAL ]: getAllCommandDefinitions()
+                .map( ( definition ) => definition.flowTransition ),
+
+            // Nothing leads back out of an unknown command.
+            [ COMMANDS_FLOW_STATES.UNKNOWN_COMMAND ]: []
         };
     }
 
@@ -57,22 +63,18 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
      * This is the core routing logic. Ensure target flow names are correct.
      */
     public static getNextStates(): Record<string, string> {
-        return {
-            // Command Transition                         => Target UI Flow Initial State
-            // IMPORTANT: Target flow initial state strings must be accurate!
-            //            Assuming SetupFlow and HelpFlow will be created later.
-            "VertixBot/Commands/Setup":   "VertixBot/UI-General/SetupFlow/States/Initial",
-            "VertixBot/Commands/Help":    "VertixBot/UI-General/FeedbackFlow/States/Default",
-            "VertixBot/Commands/Welcome": "VertixBot/UI-General/WelcomeFlow/States/Initial",
-            // "VertixBot/Commands/Ping":    "VertixBot/Misc/PingFlow/States/Initial",       // Example
-        };
+        return Object.fromEntries(
+            getAllCommandDefinitions().map(
+                ( definition ) => [ definition.flowTransition, definition.flowTargetState ]
+            )
+        );
     }
 
     /**
      * Required data for command transitions (typically none needed just for dispatch).
      */
     public static getRequiredData(): Record<string, ( keyof UIFlowDataBase )[]> {
-        const commands = this.getFlowTransitions()[ "VertixBot/CommandsFlow/States/Initial" ] || [];
+        const commands = this.getFlowTransitions()[ COMMANDS_FLOW_STATES.INITIAL ] || [];
         const requiredData: Record<string, ( keyof UIFlowDataBase )[]> = {};
         commands.forEach( cmdTransition => {
             requiredData[ cmdTransition ] = [];
@@ -81,28 +83,12 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
     }
 
     /**
-      * Utility method to easily get the target flow's initial state string for a command name.
-      * Assumes command name matches the last part of the transition string (case-insensitive).
-      * Returns undefined if the command name doesn't map to a known transition.
-      */
-    public static getTargetFlowInitialState( commandName: string ): string | undefined {
-        const transitions = this.getFlowTransitions()[ "VertixBot/CommandsFlow/States/Initial" ] || [];
-        // Find transition matching VertixBot/Commands/<CommandName>
-        const commandTransition = transitions.find( t => {
-            const parts = t.split( "/" );
-            return parts.length > 0 && parts[ parts.length - 1 ].toLowerCase() === commandName.toLowerCase();
-        } );
-
-        return commandTransition ? this.getNextStates()[ commandTransition ] : undefined;
-    }
-
-    /**
      * Defines the handoff points from this command router flow.
      * Aligned with UIFlowBase structure. Uses FlowIntegrationPointCommand.
      */
     public static override getHandoffPoints(): UIFlowIntegrationPointBase[] {
         const handoffPoints: UIFlowIntegrationPointBase[] = [];
-        const commandTransitions = this.getFlowTransitions()[ "VertixBot/CommandsFlow/States/Initial" ] || [];
+        const commandTransitions = this.getFlowTransitions()[ COMMANDS_FLOW_STATES.INITIAL ] || [];
         const nextStates = this.getNextStates();
 
         commandTransitions.forEach( transition => {
@@ -117,7 +103,7 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
                         flowName: targetFlowName,
                         description: `Handoff: ${ commandName }`,
                         transition: transition,
-                        sourceState: "VertixBot/CommandsFlow/States/Initial",
+                        sourceState: COMMANDS_FLOW_STATES.INITIAL,
                         targetState: targetState,
                         requiredData: []
                     } ) );
@@ -135,7 +121,7 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
      * Added for structural consistency with UIFlowBase.
      */
     public static override getEntryPoints(): UIFlowIntegrationPointBase[] {
-        const transitions = this.getFlowTransitions()[ "VertixBot/CommandsFlow/States/Initial" ] || [];
+        const transitions = this.getFlowTransitions()[ COMMANDS_FLOW_STATES.INITIAL ] || [];
 
         return transitions.map( ( transition ) => {
             const commandName = transition.split( "/" ).pop() ?? "Command";
@@ -144,7 +130,7 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
                 flowName: this.getName(),
                 description: `Slash command entry: ${ commandName }`,
                 transition,
-                targetState: "VertixBot/CommandsFlow/States/Initial",
+                targetState: COMMANDS_FLOW_STATES.INITIAL,
                 requiredData: []
             } );
         } );
@@ -187,7 +173,7 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
 
     protected override getInitialState(): string {
         // Defines the single logical state for this router flow
-        return "VertixBot/CommandsFlow/States/Initial";
+        return COMMANDS_FLOW_STATES.INITIAL;
     }
 
     protected override getInitialData(): UIFlowDataBase {
@@ -218,7 +204,7 @@ export class CommandsFlow extends UIFlowBase<string, string, UIFlowDataBase> {
     // Required by base class, uses static definition
     // Returns a defined error state if the transition is not found
     public override getNextState( transition: string ): string {
-        return CommandsFlow.getNextStates()[ transition ] ?? "VertixBot/CommandsFlow/States/UnknownCommand";
+        return CommandsFlow.getNextStates()[ transition ] ?? COMMANDS_FLOW_STATES.UNKNOWN_COMMAND;
     }
 
     // Required by base class, uses static definition

@@ -2,6 +2,7 @@
     "name": "@vertix.gg/utils",
     "type": "module",
     "scripts": {
+        "vertix-utils:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects utils",
         "vertix-utils:typecheck": "bunx --bun tsc --noEmit"
     },
     "dependencies": {
@@ -12,6 +13,8 @@
         "tough-cookie": "^4.1.2"
     },
     "devDependencies": {
-        "@types/tough-cookie": "^4.0.2"
+        "@jest/types": "^30.5.1",
+        "@types/tough-cookie": "^4.0.2",
+        "@zenflux/tsconfig-to-swc": "0.1.21"
     }
 }

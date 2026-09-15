@@ -78,6 +78,35 @@ interface UILanguageManagerValidateOptions {
 }
 
 // TODO: Reduce repeated code.
+export interface UILanguageDriftGroup {
+    group: string;
+
+    /** Named in the language file, but the bot no longer has it. */
+    stale: string[];
+
+    /** The bot has it, and the language file does not name it. */
+    missing: string[];
+
+    /**
+     * Named more than once in the same file.
+     *
+     * A lookup takes the first, so a second copy is not wrong so much as unreachable - which is
+     * exactly what makes it worth reporting: a translator who edits the one they found may have
+     * edited the one nobody reads. They arrive by regeneration rather than by hand, an entity used
+     * by two modals being written out once per modal.
+     */
+    duplicated: string[];
+}
+
+export interface UILanguageDriftReport {
+    code: string;
+
+    comparedAgainst: string;
+
+    /** Only the groups that drifted. Empty means the file is in step. */
+    groups: UILanguageDriftGroup[];
+}
+
 export class UILanguageManager extends InitializeBase implements UILanguageManagerInterface {
     private static instance: UILanguageManager;
 
@@ -267,6 +296,91 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
 
         return {
             title: content.title
+        };
+    }
+
+    /**
+     * Function reportLanguageDrift() :: What every language file has that the bot does not, and
+     * the other way round.
+     *
+     * `validateLanguage()` answers the same question by throwing on the first count that does not
+     * add up, which is what a start-up wants and useless to someone who has just changed a dozen
+     * entities. This walks all of it and hands back everything at once, naming what drifted rather
+     * than only that something did.
+     *
+     * The initial language is measured against the entities the bot actually has; every other
+     * language is measured against the initial one, which is the same order the validation uses.
+     */
+    public async reportLanguageDrift(): Promise<UILanguageDriftReport[]> {
+        const sourceOfTruth = {
+            ...UI_LANGUAGES_INITIAL_ATTRIBUTES,
+
+            ...( await this.extractEntitiesLanguage() )
+        } as UILanguageJSON;
+
+        const reports: UILanguageDriftReport[] = [
+            this.compareLanguage( this.getInitialLanguage(), sourceOfTruth, "the bot's entities" )
+        ];
+
+        for ( const language of this.getAvailableLanguages().values() ) {
+            if ( language.code === UI_LANGUAGES_INITIAL_CODE ) {
+                continue;
+            }
+
+            reports.push( this.compareLanguage( language, this.getInitialLanguage(), `'${ UI_LANGUAGES_INITIAL_CODE }'` ) );
+        }
+
+        return reports;
+    }
+
+    /**
+     * Function compareLanguage() :: One language file against what it ought to hold.
+     */
+    private compareLanguage(
+        current: UILanguageJSON,
+        sourceOfTruth: UILanguageJSON,
+        sourceDescription: string
+    ): UILanguageDriftReport {
+        const groups: Array<[ string, { name: string }[], { name: string }[] ]> = [
+            [ "buttons", current.elements.buttons, sourceOfTruth.elements.buttons ],
+            [ "textInputs", current.elements.textInputs, sourceOfTruth.elements.textInputs ],
+            [ "selectMenus", current.elements.selectMenus, sourceOfTruth.elements.selectMenus ],
+            [ "embeds", current.embeds, sourceOfTruth.embeds ],
+            [ "markdowns", current.markdowns, sourceOfTruth.markdowns ],
+            [ "modals", current.modals, sourceOfTruth.modals ]
+        ];
+
+        const drifted: UILanguageDriftGroup[] = [];
+
+        for ( const [ group, currentEntries, sourceEntries ] of groups ) {
+            const currentNames = new Set( currentEntries.map( ( entry ) => entry.name ) );
+            const sourceNames = new Set( sourceEntries.map( ( entry ) => entry.name ) );
+
+            const stale = [ ...currentNames ].filter( ( name ) => ! sourceNames.has( name ) ).sort();
+            const missing = [ ...sourceNames ].filter( ( name ) => ! currentNames.has( name ) ).sort();
+
+            // Counted before the names above collapse into sets, which is why this was invisible:
+            // a name written twice is one name to both comparisons, and every count still added up.
+            const occurrences = new Map<string, number>();
+
+            for ( const entry of currentEntries ) {
+                occurrences.set( entry.name, ( occurrences.get( entry.name ) ?? 0 ) + 1 );
+            }
+
+            const duplicated = [ ...occurrences.entries() ]
+                .filter( ( [ , count ] ) => count > 1 )
+                .map( ( [ name ] ) => name )
+                .sort();
+
+            if ( stale.length || missing.length || duplicated.length ) {
+                drifted.push( { group, stale, missing, duplicated } );
+            }
+        }
+
+        return {
+            code: current.code,
+            comparedAgainst: sourceDescription,
+            groups: drifted
         };
     }
 

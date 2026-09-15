@@ -3,6 +3,7 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 import { DynamicChannelClearChatComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/clear-chat/dynamic-channel-clear-chat-component";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
+import { removePreviousClearNotices } from "@vertix.gg/bot/src/utils/clear-chat";
 
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
 
@@ -69,15 +70,7 @@ const DynamicChannelClearChatAdapter = new DynamicExecutionAdapterBuilder<UIDefa
                             // messages can outlast the three seconds discord allows.
                             await context.updateInteractionDefer( interaction );
 
-                            // Custom success handling - sends message to channel
-                            const messages = await interaction.channel.messages.fetch();
-                            for ( const message of messages.values() ) {
-                                if ( message.embeds.length === 0 ) continue;
-                                const embed = message.embeds[ 0 ];
-                                if ( embed?.title?.includes( "🧹" ) ) {
-                                    await message.delete();
-                                }
-                            }
+                            await removePreviousClearNotices( interaction.channel );
 
                             context.getComponent().switchEmbedsGroup(
                                 "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbedGroup"

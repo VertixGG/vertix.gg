@@ -1,4 +1,4 @@
-import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
+import { ChannelModel, MASTER_INTERNAL_TYPES } from "@vertix.gg/data/src/models/channel/channel-model";
 
 import { ChannelType } from "discord.js";
 
@@ -9,6 +9,8 @@ import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-mana
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS } from "@vertix.gg/bot/src/definitions/master-channel";
 
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
+
+import { resolveMasterChannelId } from "@vertix.gg/bot/src/utils/master-channel";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
@@ -41,8 +43,7 @@ export async function dynamicChannelRequirements(
     }
 
     if ( !resolvedChannel ) {
-        const panelChannelDB = await ChannelModel.$.getByChannelId( interaction.channelId );
-        const masterChannelId = panelChannelDB?.ownerChannelId;
+        const masterChannelId = await resolveMasterChannelId( interaction );
 
         GlobalLogger.$.log(
             dynamicChannelRequirements,
@@ -58,9 +59,22 @@ export async function dynamicChannelRequirements(
 
     const dynamicChannelDB = await ChannelModel.$.getByChannelId( resolvedChannel.id );
 
-    if ( !dynamicChannelDB ) {
-        const panelChannelDB = await ChannelModel.$.getByChannelId( interaction.channelId );
-        const masterChannelId = panelChannelDB?.ownerChannelId;
+    // A generator is a voice channel too, and carries a row of its own - so standing in its chat
+    // and asking for something looked, to a check that only asked whether a row existed, exactly
+    // like standing in a channel it had made. Whoever created the generator even passed the owner
+    // check below it, because a master's row names them.
+    //
+    // Asked as "is this a generator" rather than "is this a dynamic channel", deliberately. The
+    // column defaults to `DEFAULT_CHANNEL`, so a row written before it meant anything says nothing
+    // about what it is - and demanding it say `DYNAMIC_CHANNEL` would have turned every button on
+    // every such channel into "no active dynamic channel". Only what is provably a generator is
+    // refused.
+    const isMasterChannel = dynamicChannelDB
+        ? MASTER_INTERNAL_TYPES.includes( dynamicChannelDB.internalType )
+        : false;
+
+    if ( !dynamicChannelDB || isMasterChannel ) {
+        const masterChannelId = await resolveMasterChannelId( interaction );
 
         GlobalLogger.$.warn(
             dynamicChannelRequirements,

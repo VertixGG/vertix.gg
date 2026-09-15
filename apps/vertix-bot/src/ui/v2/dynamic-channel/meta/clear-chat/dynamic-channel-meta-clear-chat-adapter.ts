@@ -5,6 +5,7 @@ import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v2/dynamic
 import { DynamicChannelMetaClearChatComponent } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/clear-chat/dynamic-channel-meta-clear-chat-component";
 
 import { guildGetMemberDisplayName } from "@vertix.gg/bot/src/utils/guild";
+import { removePreviousClearNotices } from "@vertix.gg/bot/src/utils/clear-chat";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIDefaultButtonChannelVoiceInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
@@ -20,21 +21,7 @@ async function onClearChatButtonClicked(
 
     switch ( result?.code ) {
         case "success":
-            // Search embeds with "🧹" in title and delete them.
-            const messages = await interaction.channel.messages.fetch();
-
-            for ( const message of messages.values() ) {
-                if ( message.embeds.length === 0 ) {
-                    continue;
-                }
-
-                const embed = message.embeds[ 0 ];
-
-                // TODO: Find a better way to do this.
-                if ( embed?.title?.includes( "🧹" ) ) {
-                    await message.delete();
-                }
-            }
+            await removePreviousClearNotices( interaction.channel );
 
             await context.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccess", {
                 ownerDisplayName: await guildGetMemberDisplayName( interaction.channel.guild, interaction.user.id ),

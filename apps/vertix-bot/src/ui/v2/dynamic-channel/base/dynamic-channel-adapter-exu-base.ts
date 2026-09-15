@@ -8,8 +8,12 @@ import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions"
 
 import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/_dynamic-channel-requirements";
 import {
-    answerClaimPressedFromControlPanel
+    answerClaimWithoutAChannel
 } from "@vertix.gg/bot/src/ui/general/claim-in-channel-only/claim-in-channel-only-gate";
+
+import {
+    answeredBecauseTheChannelIsGone
+} from "@vertix.gg/bot/src/ui/general/channel-gone/channel-gone-gate";
 
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
@@ -47,7 +51,14 @@ export abstract class DynamicChannelAdapterExuBase<
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {
-        if ( await answerClaimPressedFromControlPanel( interaction, this.getPressedEntityName( interaction ) ) ) {
+        if ( await answeredBecauseTheChannelIsGone(
+            interaction,
+            this.getArgsManager().getArgs( this, interaction )
+        ) ) {
+            return false;
+        }
+
+        if ( await answerClaimWithoutAChannel( interaction, this.getPressedEntityName( interaction ) ) ) {
             return false;
         }
 

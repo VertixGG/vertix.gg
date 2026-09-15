@@ -5,12 +5,16 @@ export { SetupEditAdapter } from "@vertix.gg/bot/src/ui/v2/setup-edit/setup-edit
 export { DynamicChannelAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/dynamic-channel-adapter";
 export { DynamicChannelPanelAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel-panel/dynamic-channel-panel-adapter";
 export { DynamicChannelMetaLimitAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/limit/dynamic-channel-meta-limit-adapter";
+export { DynamicChannelMetaClearChatCommandAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/clear-chat/dynamic-channel-meta-clear-chat-command-adapter";
 export { DynamicChannelMetaClearChatAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/clear-chat/dynamic-channel-meta-clear-chat-adapter";
 export { DynamicChannelMetaRenameAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-adapter";
 export { DynamicChannelMetaStatusAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/status/dynamic-channel-meta-status-adapter";
+export { DynamicChannelPermissionsAccessCommandAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/dynamic-channel-permissions-access-command-adapter";
 export { DynamicChannelPermissionsAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/permissions/dynamic-channel-permissions-adapter";
+export { DynamicChannelTransferOwnerCommandAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-command-adapter";
 export { DynamicChannelTransferOwnerAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/transfer-ownership/dynamic-channel-transfer-owner-adapter";
 export { DynamicChannelLfmAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/lfm/dynamic-channel-lfm-adapter";
 export { DynamicChannelLfmPostAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/lfm/dynamic-channel-lfm-post-adapter";
+export { DynamicChannelPremiumResetChannelCommandAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-command-adapter";
 export { DynamicChannelPremiumResetChannelAdapter } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/premium/reset/dynamic-channel-premium-reset-channel-adapter";
 export { SetupNewWizardAdapter } from "@vertix.gg/bot/src/ui/v2/setup-new/setup-new-wizard-adapter";

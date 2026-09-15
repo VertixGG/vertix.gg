@@ -14,6 +14,8 @@ cd $CURRENT_DIR
 
 bun run vertix:base:jest - --ci --detectOpenHandles --runInBand
 bun run vertix:bot:jest - --ci --detectOpenHandles --runInBand
+bun run vertix:definitions:jest - --ci --detectOpenHandles --runInBand
 bun run vertix:gui:jest - --ci --detectOpenHandles --runInBand
+bun run vertix:utils:jest - --ci --detectOpenHandles --runInBand
 
 # TODO: ci can use bun runner for all packages

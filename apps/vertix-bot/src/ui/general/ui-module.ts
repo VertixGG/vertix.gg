@@ -12,7 +12,13 @@ import { NoActiveDynamicChannelAdapter } from "@vertix.gg/bot/src/ui/general/no-
 import { ClaimInChannelOnlyAdapter } from "@vertix.gg/bot/src/ui/general/claim-in-channel-only/claim-in-channel-only-adapter";
 import { ChannelCreateFailedAdapter } from "@vertix.gg/bot/src/ui/general/channel-create-failed/channel-create-failed-adapter";
 import { UnassignableRoleAdapter } from "@vertix.gg/bot/src/ui/general/server-options/unassignable-role-adapter";
-import { AIAgentAdapter } from "@vertix.gg/bot/src/ui/general/ai-agent/ai-agent-adapter";
+import { FeatureMissingInV2Adapter } from "@vertix.gg/bot/src/ui/general/feature-missing-in-v2/feature-missing-in-v2-adapter";
+import { NotInAServerAdapter } from "@vertix.gg/bot/src/ui/general/not-in-a-server/not-in-a-server-adapter";
+import { ChannelGoneAdapter } from "@vertix.gg/bot/src/ui/general/channel-gone/channel-gone-adapter";
+import { MissingAdminPermissionsAdapter } from "@vertix.gg/bot/src/ui/general/missing-admin-permissions/missing-admin-permissions-adapter";
+import { NotClaimableAdapter } from "@vertix.gg/bot/src/ui/general/not-claimable/not-claimable-adapter";
+import { ClaimOpenAdapter } from "@vertix.gg/bot/src/ui/general/claim-open/claim-open-adapter";
+import { CommandFailedAdapter } from "@vertix.gg/bot/src/ui/general/command-failed/command-failed-adapter";
 import { CommandsFlow } from "@vertix.gg/bot/src/ui/general/flows/commands-flow";
 import { GuildFlow } from "@vertix.gg/bot/src/ui/general/flows/guild-flow";
 
@@ -26,7 +32,24 @@ export class UIModuleGeneral extends UIModuleBase {
     }
 
     public static getAdapters() {
-        return [ FeedbackAdapter, LanguageAdapter, SetupAdapter, WelcomeAdapter, NotYourChannelAdapter, NoActiveDynamicChannelAdapter, ClaimInChannelOnlyAdapter, AIAgentAdapter, ChannelCreateFailedAdapter, UnassignableRoleAdapter ];
+        return [
+            FeedbackAdapter,
+            LanguageAdapter,
+            SetupAdapter,
+            WelcomeAdapter,
+            NotYourChannelAdapter,
+            NoActiveDynamicChannelAdapter,
+            ClaimInChannelOnlyAdapter,
+            ChannelCreateFailedAdapter,
+            UnassignableRoleAdapter,
+            FeatureMissingInV2Adapter,
+            MissingAdminPermissionsAdapter,
+            NotClaimableAdapter,
+            NotInAServerAdapter,
+            ChannelGoneAdapter,
+            ClaimOpenAdapter,
+            CommandFailedAdapter
+        ];
     }
 
     public static getFlows() {

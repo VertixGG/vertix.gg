@@ -5,6 +5,12 @@
   "elements": {
     "buttons": [
       {
+        "name": "VertixBot/UI-General/BadwordsClearButton",
+        "content": {
+          "label": "すべて削除"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/ChannelNameTemplateEditButton",
         "content": {
           "label": "チャンネル名を編集"
@@ -23,9 +29,33 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DeleteButton",
+        "content": {
+          "label": "削除"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/DoneButton",
         "content": {
           "label": "✓ 完了"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInviteDeveloperButton",
+        "content": {
+          "label": "開発者を招待"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackReportButton",
+        "content": {
+          "label": "問題を報告"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackSuggestionButton",
+        "content": {
+          "label": "アイデアを提案"
         }
       },
       {
@@ -41,27 +71,51 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/ServerOptionsBackButton",
+        "content": {
+          "label": "戻る"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/SetupBadwordsEditButton",
         "content": {
           "label": "禁止ワードを編集"
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupMasterCreateButton",
+        "name": "VertixBot/UI-General/SetupClaimBackButton",
         "content": {
-          "label": "マスターチャンネルを作成"
+          "label": "戻る"
         }
       },
       {
-        "name": "VertixBot/UI-General/SetupMasterCreateV3Button",
+        "name": "VertixBot/UI-General/SetupClaimResetButton",
         "content": {
-          "label": "マスターチャンネルを作成 (V3)"
+          "label": "既定値に戻す"
         }
       },
       {
         "name": "VertixBot/UI-General/SetupServerOptionsEditButton",
         "content": {
           "label": "サーバー設定を編集"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/StaffRolesClearButton",
+        "content": {
+          "label": "クリア"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VerifiedRolesClearButton",
+        "content": {
+          "label": "クリア"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/VoiceRoleClearButton",
+        "content": {
+          "label": "クリア"
         }
       },
       {
@@ -80,12 +134,6 @@
         "name": "VertixBot/UI-General/WelcomeSupportButton",
         "content": {
           "label": "コミュニティサーバー"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/RegenerateButton",
-        "content": {
-          "label": "⚡ 再生成"
         }
       },
       {
@@ -128,6 +176,12 @@
         "name": "VertixBot/UI-V2/ClaimVoteStepInButton",
         "content": {
           "label": "参加"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
         }
       },
       {
@@ -211,6 +265,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
+        "content": {
+          "label": "タイミングを編集"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/ClaimStartButton",
         "content": {
           "label": "取得"
@@ -238,6 +298,18 @@
         "name": "VertixBot/UI-V3/DynamicChannelClearChatButton",
         "content": {
           "label": "チャットをクリア"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
+        "content": {
+          "label": "招待"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
+        "content": {
+          "label": "ノック"
         }
       },
       {
@@ -289,69 +361,15 @@
         }
       },
       {
-        "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
-        "content": {
-          "label": "ステータス"
-        }
-      },
-      {
         "name": "VertixBot/UI-V3/DynamicChannelResetChannelButton",
         "content": {
           "label": "リセット"
         }
       },
       {
-        "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+        "name": "VertixBot/UI-V3/DynamicChannelStatusButton",
         "content": {
-          "label": "転送"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
-        "content": {
-          "label": "設定を編集"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
-        "content": {
-          "label": "キャンセル"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/AIAgentConfirmSendButton",
-        "content": {
-          "label": "チャンネルに送信"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/AIAgentSendButton",
-        "content": {
-          "label": "送信"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/DeleteButton",
-        "content": {
-          "label": "削除"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/FeedbackInviteDeveloperButton",
-        "content": {
-          "label": "開発者を招待"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/FeedbackReportButton",
-        "content": {
-          "label": "問題を報告"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/FeedbackSuggestionButton",
-        "content": {
-          "label": "アイデアを提案"
+          "label": "ステータス"
         }
       },
       {
@@ -397,6 +415,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerButton",
+        "content": {
+          "label": "転送"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/ScalingSetupEditConfigButton",
+        "content": {
+          "label": "設定を編集"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/SetupEditButtonsClearRoleOverrideButton",
         "content": {
           "label": "このロールに既定を使う"
@@ -406,78 +436,6 @@
         "name": "VertixBot/UI-V3/SetupEditButtonsUpdateExistingButton",
         "content": {
           "label": "既存チャンネルを更新"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/DynamicChannelInviteButton",
-        "content": {
-          "label": "招待"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/DynamicChannelKnockButton",
-        "content": {
-          "label": "ノック"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupClaimBackButton",
-        "content": {
-          "label": "戻る"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/ServerOptionsBackButton",
-        "content": {
-          "label": "戻る"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/VoiceRoleClearButton",
-        "content": {
-          "label": "クリア"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/VerifiedRolesClearButton",
-        "content": {
-          "label": "クリア"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/StaffRolesClearButton",
-        "content": {
-          "label": "クリア"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/BadwordsClearButton",
-        "content": {
-          "label": "すべて削除"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupClaimResetButton",
-        "content": {
-          "label": "既定値に戻す"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupTimingsEditButton",
-        "content": {
-          "label": "請求を編集"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/DynamicChannelLfmButton",
-        "content": {
-          "label": "LFM"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/SetupEditLfmTimingsButton",
-        "content": {
-          "label": "タイミングを編集"
         }
       }
     ],
@@ -497,6 +455,43 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/DeleteConfirmInput",
+        "content": {
+          "label": "確認するには DELETE と入力",
+          "placeholder": "DELETE"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInputDescription",
+        "content": {
+          "label": "Description"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInputTitle",
+        "content": {
+          "label": "Title"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/FeedbackInputUrl",
+        "content": {
+          "label": "Invite Link"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
+        "content": {
+          "label": "秒数、空欄で既定値"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
+        "content": {
+          "label": "秒数、空欄で既定値"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
         "content": {
           "label": "チャンネルあたりの最大メンバー数",
@@ -508,6 +503,24 @@
         "content": {
           "label": "チャンネル名のプレフィックス",
           "placeholder": "### ルーム - {index} ###"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
+        "content": {
+          "label": "秒数、空欄で既定値"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
+        "content": {
+          "label": "秒数、空欄で既定値"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "どんなメンバーを探していますか"
         }
       },
       {
@@ -527,6 +540,30 @@
         "name": "VertixBot/UI-V2/DynamicChannelMetaStatusInput",
         "content": {
           "label": "チャンネルの状況"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
+        "content": {
+          "label": "人数の更新遅延（秒）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
+        "content": {
+          "label": "ping のクールダウン（分、0 でなし）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
+        "content": {
+          "label": "投稿のクールダウン（分、0 でなし）"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
+        "content": {
+          "label": "投稿の有効期限（分）"
         }
       },
       {
@@ -561,78 +598,10 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/AIAgentMessageInput",
-        "content": {
-          "label": "メッセージ",
-          "placeholder": "メッセージを入力…"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/DeleteConfirmInput",
-        "content": {
-          "label": "確認するには DELETE と入力",
-          "placeholder": "DELETE"
-        }
-      },
-      {
         "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveInput",
         "content": {
           "label": "テンプレート名",
           "placeholder": "テンプレートの名前を入力…"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
-        "content": {
-          "label": "秒数、空欄で既定値"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
-        "content": {
-          "label": "秒数、空欄で既定値"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
-        "content": {
-          "label": "秒数、空欄で既定値"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
-        "content": {
-          "label": "秒数、空欄で既定値"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/DynamicChannelLfmNoteInput",
-        "content": {
-          "label": "どんなメンバーを探していますか"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
-        "content": {
-          "label": "投稿のクールダウン（分、0 でなし）"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
-        "content": {
-          "label": "ping のクールダウン（分、0 でなし）"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
-        "content": {
-          "label": "投稿の有効期限（分）"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
-        "content": {
-          "label": "人数の更新遅延（秒）"
         }
       }
     ],
@@ -714,6 +683,60 @@
               "value": "ja"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+        "content": {
+          "placeholder": "⚙️ ∙ 設定を選択",
+          "selectOptions": [
+            {
+              "label": "ボイスロール",
+              "description": "ボイスチャンネルにいる間メンバーに付与されるロール"
+            },
+            {
+              "label": "認証済みロール",
+              "description": "ダイナミックチャンネルを使える人"
+            },
+            {
+              "label": "スタッフロール",
+              "description": "自分のものではないチャンネルを操作できる人"
+            },
+            {
+              "label": "禁止ワード",
+              "description": "チャンネル名に使えない単語"
+            },
+            {
+              "label": "取得",
+              "description": "放置されたチャンネルが待つ時間と、投票が続く時間"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
+        "content": {
+          "placeholder": "◎ ∙ 編集する値を選択",
+          "selectOptions": [
+            {
+              "label": "∙ 請求までの不在時間"
+            },
+            {
+              "label": "∙ チェック間隔"
+            },
+            {
+              "label": "∙ 投票の継続時間"
+            },
+            {
+              "label": "∙ 候補者ごとの追加時間"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+        "content": {
+          "placeholder": "➕ ∙ マスターチャンネルを作成"
         }
       },
       {
@@ -811,6 +834,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 チャンネルを選択"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
         "content": {
           "placeholder": "🫵 ユーザーアクセスをブロック"
@@ -844,6 +873,18 @@
         "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenu",
         "content": {
           "placeholder": "🔀 ユーザーを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmChannelsSelectMenu",
+        "content": {
+          "placeholder": "🔎 ∙ LFMチャンネル"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
+        "content": {
+          "placeholder": "🔔 ∙ メンションするロール"
         }
       },
       {
@@ -975,6 +1016,30 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/ClaimCommandChannelMenu",
+        "content": {
+          "placeholder": "👑 ∙ Select a channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
+        "content": {
+          "placeholder": "📨 チャンネルを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
+        "content": {
+          "placeholder": "📨 ユーザーを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
+        "content": {
+          "placeholder": "🚪 チャンネルを選択"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
         "content": {
           "placeholder": "🫵 ユーザーアクセスをブロック"
@@ -1072,6 +1137,18 @@
         }
       },
       {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
+        "content": {
+          "placeholder": "📂 適用するテンプレートを選択…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
+        "content": {
+          "placeholder": "🗑️ 削除するテンプレートを選択…"
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserMenu",
         "content": {
           "placeholder": "🔀 ユーザーを選択"
@@ -1081,6 +1158,12 @@
         "name": "VertixBot/UI-V3/LogChannelSelectMenu",
         "content": {
           "placeholder": "❯❯ ∙ ログチャンネル"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
+        "content": {
+          "placeholder": "➕ ロールに専用のボタンを与える"
         }
       },
       {
@@ -1123,129 +1206,70 @@
             }
           ]
         }
-      },
-      {
-        "name": "VertixBot/UI-General/AIAgentChannelSelectMenu",
-        "content": {
-          "placeholder": "チャンネルを選択"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
-        "content": {
-          "placeholder": "➕ ∙ マスターチャンネルを作成"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
-        "content": {
-          "placeholder": "📂 適用するテンプレートを選択…"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeleteSelectMenu",
-        "content": {
-          "placeholder": "🗑️ 削除するテンプレートを選択…"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
-        "content": {
-          "placeholder": "➕ ロールに専用のボタンを与える"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/DynamicChannelInviteChannelMenu",
-        "content": {
-          "placeholder": "📨 チャンネルを選択"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/DynamicChannelInviteUserMenu",
-        "content": {
-          "placeholder": "📨 ユーザーを選択"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V3/DynamicChannelKnockChannelMenu",
-        "content": {
-          "placeholder": "🚪 チャンネルを選択"
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/SetupClaimSelectOptionMenu",
-        "content": {
-          "placeholder": "◎ ∙ 編集する値を選択",
-          "selectOptions": [
-            {
-              "label": "∙ 請求までの不在時間"
-            },
-            {
-              "label": "∙ チェック間隔"
-            },
-            {
-              "label": "∙ 投票の継続時間"
-            },
-            {
-              "label": "∙ 候補者ごとの追加時間"
-            }
-          ]
-        }
-      },
-      {
-        "name": "VertixBot/UI-General/ServerOptionsEditSelectMenu",
-        "content": {
-          "placeholder": "⚙️ ∙ 設定を選択",
-          "selectOptions": [
-            {
-              "label": "ボイスロール",
-              "description": "ボイスチャンネルにいる間メンバーに付与されるロール"
-            },
-            {
-              "label": "認証済みロール",
-              "description": "ダイナミックチャンネルを使える人"
-            },
-            {
-              "label": "スタッフロール",
-              "description": "自分のものではないチャンネルを操作できる人"
-            },
-            {
-              "label": "禁止ワード",
-              "description": "チャンネル名に使えない単語"
-            },
-            {
-              "label": "取得",
-              "description": "放置されたチャンネルが待つ時間と、投票が続く時間"
-            }
-          ]
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/DynamicChannelLfmChannelMenu",
-        "content": {
-          "placeholder": "🔎 チャンネルを選択"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/LfmChannelsSelectMenu",
-        "content": {
-          "placeholder": "🔎 ∙ LFMチャンネル"
-        }
-      },
-      {
-        "name": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
-        "content": {
-          "placeholder": "🔔 ∙ メンションするロール"
-        }
       }
     ]
   },
   "embeds": [
     {
+      "name": "VertixBot/UI-General/ChannelCreateFailedEmbed",
+      "content": {
+        "title": "⚠️  チャンネルを作成できませんでした",
+        "description": "<#{masterChannelId}> に参加しましたが、チャンネルは作成されませんでした。\n\n{reason}",
+        "options": {
+          "reason": {
+            "{reasonCategoryFull}": "このチャンネルが属するカテゴリがいっぱいです。Discord はカテゴリごとに 50 チャンネルまでで、その上限に達しています。\n\nサーバー管理者にお知らせください。チャンネルを空けるか、ジェネレーターを別のカテゴリへ移動できます。",
+            "{reasonUnknown}": "通常これは、サーバーが Discord の制限に達したか、ボットに必要な権限が削除されたことを意味します。\n\nサーバー管理者にお知らせください。理由はボットのログに記録されています。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ChannelGoneEmbed",
+      "content": {
+        "title": "🕳  That channel is gone",
+        "description": "The channel this screen was opened about no longer exists - a dynamic channel is removed once the last person leaves it.\n\nRun the command again to work on the one you have now."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
+      "content": {
+        "title": "😈  取得はチャンネル内で行います",
+        "description": "このパネルはジェネレーターの隣にあり、特定のチャンネルの中にはないため、ここで取得できるものはありません。\n\n引き継ぎたいボイスチャンネルに参加し、そのチャットを開いて、そこで待っているメッセージの **取得** を押してください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/ClaimOpenEmbed",
+      "content": {
+        "title": "😈  This channel can be claimed",
+        "description": "Its owner has left, so the channel is up for claiming.\n\nPress **Claim** on this channel's buttons to start."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/CommandFailedEmbed",
+      "content": {
+        "title": "⚠  That did not work",
+        "description": "Something went wrong running that command.\n\nIt has been logged. Trying again is worth a go — if it keeps happening, tell us in the support server."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/DisabledWhileClaimEmbed",
       "content": {
         "title": "😈 アクションは無効です",
         "description": "取得処理中はアクションが無効です。\n\n取得が完了するまでお待ちください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeatureMissingInV2Embed",
+      "content": {
+        "title": "⚠  Not in this generator's interface",
+        "description": "This channel comes from a generator running the older interface, which does not have that feature.\n\nA server admin can upgrade the generator to get it."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackEmbed",
+      "content": {
+        "title": "VoiceChannels のご利用ありがとうございます",
+        "description": "お時間とご協力に感謝します。\n\n**VoiceChannels でのあなたの体験は私たちにとって大切です。ぜひご意見をお聞かせください。**\n\n私たちは最高のサービスを目指しており、あなたの声がその助けになります。\n\nVoiceChannels をより良くするための提案・懸念・アイデアがあれば、遠慮なくお知らせください。\n\nいただいたご意見は大変ありがたく、VoiceChannels の改善につながります。\n\nVoiceChannels をご利用いただきありがとうございます。ご意見をお待ちしています!"
       }
     },
     {
@@ -1280,6 +1304,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/MissingAdminPermissionsEmbed",
+      "content": {
+        "title": "⛔  You cannot configure this server",
+        "description": "This command is for server admins.\n\nIt needs the **Manage Server**, **Manage Channels** and **Manage Roles** permissions."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/MissingPermissionsEmbed",
       "content": {
         "title": "🔐  おっと！特定の権限が必要です",
@@ -1293,23 +1324,17 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/ChannelCreateFailedEmbed",
+      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
       "content": {
-        "title": "⚠️  チャンネルを作成できませんでした",
-        "description": "<#{masterChannelId}> に参加しましたが、チャンネルは作成されませんでした。\n\n{reason}",
-        "options": {
-          "reason": {
-            "{reasonCategoryFull}": "このチャンネルが属するカテゴリがいっぱいです。Discord はカテゴリごとに 50 チャンネルまでで、その上限に達しています。\n\nサーバー管理者にお知らせください。チャンネルを空けるか、ジェネレーターを別のカテゴリへ移動できます。",
-            "{reasonUnknown}": "通常これは、サーバーが Discord の制限に達したか、ボットに必要な権限が削除されたことを意味します。\n\nサーバー管理者にお知らせください。理由はボットのログに記録されています。"
-          }
-        }
+        "title": "⛔  アクティブなダイナミックチャンネルがありません",
+        "description": "アクティブなダイナミックチャンネルを所有していません。\n\nまず <#{masterChannelId}> に参加して自分のチャンネルを作成してください。"
       }
     },
     {
-      "name": "VertixBot/UI-General/UnassignableRoleEmbed",
+      "name": "VertixBot/UI-General/NotClaimableEmbed",
       "content": {
-        "title": "🎙️  このロールは使用できません",
-        "description": "ロール <@&{roleId}> は保存されましたが、ボットが付与できません - {reason}。\n\n**サーバー設定 → ロール** でボット自身のロールをその上に移動するか、別のロールを選んでください。"
+        "title": "🔒  Nothing to claim here",
+        "description": "This channel is not up for claiming right now.\n\nA channel becomes claimable when its owner leaves it."
       }
     },
     {
@@ -1320,10 +1345,10 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/StaffMemberEmbed",
+      "name": "VertixBot/UI-General/NotInAServerEmbed",
       "content": {
-        "title": "🔑  スタッフメンバー",
-        "description": "**{staffMemberDisplayName}** はこのサーバーのスタッフロールを持っています。\n\nスタッフロールは所有者がどの状態を選んでもすべてのダイナミックチャンネルへのアクセスを保つため、あなたのチャンネルからブロックしたりキックしたりすることはできません。"
+        "title": "🏠  Run this in a server",
+        "description": "These commands act on a server's voice channels, and a direct message has neither.\n\nOpen the server you want and run it there."
       }
     },
     {
@@ -1331,6 +1356,35 @@
       "content": {
         "title": "⛔  これはあなたのチャンネルではありません！",
         "description": "でも自分のチャンネルを開くことができます :)\n\nここをクリック：<#{masterChannelId}>"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupBadwordsEmbed",
+      "content": {
+        "title": "🙅  Bad Words",
+        "description": "Words that cannot appear in the name of a dynamic channel, anywhere in this server.\n\nA member renaming their channel to something holding one of these is told no and the name is left as it was. The check is on names only - it does not read what anyone says.\n\n_**Current list**_:\n{badwordsMessage}\n\n`(🙅 Edit Bad Words)` replaces the whole list with what you type, separated by commas.\n`(🧹 Remove all)` empties it, which allows every name again.\n",
+        "options": {
+          "badwordsMessage": {
+            "{badwords}": "`{badwords}`",
+            "{badwordsMessageDefault}": "**None** - every name is allowed."
+          }
+        },
+        "arrayOptions": {
+          "badwords": {
+            "format": "{value}{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimEmbed",
+      "content": {
+        "title": "⏱️  請求の設定",
+        "description": "ダイナミックチャンネルのオーナーが退出すると、VoiceChannels はしばらく待ってから、まだ残っているメンバーにチャンネルを提供します。メンバーは誰が引き継ぐかを投票で決めます。\n\n下から値を選んで変更してください。{defaultMarker} が付いた値は、ここでの選択ではなくボット自身の設定に従います。空欄にすると、その状態に戻ります。\n\n**🚪 請求までの不在時間** ∙ {valueClaimTimeout}\nチャンネルが他のメンバーに提供されるまで、オーナーが不在でいられる時間です。\n\n**🔁 チェック間隔** ∙ {valueClaimInterval}\nVoiceChannels が放置されたチャンネルを探す頻度で、上記の待ち時間にどれだけ近いタイミングで提供されるかも決まります。\n\n**🗳️ 投票の継続時間** ∙ {valueVoteTimeout}\n請求の投票が開始してから開いたままになる時間です。\n\n**➕ 候補者ごとの追加時間** ∙ {valueVoteAddTime}\n誰かが新たに立候補するたびに、進行中の投票へ加算されます。\n",
+        "options": {
+          "defaultMarker": "*(既定)*"
+        }
       }
     },
     {
@@ -1400,10 +1454,38 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/SetupMasterCreateEmbed",
+      "content": {
+        "title": "➕  Create a channel generator",
+        "description": "A generator is a voice channel members join to get one of their own, made for them and removed when they leave.\n\n**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n\nChoose below, and the rest is a few questions."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupMasterEditEmbed",
+      "content": {
+        "title": "🔧  Edit a channel generator",
+        "description": "Pick the generator you want to change.\n\nIts settings open next — the name new channels get, who may see them, which buttons their owners have, and the rest.\n\n*Nothing here? The server has no generators yet — `/manage new-generator` makes one.*"
+      }
+    },
+    {
       "name": "VertixBot/UI-General/SetupMaxMasterChannelsEmbed",
       "content": {
         "title": "🤷  マスターチャンネルの上限に達しました",
         "description": "合計**{maxMasterChannels}**個のマスターチャンネルまで作成できます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
+      "content": {
+        "title": "⚙️  Server settings",
+        "description": "Settings that belong to the whole server rather than to one generator.\n\n**Voice Role** — given to members while they are in a voice channel.\n**Verified Roles** — who dynamic channels are for.\n**Staff Roles** — who may act on a channel they do not own.\n**Bad Words** — words a member cannot put in a channel name.\n**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\nPick one to change it."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
+      "content": {
+        "title": "🛡️  Server roles",
+        "description": "Which roles this server's dynamic channels answer to.\n\n**Voice Role** — given to members while they are in a voice channel, and taken back when they leave.\n**Verified Roles** — who the channels are for. Everyone else is kept out.\n**Staff Roles** — who may act on a channel they do not own.\n\nPick one to change it."
       }
     },
     {
@@ -1414,10 +1496,1908 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/StaffMemberEmbed",
+      "content": {
+        "title": "🔑  スタッフメンバー",
+        "description": "**{staffMemberDisplayName}** はこのサーバーのスタッフロールを持っています。\n\nスタッフロールは所有者がどの状態を選んでもすべてのダイナミックチャンネルへのアクセスを保つため、あなたのチャンネルからブロックしたりキックしたりすることはできません。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/TopGGVoteEmbed",
+      "content": {
+        "title": "👑 投票してこの機能をアンロック!",
+        "description": "これはプレミアム機能ですが、無料でアンロックできます! [**top.gg で投票する!**]({voteUrl})"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/UnassignableRoleEmbed",
+      "content": {
+        "title": "🎙️  このロールは使用できません",
+        "description": "ロール <@&{roleId}> は保存されましたが、ボットが付与できません - {reason}。\n\n**サーバー設定 → ロール** でボット自身のロールをその上に移動するか、別のロールを選んでください。"
+      }
+    },
+    {
       "name": "VertixBot/UI-General/WelcomeEmbed",
       "content": {
         "title": "༄ VoiceChannelsへようこそ、始めましょう！",
         "description": "Vertixへようこそ、あなたのサーバーへの素晴らしい追加機能です！\n協力してサーバーをさらに良くしましょう。\n\n**ボットのセットアップ**\n- `/setup`と入力するか、`(🛠 セットアップ)`ボタンを押してください。\n- `(➕ マスターチャンネルを作成)`をクリック\n- 手順に従ってください。\n\nまだ不安ですか？[ステップバイステップガイド](https://voicechannels.online/posts/how-to-setup)をご覧ください。\n\n`/setup`コマンドでいつでも設定を編集できます。\n\nヘルプが必要な場合や提案がある場合は、Discordコミュニティサーバーに参加してください！喜んでお手伝いし、フィードバックをお聞きします。\n\n参加はこちら：https://discord.gg/dEwKeQefUU"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed",
+      "content": {
+        "title": "👑  再びあなたが管理者です！",
+        "description": "**{absentMinutes}** 分以内に戻らない場合、このチャンネルは再び他のメンバーが取得できる状態になりますのでご注意ください。\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed",
+      "content": {
+        "title": "🤷  すでに参加しています",
+        "description": "意思は伝わりました。すでにこのチャンネルの所有者候補として立候補しています。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultStepInEmbed",
+      "content": {
+        "title": "😈  このチャンネルはあなたのものになるかもしれません",
+        "description": "このチャンネルの所有者候補として立候補しました。\n幸運を祈ります！\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultVotedEmbed",
+      "content": {
+        "title": "🗳️  {userDisplayName} に投票しました",
+        "description": "<@{userId}> がこのチャンネルの所有権を得られるよう投票しました。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultVotedSameEmbed",
+      "content": {
+        "title": "🗳️  すでに {userDisplayName} に投票しています",
+        "description": "すでに <@{userId}> に投票済みです。気が変わった場合は別の人に投票できます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed",
+      "content": {
+        "title": "🤷  自分自身には投票できません",
+        "description": "自分を信じるのは素晴らしいことですが、この選挙では自分自身への投票は許可されていません。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed",
+      "content": {
+        "title": "🗳️  投票が更新されました",
+        "description": "チャンネルの所有権について、投票を <@{prevUserId}> から <@{currentUserId}> に変更しました。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimStartEmbed",
+      "content": {
+        "title": "👋  {ownerDisplayName} がチャンネルを離れました！",
+        "description": "<@{ownerId}> が {absentMinutes} 分以上不在です。\nあなたが引き継ぎますか？名乗りを上げて、このチャンネルを手に入れましょう！"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimVoteEmbed",
+      "content": {
+        "title": "👑  {candidatesCount} 人がこのチャンネルの取得を希望しています",
+        "description": "カウントダウン開始！\nあと `{elapsedTimeFormatFraction}` で投票が終了します。\n同数の場合は <@{userInitiatorId}> が新しい所有者になります。\n\n{candidatesState}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "candidatesState": {
+            "{candidates}": "🏅 {candidates}",
+            "{candidatesDefault}": "まだ候補者がいません。"
+          }
+        },
+        "arrayOptions": {
+          "candidates": {
+            "format": "{value}{separator}",
+            "separator": " - ",
+            "multiSeparator": "\n",
+            "options": {
+              "userId": "<@{userId}>",
+              "votes": "{votes} Votes"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimVoteStepInEmbed",
+      "content": {
+        "title": "👑  {userInitiatorDisplayName} がこのチャンネルの取得を希望しています",
+        "description": "他に立候補者が現れない限り、あと `{elapsedTimeFormatFraction}` で <@{userInitiatorId}> がこのチャンネルの所有者になります。",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/ClaimVoteWonEmbed",
+      "content": {
+        "title": "👑  {userWonDisplayName} がチャンネルを取得しました",
+        "description": "{wonMessage}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "wonMessage": {
+            "{wonSomeoneElse}": "<@{userWonId}> がこのチャンネルの所有権を取得し、~~{previousOwnerDisplayName}~~ に代わって新しい所有者になりました！{results}",
+            "{wonSameOwner}": "<@{userWonId}> がこのチャンネルの所有権を取得しました。すでに所有者でした！ 😊{results}"
+          },
+          "results": {
+            "{resultsDefault}": "",
+            "{resultsLink}": "\n\n詳細は[こちら]({resultsLink})をクリックしてください"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelEmbed",
+      "content": {
+        "title": "༄ ダイナミックチャンネルを管理",
+        "description": "ダイナミックチャンネルの管理はあなたの役目です。好みに合わせて丁寧にカスタマイズしましょう。\n\n変更を行えるのはチャンネルの所有者のみですのでご注意ください。\n\n_現在の設定_:\n- 名前: **{name}**\n- ユーザー数上限: ✋ **{limit}**\n- 状態: {state}\n- 表示状態: {visibilityState}\n- リージョン: 🌍 **{region}**",
+        "options": {
+          "limit": {
+            "{limitDisplayValue}": "{limitValue}",
+            "{limitDisplayUnlimited}": "無制限"
+          },
+          "state": {
+            "{statePublic}": "🌐 **公開**",
+            "{statePrivate}": "🚫 **プライベート**"
+          },
+          "visibilityState": {
+            "{visibilityStateShown}": "🐵 **表示**",
+            "{visibilityStateHidden}": "🙈 **非表示**"
+          },
+          "region": {
+            "{region-auto}": "自動",
+            "{region-brazil}": "ブラジル",
+            "{region-hongkong}": "香港",
+            "{region-india}": "インド",
+            "{region-japan}": "日本",
+            "{region-rotterdam}": "ロッテルダム",
+            "{region-russia}": "ロシア",
+            "{region-singapore}": "シンガポール",
+            "{region-southafrica}": "南アフリカ",
+            "{region-sydney}": "シドニー",
+            "{region-us-central}": "米国中部",
+            "{region-us-east}": "米国東部",
+            "{region-us-south}": "米国南部",
+            "{region-us-west}": "米国西部"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  まだ投稿できません",
+        "description": "このサーバーではチャンネルの宣伝頻度が制限されており、直前に投稿されたばかりです。次の投稿は約 {retryMinutes} 分後に可能です。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  募集を掲載しました",
+        "description": "<#{lfmChannelId}> に投稿しました。\n\nメンバー数は自動で更新され、チャンネルが満員になるか空になると自動で取り下げられます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmPostEmbed",
+      "content": {
+        "title": "🔎  {channelName} がメンバーを募集中",
+        "description": "{noteLine}{gameLine}**メンバー** {occupancy}\n**ホスト** <@{ownerId}>\n\n<#{channelId}> で合流しよう · `{elapsedTimeFormatFraction}` 後に終了",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "gameLine": {
+            "{gameKnown}": "**プレイ中** {gameName}\n",
+            "{gameUnknown}": ""
+          },
+          "noteLine": {
+            "{noteKnown}": "> {note}\n\n",
+            "{noteUnknown}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  どこに投稿しますか？",
+        "description": "メンバー募集を投稿するチャンネルを選んでください。\n\n誰がホストか、何をプレイしているか、何人いるかが表示され、チャンネルが満員になるか空になると取り下げられます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  投稿できません",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "投稿先のチャンネルがまだ設定されていません。管理者が設定画面で選択します。",
+            "{reasonDestinationUnavailable}": "これらの募集が送られるチャンネルは、あなたには表示されていません。管理者が設定画面で選びます。",
+            "{reasonHidden}": "チャンネルが非表示のため、誰にも見つけてもらえません。先に表示に切り替えてください。",
+            "{reasonPrivate}": "チャンネルが非公開のため、招待しても誰も入れません。先に公開に切り替えてください。",
+            "{reasonFull}": "チャンネルはすでに満員です。",
+            "{reasonAlreadyPosted}": "このチャンネルはすでに掲載されています。",
+            "{reasonFailed}": "投稿中に問題が発生しました。少し待ってからもう一度お試しください。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
+      "content": {
+        "title": "🧹  削除できるメッセージがありません",
+        "description": "埋め込みのないメッセージのみ削除できますのでご注意ください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed",
+      "content": {
+        "title": "🧹  {ownerDisplayName} がチャットをクリアしました！",
+        "description": "合計 {totalMessages} 件のメッセージ。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
+      "content": {
+        "title": "🙅  ユーザー数の上限は {minValue} 〜 {maxValue} の範囲で指定してください"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
+      "content": {
+        "title": "✋  チャンネルのユーザー数上限が {userLimit} に変更されました",
+        "options": {
+          "userLimit": {
+            "{userLimitValue}": "{userLimitValue}",
+            "{userLimitUnlimited}": "無制限"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
+      "content": {
+        "title": "🙅  チャンネルの名前変更に失敗しました",
+        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
+      "content": {
+        "title": "🙅 チャンネルの名前変更が早すぎます！",
+        "description": "次の名前変更まで `{elapsedTimeFormatFraction}` お待ちください{masterChannelMessage}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "masterChannelMessage": {
+            "{masterChannelId}": " または新しいチャンネルを開いてください: <#{masterChannelId}>",
+            "{masterChannelMessageDefault}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbed",
+      "content": {
+        "title": "✏️  チャンネル名が「{channelName}」に変更されました"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
+      "content": {
+        "title": "🙅  チャンネルのステータスを設定できませんでした",
+        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
+      "content": {
+        "title": "📣  チャンネルのステータスが自動に戻りました",
+        "description": "現在は「{channelStatus}」と表示され、チャンネルの変化に応じて更新されます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
+      "content": {
+        "title": "📣  チャンネルのステータスが「{channelStatus}」になりました",
+        "description": "消すまで保持されます。空のステータスを送信すると自動に戻ります。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ ダイナミックチャンネルを管理",
+        "description": "自分のダイナミックチャンネルを、好みに合わせてじっくりカスタマイズしましょう。\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed",
+      "content": {
+        "title": "👥  チャンネルの権限を管理",
+        "description": "\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed",
+      "content": {
+        "title": "🫵  ユーザーをブロックしました",
+        "description": "**{userBlockedDisplayName}** をブロックしました。このチャンネルにアクセスできなくなりました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed",
+      "content": {
+        "title": "👎  アクセスを取り消しました",
+        "description": "**{userDeniedDisplayName}** のアクセスを取り消しました。このチャンネルにアクセスできなくなりました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed",
+      "content": {
+        "title": "👍  アクセスを許可しました",
+        "description": "**{userGrantedDisplayName}** を追加しました。このチャンネルにアクセスできるようになりました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbed",
+      "content": {
+        "title": "🙈  チャンネルは非表示になりました",
+        "description": "許可されたユーザーのみがチャンネルを見ることができますのでご注意ください。\n\n{allowedUsersDisplay}\n{message}",
+        "options": {
+          "message": {
+            "{messageDefault}": "**(`👥 アクセス`)** ボタンでチャンネルへのアクセスを管理できます。",
+            "{messageAccessNotAvailable}": "新しいメンバーにチャンネルへのアクセスを許可する方法はありません。\n\n**(👥 アクセス)** ボタンが管理者によって無効化されているためです"
+          },
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、あなた以外にアクセスできるユーザーはいません。\n",
+            "{allowedUsers}": "**_許可されたユーザー_**: \n{allowedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
+      "content": {
+        "title": "👢  ユーザーをキックしました",
+        "description": "**{userKickedDisplayName}** をキックしました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbed",
+      "content": {
+        "title": "🚫  チャンネルはプライベートになりました",
+        "description": "許可されたユーザーのみがチャンネルに参加できますのでご注意ください。\n\n{allowedUsersDisplay}\n{message}",
+        "options": {
+          "message": {
+            "{messageDefault}": "**(`👥 アクセス`)** ボタンでチャンネルへのアクセスを管理できます。",
+            "{messageAccessNotAvailable}": "新しいメンバーにチャンネルへのアクセスを許可する方法はありません。\n\n**(👥 アクセス)** ボタンが管理者によって無効化されているためです"
+          },
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、あなた以外にアクセスできるユーザーはいません。\n",
+            "{allowedUsers}": "**_許可されたユーザー_**: \n{allowedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbed",
+      "content": {
+        "title": "🌐  チャンネルは公開になりました",
+        "description": "現在、あなたのルームは誰でもアクセスできる状態です。\n\n非表示またはプライベートに設定しない限り、アクセス権の**ない**メンバーもルームに入ることができます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed",
+      "content": {
+        "title": "🐵  チャンネルは表示されるようになりました"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
+      "content": {
+        "title": "🤙  ユーザーのブロックを解除しました",
+        "description": "**{userUnBlockedDisplayName}** のブロックを解除しました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbed",
+      "content": {
+        "title": "🔃  ダイナミックチャンネルを既定の設定にリセットしました！ ",
+        "description": "設定を既定値にリセットしました:\n\n- 名前: **{name}** {nameChanged}\n- ユーザー数上限: ✋**{userLimit}** {userLimitChanged}\n- 状態: {state} {stateChanged}\n- 表示状態: {visibilityState} {visibilityStateChanged}\n- 許可されたユーザー: {allowedUsers} {allowedUsersChanged}\n- ブロック済みユーザー: {blockedUsers} {blockedUsersChanged}{rateLimited}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "changedDisplay": "(__復元済み__)",
+          "unchangedDisplay": "(__変更なし__)",
+          "userLimit": {
+            "{userLimitValue}": "{userLimitValue}",
+            "{userLimitUnlimited}": "無制限"
+          },
+          "state": {
+            "{statePublic}": "🌐 **公開**",
+            "{statePrivate}": "🚫 **プライベート**"
+          },
+          "visibilityState": {
+            "{visibilityStateShown}": "🐵 **表示**",
+            "{visibilityStateHidden}": "🙈 **非表示**"
+          },
+          "rateLimited": {
+            "{rateLimitedNone}": "",
+            "{rateLimitedDisplay}": "\n\n⚠️ レート制限のため、現在は名前を変更できません。\n\n{elapsedTimeFormatFraction} 秒お待ちいただくか、新しいチャンネルを作成してください。"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          },
+          "blockedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed",
+      "content": {
+        "title": "🔀  チャンネルの所有権を譲渡",
+        "description": "チャンネルの所有権を別のユーザーに譲渡します。\n\n譲渡先のユーザーを選択してください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
+      "content": {
+        "title": "🔀  チャンネルの所有権を譲渡しました！",
+        "description": "あなたはこのチャンネルの所有者ではなくなりました。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
+      "content": {
+        "title": "🔀  チャンネルの所有権を譲渡",
+        "description": "チャンネルの所有権を {userDisplayName} に譲渡します。\n\n⚠️ 所有権を他のユーザーに譲渡すると、あなたの所有者権限は失われます。\n\n本当に **{userDisplayName}?** にチャンネルの所有権を譲渡しますか"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
+      "content": {
+        "title": "🎚  マスターチャンネル #{index} のボタン",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "選ぶたびにすぐ保存されます。すでに開いているチャンネルは、既存チャンネルを更新を押すまで今のボタンのままです。",
+        "options": {
+          "buttonsNone": "> - *なし。所有者にはボタンのないパネルが表示されます。*",
+          "rosterHeading": "**専用のボタンを持つロール**",
+          "rosterButtonsWord": "ボタン",
+          "panelNote": "ロールごとの構成が届くのはボイスチャンネル内のパネルだけです。**control-panel** チャンネルには常に既定の構成が表示されます。",
+          "rosterMore": "> - *… ほか {rosterMoreCount} 件。すべて上のメニューにあります。*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここで作られたチャンネルの所有者にはこのボタンが表示されます。ただし下に並んでいるロールを持つ場合は、そのロールの構成に置き換わります。",
+            "{scopeDefaultVerified}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここでチャンネルを開けるのは {verifiedRolesList} だけなので、これはその所有者に表示されるボタンです。ただし下に並んでいるロールも持つ場合は、そのロールの構成に置き換わります。",
+            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。\n{panelNote}",
+            "{scopeRoleMissing}": "**このロールはこのサーバーにもう存在しません。**\n誰も持てないため、保存されたボタンは誰にも届きません。**このロールに既定を使う** を押して削除してください。"
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**すべてのパネルに表示**",
+            "{listRoleOwn}": "**このロールを持つ所有者のパネルに表示**",
+            "{listRoleNew}": "**既定の構成 — ここで変更すると、このロール専用の構成になります**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *まだありません。すべての所有者が既定の構成になります。*\n> - *例: あるロールだけがチャンネルの引き継ぎとリセットを行え、ほかは名前の変更だけにする。*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nこれらのロールを 2 つ持つ所有者には、**サーバー設定 → ロール** でより上にあるロールの構成が適用されます。"
+          },
+          "hintDisplay": {
+            "{hintDefault}": "あるロールに別の構成を与えるには、**➕ ロールに専用のボタンを与える** から選んでください。",
+            "{hintRoleOwn}": "**このロールに既定を使う** はこの構成を削除し、その所有者を既定の構成に戻します。",
+            "{hintRoleNew}": "ボタンを変更するまで、このロールには何も保存されません。",
+            "{hintEveryone}": "⚠️ **@everyone** に専用の構成は持たせられません。全メンバーがこのロールを持つため、その構成がすべての所有者の既定を置き換えてしまいます。既定の構成を編集するか、対象の狭いロールを選んでください。",
+            "{hintPushed}": "✅ このマスターチャンネルが開いているすべてのチャンネルに送信しました。それぞれの所有者に応じた構成が表示されます。"
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "0": "✏️ ∙ **名前を変更**",
+              "1": "✋ ∙ **人数制限**",
+              "2": "🧹 ∙ **チャットを消去**",
+              "3": "🚫 ∙ **非公開** / 🌐 ∙ **公開**",
+              "4": "🙈 ∙ **非表示** / 🐵 ∙ **表示**",
+              "5": "👥 ∙ **アクセス**",
+              "6": "🔃 ∙ **リセット**",
+              "7": "😈 ∙ **引き継ぐ**",
+              "12": "🔀 ∙ **譲渡**",
+              "13": "📣 ∙ **ステータス**",
+              "15": "🔎 ∙ **LFM**"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  マスターチャンネル #{index} の既定プライバシーを編集",
+        "description": "**新しく作成される** ダイナミックチャンネルが最初に取る状態です。既存のチャンネルには影響せず、所有者は後から自分のチャンネルを変更できます。\n\n**公開** - 対象者なら誰でも見えて参加できます。\n**プライベート** - 見えますが、入れるのは所有者が許可した人だけです。\n**非表示** - 所有者が表示するまで見えません。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の状態が適用されます。\n\n**_現在の既定値_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **公開**",
+            "{privacyPrivate}": "🚫 **プライベート**",
+            "{privacyHidden}": "🙈 **非表示**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  マスターチャンネル #{index} の既定ユーザー上限を編集",
+        "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitUnlimited}": "**上限なし**",
+            "{userLimitValue}": "**{userLimit} 人**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditEmbed",
+      "content": {
+        "title": "🔧  マスターチャンネル #{index} を設定",
+        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
+        "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
+        "options": {
+          "on": "`🟢∙オン`",
+          "off": "`🔴∙オフ`",
+          "dynamicChannelLogsChannelDisplay": {
+            "{dynamicChannelLogsChannelDefault}": "**なし**",
+            "{dynamicChannelLogsChannelSelected}": "<#{dynamicChannelLogsChannelId}>"
+          },
+          "configUserMention": {
+            "{configUserMentionEnabled}": "{on}",
+            "{configUserMentionDisabled}": "{off}"
+          },
+          "configAutoSave": {
+            "{configAutoSaveEnabled}": "{on}",
+            "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
+          },
+          "configLogs": {
+            "{configLogsEnabled}": "{on}",
+            "{configLogsDisabled}": "{off}"
+          },
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**なし** *(サーバー設定より)*",
+            "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
+          },
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
+            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
+          },
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
+          },
+          "newChannelLimit": {
+            "{newChannelLimitUnlimited}": "上限なし",
+            "{newChannelLimitValue}": "{newChannelLimitCount} 人"
+          },
+          "newChannelPrivacy": {
+            "{privacyPublic}": "🌐 公開",
+            "{privacyPrivate}": "🚫 プライベート",
+            "{privacyHidden}": "🙈 非表示"
+          }
+        },
+        "arrayOptions": {
+          "dynamicChannelButtonsTemplate": {
+            "format": "- ( {value} ){separator}",
+            "separator": "\n",
+            "options": {
+              "0": "✏️ ∙ **Rename**",
+              "1": "✋ ∙ **User Limit**",
+              "2": "🧹 ∙ **Clear Chat**",
+              "3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
+              "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
+              "5": "👥 ∙ **Access**",
+              "6": "🔃 ∙ **Reset**",
+              "7": "😈 ∙ **Claim**",
+              "12": "🔀 ∙ **Transfer**",
+              "13": "📣 ∙ **ステータス**",
+              "15": "🔎 ∙ **LFM**"
+            }
+          },
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          },
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmChannelsEmbed",
+      "content": {
+        "title": "🔎  マスターチャンネル #{index} の LFM を編集",
+        "description": "チャンネルのオーナーは、ここで選んだテキストチャンネルに自分のチャンネルを告知できます。チャットを読んでいるメンバーが、人を探している部屋を見つけて参加できるようになります。\n\nメンバーは投稿時にこの中から選び、それ以外のチャンネルには投稿できません。\n\n空のままにすると、このマスターチャンネルではこの機能が無効になります。\n\n**_現在のLFMチャンネル_**\n\n> {lfmChannelsDisplay}\n\n**_メンションされるロール_**\n\n> {pingRolesDisplay}\n\n**_タイミング_**\n\n> 投稿のクールダウン（全チャンネル）: {postCooldown}\n> ping のクールダウン: {pingCooldown}\n> 投稿の有効期限: {postExpiry}\n> 人数の更新間隔: {occupancyDebounce}",
+        "footer": "注意: ここで選んだすべてのチャンネルで、ボットにチャンネルを見る・メッセージを送信・リンクを埋め込む権限が必要です。",
+        "options": {
+          "lfmChannelsDisplay": {
+            "{lfmChannels}": "{lfmChannels}",
+            "{lfmChannelsNone}": "**なし** *(機能は無効です)*"
+          },
+          "pingRolesDisplay": {
+            "{pingRoles}": "{pingRoles}",
+            "{pingRolesNone}": "**なし** *(投稿は通知なしで掲載されます)*"
+          }
+        },
+        "arrayOptions": {
+          "lfmChannels": {
+            "format": "<#{value}>{separator}",
+            "separator": ", "
+          },
+          "pingRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
+      "content": {
+        "title": "🔑  マスターチャンネル #{index} のスタッフロールを編集",
+        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n空のままにすると、サーバー全体のスタッフロールが使われます。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
+        "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
+        "options": {
+          "staffRolesDisplay": {
+            "{staffRoles}": "{staffRoles}",
+            "{staffRolesNone}": "**なし** *(サーバー設定より)*",
+            "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
+          }
+        },
+        "arrayOptions": {
+          "staffRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
+      "content": {
+        "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
+        "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n空のままにすると、サーバー全体の認証済みロールが使われます。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
+        "footer": "注意: 変更は編集後に状態が変わるダイナミックチャンネルにのみ適用され、チャンネル内の既存のロールは変更されません。",
+        "options": {
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesDefault}": "**なし** *(サーバー設定より)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
+          }
+        },
+        "arrayOptions": {
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditVoiceRoleEmbed",
+      "content": {
+        "title": "🎙️  マスターチャンネル #{index} のボイスロールを編集",
+        "description": "このロールは、メンバーがこのマスターチャンネルのダイナミックチャンネルにいる間だけ付与され、退出した瞬間に外れます。\n\n今ボイスにいる人だけにテキストチャンネルを見せたり、メンバーリストでまとめたりするのに使えます。\n\n空のままにすると、サーバー全体のボイスロールが使われます。\n\n**_現在のボイスロール_**\n\n> {voiceRoleDisplay}",
+        "footer": "注意: ボット自身のロールが付与するロールより上にないと、Discord は拒否します。",
+        "options": {
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
+            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupStep1Embed",
+      "content": {
+        "title": "ステップ 1 - ダイナミックチャンネルのテンプレート名を設定",
+        "description": "ダイナミックチャンネルが開かれるときに使用される既定の名前を指定できます。\n\n_現在のテンプレート名_:\n`{dynamicChannelNameTemplate}`\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\n仕組みがわからない場合は[説明](https://voicechannels.online/setup/1)をご覧ください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupStep2Embed",
+      "content": {
+        "title": "ステップ 2 - ダイナミックチャンネルの設定",
+        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n> 📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channel-v2)をご覧ください。",
+        "footer": "{footer}",
+        "options": {
+          "on": "`🟢∙オン`",
+          "off": "`🔴∙オフ`",
+          "message": {
+            "{defaultMessage}": "{dynamicChannelButtonsTemplate}\n",
+            "{noButtonsMessage}": "ボタンが選択されていません！\n"
+          },
+          "configUserMention": {
+            "{configUserMentionEnabled}": "{on}",
+            "{configUserMentionDisabled}": "{off}"
+          },
+          "configAutoSave": {
+            "{configAutoSaveEnabled}": "{on}",
+            "{configAutoSaveDisabled}": "{off}"
+          },
+          "configAutoStatus": {
+            "{configAutoStatusEnabled}": "{on}",
+            "{configAutoStatusDisabled}": "{off}"
+          },
+          "footer": {
+            "{defaultFooter}": "このマスターチャンネルから新しく作成されるダイナミックチャンネルは、選択した設定の影響を受けます。",
+            "{noButtonsFooter}": "注意: ボタンがないと、メンバーはダイナミックチャンネルを管理できません。埋め込みもインターフェースも表示されません。\n"
+          }
+        },
+        "arrayOptions": {
+          "dynamicChannelButtonsTemplate": {
+            "format": "- ( {value} ){separator}",
+            "separator": "\n",
+            "options": {
+              "0": "✏️ ∙ **Rename**",
+              "1": "✋ ∙ **User Limit**",
+              "2": "🧹 ∙ **Clear Chat**",
+              "3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
+              "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
+              "5": "👥 ∙ **Access**",
+              "6": "🔃 ∙ **Reset**",
+              "7": "😈 ∙ **Claim**",
+              "12": "🔀 ∙ **Transfer**",
+              "13": "📣 ∙ **ステータス**",
+              "15": "🔎 ∙ **LFM**"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupStep3Embed",
+      "content": {
+        "title": "ステップ 3 - 認証済みロールを選択",
+        "description": "認証済みロールとは、プライバシーボタンが操作するロールのことです。\n\nチャンネルの所有者が **Private** または **Hidden** を押すと、Bot はこれらのロールの権限を変更します。誰がチャンネルを見られるか、誰が参加できるかはこのロールで決まります。\n\n⚠️ **何を選べばよいか分からない場合は `@everyone` のままにしてください。** ほぼすべてのサーバーではこれが正解です。\n\n**_別のロールが必要になる場合_**\n\n新しいメンバーが、誰かにロールを付与されるまでチャンネルを見られないサーバーの場合だけです。\n\n_例_: 新しいメンバーがサーバーに参加しても、`Member` ロールを受け取るまで何も見えないとします。認証済みロールを `@everyone` のままにすると、公開のダイナミックチャンネルはその新しいメンバーにも表示されます。代わりに `Member` を選べば、あなたの確認を通過したメンバーだけが見て参加できます。\n\n**_🛡️ 認証済みロール_**\n\n> {verifiedRolesDisplay}\n\nそれでも分からない場合は[説明](https://voicechannels.online/setup/3)をご覧ください。\n\n**( `✓ Finish` )** ボタンを押すと、既定の設定のままにできます。",
+        "options": {
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesDefault}": "**なし**"
+          }
+        },
+        "arrayOptions": {
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimCommandPointedAtEmbed",
+      "content": {
+        "title": "👑  Claim it here",
+        "description": "**{claimedChannelName}** is waiting for a new owner.\n\n{claimMessageUrl}\n\nPress **Claim** there to put yourself forward. Everyone still inside votes."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimCommandSelectEmbed",
+      "content": {
+        "title": "👑  Channels you can claim",
+        "description": "There {claimableCount} waiting for a new owner.\n\nA channel becomes claimable when whoever owned it leaves and does not come back. Whoever is still inside votes on who takes it.\n\nPick one and you will be sent to where the vote is.",
+        "options": {
+          "claimableCount": {
+            "1": "is **one channel**",
+            "many": "are **{count} channels**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultOwnerStopEmbed",
+      "content": {
+        "title": "👑  再びあなたが管理者です！",
+        "description": "**{absentMinutes}** 分以内に戻らない場合、このチャンネルは再び他のメンバーが取得できる状態になりますのでご注意ください。\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbed",
+      "content": {
+        "title": "🤷  すでに参加しています",
+        "description": "意思は伝わりました。すでにこのチャンネルの所有者候補として立候補しています。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultStepInEmbed",
+      "content": {
+        "title": "😈  このチャンネルはあなたのものになるかもしれません",
+        "description": "このチャンネルの所有者候補として立候補しました。\n幸運を祈ります！\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultVotedEmbed",
+      "content": {
+        "title": "🗳️  {userDisplayName} に投票しました",
+        "description": "<@{userId}> がこのチャンネルの所有権を得られるよう投票しました。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultVotedSameEmbed",
+      "content": {
+        "title": "🗳️  すでに {userDisplayName} に投票しています",
+        "description": "すでに <@{userId}> に投票済みです。気が変わった場合は別の人に投票できます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultVoteSelfEmbed",
+      "content": {
+        "title": "🤷  自分自身には投票できません",
+        "description": "自分を信じるのは素晴らしいことですが、この選挙では自分自身への投票は許可されていません。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbed",
+      "content": {
+        "title": "🗳️  投票が更新されました",
+        "description": "チャンネルの所有権について、投票を <@{prevUserId}> から <@{currentUserId}> に変更しました。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimStartEmbed",
+      "content": {
+        "title": "👋  {ownerDisplayName} がチャンネルを離れました！",
+        "description": "<@{ownerId}> が {absentMinutes} 分以上不在です。\nあなたが引き継ぎますか？名乗りを上げて、このチャンネルを手に入れましょう！"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimVoteEmbed",
+      "content": {
+        "title": "👑  {candidatesCount} 人がこのチャンネルの取得を希望しています",
+        "description": "カウントダウン開始！\nあと `{elapsedTimeFormatFraction}` で投票が終了します。\n同数の場合は <@{userInitiatorId}> が新しい所有者になります。\n\n{candidatesState}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "candidatesState": {
+            "{candidates}": "🏅 {candidates}",
+            "{candidatesDefault}": "まだ候補者がいません。"
+          }
+        },
+        "arrayOptions": {
+          "candidates": {
+            "format": "{value}{separator}",
+            "separator": " - ",
+            "multiSeparator": "\n",
+            "options": {
+              "userId": "<@{userId}>",
+              "votes": "{votes} Votes"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimVoteStepInEmbed",
+      "content": {
+        "title": "👑  {userInitiatorDisplayName} がこのチャンネルの取得を希望しています",
+        "description": "他に立候補者が現れない限り、あと `{elapsedTimeFormatFraction}` で <@{userInitiatorId}> がこのチャンネルの所有者になります。",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ClaimVoteWonEmbed",
+      "content": {
+        "title": "👑  {userWonDisplayName} がチャンネルを取得しました",
+        "description": "{wonMessage}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "wonMessage": {
+            "{wonSomeoneElse}": "<@{userWonId}> がこのチャンネルの所有権を取得し、~~{previousOwnerDisplayName}~~ に代わって新しい所有者になりました！{results}",
+            "{wonSameOwner}": "<@{userWonId}> がこのチャンネルの所有権を取得しました。すでに所有者でした！ 😊{results}"
+          },
+          "results": {
+            "{resultsDefault}": "",
+            "{resultsLink}": "\n\n詳細は[こちら]({resultsLink})をクリックしてください"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed",
+      "content": {
+        "title": "{clearEmoji}  削除できるメッセージがありません",
+        "description": "埋め込みのないメッセージのみ削除できますのでご注意ください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbed",
+      "content": {
+        "title": "{clearEmoji}  {ownerDisplayName} がチャットをクリアしました！",
+        "description": "合計 {totalMessages} 件のメッセージ。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
+      "content": {
+        "title": "{inviteEmoji}  チャンネルに誰かを招待する",
+        "description": "入れたいユーザーを選ぶと、チャンネルの状態にかかわらず参加できるようになります。\n\n場所も伝わるので、プライベートなチャンネルでも説明はいりません。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
+      "content": {
+        "title": "{inviteEmoji}  どのチャンネルですか？",
+        "description": "ここで複数のチャンネルを開いています。誰かを招待したいチャンネルを選んでください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
+      "content": {
+        "title": "{inviteEmoji}  招待を送信しました",
+        "description": "**{invitedDisplayName}** がこのチャンネルに参加できるようになりました。\n\n{deliveryDisplay}",
+        "options": {
+          "deliveryDisplay": {
+            "{deliveryDelivered}": "チャンネルへのリンクを送りました。",
+            "{deliveryBlocked}": "ダイレクトメッセージが閉じているので、直接伝えてください — アクセス権はすでに渡っています。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
+      "content": {
+        "title": "{knockEmoji}  リクエストに回答しました",
+        "description": "{answerDisplay}",
+        "options": {
+          "answerDisplay": {
+            "{answerAllowed}": "**{knockerDisplayName}** を入れました。",
+            "{answerDenied}": "**{knockerDisplayName}** は入れませんでした。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
+      "content": {
+        "title": "{knockEmoji}  チャンネルへの参加を頼む",
+        "description": "入りたいチャンネルを選ぶと、その所有者に入れてもらえるよう依頼します。\n\n決めるのは所有者で、結果はどちらでもお知らせします。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
+      "content": {
+        "title": "{knockEmoji}  ノックする先がありません",
+        "description": "{openChannelsDisplay}",
+        "options": {
+          "openChannelsDisplay": {
+            "{openChannelsDefault}": "ここのチャンネルはすべて、すでに入れるか自分のものです。\n\n見えないチャンネルは一覧に出ません — 友達が持っているなら招待を頼んでください。",
+            "{openChannels}": "ここに閉じたチャンネルはありません — 以下は開いています、そのままどうぞ:\n\n{openChannels}"
+          }
+        },
+        "arrayOptions": {
+          "openChannels": {
+            "format": "- <#{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
+      "content": {
+        "title": "{knockEmoji}  参加したい人がいます",
+        "description": "<@{knockerId}> がこのチャンネルへの参加を求めています。\n\n入れると、アクセスメニューと同じようにアクセス権が渡ります。無視するのも答えです — リクエストは自動的に期限切れになります。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
+      "content": {
+        "title": "{knockEmoji}  リクエストを送信しました",
+        "description": "**{knockedChannelName}** の所有者に、あなたを入れてもらうよう依頼しました。\n\n返事があり次第お知らせします。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
+      "content": {
+        "title": "{knockEmoji}  すでに頼んでいます",
+        "description": "そのチャンネルの所有者はリクエストを受け取っており、まだ返事をしていません。\n\n少し待ってから、もう一度頼んでください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbed",
+      "content": {
+        "title": "🙅  ユーザー数の上限は {minValue} 〜 {maxValue} の範囲で指定してください"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbed",
+      "content": {
+        "title": "✋  チャンネルのユーザー数上限が {userLimit} に変更されました",
+        "options": {
+          "userLimit": {
+            "{userLimitValue}": "{userLimitValue}",
+            "{userLimitUnlimited}": "無制限"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
+      "content": {
+        "title": "༄ ダイナミックチャンネルを管理",
+        "description": "自分のダイナミックチャンネルを、好みに合わせてじっくりカスタマイズしましょう。\n\n**利用できる機能:**\n\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbed",
+      "content": {
+        "title": "{permissionsEmoji}  チャンネルの権限を管理",
+        "description": "\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbed",
+      "content": {
+        "title": "🫵  ユーザーをブロックしました",
+        "description": "**{userBlockedDisplayName}** をブロックしました。このチャンネルにアクセスできなくなりました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbed",
+      "content": {
+        "title": "👎  アクセスを取り消しました",
+        "description": "**{userDeniedDisplayName}** のアクセスを取り消しました。このチャンネルにアクセスできなくなりました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbed",
+      "content": {
+        "title": "👍  アクセスを許可しました",
+        "description": "**{userGrantedDisplayName}** を追加しました。このチャンネルにアクセスできるようになりました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbed",
+      "content": {
+        "title": "👢  ユーザーをキックしました",
+        "description": "**{userKickedDisplayName}** をキックしました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbed",
+      "content": {
+        "title": "🤙  ユーザーのブロックを解除しました",
+        "description": "**{userUnBlockedDisplayName}** のブロックを解除しました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
+        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          },
+          "blockedUsers": {
+            "format": "- <@{value}>{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed",
+      "content": {
+        "title": "{editPrimaryMessageEmoji}  •  チャンネルの説明を編集",
+        "description": "\n _説明_:\n `{description}`\n\n### 変更しますか？",
+        "options": {
+          "description": {
+            "{descriptionDisplayValue}": "{descriptionValue}",
+            "{descriptionDisplayDefault}": "ダイナミックチャンネルの管理はあなたの役目です。好みに合わせて丁寧にカスタマイズしましょう。\n\n変更を行えるのはチャンネルの所有者のみですのでご注意ください。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbed",
+      "content": {
+        "title": "{editPrimaryMessageEmoji}  •  チャンネルの最初のメッセージを編集",
+        "description": "\n _現在_:\n\n• タイトル: `{title}`\n\n• 説明: `{description}`\n\n### 変更しますか？",
+        "options": {
+          "title": {
+            "{titleDisplayValue}": "{titleValue}",
+            "{titleDisplayDefault}": "༄ ダイナミックチャンネルを管理"
+          },
+          "description": {
+            "{descriptionDisplayValue}": "{descriptionValue}",
+            "{descriptionDisplayDefault}": "ダイナミックチャンネルの管理はあなたの役目です。好みに合わせて丁寧にカスタマイズしましょう。\n\n変更を行えるのはチャンネルの所有者のみですのでご注意ください。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed",
+      "content": {
+        "title": "{editPrimaryMessageEmoji}  •  チャンネルのタイトルを編集",
+        "description": "\n _タイトル_:\n `{title}`\n\n### 変更しますか？",
+        "options": {
+          "title": {
+            "{titleDisplayValue}": "{titleValue}",
+            "{titleDisplayDefault}": "༄ ダイナミックチャンネルを管理"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed",
+      "content": {
+        "title": "{title}",
+        "description": "{description}\n\n{renameEmoji} ・ 名前: **{name}**\n\n{limitEmoji} ・ ユーザー数上限: **{limit}**\n\n{privacyEmoji} ・ プライバシー状態: **{state}**\n\n{regionEmoji} ・ リージョン:  **{region}**\n",
+        "options": {
+          "title": {
+            "{titleDisplayValue}": "{titleValue}",
+            "{titleDisplayDefault}": "༄ ダイナミックチャンネルを管理"
+          },
+          "description": {
+            "{descriptionDisplayValue}": "{descriptionValue}",
+            "{descriptionDisplayDefault}": "ダイナミックチャンネルの管理はあなたの役目です。好みに合わせて丁寧にカスタマイズしましょう。\n\n変更を行えるのはチャンネルの所有者のみですのでご注意ください。"
+          },
+          "region": {
+            "{region-auto}": "自動",
+            "{region-brazil}": "ブラジル",
+            "{region-hongkong}": "香港",
+            "{region-india}": "インド",
+            "{region-japan}": "日本",
+            "{region-rotterdam}": "ロッテルダム",
+            "{region-russia}": "ロシア",
+            "{region-singapore}": "シンガポール",
+            "{region-southafrica}": "南アフリカ",
+            "{region-sydney}": "シドニー",
+            "{region-us-central}": "米国中部",
+            "{region-us-east}": "米国東部",
+            "{region-us-south}": "米国南部",
+            "{region-us-west}": "米国西部"
+          },
+          "state": {
+            "{statePublic}": "🌐 公開",
+            "{statePrivate}": "🚫 プライベート",
+            "{stateShown}": "🐵 表示",
+            "{stateHidden}": "🙈 非表示"
+          },
+          "stateMessage": {
+            "{stateMessagePublic}": "誰でもチャンネルに参加できます。",
+            "{stateMessagePrivate}": "信頼済みユーザーのみがチャンネルに参加できます。",
+            "{stateMessageShown}": "誰でもチャンネルを見て参加できます。",
+            "{stateMessageHidden}": "信頼済みユーザーのみがチャンネルを見て参加できます。"
+          },
+          "limit": {
+            "{limitDisplayValue}": "{limitValue}",
+            "{limitDisplayUnlimited}": "無制限"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelPrivacyEmbed",
+      "content": {
+        "title": "{privacyEmoji}  チャンネルのプライバシーを管理",
+        "description": "**_状態_**: `{state}`\n**_意味_**: `{stateMessage}`\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}\n-# ブロック済みユーザーは、どの状態でもチャンネルに参加できません。",
+        "footer": "下のメニューからチャンネルのプライバシー状態を管理できます。",
+        "options": {
+          "allowedUsersDisplay": {
+            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
+            "{allowedUsers}": "{allowedUsers}\n"
+          },
+          "blockedUsersDisplay": {
+            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
+            "{blockedUsers}": "{blockedUsers}\n"
+          },
+          "state": {
+            "{statePublic}": "🌐 公開",
+            "{statePrivate}": "🚫 プライベート",
+            "{stateShown}": "🐵 表示",
+            "{stateHidden}": "🙈 非表示"
+          },
+          "stateMessage": {
+            "{stateMessagePublic}": "誰でもチャンネルに参加できます。",
+            "{stateMessagePrivate}": "信頼済みユーザーのみがチャンネルに参加できます。",
+            "{stateMessageShown}": "誰でもチャンネルを見て参加できます。",
+            "{stateMessageHidden}": "信頼済みユーザーのみがチャンネルを見て参加できます。"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRegionEmbed",
+      "content": {
+        "title": "{regionEmoji}  チャンネルの音声リージョンを設定",
+        "description": "-# リージョンは音声サーバーの場所を決定します。\n-# ボイスチャンネルのメンバー全員に最も近い場所が理想です。\n-# 推奨は `自動` です\n\n現在の音声リージョン: `{region}`",
+        "options": {
+          "region": {
+            "{region-auto}": "自動",
+            "{region-brazil}": "ブラジル",
+            "{region-hongkong}": "香港",
+            "{region-india}": "インド",
+            "{region-japan}": "日本",
+            "{region-rotterdam}": "ロッテルダム",
+            "{region-russia}": "ロシア",
+            "{region-singapore}": "シンガポール",
+            "{region-southafrica}": "南アフリカ",
+            "{region-sydney}": "シドニー",
+            "{region-us-central}": "米国中部",
+            "{region-us-east}": "米国東部",
+            "{region-us-south}": "米国南部",
+            "{region-us-west}": "米国西部"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbed",
+      "content": {
+        "title": "🙅  チャンネルの名前変更に失敗しました",
+        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbed",
+      "content": {
+        "title": "🙅 チャンネルの名前変更が早すぎます！",
+        "description": "次の名前変更まで `{elapsedTimeFormatFraction}` お待ちください{masterChannelMessage}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "masterChannelMessage": {
+            "{masterChannelId}": " または新しいチャンネルを開いてください: <#{masterChannelId}>",
+            "{masterChannelMessageDefault}": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed",
+      "content": {
+        "title": "✏️  チャンネル名が「{channelName}」に変更されました"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelResetChannelEmbed",
+      "content": {
+        "title": "{resetEmoji}  ダイナミックチャンネルを既定の設定にリセットしました！ ",
+        "description": "設定を既定値にリセットしました:\n\n- 名前: **{name}** {nameChanged}\n- ユーザー数上限: ✋**{userLimit}** {userLimitChanged}\n- 状態: {state} {stateChanged}\n- 表示状態: {visibilityState} {visibilityStateChanged}\n- リージョン: {region} {regionChanged}\n- 最初のメッセージ: {primaryMessageChanged}\n- 許可されたユーザー: {allowedUsers} {allowedUsersChanged}\n- ブロック済みユーザー: {blockedUsers} {blockedUsersChanged}{rateLimited}",
+        "options": {
+          "formatSecondUnits": {
+            "unit": "秒",
+            "units": "秒"
+          },
+          "formatMinuteUnits": {
+            "unit": "分",
+            "units": "分"
+          },
+          "elapsedTimeFormat": {
+            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
+          },
+          "elapsedTimeFormatFraction": {
+            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
+            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
+          },
+          "changedDisplay": "(__復元済み__)",
+          "unchangedDisplay": "(__変更なし__)",
+          "userLimit": {
+            "{userLimitValue}": "{userLimitValue}",
+            "{userLimitUnlimited}": "無制限"
+          },
+          "state": {
+            "{statePublic}": "🌐 **公開**",
+            "{statePrivate}": "🚫 **プライベート**"
+          },
+          "visibilityState": {
+            "{visibilityStateShown}": "🐵 **表示**",
+            "{visibilityStateHidden}": "🙈 **非表示**"
+          },
+          "rateLimited": {
+            "{rateLimitedNone}": "",
+            "{rateLimitedDisplay}": "\n\n⚠️ レート制限のため、現在は名前を変更できません。\n\n{elapsedTimeFormatFraction} 秒お待ちいただくか、新しいチャンネルを作成してください。"
+          }
+        },
+        "arrayOptions": {
+          "allowedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          },
+          "blockedUsers": {
+            "format": "<@{value}>{separator}",
+            "separator": ", "
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
+      "content": {
+        "title": "チャンネルのステータスを設定できませんでした",
+        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
+      "content": {
+        "title": "チャンネルのステータスが自動に戻りました",
+        "description": "現在は「{channelStatus}」と表示され、チャンネルの変化に応じて更新されます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
+      "content": {
+        "title": "チャンネルのステータスが「{channelStatus}」になりました",
+        "description": "消すまで保持されます。空のステータスを送信すると自動に戻ります。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  テンプレートを適用しました",
+        "description": "テンプレート **\"{templateName}\"** をチャンネルに適用しました。\n\n**適用した設定:**\n{appliedSettings}\n\n-# 注意: レート制限のため、チャンネル名の変更には少し時間がかかることがあります。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
+      "content": {
+        "title": "🗑️  テンプレートを削除しました",
+        "description": "テンプレート **\"{templateName}\"** を削除しました。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
+      "content": {
+        "title": "{templatesEmoji}  チャンネルテンプレート",
+        "description": "現在のチャンネル設定をテンプレートとして保存し、後からワンクリックで適用できます。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
+      "content": {
+        "title": "{templatesEmoji}  テンプレートを管理",
+        "description": "下のメニューから削除するテンプレートを選んでください。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ この操作は取り消せません。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
+      "content": {
+        "title": "{templatesEmoji}  テンプレートを保存しました",
+        "description": "テンプレート **\"{templateName}\"** を保存しました。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# **テンプレートを適用** ボタンでいつでも適用できます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerEmbed",
+      "content": {
+        "title": "🔀  チャンネルの所有権を譲渡",
+        "description": "チャンネルの所有権を別のユーザーに譲渡します。\n\n譲渡先のユーザーを選択してください。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferredEmbed",
+      "content": {
+        "title": "🔀  チャンネルの所有権を譲渡しました！",
+        "description": "あなたはこのチャンネルの所有者ではなくなりました。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelectedEmbed",
+      "content": {
+        "title": "🔀  チャンネルの所有権を譲渡",
+        "description": "チャンネルの所有権を {userDisplayName} に譲渡します。\n\n⚠️ 所有権を他のユーザーに譲渡すると、あなたの所有者権限は失われます。\n\n本当に **{userDisplayName}?** にチャンネルの所有権を譲渡しますか"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
+      "content": {
+        "title": "📈  自動スケーリングチャンネル #{scalingIndex}",
+        "description": "自動スケーリングのボイスチャンネルを設定します。\n\n➤ ∙ マスターチャンネル: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ プレフィックス: `{scalingPrefix}`\n➤ ∙ 最大メンバー数: `{scalingMaxMembers}`\n\nプレースホルダー: `{index}`\n"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditButtonsEmbed",
+      "content": {
+        "title": "🎚  マスターチャンネル #{index} のボタン",
+        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
+        "footer": "選ぶたびにすぐ保存されます。すでに開いているチャンネルは、既存チャンネルを更新を押すまで今のボタンのままです。",
+        "options": {
+          "buttonsNone": "> - *なし。所有者にはボタンのないパネルが表示されます。*",
+          "rosterHeading": "**専用のボタンを持つロール**",
+          "rosterButtonsWord": "ボタン",
+          "panelNote": "ロールごとの構成が届くのはボイスチャンネル内のパネルだけです。**control-panel** チャンネルには常に既定の構成が表示されます。",
+          "rosterMore": "> - *… ほか {rosterMoreCount} 件。すべて上のメニューにあります。*",
+          "scopeDisplay": {
+            "{scopeDefault}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここで作られたチャンネルの所有者にはこのボタンが表示されます。ただし下に並んでいるロールを持つ場合は、そのロールの構成に置き換わります。",
+            "{scopeDefaultVerified}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここでチャンネルを開けるのは {verifiedRolesList} だけなので、これはその所有者に表示されるボタンです。ただし下に並んでいるロールも持つ場合は、そのロールの構成に置き換わります。",
+            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。\n{panelNote}",
+            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。\n{panelNote}",
+            "{scopeRoleMissing}": "**このロールはこのサーバーにもう存在しません。**\n誰も持てないため、保存されたボタンは誰にも届きません。**このロールに既定を使う** を押して削除してください。"
+          },
+          "listHeadingDisplay": {
+            "{listDefault}": "**すべてのパネルに表示**",
+            "{listRoleOwn}": "**このロールを持つ所有者のパネルに表示**",
+            "{listRoleNew}": "**既定の構成 — ここで変更すると、このロール専用の構成になります**"
+          },
+          "rosterDisplay": {
+            "{rosterNone}": "> - *まだありません。すべての所有者が既定の構成になります。*\n> - *例: あるロールだけがチャンネルの引き継ぎとリセットを行え、ほかは名前の変更だけにする。*",
+            "{rosterOne}": "{rosterList}",
+            "{rosterMany}": "{rosterList}\nこれらのロールを 2 つ持つ所有者には、**サーバー設定 → ロール** でより上にあるロールの構成が適用されます。"
+          },
+          "hintDisplay": {
+            "{hintDefault}": "あるロールに別の構成を与えるには、**➕ ロールに専用のボタンを与える** から選んでください。",
+            "{hintRoleOwn}": "**このロールに既定を使う** はこの構成を削除し、その所有者を既定の構成に戻します。",
+            "{hintRoleNew}": "ボタンを変更するまで、このロールには何も保存されません。",
+            "{hintEveryone}": "⚠️ **@everyone** に専用の構成は持たせられません。全メンバーがこのロールを持つため、その構成がすべての所有者の既定を置き換えてしまいます。既定の構成を編集するか、対象の狭いロールを選んでください。",
+            "{hintPushed}": "✅ このマスターチャンネルが開いているすべてのチャンネルに送信しました。それぞれの所有者に応じた構成が表示されます。"
+          }
+        },
+        "arrayOptions": {
+          "buttonsList": {
+            "format": "> - {value}{separator}",
+            "separator": "\n",
+            "options": {
+              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
+              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
+              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
+              "invite": "<emoji name='InviteChannel'> ∙ **招待**",
+              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
+              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
+              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
+              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
+              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
+              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
+              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
+              "status": "<emoji name='Megaphone'> ∙ **ステータス**",
+              "knock": "<emoji name='KnockChannel'> ∙ **ノック**",
+              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
+      "content": {
+        "title": "🛡️  マスターチャンネル #{index} の既定プライバシーを編集",
+        "description": "**新しく作成される** ダイナミックチャンネルが最初に取る状態です。既存のチャンネルには影響せず、所有者は後から自分のチャンネルを変更できます。\n\n**公開** - 対象者なら誰でも見えて参加できます。\n**プライベート** - 見えますが、入れるのは所有者が許可した人だけです。\n**非表示** - 所有者が表示するまで見えません。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の状態が適用されます。\n\n**_現在の既定値_**\n\n> {privacyState}",
+        "options": {
+          "privacyState": {
+            "{privacyPublic}": "🌐 **公開**",
+            "{privacyPrivate}": "🚫 **プライベート**",
+            "{privacyHidden}": "🙈 **非表示**"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
+      "content": {
+        "title": "✋  マスターチャンネル #{index} の既定ユーザー上限を編集",
+        "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
+        "options": {
+          "userLimitDisplay": {
+            "{userLimitUnlimited}": "**上限なし**",
+            "{userLimitValue}": "**{userLimit} 人**"
+          }
+        }
       }
     },
     {
@@ -1506,291 +3486,19 @@
       }
     },
     {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsHiddenEmbed",
+      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
       "content": {
-        "title": "🙈  チャンネルは非表示になりました",
-        "description": "許可されたユーザーのみがチャンネルを見ることができますのでご注意ください。\n\n{allowedUsersDisplay}\n{message}",
+        "title": "🔑  マスターチャンネル #{index} のスタッフロールを編集",
+        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n空のままにすると、サーバー全体のスタッフロールが使われます。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
+        "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
         "options": {
-          "message": {
-            "{messageDefault}": "**(`👥 アクセス`)** ボタンでチャンネルへのアクセスを管理できます。",
-            "{messageAccessNotAvailable}": "新しいメンバーにチャンネルへのアクセスを許可する方法はありません。\n\n**(👥 アクセス)** ボタンが管理者によって無効化されているためです"
-          },
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、あなた以外にアクセスできるユーザーはいません。\n",
-            "{allowedUsers}": "**_許可されたユーザー_**: \n{allowedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsPublicEmbed",
-      "content": {
-        "title": "🌐  チャンネルは公開になりました",
-        "description": "現在、あなたのルームは誰でもアクセスできる状態です。\n\n非表示またはプライベートに設定しない限り、アクセス権の**ない**メンバーもルームに入ることができます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsShownEmbed",
-      "content": {
-        "title": "🐵  チャンネルは表示されるようになりました"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaLimitSuccessEmbed",
-      "content": {
-        "title": "✋  チャンネルのユーザー数上限が {userLimit} に変更されました",
-        "options": {
-          "userLimit": {
-            "{userLimitValue}": "{userLimitValue}",
-            "{userLimitUnlimited}": "無制限"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed",
-      "content": {
-        "title": "🫵  ユーザーをブロックしました",
-        "description": "**{userBlockedDisplayName}** をブロックしました。このチャンネルにアクセスできなくなりました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimResultVotedEmbed",
-      "content": {
-        "title": "🗳️  {userDisplayName} に投票しました",
-        "description": "<@{userId}> がこのチャンネルの所有権を得られるよう投票しました。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupStep1Embed",
-      "content": {
-        "title": "ステップ 1 - ダイナミックチャンネルのテンプレート名を設定",
-        "description": "ダイナミックチャンネルが開かれるときに使用される既定の名前を指定できます。\n\n_現在のテンプレート名_:\n`{dynamicChannelNameTemplate}`\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\n仕組みがわからない場合は[説明](https://voicechannels.online/setup/1)をご覧ください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ScalingSetupEditEmbed",
-      "content": {
-        "title": "📈  自動スケーリングチャンネル #{scalingIndex}",
-        "description": "自動スケーリングのボイスチャンネルを設定します。\n\n➤ ∙ マスターチャンネル: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ プレフィックス: `{scalingPrefix}`\n➤ ∙ 最大メンバー数: `{scalingMaxMembers}`\n\nプレースホルダー: `{index}`\n"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelRenameBadwordEmbed",
-      "content": {
-        "title": "🙅  チャンネルの名前変更に失敗しました",
-        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditButtonsEmbed",
-      "content": {
-        "title": "🎚  マスターチャンネル #{index} のボタン",
-        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
-        "footer": "選ぶたびにすぐ保存されます。すでに開いているチャンネルは、既存チャンネルを更新を押すまで今のボタンのままです。",
-        "options": {
-          "buttonsNone": "> - *なし。所有者にはボタンのないパネルが表示されます。*",
-          "rosterHeading": "**専用のボタンを持つロール**",
-          "rosterButtonsWord": "ボタン",
-          "panelNote": "ロールごとの構成が届くのはボイスチャンネル内のパネルだけです。**control-panel** チャンネルには常に既定の構成が表示されます。",
-          "rosterMore": "> - *… ほか {rosterMoreCount} 件。すべて上のメニューにあります。*",
-          "scopeDisplay": {
-            "{scopeDefault}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここで作られたチャンネルの所有者にはこのボタンが表示されます。ただし下に並んでいるロールを持つ場合は、そのロールの構成に置き換わります。",
-            "{scopeDefaultVerified}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここでチャンネルを開けるのは {verifiedRolesList} だけなので、これはその所有者に表示されるボタンです。ただし下に並んでいるロールも持つ場合は、そのロールの構成に置き換わります。",
-            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。\n{panelNote}",
-            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。\n{panelNote}",
-            "{scopeRoleMissing}": "**このロールはこのサーバーにもう存在しません。**\n誰も持てないため、保存されたボタンは誰にも届きません。**このロールに既定を使う** を押して削除してください。"
-          },
-          "listHeadingDisplay": {
-            "{listDefault}": "**すべてのパネルに表示**",
-            "{listRoleOwn}": "**このロールを持つ所有者のパネルに表示**",
-            "{listRoleNew}": "**既定の構成 — ここで変更すると、このロール専用の構成になります**"
-          },
-          "rosterDisplay": {
-            "{rosterNone}": "> - *まだありません。すべての所有者が既定の構成になります。*\n> - *例: あるロールだけがチャンネルの引き継ぎとリセットを行え、ほかは名前の変更だけにする。*",
-            "{rosterOne}": "{rosterList}",
-            "{rosterMany}": "{rosterList}\nこれらのロールを 2 つ持つ所有者には、**サーバー設定 → ロール** でより上にあるロールの構成が適用されます。"
-          },
-          "hintDisplay": {
-            "{hintDefault}": "あるロールに別の構成を与えるには、**➕ ロールに専用のボタンを与える** から選んでください。",
-            "{hintRoleOwn}": "**このロールに既定を使う** はこの構成を削除し、その所有者を既定の構成に戻します。",
-            "{hintRoleNew}": "ボタンを変更するまで、このロールには何も保存されません。",
-            "{hintEveryone}": "⚠️ **@everyone** に専用の構成は持たせられません。全メンバーがこのロールを持つため、その構成がすべての所有者の既定を置き換えてしまいます。既定の構成を編集するか、対象の狭いロールを選んでください。",
-            "{hintPushed}": "✅ このマスターチャンネルが開いているすべてのチャンネルに送信しました。それぞれの所有者に応じた構成が表示されます。"
-          }
-        },
-        "arrayOptions": {
-          "buttonsList": {
-            "format": "> - {value}{separator}",
-            "separator": "\n",
-            "options": {
-              "0": "✏️ ∙ **名前を変更**",
-              "1": "✋ ∙ **人数制限**",
-              "2": "🧹 ∙ **チャットを消去**",
-              "3": "🚫 ∙ **非公開** / 🌐 ∙ **公開**",
-              "4": "🙈 ∙ **非表示** / 🐵 ∙ **表示**",
-              "5": "👥 ∙ **アクセス**",
-              "6": "🔃 ∙ **リセット**",
-              "7": "😈 ∙ **引き継ぐ**",
-              "12": "🔀 ∙ **譲渡**",
-              "13": "📣 ∙ **ステータス**",
-              "15": "🔎 ∙ **LFM**"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsHiddenEmbed",
-      "content": {
-        "title": "🙈  チャンネルは非表示になりました",
-        "description": "許可されたユーザーのみがチャンネルを見ることができますのでご注意ください。\n\n{allowedUsersDisplay}\n{message}",
-        "options": {
-          "message": {
-            "{messageDefault}": "**(`👥 アクセス`)** ボタンでチャンネルへのアクセスを管理できます。",
-            "{messageAccessNotAvailable}": "新しいメンバーにチャンネルへのアクセスを許可する方法はありません。\n\n**(👥 アクセス)** ボタンが管理者によって無効化されているためです"
-          },
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、あなた以外にアクセスできるユーザーはいません。\n",
-            "{allowedUsers}": "**_許可されたユーザー_**: \n{allowedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelLimitSuccessEmbed",
-      "content": {
-        "title": "✋  チャンネルのユーザー数上限が {userLimit} に変更されました",
-        "options": {
-          "userLimit": {
-            "{userLimitValue}": "{userLimitValue}",
-            "{userLimitUnlimited}": "無制限"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimStartEmbed",
-      "content": {
-        "title": "👋  {ownerDisplayName} がチャンネルを離れました！",
-        "description": "<@{ownerId}> が {absentMinutes} 分以上不在です。\nあなたが引き継ぎますか？名乗りを上げて、このチャンネルを手に入れましょう！"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferredEmbed",
-      "content": {
-        "title": "🔀  チャンネルの所有権を譲渡しました！",
-        "description": "あなたはこのチャンネルの所有者ではなくなりました。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditEmbed",
-      "content": {
-        "title": "🔧  マスターチャンネル #{index} を設定",
-        "description": "マスターチャンネルを好みに合わせて設定します。\n\n**_🎛️ 一般_**\n\n➤ ∙ 名前: <#{masterChannelId}>\n➤ ∙ チャンネル ID: `{masterChannelId}`\n➤ ∙ ダイナミックチャンネル名: `{dynamicChannelNameTemplate}`\n➤ ∙ 新規チャンネルのプライバシー: {newChannelPrivacy}\n➤ ∙ 新規チャンネルの上限: {newChannelLimit}\n➤ ∙ ログチャンネル: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 ボタンインターフェース_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ 認証済みロール_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 スタッフロール_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ ボイスロール_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ 設定_**\n\n@ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n❯❯ ∙ ログを指定チャンネルへ送信: {configLogs}\n\n",
-        "footer": "注意: ユーザーメンションの変更は、すでに作成されたダイナミックチャンネルには影響しません。",
-        "options": {
-          "on": "`🟢∙オン`",
-          "off": "`🔴∙オフ`",
-          "dynamicChannelLogsChannelDisplay": {
-            "{dynamicChannelLogsChannelDefault}": "**なし**",
-            "{dynamicChannelLogsChannelSelected}": "<#{dynamicChannelLogsChannelId}>"
-          },
-          "configUserMention": {
-            "{configUserMentionEnabled}": "{on}",
-            "{configUserMentionDisabled}": "{off}"
-          },
-          "configAutoSave": {
-            "{configAutoSaveEnabled}": "{on}",
-            "{configAutoSaveDisabled}": "{off}"
-          },
-          "configAutoStatus": {
-            "{configAutoStatusEnabled}": "{on}",
-            "{configAutoStatusDisabled}": "{off}"
-          },
-          "configLogs": {
-            "{configLogsEnabled}": "{on}",
-            "{configLogsDisabled}": "{off}"
-          },
           "staffRolesDisplay": {
             "{staffRoles}": "{staffRoles}",
             "{staffRolesNone}": "**なし** *(サーバー設定より)*",
             "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
-          },
-          "voiceRoleDisplay": {
-            "{voiceRoleId}": "<@&{voiceRoleId}>",
-            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
-            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
-          },
-          "verifiedRolesDisplay": {
-            "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
-          },
-          "newChannelLimit": {
-            "{newChannelLimitUnlimited}": "上限なし",
-            "{newChannelLimitValue}": "{newChannelLimitCount} 人"
-          },
-          "newChannelPrivacy": {
-            "{privacyPublic}": "🌐 公開",
-            "{privacyPrivate}": "🚫 プライベート",
-            "{privacyHidden}": "🙈 非表示"
           }
         },
         "arrayOptions": {
-          "dynamicChannelButtonsTemplate": {
-            "format": "- ( {value} ){separator}",
-            "separator": "\n",
-            "options": {
-              "0": "✏️ ∙ **Rename**",
-              "1": "✋ ∙ **User Limit**",
-              "2": "🧹 ∙ **Clear Chat**",
-              "3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
-              "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
-              "5": "👥 ∙ **Access**",
-              "6": "🔃 ∙ **Reset**",
-              "7": "😈 ∙ **Claim**",
-              "12": "🔀 ∙ **Transfer**",
-              "13": "📣 ∙ **ステータス**",
-              "15": "🔎 ∙ **LFM**"
-            }
-          },
-          "verifiedRoles": {
-            "format": "<@&{value}>{separator}",
-            "separator": ", "
-          },
           "staffRoles": {
             "format": "<@&{value}>{separator}",
             "separator": ", "
@@ -1799,171 +3507,46 @@
       }
     },
     {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameLimitedEmbed",
+      "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
       "content": {
-        "title": "🙅 チャンネルの名前変更が早すぎます！",
-        "description": "次の名前変更まで `{elapsedTimeFormatFraction}` お待ちください{masterChannelMessage}",
+        "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
+        "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n空のままにすると、サーバー全体の認証済みロールが使われます。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
+        "footer": "注意: 変更は編集後に状態が変わるダイナミックチャンネルにのみ適用され、チャンネル内の既存のロールは変更されません。",
         "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "masterChannelMessage": {
-            "{masterChannelId}": " または新しいチャンネルを開いてください: <#{masterChannelId}>",
-            "{masterChannelMessageDefault}": ""
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserSelectedEmbed",
-      "content": {
-        "title": "🔀  チャンネルの所有権を譲渡",
-        "description": "チャンネルの所有権を {userDisplayName} に譲渡します。\n\n⚠️ 所有権を他のユーザーに譲渡すると、あなたの所有者権限は失われます。\n\n本当に **{userDisplayName}?** にチャンネルの所有権を譲渡しますか"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameSuccessEmbed",
-      "content": {
-        "title": "✏️  チャンネル名が「{channelName}」に変更されました"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditButtonsEmbed",
-      "content": {
-        "title": "🎚  マスターチャンネル #{index} のボタン",
-        "description": "{scopeDisplay}\n\n{listHeadingDisplay}\n{buttonsList}\n\n{rosterHeading}\n{rosterDisplay}\n\n{hintDisplay}",
-        "footer": "選ぶたびにすぐ保存されます。すでに開いているチャンネルは、既存チャンネルを更新を押すまで今のボタンのままです。",
-        "options": {
-          "buttonsNone": "> - *なし。所有者にはボタンのないパネルが表示されます。*",
-          "rosterHeading": "**専用のボタンを持つロール**",
-          "rosterButtonsWord": "ボタン",
-          "panelNote": "ロールごとの構成が届くのはボイスチャンネル内のパネルだけです。**control-panel** チャンネルには常に既定の構成が表示されます。",
-          "rosterMore": "> - *… ほか {rosterMoreCount} 件。すべて上のメニューにあります。*",
-          "scopeDisplay": {
-            "{scopeDefault}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここで作られたチャンネルの所有者にはこのボタンが表示されます。ただし下に並んでいるロールを持つ場合は、そのロールの構成に置き換わります。",
-            "{scopeDefaultVerified}": "**<#{masterChannelId}> の既定のボタンを編集しています。**\nここでチャンネルを開けるのは {verifiedRolesList} だけなので、これはその所有者に表示されるボタンです。ただし下に並んでいるロールも持つ場合は、そのロールの構成に置き換わります。",
-            "{scopeRoleOwn}": "**<@&{roleId}> のボタンを編集しています。**\nこのロールを持つ所有者には、既定の構成の**代わりに**このボタンが表示されます。ほかの所有者は既定の構成のままで、それは変更されません。\n{panelNote}",
-            "{scopeRoleNew}": "**<@&{roleId}> にはまだ専用のボタンがありません。**\nこのロールの所有者は既定の構成に従っており、それが今ボタンメニューでチェックされている内容です。どれかをチェックまたは解除すると、その時点からこのロールは専用の構成を持ちます。既定の構成はそのまま変わりません。\n{panelNote}",
-            "{scopeRoleMissing}": "**このロールはこのサーバーにもう存在しません。**\n誰も持てないため、保存されたボタンは誰にも届きません。**このロールに既定を使う** を押して削除してください。"
-          },
-          "listHeadingDisplay": {
-            "{listDefault}": "**すべてのパネルに表示**",
-            "{listRoleOwn}": "**このロールを持つ所有者のパネルに表示**",
-            "{listRoleNew}": "**既定の構成 — ここで変更すると、このロール専用の構成になります**"
-          },
-          "rosterDisplay": {
-            "{rosterNone}": "> - *まだありません。すべての所有者が既定の構成になります。*\n> - *例: あるロールだけがチャンネルの引き継ぎとリセットを行え、ほかは名前の変更だけにする。*",
-            "{rosterOne}": "{rosterList}",
-            "{rosterMany}": "{rosterList}\nこれらのロールを 2 つ持つ所有者には、**サーバー設定 → ロール** でより上にあるロールの構成が適用されます。"
-          },
-          "hintDisplay": {
-            "{hintDefault}": "あるロールに別の構成を与えるには、**➕ ロールに専用のボタンを与える** から選んでください。",
-            "{hintRoleOwn}": "**このロールに既定を使う** はこの構成を削除し、その所有者を既定の構成に戻します。",
-            "{hintRoleNew}": "ボタンを変更するまで、このロールには何も保存されません。",
-            "{hintEveryone}": "⚠️ **@everyone** に専用の構成は持たせられません。全メンバーがこのロールを持つため、その構成がすべての所有者の既定を置き換えてしまいます。既定の構成を編集するか、対象の狭いロールを選んでください。",
-            "{hintPushed}": "✅ このマスターチャンネルが開いているすべてのチャンネルに送信しました。それぞれの所有者に応じた構成が表示されます。"
+          "verifiedRolesDisplay": {
+            "{verifiedRoles}": "{verifiedRoles}",
+            "{verifiedRolesDefault}": "**なし** *(サーバー設定より)*",
+            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
           }
         },
         "arrayOptions": {
-          "buttonsList": {
-            "format": "> - {value}{separator}",
-            "separator": "\n",
-            "options": {
-              "rename": "<emoji name='ChannelRename'>  ∙ **Rename**",
-              "limit": "<emoji name='UserLimit'> ∙ **User Limit**",
-              "access": "<emoji name='ChannelPermissions'> ∙ **Access**",
-              "invite": "<emoji name='InviteChannel'> ∙ **招待**",
-              "privacy": "<emoji name='ChannelPrivacy'> ∙ **Privacy**",
-              "region": "<emoji name='ChannelRegion'> ∙ **Region**",
-              "edit-primary-message": "<emoji name='EditChannelMessage'> ∙ **Edit Primary Message**",
-              "clear-chat": "<emoji name='ClearChat'> ∙ **Clear Chat**",
-              "rest-channel": "<emoji name='ResetChannel'>  ∙ **Reset**",
-              "transfer": "<emoji name='TransferChannel'> ∙ **Transfer**",
-              "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
-              "status": "<emoji name='Megaphone'> ∙ **ステータス**",
-              "knock": "<emoji name='KnockChannel'> ∙ **ノック**",
-              "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
-            }
+          "verifiedRoles": {
+            "format": "<@&{value}>{separator}",
+            "separator": ", "
           }
         }
       }
     },
     {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbed",
+      "name": "VertixBot/UI-V3/SetupEditVoiceRoleEmbed",
       "content": {
-        "title": "👎  アクセスを取り消しました",
-        "description": "**{userDeniedDisplayName}** のアクセスを取り消しました。このチャンネルにアクセスできなくなりました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
+        "title": "🎙️  マスターチャンネル #{index} のボイスロールを編集",
+        "description": "このロールは、メンバーがこのマスターチャンネルのダイナミックチャンネルにいる間だけ付与され、退出した瞬間に外れます。\n\n今ボイスにいる人だけにテキストチャンネルを見せたり、メンバーリストでまとめたりするのに使えます。\n\n空のままにすると、サーバー全体のボイスロールが使われます。\n\n**_現在のボイスロール_**\n\n> {voiceRoleDisplay}",
+        "footer": "注意: ボット自身のロールが付与するロールより上にないと、Discord は拒否します。",
         "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
+          "voiceRoleDisplay": {
+            "{voiceRoleId}": "<@&{voiceRoleId}>",
+            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
+            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
           }
         }
       }
     },
     {
-      "name": "VertixBot/UI-V3/ClaimResultStepAlreadyInEmbed",
+      "name": "VertixBot/UI-V3/SetupNewStep1Embed",
       "content": {
-        "title": "🤷  すでに参加しています",
-        "description": "意思は伝わりました。すでにこのチャンネルの所有者候補として立候補しています。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatSuccessEmbed",
-      "content": {
-        "title": "🧹  {ownerDisplayName} がチャットをクリアしました！",
-        "description": "合計 {totalMessages} 件のメッセージ。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsPrivateEmbed",
-      "content": {
-        "title": "🚫  チャンネルはプライベートになりました",
-        "description": "許可されたユーザーのみがチャンネルに参加できますのでご注意ください。\n\n{allowedUsersDisplay}\n{message}",
-        "options": {
-          "message": {
-            "{messageDefault}": "**(`👥 アクセス`)** ボタンでチャンネルへのアクセスを管理できます。",
-            "{messageAccessNotAvailable}": "新しいメンバーにチャンネルへのアクセスを許可する方法はありません。\n\n**(👥 アクセス)** ボタンが管理者によって無効化されているためです"
-          },
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、あなた以外にアクセスできるユーザーはいません。\n",
-            "{allowedUsers}": "**_許可されたユーザー_**: \n{allowedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
+        "title": "ステップ 1 - ダイナミックチャンネルのテンプレート名を設定",
+        "description": "ダイナミックチャンネルが開かれるときに使用される既定の名前を指定できます。\n\n_現在のテンプレート名_:\n`{dynamicChannelNameTemplate}`\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\n仕組みがわからない場合は[説明](https://voicechannels.online/setup/1)をご覧ください。"
       }
     },
     {
@@ -2039,1570 +3622,6 @@
           }
         }
       }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbed",
-      "content": {
-        "title": "{clearEmoji}  {ownerDisplayName} がチャットをクリアしました！",
-        "description": "合計 {totalMessages} 件のメッセージ。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
-      "content": {
-        "title": "👢  ユーザーをキックしました",
-        "description": "**{userKickedDisplayName}** をキックしました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimResultStepInEmbed",
-      "content": {
-        "title": "😈  このチャンネルはあなたのものになるかもしれません",
-        "description": "このチャンネルの所有者候補として立候補しました。\n幸運を祈ります！\n"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimResultVotedSameEmbed",
-      "content": {
-        "title": "🗳️  すでに {userDisplayName} に投票しています",
-        "description": "すでに <@{userId}> に投票済みです。気が変わった場合は別の人に投票できます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupStep3Embed",
-      "content": {
-        "title": "ステップ 3 - 認証済みロールを選択",
-        "description": "認証済みロールとは、プライバシーボタンが操作するロールのことです。\n\nチャンネルの所有者が **Private** または **Hidden** を押すと、Bot はこれらのロールの権限を変更します。誰がチャンネルを見られるか、誰が参加できるかはこのロールで決まります。\n\n⚠️ **何を選べばよいか分からない場合は `@everyone` のままにしてください。** ほぼすべてのサーバーではこれが正解です。\n\n**_別のロールが必要になる場合_**\n\n新しいメンバーが、誰かにロールを付与されるまでチャンネルを見られないサーバーの場合だけです。\n\n_例_: 新しいメンバーがサーバーに参加しても、`Member` ロールを受け取るまで何も見えないとします。認証済みロールを `@everyone` のままにすると、公開のダイナミックチャンネルはその新しいメンバーにも表示されます。代わりに `Member` を選べば、あなたの確認を通過したメンバーだけが見て参加できます。\n\n**_🛡️ 認証済みロール_**\n\n> {verifiedRolesDisplay}\n\nそれでも分からない場合は[説明](https://voicechannels.online/setup/3)をご覧ください。\n\n**( `✓ Finish` )** ボタンを押すと、既定の設定のままにできます。",
-        "options": {
-          "verifiedRolesDisplay": {
-            "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**なし**"
-          }
-        },
-        "arrayOptions": {
-          "verifiedRoles": {
-            "format": "<@&{value}>{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimResultOwnerStopEmbed",
-      "content": {
-        "title": "👑  再びあなたが管理者です！",
-        "description": "**{absentMinutes}** 分以内に戻らない場合、このチャンネルは再び他のメンバーが取得できる状態になりますのでご注意ください。\n"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimResultVoteSelfEmbed",
-      "content": {
-        "title": "🤷  自分自身には投票できません",
-        "description": "自分を信じるのは素晴らしいことですが、この選挙では自分自身への投票は許可されていません。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupStep2Embed",
-      "content": {
-        "title": "ステップ 2 - ダイナミックチャンネルの設定",
-        "description": "ダイナミックチャンネルの管理インターフェースを設定します。\n\n**_🎚 ボタンインターフェース_**\n\n{message}\n**_⚙️ 設定_**\n\n> @ ∙ 最初のメッセージでユーザーをメンション: {configUserMention}\n> ⫸ ∙ ダイナミックチャンネルを自動保存: {configAutoSave}\n> 📢 ∙ チャンネルステータスの自動更新: {configAutoStatus}\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\nボタンの機能がわからない場合は[説明](https://voicechannels.online/features/dynamic-channel-v2)をご覧ください。",
-        "footer": "{footer}",
-        "options": {
-          "on": "`🟢∙オン`",
-          "off": "`🔴∙オフ`",
-          "message": {
-            "{defaultMessage}": "{dynamicChannelButtonsTemplate}\n",
-            "{noButtonsMessage}": "ボタンが選択されていません！\n"
-          },
-          "configUserMention": {
-            "{configUserMentionEnabled}": "{on}",
-            "{configUserMentionDisabled}": "{off}"
-          },
-          "configAutoSave": {
-            "{configAutoSaveEnabled}": "{on}",
-            "{configAutoSaveDisabled}": "{off}"
-          },
-          "configAutoStatus": {
-            "{configAutoStatusEnabled}": "{on}",
-            "{configAutoStatusDisabled}": "{off}"
-          },
-          "footer": {
-            "{defaultFooter}": "このマスターチャンネルから新しく作成されるダイナミックチャンネルは、選択した設定の影響を受けます。",
-            "{noButtonsFooter}": "注意: ボタンがないと、メンバーはダイナミックチャンネルを管理できません。埋め込みもインターフェースも表示されません。\n"
-          }
-        },
-        "arrayOptions": {
-          "dynamicChannelButtonsTemplate": {
-            "format": "- ( {value} ){separator}",
-            "separator": "\n",
-            "options": {
-              "0": "✏️ ∙ **Rename**",
-              "1": "✋ ∙ **User Limit**",
-              "2": "🧹 ∙ **Clear Chat**",
-              "3": "🚫 ∙ **Private** / 🌐 ∙ **Public**",
-              "4": "🙈 ∙ **Hidden** / 🐵 ∙ **Shown**",
-              "5": "👥 ∙ **Access**",
-              "6": "🔃 ∙ **Reset**",
-              "7": "😈 ∙ **Claim**",
-              "12": "🔀 ∙ **Transfer**",
-              "13": "📣 ∙ **ステータス**",
-              "15": "🔎 ∙ **LFM**"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
-      "content": {
-        "title": "🤙  ユーザーのブロックを解除しました",
-        "description": "**{userUnBlockedDisplayName}** のブロックを解除しました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelRenameSuccessEmbed",
-      "content": {
-        "title": "✏️  チャンネル名が「{channelName}」に変更されました"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelStatusBadwordEmbed",
-      "content": {
-        "title": "チャンネルのステータスを設定できませんでした",
-        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelStatusClearedEmbed",
-      "content": {
-        "title": "チャンネルのステータスが自動に戻りました",
-        "description": "現在は「{channelStatus}」と表示され、チャンネルの変化に応じて更新されます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelStatusSuccessEmbed",
-      "content": {
-        "title": "チャンネルのステータスが「{channelStatus}」になりました",
-        "description": "消すまで保持されます。空のステータスを送信すると自動に戻ります。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimResultOwnerStopEmbed",
-      "content": {
-        "title": "👑  再びあなたが管理者です！",
-        "description": "**{absentMinutes}** 分以内に戻らない場合、このチャンネルは再び他のメンバーが取得できる状態になりますのでご注意ください。\n"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimResultVotedSameEmbed",
-      "content": {
-        "title": "🗳️  すでに {userDisplayName} に投票しています",
-        "description": "すでに <@{userId}> に投票済みです。気が変わった場合は別の人に投票できます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbed",
-      "content": {
-        "title": "👍  アクセスを許可しました",
-        "description": "**{userGrantedDisplayName}** を追加しました。このチャンネルにアクセスできるようになりました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimVoteWonEmbed",
-      "content": {
-        "title": "👑  {userWonDisplayName} がチャンネルを取得しました",
-        "description": "{wonMessage}",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "wonMessage": {
-            "{wonSomeoneElse}": "<@{userWonId}> がこのチャンネルの所有権を取得し、~~{previousOwnerDisplayName}~~ に代わって新しい所有者になりました！{results}",
-            "{wonSameOwner}": "<@{userWonId}> がこのチャンネルの所有権を取得しました。すでに所有者でした！ 😊{results}"
-          },
-          "results": {
-            "{resultsDefault}": "",
-            "{resultsLink}": "\n\n詳細は[こちら]({resultsLink})をクリックしてください"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed",
-      "content": {
-        "title": "👎  アクセスを取り消しました",
-        "description": "**{userDeniedDisplayName}** のアクセスを取り消しました。このチャンネルにアクセスできなくなりました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbed",
-      "content": {
-        "title": "🫵  ユーザーをブロックしました",
-        "description": "**{userBlockedDisplayName}** をブロックしました。このチャンネルにアクセスできなくなりました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPrivacyEmbed",
-      "content": {
-        "title": "{privacyEmoji}  チャンネルのプライバシーを管理",
-        "description": "**_状態_**: `{state}`\n**_意味_**: `{stateMessage}`\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}\n-# ブロック済みユーザーは、どの状態でもチャンネルに参加できません。",
-        "footer": "下のメニューからチャンネルのプライバシー状態を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          },
-          "state": {
-            "{statePublic}": "🌐 公開",
-            "{statePrivate}": "🚫 プライベート",
-            "{stateShown}": "🐵 表示",
-            "{stateHidden}": "🙈 非表示"
-          },
-          "stateMessage": {
-            "{stateMessagePublic}": "誰でもチャンネルに参加できます。",
-            "{stateMessagePrivate}": "信頼済みユーザーのみがチャンネルに参加できます。",
-            "{stateMessageShown}": "誰でもチャンネルを見て参加できます。",
-            "{stateMessageHidden}": "信頼済みユーザーのみがチャンネルを見て参加できます。"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbed",
-      "content": {
-        "title": "🤙  ユーザーのブロックを解除しました",
-        "description": "**{userUnBlockedDisplayName}** のブロックを解除しました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbed",
-      "content": {
-        "title": "👢  ユーザーをキックしました",
-        "description": "**{userKickedDisplayName}** をキックしました！\n\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimResultStepInEmbed",
-      "content": {
-        "title": "😈  このチャンネルはあなたのものになるかもしれません",
-        "description": "このチャンネルの所有者候補として立候補しました。\n幸運を祈ります！\n"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaLimitInvalidInputEmbed",
-      "content": {
-        "title": "🙅  ユーザー数の上限は {minValue} 〜 {maxValue} の範囲で指定してください"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditStaffRolesEmbed",
-      "content": {
-        "title": "🔑  マスターチャンネル #{index} のスタッフロールを編集",
-        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n空のままにすると、サーバー全体のスタッフロールが使われます。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
-        "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
-        "options": {
-          "staffRolesDisplay": {
-            "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**なし** *(サーバー設定より)*",
-            "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
-          }
-        },
-        "arrayOptions": {
-          "staffRoles": {
-            "format": "<@&{value}>{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditVoiceRoleEmbed",
-      "content": {
-        "title": "🎙️  マスターチャンネル #{index} のボイスロールを編集",
-        "description": "このロールは、メンバーがこのマスターチャンネルのダイナミックチャンネルにいる間だけ付与され、退出した瞬間に外れます。\n\n今ボイスにいる人だけにテキストチャンネルを見せたり、メンバーリストでまとめたりするのに使えます。\n\n空のままにすると、サーバー全体のボイスロールが使われます。\n\n**_現在のボイスロール_**\n\n> {voiceRoleDisplay}",
-        "footer": "注意: ボット自身のロールが付与するロールより上にないと、Discord は拒否します。",
-        "options": {
-          "voiceRoleDisplay": {
-            "{voiceRoleId}": "<@&{voiceRoleId}>",
-            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
-            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditDefaultPrivacyEmbed",
-      "content": {
-        "title": "🛡️  マスターチャンネル #{index} の既定プライバシーを編集",
-        "description": "**新しく作成される** ダイナミックチャンネルが最初に取る状態です。既存のチャンネルには影響せず、所有者は後から自分のチャンネルを変更できます。\n\n**公開** - 対象者なら誰でも見えて参加できます。\n**プライベート** - 見えますが、入れるのは所有者が許可した人だけです。\n**非表示** - 所有者が表示するまで見えません。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の状態が適用されます。\n\n**_現在の既定値_**\n\n> {privacyState}",
-        "options": {
-          "privacyState": {
-            "{privacyPublic}": "🌐 **公開**",
-            "{privacyPrivate}": "🚫 **プライベート**",
-            "{privacyHidden}": "🙈 **非表示**"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditDefaultUserLimitEmbed",
-      "content": {
-        "title": "✋  マスターチャンネル #{index} の既定ユーザー上限を編集",
-        "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
-        "options": {
-          "userLimitDisplay": {
-            "{userLimitUnlimited}": "**上限なし**",
-            "{userLimitValue}": "**{userLimit} 人**"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditVerifiedRolesEmbed",
-      "content": {
-        "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
-        "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n空のままにすると、サーバー全体の認証済みロールが使われます。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
-        "footer": "注意: 変更は編集後に状態が変わるダイナミックチャンネルにのみ適用され、チャンネル内の既存のロールは変更されません。",
-        "options": {
-          "verifiedRolesDisplay": {
-            "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**なし** *(サーバー設定より)*",
-            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
-          }
-        },
-        "arrayOptions": {
-          "verifiedRoles": {
-            "format": "<@&{value}>{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsPrivateEmbed",
-      "content": {
-        "title": "🚫  チャンネルはプライベートになりました",
-        "description": "許可されたユーザーのみがチャンネルに参加できますのでご注意ください。\n\n{allowedUsersDisplay}\n{message}",
-        "options": {
-          "message": {
-            "{messageDefault}": "**(`👥 アクセス`)** ボタンでチャンネルへのアクセスを管理できます。",
-            "{messageAccessNotAvailable}": "新しいメンバーにチャンネルへのアクセスを許可する方法はありません。\n\n**(👥 アクセス)** ボタンが管理者によって無効化されているためです"
-          },
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、あなた以外にアクセスできるユーザーはいません。\n",
-            "{allowedUsers}": "**_許可されたユーザー_**: \n{allowedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelEmbed",
-      "content": {
-        "title": "༄ ダイナミックチャンネルを管理",
-        "description": "ダイナミックチャンネルの管理はあなたの役目です。好みに合わせて丁寧にカスタマイズしましょう。\n\n変更を行えるのはチャンネルの所有者のみですのでご注意ください。\n\n_現在の設定_:\n- 名前: **{name}**\n- ユーザー数上限: ✋ **{limit}**\n- 状態: {state}\n- 表示状態: {visibilityState}\n- リージョン: 🌍 **{region}**",
-        "options": {
-          "limit": {
-            "{limitDisplayValue}": "{limitValue}",
-            "{limitDisplayUnlimited}": "無制限"
-          },
-          "state": {
-            "{statePublic}": "🌐 **公開**",
-            "{statePrivate}": "🚫 **プライベート**"
-          },
-          "visibilityState": {
-            "{visibilityStateShown}": "🐵 **表示**",
-            "{visibilityStateHidden}": "🙈 **非表示**"
-          },
-          "region": {
-            "{region-auto}": "自動",
-            "{region-brazil}": "ブラジル",
-            "{region-hongkong}": "香港",
-            "{region-india}": "インド",
-            "{region-japan}": "日本",
-            "{region-rotterdam}": "ロッテルダム",
-            "{region-russia}": "ロシア",
-            "{region-singapore}": "シンガポール",
-            "{region-southafrica}": "南アフリカ",
-            "{region-sydney}": "シドニー",
-            "{region-us-central}": "米国中部",
-            "{region-us-east}": "米国東部",
-            "{region-us-south}": "米国南部",
-            "{region-us-west}": "米国西部"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimResultStepAlreadyInEmbed",
-      "content": {
-        "title": "🤷  すでに参加しています",
-        "description": "意思は伝わりました。すでにこのチャンネルの所有者候補として立候補しています。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimResultVoteSelfEmbed",
-      "content": {
-        "title": "🤷  自分自身には投票できません",
-        "description": "自分を信じるのは素晴らしいことですが、この選挙では自分自身への投票は許可されていません。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed",
-      "content": {
-        "title": "{title}",
-        "description": "{description}\n\n{renameEmoji} ・ 名前: **{name}**\n\n{limitEmoji} ・ ユーザー数上限: **{limit}**\n\n{privacyEmoji} ・ プライバシー状態: **{state}**\n\n{regionEmoji} ・ リージョン:  **{region}**\n",
-        "options": {
-          "title": {
-            "{titleDisplayValue}": "{titleValue}",
-            "{titleDisplayDefault}": "༄ ダイナミックチャンネルを管理"
-          },
-          "description": {
-            "{descriptionDisplayValue}": "{descriptionValue}",
-            "{descriptionDisplayDefault}": "ダイナミックチャンネルの管理はあなたの役目です。好みに合わせて丁寧にカスタマイズしましょう。\n\n変更を行えるのはチャンネルの所有者のみですのでご注意ください。"
-          },
-          "region": {
-            "{region-auto}": "自動",
-            "{region-brazil}": "ブラジル",
-            "{region-hongkong}": "香港",
-            "{region-india}": "インド",
-            "{region-japan}": "日本",
-            "{region-rotterdam}": "ロッテルダム",
-            "{region-russia}": "ロシア",
-            "{region-singapore}": "シンガポール",
-            "{region-southafrica}": "南アフリカ",
-            "{region-sydney}": "シドニー",
-            "{region-us-central}": "米国中部",
-            "{region-us-east}": "米国東部",
-            "{region-us-south}": "米国南部",
-            "{region-us-west}": "米国西部"
-          },
-          "state": {
-            "{statePublic}": "🌐 公開",
-            "{statePrivate}": "🚫 プライベート",
-            "{stateShown}": "🐵 表示",
-            "{stateHidden}": "🙈 非表示"
-          },
-          "stateMessage": {
-            "{stateMessagePublic}": "誰でもチャンネルに参加できます。",
-            "{stateMessagePrivate}": "信頼済みユーザーのみがチャンネルに参加できます。",
-            "{stateMessageShown}": "誰でもチャンネルを見て参加できます。",
-            "{stateMessageHidden}": "信頼済みユーザーのみがチャンネルを見て参加できます。"
-          },
-          "limit": {
-            "{limitDisplayValue}": "{limitValue}",
-            "{limitDisplayUnlimited}": "無制限"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerTransferredEmbed",
-      "content": {
-        "title": "🔀  チャンネルの所有権を譲渡しました！",
-        "description": "あなたはこのチャンネルの所有者ではなくなりました。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEmbed",
-      "content": {
-        "title": "{editPrimaryMessageEmoji}  •  チャンネルのタイトルを編集",
-        "description": "\n _タイトル_:\n `{title}`\n\n### 変更しますか？",
-        "options": {
-          "title": {
-            "{titleDisplayValue}": "{titleValue}",
-            "{titleDisplayDefault}": "༄ ダイナミックチャンネルを管理"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatNothingToClearEmbed",
-      "content": {
-        "title": "🧹  削除できるメッセージがありません",
-        "description": "埋め込みのないメッセージのみ削除できますのでご注意ください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsPublicEmbed",
-      "content": {
-        "title": "🌐  チャンネルは公開になりました",
-        "description": "現在、あなたのルームは誰でもアクセスできる状態です。\n\n非表示またはプライベートに設定しない限り、アクセス権の**ない**メンバーもルームに入ることができます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimResultVoteUpdatedEmbed",
-      "content": {
-        "title": "🗳️  投票が更新されました",
-        "description": "チャンネルの所有権について、投票を <@{prevUserId}> から <@{currentUserId}> に変更しました。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimVoteWonEmbed",
-      "content": {
-        "title": "👑  {userWonDisplayName} がチャンネルを取得しました",
-        "description": "{wonMessage}",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "wonMessage": {
-            "{wonSomeoneElse}": "<@{userWonId}> がこのチャンネルの所有権を取得し、~~{previousOwnerDisplayName}~~ に代わって新しい所有者になりました！{results}",
-            "{wonSameOwner}": "<@{userWonId}> がこのチャンネルの所有権を取得しました。すでに所有者でした！ 😊{results}"
-          },
-          "results": {
-            "{resultsDefault}": "",
-            "{resultsLink}": "\n\n詳細は[こちら]({resultsLink})をクリックしてください"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditStaffRolesEmbed",
-      "content": {
-        "title": "🔑  マスターチャンネル #{index} のスタッフロールを編集",
-        "description": "スタッフロールは認証済みロールの対になるものです。認証済みロールはチャンネルが締め出せる対象であり、スタッフロールは決して締め出せない対象です。\n\nここで選択したロールは、所有者がどのプライバシー状態を選んでもマスターチャンネル #{index} のすべてのダイナミックチャンネルへのアクセスを保ちます。モデレーターは個別に招待されなくてもプライベートまたは非表示のチャンネルに入れます。\n\n空のままにすると、サーバー全体のスタッフロールが使われます。\n\n**_現在のスタッフロール_**\n\n> {staffRolesDisplay}",
-        "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
-        "options": {
-          "staffRolesDisplay": {
-            "{staffRoles}": "{staffRoles}",
-            "{staffRolesNone}": "**なし** *(サーバー設定より)*",
-            "{staffRolesGuild}": "{staffRoles} *(サーバー設定より)*"
-          }
-        },
-        "arrayOptions": {
-          "staffRoles": {
-            "format": "<@&{value}>{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditVoiceRoleEmbed",
-      "content": {
-        "title": "🎙️  マスターチャンネル #{index} のボイスロールを編集",
-        "description": "このロールは、メンバーがこのマスターチャンネルのダイナミックチャンネルにいる間だけ付与され、退出した瞬間に外れます。\n\n今ボイスにいる人だけにテキストチャンネルを見せたり、メンバーリストでまとめたりするのに使えます。\n\n空のままにすると、サーバー全体のボイスロールが使われます。\n\n**_現在のボイスロール_**\n\n> {voiceRoleDisplay}",
-        "footer": "注意: ボット自身のロールが付与するロールより上にないと、Discord は拒否します。",
-        "options": {
-          "voiceRoleDisplay": {
-            "{voiceRoleId}": "<@&{voiceRoleId}>",
-            "{voiceRoleGuild}": "<@&{voiceRoleId}> *(サーバー設定より)*",
-            "{voiceRoleNone}": "**なし** *(サーバー設定より)*"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed",
-      "content": {
-        "title": "🛡️  マスターチャンネル #{index} の既定プライバシーを編集",
-        "description": "**新しく作成される** ダイナミックチャンネルが最初に取る状態です。既存のチャンネルには影響せず、所有者は後から自分のチャンネルを変更できます。\n\n**公開** - 対象者なら誰でも見えて参加できます。\n**プライベート** - 見えますが、入れるのは所有者が許可した人だけです。\n**非表示** - 所有者が表示するまで見えません。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の状態が適用されます。\n\n**_現在の既定値_**\n\n> {privacyState}",
-        "options": {
-          "privacyState": {
-            "{privacyPublic}": "🌐 **公開**",
-            "{privacyPrivate}": "🚫 **プライベート**",
-            "{privacyHidden}": "🙈 **非表示**"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed",
-      "content": {
-        "title": "✋  マスターチャンネル #{index} の既定ユーザー上限を編集",
-        "description": "**新しく作成される** ダイナミックチャンネルが最初に持つユーザー上限です。既存のチャンネルには影響せず、所有者は後から変更できます。\n\nジェネレーターチャンネルからのコピーは以前の動作です。ここで数値を設定するほうが通常は適切です。ジェネレーター自身の上限は、そこで待機できる人数も制限するためです。\n\n自動保存が有効な場合、再び作成した所有者にはこの値ではなく自分の前回の上限が適用されます。\n\n**_現在の既定値_**\n\n> {userLimitDisplay}",
-        "options": {
-          "userLimitDisplay": {
-            "{userLimitUnlimited}": "**上限なし**",
-            "{userLimitValue}": "**{userLimit} 人**"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed",
-      "content": {
-        "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
-        "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n空のままにすると、サーバー全体の認証済みロールが使われます。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
-        "footer": "注意: 変更は編集後に状態が変わるダイナミックチャンネルにのみ適用され、チャンネル内の既存のロールは変更されません。",
-        "options": {
-          "verifiedRolesDisplay": {
-            "{verifiedRoles}": "{verifiedRoles}",
-            "{verifiedRolesDefault}": "**なし** *(サーバー設定より)*",
-            "{verifiedRolesGuild}": "{verifiedRoles} *(サーバー設定より)*"
-          }
-        },
-        "arrayOptions": {
-          "verifiedRoles": {
-            "format": "<@&{value}>{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimVoteStepInEmbed",
-      "content": {
-        "title": "👑  {userInitiatorDisplayName} がこのチャンネルの取得を希望しています",
-        "description": "他に立候補者が現れない限り、あと `{elapsedTimeFormatFraction}` で <@{userInitiatorId}> がこのチャンネルの所有者になります。",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsShownEmbed",
-      "content": {
-        "title": "🐵  チャンネルは表示されるようになりました"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelRenameLimitedEmbed",
-      "content": {
-        "title": "🙅 チャンネルの名前変更が早すぎます！",
-        "description": "次の名前変更まで `{elapsedTimeFormatFraction}` お待ちください{masterChannelMessage}",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "masterChannelMessage": {
-            "{masterChannelId}": " または新しいチャンネルを開いてください: <#{masterChannelId}>",
-            "{masterChannelMessageDefault}": ""
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed",
-      "content": {
-        "title": "👍  アクセスを許可しました",
-        "description": "**{userGrantedDisplayName}** を追加しました。このチャンネルにアクセスできるようになりました！\n\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimResultVoteUpdatedEmbed",
-      "content": {
-        "title": "🗳️  投票が更新されました",
-        "description": "チャンネルの所有権について、投票を <@{prevUserId}> から <@{currentUserId}> に変更しました。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimStartEmbed",
-      "content": {
-        "title": "👋  {ownerDisplayName} がチャンネルを離れました！",
-        "description": "<@{ownerId}> が {absentMinutes} 分以上不在です。\nあなたが引き継ぎますか？名乗りを上げて、このチャンネルを手に入れましょう！"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimVoteStepInEmbed",
-      "content": {
-        "title": "👑  {userInitiatorDisplayName} がこのチャンネルの取得を希望しています",
-        "description": "他に立候補者が現れない限り、あと `{elapsedTimeFormatFraction}` で <@{userInitiatorId}> がこのチャンネルの所有者になります。",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/SetupNewStep1Embed",
-      "content": {
-        "title": "ステップ 1 - ダイナミックチャンネルのテンプレート名を設定",
-        "description": "ダイナミックチャンネルが開かれるときに使用される既定の名前を指定できます。\n\n_現在のテンプレート名_:\n`{dynamicChannelNameTemplate}`\n\n**( `Next ▶` )** ボタンを押すと、既定の設定のままにできます。\n\n仕組みがわからない場合は[説明](https://voicechannels.online/setup/1)をご覧ください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelEmbed",
-      "content": {
-        "title": "🔃  ダイナミックチャンネルを既定の設定にリセットしました！ ",
-        "description": "設定を既定値にリセットしました:\n\n- 名前: **{name}** {nameChanged}\n- ユーザー数上限: ✋**{userLimit}** {userLimitChanged}\n- 状態: {state} {stateChanged}\n- 表示状態: {visibilityState} {visibilityStateChanged}\n- 許可されたユーザー: {allowedUsers} {allowedUsersChanged}\n- ブロック済みユーザー: {blockedUsers} {blockedUsersChanged}{rateLimited}",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "changedDisplay": "(__復元済み__)",
-          "unchangedDisplay": "(__変更なし__)",
-          "userLimit": {
-            "{userLimitValue}": "{userLimitValue}",
-            "{userLimitUnlimited}": "無制限"
-          },
-          "state": {
-            "{statePublic}": "🌐 **公開**",
-            "{statePrivate}": "🚫 **プライベート**"
-          },
-          "visibilityState": {
-            "{visibilityStateShown}": "🐵 **表示**",
-            "{visibilityStateHidden}": "🙈 **非表示**"
-          },
-          "rateLimited": {
-            "{rateLimitedNone}": "",
-            "{rateLimitedDisplay}": "\n\n⚠️ レート制限のため、現在は名前を変更できません。\n\n{elapsedTimeFormatFraction} 秒お待ちいただくか、新しいチャンネルを作成してください。"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "<@{value}>{separator}",
-            "separator": ", "
-          },
-          "blockedUsers": {
-            "format": "<@{value}>{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimVoteEmbed",
-      "content": {
-        "title": "👑  {candidatesCount} 人がこのチャンネルの取得を希望しています",
-        "description": "カウントダウン開始！\nあと `{elapsedTimeFormatFraction}` で投票が終了します。\n同数の場合は <@{userInitiatorId}> が新しい所有者になります。\n\n{candidatesState}",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "candidatesState": {
-            "{candidates}": "🏅 {candidates}",
-            "{candidatesDefault}": "まだ候補者がいません。"
-          }
-        },
-        "arrayOptions": {
-          "candidates": {
-            "format": "{value}{separator}",
-            "separator": " - ",
-            "multiSeparator": "\n",
-            "options": {
-              "userId": "<@{userId}>",
-              "votes": "{votes} Votes"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbed",
-      "content": {
-        "title": "{permissionsEmoji}  チャンネルの権限を管理",
-        "description": "\n**_信頼済みユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、信頼済みユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/ClaimVoteEmbed",
-      "content": {
-        "title": "👑  {candidatesCount} 人がこのチャンネルの取得を希望しています",
-        "description": "カウントダウン開始！\nあと `{elapsedTimeFormatFraction}` で投票が終了します。\n同数の場合は <@{userInitiatorId}> が新しい所有者になります。\n\n{candidatesState}",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "candidatesState": {
-            "{candidates}": "🏅 {candidates}",
-            "{candidatesDefault}": "まだ候補者がいません。"
-          }
-        },
-        "arrayOptions": {
-          "candidates": {
-            "format": "{value}{separator}",
-            "separator": " - ",
-            "multiSeparator": "\n",
-            "options": {
-              "userId": "<@{userId}>",
-              "votes": "{votes} Votes"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEmbed",
-      "content": {
-        "title": "{editPrimaryMessageEmoji}  •  チャンネルの説明を編集",
-        "description": "\n _説明_:\n `{description}`\n\n### 変更しますか？",
-        "options": {
-          "description": {
-            "{descriptionDisplayValue}": "{descriptionValue}",
-            "{descriptionDisplayDefault}": "ダイナミックチャンネルの管理はあなたの役目です。好みに合わせて丁寧にカスタマイズしましょう。\n\n変更を行えるのはチャンネルの所有者のみですのでご注意ください。"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditEmbed",
-      "content": {
-        "title": "{editPrimaryMessageEmoji}  •  チャンネルの最初のメッセージを編集",
-        "description": "\n _現在_:\n\n• タイトル: `{title}`\n\n• 説明: `{description}`\n\n### 変更しますか？",
-        "options": {
-          "title": {
-            "{titleDisplayValue}": "{titleValue}",
-            "{titleDisplayDefault}": "༄ ダイナミックチャンネルを管理"
-          },
-          "description": {
-            "{descriptionDisplayValue}": "{descriptionValue}",
-            "{descriptionDisplayDefault}": "ダイナミックチャンネルの管理はあなたの役目です。好みに合わせて丁寧にカスタマイズしましょう。\n\n変更を行えるのはチャンネルの所有者のみですのでご注意ください。"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerUserSelectedEmbed",
-      "content": {
-        "title": "🔀  チャンネルの所有権を譲渡",
-        "description": "チャンネルの所有権を {userDisplayName} に譲渡します。\n\n⚠️ 所有権を他のユーザーに譲渡すると、あなたの所有者権限は失われます。\n\n本当に **{userDisplayName}?** にチャンネルの所有権を譲渡しますか"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelRegionEmbed",
-      "content": {
-        "title": "{regionEmoji}  チャンネルの音声リージョンを設定",
-        "description": "-# リージョンは音声サーバーの場所を決定します。\n-# ボイスチャンネルのメンバー全員に最も近い場所が理想です。\n-# 推奨は `自動` です\n\n現在の音声リージョン: `{region}`",
-        "options": {
-          "region": {
-            "{region-auto}": "自動",
-            "{region-brazil}": "ブラジル",
-            "{region-hongkong}": "香港",
-            "{region-india}": "インド",
-            "{region-japan}": "日本",
-            "{region-rotterdam}": "ロッテルダム",
-            "{region-russia}": "ロシア",
-            "{region-singapore}": "シンガポール",
-            "{region-southafrica}": "南アフリカ",
-            "{region-sydney}": "シドニー",
-            "{region-us-central}": "米国中部",
-            "{region-us-east}": "米国東部",
-            "{region-us-south}": "米国南部",
-            "{region-us-west}": "米国西部"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/ClaimResultVotedEmbed",
-      "content": {
-        "title": "🗳️  {userDisplayName} に投票しました",
-        "description": "<@{userId}> がこのチャンネルの所有権を得られるよう投票しました。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerEmbed",
-      "content": {
-        "title": "🔀  チャンネルの所有権を譲渡",
-        "description": "チャンネルの所有権を別のユーザーに譲渡します。\n\n譲渡先のユーザーを選択してください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaRenameBadwordEmbed",
-      "content": {
-        "title": "🙅  チャンネルの名前変更に失敗しました",
-        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusBadwordEmbed",
-      "content": {
-        "title": "🙅  チャンネルのステータスを設定できませんでした",
-        "description": "`{badword}` という単語は、サーバー管理者によって不適切と分類されています。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusClearedEmbed",
-      "content": {
-        "title": "📣  チャンネルのステータスが自動に戻りました",
-        "description": "現在は「{channelStatus}」と表示され、チャンネルの変化に応じて更新されます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelMetaStatusSuccessEmbed",
-      "content": {
-        "title": "📣  チャンネルのステータスが「{channelStatus}」になりました",
-        "description": "消すまで保持されます。空のステータスを送信すると自動に戻ります。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelClearChatNothingToClearEmbed",
-      "content": {
-        "title": "{clearEmoji}  削除できるメッセージがありません",
-        "description": "埋め込みのないメッセージのみ削除できますのでご注意ください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerEmbed",
-      "content": {
-        "title": "🔀  チャンネルの所有権を譲渡",
-        "description": "チャンネルの所有権を別のユーザーに譲渡します。\n\n譲渡先のユーザーを選択してください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelResetChannelEmbed",
-      "content": {
-        "title": "{resetEmoji}  ダイナミックチャンネルを既定の設定にリセットしました！ ",
-        "description": "設定を既定値にリセットしました:\n\n- 名前: **{name}** {nameChanged}\n- ユーザー数上限: ✋**{userLimit}** {userLimitChanged}\n- 状態: {state} {stateChanged}\n- 表示状態: {visibilityState} {visibilityStateChanged}\n- リージョン: {region} {regionChanged}\n- 最初のメッセージ: {primaryMessageChanged}\n- 許可されたユーザー: {allowedUsers} {allowedUsersChanged}\n- ブロック済みユーザー: {blockedUsers} {blockedUsersChanged}{rateLimited}",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "changedDisplay": "(__復元済み__)",
-          "unchangedDisplay": "(__変更なし__)",
-          "userLimit": {
-            "{userLimitValue}": "{userLimitValue}",
-            "{userLimitUnlimited}": "無制限"
-          },
-          "state": {
-            "{statePublic}": "🌐 **公開**",
-            "{statePrivate}": "🚫 **プライベート**"
-          },
-          "visibilityState": {
-            "{visibilityStateShown}": "🐵 **表示**",
-            "{visibilityStateHidden}": "🙈 **非表示**"
-          },
-          "rateLimited": {
-            "{rateLimitedNone}": "",
-            "{rateLimitedDisplay}": "\n\n⚠️ レート制限のため、現在は名前を変更できません。\n\n{elapsedTimeFormatFraction} 秒お待ちいただくか、新しいチャンネルを作成してください。"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "<@{value}>{separator}",
-            "separator": ", "
-          },
-          "blockedUsers": {
-            "format": "<@{value}>{separator}",
-            "separator": ", "
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed",
-      "content": {
-        "title": "👥  チャンネルの権限を管理",
-        "description": "\n**_許可されたユーザー_**:\n{allowedUsersDisplay}\n**_ブロック済みユーザー_**:\n{blockedUsersDisplay}",
-        "footer": "下のメニューからチャンネルの権限を管理できます。",
-        "options": {
-          "allowedUsersDisplay": {
-            "{allowedUsersDefault}": "現在、許可されたユーザーはいません。\n",
-            "{allowedUsers}": "{allowedUsers}\n"
-          },
-          "blockedUsersDisplay": {
-            "{blockedUsersDefault}": "現在、ブロックされているユーザーはいません。\n",
-            "{blockedUsers}": "{blockedUsers}\n"
-          }
-        },
-        "arrayOptions": {
-          "allowedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          },
-          "blockedUsers": {
-            "format": "- <@{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelLimitInvalidInputEmbed",
-      "content": {
-        "title": "🙅  ユーザー数の上限は {minValue} 〜 {maxValue} の範囲で指定してください"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/AIAgentEmbed",
-      "content": {
-        "title": "AIエージェント",
-        "description": "チャンネルを選んで送信を押してください。\n\n選択中のチャンネル: {selectedChannelDisplay}\n\n送信内容:\n{draftContentDisplay}\n"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/FeedbackEmbed",
-      "content": {
-        "title": "Vertix のご利用ありがとうございます",
-        "description": "お時間とご協力に感謝します。\n\n**Vertix でのあなたの体験は私たちにとって大切です。ぜひご意見をお聞かせください。**\n\n私たちは最高のサービスを目指しており、あなたの声がその助けになります。\n\nVertix をより良くするための提案・懸念・アイデアがあれば、遠慮なくお知らせください。\n\nいただいたご意見は大変ありがたく、Vertix の改善につながります。\n\nVertix をご利用いただきありがとうございます。ご意見をお待ちしています!"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/NoActiveDynamicChannelEmbed",
-      "content": {
-        "title": "⛔  アクティブなダイナミックチャンネルがありません",
-        "description": "アクティブなダイナミックチャンネルを所有していません。\n\nまず <#{masterChannelId}> に参加して自分のチャンネルを作成してください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
-      "content": {
-        "title": "😈  取得はチャンネル内で行います",
-        "description": "このパネルはジェネレーターの隣にあり、特定のチャンネルの中にはないため、ここで取得できるものはありません。\n\n引き継ぎたいボイスチャンネルに参加し、そのチャットを開いて、そこで待っているメッセージの **取得** を押してください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/TopGGVoteEmbed",
-      "content": {
-        "title": "👑 投票してこの機能をアンロック!",
-        "description": "これはプレミアム機能ですが、無料でアンロックできます! [**top.gg で投票する!**]({voteUrl})"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelPanelEmbed",
-      "content": {
-        "title": "༄ ダイナミックチャンネルを管理",
-        "description": "自分のダイナミックチャンネルを、好みに合わせてじっくりカスタマイズしましょう。\n\n"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelPanelEmbed",
-      "content": {
-        "title": "༄ ダイナミックチャンネルを管理",
-        "description": "自分のダイナミックチャンネルを、好みに合わせてじっくりカスタマイズしましょう。\n\n**利用できる機能:**\n\n"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelTemplatesEmbed",
-      "content": {
-        "title": "{templatesEmoji}  チャンネルテンプレート",
-        "description": "現在のチャンネル設定をテンプレートとして保存し、後からワンクリックで適用できます。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelTemplatesSavedEmbed",
-      "content": {
-        "title": "{templatesEmoji}  テンプレートを保存しました",
-        "description": "テンプレート **\"{templateName}\"** を保存しました。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n{templatesListDisplay}\n-# **テンプレートを適用** ボタンでいつでも適用できます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelTemplatesAppliedEmbed",
-      "content": {
-        "title": "{templatesEmoji}  テンプレートを適用しました",
-        "description": "テンプレート **\"{templateName}\"** をチャンネルに適用しました。\n\n**適用した設定:**\n{appliedSettings}\n\n-# 注意: レート制限のため、チャンネル名の変更には少し時間がかかることがあります。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelTemplatesManageEmbed",
-      "content": {
-        "title": "{templatesEmoji}  テンプレートを管理",
-        "description": "下のメニューから削除するテンプレートを選んでください。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`\n\n-# ⚠️ この操作は取り消せません。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelTemplatesDeletedEmbed",
-      "content": {
-        "title": "🗑️  テンプレートを削除しました",
-        "description": "テンプレート **\"{templateName}\"** を削除しました。\n\n**テンプレート**: `{templatesCount}/{maxTemplates}`"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelInviteEmbed",
-      "content": {
-        "title": "{inviteEmoji}  チャンネルに誰かを招待する",
-        "description": "入れたいユーザーを選ぶと、チャンネルの状態にかかわらず参加できるようになります。\n\n場所も伝わるので、プライベートなチャンネルでも説明はいりません。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelInviteSelectChannelEmbed",
-      "content": {
-        "title": "{inviteEmoji}  どのチャンネルですか？",
-        "description": "ここで複数のチャンネルを開いています。誰かを招待したいチャンネルを選んでください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelInviteSentEmbed",
-      "content": {
-        "title": "{inviteEmoji}  招待を送信しました",
-        "description": "**{invitedDisplayName}** がこのチャンネルに参加できるようになりました。\n\n{deliveryDisplay}",
-        "options": {
-          "deliveryDisplay": {
-            "{deliveryDelivered}": "チャンネルへのリンクを送りました。",
-            "{deliveryBlocked}": "ダイレクトメッセージが閉じているので、直接伝えてください — アクセス権はすでに渡っています。"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelKnockEmbed",
-      "content": {
-        "title": "{knockEmoji}  チャンネルへの参加を頼む",
-        "description": "入りたいチャンネルを選ぶと、その所有者に入れてもらえるよう依頼します。\n\n決めるのは所有者で、結果はどちらでもお知らせします。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelKnockNoneEmbed",
-      "content": {
-        "title": "{knockEmoji}  ノックする先がありません",
-        "description": "{openChannelsDisplay}",
-        "options": {
-          "openChannelsDisplay": {
-            "{openChannelsDefault}": "ここのチャンネルはすべて、すでに入れるか自分のものです。\n\n見えないチャンネルは一覧に出ません — 友達が持っているなら招待を頼んでください。",
-            "{openChannels}": "ここに閉じたチャンネルはありません — 以下は開いています、そのままどうぞ:\n\n{openChannels}"
-          }
-        },
-        "arrayOptions": {
-          "openChannels": {
-            "format": "- <#{value}>{separator}",
-            "separator": "\n"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelKnockWaitingEmbed",
-      "content": {
-        "title": "{knockEmoji}  すでに頼んでいます",
-        "description": "そのチャンネルの所有者はリクエストを受け取っており、まだ返事をしていません。\n\n少し待ってから、もう一度頼んでください。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelKnockSentEmbed",
-      "content": {
-        "title": "{knockEmoji}  リクエストを送信しました",
-        "description": "**{knockedChannelName}** の所有者に、あなたを入れてもらうよう依頼しました。\n\n返事があり次第お知らせします。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelKnockRequestEmbed",
-      "content": {
-        "title": "{knockEmoji}  参加したい人がいます",
-        "description": "<@{knockerId}> がこのチャンネルへの参加を求めています。\n\n入れると、アクセスメニューと同じようにアクセス権が渡ります。無視するのも答えです — リクエストは自動的に期限切れになります。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V3/DynamicChannelKnockAnsweredEmbed",
-      "content": {
-        "title": "{knockEmoji}  リクエストに回答しました",
-        "description": "{answerDisplay}",
-        "options": {
-          "answerDisplay": {
-            "{answerAllowed}": "**{knockerDisplayName}** を入れました。",
-            "{answerDenied}": "**{knockerDisplayName}** は入れませんでした。"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupClaimEmbed",
-      "content": {
-        "title": "⏱️  請求の設定",
-        "description": "ダイナミックチャンネルのオーナーが退出すると、Vertix はしばらく待ってから、まだ残っているメンバーにチャンネルを提供します。メンバーは誰が引き継ぐかを投票で決めます。\n\n下から値を選んで変更してください。{defaultMarker} が付いた値は、ここでの選択ではなくボット自身の設定に従います。空欄にすると、その状態に戻ります。\n\n**🚪 請求までの不在時間** ∙ {valueClaimTimeout}\nチャンネルが他のメンバーに提供されるまで、オーナーが不在でいられる時間です。\n\n**🔁 チェック間隔** ∙ {valueClaimInterval}\nVertix が放置されたチャンネルを探す頻度で、上記の待ち時間にどれだけ近いタイミングで提供されるかも決まります。\n\n**🗳️ 投票の継続時間** ∙ {valueVoteTimeout}\n請求の投票が開始してから開いたままになる時間です。\n\n**➕ 候補者ごとの追加時間** ∙ {valueVoteAddTime}\n誰かが新たに立候補するたびに、進行中の投票へ加算されます。\n",
-        "options": {
-          "defaultMarker": "*(既定)*"
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelLfmPostEmbed",
-      "content": {
-        "title": "🔎  {channelName} がメンバーを募集中",
-        "description": "{noteLine}{gameLine}**メンバー** {occupancy}\n**ホスト** <@{ownerId}>\n\n<#{channelId}> で合流しよう · `{elapsedTimeFormatFraction}` 後に終了",
-        "options": {
-          "formatSecondUnits": {
-            "unit": "秒",
-            "units": "秒"
-          },
-          "formatMinuteUnits": {
-            "unit": "分",
-            "units": "分"
-          },
-          "elapsedTimeFormat": {
-            "minutes": "{elapsedTimeValue} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValue} {formatSecondUnits}"
-          },
-          "elapsedTimeFormatFraction": {
-            "minutes": "{elapsedTimeValueFraction} {formatMinuteUnits}",
-            "seconds": "{elapsedTimeValueFraction} {formatSecondUnits}"
-          },
-          "gameLine": {
-            "{gameKnown}": "**プレイ中** {gameName}\n",
-            "{gameUnknown}": ""
-          },
-          "noteLine": {
-            "{noteKnown}": "> {note}\n\n",
-            "{noteUnknown}": ""
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelLfmSelectChannelEmbed",
-      "content": {
-        "title": "🔎  どこに投稿しますか？",
-        "description": "メンバー募集を投稿するチャンネルを選んでください。\n\n誰がホストか、何をプレイしているか、何人いるかが表示され、チャンネルが満員になるか空になると取り下げられます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelLfmPostedEmbed",
-      "content": {
-        "title": "🔎  募集を掲載しました",
-        "description": "<#{lfmChannelId}> に投稿しました。\n\nメンバー数は自動で更新され、チャンネルが満員になるか空になると自動で取り下げられます。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelLfmCooldownEmbed",
-      "content": {
-        "title": "🔎  まだ投稿できません",
-        "description": "このサーバーではチャンネルの宣伝頻度が制限されており、直前に投稿されたばかりです。次の投稿は約 {retryMinutes} 分後に可能です。"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelLfmUnavailableEmbed",
-      "content": {
-        "title": "🔎  投稿できません",
-        "description": "{reason}",
-        "options": {
-          "reason": {
-            "{reasonNotConfigured}": "投稿先のチャンネルがまだ設定されていません。管理者が設定画面で選択します。",
-            "{reasonDestinationUnavailable}": "これらの募集が送られるチャンネルは、あなたには表示されていません。管理者が設定画面で選びます。",
-            "{reasonHidden}": "チャンネルが非表示のため、誰にも見つけてもらえません。先に表示に切り替えてください。",
-            "{reasonPrivate}": "チャンネルが非公開のため、招待しても誰も入れません。先に公開に切り替えてください。",
-            "{reasonFull}": "チャンネルはすでに満員です。",
-            "{reasonAlreadyPosted}": "このチャンネルはすでに掲載されています。",
-            "{reasonFailed}": "投稿中に問題が発生しました。少し待ってからもう一度お試しください。"
-          }
-        }
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditLfmChannelsEmbed",
-      "content": {
-        "title": "🔎  マスターチャンネル #{index} の LFM を編集",
-        "description": "チャンネルのオーナーは、ここで選んだテキストチャンネルに自分のチャンネルを告知できます。チャットを読んでいるメンバーが、人を探している部屋を見つけて参加できるようになります。\n\nメンバーは投稿時にこの中から選び、それ以外のチャンネルには投稿できません。\n\n空のままにすると、このマスターチャンネルではこの機能が無効になります。\n\n**_現在のLFMチャンネル_**\n\n> {lfmChannelsDisplay}\n\n**_メンションされるロール_**\n\n> {pingRolesDisplay}\n\n**_タイミング_**\n\n> 投稿のクールダウン（全チャンネル）: {postCooldown}\n> ping のクールダウン: {pingCooldown}\n> 投稿の有効期限: {postExpiry}\n> 人数の更新間隔: {occupancyDebounce}",
-        "footer": "注意: ここで選んだすべてのチャンネルで、ボットにチャンネルを見る・メッセージを送信・リンクを埋め込む権限が必要です。",
-        "options": {
-          "lfmChannelsDisplay": {
-            "{lfmChannels}": "{lfmChannels}",
-            "{lfmChannelsNone}": "**なし** *(機能は無効です)*"
-          },
-          "pingRolesDisplay": {
-            "{pingRoles}": "{pingRoles}",
-            "{pingRolesNone}": "**なし** *(投稿は通知なしで掲載されます)*"
-          }
-        },
-        "arrayOptions": {
-          "lfmChannels": {
-            "format": "<#{value}>{separator}",
-            "separator": ", "
-          },
-          "pingRoles": {
-            "format": "<@&{value}>{separator}",
-            "separator": ", "
-          }
-        }
-      }
     }
   ],
   "markdowns": [
@@ -3633,9 +3652,63 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/DeleteConfirmModal",
+      "content": {
+        "title": "削除の確認"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackInviteDeveloperModal",
+      "content": {
+        "title": "開発者を招待"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackModal",
+      "content": {
+        "title": "フィードバックを送信"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/FeedbackReportModal",
+      "content": {
+        "title": "問題の報告"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+      "content": {
+        "title": "⏱️ チェック間隔"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
+      "content": {
+        "title": "⏱️ 請求までの不在時間"
+      }
+    },
+    {
       "name": "VertixBot/UI-General/SetupScalingConfigModal",
       "content": {
         "title": "📈 スケーリングチャンネルを設定"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
+      "content": {
+        "title": "⏱️ 候補者ごとの追加時間"
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
+      "content": {
+        "title": "⏱️ 投票の継続時間"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "メンバー募集"
       }
     },
     {
@@ -3654,6 +3727,12 @@
       "name": "VertixBot/UI-V2/DynamicChannelMetaStatusModal",
       "content": {
         "title": "ダイナミックチャンネルのステータスを設定"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
+      "content": {
+        "title": "⏱️ LFM タイミング"
       }
     },
     {
@@ -3687,75 +3766,9 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/AIAgentSendModal",
-      "content": {
-        "title": "メッセージを送信"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/DeleteConfirmModal",
-      "content": {
-        "title": "削除の確認"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/FeedbackInviteDeveloperModal",
-      "content": {
-        "title": "開発者を招待"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/FeedbackModal",
-      "content": {
-        "title": "フィードバックを送信"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/FeedbackReportModal",
-      "content": {
-        "title": "問題の報告"
-      }
-    },
-    {
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "テンプレートを保存"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupClaimTimeoutModal",
-      "content": {
-        "title": "⏱️ 請求までの不在時間"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupClaimSweepIntervalModal",
-      "content": {
-        "title": "⏱️ チェック間隔"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupVoteTimeoutModal",
-      "content": {
-        "title": "⏱️ 投票の継続時間"
-      }
-    },
-    {
-      "name": "VertixBot/UI-General/SetupVoteAddTimeModal",
-      "content": {
-        "title": "⏱️ 候補者ごとの追加時間"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/DynamicChannelLfmNoteModal",
-      "content": {
-        "title": "メンバー募集"
-      }
-    },
-    {
-      "name": "VertixBot/UI-V2/SetupEditLfmTimingsModal",
-      "content": {
-        "title": "⏱️ LFM タイミング"
       }
     }
   ]

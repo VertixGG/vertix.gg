@@ -75,9 +75,53 @@ const handleSlashCommand = async( client: Client, interaction: CommandInteractio
     const slashCommand = Commands.find( ( c ) => c.name === interaction.commandName );
 
     if ( !slashCommand ) {
-        await interaction.followUp( { content: "An error has occurred" } );
+        GlobalLogger.$.error(
+            handleSlashCommand,
+            `Guild id: '${ interaction.guildId }' - No such command: '${ interaction.commandName }'`
+        );
+
+        await answerFailedCommand( interaction );
+
         return;
     }
 
-    slashCommand.run( client, interaction );
+    // Awaited, and caught. A command reads the database, fetches channels and runs an interface's
+    // own handler, and any of that can throw - unawaited it became an unhandled rejection, and
+    // whoever ran the command was left with discord's "the application did not respond", which
+    // says the bot is broken rather than that this one thing went wrong.
+    try {
+        await slashCommand.run( client, interaction );
+    } catch( error ) {
+        GlobalLogger.$.error(
+            handleSlashCommand,
+            `Guild id: '${ interaction.guildId }' - Command '${ interaction.commandName }' failed`,
+            error
+        );
+
+        await answerFailedCommand( interaction );
+    }
+};
+
+/**
+ * Function answerFailedCommand() :: Says the command is over, whatever happened to it.
+ *
+ * Answered the way it would have been if it had worked, unless something already answered - a
+ * command that got as far as replying and then threw has said its piece, and discord refuses a
+ * second reply anyway.
+ *
+ * Its own try/catch because this is the last thing standing between a thrown error and silence; if
+ * the interface cannot be reached either, the log is what is left and it is already written.
+ */
+const answerFailedCommand = async( interaction: CommandInteraction<"cached"> ): Promise<void> => {
+    if ( interaction.replied || interaction.deferred ) {
+        return;
+    }
+
+    try {
+        await ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+            .get( "VertixBot/UI-General/CommandFailedAdapter" )
+            ?.ephemeral( interaction );
+    } catch( error ) {
+        GlobalLogger.$.error( answerFailedCommand, "", error );
+    }
 };

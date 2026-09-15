@@ -1,10 +1,10 @@
 {
     "schemaVersion": "1.0.0",
-    "exportedAt": "2026-09-14T11:32:52.145Z",
+    "exportedAt": "2026-09-15T09:27:25.623Z",
     "counts": {
-        "components": 56,
-        "adapters": 48,
-        "flows": 42
+        "components": 64,
+        "adapters": 65,
+        "flows": 53
     },
     "modules": [
         "VertixBot/UI-General/Module",
@@ -14,47 +14,47 @@
     "moduleSummary": [
         {
             "module": "VertixBot/UI-General/Module",
-            "components": 10,
-            "adapters": 10,
+            "components": 16,
+            "adapters": 16,
             "flows": 4,
             "embeds": {
-                "total": 12,
-                "withDefinition": 12,
+                "total": 23,
+                "withDefinition": 23,
                 "missingDefinition": 0
             },
-            "componentsWithEmbeds": 10,
+            "componentsWithEmbeds": 16,
             "componentsWithMissingEmbeds": 0
         },
         {
             "module": "VertixBot/UI-V2/Module",
-            "components": 19,
-            "adapters": 16,
-            "flows": 14,
+            "components": 20,
+            "adapters": 20,
+            "flows": 18,
             "embeds": {
-                "total": 66,
-                "withDefinition": 66,
+                "total": 75,
+                "withDefinition": 75,
                 "missingDefinition": 0
             },
-            "componentsWithEmbeds": 19,
+            "componentsWithEmbeds": 20,
             "componentsWithMissingEmbeds": 0
         },
         {
             "module": "VertixBot/UI-V3/Module",
-            "components": 27,
-            "adapters": 22,
-            "flows": 20,
+            "components": 28,
+            "adapters": 29,
+            "flows": 27,
             "embeds": {
-                "total": 84,
-                "withDefinition": 84,
+                "total": 87,
+                "withDefinition": 87,
                 "missingDefinition": 0
             },
-            "componentsWithEmbeds": 27,
+            "componentsWithEmbeds": 28,
             "componentsWithMissingEmbeds": 0
         }
     ],
     "embedCoverage": {
-        "total": 162,
-        "withDefinition": 162,
+        "total": 185,
+        "withDefinition": 185,
         "missingDefinition": 0
     }
 }

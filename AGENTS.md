@@ -35,7 +35,7 @@
 - The dashboard does not read those rows. `management-service.getMaxMasterChannels()` asks the bot over IPC and `management-ipc-service.ts` answers from `constants.masterChannelMaximumFreeChannels` — no guild in the question. A per-guild allowance therefore applies in Discord and not in the dashboard, which refuses at the global number.
 
 ## UI Entity Names
-- Everything a UI entity's `getName()` returns — a flow, a state, a transition, a button, a modal, an input, an embeds or elements group — is **written out in full at every place it is used**. No local `const` aliasing one, and no building one from a shared prefix with a template literal.
+- Everything a UI entity's `getName()` returns — a flow, a state, a transition, an execution step, a button, a modal, an input, an embeds or elements group — is **written out in full at every place it is used**. No local `const` aliasing one, no building one from a shared prefix with a template literal, and no object collecting several of them under short keys for another module to import. An exported `STEPS` map is the same mistake as a `const` alias, one import further away: the use site then reads `STEPS.SENT`, and the name it actually means appears nowhere near it.
 - The literal is the only thing tying a use site back to the class that declares it. Spelled out, one search for `"VertixBot/UI-V3/DynamicChannelLimitModal"` finds the class, every adapter that binds it and every page that draws it. Behind an alias or a composed path it is invisible to that search, and an entity nobody can find every user of is one nobody can safely rename.
 - Nothing catches a mistake here. These names cross a wire — the bot exports them as JSON and the website and dashboard look them up as strings — so a name that does not match resolves to nothing rather than failing: a guidance entry that never shows, a step whose modal never opens, a transition comparison that is quietly always false.
 - `.cursor/rules/always-use-full-names.mdc` states the narrower half of this (flows, transitions, states). It applies to every `getName()` value.
@@ -59,9 +59,12 @@
 - Fixture state has to be the state the product leaves behind. The vote unit tests fabricate an event and had omitted its required `timings`, so anything calling `addCandidate` threw instead of asserting — which is why that path had never been covered at all.
 
 ## Testing Guidelines
-- Jest with `@swc/jest` powers unit/integration tests; specs live under `packages/*/test` and must keep the `*.spec.ts` suffix enforced by each `jest.config.ts`.
+- Jest with `@swc/jest` powers unit/integration tests; specs live under each package's own `test/` and must keep the `*.spec.ts` suffix enforced by each `jest.config.ts`.
+- **A spec's path mirrors its subject's path.** `test/` stands where `src/` stands, so the test for `src/ui/general/channel-gone/channel-gone-gate.ts` is `test/ui/general/channel-gone/channel-gone-gate.spec.ts`, and the file is named after the module it covers - a suffix (`ui-adapter-base-cleanup`) only when a second spec covers the same one. A test belongs to the package whose code it exercises, not to whoever happened to write it: a bot spec that only calls `@vertix.gg/base` code is a base spec.
+- Things that are not mirrors of a source file go in `test/__test_utils__/` (harnesses, fixtures, casts), and `test/__setup__.ts` stays at the root.
+- Resolve paths inside a spec from `process.cwd()`, which jest sets to the package root - never by counting directories up from `import.meta.url`, which goes stale the moment the spec moves.
 - Reuse `test/__setup__.ts`, reset ServiceLocator state, and lean on `vertix-test-utils` or `ts-mockito` for doubles.
-- New commands, services, or adapters need positive and failure-path coverage before `bun run vertix:jest` (mirrors `scripts/ci-jest.bash`).
+- New commands, services, or adapters need positive and failure-path coverage before `bun run vertix:jest` (mirrors `scripts/ci-jest.bash`). A package that gains its first spec needs a `jest.config.ts`, a `test/tsconfig.json`, a `<name>:jest` script and a line in both of those runners - otherwise it passes by never running.
 
 ## Commit & Pull Request Guidelines
 - **Never run `git commit` or `git push` without explicit approval for that specific change.** Show what would be staged and wait for a yes. Approval for one commit is not approval for the next one, and "the work is finished" is not approval to commit it.

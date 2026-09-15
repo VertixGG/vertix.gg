@@ -482,6 +482,21 @@ export class DynamicChannelClaimManager extends InitializeBase {
     }
 
     /**
+     * Function getClaimableChannels() :: Every channel in this guild whose owner has gone.
+     *
+     * The set is held here and nowhere else - a channel becomes claimable when its owner leaves and
+     * stops being claimable when somebody takes it, and neither of those is written down anywhere a
+     * query could find. So anything that wants to offer the list has to ask.
+     *
+     * Asked for by guild because the manager is per interface version rather than per guild, and a
+     * member picking a channel to claim can only mean one in the server they are standing in.
+     */
+    public getClaimableChannels( guildId: string ): VoiceBasedChannel[] {
+        return Object.values( this.claimableChannels )
+            .filter( ( channel ) => channel.guildId === guildId );
+    }
+
+    /**
      * Function handleAbandonedChannels() :: Ensures that all abandoned added to abandon list,
      * so timer can handle them later, the function is called on bot start.
      */

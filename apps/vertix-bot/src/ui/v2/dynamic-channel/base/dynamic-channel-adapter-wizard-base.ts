@@ -5,6 +5,10 @@ import { ChannelType, PermissionsBitField } from "discord.js";
 
 import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/_dynamic-channel-requirements";
 
+import {
+    answeredBecauseTheChannelIsGone
+} from "@vertix.gg/bot/src/ui/general/channel-gone/channel-gone-gate";
+
 import type {
     UIAdapterReplyContext,
     UIAdapterStartContext,
@@ -40,6 +44,13 @@ export abstract class DynamicChannelAdapterWizardBase<
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {
+        if ( await answeredBecauseTheChannelIsGone(
+            interaction,
+            this.getArgsManager().getArgs( this, interaction )
+        ) ) {
+            return false;
+        }
+
         const channel = await this.resolveTargetChannel( interaction );
 
         return ( await dynamicChannelRequirements( interaction, channel ) ) ?? false;

@@ -157,7 +157,18 @@ const DynamicChannelKnockRequestAdapter = new DynamicExecutionAdapterBuilder<UID
         knockerId: sendArgs?.knockerId,
         knockerDisplayName: sendArgs?.knockerDisplayName
     } ) )
-    .getReplyArgs( async( context, interaction ) => context.getArgs( interaction ) )
+    /**
+     * Merged rather than read from the store alone.
+     *
+     * The store holds who knocked, put there when the request was sent. Which way the owner
+     * answered is not in it and cannot be - it is the press itself - so it arrives with the
+     * transition. Reading only the store dropped `isKnockAllowed`, the embed read it as absent, and
+     * every answer came out as the sentence for a refusal: somebody who had just been let in was
+     * told they were not.
+     */
+    .getReplyArgs( async( context, interaction, argsFromManager ) =>
+        Object.assign( {}, context.getArgs( interaction ) ?? {}, argsFromManager ?? {} )
+    )
     .build();
 
 export { DynamicChannelKnockRequestAdapter };

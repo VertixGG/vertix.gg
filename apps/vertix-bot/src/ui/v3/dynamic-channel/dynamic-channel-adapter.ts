@@ -195,22 +195,8 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
                 "VertixBot/UI-V3/DynamicChannelTemplatesButton",
                 "OpenTemplates",
                 async( _context, interaction ) => {
-                    const { ChannelTemplateModel } = await import( "@vertix.gg/data/src/models/data/channel-template-model" );
-
-                    const templates = await ChannelTemplateModel.$.getTemplates(
-                        interaction.user.id,
-                        interaction.guildId
-                    );
-
                     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelTemplatesAdapter" );
-
-                    if ( adapter ) {
-                        await adapter.ephemeral( interaction, {
-                            templates,
-                            maxTemplates: 5
-                        } );
-                    }
+                    await uiService.get( "VertixBot/UI-V3/DynamicChannelTemplatesAdapter" )?.runInitial( interaction );
                 }
             );
     } )

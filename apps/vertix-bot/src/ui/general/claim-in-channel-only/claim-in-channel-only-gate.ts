@@ -1,6 +1,9 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { isPressedFromControlPanel } from "@vertix.gg/bot/src/ui/general/misc/pressed-from-control-panel";
+import {
+    getInteractionChannelContext,
+    interactionNamesAChannel
+} from "@vertix.gg/bot/src/ui/general/misc/interaction-channel-context";
 
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
@@ -16,21 +19,25 @@ const CLAIM_BUTTON_NAMES = new Set( [
 ] );
 
 /**
- * Function answerClaimPressedFromControlPanel() :: Says where claiming happens, to a press that
- * asked for it from a panel.
+ * Function answerClaimWithoutAChannel() :: Says where claiming happens, when the asking named
+ * no channel.
  *
  * A control panel draws the same buttons as the interface inside a channel, and claim is left
  * pressable there so that what a member gets is a sentence rather than a button greyed out for
  * reasons it cannot state. The panel sits beside the generator rather than inside any one channel,
- * so there is no channel the press could mean.
+ * so there is no channel the press could mean - and a command typed away from a channel is the
+ * same, which is why this asks what the interaction names rather than where it came from.
  *
- * Answered here, ahead of the ordinary requirements, because those would turn a panel press into
- * whichever complaint fits the presser's own voice state - that they own no channel, or that the
- * one they are standing in is not theirs - and neither is what happened.
+ * Answered here, ahead of the ordinary requirements, because those would turn it into whichever
+ * complaint fits the asker's own voice state - that they own no channel, or that the one they are
+ * standing in is not theirs - and neither is what happened.
+ *
+ * The question is whether the interaction names a channel at all, not whether it came from a panel:
+ * a command typed away from one names none either, and deserves the same sentence.
  *
  * Returns whether it answered, in which case the press is spent.
  */
-export async function answerClaimPressedFromControlPanel(
+export async function answerClaimWithoutAChannel(
     interaction: UIAdapterReplyContext,
     entityName: string | null
 ): Promise<boolean> {
@@ -38,7 +45,7 @@ export async function answerClaimPressedFromControlPanel(
         return false;
     }
 
-    if ( ! isPressedFromControlPanel( interaction ) ) {
+    if ( interactionNamesAChannel( getInteractionChannelContext( interaction ) ) ) {
         return false;
     }
 

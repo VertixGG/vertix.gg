@@ -81,6 +81,13 @@ import {
 import { SetupClaimElementsGroup } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-claim-elements-group";
 
 import { SetupClaimEmbed } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-claim-embed";
+import { SetupMasterCreateEmbed } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-embed";
+import { SetupMasterEditEmbed } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-embed";
+import {
+    SetupServerOptionsEmbed,
+    SetupServerOptionsRolesEmbed
+} from "@vertix.gg/bot/src/ui/general/setup/elements/setup-server-options-embeds";
+import { SetupBadwordsEmbed } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-badwords-embed";
 
 import { SETUP_EMBED_VARS } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
@@ -881,8 +888,28 @@ const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/Setup
     .addRow( [ LanguageChooseButton, ServerOptionsEditButton ] )
     .build();
 
+/**
+ * The choice of what to make, on its own.
+ *
+ * The same menu the setup screen carries, without the rest of that screen around it - `/manage
+ * new-generator` asks one question, and landing on the whole interface makes a member find it
+ * among everything else they could have been doing instead.
+ */
+const SetupMasterCreateElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupMasterCreateElementsGroup" )
+    .addRow( [ SetupMasterCreateSelectMenu ] )
+    .build();
+
+/**
+ * The choice of which generator to change, on its own - the same menu, without the report around it.
+ */
+const SetupMasterEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupMasterEditElementsGroup" )
+    .addRow( [ SetupMasterEditSelectMenu ] )
+    .build();
+
 const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponent" )
     .addElementsGroup( SetupElementsGroup )
+    .addElementsGroup( SetupMasterCreateElementsGroup )
+    .addElementsGroup( SetupMasterEditElementsGroup )
     .addElementsGroup( ServerOptionsElementsGroup )
     .addElementsGroup( VoiceRoleElementsGroup )
     .addElementsGroup( VerifiedRolesElementsGroup )
@@ -892,6 +919,11 @@ const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponen
     .addEmbedsSingleGroup( SetupEmbed )
     .addEmbedsSingleGroup( SetupMaxMasterChannelsEmbed )
     .addEmbedsSingleGroup( SetupClaimEmbed )
+    .addEmbedsSingleGroup( SetupMasterCreateEmbed )
+    .addEmbedsSingleGroup( SetupMasterEditEmbed )
+    .addEmbedsSingleGroup( SetupServerOptionsEmbed )
+    .addEmbedsSingleGroup( SetupServerOptionsRolesEmbed )
+    .addEmbedsSingleGroup( SetupBadwordsEmbed )
     .addModal( BadwordsModal )
     .addModal( SetupScalingConfigModal )
     .addModal( SetupClaimTimeoutModal )
@@ -966,9 +998,24 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                     staffRolesMessage: "**None**"
                 }
             } )
+            .addState( "MasterCreate", {
+                executionStep: "VertixBot/UI-General/SetupMasterCreate",
+                embedsGroup: "VertixBot/UI-General/SetupMasterCreateEmbedGroup",
+                elementsGroup: "VertixBot/UI-General/SetupMasterCreateElementsGroup"
+            } )
+            .addState( "MasterEdit", {
+                executionStep: "VertixBot/UI-General/SetupMasterEdit",
+                embedsGroup: "VertixBot/UI-General/SetupMasterEditEmbedGroup",
+                elementsGroup: "VertixBot/UI-General/SetupMasterEditElementsGroup"
+            } )
+            .addState( "ServerOptionsRoles", {
+                executionStep: "VertixBot/UI-General/SetupServerOptionsRoles",
+                embedsGroup: "VertixBot/UI-General/SetupServerOptionsRolesEmbedGroup",
+                elementsGroup: "VertixBot/UI-General/ServerOptionsElementsGroup"
+            } )
             .addState( "ServerOptions", {
                 executionStep: "VertixBot/UI-General/SetupServerOptions",
-                embedsGroup: "VertixBot/UI-General/SetupEmbedGroup",
+                embedsGroup: "VertixBot/UI-General/SetupServerOptionsEmbedGroup",
                 elementsGroup: "VertixBot/UI-General/ServerOptionsElementsGroup",
                 previewDefaultVars: {
                     masterChannelMessage: "**None**",
@@ -1016,14 +1063,10 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             } )
             .addState( "ServerOptionsBadwords", {
                 executionStep: "VertixBot/UI-General/SetupBadwords",
-                embedsGroup: "VertixBot/UI-General/SetupEmbedGroup",
+                embedsGroup: "VertixBot/UI-General/SetupBadwordsEmbedGroup",
                 elementsGroup: "VertixBot/UI-General/BadwordsElementsGroup",
                 previewDefaultVars: {
-                    masterChannelMessage: "**None**",
-                    badwordsMessage: "**None**",
-                    voiceRoleMessage: "**None**",
-                    verifiedRolesMessage: "**@everyone** *(default)*",
-                    staffRolesMessage: "**None**"
+                    badwordsMessage: "**None** - every name is allowed."
                 }
             } )
             .addState( "Claim", {
@@ -1052,6 +1095,9 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 from: [ "Initial", "ServerOptionsBadwords" ],
                 to: "ServerOptionsBadwords"
             } )
+            .addTransition( "OpenMasterCreate", { from: "Initial", to: "MasterCreate" } )
+            .addTransition( "OpenMasterEdit", { from: "Initial", to: "MasterEdit" } )
+            .addTransition( "OpenServerOptionsRoles", { from: "Initial", to: "ServerOptionsRoles" } )
             .addTransition( "OpenServerOptions", { from: "Initial", to: "ServerOptions" } )
             .addTransition( "SubmitBadwords", {
                 from: [ "Initial", "ServerOptionsBadwords" ],

@@ -8,8 +8,13 @@ import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions"
 
 import { isSelfGatedEntity } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-self-gated-entities";
 import {
-    answerClaimPressedFromControlPanel
+    answerClaimWithoutAChannel
 } from "@vertix.gg/bot/src/ui/general/claim-in-channel-only/claim-in-channel-only-gate";
+import {
+    answeredBecauseTheChannelIsGone
+} from "@vertix.gg/bot/src/ui/general/channel-gone/channel-gone-gate";
+
+import { applyResolvedChannelToInteraction } from "@vertix.gg/bot/src/utils/interaction-channel";
 
 import {
     dynamicChannelBotPermissionsRequirements,
@@ -26,7 +31,7 @@ import type {
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
-import type { Message, MessageComponentInteraction, ModalSubmitInteraction, VoiceChannel } from "discord.js";
+import type { Message, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
 
 export abstract class DynamicChannelAdapterExuBase<
     TInteraction extends UIAdapterReplyContext = UIDefaultButtonChannelVoiceInteraction
@@ -52,7 +57,14 @@ export abstract class DynamicChannelAdapterExuBase<
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ): Promise<boolean> {
-        if ( await answerClaimPressedFromControlPanel( interaction, this.getPressedEntityName( interaction ) ) ) {
+        if ( await answeredBecauseTheChannelIsGone(
+            interaction,
+            this.getArgsManager().getArgs( this, interaction )
+        ) ) {
+            return false;
+        }
+
+        if ( await answerClaimWithoutAChannel( interaction, this.getPressedEntityName( interaction ) ) ) {
             return false;
         }
 
@@ -116,7 +128,7 @@ export abstract class DynamicChannelAdapterExuBase<
             return;
         }
 
-        this.applyResolvedChannelToInteraction( interaction, channel );
+        applyResolvedChannelToInteraction( interaction, channel );
     }
 
     protected async hydrateMessageChannel( message: Message<true>, newArgs?: UIArgs ) {
@@ -129,22 +141,6 @@ export abstract class DynamicChannelAdapterExuBase<
 
         try {
             Object.defineProperty( message, "channel", { value: channel } );
-        } catch {
-        }
-    }
-
-    private applyResolvedChannelToInteraction( interaction: TInteraction, channel: VoiceChannel ) {
-        if ( interaction.channel?.id === channel.id ) {
-            return;
-        }
-
-        try {
-            Object.defineProperty( interaction, "channel", { value: channel } );
-        } catch {
-        }
-
-        try {
-            Object.defineProperty( interaction, "channelId", { value: channel.id } );
         } catch {
         }
     }

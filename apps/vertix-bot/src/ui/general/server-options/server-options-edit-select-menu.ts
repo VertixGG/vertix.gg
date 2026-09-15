@@ -9,6 +9,17 @@ export const EDIT_BADWORDS = "editBadwords" as const;
 export const EDIT_CLAIM = "editClaim" as const;
 
 /**
+ * The step that asks about roles alone.
+ *
+ * `/manage roles` means the three role settings, not the five this menu carries - so the menu shows
+ * three when it is opened there. One menu rather than two, because what a choice *does* is a switch
+ * in the setup adapter and a second menu would need a second copy of it.
+ */
+export const SERVER_OPTIONS_ROLES_STEP = "VertixBot/UI-General/SetupServerOptionsRoles" as const;
+
+const ROLE_OPTION_VALUES: string[] = [ EDIT_VOICE_ROLE, EDIT_VERIFIED_ROLES, EDIT_STAFF_ROLES ];
+
+/**
  * The way into each of the server's settings.
  *
  * One setting at a time, each on a screen of its own, because a picker shown beside four others has
@@ -25,7 +36,9 @@ export class ServerOptionsEditSelectMenu extends UIElementStringSelectMenu {
     }
 
     protected async getPlaceholder(): Promise<string> {
-        return "⚙️ ∙ Select Edit Options";
+        return SERVER_OPTIONS_ROLES_STEP === this.uiArgs?._step
+            ? "🛡️ ∙ Select a role setting"
+            : "⚙️ ∙ Select Edit Options";
     }
 
     protected async getMinValues() {
@@ -37,6 +50,14 @@ export class ServerOptionsEditSelectMenu extends UIElementStringSelectMenu {
     }
 
     protected async getSelectOptions() {
+        const options = this.allOptions();
+
+        return SERVER_OPTIONS_ROLES_STEP === this.uiArgs?._step
+            ? options.filter( ( option ) => ROLE_OPTION_VALUES.includes( option.value ) )
+            : options;
+    }
+
+    private allOptions() {
         return [
             {
                 label: "Voice Role",

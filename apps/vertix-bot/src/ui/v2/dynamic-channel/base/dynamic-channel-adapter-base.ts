@@ -7,6 +7,10 @@ import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
 import { dynamicChannelRequirements } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/_dynamic-channel-requirements";
 
+import {
+    answeredBecauseTheChannelIsGone
+} from "@vertix.gg/bot/src/ui/general/channel-gone/channel-gone-gate";
+
 import type { TAdapterRegisterOptions } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 
 import type {
@@ -45,6 +49,13 @@ export abstract class DynamicChannelAdapterBase extends UIAdapterBase<
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: UIDefaultButtonChannelVoiceInteraction ): Promise<boolean> {
+        if ( await answeredBecauseTheChannelIsGone(
+            interaction,
+            this.getArgsManager().getArgs( this, interaction )
+        ) ) {
+            return false;
+        }
+
         const channel = await this.resolveTargetChannel( interaction );
 
         return ( await dynamicChannelRequirements( interaction, channel ) ) ?? false;

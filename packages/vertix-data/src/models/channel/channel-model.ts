@@ -34,7 +34,14 @@ type ChannelExtendedResult<T extends TDataType> =
  * made and one category standing in its server - so a question about what a guild has set up, or
  * about how much of its allowance is spent, means both of them.
  */
-const MASTER_INTERNAL_TYPES = [
+/**
+ * The channel types that are a generator rather than something a generator made.
+ *
+ * Exported because "is this a generator" is asked outside this model too - a generator is a voice
+ * channel with a chat of its own, and an interface asked for from that chat is not an interface
+ * for the generator.
+ */
+export const MASTER_INTERNAL_TYPES: PrismaBot.E_INTERNAL_CHANNEL_TYPES[] = [
     PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_CREATE_CHANNEL,
     PrismaBot.E_INTERNAL_CHANNEL_TYPES.MASTER_SCALING_CHANNEL
 ];

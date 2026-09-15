@@ -731,6 +731,60 @@ export async function bootstrapUIRuntimeHeadless(): Promise<UIService> {
     return ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
 }
 
+/**
+ * Function validateLanguageCommand() :: Says how far the language files have drifted, and stops.
+ *
+ * The bot does not check this on its way up, and deliberately: a mismatch is a file naming a button
+ * that no longer exists, and refusing to start over it would take the bot down for something that
+ * only decides which words are shown. The API's headless bootstrap leaves it off for the same
+ * reason. So the check lives here instead, as a thing run by whoever just changed the entities.
+ *
+ * Reports everything rather than the first thing. `validateLanguage()` throws on the earliest count
+ * that does not add up, which says a file is wrong without saying what in it is - no use to someone
+ * who has just added four embeds and removed a feature.
+ *
+ * It also reports a name written twice in one file, which no count catches: both comparisons work
+ * from sets, so the second copy is invisible to them while being invisible to the bot as well.
+ *
+ * Exits non-zero when anything drifted, so it can be the thing that fails a pipeline.
+ */
+async function validateLanguageCommand(): Promise<number> {
+    const { UILanguageManager } = await import( "@vertix.gg/bot/src/ui/ui-language-manager" );
+
+    await bootstrapUIRuntime();
+
+    const reports = await UILanguageManager.$.reportLanguageDrift();
+
+    let driftedFiles = 0;
+
+    for ( const report of reports ) {
+        if ( ! report.groups.length ) {
+            GlobalLogger.$.info( validateLanguageCommand, `✔  '${ report.code }' is in step with ${ report.comparedAgainst }` );
+            continue;
+        }
+
+        driftedFiles++;
+
+        GlobalLogger.$.warn( validateLanguageCommand, `✖  '${ report.code }' has drifted from ${ report.comparedAgainst }:` );
+
+        for ( const group of report.groups ) {
+            for ( const name of group.stale ) {
+                GlobalLogger.$.warn( validateLanguageCommand, `     ${ group.group } · stale, the bot no longer has it  → ${ name }` );
+            }
+
+            for ( const name of group.missing ) {
+                GlobalLogger.$.warn( validateLanguageCommand, `     ${ group.group } · missing, never translated     → ${ name }` );
+            }
+
+            for ( const name of group.duplicated ) {
+                GlobalLogger.$.warn( validateLanguageCommand, `     ${ group.group } · named twice, one is unread    → ${ name }` );
+            }
+        }
+    }
+
+    return driftedFiles;
+}
+
 async function exportUIDefinitionsCommand( outputDirArg?: string ) {
     const outputDir = outputDirArg ?? path.join( "exports", "ui" );
     const resolvedOutputDir = path.isAbsolute( outputDir )
@@ -876,6 +930,29 @@ export async function entryPoint( options: {
             process.exit( 0 );
         } catch( error ) {
             GlobalLogger.$.error( entryPoint, "Failed to export UI definitions", error );
+            process.exit( 1 );
+        }
+    }
+
+    const validateLanguageArg = process.argv.find( ( arg ) => arg.startsWith( "--validate-language" ) );
+    if ( validateLanguageArg ) {
+        GlobalLogger.$.info( entryPoint, "Validate language command detected" );
+        try {
+            const driftedFiles = await validateLanguageCommand();
+
+            if ( driftedFiles ) {
+                GlobalLogger.$.warn(
+                    entryPoint,
+                    `${ driftedFiles } language file(s) drifted. Delete 'assets/languages/en.json' and start the bot to rebuild it from the entities; the translated files need the named entries added or removed by hand.`
+                );
+
+                process.exit( 1 );
+            }
+
+            GlobalLogger.$.info( entryPoint, "All language files are in step" );
+            process.exit( 0 );
+        } catch( error ) {
+            GlobalLogger.$.error( entryPoint, "Failed to validate languages", error );
             process.exit( 1 );
         }
     }

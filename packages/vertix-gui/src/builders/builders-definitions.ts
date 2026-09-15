@@ -30,7 +30,8 @@ export interface IAdapterContext<TInteraction extends UIAdapterReplyContext, TAr
 
     ephemeral: ( interaction: TInteraction, args?: TArgs, deletePrevious?: boolean ) => Promise<void>;
     editReply: ( interaction: TInteraction, args?: TArgs ) => Promise<void | {}>;
-    showModal: ( interaction: MessageComponentInteraction<"cached">, name: string ) => Promise<void>;
+    /** Answers whether the modal is on screen; a refusal leaves the interaction still unanswered. */
+    showModal: ( interaction: MessageComponentInteraction<"cached">, name: string ) => Promise<boolean>;
 
     // Existing in base, part of args manager
     deleteArgs: ( interaction: TInteraction | Message<true> ) => void;

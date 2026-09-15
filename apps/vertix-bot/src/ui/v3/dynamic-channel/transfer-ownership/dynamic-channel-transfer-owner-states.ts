@@ -165,5 +165,8 @@ export async function getTransferOwnerReplyArgs(
         };
     }
 
-    return storedArgs;
+    // Merged rather than read from the store alone: the command hands the channel in with the
+    // opening, having nothing stored yet, and every press after this one resolves the channel from
+    // these args.
+    return Object.assign( {}, storedArgs, argsFromManager ?? {} );
 }

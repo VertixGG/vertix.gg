@@ -174,28 +174,28 @@
                                         "value": "en"
                                     },
                                     {
-                                        "label": "🇯🇵 Japanese",
-                                        "value": "ja"
-                                    },
-                                    {
-                                        "label": "🇩🇪 German",
+                                        "label": "🇩🇪 Deutsch",
                                         "value": "de"
                                     },
                                     {
-                                        "label": "🇷🇺 Russian",
-                                        "value": "ru"
-                                    },
-                                    {
-                                        "label": "🇫🇷 French",
-                                        "value": "fr"
-                                    },
-                                    {
-                                        "label": "🇬🇷 Greek",
+                                        "label": "🇬🇷 Ελληνικά",
                                         "value": "el"
                                     },
                                     {
-                                        "label": "🇪🇸 Spanish",
+                                        "label": "🇪🇸 Español",
                                         "value": "es"
+                                    },
+                                    {
+                                        "label": "🇫🇷 Français",
+                                        "value": "fr"
+                                    },
+                                    {
+                                        "label": "🇯🇵 日本語",
+                                        "value": "ja"
+                                    },
+                                    {
+                                        "label": "🇷🇺 Русский",
+                                        "value": "ru"
                                     }
                                 ]
                             }
@@ -231,12 +231,12 @@
                             "options": {
                                 "currentLanguage": {
                                     "en": "English",
-                                    "ja": "日本語",
                                     "de": "Deutsch",
-                                    "ru": "Русский",
-                                    "fr": "Français",
                                     "el": "Ελληνικά",
-                                    "es": "Español"
+                                    "es": "Español",
+                                    "fr": "Français",
+                                    "ja": "日本語",
+                                    "ru": "Русский"
                                 }
                             },
                             "vars": {
@@ -335,6 +335,58 @@
                                 "label": "Edit Server Options",
                                 "style": "primary",
                                 "emoji": "⚙️"
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupMasterCreateElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "➕ ∙ Create Master Channel",
+                                "selectOptions": [
+                                    {
+                                        "label": "Dynamic Channel (V2)",
+                                        "value": "v2",
+                                        "emoji": "➕",
+                                        "description": "Classic dynamic voice channels"
+                                    },
+                                    {
+                                        "label": "Dynamic Channel (V3)",
+                                        "value": "v3",
+                                        "emoji": "✨",
+                                        "description": "Enhanced dynamic channels with more features"
+                                    },
+                                    {
+                                        "label": "Auto-Scaling Channel",
+                                        "value": "scaling",
+                                        "emoji": "📈",
+                                        "description": "Automatically scales based on member count"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupMasterEditElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "❖ ∙ Edit Master Channel(s)"
                             }
                         }
                     ]
@@ -631,8 +683,8 @@
                         "embed": "VertixBot/UI-General/SetupEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "🛠  Setup VoiceChannels",
-                            "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n_**Server Verified Roles**_:\n{verifiedRolesMessage}\n\n_**Server Staff Roles**_:\n{staffRolesMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+                            "title": "🛠  Setup Vertix",
+                            "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n_**Server Verified Roles**_:\n{verifiedRolesMessage}\n\n_**Server Staff Roles**_:\n{staffRolesMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
                             "image": "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png",
                             "color": 3369963,
                             "options": {
@@ -768,13 +820,6 @@
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  maxMasterChannels: args.maxMasterChannels\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -799,6 +844,107 @@
                                 "valueVoteTimeout": "{valueVoteTimeout}",
                                 "valueVoteAddTime": "{valueVoteAddTime}",
                                 "defaultMarker": "{defaultMarker}"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupMasterCreateEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupMasterCreateEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "➕  Create a channel generator",
+                            "description": "A generator is a voice channel members join to get one of their own, made for them and removed when they leave.\n\n**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n\nChoose below, and the rest is a few questions.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupMasterEditEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupMasterEditEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔧  Edit a channel generator",
+                            "description": "Pick the generator you want to change.\n\nIts settings open next — the name new channels get, who may see them, which buttons their owners have, and the rest.\n\n*Nothing here? The server has no generators yet — `/manage new-generator` makes one.*",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupServerOptionsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupServerOptionsEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "⚙️  Server settings",
+                            "description": "Settings that belong to the whole server rather than to one generator.\n\n**Voice Role** — given to members while they are in a voice channel.\n**Verified Roles** — who dynamic channels are for.\n**Staff Roles** — who may act on a channel they do not own.\n**Bad Words** — words a member cannot put in a channel name.\n**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\nPick one to change it.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🛡️  Server roles",
+                            "description": "Which roles this server's dynamic channels answer to.\n\n**Voice Role** — given to members while they are in a voice channel, and taken back when they leave.\n**Verified Roles** — who the channels are for. Everyone else is kept out.\n**Staff Roles** — who may act on a channel they do not own.\n\nPick one to change it.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupBadwordsEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SetupBadwordsEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🙅  Bad Words",
+                            "description": "Words that cannot appear in the name of a dynamic channel, anywhere in this server.\n\nA member renaming their channel to something holding one of these is told no and the name is left as it was. The check is on names only - it does not read what anyone says.\n\n_**Current list**_:\n{badwordsMessage}\n\n`(🙅 Edit Bad Words)` replaces the whole list with what you type, separated by commas.\n`(🧹 Remove all)` empties it, which allows every name again.\n",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963,
+                            "options": {
+                                "badwordsMessage": {
+                                    "{badwords}": "`{badwords}`",
+                                    "{badwordsMessageDefault}": "**None** - every name is allowed."
+                                }
+                            },
+                            "arrayOptions": {
+                                "badwords": {
+                                    "format": "{value}{separator}",
+                                    "separator": ", "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "badwords": "{badwords}",
+                                "badwordsMessage": "{badwordsMessage}",
+                                "badwordsMessageDefault": "{badwordsMessageDefault}"
+                            },
+                            "logic": {
+                                "sources": [
+                                    {
+                                        "source": "(args,vars)=>{const result={};if(args?.badwords?.length){result.badwords=args.badwords;result.badwordsMessage=vars.badwords}else{result.badwordsMessage=vars.badwordsMessageDefault}return result}"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -834,7 +980,7 @@
                 "inputs": [
                     {
                         "name": "VertixBot/UI-General/SetupScalingPrefixInput",
-                        "label": "CHANNEL NAME PREFIX",
+                        "label": "Channel Name Prefix",
                         "placeholder": "### Room - {index} ###",
                         "style": "short",
                         "minLength": 1,
@@ -842,7 +988,7 @@
                     },
                     {
                         "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
-                        "label": "MAX MEMBERS PER CHANNEL",
+                        "label": "Max Members Per Channel",
                         "placeholder": "10",
                         "style": "short",
                         "minLength": 1,
@@ -857,6 +1003,7 @@
                     {
                         "name": "VertixBot/UI-General/SetupClaimTimeoutInput",
                         "label": "Seconds, empty for the default",
+                        "placeholder": "600",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 7
@@ -870,6 +1017,7 @@
                     {
                         "name": "VertixBot/UI-General/SetupClaimSweepIntervalInput",
                         "label": "Seconds, empty for the default",
+                        "placeholder": "60",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 7
@@ -883,6 +1031,7 @@
                     {
                         "name": "VertixBot/UI-General/SetupVoteTimeoutInput",
                         "label": "Seconds, empty for the default",
+                        "placeholder": "60",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 7
@@ -896,6 +1045,7 @@
                     {
                         "name": "VertixBot/UI-General/SetupVoteAddTimeInput",
                         "label": "Seconds, empty for the default",
+                        "placeholder": "60",
                         "style": "short",
                         "minLength": 0,
                         "maxLength": 7
@@ -909,8 +1059,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 3,
-                "withDefinition": 3,
+                "total": 8,
+                "withDefinition": 8,
                 "missingDefinition": 0
             }
         }
@@ -972,8 +1122,8 @@
                         "embed": "VertixBot/UI-General/WelcomeEmbed",
                         "definition": {
                             "instanceType": "Static",
-                            "title": "༄ VoiceChannels is here, let's get started!",
-                            "description": "Welcome to VoiceChannels, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://voicechannels.online/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU",
+                            "title": "༄ Vertix is here, let's get started!",
+                            "description": "Welcome to Vertix, an incredible addition to your server!\nLet's collaborate and make your server even better.\n\n**Bot Setup**\n- Type `/setup` or press `(🛠 Setup)` button.\n- Click on `(➕ Create Master Channel)`\n- Follow the steps.\n\nStill not sure? Check out our [step by step](https://voicechannels.online/posts/how-to-setup) guide.\n\nYou can always edit the configurations by using the `/setup` command.\n\nIf you need assistance or have any suggestions, feel free to join our Discord community server! We would be glad to help you and hear your feedback.\n\nJoin us at: https://discord.gg/dEwKeQefUU",
                             "image": "https://i.imgur.com/x8jMguN.gif",
                             "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "color": 3369963
@@ -1017,13 +1167,6 @@
                             "color": 16732674,
                             "vars": {
                                 "masterChannelId": "{masterChannelId}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  masterChannelId: args?.masterChannelId\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -1061,17 +1204,18 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "⛔  No active dynamic channel",
-                            "description": "You don't own an active dynamic channel.\n\nJoin <#{masterChannelId}> to create your own channel first.",
+                            "description": "You don't own an active dynamic channel.{masterChannelMessage}",
                             "color": 16732674,
-                            "vars": {
-                                "masterChannelId": "{masterChannelId}"
+                            "options": {
+                                "masterChannelMessage": {
+                                    "{masterChannelId}": "\n\nJoin <#{masterChannelId}> to create your own channel first.",
+                                    "{masterChannelMessageDefault}": ""
+                                }
                             },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  masterChannelId: args?.masterChannelId\n})"
-                                    }
-                                ]
+                            "vars": {
+                                "masterChannelId": "{masterChannelId}",
+                                "masterChannelMessage": "{masterChannelMessage}",
+                                "masterChannelMessageDefault": "{masterChannelMessageDefault}"
                             }
                         }
                     }
@@ -1131,125 +1275,6 @@
         }
     },
     {
-        "name": "VertixBot/UI-General/AIAgentComponent",
-        "type": "component",
-        "instanceType": "Dynamic",
-        "modules": [
-            "VertixBot/UI-General/Module"
-        ],
-        "elementsGroups": [
-            {
-                "name": "VertixBot/UI-General/AIAgentComponent/ElementsGroup",
-                "items": [
-                    [
-                        {
-                            "element": "VertixBot/UI-General/AIAgentChannelSelectMenu",
-                            "definition": {
-                                "name": "VertixBot/UI-General/AIAgentChannelSelectMenu",
-                                "elementType": "channel-select",
-                                "instanceType": "Dynamic",
-                                "placeholder": "Select a channel"
-                            }
-                        }
-                    ],
-                    [
-                        {
-                            "element": "VertixBot/UI-General/AIAgentSendButton",
-                            "definition": {
-                                "name": "VertixBot/UI-General/AIAgentSendButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "label": "Send",
-                                "style": "primary",
-                                "emoji": "📨"
-                            }
-                        },
-                        {
-                            "element": "VertixBot/UI-General/AIAgentConfirmSendButton",
-                            "definition": {
-                                "name": "VertixBot/UI-General/AIAgentConfirmSendButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "label": "Send to channel",
-                                "style": "success",
-                                "emoji": "✅"
-                            }
-                        },
-                        {
-                            "element": "VertixBot/UI-General/AIAgentCancelDraftButton",
-                            "definition": {
-                                "name": "VertixBot/UI-General/AIAgentCancelDraftButton",
-                                "elementType": "button",
-                                "instanceType": "Dynamic",
-                                "label": "Cancel",
-                                "style": "secondary",
-                                "emoji": "✖️"
-                            }
-                        }
-                    ]
-                ]
-            }
-        ],
-        "embedsGroups": [
-            {
-                "name": "VertixBot/UI-General/AIAgentComponent/EmbedsGroup",
-                "items": [
-                    {
-                        "embed": "VertixBot/UI-General/AIAgentEmbed",
-                        "definition": {
-                            "instanceType": "Dynamic",
-                            "title": "AI Agent",
-                            "description": "Select a channel, then press Send.\n\nSelected channel: {selectedChannelDisplay}\n\nAbout to send:\n{draftContentDisplay}\n",
-                            "image": "https://i.imgur.com/NthLO3W.png",
-                            "color": 3369963,
-                            "vars": {
-                                "selectedChannelDisplay": "{selectedChannelDisplay}",
-                                "draftContentDisplay": "{draftContentDisplay}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const selectedChannelDisplay = typeof args.selectedChannelId === \"string\" && args.selectedChannelId.length ? `<#${args.selectedChannelId}>` : \"`none`\", cleanedDraft = typeof args.draftContent === \"string\" ? args.draftContent.trim() : \"\", escapedDraft = (cleanedDraft.length > 500 ? `${cleanedDraft.slice(0, 500)}...` : cleanedDraft).replaceAll(\"```\", \"``\\u200B`\"), draftContentDisplay = escapedDraft.length ? `\\`\\`\\`\n${escapedDraft}\n\\`\\`\\`` : \"`none`\";\n  return {\n    selectedChannelDisplay,\n    draftContentDisplay\n  };\n}"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ]
-            }
-        ],
-        "modals": [
-            "VertixBot/UI-General/AIAgentSendModal"
-        ],
-        "modalDefinitions": [
-            {
-                "name": "VertixBot/UI-General/AIAgentSendModal",
-                "title": "Send message",
-                "inputs": [
-                    {
-                        "name": "VertixBot/UI-General/AIAgentMessageInput",
-                        "label": "Message",
-                        "placeholder": "Type your message...",
-                        "style": "paragraph",
-                        "minLength": 1,
-                        "maxLength": 1900
-                    }
-                ]
-            }
-        ],
-        "defaultElementsGroup": null,
-        "defaultEmbedsGroup": null,
-        "defaultMarkdownsGroup": null,
-        "hooks": [],
-        "options": {
-            "embedAudit": {
-                "total": 1,
-                "withDefinition": 1,
-                "missingDefinition": 0
-            }
-        }
-    },
-    {
         "name": "VertixBot/UI-General/ChannelCreateFailedComponent",
         "type": "component",
         "instanceType": "Dynamic",
@@ -1282,16 +1307,6 @@
                             },
                             "defaultVars": {
                                 "masterChannelId": "123456789"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  masterChannelId: args.masterChannelId,\n  reason: args.isCategoryFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonCategoryFull : CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown\n})",
-                                        "binds": [
-                                            "CHANNEL_CREATE_FAILED_EMBED_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -1338,14 +1353,280 @@
                             "defaultVars": {
                                 "roleId": "123456789",
                                 "reason": "the role is above the bot in the role list"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  roleId: args.roleId,\n  reason: args.reason\n})"
-                                    }
-                                ]
                             }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/FeatureMissingInV2Component",
+        "type": "component",
+        "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/FeatureMissingInV2Component/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/FeatureMissingInV2Embed",
+                        "definition": {
+                            "instanceType": "Static",
+                            "title": "⚠  Not in this generator's interface",
+                            "description": "This channel comes from a generator running the older interface, which does not have that feature.\n\nA server admin can upgrade the generator to get it.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/MissingAdminPermissionsComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/MissingAdminPermissionsComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/MissingAdminPermissionsEmbed",
+                        "definition": {
+                            "instanceType": "Static",
+                            "title": "⛔  You cannot configure this server",
+                            "description": "This command is for server admins.\n\nIt needs the **Manage Server**, **Manage Channels** and **Manage Roles** permissions.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/NotClaimableComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/NotClaimableComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/NotClaimableEmbed",
+                        "definition": {
+                            "instanceType": "Static",
+                            "title": "🔒  Nothing to claim here",
+                            "description": "This channel is not up for claiming right now.\n\nA channel becomes claimable when its owner leaves it.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/NotInAServerComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/NotInAServerComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/NotInAServerEmbed",
+                        "definition": {
+                            "instanceType": "Static",
+                            "title": "🏠  Run this in a server",
+                            "description": "These commands act on a server's voice channels, and a direct message has neither.\n\nOpen the server you want and run it there.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/ChannelGoneComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/ChannelGoneComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/ChannelGoneEmbed",
+                        "definition": {
+                            "instanceType": "Static",
+                            "title": "🕳  That channel is gone",
+                            "description": "The channel this screen was opened about no longer exists - a dynamic channel is removed once the last person leaves it.\n\nRun the command again to work on the one you have now.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/ClaimOpenComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/ClaimOpenComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/ClaimOpenEmbed",
+                        "definition": {
+                            "instanceType": "Static",
+                            "title": "😈  This channel can be claimed",
+                            "description": "Its owner has left, so the channel is up for claiming.\n\nPress **Claim** on this channel's buttons to start.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/CommandFailedComponent",
+        "type": "component",
+        "instanceType": "Static",
+        "modules": [
+            "VertixBot/UI-General/Module"
+        ],
+        "elementsGroups": [],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-General/CommandFailedComponent/EmbedsGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/CommandFailedEmbed",
+                        "definition": {
+                            "instanceType": "Static",
+                            "title": "⚠  That did not work",
+                            "description": "Something went wrong running that command.\n\nIt has been logged. Trying again is worth a go — if it keeps happening, tell us in the support server.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963
                         }
                     }
                 ]
@@ -1385,13 +1666,6 @@
                             "description": "Please be aware that if you don't return within **{absentMinutes}** minutes, the channel will once again become available for other members to claim.\n",
                             "vars": {
                                 "absentMinutes": "{absentMinutes}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  absentMinutes: (args.absentInterval / 60000).toFixed(1)\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -1413,13 +1687,6 @@
                             "defaultVars": {
                                 "userDisplayName": "User",
                                 "userId": "123456789"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName,\n  userId: args.userId\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -1441,13 +1708,6 @@
                             "defaultVars": {
                                 "userDisplayName": "User",
                                 "userId": "123456789"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName,\n  userId: args.userId\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -1469,13 +1729,6 @@
                             "defaultVars": {
                                 "prevUserId": "123456789",
                                 "currentUserId": "987654321"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  prevUserId: args.prevUserId,\n  currentUserId: args.currentUserId\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -1578,13 +1831,6 @@
                                 "ownerId": "{ownerId}",
                                 "ownerDisplayName": "{ownerDisplayName}",
                                 "absentMinutes": "{absentMinutes}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  ownerId: args.ownerId,\n  ownerDisplayName: args.ownerDisplayName,\n  absentMinutes: (args.absentInterval / 60000).toFixed(1)\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -1710,15 +1956,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
-                                    },
-                                    {
-                                        "source": "(args) => {\n  return {\n    userInitiatorId: args.userInitiatorId,\n    userInitiatorDisplayName: args.userInitiatorDisplayName\n  };\n}"
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(args.timeEnd)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -1732,7 +1972,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👑  {candidatesCount} Candidates wish to claim this channel",
-                            "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}`, the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
+                            "description": "The countdown is on!\nIn just `{elapsedTimeFormatFraction}` , the voting will come to a close.\nIn case of a tie, <@{userInitiatorId}> will become the new owner.\n\n{candidatesState}",
                             "options": {
                                 "formatSecondUnits": {
                                     "unit": "second",
@@ -1792,18 +2032,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
-                                    },
-                                    {
-                                        "source": "(args) => {\n  const result = {}, candidates = Object.entries(args.results || {}).map(([userId, votes]) => ({\n    userId,\n    votes\n  })).sort((a, b) => b.votes - a.votes);\n  result.candidatesCount = candidates.length;\n  result.userInitiatorId = args.userInitiatorId;\n  if (result.candidatesCount) {\n    result.candidates = candidates;\n    result.candidatesState = vars.candidates;\n  } else\n    result.candidatesState = vars.candidatesDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(args.timeEnd)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -1874,12 +2105,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(Date.now() + (args.elapsedTime || 0))"
-                                }
+                                ]
                             }
                         }
                     }
@@ -2202,13 +2430,6 @@
                             "color": 16766720,
                             "vars": {
                                 "lfmChannelId": "{lfmChannelId}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  lfmChannelId: args.lfmChannelId\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2229,13 +2450,6 @@
                             },
                             "defaultVars": {
                                 "retryMinutes": "10"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  retryMinutes: args.retryMinutes\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2274,17 +2488,6 @@
                             },
                             "defaultVars": {
                                 "reason": "{reasonNotConfigured}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  return {\n    reason: {\n      [DynamicChannelLfmPostResultCode.NotConfigured]: vars.reasonNotConfigured,\n      [DynamicChannelLfmPostResultCode.DestinationUnavailable]: vars.reasonDestinationUnavailable,\n      [DynamicChannelLfmPostResultCode.ChannelHidden]: vars.reasonHidden,\n      [DynamicChannelLfmPostResultCode.ChannelPrivate]: vars.reasonPrivate,\n      [DynamicChannelLfmPostResultCode.ChannelFull]: vars.reasonFull,\n      [DynamicChannelLfmPostResultCode.AlreadyPosted]: vars.reasonAlreadyPosted,\n      [DynamicChannelLfmPostResultCode.Error]: vars.reasonFailed\n    }[args.reasonCode] ?? vars.reasonFailed\n  };\n}",
-                                        "binds": [
-                                            "DynamicChannelLfmPostResultCode",
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2399,12 +2602,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(Number(args.expiresAt))"
-                                }
+                                ]
                             }
                         }
                     }
@@ -2470,13 +2670,6 @@
                             "defaultVars": {
                                 "ownerDisplayName": "User",
                                 "totalMessages": "0"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  ownerDisplayName: args.ownerDisplayName,\n  totalMessages: args.totalMessages\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2556,16 +2749,6 @@
                             },
                             "defaultVars": {
                                 "userLimit": "Unlimited"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  userLimit: args.userLimit === 0 ? vars.userLimitUnlimited : vars.userLimitValue,\n  userLimitValue: args.userLimit\n})",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2587,13 +2770,6 @@
                             "defaultVars": {
                                 "minValue": "0",
                                 "maxValue": "99"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  minValue: args.minValue,\n  maxValue: args.maxValue\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2666,13 +2842,6 @@
                             "color": 16738560,
                             "vars": {
                                 "badword": "{badword}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  badword: args.badword\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2724,18 +2893,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
-                                    },
-                                    {
-                                        "source": "(args) => {\n  const result = {}, masterChannelId = typeof args.masterChannelId === \"string\" ? args.masterChannelId : \"\";\n  if (masterChannelId) {\n    result.masterChannelId = masterChannelId;\n    result.masterChannelMessage = vars.masterChannelId;\n  } else\n    result.masterChannelMessage = vars.masterChannelMessageDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(Date.now() + args.retryAfter * 1000)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -2755,13 +2915,6 @@
                             },
                             "defaultVars": {
                                 "channelName": "New Channel Name"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  channelName: args.channelName\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2823,13 +2976,6 @@
                             },
                             "defaultVars": {
                                 "badword": "example"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  badword: args.badword\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2850,13 +2996,6 @@
                             },
                             "defaultVars": {
                                 "channelStatus": "Valorant · 3/5"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  channelStatus: args.channelStatus\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -2877,13 +3016,6 @@
                             },
                             "defaultVars": {
                                 "channelStatus": "Ranked grind, need two"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  channelStatus: args.channelStatus\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3104,6 +3236,449 @@
         }
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "👍 Grant Access"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "👎 Remove Access"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🫵 Block User Access"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🤙 Un-Block User Access"
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
+                                "elementType": "user-select",
+                                "instanceType": "Dynamic",
+                                "placeholder": "👢 Kick User"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsAccessEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👥  Manage permissions of your channel",
+                            "description": "**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 4943761,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                },
+                                "blockedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}"
+                            },
+                            "defaultVars": {
+                                "allowedUsersDisplay": "Currently there are no granted users.\n",
+                                "blockedUsersDisplay": "Currently there are no blocked users.\n"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsGrantedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👍  Access granted",
+                            "description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 16109389,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                },
+                                "blockedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userGrantedDisplayName": "{userGrantedDisplayName}"
+                            },
+                            "defaultVars": {
+                                "userGrantedDisplayName": "User",
+                                "allowedUsersDisplay": "• <@123456789>",
+                                "blockedUsersDisplay": "Currently there are no blocked users."
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsDeniedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👎  Access canceled",
+                            "description": "**{userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 15548997,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                },
+                                "blockedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userDeniedDisplayName": "{userDeniedDisplayName}"
+                            },
+                            "defaultVars": {
+                                "userDeniedDisplayName": "User",
+                                "allowedUsersDisplay": "Currently there are no granted users.",
+                                "blockedUsersDisplay": "Currently there are no blocked users."
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsBlockedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🫵  User blocked",
+                            "description": "**{userBlockedDisplayName}** successfully blocked and no longer has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 10038562,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                },
+                                "blockedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userBlockedDisplayName": "{userBlockedDisplayName}"
+                            },
+                            "defaultVars": {
+                                "userBlockedDisplayName": "User",
+                                "allowedUsersDisplay": "Currently there are no granted users.",
+                                "blockedUsersDisplay": "• <@123456789>"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🤙  User unblocked",
+                            "description": "**{userUnBlockedDisplayName}** successfully un-blocked!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 16705372,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                },
+                                "blockedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userUnBlockedDisplayName": "{userUnBlockedDisplayName}"
+                            },
+                            "defaultVars": {
+                                "userUnBlockedDisplayName": "User",
+                                "allowedUsersDisplay": "Currently there are no granted users.",
+                                "blockedUsersDisplay": "Currently there are no blocked users."
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelPermissionsKickEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👢  User kicked",
+                            "description": "**{userKickedDisplayName}** successfully kicked!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
+                            "footer": "Use the menu below to manage permissions of your channel.",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 16705372,
+                            "options": {
+                                "allowedUsersDisplay": {
+                                    "{allowedUsersDefault}": "Currently there are no granted users.",
+                                    "{allowedUsers}": "{allowedUsers}"
+                                },
+                                "blockedUsersDisplay": {
+                                    "{blockedUsersDefault}": "Currently there are no blocked users.",
+                                    "{blockedUsers}": "{blockedUsers}"
+                                }
+                            },
+                            "arrayOptions": {
+                                "allowedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                },
+                                "blockedUsers": {
+                                    "format": "• <@{value}>{separator}",
+                                    "separator": " "
+                                }
+                            },
+                            "vars": {
+                                "separator": "{separator}",
+                                "value": "{value}",
+                                "allowedUsers": "{allowedUsers}",
+                                "allowedUsersDisplay": "{allowedUsersDisplay}",
+                                "allowedUsersDefault": "{allowedUsersDefault}",
+                                "blockedUsers": "{blockedUsers}",
+                                "blockedUsersDisplay": "{blockedUsersDisplay}",
+                                "blockedUsersDefault": "{blockedUsersDefault}",
+                                "userKickedDisplayName": "{userKickedDisplayName}"
+                            },
+                            "defaultVars": {
+                                "userKickedDisplayName": "User",
+                                "allowedUsersDisplay": "Currently there are no granted users.",
+                                "blockedUsersDisplay": "Currently there are no blocked users."
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🤷 Oops, an issue has occurred",
+                            "description": "Something went wrong",
+                            "color": 15548997
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/NothingChangedEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/NothingChangedEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🤷  Nothing changed",
+                            "description": "This is may occur when you try to change something that is not changeable or is the same as before.",
+                            "color": 15548997
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/StaffMemberEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/StaffMemberEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🔑  Staff member",
+                            "description": "**{staffMemberDisplayName}** holds a staff role of this server.\n\nStaff roles keep access to every dynamic channel whatever state its owner picks, so they cannot be blocked or kicked out of your channel.",
+                            "color": 15548997,
+                            "vars": {
+                                "staffMemberDisplayName": "{staffMemberDisplayName}"
+                            },
+                            "defaultVars": {
+                                "staffMemberDisplayName": "Example User"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 9,
+                "withDefinition": 9,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsComponent",
         "type": "component",
         "instanceType": "Dynamic",
@@ -3213,16 +3788,6 @@
                             "defaultVars": {
                                 "message": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
                                 "allowedUsersDisplay": "Currently no other user has access except you.\n"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.dynamicChannelButtonsIsAccessButtonAvailable)\n    result.message = vars.messageDefault;\n  else\n    result.message = vars.messageAccessNotAvailable;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3283,16 +3848,6 @@
                             "defaultVars": {
                                 "message": "You can use **(`👥 Access`)** - _Button_ to manage the access of your channel.",
                                 "allowedUsersDisplay": "Currently no other user has access except you.\n"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.dynamicChannelButtonsIsAccessButtonAvailable)\n    result.message = vars.messageDefault;\n  else\n    result.message = vars.messageAccessNotAvailable;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3319,7 +3874,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👍  Access granted",
-                            "description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "description": "**{userGrantedDisplayName}** added successfully and now has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 16109389,
@@ -3358,16 +3913,6 @@
                                 "userGrantedDisplayName": "User",
                                 "allowedUsersDisplay": "• <@123456789>",
                                 "blockedUsersDisplay": "Currently there are no blocked users."
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userGrantedDisplayName = args.userGrantedDisplayName;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3381,7 +3926,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👎  Access canceled",
-                            "description": "**{userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "description": "**{userDeniedDisplayName}** successfully revoked and no longer has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 15548997,
@@ -3420,16 +3965,6 @@
                                 "userDeniedDisplayName": "User",
                                 "allowedUsersDisplay": "Currently there are no granted users.",
                                 "blockedUsersDisplay": "Currently there are no blocked users."
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userDeniedDisplayName = args.userDeniedDisplayName;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3443,7 +3978,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🫵  User blocked",
-                            "description": "**{userBlockedDisplayName}** successfully blocked and no longer has access to this channel!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "description": "**{userBlockedDisplayName}** successfully blocked and no longer has access to this channel!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 10038562,
@@ -3482,16 +4017,6 @@
                                 "userBlockedDisplayName": "User",
                                 "allowedUsersDisplay": "Currently there are no granted users.",
                                 "blockedUsersDisplay": "• <@123456789>"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userBlockedDisplayName = args.userBlockedDisplayName;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3505,7 +4030,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🤙  User unblocked",
-                            "description": "**{userUnBlockedDisplayName}** successfully un-blocked!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "description": "**{userUnBlockedDisplayName}** successfully un-blocked!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 16705372,
@@ -3544,16 +4069,6 @@
                                 "userUnBlockedDisplayName": "User",
                                 "allowedUsersDisplay": "Currently there are no granted users.",
                                 "blockedUsersDisplay": "Currently there are no blocked users."
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userUnBlockedDisplayName = args.userUnBlockedDisplayName;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3567,7 +4082,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👢  User kicked",
-                            "description": "**{userKickedDisplayName}** successfully kicked!\n\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "description": "**{userKickedDisplayName}** successfully kicked!\n\n**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 16705372,
@@ -3606,16 +4121,6 @@
                                 "userKickedDisplayName": "User",
                                 "allowedUsersDisplay": "Currently there are no granted users.",
                                 "blockedUsersDisplay": "Currently there are no blocked users."
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  result.userKickedDisplayName = args.userKickedDisplayName;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3629,7 +4134,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "👥  Manage permissions of your channel",
-                            "description": "\n**_Allowed Users_**:\n{allowedUsersDisplay}\n**_Blocked Users_**:\n{blockedUsersDisplay}",
+                            "description": "**Allowed Users**: {allowedUsersDisplay}\n**Blocked Users**: {blockedUsersDisplay}",
                             "footer": "Use the menu below to manage permissions of your channel.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 4943761,
@@ -3666,16 +4171,6 @@
                             "defaultVars": {
                                 "allowedUsersDisplay": "Currently there are no granted users.\n",
                                 "blockedUsersDisplay": "Currently there are no blocked users.\n"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3724,13 +4219,6 @@
                             },
                             "defaultVars": {
                                 "staffMemberDisplayName": "Example User"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  staffMemberDisplayName: args.staffMemberDisplayName ?? \"Unknown\"\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -3886,18 +4374,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
-                                    },
-                                    {
-                                        "source": "(args) => {\n  const {\n    changedDisplay,\n    unchangedDisplay,\n    userLimitUnlimited,\n    userLimitValue,\n    statePublic,\n    statePrivate,\n    visibilityStateShown,\n    visibilityStateHidden,\n    rateLimitedNone,\n    rateLimitedDisplay\n  } = vars, { newState, oldState } = args;\n  return {\n    name: newState?.name ?? null,\n    nameChanged: newState?.name !== oldState?.name ? changedDisplay : unchangedDisplay,\n    userLimit: newState?.userLimit === 0 ? userLimitUnlimited : userLimitValue,\n    userLimitChanged: newState?.userLimit !== oldState?.userLimit ? changedDisplay : unchangedDisplay,\n    userLimitValue: newState?.userLimit ?? 0,\n    state: newState?.state === \"public\" ? statePublic : statePrivate,\n    stateChanged: newState?.state !== oldState?.state ? changedDisplay : unchangedDisplay,\n    visibilityState: newState?.visibilityState === \"shown\" ? visibilityStateShown : visibilityStateHidden,\n    visibilityStateChanged: newState?.visibilityState !== oldState?.visibilityState ? changedDisplay : unchangedDisplay,\n    allowedUsers: newState?.allowedUserIds ?? [],\n    allowedUsersChanged: JSON.stringify(newState?.allowedUserIds) !== JSON.stringify(oldState?.allowedUserIds) ? changedDisplay : unchangedDisplay,\n    blockedUsers: newState?.blockedUserIds ?? [],\n    blockedUsersChanged: JSON.stringify(newState?.blockedUserIds) !== JSON.stringify(oldState?.blockedUserIds) ? changedDisplay : unchangedDisplay,\n    rateLimited: args.rateLimitRetryAfter ? rateLimitedDisplay : rateLimitedNone\n  };\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(Date.now() + (args.rateLimitRetryAfter || 30000) * 1000)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -4016,13 +4495,6 @@
                             },
                             "defaultVars": {
                                 "userDisplayName": "User"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -4683,7 +5155,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n▥ ∙ Auto create control panel channel: {configControlChannelAutoCreate}\n\n",
                             "footer": "Note: Changing user mention will not affect already created dynamic channels.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
@@ -4953,16 +5425,6 @@
                                 "verifiedRolesDefault": "{verifiedRolesDefault}",
                                 "verifiedRolesGuild": "{verifiedRolesGuild}",
                                 "index": "{index}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {\n    index: args.index + 1\n  }, ownRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [], guildRoles = Array.isArray(args.guildVerifiedRoleIds) ? args.guildVerifiedRoleIds : [];\n  if (ownRoles.length) {\n    result.verifiedRoles = ownRoles;\n    result.verifiedRolesDisplay = vars.verifiedRoles;\n  } else if (guildRoles.length) {\n    result.verifiedRoles = guildRoles;\n    result.verifiedRolesDisplay = vars.verifiedRolesGuild;\n  } else\n    result.verifiedRolesDisplay = vars.verifiedRolesDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -5001,16 +5463,6 @@
                                 "staffRolesNone": "{staffRolesNone}",
                                 "staffRolesGuild": "{staffRolesGuild}",
                                 "index": "{index}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {\n    index: args.index + 1\n  }, ownRoles = Array.isArray(args.dynamicChannelStaffRoles) ? args.dynamicChannelStaffRoles : [], guildRoles = Array.isArray(args.guildStaffRoleIds) ? args.guildStaffRoleIds : [];\n  if (ownRoles.length) {\n    result.staffRoles = ownRoles;\n    result.staffRolesDisplay = vars.staffRoles;\n  } else if (guildRoles.length) {\n    result.staffRoles = guildRoles;\n    result.staffRolesDisplay = vars.staffRolesGuild;\n  } else\n    result.staffRolesDisplay = vars.staffRolesNone;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -5041,16 +5493,6 @@
                                 "voiceRoleDisplay": "{voiceRoleDisplay}",
                                 "voiceRoleGuild": "{voiceRoleGuild}",
                                 "voiceRoleNone": "{voiceRoleNone}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const { dynamicChannelVoiceRoleId: roleId, guildVoiceRoleId: guildRoleId } = args, result = {\n    index: args.index + 1\n  };\n  if (roleId) {\n    result.voiceRoleId = roleId;\n    result.voiceRoleDisplay = vars.voiceRoleId;\n  } else if (guildRoleId) {\n    result.voiceRoleId = guildRoleId;\n    result.voiceRoleDisplay = vars.voiceRoleGuild;\n  } else\n    result.voiceRoleDisplay = vars.voiceRoleNone;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -5064,7 +5506,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔎  Edit LFM Of Master Channel #{index}",
-                            "description": "A channel owner can advertise their channel to the text channels picked here, so members who are reading chat can see a room that is looking for people and join it.\n\nMembers choose between these when they post, and can reach no other channel.\n\nLeaving it empty turns the feature off for this master channel.\n\n**_Current LFM Channels_**\n\n> {lfmChannelsDisplay}\n\n**_Roles Pinged_**\n\n> {pingRolesDisplay}\n\n**_Timings_**\n\n> Post cooldown (all channels): {postCooldown}\n> Ping cooldown: {pingCooldown}\n> Post expiry: {postExpiry}\n> Member count refresh: {occupancyDebounce}",
+                            "description": "A channel owner can advertise their channel to the text channels picked here, so members who are reading chat can see a room that is looking for people and join it.\n\nMembers choose between these when they post, and can reach no other channel.\n\nLeaving it empty turns the feature off for this master channel.\n\n**_Current LFM Channels_**\n\n> {lfmChannelsDisplay}\n\n**_Roles Pinged_**\n\n> {pingRolesDisplay}\n\n**_Timings_**\n\n> Post cooldown: {postCooldown}\n> Ping cooldown: {pingCooldown}\n> Post expiry: {postExpiry}\n> Member count refresh: {occupancyDebounce}",
                             "footer": "Note: The bot needs to view, send messages and embed links in every channel picked here.",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
@@ -5131,16 +5573,6 @@
                                 "privacyPublic": "{privacyPublic}",
                                 "privacyPrivate": "{privacyPrivate}",
                                 "privacyHidden": "{privacyHidden}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const state = args.dynamicChannelDefaultPrivacyState;\n  return {\n    index: args.index + 1,\n    privacyState: state === \"private\" ? vars.privacyPrivate : state === \"hidden\" ? vars.privacyHidden : vars.privacyPublic\n  };\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -5170,16 +5602,6 @@
                                 "userLimitInherit": "{userLimitInherit}",
                                 "userLimitUnlimited": "{userLimitUnlimited}",
                                 "userLimitValue": "{userLimitValue}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const own = args.dynamicChannelDefaultUserLimit, limit = (own === null || own === void 0 ? Number(args.masterChannelUserLimit) : own) || 0, result = {\n    index: args.index + 1,\n    userLimitDisplay: limit ? vars.userLimitValue : vars.userLimitUnlimited\n  };\n  if (limit)\n    result.userLimit = String(limit);\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -5227,6 +5649,7 @@
                     {
                         "name": "VertixBot/UI-V2/SetupEditLfmPostCooldownInput",
                         "label": "Post cooldown (minutes, 0 for none)",
+                        "placeholder": "10",
                         "style": "short",
                         "minLength": 1,
                         "maxLength": 6
@@ -5234,6 +5657,7 @@
                     {
                         "name": "VertixBot/UI-V2/SetupEditLfmPingCooldownInput",
                         "label": "Ping cooldown (minutes, 0 for none)",
+                        "placeholder": "60",
                         "style": "short",
                         "minLength": 1,
                         "maxLength": 6
@@ -5241,6 +5665,7 @@
                     {
                         "name": "VertixBot/UI-V2/SetupEditLfmPostExpiryInput",
                         "label": "Post expiry (minutes)",
+                        "placeholder": "30",
                         "style": "short",
                         "minLength": 1,
                         "maxLength": 6
@@ -5248,6 +5673,7 @@
                     {
                         "name": "VertixBot/UI-V2/SetupEditLfmOccupancyDebounceInput",
                         "label": "Member count refresh delay (seconds)",
+                        "placeholder": "1.5",
                         "style": "short",
                         "minLength": 1,
                         "maxLength": 6
@@ -5567,7 +5993,7 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupStep2Embed",
                         "definition": {
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n> ▥ ∙ Auto create panel channel: {configControlChannelAutoCreate}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -5630,16 +6056,6 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesDisplay": "{verifiedRolesDisplay}",
                                 "verifiedRolesEmpty": "{verifiedRolesDefault}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {}, verifiedRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [];\n  if (verifiedRoles.length) {\n    result.verifiedRoles = verifiedRoles;\n    result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRoles;\n  } else\n    result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRolesEmpty;\n  return result;\n}",
-                                        "binds": [
-                                            "SETUP_STEP_3_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -5670,13 +6086,6 @@
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  maxMasterChannels: args.maxMasterChannels\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -5919,7 +6328,7 @@
                     {
                         "embed": "VertixBot/UI-V2/SetupStep2Embed",
                         "definition": {
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n> ▥ ∙ Auto create panel channel: {configControlChannelAutoCreate}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v2).",
                             "arrayOptions": {
                                 "dynamicChannelButtonsTemplate": {
                                     "format": "- ( {value} ){separator}",
@@ -6048,16 +6457,6 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesDisplay": "{verifiedRolesDisplay}",
                                 "verifiedRolesEmpty": "{verifiedRolesDefault}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {}, verifiedRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [];\n  if (verifiedRoles.length) {\n    result.verifiedRoles = verifiedRoles;\n    result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRoles;\n  } else\n    result.verifiedRolesDisplay = SETUP_STEP_3_VARS.verifiedRolesEmpty;\n  return result;\n}",
-                                        "binds": [
-                                            "SETUP_STEP_3_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -6074,6 +6473,104 @@
             "embedAudit": {
                 "total": 1,
                 "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
+        "name": "VertixBot/UI-V3/ClaimCommandComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V3/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V3/ClaimCommandChannelMenuGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/ClaimCommandChannelMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/ClaimCommandChannelMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "👑 ∙ Select a channel"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V3/ClaimCommandSelectEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimCommandSelectEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👑  Channels you can claim",
+                            "description": "There {claimableCount} waiting for a new owner.\n\nA channel becomes claimable when whoever owned it leaves and does not come back. Whoever is still inside votes on who takes it.\n\nPick one and you will be sent to where the vote is.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963,
+                            "options": {
+                                "claimableCount": {
+                                    "1": "is **one channel**",
+                                    "many": "are **{count} channels**"
+                                }
+                            },
+                            "vars": {
+                                "claimableCount": "{claimableCount}"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/ClaimCommandPointedAtEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V3/ClaimCommandPointedAtEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "👑  Claim it here",
+                            "description": "**{claimedChannelName}** is waiting for a new owner.\n\n{claimMessageUrl}\n\nPress **Claim** there to put yourself forward. Everyone still inside votes.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
+                            "color": 3369963,
+                            "vars": {
+                                "claimedChannelName": "{claimedChannelName}",
+                                "claimMessageUrl": "{claimMessageUrl}"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/SomethingWentWrongEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🤷 Oops, an issue has occurred",
+                            "description": "Something went wrong",
+                            "color": 15548997
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": null,
+        "defaultEmbedsGroup": null,
+        "defaultMarkdownsGroup": null,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 3,
+                "withDefinition": 3,
                 "missingDefinition": 0
             }
         }
@@ -6098,13 +6595,6 @@
                             "description": "Please be aware that if you don't return within **{absentMinutes}** minutes, the channel will once again become available for other members to claim.\n",
                             "vars": {
                                 "absentMinutes": "{absentMinutes}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  absentMinutes: (args.absentInterval / 60000).toFixed(1)\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -6122,13 +6612,6 @@
                             "vars": {
                                 "userDisplayName": "{userDisplayName}",
                                 "userId": "{userId}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName,\n  userId: args.userId\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -6146,13 +6629,6 @@
                             "vars": {
                                 "userDisplayName": "{userDisplayName}",
                                 "userId": "{userId}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName,\n  userId: args.userId\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -6170,13 +6646,6 @@
                             "vars": {
                                 "prevUserId": "{prevUserId}",
                                 "currentUserId": "{currentUserId}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  prevUserId: args.prevUserId,\n  currentUserId: args.currentUserId\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -6279,13 +6748,6 @@
                                 "ownerId": "{ownerId}",
                                 "ownerDisplayName": "{ownerDisplayName}",
                                 "absentMinutes": "{absentMinutes}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const { ownerDisplayName, ownerId, absentInterval } = args;\n  return {\n    ownerId,\n    ownerDisplayName,\n    absentMinutes: (absentInterval / 60000).toFixed(1)\n  };\n}"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -6406,15 +6868,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
-                                    },
-                                    {
-                                        "source": "(args) => ({\n  userInitiatorId: args.userInitiatorId,\n  userInitiatorDisplayName: args.userInitiatorDisplayName\n})"
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(args.timeEnd)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -6482,18 +6938,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
-                                    },
-                                    {
-                                        "source": "(args) => {\n  const candidates = Object.entries(args.results || {}).map(([userId, votes]) => ({\n    userId,\n    votes\n  })).sort((a, b) => b.votes - a.votes);\n  return {\n    candidatesCount: candidates.length,\n    userInitiatorId: args.userInitiatorId,\n    candidates: candidates.length ? candidates : [],\n    candidatesState: candidates.length ? CLAIM_VOTE_EMBED_VARS.candidates : CLAIM_VOTE_EMBED_VARS.candidatesDefault\n  };\n}",
-                                        "binds": [
-                                            "CLAIM_VOTE_EMBED_VARS"
-                                        ]
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(args.timeEnd)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -6556,12 +7003,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(Date.now() + args.elapsedTime)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -7064,16 +7508,6 @@
                                 "inviteEmoji": "<emoji name='InviteChannel'>",
                                 "invitedDisplayName": "The member",
                                 "deliveryDisplay": "{deliveryDelivered}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {\n    deliveryDisplay: args?.isInviteDelivered ? DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryDelivered : DYNAMIC_CHANNEL_INVITE_SENT_VARS.deliveryBlocked\n  };\n  if (args?.invitedDisplayName)\n    result.invitedDisplayName = args.invitedDisplayName;\n  return result;\n}",
-                                        "binds": [
-                                            "DYNAMIC_CHANNEL_INVITE_SENT_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -7108,17 +7542,18 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "⛔  No active dynamic channel",
-                            "description": "You don't own an active dynamic channel.\n\nJoin <#{masterChannelId}> to create your own channel first.",
+                            "description": "You don't own an active dynamic channel.{masterChannelMessage}",
                             "color": 16732674,
-                            "vars": {
-                                "masterChannelId": "{masterChannelId}"
+                            "options": {
+                                "masterChannelMessage": {
+                                    "{masterChannelId}": "\n\nJoin <#{masterChannelId}> to create your own channel first.",
+                                    "{masterChannelMessageDefault}": ""
+                                }
                             },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  masterChannelId: args?.masterChannelId\n})"
-                                    }
-                                ]
+                            "vars": {
+                                "masterChannelId": "{masterChannelId}",
+                                "masterChannelMessage": "{masterChannelMessage}",
+                                "masterChannelMessageDefault": "{masterChannelMessageDefault}"
                             }
                         }
                     }
@@ -7232,13 +7667,6 @@
                             "defaultVars": {
                                 "knockEmoji": "<emoji name='KnockChannel'>",
                                 "knockedChannelName": "Example Channel"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  knockedChannelName: args?.knockedChannelName\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -7277,16 +7705,6 @@
                             "defaultVars": {
                                 "knockEmoji": "<emoji name='KnockChannel'>",
                                 "openChannelsDisplay": "{openChannelsDefault}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const openChannels = Array.isArray(args?.openChannels) ? args.openChannels : [];\n  return {\n    openChannels,\n    openChannelsDisplay: openChannels.length ? vars.openChannels : vars.openChannelsDefault\n  };\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -7398,13 +7816,6 @@
                                 "knockEmoji": "<emoji name='KnockChannel'>",
                                 "knockerId": "123456789",
                                 "knockerDisplayName": "Example User"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  knockerId: args?.knockerId,\n  knockerDisplayName: args?.knockerDisplayName\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -7437,16 +7848,6 @@
                                 "knockEmoji": "<emoji name='KnockChannel'>",
                                 "knockerDisplayName": "Example User",
                                 "answerDisplay": "{answerAllowed}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  knockerDisplayName: args?.knockerDisplayName,\n  answerDisplay: args?.isKnockAllowed ? DYNAMIC_CHANNEL_KNOCK_ANSWERED_VARS.answerAllowed : DYNAMIC_CHANNEL_KNOCK_ANSWERED_VARS.answerDenied\n})",
-                                        "binds": [
-                                            "DYNAMIC_CHANNEL_KNOCK_ANSWERED_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -7509,16 +7910,6 @@
                                 "userLimit": "{userLimit}",
                                 "userLimitValue": "{userLimitValue}",
                                 "userLimitUnlimited": "{userLimitUnlimited}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  userLimit: args.userLimit === 0 ? DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitUnlimited : DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS.userLimitValue,\n  userLimitValue: args.userLimit\n})",
-                                        "binds": [
-                                            "DYNAMIC_CHANNEL_LIMIT_SUCCESS_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -7536,13 +7927,6 @@
                             "vars": {
                                 "minValue": "{minValue}",
                                 "maxValue": "{maxValue}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  minValue: args.minValue,\n  maxValue: args.maxValue\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -7797,13 +8181,6 @@
                                 "value": "{value}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}",
                                 "dynamicChannelButtonsRowBreaks": "{dynamicChannelButtonsRowBreaks}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,\n  dynamicChannelButtonsRowBreaks: args.dynamicChannelButtonsRowBreaks ?? []\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8011,16 +8388,6 @@
                             },
                             "defaultVars": {
                                 "userDeniedDisplayName": "Example User"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const allowedUsers = Array.isArray(args.allowedUsers) ? args.allowedUsers.map((user) => user.id) : [], blockedUsers = Array.isArray(args.blockedUsers) ? args.blockedUsers.map((user) => user.id) : [];\n  return {\n    allowedUsers,\n    blockedUsers,\n    allowedUsersDisplay: allowedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS.allowedUsers : DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS.allowedUsersDefault,\n    blockedUsersDisplay: blockedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS.blockedUsers : DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS.blockedUsersDefault,\n    userDeniedDisplayName: args.userDeniedDisplayName ?? \"Unknown\"\n  };\n}",
-                                        "binds": [
-                                            "DYNAMIC_CHANNEL_PERMISSIONS_DENIED_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8070,16 +8437,6 @@
                             },
                             "defaultVars": {
                                 "userBlockedDisplayName": "Example User"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const allowedUsers = Array.isArray(args.allowedUsers) ? args.allowedUsers.map((user) => user.id) : [], blockedUsers = Array.isArray(args.blockedUsers) ? args.blockedUsers.map((user) => user.id) : [];\n  return {\n    allowedUsers,\n    blockedUsers,\n    allowedUsersDisplay: allowedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.allowedUsers : DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.allowedUsersDefault,\n    blockedUsersDisplay: blockedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.blockedUsers : DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS.blockedUsersDefault,\n    userBlockedDisplayName: args.userBlockedDisplayName ?? \"Unknown\"\n  };\n}",
-                                        "binds": [
-                                            "DYNAMIC_CHANNEL_PERMISSIONS_BLOCKED_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8129,16 +8486,6 @@
                             },
                             "defaultVars": {
                                 "userUnBlockedDisplayName": "Example User"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const allowedUsers = Array.isArray(args.allowedUsers) ? args.allowedUsers.map((user) => user.id) : [], blockedUsers = Array.isArray(args.blockedUsers) ? args.blockedUsers.map((user) => user.id) : [];\n  return {\n    allowedUsers,\n    blockedUsers,\n    allowedUsersDisplay: allowedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS.allowedUsers : DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS.allowedUsersDefault,\n    blockedUsersDisplay: blockedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS.blockedUsers : DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS.blockedUsersDefault,\n    userUnBlockedDisplayName: args.userUnBlockedDisplayName ?? \"Unknown\"\n  };\n}",
-                                        "binds": [
-                                            "DYNAMIC_CHANNEL_PERMISSIONS_UNBLOCKED_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8189,16 +8536,6 @@
                             },
                             "defaultVars": {
                                 "userKickedDisplayName": "Example User"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const allowedUsers = Array.isArray(args.allowedUsers) ? args.allowedUsers.map((user) => user.id) : [], blockedUsers = Array.isArray(args.blockedUsers) ? args.blockedUsers.map((user) => user.id) : [];\n  return {\n    allowedUsers,\n    blockedUsers,\n    allowedUsersDisplay: allowedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS.allowedUsers : DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS.allowedUsersDefault,\n    blockedUsersDisplay: blockedUsers.length ? DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS.blockedUsers : DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS.blockedUsersDefault,\n    userKickedDisplayName: args.userKickedDisplayName ?? \"Unknown\"\n  };\n}",
-                                        "binds": [
-                                            "DYNAMIC_CHANNEL_PERMISSIONS_KICK_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8297,13 +8634,6 @@
                             },
                             "defaultVars": {
                                 "staffMemberDisplayName": "Example User"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  staffMemberDisplayName: args.staffMemberDisplayName ?? \"Unknown\"\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -8871,16 +9201,6 @@
                                 "stateMessageHidden": "hidden",
                                 "allowedUsersDefault": "none",
                                 "blockedUsersDefault": "none"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  switch (args.state) {\n    default:\n    case \"public\":\n      result.state = vars.statePublic;\n      result.stateMessage = vars.stateMessagePublic;\n      break;\n    case \"private\":\n      result.state = vars.statePrivate;\n      result.stateMessage = vars.stateMessagePrivate;\n      break;\n    case \"shown\":\n      result.state = vars.stateShown;\n      result.stateMessage = vars.stateMessageShown;\n      break;\n    case \"hidden\":\n      result.state = vars.stateHidden;\n      result.stateMessage = vars.stateMessageHidden;\n      break;\n  }\n  if (args.allowedUsers?.length) {\n    result.allowedUsers = args.allowedUsers?.map((user) => user.id);\n    result.allowedUsersDisplay = vars.allowedUsers;\n  } else\n    result.allowedUsersDisplay = vars.allowedUsersDefault;\n  if (args.blockedUsers?.length) {\n    result.blockedUsers = args.blockedUsers?.map((user) => user.id);\n    result.blockedUsersDisplay = vars.blockedUsers;\n  } else\n    result.blockedUsersDisplay = vars.blockedUsersDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9035,16 +9355,6 @@
                             },
                             "defaultVars": {
                                 "regionEmoji": "<emoji name='ChannelRegion'>"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "async (args) => {\n  const result = {};\n  if (args.region)\n    result.region = vars[`region-${args.region}`];\n  else\n    result.region = vars[\"region-auto\"];\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9086,13 +9396,6 @@
                             "color": 16738560,
                             "vars": {
                                 "badword": "{badword}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  badword: args.badword\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9144,18 +9447,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
-                                    },
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  if (args.masterChannelId) {\n    result.masterChannelId = args.masterChannelId;\n    result.masterChannelMessage = DYNAMIC_CHANNEL_RENAME_LIMITED_VARS.masterChannelId;\n  } else\n    result.masterChannelMessage = DYNAMIC_CHANNEL_RENAME_LIMITED_VARS.masterChannelMessageDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "DYNAMIC_CHANNEL_RENAME_LIMITED_VARS"
-                                        ]
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(Date.now() + args.retryAfter * 1000)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -9172,13 +9466,6 @@
                             "color": 15248904,
                             "vars": {
                                 "channelName": "{channelName}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  channelName: args.channelName\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9359,18 +9646,9 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "getElapsedTimeLogic(args) {\n    const result = {\n      formatMinuteUnits: null,\n      formatSecondUnits: null\n    }, timeValue = this.getEndTime(args).getTime() - Date.now();\n    if (timeValue <= 60000) {\n      result.elapsedTimeValue = Math.max(0, Math.floor(timeValue / 1000));\n      result.elapsedTimeFormat = \"seconds\";\n      result.elapsedTimeValueFraction = result.elapsedTimeValue;\n      result.formatSecondUnits = result.elapsedTimeValue > 1 ? \"units\" : \"unit\";\n    } else {\n      const minutes = Math.floor(timeValue / 1000 / 60), seconds = Math.floor(timeValue / 1000 % 60);\n      if (seconds > 0) {\n        const fraction = Math.ceil(seconds / 6);\n        result.elapsedTimeValueFraction = parseFloat(`${minutes}.${fraction > 9 ? 9 : fraction}`);\n      } else\n        result.elapsedTimeValueFraction = minutes;\n      result.elapsedTimeValue = minutes;\n      result.elapsedTimeFormat = \"minutes\";\n      result.formatMinuteUnits = result.elapsedTimeValueFraction > 1 ? \"units\" : \"unit\";\n    }\n    result.elapsedTimeFormatFraction = result.elapsedTimeFormat;\n    return result;\n  }"
-                                    },
-                                    {
-                                        "source": "(args) => {\n  const {\n    changedDisplay,\n    unchangedDisplay,\n    userLimitUnlimited,\n    userLimitValue,\n    statePublic,\n    statePrivate,\n    visibilityStateShown,\n    visibilityStateHidden,\n    rateLimitedNone,\n    rateLimitedDisplay\n  } = vars, { newState, oldState } = args, primaryMessageChanged = () => {\n    const oldMessage = (oldState?.primaryMessageTitle || \"\") + (oldState?.primaryMessageDescription || \"\");\n    return (newState?.primaryMessageTitle || \"\") + (newState?.primaryMessageDescription || \"\") !== oldMessage ? changedDisplay : unchangedDisplay;\n  };\n  return {\n    name: newState?.name ?? null,\n    nameChanged: newState?.name !== oldState?.name ? changedDisplay : unchangedDisplay,\n    userLimit: newState?.userLimit === 0 ? userLimitUnlimited : userLimitValue,\n    userLimitChanged: newState?.userLimit !== oldState?.userLimit ? changedDisplay : unchangedDisplay,\n    userLimitValue: newState?.userLimit ?? 0,\n    state: newState?.state === \"public\" ? statePublic : statePrivate,\n    stateChanged: newState?.state !== oldState?.state ? changedDisplay : unchangedDisplay,\n    visibilityState: newState?.visibilityState === \"shown\" ? visibilityStateShown : visibilityStateHidden,\n    visibilityStateChanged: newState?.visibilityState !== oldState?.visibilityState ? changedDisplay : unchangedDisplay,\n    region: newState?.region ?? null,\n    regionChanged: newState?.region !== oldState?.region ? changedDisplay : unchangedDisplay,\n    primaryMessageChanged: primaryMessageChanged(),\n    allowedUsers: newState?.allowedUserIds ?? [],\n    allowedUsersChanged: JSON.stringify(newState?.allowedUserIds) !== JSON.stringify(oldState?.allowedUserIds) ? changedDisplay : unchangedDisplay,\n    blockedUsers: newState?.blockedUserIds ?? [],\n    blockedUsersChanged: JSON.stringify(newState?.blockedUserIds) !== JSON.stringify(oldState?.blockedUserIds) ? changedDisplay : unchangedDisplay,\n    rateLimited: args.rateLimitRetryAfter ? rateLimitedDisplay : rateLimitedNone\n  };\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
+                                        "source": "getElapsedTimeLogic(args){const result={formatMinuteUnits:null,formatSecondUnits:null};const timeValue=this.getEndTime(args).getTime()-Date.now();if(timeValue<=1e3*60){result.elapsedTimeValue=Math.max(0,Math.floor(timeValue/1e3));result.elapsedTimeFormat=\"seconds\";result.elapsedTimeValueFraction=result.elapsedTimeValue;result.formatSecondUnits=result.elapsedTimeValue>1?\"units\":\"unit\"}else{const minutes=Math.floor(timeValue/1e3/60);const seconds=Math.floor(timeValue/1e3%60);if(seconds>0){const fraction=Math.ceil(seconds/6);result.elapsedTimeValueFraction=parseFloat(`${minutes}.${fraction>9?9:fraction}`)}else{result.elapsedTimeValueFraction=minutes}result.elapsedTimeValue=minutes;result.elapsedTimeFormat=\"minutes\";result.formatMinuteUnits=result.elapsedTimeValueFraction>1?\"units\":\"unit\"}result.elapsedTimeFormatFraction=result.elapsedTimeFormat;return result}"
                                     }
-                                ],
-                                "endTime": {
-                                    "source": "(args) => new Date(Date.now() + (args.rateLimitRetryAfter || 30000) * 1000)"
-                                }
+                                ]
                             }
                         }
                     }
@@ -9449,13 +9727,6 @@
                             },
                             "defaultVars": {
                                 "badword": "example"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  badword: args.badword\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9476,13 +9747,6 @@
                             },
                             "defaultVars": {
                                 "channelStatus": "Valorant · 3/5"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  channelStatus: args.channelStatus\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9503,13 +9767,6 @@
                             },
                             "defaultVars": {
                                 "channelStatus": "Ranked grind, need two"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  channelStatus: args.channelStatus\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9766,16 +10023,6 @@
                             },
                             "defaultVars": {
                                 "templatesEmoji": "<emoji name='ChannelTemplates'>"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  result.templatesCount = args.templates?.length ?? 0;\n  result.maxTemplates = args.maxTemplates ?? 5;\n  if (args.templates?.length) {\n    result.templatesList = args.templates.map((t) => t.name);\n    result.templatesListDisplay = vars.templatesList;\n  } else\n    result.templatesListDisplay = vars.templatesListDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9817,16 +10064,6 @@
                             },
                             "defaultVars": {
                                 "templatesEmoji": "<emoji name='ChannelTemplates'>"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const result = {};\n  result.templateName = args.templateName ?? \"Unknown\";\n  result.templatesCount = args.templates?.length ?? 0;\n  result.maxTemplates = args.maxTemplates ?? 5;\n  if (args.templates?.length) {\n    result.templatesList = args.templates.map((t) => t.name);\n    result.templatesListDisplay = vars.templatesList;\n  } else\n    result.templatesListDisplay = vars.templatesListDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "vars"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9872,7 +10109,7 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args, v) => {\n  const config = args.appliedTemplate?.config, settings = [];\n  if (config) {\n    if (config.nameTemplate)\n      settings.push(`${v.labelName} ${config.nameTemplate}`);\n    if (config.userLimit !== void 0)\n      settings.push(`${v.labelLimit} ${config.userLimit === 0 ? v.labelUnlimited : config.userLimit}`);\n    if (config.state)\n      settings.push(`${v.labelPrivacy} ${config.state}`);\n    if (config.visibilityState)\n      settings.push(`${v.labelVisibility} ${config.visibilityState}`);\n    if (typeof config.region === \"string\" && config.region.length)\n      settings.push(`${v.labelRegion} ${config.region === \"auto\" ? v.labelAutomatic : config.region}`);\n  }\n  return {\n    templateName: args.appliedTemplate?.name ?? v.labelUnknown,\n    appliedSettings: settings.length > 0 ? settings.join(`\n`) : v.labelNoSettings\n  };\n}"
+                                        "source": "(args,v)=>{const config=args.appliedTemplate?.config;const settings=[];if(config){if(config.nameTemplate)settings.push(`${v.labelName} ${config.nameTemplate}`);if(config.userLimit!==void 0)settings.push(`${v.labelLimit} ${config.userLimit===0?v.labelUnlimited:config.userLimit}`);if(config.state)settings.push(`${v.labelPrivacy} ${config.state}`);if(config.visibilityState)settings.push(`${v.labelVisibility} ${config.visibilityState}`);if(typeof config.region===\"string\"&&config.region.length){settings.push(`${v.labelRegion} ${config.region===\"auto\"?v.labelAutomatic:config.region}`)}}return{templateName:args.appliedTemplate?.name??v.labelUnknown,appliedSettings:settings.length>0?settings.join(\"\\n\"):v.labelNoSettings}}"
                                     }
                                 ]
                             }
@@ -9898,13 +10135,6 @@
                             },
                             "defaultVars": {
                                 "templatesEmoji": "<emoji name='Close'>"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  templatesCount: args.templates?.length ?? 0,\n  maxTemplates: args.maxTemplates ?? 5\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -9929,13 +10159,6 @@
                             },
                             "defaultVars": {
                                 "templatesEmoji": "<emoji name='Close'>"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  templateName: args.deletedTemplateName ?? \"Unknown\",\n  templatesCount: args.templates?.length ?? 0,\n  maxTemplates: args.maxTemplates ?? 5\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -10054,13 +10277,6 @@
                             "color": 3369963,
                             "vars": {
                                 "userDisplayName": "{userDisplayName}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  userDisplayName: args.userDisplayName\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -10207,7 +10423,7 @@
                 "inputs": [
                     {
                         "name": "VertixBot/UI-General/SetupScalingPrefixInput",
-                        "label": "CHANNEL NAME PREFIX",
+                        "label": "Channel Name Prefix",
                         "placeholder": "### Room - {index} ###",
                         "style": "short",
                         "minLength": 1,
@@ -10215,7 +10431,7 @@
                     },
                     {
                         "name": "VertixBot/UI-General/SetupScalingMaxMembersInput",
-                        "label": "MAX MEMBERS PER CHANNEL",
+                        "label": "Max Members Per Channel",
                         "placeholder": "10",
                         "style": "short",
                         "minLength": 1,
@@ -10807,7 +11023,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "🔧  Configure Master Channel #{index}",
-                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n\n",
+                            "description": "Configure master channel according to your preferences.\n\n**_🎛️ General_**\n\n➤ ∙ Name: <#{masterChannelId}>\n➤ ∙ Channel ID: `{masterChannelId}`\n➤ ∙ Dynamic Channels Name: `{dynamicChannelNameTemplate}`\n➤ ∙ New Channel Privacy: {newChannelPrivacy}\n➤ ∙ New Channel Limit: {newChannelLimit}\n➤ ∙ Logs Channel: {dynamicChannelLogsChannelDisplay}\n\n**_🎚 Buttons Interface_**\n\n{dynamicChannelButtonsTemplate}\n\n**_🛡️ Verified Roles_**\n\n▹ {verifiedRolesDisplay}\n\n**_🔑 Staff Roles_**\n\n▹ {staffRolesDisplay}\n\n**_🎙️ Voice Role_**\n\n▹ {voiceRoleDisplay}\n\n**_⚙️ Configuration_**\n\n@ ∙ Mention user in primary message: {configUserMention}\n⫸ ∙ Auto save dynamic channels: {configAutoSave}\n📢 ∙ Automatic channel status: {configAutoStatus}\n❯❯ ∙ Send logs to custom channel: {configLogs}\n▥ ∙ Auto create control panel channel: {configControlChannelAutoCreate}\n\n",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -10928,8 +11144,7 @@
                                 "labelRoleOverride": "**Role Override:",
                                 "labelButtonPrefix": "> -",
                                 "labelButtonNone": "> - *None*"
-                            },
-                            "footer": "Note: Changing user mention will not affect already created dynamic channels."
+                            }
                         }
                     }
                 ]
@@ -11072,7 +11287,7 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args, v) => {\n  const ownRoles = args.dynamicChannelVerifiedRoles || [], guildRoles = args.guildVerifiedRoleIds || [];\n  return {\n    index: (args.index || 0) + 1,\n    verifiedRoles: ownRoles.length ? ownRoles : guildRoles,\n    verifiedRolesDisplay: ownRoles.length ? v.verifiedRoles : v.verifiedRolesGuild\n  };\n}"
+                                        "source": "(args,v)=>{const ownRoles=args.dynamicChannelVerifiedRoles||[],guildRoles=args.guildVerifiedRoleIds||[];return{index:(args.index||0)+1,verifiedRoles:ownRoles.length?ownRoles:guildRoles,verifiedRolesDisplay:ownRoles.length?v.verifiedRoles:v.verifiedRolesGuild}}"
                                     }
                                 ]
                             }
@@ -11117,7 +11332,7 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args, v) => {\n  const ownRoles = args.dynamicChannelStaffRoles || [], guildRoles = args.guildStaffRoleIds || [], staffRoles = ownRoles.length ? ownRoles : guildRoles;\n  return {\n    index: (args.index || 0) + 1,\n    ...staffRoles.length ? { staffRoles } : {},\n    staffRolesDisplay: ownRoles.length ? v.staffRoles : guildRoles.length ? v.staffRolesGuild : v.staffRolesNone\n  };\n}"
+                                        "source": "(args,v)=>{const ownRoles=args.dynamicChannelStaffRoles||[],guildRoles=args.guildStaffRoleIds||[];const staffRoles=ownRoles.length?ownRoles:guildRoles;return{index:(args.index||0)+1,...staffRoles.length?{staffRoles}:{},staffRolesDisplay:ownRoles.length?v.staffRoles:guildRoles.length?v.staffRolesGuild:v.staffRolesNone}}"
                                     }
                                 ]
                             }
@@ -11154,7 +11369,7 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args, v) => {\n  const { dynamicChannelVoiceRoleId: roleId, guildVoiceRoleId: guildRoleId } = args, result = {\n    index: (args.index || 0) + 1\n  };\n  if (roleId) {\n    result.voiceRoleId = roleId;\n    result.voiceRoleDisplay = v.voiceRoleId;\n  } else if (guildRoleId) {\n    result.voiceRoleId = guildRoleId;\n    result.voiceRoleDisplay = v.voiceRoleGuild;\n  } else\n    result.voiceRoleDisplay = v.voiceRoleNone;\n  return result;\n}"
+                                        "source": "(args,v)=>{const roleId=args.dynamicChannelVoiceRoleId,guildRoleId=args.guildVoiceRoleId;const result={index:(args.index||0)+1};if(roleId){result.voiceRoleId=roleId;result.voiceRoleDisplay=v.voiceRoleId}else if(guildRoleId){result.voiceRoleId=guildRoleId;result.voiceRoleDisplay=v.voiceRoleGuild}else{result.voiceRoleDisplay=v.voiceRoleNone}return result}"
                                     }
                                 ]
                             }
@@ -11190,7 +11405,7 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args, v) => {\n  const state = args.dynamicChannelDefaultPrivacyState;\n  return {\n    index: (args.index || 0) + 1,\n    privacyState: state === \"private\" ? v.privacyPrivate : state === \"hidden\" ? v.privacyHidden : v.privacyPublic\n  };\n}"
+                                        "source": "(args,v)=>{const state=args.dynamicChannelDefaultPrivacyState;return{index:(args.index||0)+1,privacyState:\"private\"===state?v.privacyPrivate:\"hidden\"===state?v.privacyHidden:v.privacyPublic}}"
                                     }
                                 ]
                             }
@@ -11226,7 +11441,7 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args, v) => {\n  const own = args.dynamicChannelDefaultUserLimit, limit = (own === null || own === void 0 ? Number(args.masterChannelUserLimit) : own) || 0;\n  return {\n    index: (args.index || 0) + 1,\n    ...limit ? { userLimit: String(limit) } : {},\n    userLimitDisplay: limit ? v.userLimitValue : v.userLimitUnlimited\n  };\n}"
+                                        "source": "(args,v)=>{const own=args.dynamicChannelDefaultUserLimit;const limit=(null===own||void 0===own?Number(args.masterChannelUserLimit):own)||0;return{index:(args.index||0)+1,...limit?{userLimit:String(limit)}:{},userLimitDisplay:limit?v.userLimitValue:v.userLimitUnlimited}}"
                                     }
                                 ]
                             }
@@ -11598,7 +11813,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v3).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n> ▥ ∙ Auto create panel channel: {configControlChannelAutoCreate}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v3).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -11673,18 +11888,7 @@
                                 "defaultFooter": "{defaultFooter}",
                                 "noButtonsFooter": "{noButtonsFooter}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "async (args) => {\n  const vars = STEP_2_EMBED_VARS, buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;\n  return {\n    configUserMention: args.dynamicChannelMentionable ? vars.configUserMentionEnabled : vars.configUserMentionDisabled,\n    configAutoSave: args.dynamicChannelAutoSave ? vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,\n    configAutoStatus: args.dynamicChannelAutoStatus !== !1 ? vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,\n    configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ? vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,\n    message: buttonsLength ? vars.defaultMessage : vars.noButtonsMessage,\n    footer: buttonsLength ? vars.defaultFooter : vars.noButtonsFooter,\n    dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate\n  };\n}",
-                                        "binds": [
-                                            "STEP_2_EMBED_VARS"
-                                        ]
-                                    }
-                                ]
-                            },
-                            "footer": "{footer}"
+                            }
                         }
                     }
                 ]
@@ -11717,16 +11921,6 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesEveryone": "{verifiedRolesEveryone}",
                                 "verifiedRolesDefault": "{verifiedRolesDefault}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const vars = STEP_3_EMBED_VARS, result = {}, verifiedRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [];\n  if (verifiedRoles.length) {\n    result.verifiedRoles = verifiedRoles;\n    result.verifiedRolesDisplay = vars.verifiedRoles;\n  } else if (args.dynamicChannelIncludeEveryoneRole)\n    result.verifiedRolesDisplay = vars.verifiedRolesEveryone;\n  else\n    result.verifiedRolesDisplay = vars.verifiedRolesDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "STEP_3_EMBED_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }
@@ -11757,13 +11951,6 @@
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => ({\n  maxMasterChannels: args.maxMasterChannels\n})"
-                                    }
-                                ]
                             }
                         }
                     }
@@ -12023,7 +12210,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "Step 2 - Dynamic Channels Setup",
-                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v3).",
+                            "description": "Setup dynamic channel management interface.\n\n**_🎚 Buttons Interface_**\n\n{message}\n**_⚙️ Configuration_**\n\n> @ ∙ Mention user in primary message: {configUserMention}\n> ⫸ ∙ Auto save dynamic channels: {configAutoSave}\n> 📢 ∙ Automatic channel status: {configAutoStatus}\n> ▥ ∙ Auto create panel channel: {configControlChannelAutoCreate}\n\nYou can keep the default settings by pressing **( `Next ▶` )** button.\n\nNot sure what buttons do? check out the [explanation](https://voicechannels.online/features/dynamic-channel-v3).",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -12098,18 +12285,7 @@
                                 "defaultFooter": "{defaultFooter}",
                                 "noButtonsFooter": "{noButtonsFooter}",
                                 "dynamicChannelButtonsTemplate": "{dynamicChannelButtonsTemplate}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "async (args) => {\n  const vars = STEP_2_EMBED_VARS, buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;\n  return {\n    configUserMention: args.dynamicChannelMentionable ? vars.configUserMentionEnabled : vars.configUserMentionDisabled,\n    configAutoSave: args.dynamicChannelAutoSave ? vars.configAutoSaveEnabled : vars.configAutoSaveDisabled,\n    configAutoStatus: args.dynamicChannelAutoStatus !== !1 ? vars.configAutoStatusEnabled : vars.configAutoStatusDisabled,\n    configControlChannelAutoCreate: args.dynamicChannelControlChannelAutoCreate ? vars.configControlChannelAutoCreateEnabled : vars.configControlChannelAutoCreateDisabled,\n    message: buttonsLength ? vars.defaultMessage : vars.noButtonsMessage,\n    footer: buttonsLength ? vars.defaultFooter : vars.noButtonsFooter,\n    dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate\n  };\n}",
-                                        "binds": [
-                                            "STEP_2_EMBED_VARS"
-                                        ]
-                                    }
-                                ]
-                            },
-                            "footer": "{footer}"
+                            }
                         }
                     }
                 ]
@@ -12208,16 +12384,6 @@
                                 "verifiedRoles": "{verifiedRoles}",
                                 "verifiedRolesEveryone": "{verifiedRolesEveryone}",
                                 "verifiedRolesDefault": "{verifiedRolesDefault}"
-                            },
-                            "logic": {
-                                "sources": [
-                                    {
-                                        "source": "(args) => {\n  const vars = STEP_3_EMBED_VARS, result = {}, verifiedRoles = Array.isArray(args.dynamicChannelVerifiedRoles) ? args.dynamicChannelVerifiedRoles : [];\n  if (verifiedRoles.length) {\n    result.verifiedRoles = verifiedRoles;\n    result.verifiedRolesDisplay = vars.verifiedRoles;\n  } else if (args.dynamicChannelIncludeEveryoneRole)\n    result.verifiedRolesDisplay = vars.verifiedRolesEveryone;\n  else\n    result.verifiedRolesDisplay = vars.verifiedRolesDefault;\n  return result;\n}",
-                                        "binds": [
-                                            "STEP_3_EMBED_VARS"
-                                        ]
-                                    }
-                                ]
                             }
                         }
                     }

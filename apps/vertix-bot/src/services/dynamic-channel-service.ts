@@ -115,6 +115,7 @@ import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interact
 import type {
     APIPartialChannel,
     Client,
+    CommandInteraction,
     Guild,
     GuildChannel,
     GuildMember,
@@ -920,6 +921,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             if ( fetched?.type === ChannelType.GuildVoice ) {
                 return fetched;
             }
+
+            // Named, and not there. Falling through to whatever the member is sitting in now would
+            // answer about a different channel than the one asked about, and say nothing about the
+            // swap - which is what happened to somebody whose channel was deleted while its screen
+            // was still open: the next press acted on the channel they had just made instead.
+            //
+            // The fallback below is for an interaction that named nothing, which is a different
+            // question with a reasonable guess. This one named something.
+            return null;
         }
 
         if ( "user" in interaction && interaction.guild ) {
@@ -2448,7 +2458,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         this.editMessageDebounceMap.set( key, timeoutId );
     }
 
-    public async clearChat( initiator: MessageComponentInteraction<"cached">, channel: VoiceChannel ) {
+    public async clearChat(
+        initiator: MessageComponentInteraction<"cached"> | CommandInteraction<"cached">,
+        channel: VoiceChannel
+    ) {
         let result: IDynamicClearChatResult = {
             code: DynamicClearChatResultCode.Error
         };
@@ -2491,7 +2504,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
     // Now need to see how it will know which model version to use.
     public async resetChannel(
-        initiator: MessageComponentInteraction<"cached">,
+        initiator: MessageComponentInteraction<"cached"> | CommandInteraction<"cached">,
         channel: VoiceChannel,
         options = {
             includeRegion: false,
@@ -3016,7 +3029,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     }
 
     private async log(
-        initiator: ModalSubmitInteraction<"cached"> | MessageComponentInteraction<"cached"> | undefined,
+        initiator:
+            | ModalSubmitInteraction<"cached">
+            | MessageComponentInteraction<"cached">
+            | CommandInteraction<"cached">
+            | undefined,
         channel: VoiceChannel,
         caller: Function,
         action: string,

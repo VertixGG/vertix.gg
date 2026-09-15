@@ -206,7 +206,16 @@ export abstract class ModelDataOwnerBase<
                 result.push( data );
             }
         } else {
-            this.logger.error( this.getAll, `Owners not found: ${ util.inspect( args ) }` );
+            /**
+             * Nothing matched, which is not a fault.
+             *
+             * Everything that asks this asks it of the dynamic channels, and those exist only while
+             * somebody is in one - a server with nobody in voice has none, which is most servers
+             * most of the time. Raised as an error, an empty answer put a red line in the log at
+             * every startup for each feature that sweeps, and a startup is exactly when somebody
+             * reading the log is looking for a real one.
+             */
+            this.logger.debug( this.getAll, `Owners not found: ${ util.inspect( args ) }` );
         }
 
         return result;

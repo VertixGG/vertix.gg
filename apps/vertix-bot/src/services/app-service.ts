@@ -89,8 +89,6 @@ export class AppService extends ServiceBase {
 
         await client.application.commands.set( Commands );
 
-        this.logger.info( this.onReady, "Abandoned channels are handled." );
-
         await this.ensureBackwardCompatibility();
 
         const username = client.user.username,

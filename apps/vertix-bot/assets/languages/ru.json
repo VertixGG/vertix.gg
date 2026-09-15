@@ -640,13 +640,73 @@
       {
         "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
         "content": {
-          "placeholder": "🛡️ ∙ Выберите состояние приватности"
+          "placeholder": "🛡️ ∙ Выберите состояние приватности",
+          "selectOptions": [
+            {
+              "label": "∙ Публичный",
+              "value": "public"
+            },
+            {
+              "label": "∙ Приватный",
+              "value": "private"
+            },
+            {
+              "label": "∙ Скрытый",
+              "value": "hidden"
+            }
+          ]
         }
       },
       {
         "name": "VertixBot/UI-General/DefaultUserLimitMenu",
         "content": {
-          "placeholder": "✋ ∙ Выберите лимит пользователей"
+          "placeholder": "✋ ∙ Выберите лимит пользователей",
+          "selectOptions": [
+            {
+              "label": "∙ Без ограничений",
+              "value": "0"
+            },
+            {
+              "label": "∙ 2 пользователя",
+              "value": "2"
+            },
+            {
+              "label": "∙ 3 пользователя",
+              "value": "3"
+            },
+            {
+              "label": "∙ 4 пользователя",
+              "value": "4"
+            },
+            {
+              "label": "∙ 5 пользователей",
+              "value": "5"
+            },
+            {
+              "label": "∙ 6 пользователей",
+              "value": "6"
+            },
+            {
+              "label": "∙ 8 пользователей",
+              "value": "8"
+            },
+            {
+              "label": "∙ 10 пользователей",
+              "value": "10"
+            },
+            {
+              "label": "∙ 15 пользователей",
+              "value": "15"
+            },
+            {
+              "label": "∙ 20 пользователей",
+              "value": "20"
+            },
+            {
+              "label": "∙ 25 пользователей",
+              "value": "25"
+            }
+          ]
         }
       },
       {
@@ -736,7 +796,21 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Создать мастер-канал"
+          "placeholder": "➕ ∙ Создать мастер-канал",
+          "selectOptions": [
+            {
+              "label": "Dynamic Channel (V2)",
+              "value": "v2"
+            },
+            {
+              "label": "Dynamic Channel (V3)",
+              "value": "v3"
+            },
+            {
+              "label": "Auto-Scaling Channel",
+              "value": "scaling"
+            }
+          ]
         }
       },
       {

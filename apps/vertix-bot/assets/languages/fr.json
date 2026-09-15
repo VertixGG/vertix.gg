@@ -640,13 +640,73 @@
       {
         "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
         "content": {
-          "placeholder": "🛡️ ∙ Sélectionner l'état de confidentialité"
+          "placeholder": "🛡️ ∙ Sélectionner l'état de confidentialité",
+          "selectOptions": [
+            {
+              "label": "∙ Public",
+              "value": "public"
+            },
+            {
+              "label": "∙ Privé",
+              "value": "private"
+            },
+            {
+              "label": "∙ Masqué",
+              "value": "hidden"
+            }
+          ]
         }
       },
       {
         "name": "VertixBot/UI-General/DefaultUserLimitMenu",
         "content": {
-          "placeholder": "✋ ∙ Sélectionner la limite d'utilisateurs"
+          "placeholder": "✋ ∙ Sélectionner la limite d'utilisateurs",
+          "selectOptions": [
+            {
+              "label": "∙ Aucune limite",
+              "value": "0"
+            },
+            {
+              "label": "∙ 2 utilisateurs",
+              "value": "2"
+            },
+            {
+              "label": "∙ 3 utilisateurs",
+              "value": "3"
+            },
+            {
+              "label": "∙ 4 utilisateurs",
+              "value": "4"
+            },
+            {
+              "label": "∙ 5 utilisateurs",
+              "value": "5"
+            },
+            {
+              "label": "∙ 6 utilisateurs",
+              "value": "6"
+            },
+            {
+              "label": "∙ 8 utilisateurs",
+              "value": "8"
+            },
+            {
+              "label": "∙ 10 utilisateurs",
+              "value": "10"
+            },
+            {
+              "label": "∙ 15 utilisateurs",
+              "value": "15"
+            },
+            {
+              "label": "∙ 20 utilisateurs",
+              "value": "20"
+            },
+            {
+              "label": "∙ 25 utilisateurs",
+              "value": "25"
+            }
+          ]
         }
       },
       {
@@ -736,7 +796,21 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Créer un salon maître"
+          "placeholder": "➕ ∙ Créer un salon maître",
+          "selectOptions": [
+            {
+              "label": "Dynamic Channel (V2)",
+              "value": "v2"
+            },
+            {
+              "label": "Dynamic Channel (V3)",
+              "value": "v3"
+            },
+            {
+              "label": "Auto-Scaling Channel",
+              "value": "scaling"
+            }
+          ]
         }
       },
       {

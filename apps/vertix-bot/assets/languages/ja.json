@@ -640,13 +640,73 @@
       {
         "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
         "content": {
-          "placeholder": "🛡️ ∙ プライバシー状態を選択"
+          "placeholder": "🛡️ ∙ プライバシー状態を選択",
+          "selectOptions": [
+            {
+              "label": "∙ 公開",
+              "value": "public"
+            },
+            {
+              "label": "∙ 非公開",
+              "value": "private"
+            },
+            {
+              "label": "∙ 非表示",
+              "value": "hidden"
+            }
+          ]
         }
       },
       {
         "name": "VertixBot/UI-General/DefaultUserLimitMenu",
         "content": {
-          "placeholder": "✋ ∙ ユーザー上限を選択"
+          "placeholder": "✋ ∙ ユーザー上限を選択",
+          "selectOptions": [
+            {
+              "label": "∙ 制限なし",
+              "value": "0"
+            },
+            {
+              "label": "∙ 2人",
+              "value": "2"
+            },
+            {
+              "label": "∙ 3人",
+              "value": "3"
+            },
+            {
+              "label": "∙ 4人",
+              "value": "4"
+            },
+            {
+              "label": "∙ 5人",
+              "value": "5"
+            },
+            {
+              "label": "∙ 6人",
+              "value": "6"
+            },
+            {
+              "label": "∙ 8人",
+              "value": "8"
+            },
+            {
+              "label": "∙ 10人",
+              "value": "10"
+            },
+            {
+              "label": "∙ 15人",
+              "value": "15"
+            },
+            {
+              "label": "∙ 20人",
+              "value": "20"
+            },
+            {
+              "label": "∙ 25人",
+              "value": "25"
+            }
+          ]
         }
       },
       {
@@ -736,7 +796,21 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ マスターチャンネルを作成"
+          "placeholder": "➕ ∙ マスターチャンネルを作成",
+          "selectOptions": [
+            {
+              "label": "Dynamic Channel (V2)",
+              "value": "v2"
+            },
+            {
+              "label": "Dynamic Channel (V3)",
+              "value": "v3"
+            },
+            {
+              "label": "Auto-Scaling Channel",
+              "value": "scaling"
+            }
+          ]
         }
       },
       {

@@ -640,13 +640,73 @@
       {
         "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
         "content": {
-          "placeholder": "🛡️ ∙ Privatsphäre-Status wählen"
+          "placeholder": "🛡️ ∙ Privatsphäre-Status wählen",
+          "selectOptions": [
+            {
+              "label": "∙ Öffentlich",
+              "value": "public"
+            },
+            {
+              "label": "∙ Privat",
+              "value": "private"
+            },
+            {
+              "label": "∙ Versteckt",
+              "value": "hidden"
+            }
+          ]
         }
       },
       {
         "name": "VertixBot/UI-General/DefaultUserLimitMenu",
         "content": {
-          "placeholder": "✋ ∙ Benutzerlimit wählen"
+          "placeholder": "✋ ∙ Benutzerlimit wählen",
+          "selectOptions": [
+            {
+              "label": "∙ Keine Begrenzung",
+              "value": "0"
+            },
+            {
+              "label": "∙ 2 Benutzer",
+              "value": "2"
+            },
+            {
+              "label": "∙ 3 Benutzer",
+              "value": "3"
+            },
+            {
+              "label": "∙ 4 Benutzer",
+              "value": "4"
+            },
+            {
+              "label": "∙ 5 Benutzer",
+              "value": "5"
+            },
+            {
+              "label": "∙ 6 Benutzer",
+              "value": "6"
+            },
+            {
+              "label": "∙ 8 Benutzer",
+              "value": "8"
+            },
+            {
+              "label": "∙ 10 Benutzer",
+              "value": "10"
+            },
+            {
+              "label": "∙ 15 Benutzer",
+              "value": "15"
+            },
+            {
+              "label": "∙ 20 Benutzer",
+              "value": "20"
+            },
+            {
+              "label": "∙ 25 Benutzer",
+              "value": "25"
+            }
+          ]
         }
       },
       {
@@ -736,7 +796,21 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Master-Kanal erstellen"
+          "placeholder": "➕ ∙ Master-Kanal erstellen",
+          "selectOptions": [
+            {
+              "label": "Dynamic Channel (V2)",
+              "value": "v2"
+            },
+            {
+              "label": "Dynamic Channel (V3)",
+              "value": "v3"
+            },
+            {
+              "label": "Auto-Scaling Channel",
+              "value": "scaling"
+            }
+          ]
         }
       },
       {

@@ -3,7 +3,7 @@
 // Verifies language files stay in sync:
 //   1. every translatable UI entity in exports/ui/ exists in en.json
 //   2. every entry in en.json exists in each other locale
-//   3. every baked select menu holds the same options as the menu it translates
+//   3. every baked select menu holds the same options as the menu it translates, in every locale
 //
 // Exits non-zero when something is missing, so it can gate CI. Pass --json for
 // machine-readable output, or --locale=<code> to list one locale's gaps.
@@ -172,6 +172,7 @@ const missingFromEn = [ ...exportNames ].filter( ( name ) => isTranslatable( nam
 // nothing to translate, and the exporter's view of it is whatever default args it happened to see.
 const menuDrift = [];
 const positionalMenus = [];
+const untranslatedMenus = [];
 
 for ( const [ name, options ] of enMenus ) {
     const expected = exportMenus.get( name );
@@ -187,7 +188,7 @@ for ( const [ name, options ] of enMenus ) {
     }
 
     if ( ! options.every( ( option ) => undefined !== option.value ) ) {
-        positionalMenus.push( name );
+        positionalMenus.push( { locale: "en", name } );
     }
 }
 
@@ -209,10 +210,23 @@ for ( const file of readdirSync( LANG_DIR ).sort() ) {
     const names = collectNames( language );
     const missing = [ ...enNames ].filter( ( name ) => ! names.has( name ) ).sort();
 
-    for ( const [ name, options ] of collectLanguageMenus( language ) ) {
-        const expected = enMenus.get( name );
+    // Walked from en.json's menus rather than the locale's own, because the gap worth finding is
+    // a menu the locale never baked, and reading only what it has cannot see what it does not.
+    // Such a menu keeps its translated placeholder and falls back to english options underneath,
+    // which reads as a broken screen rather than an untranslated one - and its entity is present,
+    // so the name comparison above counts it as covered.
+    const localeMenus = collectLanguageMenus( language );
 
-        if ( ! expected ) {
+    for ( const [ name, expected ] of enMenus ) {
+        const options = localeMenus.get( name );
+
+        if ( ! options ) {
+            // An entity absent altogether is already counted as missing, and saying it a second
+            // time here says nothing the locale's own list does not.
+            if ( names.has( name ) ) {
+                untranslatedMenus.push( { locale: code, name, count: expected.length } );
+            }
+
             continue;
         }
 
@@ -220,6 +234,13 @@ for ( const file of readdirSync( LANG_DIR ).sort() ) {
 
         if ( difference ) {
             menuDrift.push( { locale: code, name, difference } );
+        }
+
+        // Asked of every locale, not just en: the options a translator writes are the ones that
+        // carry no value far more often than the exported ones are, and a menu is matched by
+        // position in whichever file left the values out.
+        if ( ! options.every( ( option ) => undefined !== option.value ) ) {
+            positionalMenus.push( { locale: code, name } );
         }
     }
 
@@ -233,10 +254,11 @@ for ( const file of readdirSync( LANG_DIR ).sort() ) {
 
 const failed = missingFromEn.length > 0
     || menuDrift.length > 0
+    || untranslatedMenus.length > 0
     || Object.values( locales ).some( ( locale ) => locale.missing.length > 0 );
 
 if ( asJson ) {
-    console.log( JSON.stringify( { missingFromEn, menuDrift, positionalMenus, locales, ok: ! failed }, null, 2 ) );
+    console.log( JSON.stringify( { missingFromEn, menuDrift, untranslatedMenus, positionalMenus, locales, ok: ! failed }, null, 2 ) );
 } else {
     if ( missingFromEn.length ) {
         console.error( `\nMissing from en.json (${ missingFromEn.length }) - defined in the UI but has no copy:` );
@@ -250,12 +272,18 @@ if ( asJson ) {
         menuDrift.forEach( ( { locale, name, difference } ) => console.error( `  [${ locale }] ${ name } ${ difference }` ) );
     }
 
+    if ( untranslatedMenus.length ) {
+        console.error( `\nSelect menus with untranslated options (${ untranslatedMenus.length }) - the entity is translated, its options are not:` );
+        untranslatedMenus.forEach( ( { locale, name, count } ) =>
+            console.error( `  [${ locale }] ${ name } - ${ count } option(s) left in english` ) );
+    }
+
     // Not a failure: every one of these is a menu whose options have not moved, and failing on
     // them would gate CI on copy nobody has touched. Worth saying, because it is the state a
     // single inserted option turns into every label below it being wrong.
     if ( positionalMenus.length ) {
         console.log( `\nMatched by position (${ positionalMenus.length }) - baked options carry no value, so inserting one shifts the rest:` );
-        positionalMenus.forEach( ( name ) => console.log( `  ${ name }` ) );
+        positionalMenus.forEach( ( { locale, name } ) => console.log( `  [${ locale }] ${ name }` ) );
     }
 
     console.log( "\nlocale   present  missing  coverage" );

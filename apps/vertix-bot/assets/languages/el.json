@@ -640,13 +640,73 @@
       {
         "name": "VertixBot/UI-General/DefaultPrivacyStateMenu",
         "content": {
-          "placeholder": "🛡️ ∙ Επιλέξτε κατάσταση απορρήτου"
+          "placeholder": "🛡️ ∙ Επιλέξτε κατάσταση απορρήτου",
+          "selectOptions": [
+            {
+              "label": "∙ Δημόσιο",
+              "value": "public"
+            },
+            {
+              "label": "∙ Ιδιωτικό",
+              "value": "private"
+            },
+            {
+              "label": "∙ Κρυφό",
+              "value": "hidden"
+            }
+          ]
         }
       },
       {
         "name": "VertixBot/UI-General/DefaultUserLimitMenu",
         "content": {
-          "placeholder": "✋ ∙ Επιλέξτε όριο χρηστών"
+          "placeholder": "✋ ∙ Επιλέξτε όριο χρηστών",
+          "selectOptions": [
+            {
+              "label": "∙ Χωρίς όριο",
+              "value": "0"
+            },
+            {
+              "label": "∙ 2 χρήστες",
+              "value": "2"
+            },
+            {
+              "label": "∙ 3 χρήστες",
+              "value": "3"
+            },
+            {
+              "label": "∙ 4 χρήστες",
+              "value": "4"
+            },
+            {
+              "label": "∙ 5 χρήστες",
+              "value": "5"
+            },
+            {
+              "label": "∙ 6 χρήστες",
+              "value": "6"
+            },
+            {
+              "label": "∙ 8 χρήστες",
+              "value": "8"
+            },
+            {
+              "label": "∙ 10 χρήστες",
+              "value": "10"
+            },
+            {
+              "label": "∙ 15 χρήστες",
+              "value": "15"
+            },
+            {
+              "label": "∙ 20 χρήστες",
+              "value": "20"
+            },
+            {
+              "label": "∙ 25 χρήστες",
+              "value": "25"
+            }
+          ]
         }
       },
       {
@@ -736,7 +796,21 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Δημιουργία κύριου καναλιού"
+          "placeholder": "➕ ∙ Δημιουργία κύριου καναλιού",
+          "selectOptions": [
+            {
+              "label": "Dynamic Channel (V2)",
+              "value": "v2"
+            },
+            {
+              "label": "Dynamic Channel (V3)",
+              "value": "v3"
+            },
+            {
+              "label": "Auto-Scaling Channel",
+              "value": "scaling"
+            }
+          ]
         }
       },
       {

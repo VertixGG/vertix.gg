@@ -6,6 +6,15 @@ export interface EmbedOverrides {
     title?: string;
     description?: string;
     color?: number;
+
+    /**
+     * The artwork's address, as a plain string.
+     *
+     * Stored flat rather than as discord's `{ url }` object: everything else here is one value, and
+     * the embed wraps it back into that shape when it draws. What the reader typed is a url and
+     * nothing else, so that is what is kept.
+     */
+    image?: string;
 }
 
 /**

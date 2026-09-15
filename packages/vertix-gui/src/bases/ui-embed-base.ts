@@ -133,6 +133,12 @@ export abstract class UIEmbedBase extends UITemplateBase {
             if ( overrides.description !== undefined && overrides.description.length > 0 ) {
                 template.description = overrides.description;
             }
+
+            // Set as a string, like the definition's own, so the block below wraps it into the
+            // object discord wants along with everything else about the image.
+            if ( overrides.image !== undefined && overrides.image.length > 0 ) {
+                template.image = overrides.image;
+            }
         }
 
         if ( template.footer?.length ) {

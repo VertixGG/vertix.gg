@@ -359,6 +359,15 @@ function extractNodeCustomization(
         if ( embed.description !== undefined && embed.description !== originalEmbed?.description ) {
             embedOverrides.description = embed.description;
         }
+
+        // Flattened out of discord's `{ url }` on the way out, and wrapped back into it by the embed
+        // that draws it. The node carries the shape discord draws; an override carries the value.
+        const image = ( embed.image as { url?: string } | undefined )?.url,
+            originalImage = ( originalEmbed?.image as { url?: string } | undefined )?.url;
+
+        if ( image !== undefined && image !== originalImage ) {
+            embedOverrides.image = image;
+        }
     }
 
     // Check for variable overrides (defaultVars + options changes in embedDefinition)

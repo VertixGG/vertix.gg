@@ -903,7 +903,7 @@ export function FlowEditSidebar() {
         if ( componentCustomization?.embedOverrides ) {
             logger.debug( FlowEditSidebar, "Applying saved customization to node", { component, state, embedOverrides: componentCustomization.embedOverrides } );
 
-            const { color, title, description } = componentCustomization.embedOverrides;
+            const { color, title, description, image } = componentCustomization.embedOverrides;
 
             // `isSavedOverride`, not `isInitialLoad`, for the same reason the variables below use
             // it: an override is what a guild changed, not what the component is. Written as an
@@ -918,6 +918,9 @@ export function FlowEditSidebar() {
             }
             if ( description !== undefined ) {
                 updateNodeData.run( { path: "embed.description", value: description, isSavedOverride: true } );
+            }
+            if ( image !== undefined ) {
+                updateNodeData.run( { path: "embed.image.url", value: image, isSavedOverride: true } );
             }
         }
 

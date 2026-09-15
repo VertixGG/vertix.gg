@@ -1226,8 +1226,8 @@
     {
       "name": "VertixBot/UI-General/ChannelGoneEmbed",
       "content": {
-        "title": "🕳  That channel is gone",
-        "description": "The channel this screen was opened about no longer exists - a dynamic channel is removed once the last person leaves it.\n\nRun the command again to work on the one you have now."
+        "title": "🕳  Ese canal ya no existe",
+        "description": "El canal para el que se abrió esta pantalla ya no existe: un canal dinámico se elimina en cuanto lo abandona la última persona.\n\nVuelve a ejecutar el comando para trabajar con el que tienes ahora."
       }
     },
     {
@@ -1240,15 +1240,15 @@
     {
       "name": "VertixBot/UI-General/ClaimOpenEmbed",
       "content": {
-        "title": "😈  This channel can be claimed",
-        "description": "Its owner has left, so the channel is up for claiming.\n\nPress **Claim** on this channel's buttons to start."
+        "title": "😈  Este canal se puede reclamar",
+        "description": "Su propietario se ha ido, así que el canal está disponible para reclamar.\n\nPulsa **Reclamar** en los botones de este canal para empezar."
       }
     },
     {
       "name": "VertixBot/UI-General/CommandFailedEmbed",
       "content": {
-        "title": "⚠  That did not work",
-        "description": "Something went wrong running that command.\n\nIt has been logged. Trying again is worth a go — if it keeps happening, tell us in the support server."
+        "title": "⚠  Eso no ha funcionado",
+        "description": "Algo salió mal al ejecutar el comando.\n\nHa quedado registrado. Merece la pena intentarlo otra vez; si sigue ocurriendo, cuéntanoslo en el servidor de soporte."
       }
     },
     {
@@ -1261,8 +1261,8 @@
     {
       "name": "VertixBot/UI-General/FeatureMissingInV2Embed",
       "content": {
-        "title": "⚠  Not in this generator's interface",
-        "description": "This channel comes from a generator running the older interface, which does not have that feature.\n\nA server admin can upgrade the generator to get it."
+        "title": "⚠  No está en la interfaz de este generador",
+        "description": "Este canal viene de un generador con la interfaz antigua, que no tiene esa función.\n\nUn administrador del servidor puede actualizar el generador para obtenerla."
       }
     },
     {
@@ -1306,8 +1306,8 @@
     {
       "name": "VertixBot/UI-General/MissingAdminPermissionsEmbed",
       "content": {
-        "title": "⛔  You cannot configure this server",
-        "description": "This command is for server admins.\n\nIt needs the **Manage Server**, **Manage Channels** and **Manage Roles** permissions."
+        "title": "⛔  No puedes configurar este servidor",
+        "description": "Este comando es para administradores del servidor.\n\nNecesita los permisos **Gestionar servidor**, **Gestionar canales** y **Gestionar roles**."
       }
     },
     {
@@ -1333,8 +1333,8 @@
     {
       "name": "VertixBot/UI-General/NotClaimableEmbed",
       "content": {
-        "title": "🔒  Nothing to claim here",
-        "description": "This channel is not up for claiming right now.\n\nA channel becomes claimable when its owner leaves it."
+        "title": "🔒  Aquí no hay nada que reclamar",
+        "description": "Este canal no está disponible para reclamar ahora mismo.\n\nUn canal pasa a estar disponible cuando su propietario lo abandona."
       }
     },
     {
@@ -1347,8 +1347,8 @@
     {
       "name": "VertixBot/UI-General/NotInAServerEmbed",
       "content": {
-        "title": "🏠  Run this in a server",
-        "description": "These commands act on a server's voice channels, and a direct message has neither.\n\nOpen the server you want and run it there."
+        "title": "🏠  Ejecuta esto en un servidor",
+        "description": "Estos comandos actúan sobre los canales de voz de un servidor, y un mensaje directo no tiene ninguno.\n\nAbre el servidor que quieras y ejecútalo allí."
       }
     },
     {
@@ -1361,12 +1361,12 @@
     {
       "name": "VertixBot/UI-General/SetupBadwordsEmbed",
       "content": {
-        "title": "🙅  Bad Words",
-        "description": "Words that cannot appear in the name of a dynamic channel, anywhere in this server.\n\nA member renaming their channel to something holding one of these is told no and the name is left as it was. The check is on names only - it does not read what anyone says.\n\n_**Current list**_:\n{badwordsMessage}\n\n`(🙅 Edit Bad Words)` replaces the whole list with what you type, separated by commas.\n`(🧹 Remove all)` empties it, which allows every name again.\n",
+        "title": "🙅  Palabras prohibidas",
+        "description": "Palabras que no pueden aparecer en el nombre de un canal dinámico, en ninguna parte de este servidor.\n\nA quien renombre su canal con alguna de ellas se le deniega y el nombre se queda como estaba. La comprobación es solo sobre los nombres: no lee lo que escribe nadie.\n\n_**Lista actual**_:\n{badwordsMessage}\n\n`(🙅 Editar palabras prohibidas)` sustituye toda la lista por lo que escribas, separado por comas.\n`(🧹 Quitar todas)` la vacía, lo que vuelve a permitir cualquier nombre.\n",
         "options": {
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
-            "{badwordsMessageDefault}": "**None** - every name is allowed."
+            "{badwordsMessageDefault}": "**Ninguna**: se permite cualquier nombre."
           }
         },
         "arrayOptions": {
@@ -1456,15 +1456,15 @@
     {
       "name": "VertixBot/UI-General/SetupMasterCreateEmbed",
       "content": {
-        "title": "➕  Create a channel generator",
-        "description": "A generator is a voice channel members join to get one of their own, made for them and removed when they leave.\n\n**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n\nChoose below, and the rest is a few questions."
+        "title": "➕  Crear un generador de canales",
+        "description": "Un generador es un canal de voz al que los miembros entran para obtener uno propio, creado para ellos y eliminado cuando se van.\n\n**✨ Dynamic Channel (V3)** — la interfaz actual. Elige esta salvo que tengas un motivo para no hacerlo.\n**➕ Dynamic Channel (V2)** — la interfaz antigua, para servidores que ya la usan.\n**📈 Auto-Scaling Channel** — un canal que se convierte en varios a medida que se llena.\n\nElige abajo; el resto son unas pocas preguntas."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupMasterEditEmbed",
       "content": {
-        "title": "🔧  Edit a channel generator",
-        "description": "Pick the generator you want to change.\n\nIts settings open next — the name new channels get, who may see them, which buttons their owners have, and the rest.\n\n*Nothing here? The server has no generators yet — `/manage new-generator` makes one.*"
+        "title": "🔧  Editar un generador de canales",
+        "description": "Elige el generador que quieras cambiar.\n\nA continuación se abren sus ajustes: el nombre que reciben los canales nuevos, quién puede verlos, qué botones tienen sus propietarios y lo demás.\n\n*¿No hay nada aquí? El servidor aún no tiene generadores: `/manage new-generator` crea uno.*"
       }
     },
     {
@@ -1477,15 +1477,15 @@
     {
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
-        "title": "⚙️  Server settings",
-        "description": "Settings that belong to the whole server rather than to one generator.\n\n**Voice Role** — given to members while they are in a voice channel.\n**Verified Roles** — who dynamic channels are for.\n**Staff Roles** — who may act on a channel they do not own.\n**Bad Words** — words a member cannot put in a channel name.\n**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\nPick one to change it."
+        "title": "⚙️  Ajustes del servidor",
+        "description": "Ajustes que pertenecen a todo el servidor y no a un generador concreto.\n\n**Voice Role** — se da a los miembros mientras están en un canal de voz.\n**Verified Roles** — para quién son los canales dinámicos.\n**Staff Roles** — quién puede actuar sobre un canal que no es suyo.\n**Bad Words** — palabras que un miembro no puede poner en el nombre de un canal.\n**Claim** — cuánto espera un canal abandonado y cuánto dura la votación.\n\nElige uno para cambiarlo."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
-        "title": "🛡️  Server roles",
-        "description": "Which roles this server's dynamic channels answer to.\n\n**Voice Role** — given to members while they are in a voice channel, and taken back when they leave.\n**Verified Roles** — who the channels are for. Everyone else is kept out.\n**Staff Roles** — who may act on a channel they do not own.\n\nPick one to change it."
+        "title": "🛡️  Roles del servidor",
+        "description": "A qué roles responden los canales dinámicos de este servidor.\n\n**Voice Role** — se da a los miembros mientras están en un canal de voz y se retira cuando salen.\n**Verified Roles** — para quién son los canales. El resto queda fuera.\n**Staff Roles** — quién puede actuar sobre un canal que no es suyo.\n\nElige uno para cambiarlo."
       }
     },
     {
@@ -2521,19 +2521,19 @@
     {
       "name": "VertixBot/UI-V3/ClaimCommandPointedAtEmbed",
       "content": {
-        "title": "👑  Claim it here",
-        "description": "**{claimedChannelName}** is waiting for a new owner.\n\n{claimMessageUrl}\n\nPress **Claim** there to put yourself forward. Everyone still inside votes."
+        "title": "👑  Reclámalo aquí",
+        "description": "**{claimedChannelName}** está esperando un nuevo propietario.\n\n{claimMessageUrl}\n\nPulsa **Reclamar** ahí para presentarte. Votan quienes siguen dentro."
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimCommandSelectEmbed",
       "content": {
-        "title": "👑  Channels you can claim",
-        "description": "There {claimableCount} waiting for a new owner.\n\nA channel becomes claimable when whoever owned it leaves and does not come back. Whoever is still inside votes on who takes it.\n\nPick one and you will be sent to where the vote is.",
+        "title": "👑  Canales que puedes reclamar",
+        "description": "{claimableCount}\n\nUn canal pasa a estar disponible cuando su propietario se va y no vuelve. Quienes siguen dentro votan quién se queda con él.\n\nElige uno y se te llevará a donde está la votación.",
         "options": {
           "claimableCount": {
-            "1": "is **one channel**",
-            "many": "are **{count} channels**"
+            "1": "Hay **un canal** esperando un nuevo propietario.",
+            "many": "Hay **{count} canales** esperando un nuevo propietario."
           }
         }
       }

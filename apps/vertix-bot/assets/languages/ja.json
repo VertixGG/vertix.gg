@@ -1226,8 +1226,8 @@
     {
       "name": "VertixBot/UI-General/ChannelGoneEmbed",
       "content": {
-        "title": "🕳  That channel is gone",
-        "description": "The channel this screen was opened about no longer exists - a dynamic channel is removed once the last person leaves it.\n\nRun the command again to work on the one you have now."
+        "title": "🕳  そのチャンネルはもうありません",
+        "description": "この画面を開いたときのチャンネルは既に存在しません。ダイナミックチャンネルは最後の一人が退出すると削除されます。\n\n今あるチャンネルを操作するには、コマンドをもう一度実行してください。"
       }
     },
     {
@@ -1240,15 +1240,15 @@
     {
       "name": "VertixBot/UI-General/ClaimOpenEmbed",
       "content": {
-        "title": "😈  This channel can be claimed",
-        "description": "Its owner has left, so the channel is up for claiming.\n\nPress **Claim** on this channel's buttons to start."
+        "title": "😈  このチャンネルは取得できます",
+        "description": "所有者が退出したため、このチャンネルは取得可能です。\n\nこのチャンネルのボタンから **取得** を押して始めてください。"
       }
     },
     {
       "name": "VertixBot/UI-General/CommandFailedEmbed",
       "content": {
-        "title": "⚠  That did not work",
-        "description": "Something went wrong running that command.\n\nIt has been logged. Trying again is worth a go — if it keeps happening, tell us in the support server."
+        "title": "⚠  うまくいきませんでした",
+        "description": "コマンドの実行中に問題が発生しました。\n\nログに記録されています。もう一度試す価値はあります。繰り返す場合はサポートサーバーでお知らせください。"
       }
     },
     {
@@ -1261,8 +1261,8 @@
     {
       "name": "VertixBot/UI-General/FeatureMissingInV2Embed",
       "content": {
-        "title": "⚠  Not in this generator's interface",
-        "description": "This channel comes from a generator running the older interface, which does not have that feature.\n\nA server admin can upgrade the generator to get it."
+        "title": "⚠  このジェネレーターのUIにはありません",
+        "description": "このチャンネルは旧UIのジェネレーターで作られており、その機能がありません。\n\nサーバー管理者がジェネレーターを更新すると利用できます。"
       }
     },
     {
@@ -1306,8 +1306,8 @@
     {
       "name": "VertixBot/UI-General/MissingAdminPermissionsEmbed",
       "content": {
-        "title": "⛔  You cannot configure this server",
-        "description": "This command is for server admins.\n\nIt needs the **Manage Server**, **Manage Channels** and **Manage Roles** permissions."
+        "title": "⛔  このサーバーは設定できません",
+        "description": "このコマンドはサーバー管理者向けです。\n\n**サーバー管理**、**チャンネルの管理**、**ロールの管理** の権限が必要です。"
       }
     },
     {
@@ -1333,8 +1333,8 @@
     {
       "name": "VertixBot/UI-General/NotClaimableEmbed",
       "content": {
-        "title": "🔒  Nothing to claim here",
-        "description": "This channel is not up for claiming right now.\n\nA channel becomes claimable when its owner leaves it."
+        "title": "🔒  ここに取得できるものはありません",
+        "description": "このチャンネルは現在取得できません。\n\nチャンネルは所有者が退出すると取得可能になります。"
       }
     },
     {
@@ -1347,8 +1347,8 @@
     {
       "name": "VertixBot/UI-General/NotInAServerEmbed",
       "content": {
-        "title": "🏠  Run this in a server",
-        "description": "These commands act on a server's voice channels, and a direct message has neither.\n\nOpen the server you want and run it there."
+        "title": "🏠  サーバー内で実行してください",
+        "description": "これらのコマンドはサーバーのボイスチャンネルを操作しますが、ダイレクトメッセージにはありません。\n\n目的のサーバーを開いて、そこで実行してください。"
       }
     },
     {
@@ -1361,12 +1361,12 @@
     {
       "name": "VertixBot/UI-General/SetupBadwordsEmbed",
       "content": {
-        "title": "🙅  Bad Words",
-        "description": "Words that cannot appear in the name of a dynamic channel, anywhere in this server.\n\nA member renaming their channel to something holding one of these is told no and the name is left as it was. The check is on names only - it does not read what anyone says.\n\n_**Current list**_:\n{badwordsMessage}\n\n`(🙅 Edit Bad Words)` replaces the whole list with what you type, separated by commas.\n`(🧹 Remove all)` empties it, which allows every name again.\n",
+        "title": "🙅  禁止ワード",
+        "description": "このサーバーのどこでも、ダイナミックチャンネルの名前に使えない単語です。\n\nこれらを含む名前に変更しようとすると拒否され、名前は元のままになります。チェックの対象は名前だけで、発言の内容は読み取りません。\n\n_**現在のリスト**_:\n{badwordsMessage}\n\n`(🙅 禁止ワードを編集)` は、入力した内容（カンマ区切り）でリスト全体を置き換えます。\n`(🧹 すべて削除)` はリストを空にし、再びすべての名前を許可します。\n",
         "options": {
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
-            "{badwordsMessageDefault}": "**None** - every name is allowed."
+            "{badwordsMessageDefault}": "**なし** — すべての名前が許可されています。"
           }
         },
         "arrayOptions": {
@@ -1456,15 +1456,15 @@
     {
       "name": "VertixBot/UI-General/SetupMasterCreateEmbed",
       "content": {
-        "title": "➕  Create a channel generator",
-        "description": "A generator is a voice channel members join to get one of their own, made for them and removed when they leave.\n\n**✨ Dynamic Channel (V3)** — the current interface. Pick this unless you have a reason not to.\n**➕ Dynamic Channel (V2)** — the older interface, for servers already running it.\n**📈 Auto-Scaling Channel** — one channel that grows into several as it fills up.\n\nChoose below, and the rest is a few questions."
+        "title": "➕  チャンネルジェネレーターを作成",
+        "description": "ジェネレーターは、メンバーが参加すると自分専用のチャンネルが作られるボイスチャンネルです。退出すると削除されます。\n\n**✨ Dynamic Channel (V3)** — 現在のUI。特に理由がなければこちらを選んでください。\n**➕ Dynamic Channel (V2)** — 旧UI。すでに使用しているサーバー向けです。\n**📈 Auto-Scaling Channel** — 混み合うと複数に増えるチャンネルです。\n\n下から選んでください。あとはいくつかの質問だけです。"
       }
     },
     {
       "name": "VertixBot/UI-General/SetupMasterEditEmbed",
       "content": {
-        "title": "🔧  Edit a channel generator",
-        "description": "Pick the generator you want to change.\n\nIts settings open next — the name new channels get, who may see them, which buttons their owners have, and the rest.\n\n*Nothing here? The server has no generators yet — `/manage new-generator` makes one.*"
+        "title": "🔧  チャンネルジェネレーターを編集",
+        "description": "変更したいジェネレーターを選んでください。\n\n次にその設定が開きます。新しいチャンネルの名前、誰が見られるか、所有者が使えるボタンなどです。\n\n*何も表示されない場合、このサーバーにはまだジェネレーターがありません。`/manage new-generator` で作成できます。*"
       }
     },
     {
@@ -1477,15 +1477,15 @@
     {
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
-        "title": "⚙️  Server settings",
-        "description": "Settings that belong to the whole server rather than to one generator.\n\n**Voice Role** — given to members while they are in a voice channel.\n**Verified Roles** — who dynamic channels are for.\n**Staff Roles** — who may act on a channel they do not own.\n**Bad Words** — words a member cannot put in a channel name.\n**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\nPick one to change it."
+        "title": "⚙️  サーバー設定",
+        "description": "個々のジェネレーターではなく、サーバー全体に関わる設定です。\n\n**Voice Role** — ボイスチャンネルにいる間、メンバーに付与されます。\n**Verified Roles** — ダイナミックチャンネルを使える対象です。\n**Staff Roles** — 自分のものではないチャンネルを操作できる人です。\n**Bad Words** — チャンネル名に使えない単語です。\n**Claim** — 放置されたチャンネルが待つ時間と、投票の長さです。\n\n変更したい項目を選んでください。"
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
-        "title": "🛡️  Server roles",
-        "description": "Which roles this server's dynamic channels answer to.\n\n**Voice Role** — given to members while they are in a voice channel, and taken back when they leave.\n**Verified Roles** — who the channels are for. Everyone else is kept out.\n**Staff Roles** — who may act on a channel they do not own.\n\nPick one to change it."
+        "title": "🛡️  サーバーロール",
+        "description": "このサーバーのダイナミックチャンネルが従うロールです。\n\n**Voice Role** — ボイスチャンネルにいる間メンバーに付与され、退出すると外されます。\n**Verified Roles** — チャンネルを使える対象です。それ以外は入れません。\n**Staff Roles** — 自分のものではないチャンネルを操作できる人です。\n\n変更したい項目を選んでください。"
       }
     },
     {
@@ -2521,19 +2521,19 @@
     {
       "name": "VertixBot/UI-V3/ClaimCommandPointedAtEmbed",
       "content": {
-        "title": "👑  Claim it here",
-        "description": "**{claimedChannelName}** is waiting for a new owner.\n\n{claimMessageUrl}\n\nPress **Claim** there to put yourself forward. Everyone still inside votes."
+        "title": "👑  ここで取得できます",
+        "description": "**{claimedChannelName}** が新しい所有者を待っています。\n\n{claimMessageUrl}\n\nそこで **取得** を押すと立候補できます。まだ中にいる全員が投票します。"
       }
     },
     {
       "name": "VertixBot/UI-V3/ClaimCommandSelectEmbed",
       "content": {
-        "title": "👑  Channels you can claim",
-        "description": "There {claimableCount} waiting for a new owner.\n\nA channel becomes claimable when whoever owned it leaves and does not come back. Whoever is still inside votes on who takes it.\n\nPick one and you will be sent to where the vote is.",
+        "title": "👑  取得できるチャンネル",
+        "description": "{claimableCount}\n\nチャンネルは、所有者が退出して戻らないと取得可能になります。まだ中にいる人たちが、誰が引き継ぐかを投票します。\n\n1つ選ぶと、投票が行われている場所に移動します。",
         "options": {
           "claimableCount": {
-            "1": "is **one channel**",
-            "many": "are **{count} channels**"
+            "1": "**1つのチャンネル**が新しい所有者を待っています。",
+            "many": "**{count}個のチャンネル**が新しい所有者を待っています。"
           }
         }
       }

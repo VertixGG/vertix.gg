@@ -873,6 +873,16 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             return null;
         }
 
+        const db = await result.db;
+
+        // The generator is joinable from the moment discord creates it, and the first thing a member
+        // joining it needs is this row - `createDynamicChannel()` reads the name template off it and
+        // gives up when it is missing, which the member sees as "your channel could not be created".
+        // Creating the control channel below is a discord round trip, so writing the settings after it
+        // left that window open for most of a second. The control channel's own id is not known yet
+        // and is merged in once it is.
+        await MasterChannelDataModelV3.$.setSettings( db.id, { ...args }, true );
+
         const masterChannel = result.channel;
 
         const rawControlChannelId = typeof args.dynamicChannelControlChannelId === "string"
@@ -917,12 +927,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             `🛠️  Setup has performed - "${ usedNameTemplate }", "${ usedButtonsInterface.join( "," ) }", "${ usedRoles }" (${ guild.name }) (${ guild?.memberCount })`
         );
 
-        const db = await result.db;
-
         await MasterChannelDataModelV3.$.setSettings( db.id, {
-            ...args,
             dynamicChannelControlChannelId: controlChannelId
-        }, true );
+        } );
 
         return result;
     }

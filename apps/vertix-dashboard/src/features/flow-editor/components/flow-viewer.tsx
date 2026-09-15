@@ -14,6 +14,8 @@ import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-cu
 
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 import { useSelectedGuildId } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
+import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
+import { TOUR_ANCHORS } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
 
 import { useButtonCatalogue } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
 import { useEditorGenerator } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-generator";
@@ -63,6 +65,11 @@ export function FlowViewer() {
     const selectNode = useCommand( "Dashboard/FlowEditor/SelectNode" );
     const { isEditMode, editingFlowName, enterEditMode, exitEditMode } = useEditMode();
     const guildId = useSelectedGuildId();
+
+    // Up here because the button it belongs to is built inside a closure further down, which is no
+    // place to draw a hook from.
+    const editModeButtonRef = useTourAnchor( TOUR_ANCHORS.EDIT_MODE_BUTTON );
+
     const selectedLanguage = useLanguageStore( ( state ) => state.selectedLanguage );
     const translations = useLanguageStore( ( state ) => state.translations );
 
@@ -661,6 +668,7 @@ export function FlowViewer() {
                     if ( nodeFlowName && guildId && ( nodeType === "component" || nodeType === "modal" ) ) {
                         return (
                             <button
+                                ref={ editModeButtonRef }
                                 onClick={ () => enterEditMode( nodeFlowName, guildId ) }
                                 className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded border border-blue-500 transition-colors cursor-pointer"
                             >

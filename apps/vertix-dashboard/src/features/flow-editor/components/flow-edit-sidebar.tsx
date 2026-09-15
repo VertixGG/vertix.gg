@@ -22,6 +22,8 @@ import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-st
 import { useEditorScopeStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-scope";
 import { ButtonScopePicker } from "@vertix.gg/dashboard/src/features/flow-editor/components/button-scope-picker";
 import { EditedText, EditedTextArea } from "@vertix.gg/dashboard/src/components/edited-text";
+import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
+import { TOUR_ANCHORS } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
 
 import { resolveCustomization } from "@vertix.gg/dashboard/src/features/flow-editor/lib/customization-index";
 
@@ -797,6 +799,9 @@ export function FlowEditSidebar() {
     const flowShortName = editingFlowName?.split( "/" ).pop() ?? "Flow";
     const selectedNode = state.selectedNode;
 
+    const embedColorRef = useTourAnchor( TOUR_ANCHORS.EMBED_COLOR );
+    const saveChangesRef = useTourAnchor( TOUR_ANCHORS.SAVE_CHANGES );
+
     // Clear selected element when node changes
     useEffect( () => {
         if ( selectedNode?.id !== lastNodeId ) {
@@ -1154,7 +1159,7 @@ export function FlowEditSidebar() {
                                         </div>
                                     ) }
                                     { embed.color !== undefined && (
-                                        <div className="bg-zinc-700/50 rounded-lg p-3">
+                                        <div ref={ embedColorRef } className="bg-zinc-700/50 rounded-lg p-3">
                                             <label className="text-xs text-zinc-400 flex items-center gap-1 mb-1">
                                                 <Palette className="w-3 h-3" />
                                                 Color
@@ -1592,6 +1597,7 @@ export function FlowEditSidebar() {
                          and the rows arranged beside them. Two buttons meant an admin could leave
                          with half their work written. */ }
                     <button
+                        ref={ saveChangesRef }
                         onClick={ () => {
                             if ( state.hasUnsavedChanges ) {
                                 saveNodeChanges.run( {} );

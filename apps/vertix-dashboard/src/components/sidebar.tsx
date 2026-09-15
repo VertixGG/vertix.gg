@@ -6,6 +6,10 @@ import { Home, Boxes, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronU
 
 import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
+import { INTERFACE_EDITOR_PATH } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
+import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
+import { TOUR_ANCHORS } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
+
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
 interface NavItem {
@@ -57,6 +61,11 @@ export function Sidebar() {
         } )
     );
 
+    // Taken once up here rather than inside the list below: the list is a different length on a
+    // server that hides half of it, and a hook drawn from inside a loop like that would not be the
+    // same hook twice.
+    const interfaceEditorRef = useTourAnchor( TOUR_ANCHORS.INTERFACE_EDITOR_NAV );
+
     const logoutCommand = useCommand( "Dashboard/Auth/Logout" );
     const clearSelectedGuildCommand = useCommand( "Dashboard/Auth/ClearSelectedGuild" );
 
@@ -89,6 +98,7 @@ export function Sidebar() {
                 { visibleNavItems.map( ( item ) => (
                     <NavLink
                         key={ item.path }
+                        ref={ INTERFACE_EDITOR_PATH === item.path ? interfaceEditorRef : undefined }
                         to={ item.path }
                         className={ ( { isActive } ) =>
                             `flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-colors ${

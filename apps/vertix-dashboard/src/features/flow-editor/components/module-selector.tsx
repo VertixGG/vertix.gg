@@ -1,5 +1,8 @@
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 
+import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
+import { TOUR_ANCHORS } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
+
 import type { ModuleInfo } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
 
@@ -19,6 +22,8 @@ export function ModuleSelector() {
 
     const selectModule = useCommand( "Dashboard/FlowEditor/SelectModule" );
 
+    const moduleSelectRef = useTourAnchor( TOUR_ANCHORS.MODULE_SELECT );
+
     const handleSelect = ( moduleName: string | null ) => {
         selectModule.run( { moduleName } );
     };
@@ -29,6 +34,7 @@ export function ModuleSelector() {
                 Select Module
             </label>
             <select
+                ref={ moduleSelectRef }
                 value={ state.selectedModule || "" }
                 onChange={ ( e ) => handleSelect( e.target.value || null ) }
                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"

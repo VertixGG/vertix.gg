@@ -1,5 +1,7 @@
 import { useEditorScope } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-scope";
 import { ScopePicker } from "@vertix.gg/dashboard/src/features/flow-editor/components/scope-picker";
+import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
+import { TOUR_ANCHORS } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
 
 import type { ScopeOption } from "@vertix.gg/dashboard/src/features/flow-editor/components/scope-picker";
 import type { DynamicMasterChannelInfo } from "@vertix.gg/dashboard/src/features/generators/types";
@@ -27,6 +29,8 @@ function generatorName( generator: DynamicMasterChannelInfo ): string {
 export function ScopeSelector( { selectedModule }: { selectedModule: string | null } ) {
     const { isScopable, available, masterChannelId, select } = useEditorScope( selectedModule );
 
+    const scopeRef = useTourAnchor( TOUR_ANCHORS.EDITOR_SCOPE );
+
     if ( ! isScopable ) {
         return null;
     }
@@ -36,5 +40,12 @@ export function ScopeSelector( { selectedModule }: { selectedModule: string | nu
         label: generatorName( generator )
     } ) );
 
-    return <ScopePicker options={ options } value={ masterChannelId } onChange={ select } />;
+    // Wrapped so the picker can say it is here, which is only true on a server that has something
+    // to narrow to - the header's own box is drawn either way and would claim to be a picker that
+    // this server never got.
+    return (
+        <div ref={ scopeRef }>
+            <ScopePicker options={ options } value={ masterChannelId } onChange={ select } />
+        </div>
+    );
 }

@@ -5,6 +5,8 @@ import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 import { Search, X } from "lucide-react";
 
 import { MINIMAP_COLORS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
+import { useTourAnchor } from "@vertix.gg/dashboard/src/features/onboarding/hooks/use-tour-anchor";
+import { entityListAnchor } from "@vertix.gg/dashboard/src/features/onboarding/lib/tour-anchors";
 import { computeReachableFlows } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
@@ -16,6 +18,33 @@ interface EntityGroup {
     type: EntityType;
     color: string;
     items: string[];
+}
+
+interface EntityListItemProps {
+    name: string;
+    onSelect: () => void;
+}
+
+/**
+ * Function EntityListItem() :: One row, which is also one thing on the screen able to say what it
+ * is.
+ *
+ * A component of its own rather than markup inside the loop, because the row registers itself and
+ * a hook cannot be drawn from inside a list whose length is whatever the search box left behind.
+ */
+function EntityListItem( { name, onSelect }: EntityListItemProps ) {
+    const anchorRef = useTourAnchor( entityListAnchor( name ) );
+
+    return (
+        <div
+            ref={ anchorRef }
+            className="px-4 py-1.5 text-sm text-zinc-300 hover:bg-zinc-700/50 rounded cursor-pointer truncate"
+            title={ name }
+            onClick={ onSelect }
+        >
+            { name }
+        </div>
+    );
 }
 
 interface EntityListSelectedState {
@@ -148,14 +177,11 @@ export function EntityList() {
 
                         <div className="mt-1 space-y-0.5">
                             { group.items.map( ( item ) => (
-                                <div
+                                <EntityListItem
                                     key={ item }
-                                    className="px-4 py-1.5 text-sm text-zinc-300 hover:bg-zinc-700/50 rounded cursor-pointer truncate"
-                                    title={ item }
-                                    onClick={ () => handleEntitySelect( group.type, item ) }
-                                >
-                                    { item }
-                                </div>
+                                    name={ item }
+                                    onSelect={ () => handleEntitySelect( group.type, item ) }
+                                />
                             ) ) }
                         </div>
                     </div>

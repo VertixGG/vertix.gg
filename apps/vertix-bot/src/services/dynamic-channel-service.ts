@@ -29,7 +29,7 @@ import fetch from "cross-fetch";
 
 import { Routes } from "discord-api-types/v10";
 
-import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "discord.js";
+import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField, RESTJSONErrorCodes } from "discord.js";
 
 import { varsHasIndexPlaceholder, varsIndexAsAlpha, varsIndexAsRoman, varsReplaceTokens } from "@vertix.gg/base/src/utils/vars-utils";
 
@@ -116,6 +116,7 @@ import type {
     APIPartialChannel,
     Client,
     CommandInteraction,
+    DiscordAPIError,
     Guild,
     GuildChannel,
     GuildMember,
@@ -150,6 +151,24 @@ import type {
 } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
 import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
+
+/**
+ * The refusals that mean a logs channel is no good any more, rather than that this one send failed.
+ *
+ * A send can fail for reasons that say nothing about the channel - discord rate limiting us, discord
+ * having a bad minute, a request that never arrived, a payload it would not take. Every one of those
+ * used to read the same as the channel being gone, and the answer to the channel being gone is to
+ * unset the one the server configured. So a single bad second, once, turned a server's logging off
+ * for good and told nobody.
+ *
+ * Taken from discord's own enum rather than written as numbers, which is the other copy of `10003`
+ * in this repo.
+ */
+const LOGS_CHANNEL_UNUSABLE_ERRORS: number[] = [
+    RESTJSONErrorCodes.UnknownChannel,
+    RESTJSONErrorCodes.MissingAccess,
+    RESTJSONErrorCodes.MissingPermissions
+];
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
@@ -3446,12 +3465,25 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         const { masterChannelDB, logsChannel, embeds } = mapItem;
 
-        await logsChannel.send( { embeds } ).catch( async( err ) => {
-            this.logger.error( this.log, "", err );
+        await logsChannel.send( { embeds } ).catch( async( error: DiscordAPIError ) => {
+            this.logger.error( this.log, "", error );
+
+            if ( !LOGS_CHANNEL_UNUSABLE_ERRORS.includes( error?.code as number ) ) {
+                return;
+            }
+
+            this.logger.admin(
+                this.logEmbeds,
+                `❯❯ Unset log channel - masterChannelId: "${ masterChannelDB.channelId }" ` +
+                    `reason: "${ error.code }"`
+            );
 
             await MasterChannelDataManager.$.setChannelLogsChannel( masterChannelDB, null, false );
         } );
 
+        // Cleared whether or not it went. Held onto, a channel that keeps refusing would gather
+        // lines until the send carried more embeds than discord takes - which is the failure this
+        // whole path had until recently, and it would arrive back through the door it left by.
         mapItem.embeds = [];
     }
 

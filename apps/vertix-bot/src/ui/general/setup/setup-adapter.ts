@@ -1115,7 +1115,58 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 from: "ServerOptionsStaffRoles",
                 to: "ServerOptionsStaffRoles"
             } )
-            .addTransition( "ServerOptionsEditSelected", { from: "ServerOptions", to: "ServerOptions" } )
+            /*
+             * The one menu that leads to each of the server's settings, and the five ways it goes.
+             *
+             * Its handler switches on the option picked and opens that screen itself, so the menu
+             * is bound to a single transition and these five say where the options actually lead -
+             * a pairing the flow otherwise lost, leaving four screens with nothing declaring a way
+             * in. They are declared above the bound one because a branch carrying a rule is read
+             * before the one carrying none. The bot reads none of this.
+             *
+             * The roles step puts the same menu up showing three of the five, which is why those
+             * three leave from it as well.
+             */
+            .addTransition( "OpenVoiceRole", {
+                from: [ "ServerOptions", "ServerOptionsRoles" ],
+                to: "ServerOptionsVoiceRole",
+                triggeredByElement: "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+                previewCondition: { field: "serverOption", operator: "equals", value: EDIT_VOICE_ROLE }
+            } )
+            .addTransition( "OpenVerifiedRoles", {
+                from: [ "ServerOptions", "ServerOptionsRoles" ],
+                to: "ServerOptionsVerifiedRoles",
+                triggeredByElement: "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+                previewCondition: { field: "serverOption", operator: "equals", value: EDIT_VERIFIED_ROLES }
+            } )
+            .addTransition( "OpenStaffRoles", {
+                from: [ "ServerOptions", "ServerOptionsRoles" ],
+                to: "ServerOptionsStaffRoles",
+                triggeredByElement: "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+                previewCondition: { field: "serverOption", operator: "equals", value: EDIT_STAFF_ROLES }
+            } )
+            .addTransition( "OpenBadwords", {
+                from: "ServerOptions",
+                to: "ServerOptionsBadwords",
+                triggeredByElement: "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+                previewCondition: { field: "serverOption", operator: "equals", value: EDIT_BADWORDS }
+            } )
+            .addTransition( "OpenClaim", {
+                from: "ServerOptions",
+                to: "Claim",
+                triggeredByElement: "VertixBot/UI-General/ServerOptionsEditSelectMenu",
+                previewCondition: { field: "serverOption", operator: "equals", value: EDIT_CLAIM }
+            } )
+            /*
+             * Nothing picked. The menu takes an empty answer as readily as a chosen one - it asks
+             * for no minimum - and then the screen that was already there is what is left. This is
+             * the transition the menu is bound to, and it carries no rule, so it is also the branch
+             * taken when none of the five above match.
+             */
+            .addTransition( "ServerOptionsEditSelected", {
+                from: [ "ServerOptions", "ServerOptionsRoles" ],
+                to: "ServerOptions"
+            } )
             .addTransition( "ServerOptionsBack", {
                 from: [
                     "ServerOptionsVoiceRole",
@@ -1142,7 +1193,11 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 to: "ServerOptionsBadwords"
             } )
             .addTransition( "ClaimReset", { from: "Claim", to: "Claim" } )
-            .addTransition( "ServerOptionsDone", { from: "ServerOptions", to: "Initial" } )
+            // Done sits on the roles step too, the elements group being the same one.
+            .addTransition( "ServerOptionsDone", {
+                from: [ "ServerOptions", "ServerOptionsRoles" ],
+                to: "Initial"
+            } )
             .addTransition( "SubmitScalingConfig", { from: "Initial", to: "Initial" } )
             .addTransition( "SelectClaimOption", { from: "Claim", to: "Claim" } )
             .addTransition( "SubmitClaimTimeout", { from: "Claim", to: "Claim" } )

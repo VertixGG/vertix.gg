@@ -10520,7 +10520,10 @@
                                             "vars"
                                         ]
                                     }
-                                ]
+                                ],
+                                "endTime": {
+                                    "source": "(args) => new Date(Date.now() + (args.rateLimitRetryAfter || 30000) * 1000)"
+                                }
                             }
                         }
                     }

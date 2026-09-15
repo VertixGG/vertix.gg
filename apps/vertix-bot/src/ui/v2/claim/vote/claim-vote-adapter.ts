@@ -196,9 +196,9 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<VoiceChannel, DefaultIntera
                 // TODO: Dedicated method
                 const args = await getAllArgs( context, interaction );
 
-                DynamicChannelClaimManager.get( "VertixBot/UI-V2/DynamicChannelClaimManager" ).unmarkChannelAsClaimable(
-                    interaction.channel
-                );
+                await DynamicChannelClaimManager.get(
+                    "VertixBot/UI-V2/DynamicChannelClaimManager"
+                ).unmarkChannelAsClaimable( interaction.channel );
 
                 await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" ).editChannelOwner(
                     args.userWonId,

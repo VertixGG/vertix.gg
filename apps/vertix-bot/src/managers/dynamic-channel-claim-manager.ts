@@ -6,6 +6,8 @@ import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manage
 
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
+import { DynamicChannelClaimStateModel } from "@vertix.gg/data/src/models/channel/dynamic-channel-claim-state-model";
+
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
@@ -390,12 +392,19 @@ export class DynamicChannelClaimManager extends InitializeBase {
         await this.ensureGuildTimer( guildId );
     }
 
-    public async addChannelTracking( owner: GuildMember, channel: VoiceBasedChannel ) {
+    /**
+     * Function addChannelTracking() :: Starts the wait on a room whose owner has gone.
+     *
+     * `abandonedAt` is when the owner actually left, which is the caller's to know: a room picked
+     * back up on startup left long before this process existed, and handing it `Date.now()` would
+     * restart a wait it may already have served.
+     */
+    public async addChannelTracking( owner: GuildMember, channel: VoiceBasedChannel, abandonedAt = Date.now() ) {
         // Check if channel supports "Claim Channel".
         const trackingData = {
             owner,
             channel,
-            timestamp: Date.now()
+            timestamp: abandonedAt
         };
 
         this.logger.info(
@@ -404,6 +413,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
         );
 
         this.trackedChannels[ channel.id ] = trackingData;
+
+        await this.rememberClaimState( channel, abandonedAt, false );
 
         await this.ensureGuildTimer( channel.guildId );
     }
@@ -455,22 +466,73 @@ export class DynamicChannelClaimManager extends InitializeBase {
         this.clearGuildTimerWhenEmpty( channel.guildId );
     }
 
-    public markChannelAsClaimable( channel: VoiceBasedChannel ) {
+    /**
+     * Function markChannelAsClaimable() :: Ends the wait and opens the room to whoever wants it.
+     *
+     * `abandonedAt` is carried through rather than dropped, so a room restored after a restart can
+     * be told apart from one abandoned a moment ago - and so the record keeps meaning the same
+     * thing in both phases.
+     */
+    public async markChannelAsClaimable( channel: VoiceBasedChannel, abandonedAt: number ) {
         this.debugger.log(
             this.markChannelAsClaimable,
             `Guild Id: '${ channel.guildId }', channel id: '${ channel.id }' - Marking channel as claimable.`
         );
 
         this.claimableChannels[ channel.id ] = channel;
+
+        await this.rememberClaimState( channel, abandonedAt, true );
     }
 
-    public unmarkChannelAsClaimable( channel: VoiceBasedChannel ) {
+    public async unmarkChannelAsClaimable( channel: VoiceBasedChannel ) {
         this.debugger.log(
             this.unmarkChannelAsClaimable,
             `Guild Id: '${ channel.guildId }', channel id: '${ channel.id }' - Unmarking channel as claimable.`
         );
 
         delete this.claimableChannels[ channel.id ];
+
+        await this.forgetClaimState( channel );
+    }
+
+    /**
+     * Function rememberClaimState() :: Writes down where a room is in the claim lifecycle.
+     *
+     * Every transition goes through here rather than each one reaching for the model, so the one
+     * record cannot be written in two shapes - and so a manager that does not own the channel
+     * never writes at all.
+     */
+    private async rememberClaimState( channel: VoiceBasedChannel, abandonedAt: number, isClaimable: boolean ) {
+        const channelDB = await ChannelModel.$.getByChannelId( channel.id );
+
+        if ( !channelDB ) {
+            return;
+        }
+
+        await DynamicChannelClaimStateModel.$.setState( channelDB.id, {
+            channelId: channel.id,
+            abandonedAt,
+            isClaimable
+        } ).catch( ( error: unknown ) => this.logger.error( this.rememberClaimState, "", error ) );
+    }
+
+    /**
+     * Function forgetClaimState() :: Drops the record of a room that has left the lifecycle.
+     *
+     * Called where it genuinely ends - the owner came back, somebody took it over, the room
+     * emptied - and not when tracking merely turns into claimability, which is the same room
+     * moving on rather than finishing.
+     */
+    private async forgetClaimState( channel: VoiceBasedChannel ) {
+        const channelDB = await ChannelModel.$.getByChannelId( channel.id );
+
+        if ( !channelDB ) {
+            return;
+        }
+
+        await DynamicChannelClaimStateModel.$.removeState( channelDB.id ).catch( ( error: unknown ) =>
+            this.logger.error( this.forgetClaimState, "", error )
+        );
     }
 
     public isOwnerTracked( ownerId: string ) {
@@ -542,15 +604,36 @@ export class DynamicChannelClaimManager extends InitializeBase {
                     continue;
                 }
 
-                // If it startup process, remove old "Claim Channel" button.
-                // TODO: Not good place for this.
-                if ( !this.hasHandledAbandonedChannels ) {
-                    // Remove old "Claim Channel" button.
-                    await this.adapters.claimStartAdapter().deleteRelatedComponentMessagesInternal( channel );
-                }
+                const storedState = await DynamicChannelClaimStateModel.$.getState( channelDB.id );
+
+                // Check if member is in channel.
+                const member = ( channel as GuildChannel ).members.get( channelDB.userOwnerId );
+
+                /**
+                 * A room already offering itself keeps the message it is offering itself with: the
+                 * press is answered out of the interaction rather than out of anything this process
+                 * was holding, so a message written by the run before this one still works. Every
+                 * other standing claim message is a leftover from a run that ended mid-wait, and
+                 * those are still swept.
+                 */
+                const isStillClaimable = !!storedState?.isClaimable && !member;
 
                 if ( !( await this.isClaimButtonEnabled( channel ) ) ) {
                     continue;
+                }
+
+                /**
+                 * If it startup process, remove old "Claim Channel" button.
+                 * TODO: Not good place for this.
+                 *
+                 * Behind the gate above rather than in front of it, because sweeping reads the
+                 * channel's messages over the api and a guild runs both interface versions' managers
+                 * at once - in front, every dynamic channel there is got fetched twice on every
+                 * start, once by the manager that does not own it and finds nothing of its own.
+                 */
+                if ( !this.hasHandledAbandonedChannels && !isStillClaimable ) {
+                    // Remove old "Claim Channel" button.
+                    await this.adapters.claimStartAdapter().deleteRelatedComponentMessagesInternal( channel );
                 }
 
                 // Check if channel vote is idle.
@@ -564,19 +647,32 @@ export class DynamicChannelClaimManager extends InitializeBase {
                     continue;
                 }
 
-                // Check if member is in channel.
-                const member = ( channel as GuildChannel ).members.get( channelDB.userOwnerId );
-
                 if ( member ) {
                     this.logger.log(
                         this.handleAbandonedChannels,
                         `Guild id: '${ guild.id }', channel id: '${ channelDB.channelId }' - Owner id: '${ channelDB.userOwnerId }' is not abandoned!`
                     );
+
+                    // The owner came back while nothing was running to notice, so the lifecycle
+                    // this record describes is over.
+                    if ( storedState ) {
+                        await this.forgetClaimState( channel as VoiceBasedChannel );
+                    }
+
+                    continue;
+                }
+
+                if ( isStillClaimable ) {
+                    await this.markChannelAsClaimable( channel as VoiceBasedChannel, storedState!.abandonedAt );
+
                     continue;
                 }
 
                 // Get member from guild.
-                const owner = await guild.members.fetch( channelDB.userOwnerId );
+                // Caught rather than thrown: an owner who has since left the guild is not found at
+                // all, and on startup this walks every dynamic channel there is - one departed
+                // owner would otherwise end the sweep, and with it every room after them.
+                const owner = await guild.members.fetch( channelDB.userOwnerId ).catch( () => undefined );
 
                 if ( !owner ) {
                     this.logger.error(
@@ -586,7 +682,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
                     continue;
                 }
 
-                await this.addChannelTracking( owner, channel as VoiceBasedChannel );
+                await this.addChannelTracking( owner, channel as VoiceBasedChannel, storedState?.abandonedAt );
             }
         };
 
@@ -639,7 +735,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
                     await claimStartAdapter().deletedStartedMessagesInternal( interaction.channel );
 
-                    this.unmarkChannelAsClaimable( interaction.channel );
+                    await this.unmarkChannelAsClaimable( interaction.channel );
 
                     dynamicChannelService.editPrimaryMessageDebounce( interaction.channel as VoiceChannel );
 
@@ -949,7 +1045,7 @@ export class DynamicChannelClaimManager extends InitializeBase {
             }
 
             // Send claim message.
-            this.markChannelAsClaimable( channel );
+            await this.markChannelAsClaimable( channel, timestamp );
 
             this.dynamicChannelService.editPrimaryMessageDebounce( channel as VoiceChannel );
 
@@ -1044,8 +1140,20 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         const claimChannelButtonId = this.dynamicChannelClaimButtonId;
 
-        // Check if claim button is enabled.
-        if ( !claimChannelButtonId || claimChannelButtonId in enabledButtons ) {
+        /**
+         * `includes` rather than `in`: the set is a list of button ids, and `in` asks an array
+         * about its indices instead. v2 numbers its buttons, so its claim id - `7` - matched
+         * whenever the stored set happened to hold eight or more, which the default does; v3 names
+         * its buttons, so `claim-button` was never an index and matched nothing at all. Claiming
+         * has therefore been off for every v3 generator, and for any v2 one curated down to fewer
+         * than eight buttons.
+         *
+         * Asking the right question also separates the versions the way this was meant to: a
+         * generator stores ids of its own version only, so the manager whose id is missing from the
+         * set is the one that does not own that channel, and it now declines rather than matching
+         * by accident.
+         */
+        if ( !claimChannelButtonId || enabledButtons.includes( claimChannelButtonId ) ) {
             return true;
         }
 
@@ -1057,8 +1165,19 @@ export class DynamicChannelClaimManager extends InitializeBase {
         return false;
     }
 
-    private async onBotReady( _client: Client ) {
-        // await this.handleAbandonedChannels(client);
+    /**
+     * Function onBotReady() :: Picks the claim lifecycle back up where the last run left it.
+     *
+     * The sweep it runs has always known how to do this - it reads the abandoned rooms out of the
+     * database rather than out of anything held in memory - but nothing called it on startup, so a
+     * room whose owner left before a restart was simply never watched again. With pm2 restarting
+     * the process on any uncaught error, that made losing a room the ordinary case rather than the
+     * rare one.
+     */
+    private async onBotReady( client: Client ) {
+        await this.handleAbandonedChannels( client ).catch( ( error: unknown ) =>
+            this.logger.error( this.onBotReady, "", error )
+        );
     }
 
     private async onOwnerJoinDynamicChannel( owner: GuildMember, channel: VoiceBasedChannel ) {
@@ -1066,6 +1185,8 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         if ( "idle" === state ) {
             this.removeChannelOwnerTracking( owner.id, channel.id );
+
+            await this.unmarkChannelAsClaimable( channel );
 
             await this.adapters.claimStartAdapter().deletedStartedMessagesInternal( channel );
         }
@@ -1084,6 +1205,11 @@ export class DynamicChannelClaimManager extends InitializeBase {
         _args: IChannelLeaveGenericArgs
     ) {
         this.removeChannelOwnerTracking( channel.id );
+
+        // An emptied room is deleted, so the record has to go with it - the sweep on the next
+        // startup reads these before it reads discord, and one left behind describes a room that
+        // is not there.
+        await this.forgetClaimState( channel );
     }
 
     private async onUpdateChannelOwnership(

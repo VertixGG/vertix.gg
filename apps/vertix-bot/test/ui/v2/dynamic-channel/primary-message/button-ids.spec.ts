@@ -37,6 +37,9 @@ async function loadGroups() {
 
 const nameOf = ( button: ButtonLike ) => ( button.constructor as unknown as { getName(): string } ).getName();
 
+/** The claim button's shared id, which is also the id v3 stores it under. */
+const CLAIM_SHARED_ID = "claim-button";
+
 /**
  * `V2_BUTTONS` is the one place the two interfaces are joined, and every fact in it belongs to a
  * button class somewhere else: the element's name and number to the v2 button, the shared id to
@@ -85,6 +88,27 @@ describe( "VertixBot/Definitions/ButtonIds", () => {
         V2_BUTTONS
             .filter( ( button ) => ! V2_ONLY.includes( button.shared ) )
             .forEach( ( button ) => expect( v3Ids.has( button.shared ) ).toBe( true ) );
+    } );
+
+    /**
+     * `isClaimButtonEnabled()` decides whether a room may ever be offered to somebody else, and it
+     * decides by looking for this id in the generator's stored set. Nothing else in the claim path
+     * runs if it says no, and it says no in silence - no room is watched, no claim message is sent,
+     * and the button on the panel simply draws greyed.
+     *
+     * So the id it looks for is held against the buttons that actually exist. Renaming or
+     * renumbering the claim button of either version fails here rather than turning claiming off
+     * for every server on that version.
+     */
+    it( "carries the claim button in both sets, addressed the way each version stores it", async() => {
+        const { v2Buttons, v3Buttons } = await loadGroups();
+
+        const v2ClaimId = V2_BUTTONS.find( ( button ) => CLAIM_SHARED_ID === button.shared )?.id;
+
+        expect( v2ClaimId ).toBeDefined();
+
+        expect( v2Buttons.map( ( button ) => String( button.getId() ) ) ).toContain( v2ClaimId );
+        expect( v3Buttons.map( ( button ) => String( button.getId() ) ) ).toContain( CLAIM_SHARED_ID );
     } );
 
     /**

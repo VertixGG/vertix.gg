@@ -213,9 +213,9 @@ const ClaimVoteAdapter = new ExecutionAdapterBuilder<
             case "VertixBot/UI-V3/ClaimVoteWon":
                 const args = await getAllArgs( context, interaction );
 
-                DynamicChannelClaimManager.get( "VertixBot/UI-V3/DynamicChannelClaimManager" ).unmarkChannelAsClaimable(
-                    interaction.channel
-                );
+                await DynamicChannelClaimManager.get(
+                    "VertixBot/UI-V3/DynamicChannelClaimManager"
+                ).unmarkChannelAsClaimable( interaction.channel );
 
                 await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" ).editChannelOwner(
                     args.userWonId,

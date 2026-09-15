@@ -65,9 +65,16 @@ async function answeredBecauseNotInAServer( interaction: CommandInteraction<"cac
  * reasons Discord cannot see: who owns the channel the caller is standing in, and whether they are
  * standing in one at all. Declaring a permission for those would hide the command from members who
  * are allowed to run it.
+ *
+ * `null`, and never `undefined`, for those. They are not the same thing to discord.js, which reads
+ * this as `defaultMemberPermissions !== null ? new PermissionsBitField( value ).bitfield : value` -
+ * and `new PermissionsBitField( undefined ).bitfield` is `0n`. A command registered with `"0"` is
+ * one discord shows to administrators and nobody else, so `undefined` here quietly did the exact
+ * thing this function exists to avoid: `/voice`, `/help` and `/welcome` were invisible to every
+ * ordinary member, while an admin testing it saw all of them and found nothing wrong.
  */
-function getDeclaredPermissions( tier: TCommandTier ): PermissionResolvable[] | undefined {
-    return COMMAND_TIERS.ADMIN === tier ? [ DEFAULT_SETUP_PERMISSIONS ] : undefined;
+function getDeclaredPermissions( tier: TCommandTier ): PermissionResolvable[] | null {
+    return COMMAND_TIERS.ADMIN === tier ? [ DEFAULT_SETUP_PERMISSIONS ] : null;
 }
 
 /**
@@ -121,7 +128,7 @@ export function createCommandGroup( group: ICommandGroupDefinition ): ICommand {
         description: group.description,
         type: ApplicationCommandType.ChatInput,
 
-        defaultMemberPermissions: isAdminThroughout ? getDeclaredPermissions( COMMAND_TIERS.ADMIN ) : undefined,
+        defaultMemberPermissions: isAdminThroughout ? getDeclaredPermissions( COMMAND_TIERS.ADMIN ) : null,
         contexts: WHERE_COMMANDS_WORK,
 
         options: group.subcommands.map( ( subcommand ) => ( {

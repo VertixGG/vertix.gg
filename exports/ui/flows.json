@@ -33,6 +33,11 @@
                             "targetState": "VertixBot/UI-General/FeedbackFlow/States/Default",
                             "executionStep": "default"
                         }
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-General/FeedbackFlow/Handlers/ModalButton/VertixBot/UI-General/FeedbackReportButton",
+                        "sourceEntity": "VertixBot/UI-General/FeedbackReportButton::VertixBot/UI-General/FeedbackReportModal",
+                        "handlerKind": "modal-button"
                     }
                 ]
             },
@@ -49,6 +54,11 @@
                             "targetState": "VertixBot/UI-General/FeedbackFlow/States/Default",
                             "executionStep": "default"
                         }
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-General/FeedbackFlow/Handlers/ModalButton/VertixBot/UI-General/FeedbackSuggestionButton",
+                        "sourceEntity": "VertixBot/UI-General/FeedbackSuggestionButton::VertixBot/UI-General/FeedbackModal",
+                        "handlerKind": "modal-button"
                     }
                 ]
             },
@@ -65,32 +75,13 @@
                             "targetState": "VertixBot/UI-General/FeedbackFlow/States/Default",
                             "executionStep": "default"
                         }
-                    }
-                ]
-            },
-            {
-                "from": "VertixBot/UI-General/FeedbackFlow/States/Default",
-                "to": "VertixBot/UI-General/FeedbackFlow/States/Default",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-General/FeedbackFlow/Handlers/ModalButton/VertixBot/UI-General/FeedbackReportButton",
-                        "sourceEntity": "VertixBot/UI-General/FeedbackReportButton::VertixBot/UI-General/FeedbackReportModal",
-                        "handlerKind": "modal-button"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-General/FeedbackFlow/Handlers/ModalButton/VertixBot/UI-General/FeedbackSuggestionButton",
-                        "sourceEntity": "VertixBot/UI-General/FeedbackSuggestionButton::VertixBot/UI-General/FeedbackModal",
-                        "handlerKind": "modal-button"
                     },
                     {
                         "handlerId": "VertixBot/UI-General/FeedbackFlow/Handlers/ModalButton/VertixBot/UI-General/FeedbackInviteDeveloperButton",
                         "sourceEntity": "VertixBot/UI-General/FeedbackInviteDeveloperButton::VertixBot/UI-General/FeedbackInviteDeveloperModal",
                         "handlerKind": "modal-button"
                     }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
+                ]
             }
         ],
         "requiredData": [],
@@ -4647,6 +4638,11 @@
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
                             "executionStep": "default"
                         }
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-General/DeleteButton",
+                        "sourceEntity": "VertixBot/UI-General/DeleteButton::VertixBot/UI-General/DeleteConfirmModal",
+                        "handlerKind": "modal-button"
                     }
                 ]
             },
@@ -4935,6 +4931,11 @@
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
                             "executionStep": "VertixBot/UI-V2/SetupEditLfmChannels"
                         }
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-V2/SetupEditLfmTimingsButton",
+                        "sourceEntity": "VertixBot/UI-V2/SetupEditLfmTimingsButton::VertixBot/UI-V2/SetupEditLfmTimingsModal",
+                        "handlerKind": "modal-button"
                     }
                 ]
             },
@@ -5049,25 +5050,6 @@
                         }
                     }
                 ]
-            },
-            {
-                "from": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
-                "to": "VertixBot/UI-V2/SetupEditFlow/States/SelectMaster",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-V2/SetupEditLfmTimingsButton",
-                        "sourceEntity": "VertixBot/UI-V2/SetupEditLfmTimingsButton::VertixBot/UI-V2/SetupEditLfmTimingsModal",
-                        "handlerKind": "modal-button"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/ModalButton/VertixBot/UI-General/DeleteButton",
-                        "sourceEntity": "VertixBot/UI-General/DeleteButton::VertixBot/UI-General/DeleteConfirmModal",
-                        "handlerKind": "modal-button"
-                    }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
             }
         ],
         "requiredData": [],
@@ -5213,6 +5195,11 @@
                             "targetState": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step1",
                             "executionStep": "VertixBot/UI-V2/SetupStep1Component"
                         }
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/ModalButton/VertixBot/UI-General/ChannelNameTemplateEditButton",
+                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateEditButton::VertixBot/UI-General/ChannelNameTemplateModal",
+                        "handlerKind": "modal-button"
                     }
                 ]
             },
@@ -5369,20 +5356,6 @@
                 "name": "VertixBot/UI-V2/SetupNewWizardFlow/Transitions/ShowError",
                 "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step3",
                 "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Error"
-            },
-            {
-                "from": "VertixBot/UI-V2/SetupNewWizardFlow/States/Default",
-                "to": "VertixBot/UI-V2/SetupNewWizardFlow/States/Default",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/ModalButton/VertixBot/UI-General/ChannelNameTemplateEditButton",
-                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateEditButton::VertixBot/UI-General/ChannelNameTemplateModal",
-                        "handlerKind": "modal-button"
-                    }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
             }
         ],
         "requiredData": [],
@@ -8415,6 +8388,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -8479,6 +8457,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -8522,25 +8505,6 @@
                     }
                 ],
                 "previewDeletesReply": true
-            },
-            {
-                "from": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/Confirm",
-                "to": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/States/Confirm",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditTitleModal",
-                        "handlerKind": "modal-button"
-                    },
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionEditButton::VertixBot/UI-V3/DynamicChannelPrimaryMessageEditDescriptionModal",
-                        "handlerKind": "modal-button"
-                    }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
             }
         ],
         "requiredData": [],
@@ -9757,6 +9721,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -9789,6 +9758,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -9821,6 +9795,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -9853,6 +9832,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -9885,6 +9869,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -9991,20 +9980,6 @@
                         }
                     }
                 ]
-            },
-            {
-                "from": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/Entry",
-                "to": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/Entry",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
-                        "handlerKind": "modal-button"
-                    }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
             }
         ],
         "requiredData": [],
@@ -10421,6 +10396,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesCommandFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -10453,6 +10433,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesCommandFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -10485,6 +10470,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesCommandFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -10517,6 +10507,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesCommandFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -10549,6 +10544,11 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesCommandFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
+                        "handlerKind": "modal-button"
                     }
                 ],
                 "mutations": [
@@ -10639,20 +10639,6 @@
                         }
                     }
                 ]
-            },
-            {
-                "from": "VertixBot/UI-V3/DynamicChannelTemplatesCommandFlow/States/Default",
-                "to": "VertixBot/UI-V3/DynamicChannelTemplatesCommandFlow/States/Default",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/DynamicChannelTemplatesCommandFlow/Handlers/ModalButton/VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
-                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton::VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
-                        "handlerKind": "modal-button"
-                    }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
             }
         ],
         "requiredData": [],
@@ -12094,6 +12080,11 @@
                             "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step1",
                             "executionStep": "VertixBot/UI-V3/SetupStep1Component"
                         }
+                    },
+                    {
+                        "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/ModalButton/VertixBot/UI-General/ChannelNameTemplateEditButton",
+                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateEditButton::VertixBot/UI-General/ChannelNameTemplateModal",
+                        "handlerKind": "modal-button"
                     }
                 ]
             },
@@ -12250,20 +12241,6 @@
                 "name": "VertixBot/UI-V3/SetupNewWizardFlow/Transitions/ShowError",
                 "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3",
                 "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Error"
-            },
-            {
-                "from": "VertixBot/UI-V3/SetupNewWizardFlow/States/Default",
-                "to": "VertixBot/UI-V3/SetupNewWizardFlow/States/Default",
-                "triggeredBy": [
-                    {
-                        "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/ModalButton/VertixBot/UI-General/ChannelNameTemplateEditButton",
-                        "sourceEntity": "VertixBot/UI-General/ChannelNameTemplateEditButton::VertixBot/UI-General/ChannelNameTemplateModal",
-                        "handlerKind": "modal-button"
-                    }
-                ],
-                "options": {
-                    "isModalTrigger": true
-                }
             }
         ],
         "requiredData": [],

@@ -17,7 +17,6 @@ import {
 import {
     findButtonFlowConnections,
     findButtonModalConnections,
-    inferButtonModalConnections,
     getFlowStateComponents,
     getInitialComponent
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
@@ -130,7 +129,12 @@ class WizardAnalyzer {
 class PreviewResolver {
     public static resolve( component: UIExportedComponent, options?: FlowStateComponent[ "options" ], previewEmbedsGroup?: string ): ComponentPreview {
         const executionStep = typeof options?.[ "executionStep" ] === "string" ? options[ "executionStep" ] : undefined;
-        const compPreview = extractComponentPreview( component, executionStep, previewEmbedsGroup );
+        const compPreview = extractComponentPreview(
+            component,
+            executionStep,
+            previewEmbedsGroup,
+            this.getPreviewElementsGroup( options )
+        );
         const defaultVars = this.getDefaultVars( options, compPreview.embedDefinition );
 
         if ( !compPreview.embed ) {
@@ -149,6 +153,12 @@ class PreviewResolver {
 
     public static getPreviewEmbedsGroup( options?: FlowStateComponent[ "options" ] ): string | undefined {
         const group = options?.[ "previewEmbedsGroup" ];
+        return typeof group === "string" && group.trim().length ? group.trim() : undefined;
+    }
+
+    /** The controls this state draws, where it names a group of its own. */
+    public static getPreviewElementsGroup( options?: FlowStateComponent[ "options" ] ): string | undefined {
+        const group = options?.[ "previewElementsGroup" ];
         return typeof group === "string" && group.trim().length ? group.trim() : undefined;
     }
 
@@ -1089,7 +1099,25 @@ class MultiStateFlowBuilder {
                     ? `${ condition.field } = ${ condition.value ?? condition.operator }`
                     : undefined;
 
-            this.addEdge( createDeclaredTransitionEdge( sourceId, targetId, from, to, triggerName, outcomeCondition, isBackEdge ) );
+            /*
+             * Left from the control that fires it, where that control is drawn on this screen.
+             *
+             * Where it is not - a move the bot makes on its own, or a control belonging to a screen
+             * this one only stands in for - the screen's own handle at the bottom, rather than
+             * leaving react flow to pick one of the buttons and point the line at the wrong thing.
+             *
+             * Only for a screen. A modal standing in for one has no button handles to choose badly
+             * between, and naming one it does not have would draw nothing at all.
+             */
+            const leavesAScreen = Boolean( this.context.stateKeyToCompId.get( from ) ),
+                firesFromElement = trigger
+                    && ( this.context.stateKeyToElementRows.get( from ) ?? [] ).flat()
+                        .some( ( element ) => element.name === trigger ),
+                sourceHandle = leavesAScreen
+                    ? ( firesFromElement ? `btn-${ trigger }` : "bottom" )
+                    : undefined;
+
+            this.addEdge( createDeclaredTransitionEdge( sourceId, targetId, from, to, triggerName, outcomeCondition, isBackEdge, sourceHandle ) );
         } );
     }
 
@@ -1195,19 +1223,26 @@ class MultiStateFlowBuilder {
     }
 
     private getModalConnections( stateComp: FlowStateComponent, compPreview: ComponentPreview ): ButtonModalConnection[] {
-        const componentButtons = compPreview.elementRows.flat().map( el => el.name );
-        let connections = findButtonModalConnections( this.context.flow, compPreview.modals, stateComp.transitions );
+        const connections = findButtonModalConnections( this.context.flow, compPreview.modals, stateComp.stateKey );
 
-        if ( !connections.length && compPreview.modals.length > 0 ) {
-            const stateConnections = this.findStateModalConnections( stateComp.stateKey, compPreview.modals );
-            if ( stateConnections.length > 0 ) {
-                connections = stateConnections;
-            } else if ( !stateComp.transitions?.length ) {
-                connections = inferButtonModalConnections( componentButtons, compPreview.modals );
-            }
+        if ( connections.length || ! compPreview.modals.length ) {
+            return connections;
         }
 
-        return connections;
+        /*
+         * Nothing declared says this screen opens a modal, so the moves out of it are read again
+         * for a button and a modal fired together.
+         *
+         * What used to follow this was a guess: a screen with no moves of its own had its
+         * component's modals matched against its buttons by name, and whatever the names had in
+         * common was drawn as though the flow had said it. A wizard's "too many generators" and
+         * "something went wrong" screens both came out offering to edit a channel name template,
+         * which neither of them does and nothing ever claimed they did.
+         *
+         * Taken away it costs nothing: every screen that truly offers a modal is named by a
+         * declaration, and those two stop saying otherwise.
+         */
+        return this.findStateModalConnections( stateComp.stateKey, compPreview.modals );
     }
 
     private findStateModalConnections( stateKey: string, componentModals: string[] ): ButtonModalConnection[] {
@@ -1316,17 +1351,12 @@ class SingleComponentFlowBuilder {
         this.flowIdMap = flowIdMap;
     }
 
-    public build( initialComp: UIExportedComponent, stateKey?: string, stateTransitions?: string[], stateOptions?: FlowStateComponent[ "options" ] ): void {
+    public build( initialComp: UIExportedComponent, stateKey?: string, stateOptions?: FlowStateComponent[ "options" ] ): void {
         const previewEmbedsGroup = PreviewResolver.getPreviewEmbedsGroup( stateOptions );
         const compPreview = PreviewResolver.resolve( initialComp, stateOptions, previewEmbedsGroup );
         const compId = `comp-${ this.flow.name }-${ initialComp.name }`;
 
-        const componentButtons = compPreview.elementRows.flat().map( el => el.name );
-        let buttonModalConnections = findButtonModalConnections( this.flow, compPreview.modals, stateTransitions );
-
-        if ( !buttonModalConnections.length && compPreview.modals.length > 0 && !stateTransitions?.length ) {
-            buttonModalConnections = inferButtonModalConnections( componentButtons, compPreview.modals );
-        }
+        const buttonModalConnections = findButtonModalConnections( this.flow, compPreview.modals, stateKey );
 
         const buttonFlowConnections = findButtonFlowConnections( this.flow );
         const { buttonModalTriggers, buttonFlowTriggers } = TriggerBuilder.build( buttonModalConnections, buttonFlowConnections, compPreview.elementRows );
@@ -1633,11 +1663,10 @@ class FlowGraphBuilder {
         }
 
         const stateKey = stateComponents[ 0 ]?.stateKey;
-        const stateTransitions = stateComponents[ 0 ]?.transitions;
         const stateOptions = stateComponents[ 0 ]?.options;
 
         new SingleComponentFlowBuilder( this.allNodes, e => this.addEdge( e ), flow, flowId, this.flowIdMap )
-            .build( initialComp, stateKey, stateTransitions, stateOptions );
+            .build( initialComp, stateKey, stateOptions );
     }
 
     private buildSystemFlowTransitions(): void {

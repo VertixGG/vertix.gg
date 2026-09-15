@@ -236,7 +236,8 @@ export function createDeclaredTransitionEdge(
     toStateKey: string,
     triggerName: string | undefined,
     outcomeCondition?: string,
-    isBackEdge = false
+    isBackEdge = false,
+    sourceHandle?: string
 ): Edge {
     /*
      * A move with nobody pressing anything is not always a gap.
@@ -254,6 +255,15 @@ export function createDeclaredTransitionEdge(
         id: `edge-transition-${ fromStateKey }-${ toStateKey }-${ label }`,
         source: sourceId,
         target: targetId,
+        /*
+         * The control the line leaves from.
+         *
+         * Every other kind of line says this and this one did not, so react flow attached it to
+         * whichever handle it found first on the screen - which is the first control drawn there,
+         * whatever the line is about. A wizard's Next line left the Edit Channel Name button beside
+         * it: the label said Next and the line pointed at something else.
+         */
+        sourceHandle,
         label,
         style: {
             stroke: color,

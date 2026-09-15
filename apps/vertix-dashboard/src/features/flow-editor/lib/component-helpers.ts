@@ -223,7 +223,8 @@ function findElementsGroupByExecutionStep(
 export function extractComponentPreview(
     component: UIExportedComponent,
     executionStep?: string,
-    embedGroupName?: string
+    embedGroupName?: string,
+    elementsGroupName?: string
 ): ComponentPreview {
     const embedGroupOverride = embedGroupName ? findEmbedGroupByName( component, embedGroupName ) : undefined;
     const selectedEmbedsGroup = embedGroupOverride ??
@@ -241,9 +242,26 @@ export function extractComponentPreview(
 
     const elementRows: ElementData[][] = [];
 
-    // First try to find elements group by execution step, then fall back to default
+    /*
+     * The controls this screen puts up, which are not always the component's usual ones.
+     *
+     * A state can name the group it draws, the same way it names its embeds, and setup does it
+     * constantly: one component draws the opening screen, the server options screen, and a screen
+     * for each role setting, each with its own row of controls. Only the name says which.
+     *
+     * Read first, before the guess from the execution step and before the component's default. Not
+     * read at all, every screen of that flow drew the opening screen's controls - a server roles
+     * screen offering to create a master channel - and no line leaving by a control that screen
+     * genuinely has could find the control to leave from.
+     */
+    const elementsGroupByName = elementsGroupName
+        ? component.elementsGroups.find( group => isDefaultElementsGroup( group.name, elementsGroupName ) )
+        : undefined;
+
+    // Then by execution step, then the component's default
     const elementsGroupByStep = findElementsGroupByExecutionStep( component, executionStep );
-    const selectedElementsGroup = elementsGroupByStep
+    const selectedElementsGroup = elementsGroupByName
+        ?? elementsGroupByStep
         ?? ( component.defaultElementsGroup
             ? component.elementsGroups.find( group => isDefaultElementsGroup( group.name, component.defaultElementsGroup ?? "" ) )
             : component.elementsGroups[ 0 ] );

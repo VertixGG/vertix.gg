@@ -123,6 +123,9 @@ export class VirtualFlowGenerator {
     private static generateTransitions( definition: VirtualFlowDefinition ): FlowTransitionDefinition[] {
         const transitions: FlowTransitionDefinition[] = [];
 
+        /** The transitions that made it into the picture, which is not all of them - see below. */
+        const emittedTransitions = new Set<string>();
+
         const hiddenStates = new Set(
             [ ...definition.states.entries() ]
                 .filter( ( [ , config ] ) => config.hidden )
@@ -143,6 +146,8 @@ export class VirtualFlowGenerator {
             if ( fromStates.length === 0 ) {
                 continue;
             }
+
+            emittedTransitions.add( transitionName );
 
             for ( const fromState of fromStates ) {
                 transitions.push( {
@@ -170,22 +175,34 @@ export class VirtualFlowGenerator {
             }
         }
 
-        // Add modal-button bindings as triggers for visualization
-        // These show up as transitions from initial state so the dashboard can find them
-        if ( definition.modalButtonBindings?.length ) {
-            const modalTriggers = definition.modalButtonBindings.map( binding => ( {
-                handlerId: `${ definition.flowName }/Handlers/ModalButton/${ binding.buttonElement }`,
-                sourceEntity: `${ binding.buttonElement }::${ binding.modalName }`,
-                handlerKind: "modal-button" as const,
-                navigation: undefined,
-                mutations: undefined
-            } ) );
+        /*
+         * The modal pairs that found no transition of their own, kept on the first state.
+         *
+         * Every pair that names a transition is now carried by it, which is the screen the button
+         * is actually on. This is the remainder: a pair bound to a transition that was never
+         * emitted, because the state it leads to is hidden from the picture.
+         *
+         * They were all put here once, whatever screen their button stood on - so a wizard's name
+         * editor was drawn against the screen the wizard opens rather than the step that carries
+         * it, and a templates panel's save box against the state that only routes into the panel.
+         * Somewhere is better than nowhere for a pair with no transition left to sit on, but only
+         * for those.
+         */
+        const unplacedPairs = ( definition.modalButtonBindings ?? [] ).filter( ( binding ) =>
+            ! binding.transitionName || ! emittedTransitions.has( binding.transitionName )
+        );
 
-            // Add a synthetic transition for modal triggers so dashboard can discover them
+        if ( unplacedPairs.length ) {
             transitions.push( {
                 from: definition.initialState,
                 to: definition.initialState,
-                triggeredBy: modalTriggers,
+                triggeredBy: unplacedPairs.map( ( binding ) => ( {
+                    handlerId: `${ definition.flowName }/Handlers/ModalButton/${ binding.buttonElement }`,
+                    sourceEntity: `${ binding.buttonElement }::${ binding.modalName }`,
+                    handlerKind: "modal-button" as const,
+                    navigation: undefined,
+                    mutations: undefined
+                } ) ),
                 options: { isModalTrigger: true }
             } );
         }
@@ -221,6 +238,35 @@ export class VirtualFlowGenerator {
                 } );
                 addedElements.add( elementId );
             }
+        }
+
+        /*
+         * The modal a button opens, on the transition that button fires.
+         *
+         * A modal-button pair is one interaction told in two halves - press the button, submit the
+         * modal - and the transition the pair is bound to is where both halves belong. The button
+         * arrives above through its own binding; this is the other half, named as the pair so the
+         * screen can say which button opens which modal.
+         */
+        for ( const binding of definition.modalButtonBindings ?? [] ) {
+            if ( binding.transitionName !== transitionName ) {
+                continue;
+            }
+
+            const pairEntity = `${ binding.buttonElement }::${ binding.modalName }`;
+
+            if ( addedElements.has( pairEntity ) ) {
+                continue;
+            }
+
+            triggers.push( {
+                handlerId: `${ definition.flowName }/Handlers/ModalButton/${ binding.buttonElement }`,
+                sourceEntity: pairEntity,
+                handlerKind: "modal-button",
+                navigation: undefined,
+                mutations: undefined
+            } );
+            addedElements.add( pairEntity );
         }
 
         // An element the transition names itself, for one whose handling belongs to somebody else.

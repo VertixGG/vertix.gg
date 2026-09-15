@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 const EXTRA_MODULES_KEY = "vertix-dashboard-show-extra-modules";
 const HIDDEN_SYSTEM_FLOWS_KEY = "vertix-dashboard-hidden-system-flows";
+const HIDDEN_EDGE_KINDS_KEY = "vertix-dashboard-hidden-edge-kinds";
 
 /**
  * Whether the editor draws what this module reaches into, as well as what it owns.
@@ -53,11 +54,24 @@ interface CanvasFiltersStore {
     hiddenSystemFlows: string[];
     isSystemFlowHidden: ( flowName: string ) => boolean;
     setSystemFlowHidden: ( flowName: string, isHidden: boolean ) => void;
+
+    /**
+     * The kinds of line the reader has put away, by how they are drawn.
+     *
+     * Kept as the ones turned off, like the routers: a canvas that starts by leaving things out
+     * would be lying to anybody who has not found the legend yet. Named by appearance rather than
+     * by what draws them, because appearance is what the reader is pointing at - they are turning
+     * off the thing that looks like this.
+     */
+    hiddenEdgeKinds: string[];
+    isEdgeKindHidden: ( kindKey: string ) => boolean;
+    setEdgeKindHidden: ( kindKey: string, isHidden: boolean ) => void;
+    showAllEdgeKinds: () => void;
 }
 
-function readHidden(): string[] {
+function readHiddenList( key: string ): string[] {
     try {
-        const stored = localStorage.getItem( HIDDEN_SYSTEM_FLOWS_KEY );
+        const stored = localStorage.getItem( key );
 
         return stored ? JSON.parse( stored ) as string[] : [];
     } catch {
@@ -65,9 +79,9 @@ function readHidden(): string[] {
     }
 }
 
-function writeHidden( names: string[] ): void {
+function writeHiddenList( key: string, names: string[] ): void {
     try {
-        localStorage.setItem( HIDDEN_SYSTEM_FLOWS_KEY, JSON.stringify( names ) );
+        localStorage.setItem( key, JSON.stringify( names ) );
     } catch {
         return;
     }
@@ -82,7 +96,7 @@ export const useCanvasFiltersStore = create<CanvasFiltersStore>( ( set, get ) =>
         set( { showsExtraModules: value } );
     },
 
-    hiddenSystemFlows: readHidden(),
+    hiddenSystemFlows: readHiddenList( HIDDEN_SYSTEM_FLOWS_KEY ),
 
     isSystemFlowHidden: ( flowName ) => get().hiddenSystemFlows.includes( flowName ),
 
@@ -90,8 +104,27 @@ export const useCanvasFiltersStore = create<CanvasFiltersStore>( ( set, get ) =>
         const remaining = get().hiddenSystemFlows.filter( ( name ) => name !== flowName ),
             next = isHidden ? [ ...remaining, flowName ] : remaining;
 
-        writeHidden( next );
+        writeHiddenList( HIDDEN_SYSTEM_FLOWS_KEY, next );
 
         set( { hiddenSystemFlows: next } );
+    },
+
+    hiddenEdgeKinds: readHiddenList( HIDDEN_EDGE_KINDS_KEY ),
+
+    isEdgeKindHidden: ( kindKey ) => get().hiddenEdgeKinds.includes( kindKey ),
+
+    setEdgeKindHidden: ( kindKey, isHidden ) => {
+        const remaining = get().hiddenEdgeKinds.filter( ( key ) => key !== kindKey ),
+            next = isHidden ? [ ...remaining, kindKey ] : remaining;
+
+        writeHiddenList( HIDDEN_EDGE_KINDS_KEY, next );
+
+        set( { hiddenEdgeKinds: next } );
+    },
+
+    showAllEdgeKinds: () => {
+        writeHiddenList( HIDDEN_EDGE_KINDS_KEY, [] );
+
+        set( { hiddenEdgeKinds: [] } );
     }
 } ) );

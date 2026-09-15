@@ -30,6 +30,7 @@ import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-st
 
 import { nodeTypes } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes";
 import { NodeContextMenu } from "@vertix.gg/dashboard/src/features/flow-editor/components/flow-nodes/node-context-menu";
+import { kindKeyOfEdge } from "@vertix.gg/dashboard/src/features/flow-editor/lib/edge-kinds";
 import { getLayoutedElements } from "@vertix.gg/dashboard/src/features/flow-editor/lib/layout";
 import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/lib/graph-builder";
 import { LAYOUT_OPTIONS, VIEWPORT_CONFIG, MINIMAP_COLORS, BACKGROUND_CONFIG, NODE_DIMENSIONS } from "@vertix.gg/dashboard/src/features/flow-editor/lib/constants";
@@ -70,6 +71,7 @@ export function FlowViewer() {
 
     const showsExtraModules = useCanvasFiltersStore( ( state ) => state.showsExtraModules );
     const hiddenSystemFlows = useCanvasFiltersStore( ( state ) => state.hiddenSystemFlows );
+    const hiddenEdgeKinds = useCanvasFiltersStore( ( state ) => state.hiddenEdgeKinds );
 
     // Up here because the button it belongs to is built inside a closure further down, which is no
     // place to draw a hook from.
@@ -474,6 +476,28 @@ export function FlowViewer() {
             } ) )
         );
     }, [ selectedNodeId, setNodes ] );
+
+    /*
+     * The kinds of line the reader has put away, taken off the canvas.
+     *
+     * Hidden rather than rebuilt: the graph is laid out once, and turning a kind of line off is a
+     * change to what is being read rather than to what is there, so nothing moves.
+     *
+     * The built edges are what says whether a line was already hidden for a reason of its own - a
+     * module's second telling of an arrival - and that reason still holds whatever the legend says.
+     * So each line is hidden if either has it hidden, read off the built list rather than off what
+     * is on screen, which is already carrying the last answer to this same question.
+     */
+    useEffect( () => {
+        const builtHiddenById = new Map( initialEdges.map( ( edge ) => [ edge.id, Boolean( edge.hidden ) ] ) ),
+            hidden = new Set( hiddenEdgeKinds );
+
+        setEdges( ( currentEdges ) => currentEdges.map( ( edge ) => {
+            const isHidden = ( builtHiddenById.get( edge.id ) ?? false ) || hidden.has( kindKeyOfEdge( edge ) );
+
+            return isHidden === Boolean( edge.hidden ) ? edge : { ...edge, hidden: isHidden };
+        } ) );
+    }, [ hiddenEdgeKinds, initialEdges, setEdges ] );
 
     // Arriving from a generator's settings means the admin came here to edit that flow's buttons,
     // so the component is opened for them rather than left behind a "click a component" prompt.

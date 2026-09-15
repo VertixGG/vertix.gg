@@ -37,15 +37,27 @@ export function findButtonFlowConnections( flow: UIExportedFlow ): ButtonFlowCon
     } ) );
 }
 
+/**
+ * Function findButtonModalConnections() :: Which button on a screen opens which modal.
+ *
+ * `fromStateKey` is the screen being asked about, and only the moves leaving it are read. It used
+ * to be handed the state's list of outgoing transition *names* and compare those against a
+ * transition's `from`, which is a state *key* - two different things that never matched. So a
+ * screen with moves of its own found nothing, and a screen with none fell through the emptiness
+ * check to no filter at all and collected every modal in the flow. That is how a wizard's
+ * "too many generators" and "something went wrong" screens came to offer a name editor.
+ *
+ * Left out, every move in the flow is read, which is for a caller that has no screen to ask about.
+ */
 export function findButtonModalConnections(
     flow: UIExportedFlow,
     componentModals: string[],
-    allowedTransitions?: string[]
+    fromStateKey?: string
 ): ButtonModalConnection[] {
     const connections: ButtonModalConnection[] = [];
 
-    const filteredTransitions = allowedTransitions?.length
-        ? flow.transitions?.filter( t => t.from && allowedTransitions.includes( t.from ) )
+    const filteredTransitions = fromStateKey
+        ? flow.transitions?.filter( t => t.from === fromStateKey )
         : flow.transitions;
 
     filteredTransitions?.forEach( transition => {
@@ -93,33 +105,6 @@ export function findButtonModalConnections(
                 }
             }
         } );
-    } );
-
-    return connections;
-}
-
-export function inferButtonModalConnections(
-    componentButtons: string[],
-    componentModals: string[]
-): ButtonModalConnection[] {
-    const connections: ButtonModalConnection[] = [];
-
-    componentModals.forEach( modal => {
-        const modalShort = modal.split( "/" ).pop()?.replace( /Modal$/, "" ).toLowerCase() ?? "";
-
-        const matchingButton = componentButtons.find( btn => {
-            const btnShort = btn.split( "/" ).pop()?.replace( /Button$/, "" ).replace( /Edit$/, "" ).toLowerCase() ?? "";
-            return btnShort === modalShort || modalShort.includes( btnShort ) || btnShort.includes( modalShort );
-        } );
-
-        if ( matchingButton ) {
-            const buttonShortName = matchingButton.split( "/" ).pop() ?? matchingButton;
-            connections.push( {
-                buttonName: matchingButton,
-                buttonLabel: buttonShortName.replace( /Button$/, "" ).replace( /([a-z])([A-Z])/g, "$1 $2" ),
-                modalName: modal
-            } );
-        }
     } );
 
     return connections;

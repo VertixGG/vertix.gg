@@ -1013,6 +1013,33 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             return null;
         }
 
+        const masterChannelDB = await result.db;
+
+        // Written before the control panel is created, because the generator is joinable the moment
+        // discord makes it and the join path reads the name template off this row - see the same
+        // ordering in `createMasterChannelInternalV3()`. The control channel's id is whatever was
+        // configured until the panel below supplies a new one.
+        await MasterChannelDataManager.$.setAllSettings( masterChannelDB, {
+            dynamicChannelAutoSave: newAutoSave,
+            dynamicChannelAutoStatus: newAutoStatus,
+            dynamicChannelButtonsTemplate: newButtons,
+            dynamicChannelControlChannelId: newControlChannelId,
+            // Since `LogsChannelId` not defined in the creation process but later via configuration.
+            dynamicChannelLogsChannelId: settings.dynamicChannelLogsChannelId,
+            dynamicChannelMentionable: newMentionable,
+            dynamicChannelNameTemplate: newName,
+            // Configured after setup, through the edit screen.
+            dynamicChannelStaffRoles: [],
+            // The resolved list above is what discord is given, but only a choice of the admin's
+            // own is stored - an empty one leaves the channel deferring to the guild wide default.
+            dynamicChannelVerifiedRoles: args.dynamicChannelVerifiedRoles ?? [],
+            // Unset defers to the guild wide voice role.
+            dynamicChannelVoiceRoleId: null,
+            // Configured after setup, through the edit screen.
+            dynamicChannelDefaultPrivacyState: "public",
+            dynamicChannelDefaultUserLimit: null
+        } );
+
         const masterChannel = result.channel;
 
         let controlChannelId = newControlChannelId;
@@ -1034,28 +1061,9 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             }
         }
 
-        const masterChannelDB = await result.db;
-
-        await MasterChannelDataManager.$.setAllSettings( masterChannelDB, {
-            dynamicChannelAutoSave: newAutoSave,
-            dynamicChannelAutoStatus: newAutoStatus,
-            dynamicChannelButtonsTemplate: newButtons,
-            dynamicChannelControlChannelId: controlChannelId,
-            // Since `LogsChannelId` not defined in the creation process but later via configuration.
-            dynamicChannelLogsChannelId: settings.dynamicChannelLogsChannelId,
-            dynamicChannelMentionable: newMentionable,
-            dynamicChannelNameTemplate: newName,
-            // Configured after setup, through the edit screen.
-            dynamicChannelStaffRoles: [],
-            // The resolved list above is what discord is given, but only a choice of the admin's
-            // own is stored - an empty one leaves the channel deferring to the guild wide default.
-            dynamicChannelVerifiedRoles: args.dynamicChannelVerifiedRoles ?? [],
-            // Unset defers to the guild wide voice role.
-            dynamicChannelVoiceRoleId: null,
-            // Configured after setup, through the edit screen.
-            dynamicChannelDefaultPrivacyState: "public",
-            dynamicChannelDefaultUserLimit: null
-        } );
+        if ( controlChannelId !== newControlChannelId ) {
+            await MasterChannelDataManager.$.setChannelControlChannel( masterChannelDB, controlChannelId, false );
+        }
 
         // TODO: Duplicate code.
         const usedButtons = DynamicChannelElementsGroup.getAll().filter( ( item ) => {

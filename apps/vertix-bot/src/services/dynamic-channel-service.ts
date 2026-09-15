@@ -3409,9 +3409,21 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         clearTimeout( mapItem.timer );
 
-        // If embeds reach 10, send them and reset the timer.
+        /**
+         * If embeds reach 10, send them and reset the timer.
+         *
+         * Asked for by the logs channel, which is what the buffer is filed under - it used to be
+         * asked for by the room the line was about, which is a key nothing was ever stored at. So
+         * this found nothing, logged that it had found nothing, and returned without sending: the
+         * buffer never emptied here, and the only thing that ever emptied it was the timer, which
+         * every new line pushed further away.
+         *
+         * Discord takes ten embeds in a message and no more, so a busy generator eventually handed
+         * it more than it takes. That send throws, and the catch below reads a failed send as a
+         * logs channel that is no good any more - so it unsets the one the guild configured.
+         */
         if ( mapItem.embeds.length >= 10 ) {
-            await this.logEmbeds( channel.id );
+            await this.logEmbeds( logsChannelId );
         }
 
         // Push embed and reset timer.

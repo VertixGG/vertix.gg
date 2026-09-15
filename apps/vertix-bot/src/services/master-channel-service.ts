@@ -688,7 +688,14 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             `Guild id: '${ guild.id }' - User id: '${ args.userOwnerId }' is creating a default master channel`
         );
 
-        const config = ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", args.version );
+        // Asked for and thrown away: `get()` throws when no config is registered for this
+        // version, and that throw is the whole point of the call. `createMasterChannelInternal()`
+        // switches on the version with a `default:` that builds the older v2 generator, so a
+        // version nothing recognises would quietly produce the wrong interface rather than fail -
+        // and `SetupWizardPersistencePayload.version` is a plain `string`, so an unrecognised one
+        // can reach here. Bound to nothing because nothing here reads it; both internals fetch
+        // their own, correctly versioned.
+        ConfigManager.$.get<MasterChannelConfigInterface>( "Vertix/Config/MasterChannel", args.version );
 
         const masterCategory = await CategoryManager.$.create( {
             guild,

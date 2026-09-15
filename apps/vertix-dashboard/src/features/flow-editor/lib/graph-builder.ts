@@ -10,7 +10,6 @@ import {
     createComponentToFlowExitEdge,
     createComponentToComponentEdge,
     createComponentToStateFallbackEdge,
-    createProgrammaticTransitionEdge,
     createModalToComponentEdge,
     createDeclaredTransitionEdge,
     createSystemFlowTransitionEdge
@@ -540,39 +539,6 @@ class EdgeBuilder {
         return depths;
     }
 
-    public addOrphanedStateEdges( connectedCompIds: Set<string> ): void {
-        const { flow, stateKeys, stateKeyToCompId } = this.context;
-
-        const orphanedStates = [ ...stateKeys ].filter( stateKey => {
-            if ( stateKey === this.context.initialStateKey ) {
-                return false;
-            }
-
-            const compId = stateKeyToCompId.get( stateKey );
-
-            return compId && !connectedCompIds.has( compId );
-        } );
-
-        orphanedStates.forEach( orphanedState => {
-            const transition = flow.transitions.find( t => t.to === orphanedState && stateKeys.has( t.from ) );
-
-            if ( !transition ) {
-                return;
-            }
-
-            const sourceCompId = stateKeyToCompId.get( transition.from );
-            const targetCompId = stateKeyToCompId.get( orphanedState );
-
-            if ( !sourceCompId || !targetCompId ) {
-                return;
-            }
-
-            const label = orphanedState.split( "/" ).pop() ?? orphanedState;
-
-            this.addEdge( createProgrammaticTransitionEdge( sourceCompId, targetCompId, flow.name, label ) );
-        } );
-    }
-
     public addSelectMenuEdges( initialCompId: string, initialElementRows: ElementData[][] ): void {
         const elementFullNames = new Set( initialElementRows.flat().map( el => el.name ) );
 
@@ -918,7 +884,8 @@ class MultiStateFlowBuilder {
     private readonly context: FlowContext;
     private readonly edgeBuilder: EdgeBuilder;
     private readonly wizardAnalyzer: WizardAnalyzer;
-    private readonly connectedCompIds: Set<string> = new Set();
+    /** Every node either end of an edge of this flow's has landed on. */
+    private readonly wiredNodeIds: Set<string> = new Set();
 
     private readonly initialStateTransitionTriggers: StateTransitionTrigger[] = [];
 
@@ -928,7 +895,8 @@ class MultiStateFlowBuilder {
         this.wizardAnalyzer = new WizardAnalyzer( context );
 
         const trackingAddEdge = ( edge: Edge ) => {
-            this.connectedCompIds.add( edge.target );
+            this.wiredNodeIds.add( edge.source );
+            this.wiredNodeIds.add( edge.target );
             addEdge( edge );
         };
 
@@ -957,6 +925,39 @@ class MultiStateFlowBuilder {
         this.computeWizardConnectedTargets();
 
         this.addDeclaredTransitionEdges( modalFirstNodeId );
+
+        this.addEdgesToStrandedScreens();
+    }
+
+    /**
+     * The flow leads to the screens nothing at all leads to.
+     *
+     * Run last, once every other edge is in, and only for a screen with no line on it in either
+     * direction - a box drawn on the canvas and then left beside the flow it belongs to. A screen
+     * that has somewhere to go is not stranded even if nothing declares the way in, and is left as
+     * it is rather than given a line that says less than the ones it already has.
+     *
+     * The stranded ones are commands that work out which screen applies before they open anything.
+     * `/voice clear-chat` says how many it cleared, or that there was nothing to clear, or that it
+     * went wrong - three answers to the one question, none of them reached from either of the
+     * others, and each an end in itself. `/voice invite` opens at the channel picker or at "you own
+     * no channel". Nine of these across v2 and v3, floating, because the only rule for hanging a
+     * screen off its flow was being the first one listed.
+     *
+     * That the flow leads there is the whole of what is known. Which of the answers applies is
+     * decided inside the command and written down nowhere the canvas can read, so a line from the
+     * flow is as much as can be said without inventing the reason.
+     */
+    private addEdgesToStrandedScreens(): void {
+        this.context.stateComponents.forEach( ( stateComp ) => {
+            const compId = this.context.stateKeyToCompId.get( stateComp.stateKey );
+
+            if ( ! compId || this.wiredNodeIds.has( compId ) ) {
+                return;
+            }
+
+            this.addEdge( createFlowToComponentEdge( this.context.flowId, compId, this.context.flow.name ) );
+        } );
     }
 
     /**
@@ -1067,7 +1068,7 @@ class MultiStateFlowBuilder {
         const modalDef = initialComp?.modalDefinitions?.find( m => m.name === modalName );
 
         this.allNodes.push( createModalNode( modalId, modalName, modalDef, this.context.flow.name, this.context.initialStateKey ) );
-        this.addEdge( createFlowToComponentEdge( this.context.flowId, modalId, this.context.flow.name, modalName ) );
+        this.addEdge( createFlowToComponentEdge( this.context.flowId, modalId, this.context.flow.name ) );
 
         return modalId;
     }
@@ -1231,7 +1232,7 @@ class MultiStateFlowBuilder {
         if ( isModalFirst && modalFirstNodeId && stateComp.stateKey === modalFirstTargetStateKey ) {
             this.addEdge( createModalToComponentEdge( modalFirstNodeId, compId, this.context.flow.name, stateComp.stateName ) );
         } else if ( stepIndex === 0 ) {
-            this.addEdge( createFlowToComponentEdge( this.context.flowId, compId, this.context.flow.name, stateComp.component.name ) );
+            this.addEdge( createFlowToComponentEdge( this.context.flowId, compId, this.context.flow.name ) );
         }
     }
 
@@ -1268,7 +1269,7 @@ class SingleComponentFlowBuilder {
         const { buttonModalTriggers, buttonFlowTriggers } = TriggerBuilder.build( buttonModalConnections, buttonFlowConnections, compPreview.elementRows );
 
         this.allNodes.push( createComponentNode( compId, compPreview, buttonModalTriggers, buttonFlowTriggers, [], undefined, stateKey, this.flow.name ) );
-        this.addEdge( createFlowToComponentEdge( this.flowId, compId, this.flow.name, initialComp.name ) );
+        this.addEdge( createFlowToComponentEdge( this.flowId, compId, this.flow.name ) );
 
         buttonFlowTriggers.forEach( trigger => {
             if ( trigger.targetFlowName === this.flow.name ) {
@@ -1333,6 +1334,7 @@ class FlowGraphBuilder {
         this.buildSystemFlowComponents();
         this.buildFlowComponents();
         this.buildSystemFlowTransitions();
+        this.markModuleEdgesRoutedElsewhere();
 
         return { nodes: this.allNodes, edges: this.allEdges };
     }
@@ -1348,14 +1350,59 @@ class FlowGraphBuilder {
     }
 
     /**
-     * The flows a router already reaches, so the module does not claim them twice.
+     * The module's line to a flow something else already reaches, taken away.
      *
-     * A module node joined to every flow said nothing the layout did not already say, and drew the
-     * same arrival twice over wherever a router got there first. What is left is the flows nothing
-     * routes to - which is the only case where the module is the thing that explains them.
+     * A flow is arrived at by a router, or by a button on some other flow's screen. Either way
+     * something on the canvas already shows how it is reached, and the module's own line is the
+     * same arrival said twice. What is left is the flows nothing else reaches - which is the only
+     * case where the module is the thing that explains them.
      *
-     * Counted from the routers actually drawn: put one away and the flows it was reaching fall back
-     * to the module, rather than floating with nothing attached.
+     * Read off the edges actually drawn rather than worked out beforehand: a button's route is only
+     * known once the components have been built, and a router that has been put away must not go on
+     * suppressing the line its flows now depend on.
+     */
+    private markModuleEdgesRoutedElsewhere(): void {
+        const reached = new Set<string>();
+
+        this.allEdges.forEach( ( edge ) => {
+            if ( edge.id.startsWith( "edge-btn-flow-" ) ) {
+                reached.add( edge.target );
+            }
+        } );
+
+        this.routedFlows.forEach( ( flowName ) => {
+            const flowId = this.flowIdMap.get( flowName );
+
+            if ( flowId ) {
+                reached.add( flowId );
+            }
+        } );
+
+        /*
+         * A router is the module's own, whoever else reaches it.
+         *
+         * One router routing to another - a command opening the control panel - would otherwise
+         * take away the module's line to it, and a module standing apart from the routers it
+         * declares is not a truer picture, it is a wrong one. The module is where they come from.
+         */
+        const systemFlowIds = new Set(
+            this.data.systemFlows
+                .map( ( flow ) => this.flowIdMap.get( flow.name ) )
+                .filter( ( id ): id is string => Boolean( id ) )
+        );
+
+        this.allEdges.forEach( ( edge ) => {
+            if ( edge.id.startsWith( "edge-module-" ) && reached.has( edge.target ) && ! systemFlowIds.has( edge.target ) ) {
+                edge.hidden = true;
+            }
+        } );
+    }
+
+    /**
+     * The flows the routers reach.
+     *
+     * Counted from the routers actually drawn, so putting one away hands its flows back to the
+     * module rather than leaving them floating with nothing attached.
      */
     private computeRoutedFlows(): void {
         this.data.systemFlows
@@ -1423,14 +1470,9 @@ class FlowGraphBuilder {
             this.flowIdMap.set( flow.name, flowNode.id );
             this.allNodes.push( flowNode );
 
-            // Always drawn, and marked when a router already explains this flow. What becomes of
-            // the marked ones is a question of what is being read, which the canvas answers.
-            this.addEdge( createModuleToFlowEdge(
-                moduleNodeId,
-                flowNode.id,
-                flow.name,
-                this.routedFlows.has( flow.name )
-            ) );
+            // Drawn for every flow, and taken away again below wherever something else already
+            // shows how the flow is reached.
+            this.addEdge( createModuleToFlowEdge( moduleNodeId, flowNode.id, flow.name ) );
         } );
     }
 
@@ -1452,7 +1494,7 @@ class FlowGraphBuilder {
             const { buttonModalTriggers, buttonFlowTriggers } = TriggerBuilder.build( buttonModalConnections, buttonFlowConnections, compPreview.elementRows );
 
             this.allNodes.push( createComponentNode( compId, compPreview, buttonModalTriggers, buttonFlowTriggers, [], undefined, undefined, flow.name ) );
-            this.addEdge( createFlowToComponentEdge( flowId, compId, flow.name, initialComp.name ) );
+            this.addEdge( createFlowToComponentEdge( flowId, compId, flow.name ) );
 
             buttonFlowTriggers.forEach( trigger => {
                 if ( trigger.targetFlowName === flow.name ) {

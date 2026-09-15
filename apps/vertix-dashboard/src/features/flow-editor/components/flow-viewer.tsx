@@ -475,24 +475,6 @@ export function FlowViewer() {
         );
     }, [ selectedNodeId, setNodes ] );
 
-    /*
-     * The module's line to a flow a router already reaches, kept while nothing is picked out.
-     *
-     * With nothing selected the canvas is being read as a whole, and the module reaching its flows
-     * is the shape of it - a flow attached to nothing reads worse than an arrival told twice. Once
-     * something is selected the reader is following one thread, and the second telling is in the
-     * way, so it goes. Hidden rather than rebuilt: the graph is laid out once and a selection must
-     * not move anything.
-     */
-    useEffect( () => {
-        setEdges( ( currentEdges ) =>
-            currentEdges.map( ( edge ) => edge.data?.isRoutedElsewhere
-                ? { ...edge, hidden: Boolean( selectedNodeId ) }
-                : edge
-            )
-        );
-    }, [ selectedNodeId, setEdges ] );
-
     // Arriving from a generator's settings means the admin came here to edit that flow's buttons,
     // so the component is opened for them rather than left behind a "click a component" prompt.
     const openedForGenerator = Boolean( generator );

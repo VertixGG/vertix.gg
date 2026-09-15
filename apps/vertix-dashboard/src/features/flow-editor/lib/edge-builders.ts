@@ -4,33 +4,27 @@ import { EDGE_COLORS, EDGE_STYLES, MARKER_SIZES, Z_INDEX } from "@vertix.gg/dash
 
 import type { Edge } from "@xyflow/react";
 
-export function createModuleToFlowEdge(
-    moduleNodeId: string,
-    flowId: string,
-    flowName: string,
-    isRoutedElsewhere = false
-): Edge {
+export function createModuleToFlowEdge( moduleNodeId: string, flowId: string, flowName: string ): Edge {
     return {
         id: `edge-module-${ flowName }`,
         source: moduleNodeId,
         target: flowId,
         style: { stroke: EDGE_COLORS.MODULE_TO_FLOW, ...EDGE_STYLES.DEFAULT },
-        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.MODULE_TO_FLOW, ...MARKER_SIZES.MEDIUM },
-        /*
-         * Whether a router already explains how this flow is arrived at.
-         *
-         * Drawn all the same while nothing is selected - with no particular thing being read, the
-         * module reaching its flows is the shape of the module, and a canvas of flows attached to
-         * nothing reads worse than one saying the same arrival twice. Once somebody has picked
-         * something out, the second telling is in the way and goes.
-         */
-        data: { isRoutedElsewhere }
+        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.MODULE_TO_FLOW, ...MARKER_SIZES.MEDIUM }
     };
 }
 
-export function createFlowToComponentEdge( flowId: string, compId: string, flowName: string, compName: string ): Edge {
+export function createFlowToComponentEdge( flowId: string, compId: string, flowName: string ): Edge {
     return {
-        id: `edge-${ flowName }-${ compName }`,
+        /*
+         * Named after the screen it lands on rather than after the component drawn there.
+         *
+         * A flow can open at several screens and draw the same component on all of them - clearing
+         * a chat says how many it cleared, or that there was nothing to clear, or that it went
+         * wrong, all through the one component. Named after the component, those were one id, and
+         * the ways in past the first were dropped as repeats of the first.
+         */
+        id: `edge-${ flowName }-${ compId }`,
         source: flowId,
         target: compId,
         style: { stroke: EDGE_COLORS.FLOW_TO_COMPONENT, ...EDGE_STYLES.DEFAULT },
@@ -156,26 +150,6 @@ export function createComponentToStateFallbackEdge(
         style: { stroke: EDGE_COLORS.STEP_TRANSITION, ...EDGE_STYLES.DASHED_TRANSITION },
         markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.STEP_TRANSITION, ...MARKER_SIZES.MEDIUM },
         labelStyle: { fill: EDGE_COLORS.STEP_TRANSITION, fontSize: 10, fontWeight: 600 },
-        labelBgPadding: [ 6, 2 ]
-    };
-}
-
-export function createProgrammaticTransitionEdge(
-    sourceCompId: string,
-    targetCompId: string,
-    flowName: string,
-    label: string
-): Edge {
-    return {
-        id: `edge-programmatic-${ flowName }-${ sourceCompId }-${ targetCompId }-${ label }`,
-        source: sourceCompId,
-        target: targetCompId,
-        sourceHandle: "bottom",
-        zIndex: Z_INDEX.EDGE_OVERLAY,
-        label,
-        style: { stroke: EDGE_COLORS.PROGRAMMATIC_TRANSITION, ...EDGE_STYLES.DASHED_TRANSITION },
-        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.PROGRAMMATIC_TRANSITION, ...MARKER_SIZES.MEDIUM },
-        labelStyle: { fill: EDGE_COLORS.PROGRAMMATIC_TRANSITION, fontSize: 10, fontWeight: 600 },
         labelBgPadding: [ 6, 2 ]
     };
 }

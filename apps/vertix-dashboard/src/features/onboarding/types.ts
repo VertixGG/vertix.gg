@@ -39,7 +39,6 @@ export interface TourStep {
 
     placement?: TourPlacement;
 
-
     gate?: TourStepGate;
 
     /**

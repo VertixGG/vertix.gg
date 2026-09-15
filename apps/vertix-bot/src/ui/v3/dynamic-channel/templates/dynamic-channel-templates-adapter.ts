@@ -1,8 +1,6 @@
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { ChannelTemplateModel } from "@vertix.gg/data/src/models/data/channel-template-model";
-
 import { DynamicChannelTemplatesButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-button";
 import { DynamicChannelTemplatesComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/templates/dynamic-channel-templates-component";
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-execution-adapter-builder";
@@ -37,27 +35,18 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
         defineTemplatesStates( tx )
             .addTransition( "Open", { from: "Default", to: "Default" } )
             /**
-             * Opening the list, which is a piece of work rather than a call: the screen is the
-             * member's kept settings, and an adapter opened without them draws an empty list.
+             * The opening button is declared by `setInitiatorElement()` above and bound nowhere.
              *
-             * Bound here rather than in the control panel, which is where it used to live and made
-             * this the only feature of its set whose opening could not be reached by name.
+             * It belongs to the control panel, not to this adapter, and `bindButton()` resolves a name
+             * against the adapter's own entities - so binding it here threw `does not exist in
+             * adapter`, which reaches the client as an error event and takes the whole bot down.
+             * Privacy, region and the primary-message editor all declare their initiator the same way
+             * and bind nothing; this was the one that did both.
+             *
+             * Nothing is lost by removing it. The panel opens this adapter with `runInitial()`, whose
+             * args go through `getTemplatesReplyArgs()` - which fetches the member's kept settings when
+             * the screen is reached without them, which is exactly what the binding did by hand.
              */
-            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
-                "VertixBot/UI-V3/DynamicChannelTemplatesButton",
-                "Open",
-                async( context, interaction ) => {
-                    const templates = await ChannelTemplateModel.$.getTemplates(
-                        interaction.user.id,
-                        interaction.guildId
-                    );
-
-                    await context.ephemeral( interaction, {
-                        templates,
-                        maxTemplates: MAX_TEMPLATES
-                    } );
-                }
-            )
             .bindModalWithButton<UIDefaultModalChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
                 "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",

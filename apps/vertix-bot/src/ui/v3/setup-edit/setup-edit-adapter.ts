@@ -587,11 +587,15 @@ const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
         const { WizardBackButton } = uiService.$$.getSystemElements();
 
+        // Back on a row of its own, under the two that act on what is being edited. It leaves the
+        // screen rather than changing anything on it, and sharing a row with the pair that do put
+        // the way out in the middle of the work.
         return [
             [ SetupEditButtonsScopeSelectMenu ],
             [ SetupEditButtonsRoleSelectMenu ],
             [ ChannelButtonsTemplateSelectMenu ],
-            [ WizardBackButton, SetupEditButtonsClearRoleOverrideButton, SetupEditButtonsUpdateExistingButton ]
+            [ SetupEditButtonsClearRoleOverrideButton, SetupEditButtonsUpdateExistingButton ],
+            [ WizardBackButton ]
         ];
     } )
     .build();

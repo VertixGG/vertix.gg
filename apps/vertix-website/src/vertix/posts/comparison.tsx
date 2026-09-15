@@ -199,7 +199,7 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
         group: "How the bot itself behaves",
         rows: [
             { capability: "Vote for a new owner when one walks out", cells: [ "Claim vote", null, null, null ] },
-            { capability: "Rooms that scale with the crowd", cells: [ "Scaling channels", null, null, null ] },
+            { capability: "Rooms that scale with the crowd", cells: [ "Scaling channels", "Paid", null, null ] },
         ],
     },
     {

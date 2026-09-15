@@ -25,6 +25,22 @@ const EXCLUDED_GUILD_IDS_ENV_KEY = "DEV_GUILD_ID";
 
 const EXCLUDED_GUILD_IDS_SEPARATOR = ",";
 
+/**
+ * What asking discord about something that may have been deleted actually told us.
+ *
+ * Three answers rather than two. `gone` is discord saying the thing does not exist; `unreachable` is
+ * discord not answering at all - a rate limit, a bad minute, a request that never arrived. Both used
+ * to arrive as `null`, and `null` meant delete, so a hiccup part way through a sweep took rows for
+ * guilds and channels that were perfectly alive - and `ChannelData` cascades, so a server's settings
+ * went with them.
+ *
+ * Nothing is lost by declining to decide: the row is looked at again on the next sweep.
+ */
+type TLookup<TValue> =
+    | { state: "found"; value: TValue }
+    | { state: "gone" }
+    | { state: "unreachable" };
+
 class CleanupWorker extends InitializeBase {
     private static instance: CleanupWorker;
 
@@ -61,6 +77,27 @@ class CleanupWorker extends InitializeBase {
         return { guildId: { notIn: excludedGuildIds } };
     }
 
+    /**
+     * Function lookup() :: Asks discord about something, and says which of three answers it gave.
+     *
+     * `goneCode` is the one refusal that means the thing is not there - an unknown guild, an unknown
+     * channel. Anything else is discord failing to answer, which says nothing about whether the row
+     * should live, so it is reported as such rather than read as a deletion.
+     */
+    private async lookup<TValue>( fetch: () => Promise<TValue>, goneCode: number ): Promise<TLookup<TValue>> {
+        try {
+            return { state: "found", value: await fetch() };
+        } catch( error ) {
+            if ( goneCode === ( error as DiscordAPIError )?.code ) {
+                return { state: "gone" };
+            }
+
+            this.logger.error( this.lookup, "", error );
+
+            return { state: "unreachable" };
+        }
+    }
+
     private async removeNonExistentChannelsByType( client: Client, channelType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {
         const prisma = PrismaBotClient.$.getClient();
 
@@ -86,6 +123,7 @@ class CleanupWorker extends InitializeBase {
         }
 
         let deletedCount = 0;
+        let skippedCount = 0;
         let currentIndex = 0;
         let startTime = Date.now();
 
@@ -95,18 +133,18 @@ class CleanupWorker extends InitializeBase {
 
             const deletePromises = chunk.map( async( channel ) => {
                 try {
-                    const guild = await client.guilds
-                        .fetch( channel.guildId )
-                        .catch( ( error: DiscordAPIError ) => {
-                            if ( error.code === DISCORD_ERROR_UNKNOWN_GUILD ) {
-                                return null;
-                            }
+                    const guild = await this.lookup(
+                        () => client.guilds.fetch( channel.guildId ),
+                        DISCORD_ERROR_UNKNOWN_GUILD
+                    );
 
-                            this.logger.error( this.removeNonExistentChannelsByType, "", error );
-                            return null;
-                        } );
+                    if ( "unreachable" === guild.state ) {
+                        ++skippedCount;
 
-                    if ( !guild ) {
+                        return;
+                    }
+
+                    if ( "gone" === guild.state ) {
                         await prisma.channel.deleteMany( { where: { id: channel.id } } );
                         ++deletedCount;
 
@@ -118,18 +156,20 @@ class CleanupWorker extends InitializeBase {
                         return;
                     }
 
-                    const discordChannel = await guild.channels
-                        .fetch( channel.channelId )
-                        .catch( ( error: DiscordAPIError ) => {
-                            if ( error.code === DISCORD_ERROR_UNKNOWN_CHANNEL ) {
-                                return null;
-                            }
+                    const discordChannel = await this.lookup(
+                        () => guild.value.channels.fetch( channel.channelId ),
+                        DISCORD_ERROR_UNKNOWN_CHANNEL
+                    );
 
-                            this.logger.error( this.removeNonExistentChannelsByType, "", error );
-                            return null;
-                        } );
+                    if ( "unreachable" === discordChannel.state ) {
+                        ++skippedCount;
 
-                    if ( !discordChannel ) {
+                        return;
+                    }
+
+                    // `channels.fetch` answers with null for a channel that is not there rather than
+                    // throwing, so a found-but-empty answer means gone just as much as the throw does.
+                    if ( "gone" === discordChannel.state || !discordChannel.value ) {
                         await prisma.channel.deleteMany( { where: { id: channel.id } } );
                         ++deletedCount;
 
@@ -139,6 +179,8 @@ class CleanupWorker extends InitializeBase {
                         );
                     }
                 } catch( error ) {
+                    ++skippedCount;
+
                     this.logger.error( this.removeNonExistentChannelsByType, "", error );
                 }
             } );
@@ -158,7 +200,8 @@ class CleanupWorker extends InitializeBase {
 
         this.logger.info(
             this.removeNonExistentChannelsByType,
-            `Completed cleanup for '${ channelType }': ${ deletedCount }/${ channels.length } channels removed.`
+            `Completed cleanup for '${ channelType }': ${ deletedCount }/${ channels.length } channels removed` +
+                ( skippedCount ? `, ${ skippedCount } left alone because discord could not be asked.` : "." )
         );
     }
 

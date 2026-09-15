@@ -30,7 +30,9 @@ export const MAX_TEMPLATES = 5;
  * The states that carry the three template buttons - the one you start on, and the three that
  * report what just happened and then offer the same three buttons again.
  */
-export const TEMPLATE_MENU_STATES = [ "Default", "TemplateSaved", "TemplateApplied", "TemplateDeleted" ] as const;
+// `Opened` is the screen this interface is entered on and `Default` the one it returns to; they draw
+// the same three buttons, so every transition reachable from one is reachable from the other.
+export const TEMPLATE_MENU_STATES = [ "Opened", "Default", "TemplateSaved", "TemplateApplied", "TemplateDeleted" ] as const;
 
 export async function getCurrentChannelConfig( channel: VoiceChannel ) {
     const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );

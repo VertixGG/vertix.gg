@@ -30,23 +30,32 @@ const DynamicChannelTemplatesAdapter = new DynamicExecutionAdapterBuilder<Defaul
     "VertixBot/UI-V3/DynamicChannelTemplatesAdapter"
 )
     .setComponent( DynamicChannelTemplatesComponent )
-    .setInitiatorElement( DynamicChannelTemplatesButton )
+    /**
+     * The button belongs to the control panel, and the panel opens this adapter by handing it that
+     * press - so `run()` looks the press up among *this* adapter's entities and has to find it.
+     *
+     * `setExcludedElements()` is what puts it there; `setInitiatorElement()` only records it, and on
+     * this builder nothing reads that back. Declaring the initiator and binding the button threw
+     * `does not exist in adapter`, and so did declaring it and binding nothing - the entity was
+     * missing either way, and only the second failed silently, with the panel simply not answering.
+     *
+     * Registered and bound, the way transfer, knock and invite each do it.
+     */
+    .setExcludedElements( [ DynamicChannelTemplatesButton ] )
     .defineTransactions( ( tx ) => {
         defineTemplatesStates( tx )
-            .addTransition( "Open", { from: "Default", to: "Default" } )
-            /**
-             * The opening button is declared by `setInitiatorElement()` above and bound nowhere.
-             *
-             * It belongs to the control panel, not to this adapter, and `bindButton()` resolves a name
-             * against the adapter's own entities - so binding it here threw `does not exist in
-             * adapter`, which reaches the client as an error event and takes the whole bot down.
-             * Privacy, region and the primary-message editor all declare their initiator the same way
-             * and bind nothing; this was the one that did both.
-             *
-             * Nothing is lost by removing it. The panel opens this adapter with `runInitial()`, whose
-             * args go through `getTemplatesReplyArgs()` - which fetches the member's kept settings when
-             * the screen is reached without them, which is exactly what the binding did by hand.
-             */
+            // The press lands on `Entry`, which draws nothing, and the transition opens the screen.
+            // `Opened` and not `Default`: the first screen has to be sent before it can be edited.
+            .setInitialState( "Entry" )
+            .addState( "Entry", { executionStep: "default" } )
+            .addTransition( "Open", { from: "Entry", to: "Opened" } )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V3/DynamicChannelTemplatesButton",
+                "Open",
+                async( context, interaction ) => {
+                    await context.triggerTransition( "Open", interaction );
+                }
+            )
             .bindModalWithButton<UIDefaultModalChannelVoiceInteraction>(
                 "VertixBot/UI-V3/DynamicChannelTemplatesCaptureButton",
                 "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",

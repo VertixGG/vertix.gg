@@ -39,6 +39,25 @@ type TemplatesTransactions = TransactionBuilder<IExecutionAdapterContext<Templat
 export function defineTemplatesStates( tx: TemplatesTransactions ) {
     tx
         .setInitialState( "Default" )
+        // The same screen as `Default`, and separate from it only in how it reaches the member.
+        //
+        // A screen has to be sent before it can be edited. The press that opens this interface
+        // happens on the control panel's message, which this adapter did not draw - so `editReply`
+        // looks for args under an id it never wrote under, finds nothing, and returns having done
+        // nothing at all. No error reaches the member: the panel simply does not answer.
+        //
+        // Knock, invite and transfer all open on an `ephemeral` screen and edit from there. Reached
+        // from the button's adapter, which transitions onto this rather than onto `Default`.
+        //
+        // `Default` stays as it was because it is also where `BackToDefault` lands, and going back
+        // must edit the screen the member is looking at rather than send them a second one. The
+        // command opens on `Default` because `ephemeral()` sends its own screen regardless.
+        .addState( "Opened", {
+            executionStep: "default",
+            navigationType: "ephemeral",
+            elementsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesElementsGroup",
+            embedsGroup: "VertixBot/UI-V3/DynamicChannelTemplatesEmbedGroup"
+        } )
         .addState( "Default", {
             executionStep: "default",
             navigationType: "editReply",

@@ -91,7 +91,10 @@ body::before {
 }
 
 .vc-animate-slide-in-right {
-    animation: vc-slide-in-right 0.4s ease-out;
+    /* `backwards`, the way the drop-in beside this one has it. Without it the toast is painted
+       where it ends up and only then snapped back to where the animation begins, which is a jump
+       the browser counts against the page rather than an entrance. */
+    animation: vc-slide-in-right 0.4s ease-out backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

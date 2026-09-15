@@ -290,6 +290,25 @@ function prerenderPlugin(): Plugin {
                     await page.evaluate( () => {
                         document.querySelectorAll( "[data-vc-runtime]" ).forEach( ( node ) => node.remove() );
 
+                        // A page that draws a discord panel reads the ui definitions before it can
+                        // draw anything, and it only asks once react is running - by which point the
+                        // panel has already been laid out empty and everything under it moves when
+                        // the answer arrives. Starting the request with the document instead means
+                        // it is usually there by the time the question is asked.
+                        //
+                        // Only on the pages that draw one: it is 58KiB, and the pages without a
+                        // panel never read it.
+                        if ( document.querySelector( ".discord-chat-container, .discord-message" ) ) {
+                            const preload = document.createElement( "link" );
+
+                            preload.rel = "preload";
+                            preload.as = "fetch";
+                            preload.href = "/exports/ui/components.json";
+                            preload.crossOrigin = "anonymous";
+
+                            document.head.prepend( preload );
+                        }
+
                         // Prerendering mounts the panel, because it runs at a desktop size, and vite
                         // preloads the chunks behind a dynamic import as it takes it - by adding
                         // link tags to the head. Those are as baked in as anything else the page

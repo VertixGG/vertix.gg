@@ -37,12 +37,3 @@ export function rememberTourTaken( ownerId: string, tourId: string ): void {
         return;
     }
 }
-
-/** Function forgetTourTaken() :: Puts the tour back on offer, for running it again by hand. */
-export function forgetTourTaken( ownerId: string, tourId: string ): void {
-    try {
-        localStorage.removeItem( storageKey( ownerId, tourId ) );
-    } catch {
-        return;
-    }
-}

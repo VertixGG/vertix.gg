@@ -18,6 +18,7 @@ export { DynamicChannelInviteAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-ch
 export { DynamicChannelKnockAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-adapter";
 export { DynamicChannelKnockCommandAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-command-adapter";
 export { DynamicChannelKnockRequestAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/request/dynamic-channel-knock-request-adapter";
+export { DynamicChannelLfmAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/lfm/dynamic-channel-lfm-adapter";
 export { DynamicChannelPrimaryMessageEditAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/edit/dynamic-channel-primary-message-edit-adapter";
 export { DynamicChannelResetChannelCommandAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-command-adapter";
 export { DynamicChannelResetChannelAdapter } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/reset/dynamic-channel-reset-channel-adapter";

@@ -38,6 +38,7 @@ export const DYNAMIC_CHANNEL_V3_EMOJIS = {
     status: "<emoji name='Megaphone'>",
     inviteChannel: "<emoji name='InviteChannel'>",
     knockChannel: "<emoji name='KnockChannel'>",
+    lfm: "<emoji name='LfmChannel'>",
 };
 
 export const DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES = {

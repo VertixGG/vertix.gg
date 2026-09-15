@@ -21,6 +21,7 @@ export const DYNAMIC_CHANNEL_V3_EMOJI_NAMES = {
     status: "Megaphone",
     inviteChannel: "InviteChannel",
     knockChannel: "KnockChannel",
+    lfm: "LfmChannel",
 };
 
 /**
@@ -41,6 +42,7 @@ export const DYNAMIC_CHANNEL_V2_FEATURE_BY_ELEMENT: Readonly<Record<string, stri
     "VertixBot/UI-V2/DynamicChannelTransferOwnerButton": "transfer-channel",
     "VertixBot/UI-V2/DynamicChannelMetaStatusButton": "status",
     "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton": "claim-channel",
+    "VertixBot/UI-V2/DynamicChannelLfmButton": "lfm",
 };
 
 /**
@@ -64,6 +66,7 @@ export const DYNAMIC_CHANNEL_V3_FEATURE_BY_ELEMENT: Readonly<Record<string, stri
     "VertixBot/UI-V3/DynamicChannelClaimChannelButton": "claim-channel",
     "VertixBot/UI-V3/DynamicChannelInviteButton": "invite-channel",
     "VertixBot/UI-V3/DynamicChannelKnockButton": "knock-channel",
+    "VertixBot/UI-V3/DynamicChannelLfmButton": "lfm",
 };
 
 /**

@@ -22,6 +22,7 @@ import { DynamicChannelTemplatesButton } from "@vertix.gg/bot/src/ui/v3/dynamic-
 import { DynamicChannelStatusButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/status/dynamic-channel-status-button";
 import { DynamicChannelInviteButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/invite/dynamic-channel-invite-button";
 import { DynamicChannelKnockButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/knock/dynamic-channel-knock-button";
+import { DynamicChannelLfmButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/lfm/dynamic-channel-lfm-button";
 
 import type { DynamicChannelButtonBase } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/base/dynamic-channel-button-base";
 
@@ -75,6 +76,7 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
             DynamicChannelTemplatesButton,
             DynamicChannelStatusButton,
             DynamicChannelKnockButton,
+            DynamicChannelLfmButton,
             DynamicChannelClaimChannelButton,
         ].sort( ( a, b ) => a.getSortId() - b.getSortId() );
     }
@@ -114,6 +116,17 @@ export class DynamicChannelPrimaryMessageElementsGroup extends UIElementsGroupBa
 
     public static getAll() {
         return DynamicChannelPrimaryMessageElementsGroup.allButtons;
+    }
+
+    /**
+     * The set a generator is created with.
+     *
+     * Every button that says it belongs there. Which ones those are is each button's own answer
+     * rather than a list kept here, so a button that needs configuring before it can do anything
+     * stays out of new generators without this group having to know which button that is.
+     */
+    public static getDefaults() {
+        return this.getAll().filter( ( item ) => item.isInDefaultSet() );
     }
 
     public static getById( id: string ) {

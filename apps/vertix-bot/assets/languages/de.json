@@ -437,6 +437,12 @@
         "content": {
           "label": "Bestehende Kanäle aktualisieren"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
       }
     ],
     "textInputs": [
@@ -602,6 +608,12 @@
         "content": {
           "label": "VORLAGENNAME",
           "placeholder": "Gib einen Namen für deine Vorlage ein …"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "WEN SUCHST DU"
         }
       }
     ],
@@ -1092,6 +1104,10 @@
               "value": "knock"
             },
             {
+              "label": "LFM",
+              "value": "lfm"
+            },
+            {
               "label": "Beanspruchen",
               "value": "claim-button"
             }
@@ -1312,6 +1328,12 @@
               "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 Kanal auswählen"
         }
       }
     ]
@@ -3729,6 +3751,45 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  Noch nicht",
+        "description": "Dieser Server begrenzt, wie oft diese Kanäle werben, und der letzte Beitrag ist noch frisch. Der nächste kann in etwa {retryMinutes} Minuten erscheinen."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  Dein Kanal steht auf der Liste",
+        "description": "In <#{lfmChannelId}> gepostet.\n\nDie Mitgliederzahl bleibt aktuell, und der Beitrag verschwindet von selbst, sobald dein Kanal voll oder leer ist."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  Wohin damit?",
+        "description": "Wähle den Kanal, in dem dein Aufruf nach Mitgliedern erscheint.\n\nEr zeigt, wer hostet, was gespielt wird und wie viele drin sind, und wird entfernt, sobald dein Kanal voll oder leer ist."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  Nichts zu posten",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "Es wurde noch kein Kanal für diese Beiträge eingerichtet. Ein Admin wählt ihn im Setup aus.",
+            "{reasonDestinationUnavailable}": "Die Kanäle, in die diese Beiträge gehen, kannst du nicht sehen. Ein Admin wählt sie im Setup-Bildschirm aus.",
+            "{reasonHidden}": "Dein Kanal ist versteckt, also würde ihn ohnehin niemand finden. Mach ihn zuerst sichtbar.",
+            "{reasonPrivate}": "Dein Kanal ist privat, also käme niemand herein, den du einlädst. Mach ihn zuerst öffentlich.",
+            "{reasonFull}": "Dein Kanal ist bereits voll.",
+            "{reasonAlreadyPosted}": "Dein Kanal steht bereits auf der Liste.",
+            "{reasonFailed}": "Beim Posten ist etwas schiefgelaufen. Versuche es gleich noch einmal."
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3876,6 +3937,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Vorlage speichern"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "Mitglieder gesucht"
       }
     }
   ]

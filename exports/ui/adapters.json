@@ -2166,6 +2166,62 @@
         ]
     },
     {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V3/DynamicChannelLfmComponent",
+        "module": "VertixBot/UI-V3/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": "VertixBot/UI-V3/DynamicChannelLfmChannelMenuGroup",
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelLfmSelectChannel",
+                "elementsGroup": "VertixBot/UI-V3/DynamicChannelLfmChannelMenuGroup",
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelLfmSelectChannelEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelLfmPosted",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelLfmPostedEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelLfmCooldown",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelLfmCooldownEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelLfmUnavailable",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-V3/DynamicChannelLfmUnavailableEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V3/DynamicChannelLfmAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-V3/DynamicChannelLimitAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V3/DynamicChannelLimitComponent",

@@ -437,6 +437,12 @@
         "content": {
           "label": "Mettre À Jour Les Salons Existants"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
       }
     ],
     "textInputs": [
@@ -602,6 +608,12 @@
         "content": {
           "label": "NOM DU MODÈLE",
           "placeholder": "Entre un nom pour ton modèle…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "QUI CHERCHEZ-VOUS"
         }
       }
     ],
@@ -1092,6 +1104,10 @@
               "value": "knock"
             },
             {
+              "label": "LFM",
+              "value": "lfm"
+            },
+            {
               "label": "Réclamer",
               "value": "claim-button"
             }
@@ -1312,6 +1328,12 @@
               "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 Choisir un salon"
         }
       }
     ]
@@ -3729,6 +3751,45 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  Pas tout de suite",
+        "description": "Ce serveur limite la fréquence à laquelle ces salons se signalent, et le dernier message est récent. Le prochain pourra partir dans environ {retryMinutes} minutes."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  Votre salon est affiché",
+        "description": "Publié dans <#{lfmChannelId}>.\n\nLe nombre de membres reste à jour, et le message disparaît de lui-même quand votre salon est plein ou vide."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  Où l'envoyer ?",
+        "description": "Choisissez le salon où votre appel aux membres sera publié.\n\nIl indique qui reçoit, à quoi ils jouent et combien sont présents, et il est retiré quand votre salon est plein ou vide."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  Rien à publier",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "Aucun salon n'a encore été configuré pour ces messages. Un administrateur le choisit dans l'écran de configuration.",
+            "{reasonDestinationUnavailable}": "Les salons où vont ces annonces ne sont pas visibles pour toi. Un admin les choisit dans l'écran de configuration.",
+            "{reasonHidden}": "Votre salon est masqué, personne ne le trouverait de toute façon. Affichez-le d'abord.",
+            "{reasonPrivate}": "Votre salon est privé, personne que vous invitez ne pourrait entrer. Rendez-le public d'abord.",
+            "{reasonFull}": "Votre salon est déjà plein.",
+            "{reasonAlreadyPosted}": "Votre salon est déjà affiché.",
+            "{reasonFailed}": "Une erreur est survenue lors de la publication. Réessayez dans un instant."
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3876,6 +3937,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Enregistrer le modèle"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "Recherche de membres"
       }
     }
   ]

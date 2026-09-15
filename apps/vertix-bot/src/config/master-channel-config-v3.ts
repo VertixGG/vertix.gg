@@ -35,7 +35,7 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
 
             dynamicChannelDefaultUserLimit: null,
 
-            dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( i ) =>
+            dynamicChannelButtonsTemplate: DynamicChannelPrimaryMessageElementsGroup.getDefaults().map( ( i ) =>
                 i.getId().toString()
             ),
 

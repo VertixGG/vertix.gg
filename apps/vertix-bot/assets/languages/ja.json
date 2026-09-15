@@ -437,6 +437,12 @@
         "content": {
           "label": "既存チャンネルを更新"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
       }
     ],
     "textInputs": [
@@ -602,6 +608,12 @@
         "content": {
           "label": "テンプレート名",
           "placeholder": "テンプレートの名前を入力…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "どんなメンバーを探していますか"
         }
       }
     ],
@@ -1092,6 +1104,10 @@
               "value": "knock"
             },
             {
+              "label": "LFM",
+              "value": "lfm"
+            },
+            {
               "label": "取得",
               "value": "claim-button"
             }
@@ -1312,6 +1328,12 @@
               "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 チャンネルを選択"
         }
       }
     ]
@@ -3729,6 +3751,45 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  まだ投稿できません",
+        "description": "このサーバーではチャンネルの宣伝頻度が制限されており、直前に投稿されたばかりです。次の投稿は約 {retryMinutes} 分後に可能です。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  募集を掲載しました",
+        "description": "<#{lfmChannelId}> に投稿しました。\n\nメンバー数は自動で更新され、チャンネルが満員になるか空になると自動で取り下げられます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  どこに投稿しますか？",
+        "description": "メンバー募集を投稿するチャンネルを選んでください。\n\n誰がホストか、何をプレイしているか、何人いるかが表示され、チャンネルが満員になるか空になると取り下げられます。"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  投稿できません",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "投稿先のチャンネルがまだ設定されていません。管理者が設定画面で選択します。",
+            "{reasonDestinationUnavailable}": "これらの募集が送られるチャンネルは、あなたには表示されていません。管理者が設定画面で選びます。",
+            "{reasonHidden}": "チャンネルが非表示のため、誰にも見つけてもらえません。先に表示に切り替えてください。",
+            "{reasonPrivate}": "チャンネルが非公開のため、招待しても誰も入れません。先に公開に切り替えてください。",
+            "{reasonFull}": "チャンネルはすでに満員です。",
+            "{reasonAlreadyPosted}": "このチャンネルはすでに掲載されています。",
+            "{reasonFailed}": "投稿中に問題が発生しました。少し待ってからもう一度お試しください。"
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3876,6 +3937,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "テンプレートを保存"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "メンバー募集"
       }
     }
   ]

@@ -132,6 +132,13 @@
  * the channel hang below it untouched. Wrapping the whole block in it, users and all, turns a
  * selected channel into a grey slab.
  */
+/* The ring a walkthrough puts round what it wants opened, matching the one on a button. */
+.discord-channel-list-item-highlighted {
+    outline: 3px solid #ed4245;
+    outline-offset: -1px;
+    border-radius: 8px;
+}
+
 .discord-channel-list-item {
     display: flex;
     flex-direction: column;

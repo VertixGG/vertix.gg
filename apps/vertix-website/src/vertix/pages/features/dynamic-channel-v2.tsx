@@ -11,6 +11,7 @@ import Status from "./dynamic-channel-v2-features/status";
 import ResetChannel from "./dynamic-channel-v2-features/reset-channel";
 import TransferChannel from "./dynamic-channel-v2-features/transfer-channel";
 import ClaimChannel from "./dynamic-channel-v2-features/claim-channel";
+import Lfm from "./dynamic-channel-v2-features/lfm";
 
 import SearchableSelect from "../../components/ui/searchable-select";
 
@@ -28,6 +29,7 @@ const FEATURE_OPTIONS = [
     { label: "📣 Channel Status", value: "status" },
     { label: "🔃 Reset Channel", value: "reset-channel" },
     { label: "🔀 Transfer Channel", value: "transfer-channel" },
+    { label: "🔎 Looking for Members", value: "lfm" },
     { label: "😈 Claim Channel", value: "claim-channel" },
 ];
 
@@ -43,6 +45,7 @@ const FEATURE_COMPONENTS: Record<string, React.ReactNode> = {
     "reset-channel": <ResetChannel />,
     "transfer-channel": <TransferChannel />,
     "claim-channel": <ClaimChannel />,
+    "lfm": <Lfm />,
 };
 
 export default function DynamicChannelV2Page() {
@@ -90,6 +93,9 @@ export default function DynamicChannelV2Page() {
                     <hr />
 
                     <TransferChannel />
+                    <hr />
+
+                    <Lfm />
                     <hr />
 
                     <ClaimChannel />

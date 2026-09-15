@@ -399,7 +399,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
 
             args.dynamicChannelButtonsTemplate = stored.ids.length
                 ? stored.ids
-                : DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );
+                : DynamicChannelPrimaryMessageElementsGroup.getDefaults().map( item => item.getId() );
 
             args.dynamicChannelButtonsRowBreaks = stored.rowBreaks;
 
@@ -410,7 +410,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 ( buttonId: string ) => buttonId === accessButtonId
             );
         } else {
-            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );
+            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.getDefaults().map( item => item.getId() );
             const accessButtonId = DynamicChannelPrimaryMessageElementsGroup.getByName(
                 DynamicChannelPermissionsAccessButton.getName()
             )?.getId();

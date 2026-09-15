@@ -614,13 +614,20 @@ function resolveEmbedDefinition(
     // The footer is written the same way the rest of the embed is and can carry variables of its
     // own, so it is resolved too rather than handed over as it was authored.
     const resolvedFooter = applyVariables( footer, resolved );
+    // So are the two urls. An embed's artwork is addressed the same way its words are - the button
+    // sheet asks for `items={dynamicChannelButtonsTemplate}` and a post's thumbnail is whoever is
+    // hosting - and handed over as authored they reached the page as the literal token, which
+    // fetches nothing and draws as a broken image. A token no variable answers is left standing,
+    // so an embed that passes none is served exactly what it was before.
+    const resolvedImage = applyVariables( image, resolved );
+    const resolvedThumbnail = applyVariables( thumbnail, resolved );
 
     return {
         title: resolvedTitle,
         description: resolvedDescription,
         color,
-        image,
-        thumbnail,
+        image: resolvedImage,
+        thumbnail: resolvedThumbnail,
         footer: resolvedFooter,
     };
 }

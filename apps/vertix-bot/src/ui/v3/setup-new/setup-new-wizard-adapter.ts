@@ -504,10 +504,11 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
                 }
 
                 if ( !args.dynamicChannelButtonsTemplate?.length && interaction ) {
-                    // Every button is enabled by default, seeding it here makes the step show what
-                    // the master channel will actually be created with, Status included.
+                    // The default set rather than every button there is, seeding it here makes the
+                    // step show what the master channel will actually be created with - Status
+                    // included, and anything that cannot work until an admin configures it left out.
                     const defaultButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.sortIds(
-                        DynamicChannelPrimaryMessageElementsGroup.getAll().map( ( item ) => item.getId() )
+                        DynamicChannelPrimaryMessageElementsGroup.getDefaults().map( ( item ) => item.getId() )
                     );
 
                     args.dynamicChannelButtonsTemplate = defaultButtonsTemplate;
@@ -539,7 +540,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
         const templateButtons: string[] = args.dynamicChannelButtonsTemplate?.length ?
             args.dynamicChannelButtonsTemplate :
             DynamicChannelPrimaryMessageElementsGroup.sortIds(
-                DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() )
+                DynamicChannelPrimaryMessageElementsGroup.getDefaults().map( item => item.getId() )
             );
         const mentionable: boolean = args.dynamicChannelMentionable || false;
         const autosave: boolean = args.dynamicChannelAutoSave || false;

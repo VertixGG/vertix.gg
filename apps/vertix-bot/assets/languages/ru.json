@@ -437,6 +437,12 @@
         "content": {
           "label": "Обновить существующие каналы"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
       }
     ],
     "textInputs": [
@@ -602,6 +608,12 @@
         "content": {
           "label": "НАЗВАНИЕ ШАБЛОНА",
           "placeholder": "Введите название шаблона…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "КОГО ВЫ ИЩЕТЕ"
         }
       }
     ],
@@ -1092,6 +1104,10 @@
               "value": "knock"
             },
             {
+              "label": "LFM",
+              "value": "lfm"
+            },
+            {
               "label": "Забрать",
               "value": "claim-button"
             }
@@ -1312,6 +1328,12 @@
               "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 Выберите канал"
         }
       }
     ]
@@ -3729,6 +3751,45 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  Пока рано",
+        "description": "На этом сервере ограничено, как часто такие каналы могут заявлять о себе, и последний пост был недавно. Следующий можно будет отправить примерно через {retryMinutes} минут."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  Ваш канал в списке",
+        "description": "Отправлено в <#{lfmChannelId}>.\n\nКоличество участников обновляется само, а сообщение убирается, когда ваш канал заполняется или пустеет."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  Куда отправить?",
+        "description": "Выберите канал, в который будет отправлен ваш призыв к участникам.\n\nВ нём видно, кто хост, во что играют и сколько человек уже внутри. Сообщение убирается, когда ваш канал заполняется или пустеет."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  Нечего публиковать",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "Канал для таких сообщений ещё не настроен. Администратор выбирает его в настройках.",
+            "{reasonDestinationUnavailable}": "Каналы, куда уходят эти объявления, тебе не видны. Администратор выбирает их на экране настроек.",
+            "{reasonHidden}": "Ваш канал скрыт, поэтому его всё равно никто не найдёт. Сначала сделайте его видимым.",
+            "{reasonPrivate}": "Ваш канал приватный, поэтому приглашённые не смогут войти. Сначала сделайте его публичным.",
+            "{reasonFull}": "Ваш канал уже заполнен.",
+            "{reasonAlreadyPosted}": "Ваш канал уже в списке.",
+            "{reasonFailed}": "При публикации что-то пошло не так. Попробуйте ещё раз через момент."
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3876,6 +3937,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Сохранить шаблон"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "Поиск участников"
       }
     }
   ]

@@ -35,6 +35,19 @@ export interface DiscordChannelListItem {
     timer?: string;
     /** Draws the padlock Discord puts on a channel not everyone can connect to. */
     locked?: boolean;
+    /**
+     * Which kind of channel this row is, which is only ever asked to pick its glyph.
+     *
+     * Voice unless said otherwise, because every list that predates this one is voice throughout.
+     */
+    kind?: "voice" | "text";
+    /**
+     * Rings the row the way a demonstration rings the button it wants pressed.
+     *
+     * The same mark in both places on purpose: a walkthrough that says "press this" with an outline
+     * and then "now open that" with only words has changed the rules halfway through.
+     */
+    highlighted?: boolean;
     status?: DiscordChannelStatus;
     users?: DiscordChannelUser[];
     showInvite?: boolean;
@@ -178,6 +191,23 @@ function DiscordVoiceChannelIcon( { locked }: { locked?: boolean } ) {
     );
 }
 
+/**
+ * Function DiscordTextChannelIcon() :: The hash Discord puts beside a text channel.
+ *
+ * Drawn to the same weight and box as the speaker beside it, so a list carrying both kinds reads
+ * as one list rather than as two sets of artwork that happen to be stacked.
+ */
+function DiscordTextChannelIcon() {
+    return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+                d="M9.6 3.8 8.9 8.2H5.2a1 1 0 1 0 0 2h3.38l-.64 3.9H4.2a1 1 0 1 0 0 2h3.42l-.7 4.3a1 1 0 0 0 1.97.32l.76-4.62h3.9l-.7 4.3a1 1 0 0 0 1.97.32l.76-4.62h3.62a1 1 0 1 0 0-2h-3.3l.64-3.9h3.66a1 1 0 1 0 0-2h-3.34l.7-4.3a1 1 0 1 0-1.97-.32l-.76 4.62h-3.9l.7-4.3a1 1 0 0 0-1.97-.32Zm1.3 6.4h3.9l-.64 3.9h-3.9l.64-3.9Z"
+                fill="currentColor"
+            />
+        </svg>
+    );
+}
+
 const DiscordChannelListItem: React.FC<DiscordChannelListItemProps> = ( {
     channel,
     onClick,
@@ -191,13 +221,16 @@ const DiscordChannelListItem: React.FC<DiscordChannelListItemProps> = ( {
         <div
             className={ cn(
                 "discord-channel-list-item",
-                isActive && "discord-channel-list-item-active"
+                isActive && "discord-channel-list-item-active",
+                channel.highlighted && "discord-channel-list-item-highlighted"
             ) }
             onClick={ () => onClick?.( channel ) }
         >
             <div className="discord-channel-list-item-main">
                 <div className={ cn( "discord-channel-list-item-icon", isActive && "active" ) }>
-                    <DiscordVoiceChannelIcon locked={ channel.locked }/>
+                    { "text" === channel.kind
+                        ? <DiscordTextChannelIcon/>
+                        : <DiscordVoiceChannelIcon locked={ channel.locked }/> }
                 </div>
                 <div className="discord-channel-list-item-content">
                     <div className="discord-channel-list-item-name">{ channel.name }</div>

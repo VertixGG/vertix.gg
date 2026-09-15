@@ -46,6 +46,7 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
             .addTransition( "OpenInvite", { from: "Default", to: "Default" } )
             .addTransition( "OpenKnock", { from: "Default", to: "Default" } )
             .addTransition( "OpenTemplates", { from: "Default", to: "Default" } )
+            .addTransition( "OpenLfm", { from: "Default", to: "Default" } )
             // Handler bindings (combines element-to-transition binding with handler)
             .bindButton(
                 "VertixBot/UI-V3/DynamicChannelStatusButton",
@@ -173,6 +174,21 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
                 async( _context, interaction ) => {
                     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
                     await uiService.get( "VertixBot/UI-V3/DynamicChannelKnockAdapter" )?.runInitial( interaction );
+                }
+            )
+            .bindButton(
+                "VertixBot/UI-V3/DynamicChannelLfmButton",
+                "OpenLfm",
+                async( _context, interaction ) => {
+                    // Straight to the modal, the way the status button does it. Anything done
+                    // before opening it - resolving the channel, reading the generator's settings -
+                    // spends the three seconds discord allows for a first response, and a modal
+                    // cannot be preceded by a deferral. The checks happen when the note comes back,
+                    // on an interaction that is its own.
+                    const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
+                    await uiService
+                        .get( "VertixBot/UI-V3/DynamicChannelLfmAdapter" )
+                        ?.showModal( "VertixBot/UI-V3/DynamicChannelLfmNoteModal", interaction );
                 }
             )
             .bindButton(

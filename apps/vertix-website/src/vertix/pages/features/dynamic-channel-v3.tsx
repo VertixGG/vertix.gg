@@ -23,6 +23,7 @@ import TransferChannel from "@vertix.gg/website/src/vertix/pages/features/dynami
 import InviteChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/invite-channel";
 import KnockChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/knock-channel";
 import ClaimChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/claim-channel";
+import Lfm from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/lfm";
 
 import type { SearchableSelectOption } from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
 
@@ -37,7 +38,7 @@ function getFeatureOptions(): SearchableSelectOption[] {
         <DynamicChannelV3Emoji name={ name } alt={ alt } fallback={ fallback } className="inline-flex items-center" />
     );
 
-    const { rename, limit, clearChat, permissions, privacy, region, editPrimaryMessage, templates, resetChannel, transferChannel, claimChannel, status, inviteChannel, knockChannel } = DYNAMIC_CHANNEL_V3_EMOJI_NAMES;
+    const { rename, limit, clearChat, permissions, privacy, region, editPrimaryMessage, templates, resetChannel, transferChannel, claimChannel, status, inviteChannel, knockChannel, lfm } = DYNAMIC_CHANNEL_V3_EMOJI_NAMES;
 
     return [
         { label: "📋 All Features", value: "all" },
@@ -55,6 +56,7 @@ function getFeatureOptions(): SearchableSelectOption[] {
         { label: "Channel Status", value: "status", icon: icon( status, "Status", "📢" ) },
         { label: "Reset Channel", value: "reset-channel", icon: icon( resetChannel, "Reset", "🔃" ) },
         { label: "Transfer Channel", value: "transfer-channel", icon: icon( transferChannel, "Transfer", "🔀" ) },
+        { label: "Looking for Members", value: "lfm", icon: icon( lfm, "LFM", "🔎" ) },
         { label: "Claim Channel", value: "claim-channel", icon: icon( claimChannel, "Claim", "😈" ) },
     ];
 }
@@ -75,6 +77,7 @@ const FEATURE_COMPONENTS: Record<string, JSX.Element> = {
     "reset-channel": <ResetChannel />,
     "transfer-channel": <TransferChannel />,
     "claim-channel": <ClaimChannel />,
+    "lfm": <Lfm />,
 };
 
 export default function DynamicChannelV3Page() {
@@ -128,6 +131,9 @@ export default function DynamicChannelV3Page() {
                     <hr />
 
                     <TransferChannel />
+                    <hr />
+
+                    <Lfm />
                     <hr />
 
                     <ClaimChannel />

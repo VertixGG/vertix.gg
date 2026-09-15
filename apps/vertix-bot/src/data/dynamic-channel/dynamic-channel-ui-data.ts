@@ -197,7 +197,7 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
                 args.description = primaryMessage?.description || getNaming().dynamicChannelPrimaryMessageDescription;
             }
         } else {
-            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.getAll().map( item => item.getId() );
+            args.dynamicChannelButtonsTemplate = DynamicChannelPrimaryMessageElementsGroup.getDefaults().map( item => item.getId() );
         }
 
         return args;

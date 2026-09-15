@@ -437,6 +437,12 @@
         "content": {
           "label": "Update Existing Channels"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
       }
     ],
     "textInputs": [
@@ -611,6 +617,13 @@
         "content": {
           "label": "TEMPLATE NAME",
           "placeholder": "Enter a name for your template..."
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "WHO ARE YOU LOOKING FOR",
+          "placeholder": "Need 2 for ranked, mic required"
         }
       }
     ],
@@ -1100,6 +1113,10 @@
               "value": "knock"
             },
             {
+              "label": "LFM",
+              "value": "lfm"
+            },
+            {
               "label": "Claim",
               "value": "claim-button"
             }
@@ -1320,6 +1337,12 @@
               "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 Select Channel"
         }
       }
     ]
@@ -3760,6 +3783,45 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  Not just yet",
+        "description": "This server limits how often these channels advertise, and the last post went up recently. The next one can go up in about {retryMinutes} minutes."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  Your channel is on the board",
+        "description": "Posted to <#{lfmChannelId}>.\n\nIt keeps its member count up to date, and comes down on its own when your channel fills up or empties."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  Where should it go?",
+        "description": "Pick the channel your call for members is posted to.\n\nIt shows who is hosting, what they are playing and how many are in, and it is taken down when your channel fills up or empties."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  Nothing to post",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "Nobody has set up a channel for these posts yet. An admin picks one in the setup screen.",
+            "{reasonDestinationUnavailable}": "The channels these posts go to are not ones you can see. An admin picks them in the setup screen.",
+            "{reasonHidden}": "Your channel is hidden, so nobody could find it anyway. Show it first.",
+            "{reasonPrivate}": "Your channel is private, so nobody you invite could get in. Make it public first.",
+            "{reasonFull}": "Your channel is already full.",
+            "{reasonAlreadyPosted}": "Your channel is already on the board.",
+            "{reasonFailed}": "Something went wrong while posting. Try again in a moment."
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3907,6 +3969,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Save Template"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "Looking for members"
       }
     }
   ]

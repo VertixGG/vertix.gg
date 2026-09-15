@@ -437,6 +437,12 @@
         "content": {
           "label": "Ενημέρωση Υπαρχόντων Καναλιών"
         }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmButton",
+        "content": {
+          "label": "LFM"
+        }
       }
     ],
     "textInputs": [
@@ -602,6 +608,12 @@
         "content": {
           "label": "ΟΝΟΜΑ ΠΡΟΤΥΠΟΥ",
           "placeholder": "Εισαγάγετε ένα όνομα για το πρότυπό σας…"
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmNoteInput",
+        "content": {
+          "label": "ΠΟΙΟΝ ΨΑΧΝΕΤΕ"
         }
       }
     ],
@@ -1092,6 +1104,10 @@
               "value": "knock"
             },
             {
+              "label": "LFM",
+              "value": "lfm"
+            },
+            {
               "label": "Διεκδίκηση",
               "value": "claim-button"
             }
@@ -1312,6 +1328,12 @@
               "value": "edit-dynamic-channel-default-user-limit"
             }
           ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
+        "content": {
+          "placeholder": "🔎 Επιλέξτε κανάλι"
         }
       }
     ]
@@ -3729,6 +3751,45 @@
           }
         }
       }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmCooldownEmbed",
+      "content": {
+        "title": "🔎  Όχι ακόμη",
+        "description": "Ο διακομιστής περιορίζει πόσο συχνά διαφημίζονται αυτά τα κανάλια και η τελευταία ανάρτηση έγινε πρόσφατα. Η επόμενη μπορεί να γίνει σε περίπου {retryMinutes} λεπτά."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmPostedEmbed",
+      "content": {
+        "title": "🔎  Το κανάλι σου μπήκε στη λίστα",
+        "description": "Δημοσιεύτηκε στο <#{lfmChannelId}>.\n\nΟ αριθμός των μελών ενημερώνεται μόνος του και η ανάρτηση φεύγει όταν το κανάλι σου γεμίσει ή αδειάσει."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmSelectChannelEmbed",
+      "content": {
+        "title": "🔎  Πού να σταλεί;",
+        "description": "Διάλεξε το κανάλι όπου θα δημοσιευτεί το κάλεσμά σου για μέλη.\n\nΔείχνει ποιος φιλοξενεί, τι παίζουν και πόσοι είναι μέσα, και αφαιρείται όταν το κανάλι σου γεμίσει ή αδειάσει."
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmUnavailableEmbed",
+      "content": {
+        "title": "🔎  Τίποτα για δημοσίευση",
+        "description": "{reason}",
+        "options": {
+          "reason": {
+            "{reasonNotConfigured}": "Δεν έχει οριστεί ακόμη κανάλι για αυτές τις αναρτήσεις. Ένας διαχειριστής το επιλέγει στις ρυθμίσεις.",
+            "{reasonDestinationUnavailable}": "Τα κανάλια στα οποία πηγαίνουν αυτές οι δημοσιεύσεις δεν είναι ορατά σε εσένα. Ένας διαχειριστής τα επιλέγει στην οθόνη ρυθμίσεων.",
+            "{reasonHidden}": "Το κανάλι σου είναι κρυφό, οπότε δεν θα το έβρισκε κανείς έτσι κι αλλιώς. Κάν' το πρώτα ορατό.",
+            "{reasonPrivate}": "Το κανάλι σου είναι ιδιωτικό, οπότε όποιον καλέσεις δεν θα μπορεί να μπει. Κάν' το πρώτα δημόσιο.",
+            "{reasonFull}": "Το κανάλι σου είναι ήδη γεμάτο.",
+            "{reasonAlreadyPosted}": "Το κανάλι σου είναι ήδη στη λίστα.",
+            "{reasonFailed}": "Κάτι πήγε στραβά κατά την ανάρτηση. Δοκίμασε ξανά σε λίγο."
+          }
+        }
+      }
     }
   ],
   "markdowns": [
@@ -3876,6 +3937,12 @@
       "name": "VertixBot/UI-V3/DynamicChannelTemplatesSaveModal",
       "content": {
         "title": "Αποθήκευση προτύπου"
+      }
+    },
+    {
+      "name": "VertixBot/UI-V3/DynamicChannelLfmNoteModal",
+      "content": {
+        "title": "Αναζήτηση μελών"
       }
     }
   ]

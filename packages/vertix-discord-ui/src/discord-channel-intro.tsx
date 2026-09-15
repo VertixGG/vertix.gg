@@ -8,6 +8,14 @@ export interface DiscordChannelIntroProps {
     /** The channel being opened, which the welcome and the line under it are both written around. */
     channelName: string;
     /**
+     * Which kind of channel is being opened, which decides the mark and how the name is written.
+     *
+     * A text channel wears a hash, both on the mark and in front of its name everywhere the name
+     * appears - Discord writes `#general` and never `general`. Voice unless said otherwise, which
+     * is what every demonstration that predates this one is.
+     */
+    kind?: "voice" | "text";
+    /**
      * Discord offers this to whoever can manage the channel, and a dynamic channel belongs to the
      * person reading these pages - so it is drawn unless a page says otherwise.
      */
@@ -25,24 +33,40 @@ export interface DiscordChannelIntroProps {
  */
 export const DiscordChannelIntro: React.FC<DiscordChannelIntroProps> = ( {
     channelName,
+    kind = "voice",
     canEdit = true,
     onEdit
-} ) => (
+} ) => {
+    // Written once: the hash belongs to the name rather than to the sentence, so both the welcome
+    // and the line under it get it without either one spelling the rule out again.
+    const name = "text" === kind ? `#${ channelName }` : channelName;
+
+    return (
     <div className="discord-channel-intro">
         <div className="discord-channel-intro-icon">
-            { /* Discord's own speech bubble, at the 42px it draws it inside a 68px circle. */ }
-            <svg width="42" height="42" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                    fill="currentColor"
-                    d="M12 22a10 10 0 1 0-8.45-4.64c.13.19.11.44-.04.61l-2.06 2.37A1 1 0 0 0 2.2 22H12Z"
-                />
-            </svg>
+            { "text" === kind ? (
+                /* The hash Discord puts on a text channel, at the size its speech bubble sits at. */
+                <svg width="42" height="42" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        fill="currentColor"
+                        d="M9.6 3.8 8.9 8.2H5.2a1 1 0 1 0 0 2h3.38l-.64 3.9H4.2a1 1 0 1 0 0 2h3.42l-.7 4.3a1 1 0 0 0 1.97.32l.76-4.62h3.9l-.7 4.3a1 1 0 0 0 1.97.32l.76-4.62h3.62a1 1 0 1 0 0-2h-3.3l.64-3.9h3.66a1 1 0 1 0 0-2h-3.34l.7-4.3a1 1 0 1 0-1.97-.32l-.76 4.62h-3.9l.7-4.3a1 1 0 0 0-1.97-.32Zm1.3 6.4h3.9l-.64 3.9h-3.9l.64-3.9Z"
+                    />
+                </svg>
+            ) : (
+                /* Discord's own speech bubble, at the 42px it draws it inside a 68px circle. */
+                <svg width="42" height="42" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        fill="currentColor"
+                        d="M12 22a10 10 0 1 0-8.45-4.64c.13.19.11.44-.04.61l-2.06 2.37A1 1 0 0 0 2.2 22H12Z"
+                    />
+                </svg>
+            ) }
         </div>
 
-        <h3 className="discord-channel-intro-heading">Welcome to { channelName }!</h3>
+        <h3 className="discord-channel-intro-heading">Welcome to { name }!</h3>
 
         <div className="discord-channel-intro-subtitle">
-            This is the start of the { channelName } channel.
+            This is the start of the { name } channel.
         </div>
 
         { canEdit && (
@@ -68,7 +92,8 @@ export const DiscordChannelIntro: React.FC<DiscordChannelIntroProps> = ( {
                 />
             </div>
         ) }
-    </div>
-);
+        </div>
+    );
+};
 
 export default DiscordChannelIntro;

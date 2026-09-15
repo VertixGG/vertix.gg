@@ -50,7 +50,8 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates",
                 "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenInvite",
-                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenKnock"
+                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenKnock",
+                "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenLfm"
             ]
         };
     }
@@ -68,6 +69,7 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ResetChannel": "VertixBot/UI-V3/DynamicChannelResetChannelFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/ClaimChannel": "VertixBot/UI-V3/ClaimStartFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/TransferOwner": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/SelectUser",
+            "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenLfm": "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Default",
             "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenTemplates": "VertixBot/UI-V3/DynamicChannelTemplatesFlow/States/Default",
             // The invite adapter decides for itself which of three screens to open - pick a channel
             // if you own several, a refusal if you own none - but the one it lands on for somebody
@@ -197,6 +199,11 @@ export class DynamicChannelFlow extends UIFlowBase<string, string, UIFlowDataBas
                 triggeringElementId: "VertixBot/UI-V3/DynamicChannelKnockButton",
                 transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenKnock",
                 targetFlowName: "VertixBot/UI-V3/DynamicChannelKnockFlow"
+            },
+            {
+                triggeringElementId: "VertixBot/UI-V3/DynamicChannelLfmButton",
+                transitionName: "VertixBot/UI-V3/DynamicChannelFlow/Transitions/OpenLfm",
+                targetFlowName: "VertixBot/UI-V3/DynamicChannelLfmFlow"
             }
         ];
     }

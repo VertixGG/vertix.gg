@@ -20,6 +20,13 @@ export interface DiscordAppFrameProps {
     channelName?: string;
     /** The day the messages below carry, worded as Discord words it. Defaults to today. */
     channelDate?: string;
+    /**
+     * Which kind of channel this is, which decides the mark above it and how its name is written.
+     *
+     * Voice unless said otherwise, because every demonstration that predates this one shows the
+     * channel a generator made.
+     */
+    channelKind?: "voice" | "text";
     children?: React.ReactNode;
     className?: string;
 }
@@ -31,7 +38,14 @@ export interface DiscordAppFrameProps {
  * What a feature does to the sidebar is half of what it does - a status is a line under a channel
  * name in that list - so showing the message without the list beside it leaves out the result.
  */
-export function DiscordAppFrame( { sidebar, channelName, channelDate, children, className }: DiscordAppFrameProps ) {
+export function DiscordAppFrame( {
+    sidebar,
+    channelName,
+    channelDate,
+    channelKind = "voice",
+    children,
+    className
+}: DiscordAppFrameProps ) {
     return (
         <div className={ className ? `discord-app-frame ${ className }` : "discord-app-frame" }>
             { sidebar && <div className="discord-app-frame-sidebar">{ sidebar }</div> }
@@ -39,14 +53,14 @@ export function DiscordAppFrame( { sidebar, channelName, channelDate, children, 
             <div className="discord-app-frame-main">
                 { channelName && (
                     <>
-                        <DiscordChannelIntro channelName={ channelName }/>
+                        <DiscordChannelIntro channelName={ channelName } kind={ channelKind }/>
                         <DiscordDateDivider date={ channelDate }/>
                     </>
                 ) }
 
                 { children }
 
-                { channelName && <DiscordComposer channelName={ channelName }/> }
+                { channelName && <DiscordComposer channelName={ "text" === channelKind ? `#${ channelName }` : channelName }/> }
             </div>
         </div>
     );

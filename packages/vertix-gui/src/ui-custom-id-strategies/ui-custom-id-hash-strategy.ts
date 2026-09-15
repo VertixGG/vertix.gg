@@ -24,4 +24,8 @@ export class UICustomIdHashStrategy extends UICustomIdStrategyBase {
     public getId( id: string ): string {
         return this.uiHashService.getId( id );
     }
+
+    public getIdSilent( id: string ): string {
+        return this.uiHashService.getIdSilent( id );
+    }
 }

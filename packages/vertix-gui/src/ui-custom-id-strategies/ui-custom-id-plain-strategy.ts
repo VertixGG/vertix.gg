@@ -12,4 +12,8 @@ export class UICustomIdPlainStrategy extends UICustomIdStrategyBase {
     public getId( id: string ): string {
         return id;
     }
+
+    public getIdSilent( id: string ): string {
+        return id;
+    }
 }

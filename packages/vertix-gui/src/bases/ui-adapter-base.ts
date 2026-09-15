@@ -115,6 +115,34 @@ export function fillGapsFrom( args: UIArgs, argsFromManager?: UIArgs ): UIArgs {
     return filled;
 }
 
+/**
+ * Function componentsBelongTo() :: Whether a message is drawing one adapter's own controls.
+ *
+ * Custom ids reach discord hashed, so an adapter's name cannot be read off one directly - `decode`
+ * is what puts a hash back through the table that made it, and it is passed in rather than reached
+ * for because which table that is belongs to the adapter's module.
+ *
+ * Decoding has to be the quiet kind. This is asked about every component in a channel, most of
+ * which belong to another adapter or to another bot entirely, and not recognising one of those is
+ * the answer rather than a fault.
+ */
+export function componentsBelongTo(
+    rows: Message[ "components" ],
+    adapterName: string,
+    decode: ( customId: string ) => string
+): boolean {
+    return rows.some( ( row ) => {
+        if ( ComponentType.ActionRow !== row.type ) {
+            return false;
+        }
+
+        return row.components.some(
+            ( component ) =>
+                "customId" in component && !!component.customId && decode( component.customId ).startsWith( adapterName )
+        );
+    } );
+}
+
 export abstract class UIAdapterBase<
     // TODO: Generic are useless...
     TChannel extends UIAdapterStartContext,
@@ -796,8 +824,66 @@ export abstract class UIAdapterBase<
         this.$$.screenOwners[ this.getScreenOwnerKey( userId ) ] = interaction;
     }
 
-    public getStartedMessages( channel: TChannel ) {
+    /**
+     * Function getStartedMessages() :: The messages this adapter has standing in a channel.
+     *
+     * The note of them is written when they are sent, so a process that did not send them knows of
+     * none - which after a restart is every message the adapter has ever put anywhere. The messages
+     * themselves are in discord and outlived the process perfectly well; only the note of them did
+     * not, so when there is none the channel is asked instead.
+     *
+     * What comes back is kept, so the channel is asked once rather than on every press - and so
+     * that taking the messages down later, which reads the same note, finds them there to take.
+     */
+    public async getStartedMessages( channel: TChannel ) {
+        const known = this.channelStartedMessages.get( channel.id );
+
+        if ( known && Object.keys( known ).length ) {
+            return known;
+        }
+
+        const found = await this.findStartedMessages( channel );
+
+        Object.entries( found ).forEach( ( [ id, message ] ) =>
+            this.channelStartedMessages.set( channel.id, id, message )
+        );
+
         return this.channelStartedMessages.get( channel.id );
+    }
+
+    /**
+     * Function findStartedMessages() :: This adapter's own messages, as the channel still holds them.
+     */
+    private async findStartedMessages( channel: TChannel ) {
+        const result: { [messageId: string]: Message<true> } = {};
+
+        const supported = channel instanceof BaseGuildTextChannel || channel instanceof BaseGuildVoiceChannel;
+
+        if ( !supported ) {
+            return result;
+        }
+
+        const messages = await channel.messages.fetch().catch( ( e ) => {
+            this.$$.staticLogger.error( this.findStartedMessages, "", e );
+        } );
+
+        if ( !messages ) {
+            return result;
+        }
+
+        messages.forEach( ( message ) => {
+            if ( message.author.id === channel.client.user.id && this.ownsComponentsOf( message ) ) {
+                result[ message.id ] = message as Message<true>;
+            }
+        } );
+
+        return result;
+    }
+
+    private ownsComponentsOf( message: Message ) {
+        return componentsBelongTo( message.components, this.getName(), ( customId ) =>
+            this.customIdStrategy.getIdSilent( customId )
+        );
     }
 
     public async updateInteractionDefer( interaction: TInteraction ) {

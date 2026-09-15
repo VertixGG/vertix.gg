@@ -33,8 +33,8 @@ type DefaultInteraction =
  * The channel is the fallback, because the two can come apart: the manager marks a channel
  * claimable, and the prompt is sent separately.
  */
-function claimMessageUrlOf( channel: VoiceChannel, version: "v2" | "v3" ): string {
-    const started = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+async function claimMessageUrlOf( channel: VoiceChannel, version: "v2" | "v3" ): Promise<string> {
+    const started = await ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
         .get( "v2" === version
             ? "VertixBot/UI-V2/ClaimStartAdapter"
             : "VertixBot/UI-V3/ClaimStartAdapter" )
@@ -104,7 +104,7 @@ const ClaimCommandAdapter = new CommandExecutionAdapterBuilder<DefaultInteractio
 
                     await context.triggerTransition( "PointAt", interaction, {
                         claimedChannelName: channel.name,
-                        claimMessageUrl: claimMessageUrlOf( channel, version )
+                        claimMessageUrl: await claimMessageUrlOf( channel, version )
                     } );
                 }
             );

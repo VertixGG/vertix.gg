@@ -213,7 +213,7 @@ async function onClaimButtonClicked(
     interaction: UIDefaultButtonChannelVoiceInteraction
 ) {
     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-    const messages = uiService.get( "VertixBot/UI-V2/ClaimStartAdapter" )?.getStartedMessages( interaction.channel ),
+    const messages = await uiService.get( "VertixBot/UI-V2/ClaimStartAdapter" )?.getStartedMessages( interaction.channel ),
         message = Object.values( messages || {} )[ 0 ];
 
     if ( !message ) {

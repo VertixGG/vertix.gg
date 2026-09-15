@@ -5,8 +5,6 @@ import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-defin
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
-
-
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 import { getButtonSheetImageUrl } from "@vertix.gg/bot/src/definitions/button-sheet";
 
@@ -19,7 +17,6 @@ import { DynamicChannelLimitMetaButton } from "@vertix.gg/bot/src/ui/v3/dynamic-
 import { DynamicChannelRenameButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/rename/dynamic-channel-rename-button";
 import { DynamicChannelPrivacyButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/privacy/dynamic-channel-privacy-button";
 import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/region/dynamic-channel-region-button";
-
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -112,7 +109,6 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     } )
     .setLogic( ( args: UIArgs ) => {
         const { limitDisplayValue, limitDisplayUnlimited } = vars;
-
 
         const logic: Record<string, any> = {
             name: args.channelName,

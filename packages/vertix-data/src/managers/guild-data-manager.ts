@@ -1,6 +1,5 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-
 import {
     DEFAULT_GUILD_SETTINGS_KEY_BADWORDS,
     DEFAULT_GUILD_SETTINGS_KEY_LANGUAGE,

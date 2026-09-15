@@ -568,10 +568,6 @@ export class DynamicChannelClaimManager extends InitializeBase {
         );
     }
 
-    public isOwnerTracked( ownerId: string ) {
-        return !!this.trackedChannels[ ownerId ];
-    }
-
     public isChannelClaimable( channelId: string ) {
         return !!this.claimableChannels[ channelId ];
     }
@@ -1317,7 +1313,10 @@ export class DynamicChannelClaimManager extends InitializeBase {
         _guild: Guild,
         _args: IChannelLeaveGenericArgs
     ) {
-        this.removeChannelOwnerTracking( channel.id );
+        // By channel rather than by owner. This handed a channel id to the argument that means an
+        // owner id, so it took the branch that walks every tracked room looking for one whose owner
+        // is the channel - which is nobody - and the room that had just emptied stayed tracked.
+        this.removeChannelTracking( channel.id );
 
         // An emptied room is deleted, so the record has to go with it - the sweep on the next
         // startup reads these before it reads discord, and one left behind describes a room that

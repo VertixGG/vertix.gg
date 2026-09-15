@@ -3,6 +3,8 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
 
+import type { IDynamicChannelVoteStoredState } from "@vertix.gg/data/src/interfaces/dynamic-channel-vote";
+
 import type { TVoteTimings } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
 import type { GuildChannel, MessageComponentInteraction, VoiceChannel } from "discord.js";
@@ -11,7 +13,16 @@ export interface IVoteDefaultComponentInteraction extends MessageComponentIntera
     channel: VoiceChannel;
 }
 
-interface IVoteEvent<TInteraction, TChannel> {
+/**
+ * Told that a vote has changed, and handed what it now is - or nothing at all, when it is over.
+ *
+ * The manager knows what a vote is made of and nothing about where it might be written down, so it
+ * says what happened and leaves the writing to whoever opened the vote. That also keeps it free of
+ * a database it would otherwise need mocking away in every test.
+ */
+export type TVoteChangedCallback = ( channelId: string, state: IDynamicChannelVoteStoredState | null ) => void;
+
+interface IVoteEvent<TChannel> {
     state: VoteEventState;
 
     channel: TChannel;
@@ -33,12 +44,21 @@ interface IVoteEvent<TInteraction, TChannel> {
 
     intervalHandler?: NodeJS.Timeout;
 
-    initiatorInteraction?: TInteraction;
+    /**
+     * Who opened the vote, and the message it is drawn on.
+     *
+     * Ids rather than the interaction and message objects they came from: those cannot outlive the
+     * process, and the only thing ever asked of the interaction was the id of whoever it belonged
+     * to. Holding the id instead is what lets a vote be written down and picked back up.
+     */
+    initiatorId?: string;
+    messageId?: string;
+
+    onChanged?: TVoteChangedCallback;
 }
 
-interface IVoterData<TInteraction> {
+interface IVoterData {
     [memberId: string]: {
-        interaction: TInteraction;
         candidateOnly?: boolean;
     };
 }
@@ -55,7 +75,6 @@ enum VoteManagerResult {
 type VoteEventCallback<TChannel> = ( channel: TChannel, state: VoteEventState, args?: any ) => Promise<void>;
 type VoteEventState = "idle" | "starting" | "active" | "done";
 
-// TODO: What happens when bot restarts? should it be saved in the database?
 // TODO: convert to object oriented.
 export class DynamicChannelVoteManager<
     TInteraction extends IVoteDefaultComponentInteraction = IVoteDefaultComponentInteraction,
@@ -84,13 +103,13 @@ export class DynamicChannelVoteManager<
             channel: TChannel;
 
             votes: {
-                [targetId: string]: IVoterData<TInteraction>;
+                [targetId: string]: IVoterData;
             };
         };
     } = {};
 
     private events: {
-        [channelId: string]: IVoteEvent<TInteraction, TChannel>;
+        [channelId: string]: IVoteEvent<TChannel>;
     } = {};
 
     public static getName() {
@@ -139,8 +158,12 @@ export class DynamicChannelVoteManager<
     public start(
         channel: TChannel,
         callback: VoteEventCallback<TChannel>,
-        initiatorInteraction?: TInteraction,
-        timings?: TVoteTimings
+        args: {
+            initiatorId?: string;
+            messageId?: string;
+            timings?: TVoteTimings;
+            onChanged?: TVoteChangedCallback;
+        } = {}
     ) {
         if ( !this.events[ channel.id ] ) {
             this.setInitialEventState( channel );
@@ -155,28 +178,106 @@ export class DynamicChannelVoteManager<
             return;
         }
 
-        // TODO: Remove `initiatorInteraction` its not needed.
-        if ( initiatorInteraction ) {
-            this.events[ channel.id ].initiatorInteraction = initiatorInteraction;
+        const event = this.events[ channel.id ];
+
+        if ( args.initiatorId ) {
+            event.initiatorId = args.initiatorId;
         }
 
-        if ( timings ) {
-            this.events[ channel.id ].timings = timings;
+        if ( args.messageId ) {
+            event.messageId = args.messageId;
         }
 
-        const eventTimings = this.events[ channel.id ].timings;
+        if ( args.timings ) {
+            event.timings = args.timings;
+        }
 
-        this.events[ channel.id ].state = "active";
-        this.events[ channel.id ].startTime = Date.now();
-        this.events[ channel.id ].endTime = Date.now() + eventTimings.voteTimeout;
+        event.onChanged = args.onChanged;
 
-        this.timer( channel, callback ).then( () => {
-            this.events[ channel.id ].intervalHandler = setInterval(
+        event.state = "active";
+        event.startTime = Date.now();
+        event.endTime = Date.now() + event.timings.voteTimeout;
+
+        this.notifyChanged( channel.id );
+
+        this.arm( channel, callback );
+
+        this.logger.info( this.start, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Vote started` );
+    }
+
+    /**
+     * Function restore() :: Picks a vote back up exactly where the last run left it.
+     *
+     * The deadline comes back as it was written rather than counted again from now, so a vote whose
+     * time ran out during the outage is seen to have run out: the first tick closes it, announces
+     * the winner it already had and hands the room over, which is what it would have done had
+     * nothing stopped.
+     */
+    public restore(
+        channel: TChannel,
+        stored: IDynamicChannelVoteStoredState,
+        callback: VoteEventCallback<TChannel>,
+        onChanged?: TVoteChangedCallback
+    ) {
+        this.setInitialEventState( channel );
+
+        const event = this.events[ channel.id ];
+
+        event.state = "active";
+        event.startTime = stored.startedAt;
+        event.endTime = stored.endsAt;
+        event.isInitialInterval = stored.isInitialInterval;
+        event.isInitialCandidate = stored.isInitialCandidate;
+        event.timings = stored.timings;
+        event.initiatorId = stored.initiatorId;
+        event.messageId = stored.messageId;
+        event.onChanged = onChanged;
+
+        this.voteMembers[ channel.id ] = { channel, votes: {} };
+        this.voteKeeper[ channel.id ] = { ... stored.votes };
+
+        const votes = this.voteMembers[ channel.id ].votes;
+
+        stored.candidateIds.forEach( ( candidateId ) => {
+            votes[ candidateId ] = { [ candidateId ]: { candidateOnly: true } };
+        } );
+
+        Object.entries( stored.votes ).forEach( ( [ voterId, targetId ] ) => {
+            if ( !votes[ targetId ] ) {
+                votes[ targetId ] = {};
+            }
+
+            votes[ targetId ][ voterId ] = {};
+        } );
+
+        this.logger.info(
+            this.restore,
+            `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Vote restored, ` +
+                `candidates: '${ stored.candidateIds.length }', votes: '${ Object.keys( stored.votes ).length }'`
+        );
+
+        this.arm( channel, callback );
+    }
+
+    /**
+     * Function arm() :: Ticks once, then keeps ticking while there is still a vote to tick for.
+     *
+     * The guard is what makes a restored vote safe to arm at all: a vote whose deadline has already
+     * passed is stopped by that first tick, and an interval set afterwards would belong to nothing
+     * and go on firing for the rest of the process.
+     */
+    private arm( channel: TChannel, callback: VoteEventCallback<TChannel> ) {
+        void this.timer( channel, callback ).then( () => {
+            const event = this.events[ channel.id ];
+
+            if ( "active" !== event?.state ) {
+                return;
+            }
+
+            event.intervalHandler = setInterval(
                 this.timer.bind( this, channel, callback ),
-                eventTimings.voteTimerInterval
+                event.timings.voteTimerInterval
             );
-
-            this.logger.info( this.start, `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Vote started` );
         } );
     }
 
@@ -264,6 +365,8 @@ export class DynamicChannelVoteManager<
             `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Vote removed`
         );
 
+        this.notifyChanged( channelId );
+
         return VoteManagerResult.Success;
     }
 
@@ -313,7 +416,7 @@ export class DynamicChannelVoteManager<
     }
 
     public getWinnerId( channelId: string ): string {
-        const initiatorId = this.events[ channelId ]?.initiatorInteraction?.user.id || "";
+        const initiatorId = this.events[ channelId ]?.initiatorId || "";
 
         // In case of tie, the initiator wins.
         const results = this.getResults( channelId );
@@ -330,7 +433,7 @@ export class DynamicChannelVoteManager<
         return winnerId;
     }
 
-    public getEvents(): { [channelId: string]: IVoteEvent<TInteraction, TChannel> } {
+    public getEvents(): { [channelId: string]: IVoteEvent<TChannel> } {
         return this.events;
     }
 
@@ -345,7 +448,7 @@ export class DynamicChannelVoteManager<
     }
 
     public getInitiatorId( channelId: string ): string {
-        return this.events[ channelId ]?.initiatorInteraction?.user.id || "";
+        return this.events[ channelId ]?.initiatorId || "";
     }
 
     public getStartTime( channelId: string ): number {
@@ -434,10 +537,16 @@ export class DynamicChannelVoteManager<
     public clear( channelId: string ) {
         this.logger.debug( this.clear, `Channel id: '${ channelId }' - Clearing votes` );
 
+        // Read before the reset, because the reset is what drops it - and the news that this vote
+        // is over is the last thing whoever was writing it down needs to hear.
+        const onChanged = this.events[ channelId ]?.onChanged;
+
         delete this.voteMembers[ channelId ];
         delete this.voteKeeper[ channelId ];
 
         this.setInitialEventState( this.events[ channelId ].channel as TChannel );
+
+        onChanged?.( channelId, null );
     }
 
     private setInitialEventState( channel: TChannel ) {
@@ -460,6 +569,59 @@ export class DynamicChannelVoteManager<
 
     private addTime( channelId: string, baseTime = this.events[ channelId ].endTime ) {
         this.events[ channelId ].endTime = ( baseTime || 0 ) + this.events[ channelId ].timings.voteAddTime;
+    }
+
+    /**
+     * Function snapshot() :: The vote as something that can be written down.
+     *
+     * Built from the same objects the vote is run out of rather than kept alongside them, so there
+     * is nothing to fall out of step - and it is only ever the plain facts, because everything else
+     * the manager holds is either a timer or a channel this process happens to have.
+     */
+    private snapshot( channelId: string ): IDynamicChannelVoteStoredState | null {
+        const event = this.events[ channelId ];
+
+        if ( !event?.messageId || "active" !== event.state ) {
+            return null;
+        }
+
+        const votes = this.voteMembers[ channelId ]?.votes ?? {};
+
+        return {
+            channelId,
+            messageId: event.messageId,
+            initiatorId: event.initiatorId ?? "",
+            startedAt: event.startTime ?? 0,
+            endsAt: event.endTime ?? 0,
+            isInitialInterval: event.isInitialInterval,
+            isInitialCandidate: event.isInitialCandidate,
+            timings: event.timings,
+            candidateIds: Object.keys( votes ).filter( ( targetId ) => votes[ targetId ][ targetId ]?.candidateOnly ),
+            votes: { ... ( this.voteKeeper[ channelId ] ?? {} ) }
+        };
+    }
+
+    /**
+     * Function notifyChanged() :: Says what the vote now is, when there is a vote to describe.
+     *
+     * Silent rather than saying "nothing" when there is no snapshot to build - nothing is what
+     * `clear()` says, and it means the vote is over. A vote that cannot be described yet is not a
+     * vote that has ended, and reporting it as one would rub out the record of a live one.
+     */
+    private notifyChanged( channelId: string ) {
+        const onChanged = this.events[ channelId ]?.onChanged;
+
+        if ( !onChanged ) {
+            return;
+        }
+
+        const snapshot = this.snapshot( channelId );
+
+        if ( !snapshot ) {
+            return;
+        }
+
+        onChanged( channelId, snapshot );
     }
 
     private addInternal( interaction: TInteraction, args: any ): VoteManagerResult {
@@ -527,9 +689,10 @@ export class DynamicChannelVoteManager<
             this.events[ channelId ].isInitialCandidate = false;
 
             channel.votes[ interaction.user.id ][ interaction.user.id ] = {
-                interaction,
                 candidateOnly: true
             };
+
+            this.notifyChanged( channelId );
 
             return VoteManagerResult.Success;
         }
@@ -564,12 +727,14 @@ export class DynamicChannelVoteManager<
 
         const channel = initChannel.call( this, channelId, targetId );
 
-        channel.votes[ targetId ][ interaction.user.id ] = { interaction };
+        channel.votes[ targetId ][ interaction.user.id ] = {};
 
         this.logger.log(
             this.addInternal,
             `Guild id: '${ interaction.guildId }', channel id: '${ channelId }', user id: '${ interaction.user.id }' - Vote added`
         );
+
+        this.notifyChanged( channelId );
 
         return VoteManagerResult.Success;
     }
@@ -580,7 +745,15 @@ export class DynamicChannelVoteManager<
 
         await callback( channel, state );
 
+        // Written down only as it turns over, rather than on every tick: it says whether the vote
+        // is still drawing its opening screen, which it stops being once and never becomes again.
+        const wasInitialInterval = this.events[ channelId ].isInitialInterval;
+
         this.events[ channelId ].isInitialInterval = false;
+
+        if ( wasInitialInterval ) {
+            this.notifyChanged( channelId );
+        }
 
         // Check if endTime passed.
         if ( this.isTimeExpired( channelId ) ) {

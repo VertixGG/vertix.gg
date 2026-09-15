@@ -7,6 +7,8 @@ import { GuildMock } from "@vertix.gg/test-utils/src/__mock__/discord/guild-mock
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
+import type { IDynamicChannelVoteStoredState } from "@vertix.gg/data/src/interfaces/dynamic-channel-vote";
+
 import type { IVoteDefaultComponentInteraction } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 import type { RawAnonymousGuildData, RawMessageComponentInteractionData } from "discord.js/typings/rawDataTypes";
 
@@ -267,6 +269,130 @@ describe( "VertixBot/Managers/ChannelVote", () => {
 
     } );
 
+    /**
+     * A claim vote is drawn by editing the message its button sits on, so the message goes on
+     * standing whatever happens to the process. Everything that made it mean anything lived in
+     * memory, which is the whole of this: a vote has to be sayable as plain facts, and those facts
+     * have to add back up to the same vote.
+     */
+    describe( "surviving a restart", () => {
+        const MESSAGE_ID = "830000000000000009";
+
+        const storedVote = ( overrides: Partial<IDynamicChannelVoteStoredState> = {} ): IDynamicChannelVoteStoredState => ( {
+            channelId: channel.id,
+            messageId: MESSAGE_ID,
+            initiatorId: OWNER_ID,
+            startedAt: Date.now() - 1000,
+            endsAt: Date.now() + 60000,
+            isInitialInterval: false,
+            isInitialCandidate: false,
+            timings: { voteTimeout: 60000, voteAddTime: 1000, voteTimerInterval: 1000 },
+            candidateIds: [ OWNER_ID, RIVAL_ID ],
+            votes: { [ VOTER_ID ]: RIVAL_ID },
+            ... overrides
+        } );
+
+        it( "says what the vote is every time it changes", () => {
+            const changes: ( IDynamicChannelVoteStoredState | null )[] = [];
+
+            manager.start( channel, () => Promise.resolve(), {
+                initiatorId: OWNER_ID,
+                messageId: MESSAGE_ID,
+                onChanged: ( _channelId, state ) => void changes.push( state )
+            } );
+
+            manager.addCandidate( interactionFor( OWNER_ID ) );
+            manager.addCandidate( interactionFor( RIVAL_ID ) );
+            manager.addVote( interactionFor( VOTER_ID ), RIVAL_ID );
+
+            const latest = changes[ changes.length - 1 ];
+
+            expect( latest?.messageId ).toBe( MESSAGE_ID );
+            expect( latest?.initiatorId ).toBe( OWNER_ID );
+            expect( [ ... latest?.candidateIds ?? [] ].sort() ).toEqual( [ OWNER_ID, RIVAL_ID ].sort() );
+            expect( latest?.votes ).toEqual( { [ VOTER_ID ]: RIVAL_ID } );
+        } );
+
+        it( "says there is nothing left once the vote is over", () => {
+            const changes: ( IDynamicChannelVoteStoredState | null )[] = [];
+
+            manager.start( channel, () => Promise.resolve(), {
+                initiatorId: OWNER_ID,
+                messageId: MESSAGE_ID,
+                onChanged: ( _channelId, state ) => void changes.push( state )
+            } );
+
+            manager.clear( channel.id );
+
+            expect( changes[ changes.length - 1 ] ).toBeNull();
+        } );
+
+        it( "brings back the candidates, the votes, the initiator and the deadline", () => {
+            const stored = storedVote();
+
+            manager.restore( channel, stored, () => Promise.resolve() );
+
+            expect( manager.getState( channel.id ) ).toBe( "active" );
+            expect( manager.getInitiatorId( channel.id ) ).toBe( OWNER_ID );
+            expect( manager.getEndTime( channel.id ) ).toBe( stored.endsAt );
+            expect( manager.getStartTime( channel.id ) ).toBe( stored.startedAt );
+            expect( manager.getCandidatesCount( channel.id ) ).toBe( 2 );
+            expect( manager.getMemberVotes( channel.id ) ).toEqual( { [ VOTER_ID ]: RIVAL_ID } );
+
+            // Someone who only stepped in reads as nought rather than as absent, which is what puts
+            // them on the board at all.
+            expect( manager.getResults( channel.id ) ).toEqual( { [ OWNER_ID ]: 0, [ RIVAL_ID ]: 1 } );
+            expect( manager.getWinnerId( channel.id ) ).toBe( RIVAL_ID );
+        } );
+
+        it( "keeps the deadline it was given rather than counting a fresh one", () => {
+            const stored = storedVote( { endsAt: Date.now() + 5000 } );
+
+            manager.restore( channel, stored, () => Promise.resolve() );
+
+            expect( manager.getEndTime( channel.id ) ).toBe( stored.endsAt );
+            expect( manager.isTimeExpired( channel.id ) ).toBe( false );
+        } );
+
+        it( "closes out a vote whose time ran out while nothing was running", async() => {
+            const states: string[] = [],
+                changes: ( IDynamicChannelVoteStoredState | null )[] = [];
+
+            manager.restore(
+                channel,
+                storedVote( { endsAt: Date.now() - 1 } ),
+                ( _channel, state ) => {
+                    states.push( state );
+
+                    return Promise.resolve();
+                },
+                ( _channelId, state ) => void changes.push( state )
+            );
+
+            await jest.advanceTimersByTimeAsync( 0 );
+
+            // The outcome it would have reached had nothing stopped: the tally it already had,
+            // announced, and the room handed over.
+            expect( states ).toContain( "done" );
+            expect( manager.getState( channel.id ) ).toBe( "idle" );
+            expect( changes[ changes.length - 1 ] ).toBeNull();
+        } );
+
+        /**
+         * `start()` armed its interval after the first tick without asking whether there was still
+         * a vote. Live that is almost always true; restoring one that has already expired makes it
+         * false every time, and the interval would then belong to an idle event and fire for the
+         * rest of the process.
+         */
+        it( "leaves no timer behind when it closes one out", async() => {
+            manager.restore( channel, storedVote( { endsAt: Date.now() - 1 } ), () => Promise.resolve() );
+
+            await jest.advanceTimersByTimeAsync( 0 );
+
+            expect( jest.getTimerCount() ).toBe( 0 );
+        } );
+    } );
+
     describe( "unit tests", () => {
         beforeEach( () => {
             // Stands in for what `start()` would have left behind. Carries the timings it settles
@@ -306,9 +432,11 @@ describe( "VertixBot/Managers/ChannelVote", () => {
                 // Act.
                 manager.addVote( interaction, targetId );
 
-                // Assert.
+                // Assert - a voter is recorded by id and nothing else. The interaction the press
+                // arrived on used to be kept beside it, was never read, and could not have survived
+                // a restart if anything had wanted it.
                 expect( manager[ "voteMembers" ][ channel.id ].votes[ targetId ] ).toEqual( {
-                    [ interaction.user.id ]: { interaction },
+                    [ interaction.user.id ]: {},
                 } );
             } );
 
@@ -526,7 +654,7 @@ describe( "VertixBot/Managers/ChannelVote", () => {
             // can be voted for before that, so there is no arrangement where a name in the tally
             // arrived any other way.
             beforeEach( () => {
-                manager.getEvents()[ channel.id ].initiatorInteraction = interactionFor( OWNER_ID );
+                manager.getEvents()[ channel.id ].initiatorId = OWNER_ID;
 
                 manager.addCandidate( interactionFor( OWNER_ID ) );
             } );

@@ -8,6 +8,8 @@ import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-ch
 
 import { DynamicChannelClaimStateModel } from "@vertix.gg/data/src/models/channel/dynamic-channel-claim-state-model";
 
+import { DynamicChannelVoteStateModel } from "@vertix.gg/data/src/models/channel/dynamic-channel-vote-state-model";
+
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
@@ -20,6 +22,8 @@ import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
+import type { IDynamicChannelVoteStoredState } from "@vertix.gg/data/src/interfaces/dynamic-channel-vote";
+
 import type { TClaimTimings } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
 import type { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
@@ -30,7 +34,10 @@ import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel
 
 import type { IChannelLeaveGenericArgs } from "@vertix.gg/bot/src/interfaces/channel";
 
-import type { IVoteDefaultComponentInteraction } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
+import type {
+    IVoteDefaultComponentInteraction,
+    TVoteChangedCallback
+} from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 // import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
@@ -517,6 +524,32 @@ export class DynamicChannelClaimManager extends InitializeBase {
     }
 
     /**
+     * Function onVoteChanged() :: Writes a vote down as it moves, and rubs it out when it ends.
+     *
+     * A property rather than a method so the vote manager can be handed it as a reference and it
+     * still knows what it belongs to. Nothing waits on the write: a press is answered by redrawing
+     * the message it came from, and putting a database call in front of that would cost the screen
+     * its response for the sake of a record nobody reads until the next start.
+     */
+    private readonly onVoteChanged: TVoteChangedCallback = ( channelId, state ) => {
+        void this.rememberVoteState( channelId, state );
+    };
+
+    private async rememberVoteState( channelId: string, state: IDynamicChannelVoteStoredState | null ) {
+        const channelDB = await ChannelModel.$.getByChannelId( channelId );
+
+        if ( !channelDB ) {
+            return;
+        }
+
+        const write = state
+            ? DynamicChannelVoteStateModel.$.setState( channelDB.id, state )
+            : DynamicChannelVoteStateModel.$.removeState( channelDB.id );
+
+        await write.catch( ( error: unknown ) => this.logger.error( this.rememberVoteState, "", error ) );
+    }
+
+    /**
      * Function forgetClaimState() :: Drops the record of a room that has left the lifecycle.
      *
      * Called where it genuinely ends - the owner came back, somebody took it over, the room
@@ -644,6 +677,16 @@ export class DynamicChannelClaimManager extends InitializeBase {
                         this.handleAbandonedChannels,
                         `Guild id: '${ guild.id }', channel id: '${ channelDB.channelId }' - Vote is not idle: '${ state }'`
                     );
+
+                    /**
+                     * A vote restored a moment ago is the room being decided, so the sweep leaves it
+                     * to finish - but the room is still one nobody owns until it does, and the panel
+                     * reads that from here rather than from the vote.
+                     */
+                    if ( isStillClaimable ) {
+                        await this.markChannelAsClaimable( channel as VoiceBasedChannel, storedState!.abandonedAt );
+                    }
+
                     continue;
                 }
 
@@ -782,15 +825,17 @@ export class DynamicChannelClaimManager extends InitializeBase {
 
         const timings = await GuildDataManager.$.getTimings( interaction.guildId );
 
+        const message = forceMessage || interaction.message;
+
         DynamicChannelVoteManager.$.start(
             interaction.channel,
-            ( channel, state ) =>
-                this.voteTimer( channel, state, {
-                    interaction,
-                    message: forceMessage || interaction.message
-                } ), // TODO Remove object.
-            interaction,
-            timings
+            ( channel, state ) => this.voteTimer( channel, state, message ),
+            {
+                initiatorId: interaction.user.id,
+                messageId: message.id,
+                timings,
+                onChanged: this.onVoteChanged
+            }
         );
 
         this.dynamicChannelService.editPrimaryMessageDebounce( interaction.channel, 100 );
@@ -933,26 +978,24 @@ export class DynamicChannelClaimManager extends InitializeBase {
         );
     }
 
-    private async voteTimer(
-        channel: VoiceChannel,
-        state: string,
-        {
-            message,
-            interaction
-        }: {
-            interaction: IVoteDefaultComponentInteraction;
-            message: Message<true>;
-        }
-    ) {
+    /**
+     * Function voteTimer() :: Redraws the vote on the message it is drawn on.
+     *
+     * Takes that message and nothing else. It used to be handed the interaction that opened the
+     * vote as well, purely to name the guild and the channel in its own log lines - both of which
+     * the channel already knows, and neither of which a vote restored after a restart has an
+     * interaction left to ask.
+     */
+    private async voteTimer( channel: VoiceChannel, state: string, message: Message<true> ) {
         this.debugger.log(
             this.voteTimer,
-            `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - State: '${ state }'`
+            `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - State: '${ state }'`
         );
 
         if ( !message.channel ) {
             this.logger.error(
                 this.voteTimer,
-                `Guild id: '${ interaction.guildId }', channel id: '${ interaction.channelId }', user id: '${ interaction.user.id }' - Channel not found`
+                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Channel not found`
             );
             return;
         }
@@ -1175,8 +1218,78 @@ export class DynamicChannelClaimManager extends InitializeBase {
      * rare one.
      */
     private async onBotReady( client: Client ) {
+        // Votes first. A room with one running is already being decided, and the sweep reads that
+        // off the vote manager - so it has to be told before it is asked.
+        await this.restoreVotes( client ).catch( ( error: unknown ) =>
+            this.logger.error( this.onBotReady, "", error )
+        );
+
         await this.handleAbandonedChannels( client ).catch( ( error: unknown ) =>
             this.logger.error( this.onBotReady, "", error )
+        );
+    }
+
+    /**
+     * Function restoreVotes() :: Puts every vote that was running back on its feet.
+     *
+     * A claim vote is drawn by editing the message its button sits on, so the message goes on
+     * standing whatever happens to the process - which is what made losing one so bad. It kept its
+     * buttons, the countdown on it stopped moving, and every press came back "channel not running"
+     * with nothing left that could ever hand the room over.
+     */
+    private async restoreVotes( client: Client ) {
+        const stored = await DynamicChannelVoteStateModel.$.getAllStates();
+
+        if ( !stored.length ) {
+            return;
+        }
+
+        await this.uiService.waitForAdapter( this.adapters.claimVoteAdapter().getName() );
+
+        this.logger.log( this.restoreVotes, `Restoring '${ stored.length }' vote(s)` );
+
+        for ( const state of stored ) {
+            await this.restoreVote( client, state ).catch( ( error: unknown ) =>
+                this.logger.error( this.restoreVotes, "", error )
+            );
+        }
+    }
+
+    private async restoreVote( client: Client, stored: IDynamicChannelVoteStoredState ) {
+        const channel = client.channels.cache.get( stored.channelId );
+
+        if ( !channel || !channel.isVoiceBased() ) {
+            await this.rememberVoteState( stored.channelId, null );
+
+            return;
+        }
+
+        // Both interface versions' managers are asked about the same vote on the same start, and
+        // only the one whose generator made this room may answer - otherwise the vote comes back
+        // twice, each half of it redrawing the message with the other version's screen.
+        if ( !( await this.isClaimButtonEnabled( channel ) ) ) {
+            return;
+        }
+
+        const message = await channel.messages.fetch( stored.messageId ).catch( () => undefined );
+
+        if ( !message ) {
+            this.logger.warn(
+                this.restoreVote,
+                `Guild id: '${ channel.guildId }', channel id: '${ stored.channelId }' - ` +
+                    `Vote message id: '${ stored.messageId }' is gone, dropping the vote`
+            );
+
+            await this.rememberVoteState( stored.channelId, null );
+
+            return;
+        }
+
+        DynamicChannelVoteManager.$.restore(
+            channel as VoiceChannel,
+            stored,
+            ( votedChannel, state ) => this.voteTimer( votedChannel, state, message ),
+            this.onVoteChanged
         );
     }
 

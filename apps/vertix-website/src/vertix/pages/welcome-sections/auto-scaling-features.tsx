@@ -50,7 +50,7 @@ export default function AutoScalingFeatures() {
             </div>
 
             <div className="mt-6 text-center">
-                <a href="/features/auto-scaling" className="vc-btn vc-btn-azure">
+                <a href="/features/auto-scaling" className="vc-btn vc-btn-azure" target="_blank" rel="noopener noreferrer">
                     Learn More
                 </a>
             </div>

@@ -13,8 +13,13 @@ export default function ButtonsInterface() {
                     <div>
                         <div className="text-h5 text-vc-ice-dim">
                             <p>
-                                Please note buttons interface is located inside the dynamic channel.<br />
-                                You can access it by opening the chat box of the dynamic channel.
+                                The buttons live on a panel inside your dynamic channel — open its chat
+                                box to find it.
+                            </p>
+                            <p className="mb-0">
+                                Every button is a slash command too. <code>/voice rename</code>, <code>/voice limit</code>,{ " " }
+                                <code>/voice privacy</code> and the rest open the same screens, and{ " " }
+                                <code>/voice panel</code> brings the panel back if it scrolls away.
                             </p>
                         </div>
                     </div>

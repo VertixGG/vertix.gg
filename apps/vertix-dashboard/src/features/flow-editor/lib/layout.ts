@@ -276,6 +276,32 @@ export function getLayoutedElements(
     const nodeIndexById = new Map<string, number>();
     nodes.forEach( ( node, index ) => nodeIndexById.set( node.id, index ) );
 
+    /*
+     * --- Phase 0b: a line from one flow to another is drawn, but does not rank them together ---
+     *
+     * Three kinds of line leave a flow: the module's line to the flows it owns, a button that opens
+     * another flow, and a router's line to where it routes. Every one of them joins two flows that
+     * have nothing else to do with each other, and handed to the ranking they weld the whole module
+     * into a single graph - one component of a hundred and fifty nodes, laid out in ranks forty
+     * screens wide, where a flow's own two screens can end up sixteen thousand pixels apart with
+     * eleven other flows' screens in between.
+     *
+     * Left out of the ranking, each flow ranks alone and its screens sit together, which is what
+     * anybody reading one flow is reading. The lines themselves are untouched: this list is only
+     * what the layout ranks on, and every edge is returned and drawn exactly as it came in.
+     *
+     * Every green crossing on the v3 canvas was between two different flows - none was within one -
+     * so a flow's screens sitting together and the lines not crossing are the same fact.
+     */
+    const nodeTypeById = new Map( mainNodes.map( ( node ) => [ node.id, node.type ?? "" ] ) );
+
+    const isCrossFlowEdge = ( edge: Edge ): boolean =>
+        edge.id.startsWith( "edge-module-" )
+        || edge.id.startsWith( "edge-btn-flow-" )
+        || ( "flowNode" === nodeTypeById.get( edge.source ) && "flowNode" === nodeTypeById.get( edge.target ) );
+
+    const rankingEdges = mainEdges.filter( ( edge ) => ! isCrossFlowEdge( edge ) );
+
     // --- Phase 1: Connected component detection (main nodes only) ---
     const adjacency = new Map<string, Set<string>>();
 
@@ -283,7 +309,7 @@ export function getLayoutedElements(
         adjacency.set( node.id, new Set() );
     } );
 
-    mainEdges.forEach( ( edge ) => {
+    rankingEdges.forEach( ( edge ) => {
         const sourceSet = adjacency.get( edge.source );
         const targetSet = adjacency.get( edge.target );
 
@@ -365,8 +391,10 @@ export function getLayoutedElements(
             } );
         } );
 
-        mainEdges.forEach( ( edge ) => {
-            if ( !componentIds.includes( edge.source ) || !componentIds.includes( edge.target ) ) {
+        const componentIdSet = new Set( componentIds );
+
+        rankingEdges.forEach( ( edge ) => {
+            if ( !componentIdSet.has( edge.source ) || !componentIdSet.has( edge.target ) ) {
                 return;
             }
 
@@ -434,8 +462,52 @@ export function getLayoutedElements(
     } );
 
     // --- Phase 3: Grid-pack connected components ---
-    const totalArea = componentBounds.reduce( ( acc, b ) => acc + ( b.width * b.height ), 0 );
-    const targetRowWidth = totalArea > 0 ? Math.sqrt( totalArea ) : 0;
+    /*
+     * How wide to let a row of flows run before starting the next one.
+     *
+     * The square root of the total area would pack them into a square, which sounds right and is
+     * not: a flow is far taller than it is wide - a column of screens seven hundred pixels each -
+     * so squaring the whole makes a canvas half as wide as it is tall, and a reader scrolls. Four
+     * times the area puts the v3 canvas at about three to two, which is the shape of a screen.
+     *
+     * Before the flows were separated this line had nothing to do: there was one component, and one
+     * component packs the same whatever the row width.
+     */
+    /*
+     * The module and its routers are not among the things being packed.
+     *
+     * Once a flow's lines to other flows stopped ranking, anything whose every line goes to another
+     * flow was left with no ranked edge at all - the module, which is joined to every flow and to
+     * nothing else, and a router with no screen of its own, whose whole job is to send a press
+     * somewhere else. Each became a component of one and took a cell of the grid, so the module sat
+     * out on the left of the first row and the command router sat somewhere among the flows it
+     * routes into.
+     *
+     * Neither is a sibling of the flows. The module is what they all hang off and a router is the
+     * way in to them, so both are held back here and put at the head once the flows are placed.
+     *
+     * A router that does have a screen - the control panel is one - is a flow like any other and
+     * stays in the grid with its screen.
+     */
+    const mainNodeById = new Map( mainNodes.map( ( node ) => [ node.id, node ] ) );
+
+    const isRouterNode = ( id: string ): boolean => {
+        const node = mainNodeById.get( id );
+
+        return "flowNode" === node?.type && true === ( node.data as { isSystemFlow?: boolean } | undefined )?.isSystemFlow;
+    };
+
+    const moduleComponent = componentBounds.find( ( bounds ) =>
+        bounds.ids.every( ( id ) => "moduleNode" === nodeTypeById.get( id ) ) );
+
+    const routerComponents = componentBounds.filter( ( bounds ) => bounds.ids.every( isRouterNode ) );
+
+    const heldBack = new Set( [ moduleComponent, ...routerComponents ].filter( Boolean ) );
+
+    const packedBounds = componentBounds.filter( ( bounds ) => ! heldBack.has( bounds ) );
+
+    const totalArea = packedBounds.reduce( ( acc, b ) => acc + ( b.width * b.height ), 0 );
+    const targetRowWidth = totalArea > 0 ? Math.sqrt( totalArea * 4 ) : 0;
     const gapX = opts.nodeSep;
     const gapY = opts.rankSep;
 
@@ -443,7 +515,7 @@ export function getLayoutedElements(
     let cursorY = 0;
     let rowHeight = 0;
 
-    componentBounds.forEach( ( bounds ) => {
+    packedBounds.forEach( ( bounds ) => {
         if ( cursorX > 0 && targetRowWidth > 0 && ( cursorX + bounds.width ) > targetRowWidth ) {
             cursorX = 0;
             cursorY += rowHeight + gapY;
@@ -559,13 +631,25 @@ export function getLayoutedElements(
             return aNode.position.x - bNode.position.x;
         } );
 
-        const firstTargetNode = compactedNodeById.get( targetIds[ 0 ] );
-        const targetDimensions = firstTargetNode
-            ? getNodeDimensions( firstTargetNode, opts )
-            : { width: opts.nodeWidth, height: opts.nodeHeight };
+        /*
+         * Each screen takes up its own width, laid left to right from the middle.
+         *
+         * Every one of them used to be spaced by the FIRST one's width, which is right only while
+         * they all happen to be the same. A screen sizes itself to what it draws, so a row holding
+         * a wide one and a narrow one had the narrow ones spaced too far apart and anything wider
+         * than the first sitting on top of its neighbour - and only the first was centred on the
+         * slot it was given.
+         */
+        const targetWidths = targetIds.map( ( id ) => {
+            const node = compactedNodeById.get( id );
 
-        const spacing = targetDimensions.width + Math.floor( opts.nodeSep * 0.5 );
-        const middle = ( targetIds.length - 1 ) / 2;
+            return node ? getNodeDimensions( node, opts ).width : opts.nodeWidth;
+        } );
+
+        const gap = Math.floor( opts.nodeSep * 0.5 ),
+            runWidth = targetWidths.reduce( ( total, width ) => total + width, 0 ) + gap * ( targetIds.length - 1 );
+
+        let cursorLeft = sourceCenterX - runWidth / 2;
 
         // For fan-out, all targets should be at the same Y level (one rank below source)
         const targetY = targetIds.reduce( ( minY, id ) => {
@@ -581,11 +665,12 @@ export function getLayoutedElements(
                 return;
             }
 
-            const centerX = sourceCenterX + ( index - middle ) * spacing;
             targetNode.position = {
-                x: centerX - targetDimensions.width / 2,
+                x: cursorLeft,
                 y: finalTargetY
             };
+
+            cursorLeft += targetWidths[ index ] + gap;
         } );
     } );
 
@@ -594,6 +679,69 @@ export function getLayoutedElements(
     nodesWithCompactedFanouts.forEach( node => {
         layoutedNodesById.set( node.id, node );
     } );
+
+    /*
+     * --- Phase 4b: the module and its routers go at the head of what they reach ---
+     *
+     * Three bands, read downwards: the module, the routers it declares, then the flows. That is the
+     * order somebody arrives in - a press reaches a router, the router opens a flow - and the lines
+     * between the bands are the module's amber and the routers' dashed green, which now run a rank
+     * instead of the width of the canvas.
+     *
+     * Each band is centred on the flows below it and placed a rank above them. Last of all the
+     * phases, so it reads the final positions: the packing and the fan-out compaction both still
+     * move things after dagre has handed over.
+     */
+    const bandExtent = ( exclude: Set<string> ) => {
+        const placed = mainNodes
+            .map( ( node ) => layoutedNodesById.get( node.id ) )
+            .filter( ( node ): node is Node => Boolean( node ) && ! exclude.has( node!.id ) );
+
+        if ( ! placed.length ) {
+            return null;
+        }
+
+        return {
+            left: Math.min( ...placed.map( ( node ) => node.position.x ) ),
+            right: Math.max( ...placed.map( ( node ) => node.position.x + getNodeDimensions( node, opts ).width ) ),
+            top: Math.min( ...placed.map( ( node ) => node.position.y ) )
+        };
+    };
+
+    /** Lays a set of nodes out as one centred row, sitting a rank above everything below it. */
+    const placeBand = ( ids: string[], exclude: Set<string> ) => {
+        const extent = bandExtent( exclude );
+
+        if ( ! extent || ! ids.length ) {
+            return;
+        }
+
+        const banded = ids
+            .map( ( id ) => layoutedNodesById.get( id ) )
+            .filter( ( node ): node is Node => Boolean( node ) );
+
+        const widths = banded.map( ( node ) => getNodeDimensions( node, opts ).width ),
+            height = Math.max( ...banded.map( ( node ) => getNodeDimensions( node, opts ).height ) ),
+            runWidth = widths.reduce( ( total, width ) => total + width, 0 ) + opts.nodeSep * ( banded.length - 1 );
+
+        let cursor = ( extent.left + extent.right ) / 2 - runWidth / 2;
+
+        banded.forEach( ( node, index ) => {
+            layoutedNodesById.set( node.id, {
+                ...node,
+                position: { x: cursor, y: extent.top - height - opts.rankSep }
+            } );
+
+            cursor += widths[ index ] + opts.nodeSep;
+        } );
+    };
+
+    const routerIds = routerComponents.flatMap( ( bounds ) => bounds.ids ),
+        moduleIds = moduleComponent?.ids ?? [];
+
+    // Routers first, then the module above them - each measured against what is already placed.
+    placeBand( routerIds, new Set( [ ...routerIds, ...moduleIds ] ) );
+    placeBand( moduleIds, new Set( moduleIds ) );
 
     positionSatelliteModals( layoutedNodesById, satelliteModals, parentToModalIds, opts );
     resolveModalOverlaps( layoutedNodesById, parentToModalIds, mainNodes, opts );

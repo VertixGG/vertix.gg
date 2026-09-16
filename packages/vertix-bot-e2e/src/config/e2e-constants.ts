@@ -29,6 +29,14 @@ export const E2E_TIMEOUTS = {
     CHANNEL_REMOVED_MS: 60_000,
     GUILD_RESET_MS: 120_000,
     INTERACTIVE_LOGIN_MS: 300_000,
+    // A claim is not offered when the owner leaves, but when the owner has been gone long enough and
+    // the sweep has come round to notice. Neither can be hurried: the bot floors the owner-away
+    // timeout at a minute however small a number the server options are given - the suite asks for
+    // five seconds and is given sixty - and the sweep that checks it runs on its own minute. So the
+    // wait is the two of them and a margin, and nothing like the twenty seconds allowed for the bot
+    // simply answering a press.
+    CLAIM_OFFER_MS: 150_000,
+
     TEST_MS: 180_000,
     EXPECT_MS: 20_000
 } as const;

@@ -119,17 +119,21 @@ export class DiscordMessages {
         return this.page.locator( `li[id="${ messageId }"]` );
     }
 
-    public async waitForReply( mark: TMessageMark ): Promise<Locator> {
+    /**
+     * `timeout` for the few answers that are not the bot thinking but the bot waiting - a claim is
+     * offered when the owner has been gone long enough, and long enough is a minute.
+     */
+    public async waitForReply( mark: TMessageMark, timeout: number = E2E_TIMEOUTS.BOT_REPLY_MS ): Promise<Locator> {
         const started = Date.now();
 
-        const deadline = started + E2E_TIMEOUTS.BOT_REPLY_MS;
+        const deadline = started + timeout;
 
         while ( Date.now() < deadline ) {
             const { arrived, changed } = await this.newerThan( mark );
 
             // An edited message is only believed once nothing has arrived for a while, so a genuine
             // reply always wins over a re-render that happened to look like one.
-            const acceptChanged = Date.now() - started > E2E_TIMEOUTS.BOT_REPLY_MS / 2;
+            const acceptChanged = Date.now() - started > timeout / 2;
 
             for ( const id of acceptChanged ? [ ...arrived, ...changed ] : arrived ) {
                 const message = this.byId( id );

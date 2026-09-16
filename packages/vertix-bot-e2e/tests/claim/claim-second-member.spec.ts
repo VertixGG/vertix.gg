@@ -6,8 +6,11 @@ import { E2E_TIMEOUTS } from "@vertix.gg/bot-e2e/src/config/e2e-constants";
 import type { DiscordApp } from "@vertix.gg/bot-e2e/src/discord/discord-app";
 import type { VertixScreen } from "@vertix.gg/bot-e2e/src/vertix/vertix-screen";
 
-const CLAIM_TEST_MS = 240_000;
+// The offer alone can take two and a half minutes of that - see `CLAIM_OFFER_MS`.
+const CLAIM_TEST_MS = 330_000;
 
+// Asked for, not granted: the bot floors the owner-away timeout at a minute, so this buys the
+// shortest wait there is rather than a five second one. `CLAIM_OFFER_MS` is what waits it out.
 const SHORT_TIMING_SECONDS = "5";
 
 /**
@@ -78,11 +81,18 @@ test.describe( "claim with a second member", () => {
 
         expect( await second.voice.connectedChannelId() ).toBe( channel.channelId );
 
-        await app.voice.disconnect();
-
+        // Watching before the thing happens, and marked before it too. The bot offers the claim the
+        // moment the owner goes, so a mark taken afterwards is taken after the message it is waiting
+        // for has already arrived - and the wait then times out on a screen that is already showing
+        // the answer. The member also has to be looking at the channel for it to be on their screen
+        // at all.
         await second.channels.open( channel.channelId );
 
-        const claimable = await second.messages.waitForReply( await second.messages.mark() ).catch( () => null );
+        const claimMark = await second.messages.mark();
+
+        await app.voice.disconnect();
+
+        const claimable = await second.messages.waitForReply( claimMark, E2E_TIMEOUTS.CLAIM_OFFER_MS ).catch( () => null );
 
         expect( claimable, "the bot never offered the channel for claiming" ).not.toBeNull();
 

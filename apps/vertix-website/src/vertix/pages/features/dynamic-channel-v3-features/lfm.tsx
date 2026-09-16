@@ -26,11 +26,8 @@ const LFM_CHANNELS = [
 
 const EXAMPLE_NOTE = "Need 2 for ranked, mic required";
 
-
 /** A room with a seat or two left in it, which is the only kind worth advertising. */
 const CHANNEL_MEMBERS = [ DEMO_MEMBERS.owner, DEMO_MEMBERS.alex ];
-
-
 
 export default function Lfm() {
     const [ runKey, setRunKey ] = React.useState( 0 );
@@ -194,111 +191,111 @@ export default function Lfm() {
                                  * button is the thing being explained, so it is the thing to press.
                                  */
                                 <DiscordFlowSimulator
-                                key={ runKey }
-                                onGuidance={ setGuidance }
-                                entry={ {
-                                    flowName: "VertixBot/UI-V3/DynamicChannelFlow",
-                                    stateKey: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
-                                    componentName: "VertixBot/UI-V3/DynamicChannel",
-                                    mentionUser: DEMO_OWNER,
-                                    variables: {
-                                        ...DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES,
-                                        name: DEMO_CHANNEL_NAME,
-                                        limit: "4",
-                                        memberCount: String( CHANNEL_MEMBERS.length ),
-                                        dynamicChannelButtonsTemplate: DYNAMIC_CHANNEL_V3_BUTTON_ORDER.join( "," ),
-                                        dynamicChannelButtonsRowBreaks: "",
-                                        // Stands in until a board is picked, so the closing
-                                        // screen names one either way - a server with a single
-                                        // board is never asked, and lands on exactly this.
-                                        lfmChannelId: LFM_CHANNELS[ 0 ].label
-                                    }
-                                } }
-                                allowedElements={ [ "VertixBot/UI-V3/DynamicChannelLfmButton" ] }
-                                author="VoiceChannels"
-                                avatar={ VertixAvatar }
-                                interactionUser={ DEMO_OWNER }
-                                guidance={ {
-                                    "VertixBot/UI-V3/DynamicChannelFlow/States/Default": {
-                                        title: <>Press <b>( 🔎 LFM )</b> — it is lit up for you</>,
-                                        body: "Two of you, room for four. The note comes first, then it goes up."
-                                    },
-                                    "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Default": {
-                                        title: "Say who you are looking for",
-                                        body: <>
-                                            One line, and it can be left empty. It is the only part of the post you
-                                            write — the rest the bot reads off the channel itself.
-                                        </>
-                                    },
-                                    "VertixBot/UI-V3/DynamicChannelLfmFlow/States/SelectChannel": {
-                                        title: "Pick the board it goes on",
-                                        body: <>
-                                            Only the channels you can see are offered. A server with one board never
-                                            asks — the post goes straight up.
-                                        </>
-                                    },
-                                    "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Posted": {
-                                        title: <>
-                                            It is up — open { destination ? <b>#{ destination }</b> : "the board" } on
-                                            the left to see it
-                                        </>,
-                                        body: "That screen is yours alone; the post is a message in a channel other people are reading. Nobody has to take it down either - it goes when the room fills up or empties."
-                                    },
-                                    "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Cooldown": {
-                                        title: "The board has had a post recently",
-                                        body: "The limit belongs to the generator rather than to you, so somebody else's post can be the one in the way."
-                                    },
-                                    "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Unavailable": {
-                                        title: "Nothing to post",
-                                        body: "A hidden or private room advertises nothing anyone could act on, and a full one has nothing to offer."
-                                    }
-                                } }
-                                steps={ {
-                                    "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Default": {
+                                    key={ runKey }
+                                    onGuidance={ setGuidance }
+                                    entry={ {
+                                        flowName: "VertixBot/UI-V3/DynamicChannelFlow",
+                                        stateKey: "VertixBot/UI-V3/DynamicChannelFlow/States/Default",
+                                        componentName: "VertixBot/UI-V3/DynamicChannel",
+                                        mentionUser: DEMO_OWNER,
+                                        variables: {
+                                            ...DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES,
+                                            name: DEMO_CHANNEL_NAME,
+                                            limit: "4",
+                                            memberCount: String( CHANNEL_MEMBERS.length ),
+                                            dynamicChannelButtonsTemplate: DYNAMIC_CHANNEL_V3_BUTTON_ORDER.join( "," ),
+                                            dynamicChannelButtonsRowBreaks: "",
+                                            // Stands in until a board is picked, so the closing
+                                            // screen names one either way - a server with a single
+                                            // board is never asked, and lands on exactly this.
+                                            lfmChannelId: LFM_CHANNELS[ 0 ].label
+                                        }
+                                    } }
+                                    allowedElements={ [ "VertixBot/UI-V3/DynamicChannelLfmButton" ] }
+                                    author="VoiceChannels"
+                                    avatar={ VertixAvatar }
+                                    interactionUser={ DEMO_OWNER }
+                                    guidance={ {
+                                        "VertixBot/UI-V3/DynamicChannelFlow/States/Default": {
+                                            title: <>Press <b>( 🔎 LFM )</b> — it is lit up for you</>,
+                                            body: "Two of you, room for four. The note comes first, then it goes up."
+                                        },
+                                        "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Default": {
+                                            title: "Say who you are looking for",
+                                            body: <>
+                                                One line, and it can be left empty. It is the only part of the post you
+                                                write — the rest the bot reads off the channel itself.
+                                            </>
+                                        },
+                                        "VertixBot/UI-V3/DynamicChannelLfmFlow/States/SelectChannel": {
+                                            title: "Pick the board it goes on",
+                                            body: <>
+                                                Only the channels you can see are offered. A server with one board never
+                                                asks — the post goes straight up.
+                                            </>
+                                        },
+                                        "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Posted": {
+                                            title: <>
+                                                It is up — open { destination ? <b>#{ destination }</b> : "the board" } on
+                                                the left to see it
+                                            </>,
+                                            body: "That screen is yours alone; the post is a message in a channel other people are reading. Nobody has to take it down either - it goes when the room fills up or empties."
+                                        },
+                                        "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Cooldown": {
+                                            title: "The board has had a post recently",
+                                            body: "The limit belongs to the generator rather than to you, so somebody else's post can be the one in the way."
+                                        },
+                                        "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Unavailable": {
+                                            title: "Nothing to post",
+                                            body: "A hidden or private room advertises nothing anyone could act on, and a full one has nothing to offer."
+                                        }
+                                    } }
+                                    steps={ {
+                                        "VertixBot/UI-V3/DynamicChannelLfmFlow/States/Default": {
                                         // Declared here as well as on the state that asks, because
                                         // the menu is drawn by the message this state opened and
                                         // goes on being drawn by it after the note is in.
-                                        menus: {
-                                            "VertixBot/UI-V3/DynamicChannelLfmChannelMenu": {
-                                                options: LFM_CHANNELS.map( ( channel ) => ( {
-                                                    label: channel.label,
-                                                    description: channel.description,
-                                                    values: { lfmChannelId: channel.label }
-                                                } ) )
-                                            }
+                                            menus: {
+                                                "VertixBot/UI-V3/DynamicChannelLfmChannelMenu": {
+                                                    options: LFM_CHANNELS.map( ( channel ) => ( {
+                                                        label: channel.label,
+                                                        description: channel.description,
+                                                        values: { lfmChannelId: channel.label }
+                                                    } ) )
+                                                }
+                                            },
+                                            render: ( submit ) => (
+                                                <DiscordFlowModal
+                                                    modalName="VertixBot/UI-V3/DynamicChannelLfmNoteModal"
+                                                    initialValues={ {
+                                                        "VertixBot/UI-V3/DynamicChannelLfmNoteInput": EXAMPLE_NOTE
+                                                    } }
+                                                    onSubmit={ ( values ) => {
+                                                        submit( {
+                                                            note: ( values[ "VertixBot/UI-V3/DynamicChannelLfmNoteInput" ] ?? "" ).trim(),
+                                                            // This server has two boards, so it is
+                                                            // asked which. One and it would never be.
+                                                            destinations: LFM_CHANNELS.length > 1 ? "many" : "one"
+                                                        } );
+                                                    } }
+                                                />
+                                            )
                                         },
-                                        render: ( submit ) => (
-                                            <DiscordFlowModal
-                                                modalName="VertixBot/UI-V3/DynamicChannelLfmNoteModal"
-                                                initialValues={ {
-                                                    "VertixBot/UI-V3/DynamicChannelLfmNoteInput": EXAMPLE_NOTE
-                                                } }
-                                                onSubmit={ ( values ) => {
-                                                    submit( {
-                                                        note: ( values[ "VertixBot/UI-V3/DynamicChannelLfmNoteInput" ] ?? "" ).trim(),
-                                                        // This server has two boards, so it is
-                                                        // asked which. One and it would never be.
-                                                        destinations: LFM_CHANNELS.length > 1 ? "many" : "one"
-                                                    } );
-                                                } }
-                                            />
-                                        )
-                                    },
-                                    "VertixBot/UI-V3/DynamicChannelLfmFlow/States/SelectChannel": {
-                                        menus: {
-                                            "VertixBot/UI-V3/DynamicChannelLfmChannelMenu": {
-                                                options: LFM_CHANNELS.map( ( channel ) => ( {
-                                                    label: channel.label,
-                                                    description: channel.description,
-                                                    values: { lfmChannelId: channel.label }
-                                                } ) )
+                                        "VertixBot/UI-V3/DynamicChannelLfmFlow/States/SelectChannel": {
+                                            menus: {
+                                                "VertixBot/UI-V3/DynamicChannelLfmChannelMenu": {
+                                                    options: LFM_CHANNELS.map( ( channel ) => ( {
+                                                        label: channel.label,
+                                                        description: channel.description,
+                                                        values: { lfmChannelId: channel.label }
+                                                    } ) )
+                                                }
+                                            },
+                                            onTransition: ( _transitionName, values ) => {
+                                                setDestination( values.lfmChannelId ?? null );
                                             }
-                                        },
-                                        onTransition: ( _transitionName, values ) => {
-                                            setDestination( values.lfmChannelId ?? null );
                                         }
-                                    }
-                                } }
+                                    } }
                                 />
                             ) }
                         </DiscordAppFrame>

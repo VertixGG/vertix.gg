@@ -36,7 +36,12 @@ const config = [
     {
         ignores: [
             'packages/vertix-base/src/encryption/decrypt.ts',
-            'packages/vertix-base/src/encryption/encrypt.ts'
+            'packages/vertix-base/src/encryption/encrypt.ts',
+            // Written by `key-gen.bash`, which `scripts/ci-jest.bash` runs before the suites. It is
+            // gitignored and regenerated, so the two style errors it carries cannot be fixed in the
+            // file - only in the script that writes it, to no benefit. Ignored the way its two
+            // siblings above already are.
+            'packages/vertix-base/src/encryption/key.ts'
         ]
     },
     {

@@ -44,7 +44,7 @@ test.describe( "voice commands on a v2 channel", () => {
 
             const reply = await app.commands.run( { group: command.group, name: command.name } );
 
-            const shown = normalizeDiscordText( await app.messages.embedTitle( reply ).innerText() );
+            const shown = await app.messages.titleText( reply );
 
             for ( const refusal of [
                 "VertixBot/UI-General/CommandFailedEmbed",

@@ -48,7 +48,7 @@ test.describe( "voice commands on a channel the caller owns", () => {
 
             const reply = await app.commands.run( { group: command.group, name: command.name } );
 
-            const shown = normalizeDiscordText( await app.messages.embedTitle( reply ).innerText() );
+            const shown = await app.messages.titleText( reply );
 
             const refusals = [
                 BotCatalog.$.embedTitle( "VertixBot/UI-General/CommandFailedEmbed" ),
@@ -100,7 +100,7 @@ test.describe( "voice knock", () => {
 
         const reply = await app.commands.run( { group: "voice", name: "knock" } );
 
-        const shown = await app.messages.embedTitle( reply ).innerText();
+        const shown = await app.messages.titleText( reply );
 
         const accepted = [
             "VertixBot/UI-V3/DynamicChannelKnockEmbed",

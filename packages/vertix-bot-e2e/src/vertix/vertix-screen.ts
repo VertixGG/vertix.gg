@@ -29,7 +29,7 @@ export class VertixScreen {
         let seen = "";
 
         while ( Date.now() < deadline ) {
-            seen = await this.app.messages.embedTitle( message ).innerText().catch( () => "" );
+            seen = await this.app.messages.titleText( message );
 
             if ( matchesCopy( seen, expectedTitle ) ) {
                 return;
@@ -45,10 +45,7 @@ export class VertixScreen {
     }
 
     public async hasTitle( message: Locator, expectedTitle: string ): Promise<boolean> {
-        const actual = await this.app.messages
-            .embedTitle( message )
-            .innerText()
-            .catch( () => "" );
+        const actual = await this.app.messages.titleText( message );
 
         return matchesCopy( actual, expectedTitle );
     }

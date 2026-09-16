@@ -92,7 +92,7 @@ test.describe( "the panel beside a generator", () => {
 
         const panel = await app.messages.waitForReply( app.messages.anyMark() );
 
-        const shown = normalizeDiscordText( await app.messages.embedTitle( panel ).innerText() );
+        const shown = await app.messages.titleText( panel );
 
         expect( shown ).toBe(
             normalizeDiscordText( BotCatalog.$.embedTitle( "VertixBot/UI-V2/DynamicChannelPanelEmbed" ) )

@@ -160,14 +160,78 @@ export class DiscordMessages {
         return message.locator( DISCORD_DOM.EMBED_TITLE ).first();
     }
 
+    /**
+     * A container screen's title - see `titleText()` for which of the two is read.
+     */
+    public containerHeading( message: Locator ): Locator {
+        return message
+            .locator( DISCORD_DOM.MESSAGE_ACCESSORIES )
+            .locator( DISCORD_DOM.COMPONENT_HEADING )
+            .first();
+    }
+
+    /**
+     * What a screen says under its title, drawn either way.
+     *
+     * A locator rather than a read, because several assertions are made against it directly. The two
+     * shapes do not appear together - an embed's text lives inside the embed, a container's beside
+     * the heading - so whichever is there is the one this resolves to.
+     */
     public embedDescription( message: Locator ): Locator {
-        return message.locator( DISCORD_DOM.EMBED_DESCRIPTION ).first();
+        return message
+            .locator( DISCORD_DOM.EMBED_DESCRIPTION )
+            .or( message.locator( DISCORD_DOM.MESSAGE_ACCESSORIES ).locator( DISCORD_DOM.COMPONENT_TEXT ) )
+            .first();
+    }
+
+    /**
+     * A screen's title as the bot wrote it, with discord's own punctuation taken off.
+     *
+     * A component heading's text ends with the comma discord separates components by - the title
+     * reads `"Step 1 - Set ... Name\n,"` - and that comma is discord talking, not the bot. A title
+     * carrying no template variable is matched exactly, so it fails on the comma alone and reports
+     * a screen that never appeared, when what appeared was that screen with a comma after it.
+     *
+     * Every reader of a title goes through here for that reason.
+     */
+    public async titleText( message: Locator ): Promise<string> {
+        const clean = ( raw: string ) => normalizeDiscordText( raw ).replace( /[\s,]+$/, "" );
+
+        // Asked in order rather than as one locator: `or()` resolves by document order, which says
+        // nothing about which of the two is the screen's own title. The embed is the one with a name
+        // to match on, so it answers first where it exists at all.
+        const embed = this.embedTitle( message );
+
+        if ( await embed.count() ) {
+            return clean( await embed.innerText().catch( () => "" ) );
+        }
+
+        const heading = this.containerHeading( message );
+
+        if ( await heading.count() ) {
+            return clean( await heading.innerText().catch( () => "" ) );
+        }
+
+        return "";
     }
 
     public async expectEmbedTitle( message: Locator, expectedTitle: string ): Promise<void> {
-        await expect( this.embedTitle( message ) ).toBeVisible( { timeout: E2E_TIMEOUTS.BOT_REPLY_MS } );
+        // Waited for by reading rather than by asserting the embed visible: a container screen has no
+        // embed to become visible, and waiting for one that never arrives fails as a timeout on a
+        // locator instead of saying which title turned up.
+        const deadline = Date.now() + E2E_TIMEOUTS.BOT_REPLY_MS;
 
-        const actual = await this.embedTitle( message ).innerText();
+        let actual = "";
+
+        while ( Date.now() < deadline ) {
+            actual = await this.titleText( message );
+
+            if ( matchesCopy( actual, expectedTitle ) ) {
+                return;
+            }
+
+            await this.page.waitForTimeout( E2E_INTERVALS.POLL_MS );
+        }
 
         expect(
             matchesCopy( actual, expectedTitle ),

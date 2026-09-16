@@ -24,7 +24,7 @@ test.describe( "clear chat and reset", () => {
 
         const reply = await app.messages.waitForReply( mark );
 
-        const shown = await app.messages.embedTitle( reply ).innerText();
+        const shown = await app.messages.titleText( reply );
 
         const accepted = [
             "VertixBot/UI-V3/DynamicChannelClearChatSuccessEmbed",

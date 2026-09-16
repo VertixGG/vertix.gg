@@ -66,7 +66,7 @@ test.describe( "dynamic channel control panel", () => {
 
             const reply = await app.messages.waitForReply( mark );
 
-            const shown = normalizeDiscordText( await app.messages.embedTitle( reply ).innerText() );
+            const shown = await app.messages.titleText( reply );
 
             expect( shown ).not.toBe(
                 normalizeDiscordText( BotCatalog.$.embedTitle( "VertixBot/UI-General/CommandFailedEmbed" ) )

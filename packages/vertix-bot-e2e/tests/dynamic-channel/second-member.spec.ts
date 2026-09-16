@@ -44,7 +44,7 @@ test.describe( "features that take two members", () => {
             await guild.memberName( second.voice.accountId as string )
         );
 
-        const shown = normalizeDiscordText( await app.messages.embedTitle( screen ).innerText() );
+        const shown = await app.messages.titleText( screen );
 
         const accepted = [
             "VertixBot/UI-V3/DynamicChannelTransferOwnerTransferredEmbed",
@@ -83,7 +83,7 @@ test.describe( "features that take two members", () => {
             await guild.memberName( second.voice.accountId as string )
         );
 
-        const shown = normalizeDiscordText( await app.messages.embedTitle( screen ).innerText() );
+        const shown = await app.messages.titleText( screen );
 
         expect( shown ).not.toBe(
             normalizeDiscordText( BotCatalog.$.embedTitle( "VertixBot/UI-General/CommandFailedEmbed" ) )
@@ -131,7 +131,7 @@ test.describe( "features that take two members", () => {
             channel.name
         );
 
-        const sent = normalizeDiscordText( await second.messages.embedTitle( knock ).innerText() );
+        const sent = await second.messages.titleText( knock );
 
         expect(
             sent,

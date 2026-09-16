@@ -63,7 +63,7 @@ test.describe( "generator readiness", () => {
         const failure = await app.messages.waitForReply( mark ).catch( () => null );
 
         if ( failure ) {
-            const shown = normalizeDiscordText( await app.messages.embedTitle( failure ).innerText() );
+            const shown = await app.messages.titleText( failure );
 
             expect(
                 shown,

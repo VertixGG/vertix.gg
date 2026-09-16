@@ -40,6 +40,14 @@ export const DISCORD_DOM = {
 
     EMBED_TITLE: "[class*=\"embedTitle\"]",
 
+    // The same two things when the bot draws a screen as a container rather than an embed, which is
+    // how it draws most of them now. Discord renders a markdown heading as a bare `h2` - no class of
+    // its own, nothing to match but the tag - and the body as the text beside it. Both are scoped to
+    // one message's accessories, because on their own they would match half the client.
+    COMPONENT_HEADING: "h1, h2, h3",
+
+    COMPONENT_TEXT: "[class*=\"textChildren\"]",
+
     EMBED_DESCRIPTION: "[class*=\"embedDescription\"]",
 
     EMBED_FIELD_NAME: "[class*=\"embedFieldName\"]",

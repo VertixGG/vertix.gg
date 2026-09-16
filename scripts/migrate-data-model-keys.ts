@@ -30,8 +30,14 @@ const RENAMES: ReadonlyArray<readonly [ string, string ]> = [
     [ "VertixBase/Config/", "VertixData/Config/" ]
 ];
 
-/** Every collection whose `key` is built from a model name. */
-const COLLECTIONS = [ "channelData", "guildData", "userData" ] as const;
+/**
+ * Every collection whose `key` is built from a model name.
+ *
+ * `userChannelData` belongs here and was missed the first time round, so its rows kept the names
+ * they were written under while everything else moved. A row left behind is not an error anyone
+ * sees - the lookup under the new name simply finds nothing and the member gets the defaults.
+ */
+const COLLECTIONS = [ "channelData", "guildData", "userData", "userChannelData" ] as const;
 
 const isApply = process.argv.includes( "--apply" );
 

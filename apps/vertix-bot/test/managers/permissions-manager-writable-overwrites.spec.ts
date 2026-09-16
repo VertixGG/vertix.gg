@@ -18,7 +18,9 @@ function createManager() {
     const manager = Object.create( PermissionsManager.prototype ) as PermissionsManager;
 
     ( manager as unknown as { logger: { warn: ( ...args: unknown[] ) => void } } ).logger = {
-        warn: ( _caller: unknown, message: string ) => warnings.push( message )
+        warn: ( _caller: unknown, message: unknown ) => {
+            warnings.push( String( message ) );
+        }
     };
 
     return { manager, warnings };
@@ -129,5 +131,121 @@ describe( "VertixBot/Managers/PermissionsManager/filterWritableOverwrites", () =
         expect( result ).toHaveLength( 1 );
         expect( result[ 0 ].id ).toBe( "role-id" );
         expect( namesOf( result[ 0 ].allow ) ).toEqual( [] );
+    } );
+} );
+
+describe( "VertixBot/Managers/PermissionsManager/filterWritablePermissionOptions", () => {
+
+    /**
+     * The edit paths describe a change as named permissions, and an edit rewrites the channel's
+     * whole overwrite list. So the *change* is filtered and the existing overwrites are not - a
+     * filter over the list would quietly delete whatever an admin had set on the channel by hand.
+     */
+    it( "should keep a change the bot is allowed to write", () => {
+        const { manager } = createManager();
+
+        expect(
+            manager.filterWritablePermissionOptions( createGuild( MINIMAL_INVITE ), {
+                ViewChannel: false,
+                Connect: null,
+                SendMessages: true
+            } )
+        ).toEqual( { ViewChannel: false, Connect: null, SendMessages: true } );
+    } );
+
+    it( "should drop a permission the bot was never granted", () => {
+        const { manager, warnings } = createManager();
+
+        expect(
+            manager.filterWritablePermissionOptions( createGuild( MINIMAL_INVITE ), {
+                ViewChannel: false,
+                ManageThreads: false
+            } )
+        ).toEqual( { ViewChannel: false } );
+
+        expect( warnings[ 0 ] ).toContain( "ManageThreads" );
+    } );
+
+    it( "should drop ManageRoles, which discord permits only to administrators", () => {
+        const { manager } = createManager();
+
+        expect(
+            manager.filterWritablePermissionOptions( createGuild( MINIMAL_INVITE ), {
+                ManageRoles: true,
+                Connect: true
+            } )
+        ).toEqual( { Connect: true } );
+    } );
+
+    // `false` and `null` mean different things - denied, and cleared - and neither is "absent".
+    it( "should keep a permission being cleared rather than granted", () => {
+        const { manager } = createManager();
+
+        expect(
+            manager.filterWritablePermissionOptions( createGuild( MINIMAL_INVITE ), { Connect: null } )
+        ).toEqual( { Connect: null } );
+    } );
+
+    it( "should leave an administrator's change untouched", () => {
+        const { manager } = createManager();
+        const requested = { ManageRoles: true, ManageThreads: false };
+
+        expect(
+            manager.filterWritablePermissionOptions( createGuild( [ Flags.Administrator ] ), requested )
+        ).toBe( requested );
+    } );
+} );
+
+describe( "VertixBot/Managers/PermissionsManager/editChannelRolesPermissions", () => {
+
+    /**
+     * The filter existing is not the same as the edit path using it, and this is the test for the
+     * second of those. Both audience helpers delegate here, so this call is the only place an edit
+     * can ask discord for something it will refuse - and a refusal costs the whole change.
+     */
+    it( "should not ask discord to write a permission the bot cannot write", async() => {
+        const { manager } = createManager();
+
+        const ROLE_ID = "role-id";
+        const guild = createGuild( MINIMAL_INVITE ) as unknown as {
+            id: string;
+            roles: { cache: Map<string, unknown>; everyone: { id: string } };
+        };
+
+        // Shaped the way `getRolesPermissions()` walks the cache: every role it sees is asked for
+        // its members and its permissions, including ones the bot is not in.
+        guild.roles.cache.set( ROLE_ID, {
+            id: ROLE_ID,
+            permissions: new PermissionsBitField(),
+            members: new Map()
+        } );
+        guild.roles.everyone = { id: "everyone-id" };
+
+        let written: { id: string; allow: bigint; deny: bigint }[] = [];
+
+        const channel = {
+            id: "channel-id",
+            guildId: guild.id,
+            guild,
+            permissionOverwrites: {
+                cache: new Map(),
+                set: async( resolvable: typeof written ) => {
+                    written = resolvable;
+                }
+            }
+        };
+
+        ( manager as unknown as { debugger: { dumpDown: () => void } } ).debugger = { dumpDown: () => {} };
+        ( manager as unknown as { logger: { log: () => void; warn: () => void } } ).logger.log = () => {};
+
+        await manager.editChannelRolesPermissions( channel as never, [ ROLE_ID ], {
+            ViewChannel: false,
+            ManageThreads: false
+        } );
+
+        const entry = written.find( ( item ) => item.id === ROLE_ID )!;
+
+        expect( namesOf( entry.deny ) ).toEqual( [ "ViewChannel" ] );
+        expect( namesOf( entry.deny ) ).not.toContain( "ManageThreads" );
     } );
 } );

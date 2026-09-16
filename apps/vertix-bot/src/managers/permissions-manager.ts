@@ -299,6 +299,57 @@ export class PermissionsManager extends InitializeBase {
         return result;
     }
 
+    /**
+     * Function filterWritablePermissionOptions() :: The same requested change, minus anything
+     * discord would refuse to write.
+     *
+     * The counterpart of `filterWritableOverwrites()` for the edit paths, which describe a change as
+     * named permissions rather than as a list of overwrites. It filters the *change* and not the
+     * channel's existing overwrites, which matters: an edit rewrites the whole list, and trimming
+     * that would quietly strip whatever an admin had set on the channel by hand. What the bot may
+     * not write, it simply does not ask to change.
+     */
+    public filterWritablePermissionOptions(
+        guild: Guild,
+        permissions: PermissionOverwriteOptions
+    ): PermissionOverwriteOptions {
+        if ( this.isSelfAdministratorRole( guild ) ) {
+            return permissions;
+        }
+
+        const held = this.getRolesPermissions( guild ),
+            result: PermissionOverwriteOptions = {},
+            dropped: string[] = [];
+
+        for ( const [ name, value ] of Object.entries( permissions ) ) {
+            const flag = PermissionsBitField.Flags[ name as keyof typeof PermissionsBitField.Flags ];
+
+            // Not a permission name at all - left alone rather than silently swallowed, so an
+            // unknown key fails where it is written instead of here.
+            if ( undefined === flag ) {
+                result[ name as keyof PermissionOverwriteOptions ] = value;
+                continue;
+            }
+
+            if ( PermissionsBitField.Flags.ManageRoles === flag || !held.has( flag ) ) {
+                dropped.push( name );
+                continue;
+            }
+
+            result[ name as keyof PermissionOverwriteOptions ] = value;
+        }
+
+        if ( dropped.length ) {
+            this.logger.warn(
+                this.filterWritablePermissionOptions,
+                `Guild id: '${ guild.id }' - Dropped unwritable permissions from a channel edit: ` +
+                    `'${ dropped.join( "', '" ) }' - the change will be narrower than intended`
+            );
+        }
+
+        return result;
+    }
+
     public getChannelDefaultInheritedPermissionsWithUser( channel: VoiceBasedChannel, userId: string, overrides = {} ) {
         const inheritedPermissions = this.getChannelDefaultInheritedPermissions( channel );
 
@@ -416,7 +467,10 @@ export class PermissionsManager extends InitializeBase {
             permissionsOptions[ permission ] = true;
         }
 
-        await channel.permissionOverwrites.edit( botMember, permissionsOptions ).catch( ( error ) => {
+        await channel.permissionOverwrites.edit(
+            botMember,
+            this.filterWritablePermissionOptions( channel.guild, permissionsOptions )
+        ).catch( ( error ) => {
             this.logger.error(
                 this.ensureChannelBotPermissions,
                 `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Failed to grant bot permissions`,
@@ -514,6 +568,10 @@ export class PermissionsManager extends InitializeBase {
         permissions: PermissionOverwriteOptions
     ): Promise<void> {
         this.debugger.dumpDown( this.editChannelRolesPermissions, permissions, "Permissions" );
+
+        // Both audience helpers come through here, so this is the one place an edit can ask discord
+        // for something it will refuse - and a refusal costs the whole change, not the one flag.
+        permissions = this.filterWritablePermissionOptions( channel.guild, permissions );
 
         const overwrites = new Map<string, { allow: bigint; deny: bigint; type: OverwriteType }>();
 

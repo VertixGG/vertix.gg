@@ -1,5 +1,5 @@
 import { BotCatalog } from "@vertix.gg/bot-e2e/src/catalog/bot-catalog";
-import { BOT_LIMITS, E2E_TIMEOUTS } from "@vertix.gg/bot-e2e/src/config/e2e-constants";
+import { BOT_LIMITS, DISCORD_LIMITS, E2E_TIMEOUTS } from "@vertix.gg/bot-e2e/src/config/e2e-constants";
 import { DISCORD_DOM } from "@vertix.gg/bot-e2e/src/discord/discord-dom";
 
 import type { DiscordApp } from "@vertix.gg/bot-e2e/src/discord/discord-app";
@@ -20,16 +20,29 @@ function sleep( milliseconds: number ): Promise<void> {
     return new Promise( ( resolve ) => setTimeout( resolve, milliseconds ) );
 }
 
-async function waitOutCreateThrottle( accountId: string ): Promise<void> {
+/**
+ * Two limits are waited out here, and they belong to different people.
+ *
+ * The bot's own is the shorter: it refuses to make a member a second channel within ten seconds, and
+ * says so on screen. Discord's is the longer and is about the other end - every channel opened here
+ * is a channel deleted later, and deleting is what gets limited. Waiting before opening is what
+ * spaces the deletions, because by the time the next one is opened the last has been taken away.
+ *
+ * Both are measured from the same moment, so the wait is whichever is still outstanding.
+ */
+async function waitOutChannelLimits( accountId: string ): Promise<void> {
     const previous = lastCreatedAt.get( accountId );
 
     if ( undefined === previous ) {
         return;
     }
 
-    const wait = BOT_LIMITS.DYNAMIC_CHANNEL_CREATE_THROTTLE_MS +
-        BOT_LIMITS.CREATE_THROTTLE_MARGIN_MS -
-        ( Date.now() - previous );
+    const since = Date.now() - previous;
+
+    const wait = Math.max(
+        BOT_LIMITS.DYNAMIC_CHANNEL_CREATE_THROTTLE_MS + BOT_LIMITS.CREATE_THROTTLE_MARGIN_MS - since,
+        DISCORD_LIMITS.CHANNEL_OPEN_SPACING_MS - since
+    );
 
     if ( wait > 0 ) {
         await sleep( wait );
@@ -57,7 +70,7 @@ export class VertixDynamicChannel {
     public async open( generatorId: string, version: TInterfaceVersion = "v3" ): Promise<IDynamicChannelHandle> {
         const accountId = this.app.voice.accountId ?? "unknown";
 
-        await waitOutCreateThrottle( accountId );
+        await waitOutChannelLimits( accountId );
 
         const knownVoiceIds = await this.guild.voiceChannelIds();
 
@@ -77,7 +90,7 @@ export class VertixDynamicChannel {
     public async joinGenerator( generatorId: string ): Promise<void> {
         const accountId = this.app.voice.accountId ?? "unknown";
 
-        await waitOutCreateThrottle( accountId );
+        await waitOutChannelLimits( accountId );
 
         await this.app.voice.join( generatorId );
 

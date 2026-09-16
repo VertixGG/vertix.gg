@@ -72,5 +72,21 @@ export const DISCORD_URLS = {
 
 export const DISCORD_LIMITS = {
     CHANNEL_NAME_MAX: 100,
-    REST_RETRY_LIMIT: 3
+    REST_RETRY_LIMIT: 3,
+
+    /**
+     * The least time to leave between opening one dynamic channel and opening the next.
+     *
+     * Opening one is also undertaking to delete one, and deleting is the limited half. Two in quick
+     * succession are taken away at once; the third has waited minutes, while the same deletion on a
+     * quiet guild is done before the first poll comes back.
+     *
+     * Thirty seconds is read off where the line fell rather than from anything discord publishes:
+     * the specs whose tests take that long or more have never failed this way, and the one whose
+     * tests take ten seconds failed at its third. Treat it as the shape of the limit, not its value.
+     *
+     * It costs a slow spec nothing - the gap has already passed by the time it asks - so what it
+     * paces is the bursts, which is what needed pacing.
+     */
+    CHANNEL_OPEN_SPACING_MS: 30_000
 } as const;

@@ -49,7 +49,7 @@ const STORED_KEY_PREFIXES: Readonly<Record<string, string>> = {
  */
 const NAMESPACE = "VertixData/";
 
-const MODELS_DIR = fileURLToPath( new URL( "../src/models", import.meta.url ) );
+const MODELS_DIR = fileURLToPath( new URL( "../../src/models", import.meta.url ) );
 
 interface NamedClass {
     getName(): string;
@@ -157,7 +157,7 @@ async function collectKeyedModels(): Promise<Map<string, NamedClass>> {
     return withoutBases( keyed );
 }
 
-describe( "VertixData/StoredKeyNames", () => {
+describe( "VertixData/Bases/ModelDataOwnerBase/storedKeyNames", () => {
     let keyed: Map<string, NamedClass>;
 
     beforeAll( async() => {

@@ -146,6 +146,7 @@ model Channel {
   // ---
   version          String                   @default("0.0.0.0")
   data             ChannelData[]            @relation("ChannelData")
+  userChannelData  UserChannelData[]        @relation("ChannelUserChannelData")
   // ---
   internalType     E_INTERNAL_CHANNEL_TYPES @default(DEFAULT_CHANNEL)
   // ---
@@ -214,10 +215,17 @@ model UserData {
   @@index([ownerId])
 }
 
+/// One member's settings for one generator.
+///
+/// Hangs off both sides: the member who chose the settings, and the generator they apply to. Only
+/// the member was a relation, so a generator going away left its rows behind with nothing that
+/// would ever read or reap them - `channelId` pointed at a `Channel` that no longer existed. The
+/// second relation is what makes the row go when either end does.
 model UserChannelData {
   id        String       @id @default(auto()) @map("_id") @db.ObjectId
   // ---
   channelId String       @db.ObjectId
+  channel   Channel      @relation("ChannelUserChannelData", fields: [channelId], references: [id], onDelete: Cascade)
   // ---
   key       String
   version   String

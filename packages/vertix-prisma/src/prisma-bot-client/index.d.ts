@@ -64,7 +64,12 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 export type UserData = $Result.DefaultSelection<Prisma.$UserDataPayload>
 /**
  * Model UserChannelData
+ * One member's settings for one generator.
  * 
+ * Hangs off both sides: the member who chose the settings, and the generator they apply to. Only
+ * the member was a relation, so a generator going away left its rows behind with nothing that
+ * would ever read or reap them - `channelId` pointed at a `Channel` that no longer existed. The
+ * second relation is what makes the row go when either end does.
  */
 export type UserChannelData = $Result.DefaultSelection<Prisma.$UserChannelDataPayload>
 /**
@@ -1896,10 +1901,12 @@ export namespace Prisma {
 
   export type ChannelCountOutputType = {
     data: number
+    userChannelData: number
   }
 
   export type ChannelCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | ChannelCountOutputTypeCountDataArgs
+    userChannelData?: boolean | ChannelCountOutputTypeCountUserChannelDataArgs
   }
 
   // Custom InputTypes
@@ -1918,6 +1925,13 @@ export namespace Prisma {
    */
   export type ChannelCountOutputTypeCountDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChannelDataWhereInput
+  }
+
+  /**
+   * ChannelCountOutputType without action
+   */
+  export type ChannelCountOutputTypeCountUserChannelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserChannelDataWhereInput
   }
 
 
@@ -7243,6 +7257,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     data?: boolean | Channel$dataArgs<ExtArgs>
+    userChannelData?: boolean | Channel$userChannelDataArgs<ExtArgs>
     _count?: boolean | ChannelCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["channel"]>
 
@@ -7265,6 +7280,7 @@ export namespace Prisma {
   export type ChannelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channelId" | "guildId" | "userOwnerId" | "categoryId" | "ownerChannelId" | "version" | "internalType" | "createdAtDiscord" | "createdAt" | "updatedAt", ExtArgs["result"]["channel"]>
   export type ChannelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     data?: boolean | Channel$dataArgs<ExtArgs>
+    userChannelData?: boolean | Channel$userChannelDataArgs<ExtArgs>
     _count?: boolean | ChannelCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -7272,6 +7288,7 @@ export namespace Prisma {
     name: "Channel"
     objects: {
       data: Prisma.$ChannelDataPayload<ExtArgs>[]
+      userChannelData: Prisma.$UserChannelDataPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7649,6 +7666,7 @@ export namespace Prisma {
   export interface Prisma__ChannelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     data<T extends Channel$dataArgs<ExtArgs> = {}>(args?: Subset<T, Channel$dataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChannelDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userChannelData<T extends Channel$userChannelDataArgs<ExtArgs> = {}>(args?: Subset<T, Channel$userChannelDataArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserChannelDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8080,6 +8098,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChannelDataScalarFieldEnum | ChannelDataScalarFieldEnum[]
+  }
+
+  /**
+   * Channel.userChannelData
+   */
+  export type Channel$userChannelDataArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserChannelData
+     */
+    select?: UserChannelDataSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserChannelData
+     */
+    omit?: UserChannelDataOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserChannelDataInclude<ExtArgs> | null
+    where?: UserChannelDataWhereInput
+    orderBy?: UserChannelDataOrderByWithRelationInput | UserChannelDataOrderByWithRelationInput[]
+    cursor?: UserChannelDataWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserChannelDataScalarFieldEnum | UserChannelDataScalarFieldEnum[]
   }
 
   /**
@@ -11390,6 +11432,7 @@ export namespace Prisma {
     ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userChannelData"]>
 
@@ -11411,12 +11454,14 @@ export namespace Prisma {
 
   export type UserChannelDataOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "channelId" | "key" | "version" | "type" | "object" | "value" | "values" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["userChannelData"]>
   export type UserChannelDataInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    channel?: boolean | ChannelDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $UserChannelDataPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "UserChannelData"
     objects: {
+      channel: Prisma.$ChannelPayload<ExtArgs>
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -11794,6 +11839,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserChannelDataClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    channel<T extends ChannelDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChannelDefaultArgs<ExtArgs>>): Prisma__ChannelClient<$Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -14898,6 +14944,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Channel"> | Date | string
     updatedAt?: DateTimeFilter<"Channel"> | Date | string
     data?: ChannelDataListRelationFilter
+    userChannelData?: UserChannelDataListRelationFilter
   }
 
   export type ChannelOrderByWithRelationInput = {
@@ -14913,6 +14960,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     data?: ChannelDataOrderByRelationAggregateInput
+    userChannelData?: UserChannelDataOrderByRelationAggregateInput
   }
 
   export type ChannelWhereUniqueInput = Prisma.AtLeast<{
@@ -14931,6 +14979,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Channel"> | Date | string
     updatedAt?: DateTimeFilter<"Channel"> | Date | string
     data?: ChannelDataListRelationFilter
+    userChannelData?: UserChannelDataListRelationFilter
   }, "id" | "channelId">
 
   export type ChannelOrderByWithAggregationInput = {
@@ -15204,6 +15253,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"UserChannelData"> | string
     createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -15219,6 +15269,7 @@ export namespace Prisma {
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    channel?: ChannelOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
 
@@ -15238,6 +15289,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"UserChannelData"> | string
     createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
     updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    channel?: XOR<ChannelScalarRelationFilter, ChannelWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "ownerId_channelId_key_version">
 
@@ -15835,6 +15887,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     data?: ChannelDataCreateNestedManyWithoutChannelInput
+    userChannelData?: UserChannelDataCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateInput = {
@@ -15850,6 +15903,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     data?: ChannelDataUncheckedCreateNestedManyWithoutChannelInput
+    userChannelData?: UserChannelDataUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUpdateInput = {
@@ -15864,6 +15918,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: ChannelDataUpdateManyWithoutChannelNestedInput
+    userChannelData?: UserChannelDataUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateInput = {
@@ -15878,6 +15933,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     data?: ChannelDataUncheckedUpdateManyWithoutChannelNestedInput
+    userChannelData?: UserChannelDataUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelCreateManyInput = {
@@ -16154,7 +16210,6 @@ export namespace Prisma {
 
   export type UserChannelDataCreateInput = {
     id?: string
-    channelId: string
     key: string
     version: string
     type?: $Enums.E_DATA_TYPES
@@ -16163,6 +16218,7 @@ export namespace Prisma {
     values?: UserChannelDataCreatevaluesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    channel: ChannelCreateNestedOneWithoutUserChannelDataInput
     user: UserCreateNestedOneWithoutChannelDataInput
   }
 
@@ -16181,7 +16237,6 @@ export namespace Prisma {
   }
 
   export type UserChannelDataUpdateInput = {
-    channelId?: StringFieldUpdateOperationsInput | string
     key?: StringFieldUpdateOperationsInput | string
     version?: StringFieldUpdateOperationsInput | string
     type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
@@ -16190,6 +16245,7 @@ export namespace Prisma {
     values?: UserChannelDataUpdatevaluesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channel?: ChannelUpdateOneRequiredWithoutUserChannelDataNestedInput
     user?: UserUpdateOneRequiredWithoutChannelDataNestedInput
   }
 
@@ -16221,7 +16277,6 @@ export namespace Prisma {
   }
 
   export type UserChannelDataUpdateManyMutationInput = {
-    channelId?: StringFieldUpdateOperationsInput | string
     key?: StringFieldUpdateOperationsInput | string
     version?: StringFieldUpdateOperationsInput | string
     type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
@@ -16825,7 +16880,17 @@ export namespace Prisma {
     none?: ChannelDataWhereInput
   }
 
+  export type UserChannelDataListRelationFilter = {
+    every?: UserChannelDataWhereInput
+    some?: UserChannelDataWhereInput
+    none?: UserChannelDataWhereInput
+  }
+
   export type ChannelDataOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserChannelDataOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16941,17 +17006,7 @@ export namespace Prisma {
     none?: UserDataWhereInput
   }
 
-  export type UserChannelDataListRelationFilter = {
-    every?: UserChannelDataWhereInput
-    some?: UserChannelDataWhereInput
-    none?: UserChannelDataWhereInput
-  }
-
   export type UserDataOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type UserChannelDataOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -17264,11 +17319,25 @@ export namespace Prisma {
     connect?: ChannelDataWhereUniqueInput | ChannelDataWhereUniqueInput[]
   }
 
+  export type UserChannelDataCreateNestedManyWithoutChannelInput = {
+    create?: XOR<UserChannelDataCreateWithoutChannelInput, UserChannelDataUncheckedCreateWithoutChannelInput> | UserChannelDataCreateWithoutChannelInput[] | UserChannelDataUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutChannelInput | UserChannelDataCreateOrConnectWithoutChannelInput[]
+    createMany?: UserChannelDataCreateManyChannelInputEnvelope
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+  }
+
   export type ChannelDataUncheckedCreateNestedManyWithoutChannelInput = {
     create?: XOR<ChannelDataCreateWithoutChannelInput, ChannelDataUncheckedCreateWithoutChannelInput> | ChannelDataCreateWithoutChannelInput[] | ChannelDataUncheckedCreateWithoutChannelInput[]
     connectOrCreate?: ChannelDataCreateOrConnectWithoutChannelInput | ChannelDataCreateOrConnectWithoutChannelInput[]
     createMany?: ChannelDataCreateManyChannelInputEnvelope
     connect?: ChannelDataWhereUniqueInput | ChannelDataWhereUniqueInput[]
+  }
+
+  export type UserChannelDataUncheckedCreateNestedManyWithoutChannelInput = {
+    create?: XOR<UserChannelDataCreateWithoutChannelInput, UserChannelDataUncheckedCreateWithoutChannelInput> | UserChannelDataCreateWithoutChannelInput[] | UserChannelDataUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutChannelInput | UserChannelDataCreateOrConnectWithoutChannelInput[]
+    createMany?: UserChannelDataCreateManyChannelInputEnvelope
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
   }
 
   export type EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput = {
@@ -17289,6 +17358,20 @@ export namespace Prisma {
     deleteMany?: ChannelDataScalarWhereInput | ChannelDataScalarWhereInput[]
   }
 
+  export type UserChannelDataUpdateManyWithoutChannelNestedInput = {
+    create?: XOR<UserChannelDataCreateWithoutChannelInput, UserChannelDataUncheckedCreateWithoutChannelInput> | UserChannelDataCreateWithoutChannelInput[] | UserChannelDataUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutChannelInput | UserChannelDataCreateOrConnectWithoutChannelInput[]
+    upsert?: UserChannelDataUpsertWithWhereUniqueWithoutChannelInput | UserChannelDataUpsertWithWhereUniqueWithoutChannelInput[]
+    createMany?: UserChannelDataCreateManyChannelInputEnvelope
+    set?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    disconnect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    delete?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    update?: UserChannelDataUpdateWithWhereUniqueWithoutChannelInput | UserChannelDataUpdateWithWhereUniqueWithoutChannelInput[]
+    updateMany?: UserChannelDataUpdateManyWithWhereWithoutChannelInput | UserChannelDataUpdateManyWithWhereWithoutChannelInput[]
+    deleteMany?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+  }
+
   export type ChannelDataUncheckedUpdateManyWithoutChannelNestedInput = {
     create?: XOR<ChannelDataCreateWithoutChannelInput, ChannelDataUncheckedCreateWithoutChannelInput> | ChannelDataCreateWithoutChannelInput[] | ChannelDataUncheckedCreateWithoutChannelInput[]
     connectOrCreate?: ChannelDataCreateOrConnectWithoutChannelInput | ChannelDataCreateOrConnectWithoutChannelInput[]
@@ -17301,6 +17384,20 @@ export namespace Prisma {
     update?: ChannelDataUpdateWithWhereUniqueWithoutChannelInput | ChannelDataUpdateWithWhereUniqueWithoutChannelInput[]
     updateMany?: ChannelDataUpdateManyWithWhereWithoutChannelInput | ChannelDataUpdateManyWithWhereWithoutChannelInput[]
     deleteMany?: ChannelDataScalarWhereInput | ChannelDataScalarWhereInput[]
+  }
+
+  export type UserChannelDataUncheckedUpdateManyWithoutChannelNestedInput = {
+    create?: XOR<UserChannelDataCreateWithoutChannelInput, UserChannelDataUncheckedCreateWithoutChannelInput> | UserChannelDataCreateWithoutChannelInput[] | UserChannelDataUncheckedCreateWithoutChannelInput[]
+    connectOrCreate?: UserChannelDataCreateOrConnectWithoutChannelInput | UserChannelDataCreateOrConnectWithoutChannelInput[]
+    upsert?: UserChannelDataUpsertWithWhereUniqueWithoutChannelInput | UserChannelDataUpsertWithWhereUniqueWithoutChannelInput[]
+    createMany?: UserChannelDataCreateManyChannelInputEnvelope
+    set?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    disconnect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    delete?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    connect?: UserChannelDataWhereUniqueInput | UserChannelDataWhereUniqueInput[]
+    update?: UserChannelDataUpdateWithWhereUniqueWithoutChannelInput | UserChannelDataUpdateWithWhereUniqueWithoutChannelInput[]
+    updateMany?: UserChannelDataUpdateManyWithWhereWithoutChannelInput | UserChannelDataUpdateManyWithWhereWithoutChannelInput[]
+    deleteMany?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
   }
 
   export type ChannelDataCreatevaluesInput = {
@@ -17437,6 +17534,12 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type ChannelCreateNestedOneWithoutUserChannelDataInput = {
+    create?: XOR<ChannelCreateWithoutUserChannelDataInput, ChannelUncheckedCreateWithoutUserChannelDataInput>
+    connectOrCreate?: ChannelCreateOrConnectWithoutUserChannelDataInput
+    connect?: ChannelWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutChannelDataInput = {
     create?: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
     connectOrCreate?: UserCreateOrConnectWithoutChannelDataInput
@@ -17446,6 +17549,14 @@ export namespace Prisma {
   export type UserChannelDataUpdatevaluesInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type ChannelUpdateOneRequiredWithoutUserChannelDataNestedInput = {
+    create?: XOR<ChannelCreateWithoutUserChannelDataInput, ChannelUncheckedCreateWithoutUserChannelDataInput>
+    connectOrCreate?: ChannelCreateOrConnectWithoutUserChannelDataInput
+    upsert?: ChannelUpsertWithoutUserChannelDataInput
+    connect?: ChannelWhereUniqueInput
+    update?: XOR<XOR<ChannelUpdateToOneWithWhereWithoutUserChannelDataInput, ChannelUpdateWithoutUserChannelDataInput>, ChannelUncheckedUpdateWithoutUserChannelDataInput>
   }
 
   export type UserUpdateOneRequiredWithoutChannelDataNestedInput = {
@@ -17837,6 +17948,41 @@ export namespace Prisma {
     data: ChannelDataCreateManyChannelInput | ChannelDataCreateManyChannelInput[]
   }
 
+  export type UserChannelDataCreateWithoutChannelInput = {
+    id?: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutChannelDataInput
+  }
+
+  export type UserChannelDataUncheckedCreateWithoutChannelInput = {
+    id?: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserChannelDataCreateOrConnectWithoutChannelInput = {
+    where: UserChannelDataWhereUniqueInput
+    create: XOR<UserChannelDataCreateWithoutChannelInput, UserChannelDataUncheckedCreateWithoutChannelInput>
+  }
+
+  export type UserChannelDataCreateManyChannelInputEnvelope = {
+    data: UserChannelDataCreateManyChannelInput | UserChannelDataCreateManyChannelInput[]
+  }
+
   export type ChannelDataUpsertWithWhereUniqueWithoutChannelInput = {
     where: ChannelDataWhereUniqueInput
     update: XOR<ChannelDataUpdateWithoutChannelInput, ChannelDataUncheckedUpdateWithoutChannelInput>
@@ -17869,6 +18015,39 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ChannelData"> | Date | string
   }
 
+  export type UserChannelDataUpsertWithWhereUniqueWithoutChannelInput = {
+    where: UserChannelDataWhereUniqueInput
+    update: XOR<UserChannelDataUpdateWithoutChannelInput, UserChannelDataUncheckedUpdateWithoutChannelInput>
+    create: XOR<UserChannelDataCreateWithoutChannelInput, UserChannelDataUncheckedCreateWithoutChannelInput>
+  }
+
+  export type UserChannelDataUpdateWithWhereUniqueWithoutChannelInput = {
+    where: UserChannelDataWhereUniqueInput
+    data: XOR<UserChannelDataUpdateWithoutChannelInput, UserChannelDataUncheckedUpdateWithoutChannelInput>
+  }
+
+  export type UserChannelDataUpdateManyWithWhereWithoutChannelInput = {
+    where: UserChannelDataScalarWhereInput
+    data: XOR<UserChannelDataUpdateManyMutationInput, UserChannelDataUncheckedUpdateManyWithoutChannelInput>
+  }
+
+  export type UserChannelDataScalarWhereInput = {
+    AND?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+    OR?: UserChannelDataScalarWhereInput[]
+    NOT?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
+    id?: StringFilter<"UserChannelData"> | string
+    channelId?: StringFilter<"UserChannelData"> | string
+    key?: StringFilter<"UserChannelData"> | string
+    version?: StringFilter<"UserChannelData"> | string
+    type?: EnumE_DATA_TYPESFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
+    object?: JsonNullableFilter<"UserChannelData">
+    value?: StringNullableFilter<"UserChannelData"> | string | null
+    values?: StringNullableListFilter<"UserChannelData">
+    ownerId?: StringFilter<"UserChannelData"> | string
+    createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
+    updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
+  }
+
   export type ChannelCreateWithoutDataInput = {
     id?: string
     channelId: string
@@ -17881,6 +18060,7 @@ export namespace Prisma {
     createdAtDiscord: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    userChannelData?: UserChannelDataCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelUncheckedCreateWithoutDataInput = {
@@ -17895,6 +18075,7 @@ export namespace Prisma {
     createdAtDiscord: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    userChannelData?: UserChannelDataUncheckedCreateNestedManyWithoutChannelInput
   }
 
   export type ChannelCreateOrConnectWithoutDataInput = {
@@ -17924,6 +18105,7 @@ export namespace Prisma {
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userChannelData?: UserChannelDataUpdateManyWithoutChannelNestedInput
   }
 
   export type ChannelUncheckedUpdateWithoutDataInput = {
@@ -17937,6 +18119,7 @@ export namespace Prisma {
     createdAtDiscord?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userChannelData?: UserChannelDataUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type UserDataCreateWithoutUserInput = {
@@ -17974,7 +18157,6 @@ export namespace Prisma {
 
   export type UserChannelDataCreateWithoutUserInput = {
     id?: string
-    channelId: string
     key: string
     version: string
     type?: $Enums.E_DATA_TYPES
@@ -17983,6 +18165,7 @@ export namespace Prisma {
     values?: UserChannelDataCreatevaluesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    channel: ChannelCreateNestedOneWithoutUserChannelDataInput
   }
 
   export type UserChannelDataUncheckedCreateWithoutUserInput = {
@@ -18055,23 +18238,6 @@ export namespace Prisma {
     data: XOR<UserChannelDataUpdateManyMutationInput, UserChannelDataUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type UserChannelDataScalarWhereInput = {
-    AND?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
-    OR?: UserChannelDataScalarWhereInput[]
-    NOT?: UserChannelDataScalarWhereInput | UserChannelDataScalarWhereInput[]
-    id?: StringFilter<"UserChannelData"> | string
-    channelId?: StringFilter<"UserChannelData"> | string
-    key?: StringFilter<"UserChannelData"> | string
-    version?: StringFilter<"UserChannelData"> | string
-    type?: EnumE_DATA_TYPESFilter<"UserChannelData"> | $Enums.E_DATA_TYPES
-    object?: JsonNullableFilter<"UserChannelData">
-    value?: StringNullableFilter<"UserChannelData"> | string | null
-    values?: StringNullableListFilter<"UserChannelData">
-    ownerId?: StringFilter<"UserChannelData"> | string
-    createdAt?: DateTimeFilter<"UserChannelData"> | Date | string
-    updatedAt?: DateTimeFilter<"UserChannelData"> | Date | string
-  }
-
   export type UserCreateWithoutDataInput = {
     id?: string
     userId: string
@@ -18122,6 +18288,41 @@ export namespace Prisma {
     channelData?: UserChannelDataUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type ChannelCreateWithoutUserChannelDataInput = {
+    id?: string
+    channelId: string
+    guildId: string
+    userOwnerId: string
+    categoryId?: string | null
+    ownerChannelId?: string | null
+    version?: string
+    internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
+    createdAtDiscord: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    data?: ChannelDataCreateNestedManyWithoutChannelInput
+  }
+
+  export type ChannelUncheckedCreateWithoutUserChannelDataInput = {
+    id?: string
+    channelId: string
+    guildId: string
+    userOwnerId: string
+    categoryId?: string | null
+    ownerChannelId?: string | null
+    version?: string
+    internalType?: $Enums.E_INTERNAL_CHANNEL_TYPES
+    createdAtDiscord: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    data?: ChannelDataUncheckedCreateNestedManyWithoutChannelInput
+  }
+
+  export type ChannelCreateOrConnectWithoutUserChannelDataInput = {
+    where: ChannelWhereUniqueInput
+    create: XOR<ChannelCreateWithoutUserChannelDataInput, ChannelUncheckedCreateWithoutUserChannelDataInput>
+  }
+
   export type UserCreateWithoutChannelDataInput = {
     id?: string
     userId: string
@@ -18143,6 +18344,45 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutChannelDataInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutChannelDataInput, UserUncheckedCreateWithoutChannelDataInput>
+  }
+
+  export type ChannelUpsertWithoutUserChannelDataInput = {
+    update: XOR<ChannelUpdateWithoutUserChannelDataInput, ChannelUncheckedUpdateWithoutUserChannelDataInput>
+    create: XOR<ChannelCreateWithoutUserChannelDataInput, ChannelUncheckedCreateWithoutUserChannelDataInput>
+    where?: ChannelWhereInput
+  }
+
+  export type ChannelUpdateToOneWithWhereWithoutUserChannelDataInput = {
+    where?: ChannelWhereInput
+    data: XOR<ChannelUpdateWithoutUserChannelDataInput, ChannelUncheckedUpdateWithoutUserChannelDataInput>
+  }
+
+  export type ChannelUpdateWithoutUserChannelDataInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    userOwnerId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
+    internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    data?: ChannelDataUpdateManyWithoutChannelNestedInput
+  }
+
+  export type ChannelUncheckedUpdateWithoutUserChannelDataInput = {
+    channelId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    userOwnerId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: StringFieldUpdateOperationsInput | string
+    internalType?: EnumE_INTERNAL_CHANNEL_TYPESFieldUpdateOperationsInput | $Enums.E_INTERNAL_CHANNEL_TYPES
+    createdAtDiscord?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    data?: ChannelDataUncheckedUpdateManyWithoutChannelNestedInput
   }
 
   export type UserUpsertWithoutChannelDataInput = {
@@ -18229,6 +18469,19 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type UserChannelDataCreateManyChannelInput = {
+    id?: string
+    key: string
+    version: string
+    type?: $Enums.E_DATA_TYPES
+    object?: InputJsonValue | null
+    value?: string | null
+    values?: UserChannelDataCreatevaluesInput | string[]
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ChannelDataUpdateWithoutChannelInput = {
     key?: StringFieldUpdateOperationsInput | string
     version?: StringFieldUpdateOperationsInput | string
@@ -18258,6 +18511,42 @@ export namespace Prisma {
     object?: InputJsonValue | InputJsonValue | null
     value?: NullableStringFieldUpdateOperationsInput | string | null
     values?: ChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUpdateWithoutChannelInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutChannelDataNestedInput
+  }
+
+  export type UserChannelDataUncheckedUpdateWithoutChannelInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserChannelDataUncheckedUpdateManyWithoutChannelInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
+    object?: InputJsonValue | InputJsonValue | null
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    values?: UserChannelDataUpdatevaluesInput | string[]
+    ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18321,7 +18610,6 @@ export namespace Prisma {
   }
 
   export type UserChannelDataUpdateWithoutUserInput = {
-    channelId?: StringFieldUpdateOperationsInput | string
     key?: StringFieldUpdateOperationsInput | string
     version?: StringFieldUpdateOperationsInput | string
     type?: EnumE_DATA_TYPESFieldUpdateOperationsInput | $Enums.E_DATA_TYPES
@@ -18330,6 +18618,7 @@ export namespace Prisma {
     values?: UserChannelDataUpdatevaluesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    channel?: ChannelUpdateOneRequiredWithoutUserChannelDataNestedInput
   }
 
   export type UserChannelDataUncheckedUpdateWithoutUserInput = {

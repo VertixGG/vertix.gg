@@ -175,6 +175,12 @@ const OWNER_CONTROLS = [
         body: "The one that is not the owner's \u2014 ask to be let into a private channel.",
     },
     {
+        emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.lfm,
+        fallback: "🔎",
+        title: "LFM",
+        body: "Looking for members \u2014 put the room on the server's board while it still has seats.",
+    },
+    {
         emoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.claimChannel,
         fallback: "😈",
         title: "Claim",

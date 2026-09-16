@@ -54,7 +54,9 @@ function renamed( key: string ): string | null {
 async function main() {
     const client = PrismaBotClient.$.getClient();
 
-    let total = 0;
+    let total = 0,
+        carried = 0,
+        refused = 0;
 
     for ( const name of COLLECTIONS ) {
         const delegate = ( client as unknown as Record<string, {
@@ -92,15 +94,34 @@ async function main() {
         // One row at a time: the unique index is on (ownerId, key, version), so a row whose new key
         // is already taken has to be reported rather than collided into.
         for ( const move of moves ) {
-            await delegate.update( { where: { id: move.id }, data: { key: move.to } } )
-                .catch( ( error: Error ) =>
-                    console.error( `   ! ${ move.from } could not be carried over: ${ error.message }` ) );
+            const moved = await delegate.update( { where: { id: move.id }, data: { key: move.to } } )
+                .then( () => true )
+                .catch( ( error: Error ) => {
+                    console.error( `   ! ${ move.from } could not be carried over: ${ error.message }` );
+
+                    return false;
+                } );
+
+            if ( moved ) {
+                carried++;
+            } else {
+                refused++;
+            }
         }
     }
 
-    console.log(
-        `\n${ total } row(s) ${ isApply ? "carried over." : "would be carried over - pass --apply to write." }`
-    );
+    if ( ! isApply ) {
+        console.log( `\n${ total } row(s) would be carried over - pass --apply to write.` );
+
+        await client.$disconnect();
+
+        return;
+    }
+
+    // Counted from what the writes answered, not from what was attempted. A row whose new key is
+    // already taken is left where it is, and a run that reported those as carried over would be
+    // saying the collection had been moved when part of it had not.
+    console.log( `\n${ carried } row(s) carried over${ refused ? `, ${ refused } left where they were.` : "." }` );
 
     await client.$disconnect();
 }

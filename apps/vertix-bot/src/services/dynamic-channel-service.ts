@@ -1972,6 +1972,21 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             );
         }
 
+        // Everything above this point is awaited, and the room can be gone by the time it finishes:
+        // a member who joins a generator and leaves again straight away has their channel created
+        // and deleted inside that window, and the bot is left posting into a channel discord no
+        // longer has. That answers `Unknown Channel`, which is logged as a fault and reads like one,
+        // for a member who did nothing wrong. Checked as late as possible, which is here.
+        if ( !channel.guild.channels.cache.has( channel.id ) ) {
+            this.logger.log(
+                this.createPrimaryMessage,
+                `Guild id: '${ channel.guild.id }', channel id: '${ channel.id }' - ` +
+                    "Channel is gone, not sending its primary message"
+            );
+
+            return;
+        }
+
         return ( await this.services.uiVersioningAdapterService.get( "VertixBot/DynamicChannelAdapter", channel ) )?.send(
             channel,
             sendArgs

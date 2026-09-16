@@ -14,7 +14,7 @@ import { ComponentType } from "discord.js";
 
 import { UnknownElementTypeError } from "@vertix.gg/gui/src/bases/errors/unknown-element-type-error";
 
-import { UI_ELEMENTS_DEPTH } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { UI_CUSTOM_ID_SEPARATOR, UI_ELEMENTS_DEPTH } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import {
     UI_LANGUAGES_FILE_EXTENSION,
@@ -154,17 +154,57 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
         return this.uiInitialLanguage;
     }
 
+    /**
+     * Function lookupLanguageContent() :: The registered content for an entity, and whether a
+     * missing one is worth reporting.
+     *
+     * Two very different situations arrive here as "no entry". Before `register()` has built the
+     * lookup maps there is no map for the language at all - and `extractEntitiesLanguage()` runs in
+     * exactly that window, building every entity in the bot to work out what the language files
+     * ought to contain. Falling back to the entity's own content is the entire point of that pass,
+     * not a fault, and reporting it filled the log with about a thousand errors per run that meant
+     * nothing and buried the ones that did. Once the maps exist a missing entry is a real one and
+     * is still reported.
+     *
+     * A name carrying `UI_CUSTOM_ID_SEPARATOR` is one minted per member at runtime - the claim vote
+     * builds a button per candidate, named for the candidate - and nothing can register a
+     * translation under a name that only exists while a vote is open. The registered entry is the
+     * one before the separator; what follows it is an id, which is not translatable in any language.
+     */
+    private lookupLanguageContent<TContent>(
+        byLang: Map<string, Map<string, TContent>>,
+        languageCode: string,
+        name: string
+    ): { content?: TContent; shouldReport: boolean } {
+        const langMap = byLang.get( languageCode );
+
+        if ( !langMap ) {
+            return { shouldReport: false };
+        }
+
+        const content = langMap.get( name ) ?? (
+            name.includes( UI_CUSTOM_ID_SEPARATOR )
+                ? langMap.get( name.split( UI_CUSTOM_ID_SEPARATOR )[ 0 ] )
+                : undefined
+        );
+
+        return { content, shouldReport: !content };
+    }
+
     public async getButtonTranslatedContent(
         button: UIElementButtonBase,
         languageCode: string | undefined
     ): Promise<UIElementButtonLanguageContent> {
         languageCode = languageCode || UI_LANGUAGES_INITIAL_CODE;
 
-        const langMap = this.buttonsByLang.get( languageCode );
-        const content = langMap?.get( button.getName() );
+        const { content, shouldReport } = this.lookupLanguageContent(
+            this.buttonsByLang,
+            languageCode,
+            button.getName()
+        );
 
         if ( !content ) {
-            this.logger.error(
+            shouldReport && this.logger.error(
                 this.getButtonTranslatedContent,
                 `Button language not found: '${ button.getName() }' - Language: '${ languageCode }'`
             );
@@ -187,11 +227,14 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     ): Promise<UIElementSelectMenuLanguageContent> {
         languageCode = languageCode || UI_LANGUAGES_INITIAL_CODE;
 
-        const langMap = this.selectMenusByLang.get( languageCode );
-        const content = langMap?.get( selectMenu.getName() );
+        const { content, shouldReport } = this.lookupLanguageContent(
+            this.selectMenusByLang,
+            languageCode,
+            selectMenu.getName()
+        );
 
         if ( !content ) {
-            this.logger.error(
+            shouldReport && this.logger.error(
                 this.getSelectMenuTranslatedContent,
                 `Select menu language not found: '${ selectMenu.getName() }' - Language: '${ languageCode }'`
             );
@@ -211,11 +254,14 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     ): Promise<UIElementTextInputLanguageContent> {
         languageCode = languageCode || UI_LANGUAGES_INITIAL_CODE;
 
-        const langMap = this.textInputsByLang.get( languageCode );
-        const content = langMap?.get( textInput.getName() );
+        const { content, shouldReport } = this.lookupLanguageContent(
+            this.textInputsByLang,
+            languageCode,
+            textInput.getName()
+        );
 
         if ( !content ) {
-            this.logger.error(
+            shouldReport && this.logger.error(
                 this.getTextInputTranslatedContent,
                 `Text input language not found: '${ textInput.getName() }' - Language: '${ languageCode }'`
             );
@@ -234,11 +280,14 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     ): Promise<UIEmbedLanguageContent> {
         languageCode = languageCode || UI_LANGUAGES_INITIAL_CODE;
 
-        const langMap = this.embedsByLang.get( languageCode );
-        const content = langMap?.get( embed.getName() );
+        const { content, shouldReport } = this.lookupLanguageContent(
+            this.embedsByLang,
+            languageCode,
+            embed.getName()
+        );
 
         if ( !content ) {
-            this.logger.error(
+            shouldReport && this.logger.error(
                 this.getEmbedTranslatedContent,
                 `Embed language not found: '${ embed.getName() }' - Language: '${ languageCode }'`
             );
@@ -260,11 +309,14 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     ): Promise<UIMarkdownLanguageContent> {
         languageCode = languageCode || UI_LANGUAGES_INITIAL_CODE;
 
-        const langMap = this.markdownsByLang.get( languageCode );
-        const content = langMap?.get( markdown.getName() );
+        const { content, shouldReport } = this.lookupLanguageContent(
+            this.markdownsByLang,
+            languageCode,
+            markdown.getName()
+        );
 
         if ( !content ) {
-            this.logger.error(
+            shouldReport && this.logger.error(
                 this.getMarkdownTranslatedContent,
                 `Markdown language not found: '${ markdown.getName() }' - Language: '${ languageCode }'`
             );
@@ -283,11 +335,14 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     ): Promise<UIModalLanguageContent> {
         languageCode = languageCode || UI_LANGUAGES_INITIAL_CODE;
 
-        const langMap = this.modalsByLang.get( languageCode );
-        const content = langMap?.get( modal.getName() );
+        const { content, shouldReport } = this.lookupLanguageContent(
+            this.modalsByLang,
+            languageCode,
+            modal.getName()
+        );
 
         if ( !content ) {
-            this.logger.error(
+            shouldReport && this.logger.error(
                 this.getModalTranslatedContent,
                 `Modal language not found: '${ modal.getName() }' - Language: '${ languageCode }'`
             );

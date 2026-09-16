@@ -1,6 +1,8 @@
 // TODO: Fix imports order.
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
+import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import { ClaimVoteStepInButton } from "@vertix.gg/bot/src/ui/v3/claim/vote/claim-vote-step-in-button";
 import { ClaimVoteAddButton } from "@vertix.gg/bot/src/ui/v3/claim/vote/claim-vote-add-button";
 
@@ -21,8 +23,11 @@ export class ClaimVoteElementsGroup extends UIElementsGroupBase {
         if ( args ) {
             const buttons = Object.entries( args.candidateDisplayNames || {} ).map( ( [ userId, displayName ] ) => {
                 return class extends ClaimVoteAddButton {
+                    // Named for the candidate so a press can be told apart. Nothing registers a
+                    // translation under a name that only exists while a vote is open, so the
+                    // language manager resolves these back to the part before the separator.
                     public static getName() {
-                        return `${ super.getName() }:${ userId }`; // TODO: Use constant for separator.
+                        return `${ super.getName() }${ UI_CUSTOM_ID_SEPARATOR }${ userId }`;
                     }
 
                     public async build( uiArgs?: UIArgs ): Promise<UIEntitySchemaBase> {

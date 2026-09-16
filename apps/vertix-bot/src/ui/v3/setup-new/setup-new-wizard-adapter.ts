@@ -20,6 +20,8 @@ import {
 
 import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
+import { isPassingBotGuildPermissions } from "@vertix.gg/bot/src/ui/general/admin/bot-permissions-requirement";
+
 import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
@@ -390,6 +392,10 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
     ] )
     .setExcludedElements( [ SetupMasterCreateV3Button, SetupMasterCreateSelectMenu ] )
     .setPermissions( new PermissionsBitField( DEFAULT_SETUP_PERMISSIONS ) )
+    // The wizard's last step is the first moment it calls Discord, and by then the admin has spent
+    // minutes filling it in. Check what the bot itself was granted at the door instead, so a server
+    // that cannot be set up says so on the screen written for it rather than on the finish button.
+    .setInteractionRequirements( isPassingBotGuildPermissions )
     .setChannelTypes( [ ChannelType.GuildVoice, ChannelType.GuildText ] )
     .defineTransactions( ( tx ) => {
         tx

@@ -130,17 +130,24 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_VERIFIED_ROLES_PERMISSIONS = {
  * Everything outside this list stays neutral, so the channel never widens what the bot can do
  * beyond what its guild role already allows - these overwrites only keep the bot working in a
  * channel whose category or role setup would otherwise shut it out.
+ *
+ * Every flag here MUST also appear in `DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS`,
+ * which is the set the invite link asks for. Discord refuses an overwrite that allows a permission
+ * the bot does not itself hold, and it refuses the whole request: a single stray flag here turns
+ * every channel this bot creates into a 403 `Missing Permissions`, starting with the category that
+ * setup creates first. The bot then cannot be set up at all on any server that did not hand it
+ * Administrator. `master-channel-permissions.spec.ts` holds the two lists to that rule.
  */
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS = {
     type: OverwriteType.Member,
     allow: [
         Flags.ViewChannel,
         Flags.ManageChannels,
-        Flags.ManageWebhooks,
+        Flags.ManageRoles,
         Flags.Connect,
-        Flags.Speak,
         Flags.MoveMembers,
         Flags.SendMessages,
+        Flags.ReadMessageHistory,
         Flags.EmbedLinks
     ]
 };

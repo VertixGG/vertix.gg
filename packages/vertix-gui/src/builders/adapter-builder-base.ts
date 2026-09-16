@@ -97,6 +97,7 @@ export class AdapterBuilderBase<
     protected component: TComponent | undefined;
     protected permissions: PermissionsBitField | undefined;
     protected channelTypes: ChannelType[] | undefined;
+    protected interactionRequirementsHandler: ( ( interaction: TInteraction ) => Promise<boolean> ) | undefined;
     protected excludedElements: UIEntityTypes | undefined;
     protected generateCustomIdForEntityHandler: GenerateCustomIdForEntityHandler<TInteraction, TArgs, TContext> | undefined;
     protected getCustomIdForEntityHandler: GetCustomIdForEntityHandler<TInteraction, TArgs, TContext> | undefined;
@@ -148,6 +149,20 @@ export class AdapterBuilderBase<
 
     public setPermissions( permissions: PermissionsBitField ): this {
         this.permissions = permissions;
+        return this;
+    }
+
+    /**
+     * Function setInteractionRequirements() :: A further condition the adapter has to pass before
+     * it will run for an interaction, beyond the permissions its user must hold.
+     *
+     * `setPermissions()` describes the person pressing the button; this describes everything else
+     * the screen needs to be true - most usefully, what the *bot* was granted, which nothing else
+     * in the middleware looks at. A handler that answers `false` is expected to have already told
+     * the user why, since the adapter stops there and says nothing further.
+     */
+    public setInteractionRequirements( handler: ( interaction: TInteraction ) => Promise<boolean> ): this {
+        this.interactionRequirementsHandler = handler;
         return this;
     }
 
@@ -299,6 +314,14 @@ export class AdapterBuilderBase<
                     }
 
                     return builder.permissions || tryGetSuperPermissions() || new PermissionsBitField();
+                }
+
+                public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
+                    if ( !await super.isPassingInteractionRequirementsInternal( interaction ) ) {
+                        return false;
+                    }
+
+                    return builder.interactionRequirementsHandler?.( interaction ) ?? true;
                 }
 
                 public getChannelTypes() {

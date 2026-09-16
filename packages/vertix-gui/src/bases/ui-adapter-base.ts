@@ -711,13 +711,32 @@ export abstract class UIAdapterBase<
             } );
         }
 
-        return interaction
-            .reply( {
-                ...message,
-                ephemeral: true,
-                withResponse: true
-            } )
-            .then( ( result ) => {
+        /**
+         * An interaction can only be answered once, and by the time a screen is shown the answer
+         * has often already gone out: a wizard defers its finish button before running the
+         * callback, and the screen that reports what the callback failed at comes after that.
+         * `reply()` throws `InteractionAlreadyReplied` on such an interaction, and the throw lands
+         * in the `catch` below as a logged line nobody reads - the user presses the button and
+         * sees nothing at all, which reads as a dead bot rather than as a problem they could fix.
+         *
+         * `followUp()` is how discord takes a further ephemeral message on an interaction already
+         * answered, so take it that way whenever the first answer is spent. It returns the message
+         * directly rather than wrapping it in an interaction callback response, so both branches
+         * are normalised to the message before the shared handling below.
+         */
+        const isAlreadyAnswered = interaction.deferred || interaction.replied;
+
+        return ( isAlreadyAnswered
+            ? interaction.followUp( { ...message, ephemeral: true } )
+            : interaction
+                .reply( {
+                    ...message,
+                    ephemeral: true,
+                    withResponse: true
+                } )
+                .then( ( result ) => result?.resource?.message )
+        )
+            .then( ( reply ) => {
                 this.setScreenOwner( interaction.user.id, interaction );
 
                 // The reply is a message in its own right, and every component drawn on it arrives
@@ -729,8 +748,6 @@ export abstract class UIAdapterBase<
                 // `send()` has always stored against the message it created; this is that, for the
                 // message a reply creates. Asked for with the reply rather than fetched after it,
                 // so the screen costs one call as it always did.
-                const reply = result?.resource?.message;
-
                 if ( reply ) {
                     this.argsManager.setInitialArgs( this, reply.id, args, {
                         overwrite: true,

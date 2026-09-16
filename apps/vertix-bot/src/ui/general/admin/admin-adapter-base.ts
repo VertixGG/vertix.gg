@@ -4,12 +4,9 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
 
-import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
+import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
-import {
-    DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS,
-    DEFAULT_SETUP_PERMISSIONS
-} from "@vertix.gg/bot/src/definitions/master-channel";
+import { isPassingBotGuildPermissions } from "@vertix.gg/bot/src/ui/general/admin/bot-permissions-requirement";
 
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
@@ -32,27 +29,6 @@ export class AdminAdapterBase<
     }
 
     public async isPassingInteractionRequirementsInternal( interaction: TInteraction ) {
-        if ( !PermissionsManager.$.isSelfAdministratorRole( interaction.guild ) ) {
-            const botRolePermissions = PermissionsManager.$.getRolesPermissions( interaction.guild );
-            const missingPermissions = botRolePermissions.missing( DEFAULT_MASTER_CHANNEL_SETUP_PERMISSIONS );
-
-            if ( missingPermissions.length ) {
-                AdminAdapterBase.dedicatedLogger.admin(
-                    this.run,
-                    `🔐 Bot missing permissions" - "${ missingPermissions.join( ", " ) }" (${ interaction.guild.name }) (${ interaction.guild?.memberCount })`
-                );
-
-                await this.uiService
-                    .get( "VertixGUI/InternalAdapters/MissingPermissionsAdapter" )
-                    ?.ephemeral( interaction, {
-                        missingPermissions,
-                        omitterDisplayName: interaction.guild.client.user.username
-                    } );
-
-                return false;
-            }
-        }
-
-        return true;
+        return isPassingBotGuildPermissions( interaction );
     }
 }

@@ -227,6 +227,78 @@ export class PermissionsManager extends InitializeBase {
         return [ ... byId.values() ];
     }
 
+    /**
+     * Function toFlagArray() :: The flags of an overwrite field, however it was written.
+     *
+     * Overwrite lists in this codebase spell `allow` and `deny` three different ways - an array of
+     * flags, a single flag, and several flags or-ed together - and a field may be absent entirely.
+     * All four have to arrive here as the same thing before anything can be filtered out of them.
+     */
+    private toFlagArray( value: unknown ): bigint[] {
+        if ( null === value || undefined === value ) {
+            return [];
+        }
+
+        return new PermissionsBitField( value as PermissionResolvable )
+            .toArray()
+            .map( ( name ) => PermissionsBitField.Flags[ name ] );
+    }
+
+    /**
+     * Function filterWritableOverwrites() :: The same overwrites, minus anything discord would
+     * refuse to write.
+     *
+     * Discord rejects a channel create or edit whose overwrites name a permission the bot may not
+     * write, and rejects the *whole request* rather than the offending flag - so one stray flag
+     * costs the channel, and with it whatever feature was creating it. Two things make a flag
+     * unwritable: the bot does not hold it guild-wide, or it is `ManageRoles`, which discord permits
+     * in an overwrite only to guild administrators however the bot holds it.
+     *
+     * Filtering here rather than curating the lists by hand is what makes the narrowest invite
+     * enough to run on. A list that asks for more than a server granted now locks the channel down
+     * as far as that server allows instead of failing to create it at all, and no future edit to an
+     * overwrite list can take the bot off the air on a server that did not grant Administrator.
+     *
+     * What was dropped is logged, because a channel that came out less restricted than the list
+     * asked for is worth being able to explain.
+     */
+    public filterWritableOverwrites( guild: Guild, overwrites: OverwriteResolvable[] ): OverwriteResolvable[] {
+        // Administrator can write anything, and filtering against it would be a no-op that still
+        // costs a rebuild of every entry.
+        if ( this.isSelfAdministratorRole( guild ) ) {
+            return overwrites;
+        }
+
+        const held = this.getRolesPermissions( guild ),
+            dropped = new Set<string>();
+
+        const writable = ( value: unknown ) =>
+            this.toFlagArray( value ).filter( ( flag ) => {
+                if ( PermissionsBitField.Flags.ManageRoles === flag || !held.has( flag ) ) {
+                    dropped.add( new PermissionsBitField( flag ).toArray()[ 0 ] );
+                    return false;
+                }
+
+                return true;
+            } );
+
+        const result = overwrites.map( ( overwrite ) => ( {
+            ... overwrite,
+            allow: writable( ( overwrite as { allow?: unknown } ).allow ),
+            deny: writable( ( overwrite as { deny?: unknown } ).deny )
+        } ) ) as OverwriteResolvable[];
+
+        if ( dropped.size ) {
+            this.logger.warn(
+                this.filterWritableOverwrites,
+                `Guild id: '${ guild.id }' - Dropped unwritable overwrite permissions: '${ [ ... dropped ].join( "', '" ) }' - ` +
+                    "the channel will be less restricted than intended"
+            );
+        }
+
+        return result;
+    }
+
     public getChannelDefaultInheritedPermissionsWithUser( channel: VoiceBasedChannel, userId: string, overrides = {} ) {
         const inheritedPermissions = this.getChannelDefaultInheritedPermissions( channel );
 

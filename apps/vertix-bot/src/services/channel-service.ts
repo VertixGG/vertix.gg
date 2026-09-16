@@ -27,6 +27,7 @@ import type {
     Guild,
     GuildChannel,
     NonThreadGuildBasedChannel,
+    OverwriteResolvable,
     VoiceChannel,
     VoiceState
 } from "discord.js";
@@ -255,8 +256,17 @@ export class ChannelService extends ServiceWithDependenciesBase<{
                 `ownerChannelId: '${ args.ownerChannelId }'`
         );
 
+        // Everything that creates a channel routes through here, so this is where an overwrite list
+        // asking for more than the server granted is trimmed to what discord will actually accept.
+        const requested = ( args as { permissionOverwrites?: OverwriteResolvable[] } ).permissionOverwrites;
+
         const channel = await guild.channels
-            .create( args )
+            .create( {
+                ... args,
+                ...( requested
+                    ? { permissionOverwrites: PermissionsManager.$.filterWritableOverwrites( guild, requested ) }
+                    : {} )
+            } )
             .catch( ( error ) =>
                 this.logger.error(
                     this.create,

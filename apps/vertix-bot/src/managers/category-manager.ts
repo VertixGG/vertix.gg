@@ -4,6 +4,8 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { CategoryModel } from "@vertix.gg/data/src/models/category-model";
 
+import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
+
 import type { CategoryChannel, Guild, OverwriteResolvable } from "discord.js";
 
 export interface ICategoryCreateArgs {
@@ -61,7 +63,9 @@ export class CategoryManager extends InitializeBase {
         const category = ( await guild.channels.create( {
             name,
             type: ChannelType.GuildCategory,
-            ...( permissionOverwrites ? { permissionOverwrites } : {} )
+            ...( permissionOverwrites
+                ? { permissionOverwrites: PermissionsManager.$.filterWritableOverwrites( guild, permissionOverwrites ) }
+                : {} )
         } ) ) as CategoryChannel;
 
         // Add the channel to the database.

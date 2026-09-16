@@ -58,6 +58,24 @@ describe( "VertixBot/Definitions/MasterChannelPermissions", () => {
             }
         );
 
+        /**
+         * Discord documents, on Create Guild Channel, that "setting MANAGE_ROLES permission in
+         * channels is only possible for guild administrators". It is refused even though the invite
+         * asks for `ManageRoles` and the bot does hold it guild-wide - holding a permission and
+         * being allowed to write it into an overwrite are not the same thing, and the subset rule
+         * above does not catch this one because the flag *is* in the invite.
+         *
+         * This is not hypothetical either: it was added back while fixing the first fault and
+         * produced exactly the same 403 on exactly the same category.
+         */
+        it( "should never allow ManageRoles, which discord permits only to administrators", () => {
+            expect(
+                DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS.allow
+                    .filter( ( flag ) => flag === PermissionsBitField.Flags.ManageRoles )
+                    .map( nameOf )
+            ).toEqual( [] );
+        } );
+
         it( "should never allow a permission the role requirements do not declare", () => {
             const declared = DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS.allow
                 .reduce( ( acc, flag ) => acc | flag, 0n );

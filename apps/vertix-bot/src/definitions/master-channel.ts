@@ -131,19 +131,26 @@ export const DEFAULT_MASTER_CHANNEL_CREATE_VERIFIED_ROLES_PERMISSIONS = {
  * beyond what its guild role already allows - these overwrites only keep the bot working in a
  * channel whose category or role setup would otherwise shut it out.
  *
- * Every flag here MUST also appear in `DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS`,
- * which is the set the invite link asks for. Discord refuses an overwrite that allows a permission
- * the bot does not itself hold, and it refuses the whole request: a single stray flag here turns
- * every channel this bot creates into a 403 `Missing Permissions`, starting with the category that
- * setup creates first. The bot then cannot be set up at all on any server that did not hand it
- * Administrator. `master-channel-permissions.spec.ts` holds the two lists to that rule.
+ * Two rules govern this list, and breaking either one turns every channel this bot creates into a
+ * 403 `Missing Permissions` - Discord refuses the whole request, not just the offending flag - so
+ * the bot cannot be set up at all on any server that did not hand it Administrator.
+ *
+ * First: every flag here must also appear in `DEFAULT_MASTER_CHANNEL_CREATE_BOT_ROLE_PERMISSIONS_REQUIREMENTS`,
+ * the set the invite asks for, because Discord refuses an overwrite that allows a permission the
+ * bot does not itself hold.
+ *
+ * Second, and less obvious: `ManageRoles` can never appear here at all. Discord documents that
+ * "setting MANAGE_ROLES permission in channels is only possible for guild administrators", so it is
+ * refused even though the invite does ask for it and the bot does hold it guild-wide. Holding a
+ * permission and being allowed to write it into an overwrite are not the same thing.
+ *
+ * `master-channel-permissions.spec.ts` holds this list to both rules.
  */
 export const DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS = {
     type: OverwriteType.Member,
     allow: [
         Flags.ViewChannel,
         Flags.ManageChannels,
-        Flags.ManageRoles,
         Flags.Connect,
         Flags.MoveMembers,
         Flags.SendMessages,

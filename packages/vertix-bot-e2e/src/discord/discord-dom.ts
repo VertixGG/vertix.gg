@@ -46,7 +46,11 @@ export const DISCORD_DOM = {
     // one message's accessories, because on their own they would match half the client.
     COMPONENT_HEADING: "h1, h2, h3",
 
-    COMPONENT_TEXT: "[class*=\"textChildren\"]",
+    // Both, because the two container screens are not built alike: the wizard wraps its text in a
+    // `textChildren`, the language screen has only the markdown container inside it. Matching one of
+    // them found nothing on the other, and a description that reads nothing fails as a locator that
+    // never resolved rather than as text that did not match.
+    COMPONENT_TEXT: "[class*=\"textChildren\"], [class*=\"markdownContainer\"]",
 
     EMBED_DESCRIPTION: "[class*=\"embedDescription\"]",
 

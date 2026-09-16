@@ -18,17 +18,15 @@ export const E2E_TIMEOUTS = {
     MODAL_OPEN_MS: 15_000,
     VOICE_CONNECT_MS: 30_000,
     DYNAMIC_CHANNEL_CREATE_MS: 30_000,
-    // What was measured, rather than what it was assumed to be. A channel left alone is gone the
-    // moment its last member leaves: the bot deletes on `members.size === 0` with nothing in
-    // between, and a probe watching one read 404 on its first poll. The same deletion inside a full
-    // run has outlasted both thirty seconds and ninety, and the channel is always gone afterwards.
+    // A channel is gone the moment its last member leaves - the bot deletes on `members.size === 0`
+    // with nothing in between, and a probe watching a spaced deletion read 404 on its first poll.
+    // The minutes this once waited were the deletions crowding each other, which is paced now at the
+    // other end, in `DISCORD_LIMITS.CHANNEL_OPEN_SPACING_MS`.
     //
-    // Why it slows is not established. The bot itself does not queue - `ChannelService.delete()`
-    // drops the row and calls discord straight after - so the wait is somewhere past that, and
-    // discord's limits on channel operations are the obvious suspect rather than a finding. Three
-    // minutes covers what has been seen without pretending to know the cause; a bot that has really
-    // stopped deleting still fails here.
-    CHANNEL_REMOVED_MS: 180_000,
+    // It has to stay well under `TEST_MS`, and the two were briefly the same number: a wait that can
+    // use the whole budget leaves nothing for the opening and the pacing that come before it, so the
+    // test died on its own clock rather than on this one, saying only that time ran out.
+    CHANNEL_REMOVED_MS: 60_000,
     GUILD_RESET_MS: 120_000,
     INTERACTIVE_LOGIN_MS: 300_000,
     TEST_MS: 180_000,

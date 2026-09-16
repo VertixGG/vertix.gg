@@ -13,6 +13,13 @@ const tsConfig = readTsConfig( path.join( currentDir, "test", "tsconfig.json" ) 
 const config: Config = {
     testRegex: "(/test/.*\\.spec\\.ts)$",
 
+    // Compiled output from an earlier build is left next to the sources it was built from, and
+    // jest's default order resolves an extensionless import to the `.js` of the pair. Tests then
+    // run against whatever was last built rather than against the source under test - silently, and
+    // only for files that happen to have a stale sibling. Bun, which is what actually runs the bot,
+    // prefers the `.ts`; this makes the suite agree with it.
+    moduleFileExtensions: [ "ts", "tsx", "js", "mjs", "cjs", "jsx", "json", "node" ],
+
     setupFilesAfterEnv: [ "<rootDir>/test/__setup__.ts" ],
 
     transform: {

@@ -53,6 +53,14 @@ export interface UIEmbedLanguage {
 
 export interface UIElementSelectMenuLanguageContent {
     placeholder?: string;
+    /**
+     * The heading drawn over this menu, when the screen it is on draws one.
+     *
+     * A container places text beside its rows rather than above all of them, so the label belongs
+     * to the menu it names instead of to the screen's body copy - which is also what keeps it
+     * beside its `placeholder` in every language file.
+     */
+    header?: string;
     options?: {
         [key: string]: any;
     };

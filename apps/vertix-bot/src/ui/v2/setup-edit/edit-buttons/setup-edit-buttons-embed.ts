@@ -4,7 +4,7 @@ import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
@@ -55,6 +55,7 @@ const ROSTER_LIMIT = 15;
 
 const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/SetupEditButtonsEmbed", vars )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🎚  Buttons Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>

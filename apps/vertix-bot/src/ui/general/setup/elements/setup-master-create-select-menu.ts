@@ -17,6 +17,10 @@ export class SetupMasterCreateSelectMenu extends UIElementStringSelectMenu {
         return UIInstancesTypes.Dynamic;
     }
 
+    protected async getHeader(): Promise<string> {
+        return "New Master Channel";
+    }
+
     protected async getPlaceholder(): Promise<string> {
         return "➕ ∙ Create Master Channel";
     }

@@ -9,7 +9,7 @@ import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interact
 import type { UIMarkdownBase } from "@vertix.gg/gui/src/bases/ui-markdown-base";
 import type { UIMarkdownsGroupBase } from "@vertix.gg/gui/src/bases/ui-markdowns-group-base";
 import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
-import type { Message } from "discord.js";
+import type { ActionRowBuilder, BaseMessageOptions, Message, MessageActionRowComponentBuilder, MessageFlags } from "discord.js";
 
 export enum UIInstancesTypes {
     Static = "Static",
@@ -94,7 +94,43 @@ export interface UIEntitySchemaBase extends UISchemaBase {
         [key: string]: any;
     };
     isAvailable: boolean;
+    /**
+     * The heading a container draws over this entity's row. Absent on every entity that has none,
+     * and ignored by the embed renderer, which has nowhere to put one.
+     */
+    header?: string;
 }
+
+/**
+ * What an embed was going to be drawn as, which is what a container is handed instead.
+ */
+export interface UIContainerEmbedAttributes {
+    color?: number;
+    title?: string;
+    description?: string;
+    footer?: { text: string };
+    thumbnail?: { url: string };
+    image?: { url: string };
+}
+
+/**
+ * A built row together with the heading declared over it, for a screen that draws as a container.
+ */
+export interface UILabelledComponentRow {
+    header?: string;
+    row: ActionRowBuilder<MessageActionRowComponentBuilder>;
+}
+
+/**
+ * What an adapter hands discord for one screen.
+ *
+ * `flags` is what separates a container from an embed: a message carrying `IsComponentsV2` may hold
+ * no `content` and no `embeds`, and cannot have the flag taken off it again once sent - so every
+ * screen that edits the same message has to answer the same way.
+ */
+export type UIMessageOptions = BaseMessageOptions & {
+    flags?: MessageFlags.IsComponentsV2;
+};
 
 /* Execution */
 

@@ -23,14 +23,15 @@ import { UnknownElementTypeError } from "@vertix.gg/gui/src/bases/errors/unknown
 
 import { UI_CUSTOM_ID_SEPARATOR } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import type { AnyComponentBuilder } from "discord.js";
+import type { AnyComponentBuilder, MessageActionRowComponentBuilder } from "discord.js";
 
 import type {
     UIEntitySchemaBase,
     UIComponentConstructor,
     UIComponentTypeConstructor,
     UICreateComponentArgs,
-    UIEntityTypes
+    UIEntityTypes,
+    UILabelledComponentRow
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIComponentBase } from "@vertix.gg/gui/src/bases/ui-component-base";
@@ -247,6 +248,31 @@ export abstract class UIAdapterEntityBase extends UIInstanceTypeBase {
         return schema
             .flatMap( ( row: any ) => chunkRow( row as any[] ).map( buildRow ) )
             .filter( ( actionRow: any ) => actionRow.components.length );
+    }
+
+    /**
+     * Function buildLabelledRowsBySchema() :: The same rows, each still holding the heading it was
+     * declared with.
+     *
+     * `buildComponentsBySchema()` answers what discord takes on a classic message, where a heading
+     * has nowhere to go. A container does have somewhere, so the pairing has to survive the build -
+     * and it is the entities that carry it, which the built rows no longer are. A chunk takes the
+     * heading of the first entity in it that declares one, so a row too wide to send in one piece
+     * is labelled once rather than repeatedly.
+     *
+     * A row can hold gaps: an excluded element leaves its place behind rather than closing it, so
+     * the entities are read as optional here for the same reason `buildComponentsBySchema()` reads
+     * them that way.
+     */
+    protected buildLabelledRowsBySchema( schema: ( UIEntitySchemaBase | undefined )[][] ): UILabelledComponentRow[] {
+        return schema.flatMap( ( row ) => {
+            const rows = this.buildComponentsBySchema( [ row ] ) as ActionRowBuilder<MessageActionRowComponentBuilder>[];
+
+            return rows.map( ( actionRow ) => ( {
+                header: row.find( ( entity ) => entity?.isAvailable && entity.header )?.header,
+                row: actionRow
+            } ) );
+        } );
     }
 
     protected generateCustomIdForEntity( entity: UIEntitySchemaBase | UIModalSchema ) {

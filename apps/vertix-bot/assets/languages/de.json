@@ -71,6 +71,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "Neu erstellen"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/ServerOptionsBackButton",
         "content": {
           "label": "Zurück"
@@ -817,7 +823,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Master-Kanal erstellen",
+          "placeholder": "Einen Masterkanal erstellen",
+          "header": "Neuer Masterkanal",
           "selectOptions": [
             {
               "label": "Dynamic Channel (V2)",
@@ -837,7 +844,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
         "content": {
-          "placeholder": "❖ ∙ Masterkanal bearbeiten"
+          "placeholder": "Einen Masterkanal bearbeiten",
+          "header": "Masterkanäle"
         }
       },
       {
@@ -880,6 +888,7 @@
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Schaltflächen auswählen",
+          "header": "Schaltflächen in diesem Satz",
           "selectOptions": [
             {
               "label": "Umbenennen",
@@ -991,13 +1000,15 @@
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Einer Rolle eigene Buttons geben"
+          "placeholder": "➕ Einer Rolle eigene Buttons geben",
+          "header": "Rollen-Ausnahmen"
         }
       },
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 In Bearbeitung",
+          "header": "Bearbeiten",
           "selectOptions": [
             {
               "label": "Standard-Buttons",
@@ -1050,6 +1061,7 @@
         "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Schaltflächen auswählen",
+          "header": "Schaltflächen in diesem Satz",
           "selectOptions": [
             {
               "label": "Umbenennen",
@@ -1279,13 +1291,15 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Einer Rolle eigene Buttons geben"
+          "placeholder": "➕ Einer Rolle eigene Buttons geben",
+          "header": "Rollen-Ausnahmen"
         }
       },
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 In Bearbeitung",
+          "header": "Bearbeiten",
           "selectOptions": [
             {
               "label": "Standard-Buttons",
@@ -1520,11 +1534,21 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  VoiceChannels einrichten",
-        "description": "Entdecke die grenzenlosen Möglichkeiten von **VoiceChannels**!\nPasse deinen Server perfekt an und optimiere ihn.\n\nUm einen neuen Masterkanal zu erstellen, klicke einfach auf:\ndie Schaltfläche `(➕ Masterkanal erstellen)`.\n\nMasterkanäle sind Generatoren für dynamische Sprachkanäle, jeder mit seiner eigenen einzigartigen Konfiguration.\n\nUnsere Funktion für verbotene Wörter ermöglicht eine Konfiguration auf Serverebene zur Begrenzung der Namen dynamischer Kanäle.\n\n_**Aktuelle Masterkanäle**_:\n{masterChannelMessage}\n\n_**Server-Verbotene-Wörter**_:\n{badwordsMessage}\n\n_**Server-Sprachrolle**_:\n{voiceRoleMessage}\n\n_**Server-Verifizierte-Rollen**_:\n{verifiedRolesMessage}\n\n_**Server-Team-Rollen**_:\n{staffRolesMessage}\n\n-# 💡 Du kannst einen Log-Kanal festlegen, indem du den Masterkanal bearbeitest.\n",
+        "description": "Entdecke die grenzenlosen Möglichkeiten von **VoiceChannels**!\nPasse deinen Server perfekt an und optimiere ihn.\n\nMasterkanäle sind Generatoren für dynamische Sprachkanäle, jeder mit seiner eigenen einzigartigen Konfiguration.\n\nUnsere Funktion für verbotene Wörter ermöglicht eine Konfiguration auf Serverebene zur Begrenzung der Namen dynamischer Kanäle.\n\n_**Aktuelle Masterkanäle**_:\n{masterChannelMessage}\n\n_**Server-Verbotene-Wörter**_:\n{badwordsMessage}\n\n_**Server-Sprachrolle**_:\n{voiceRoleMessage}\n\n_**Server-Verifizierte-Rollen**_:\n{verifiedRolesMessage}\n\n_**Server-Team-Rollen**_:\n{staffRolesMessage}",
+        "footer": "{tipMessage}",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
             "{masterChannelMessageDefault}": "**Keine**"
+          },
+          "tipMessage": {
+            "{tip-logs-channel}": "💡 Du kannst einen Log-Kanal festlegen, indem du den Masterkanal bearbeitest.",
+            "{tip-badwords}": "💡 Verbotene Wörter werden einmal für den Server festgelegt und begrenzen jeden dynamischen Kanalnamen.",
+            "{tip-inherited-roles}": "💡 Ein Generator zeigt *(aus den Servereinstellungen)*, bis du ihm eigene Rollen gibst.",
+            "{tip-templates}": "💡 Mitglieder können Name, Limit und Privatsphäre eines Kanals als Vorlage speichern und später wiederverwenden.",
+            "{tip-autosave}": "💡 Mit automatischem Speichern öffnet sich der nächste Kanal eines Mitglieds so, wie es den letzten verlassen hat.",
+            "{tip-lfm-pings}": "💡 Ein Mitspielersuche-Beitrag erwähnt nur die Rollen, die du erlaubst — ohne Auswahl pingt er nie.",
+            "{tip-privacy-default}": "💡 Lege fest, wie ein neuer Kanal startet: öffentlich, privat oder versteckt."
           },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
@@ -3496,6 +3520,7 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Status**",
               "knock": "<emoji name='KnockChannel'> ∙ **Anklopfen**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
@@ -3726,6 +3751,7 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Status**",
               "knock": "<emoji name='KnockChannel'> ∙ **Anklopfen**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }

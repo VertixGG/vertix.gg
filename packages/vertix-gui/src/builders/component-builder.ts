@@ -24,6 +24,8 @@ export class ComponentBuilder {
     private embeds: UIEmbedTypes = [];
     private markdowns: ( typeof UIMarkdownBase )[] = [];
 
+    private renderAsContainer = false;
+
     private defaultElementsGroup: string | null = null;
     private defaultEmbedsGroup: string | null = null;
     private defaultMarkdownsGroup: string | null = null;
@@ -34,6 +36,11 @@ export class ComponentBuilder {
 
     public setInstanceType( type: UIInstancesTypes ): this {
         this.instanceType = type;
+        return this;
+    }
+
+    public setRenderAsContainer( value: boolean ): this {
+        this.renderAsContainer = value;
         return this;
     }
 
@@ -100,6 +107,10 @@ export class ComponentBuilder {
                     throw new Error( `Instance type is not defined for '${ builder.name }'` );
                 }
                 return builder.instanceType;
+            }
+
+            public static shouldRenderAsContainer() {
+                return builder.renderAsContainer;
             }
 
             public static getElementsGroups() {

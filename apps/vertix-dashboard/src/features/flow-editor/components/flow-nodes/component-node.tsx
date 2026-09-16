@@ -1,8 +1,17 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
+
+import type { ComponentProps } from "react";
 
 import { Handle, Position, useStore } from "@xyflow/react";
 
-import { DiscordMessage, DiscordEmbed, DiscordButton } from "@vertix.gg/discord-ui/src";
+import {
+    DiscordMessage,
+    DiscordEmbed,
+    DiscordButton,
+    DiscordContainer,
+    DiscordContainerHeader,
+    DiscordContainerSeparator
+} from "@vertix.gg/discord-ui/src";
 
 import {
     getElementLabel,
@@ -63,6 +72,8 @@ type ComponentNodeData = Record<
     elementRows?: ElementData[][];
     /** The same elements in this generator's rows, when the editor is scoped to one. */
     previewElementRows?: ElementData[][];
+    /** Drawn as one container, the way the bot draws this component. */
+    renderAsContainer?: boolean;
     buttonModalTriggers?: ButtonModalTrigger[];
     buttonFlowTriggers?: ButtonFlowTrigger[];
     stateTransitionTriggers?: StateTransitionTrigger[];
@@ -240,9 +251,47 @@ function renderButtonEmoji( emoji: string | undefined ): { emoji?: string; icon?
 
 type ComponentNodeType = Node<ComponentNodeData, "componentNode">;
 
+/**
+ * The heading a row is drawn under, taken from the first element in it that declares one - which is
+ * how the bot pairs them in `buildLabelledRowsBySchema()`.
+ */
+function rowHeaderOf( row: ElementData[] ): string | undefined {
+    return row.find( ( element ) => element.definition?.header )?.definition?.header;
+}
+
+/**
+ * The box around a screen: one container when the component asks for it, nothing otherwise.
+ *
+ * Declared out here rather than built in the render, so switching a node between the two does not
+ * remount everything inside it and lose what the preview was showing.
+ */
+function PreviewShell(
+    { asContainer, accentColor, children }:
+    {
+        asContainer?: boolean;
+        accentColor?: number;
+        /*
+         * Taken from the component it is handed to rather than written as `ReactNode`.
+         *
+         * The repo carries three copies of `@types/react` - this app resolves 19.3.0 and
+         * `@vertix.gg/discord-ui` has its own 18.3.31 - and their `ReactNode` differ by `bigint`,
+         * so one written here is the wrong one for whichever side did not win resolution.
+         */
+        children: ComponentProps<typeof DiscordContainer>[ "children" ];
+    }
+) {
+    if ( ! asContainer ) {
+        return <>{ children }</>;
+    }
+
+    return <DiscordContainer accentColor={ accentColor }>{ children }</DiscordContainer>;
+}
+
 export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
     const { data, selected } = props;
     const { label, embed, buttonModalTriggers, buttonFlowTriggers, stateTransitionTriggers, selfTransitions, sharedControls } = data;
+
+    const renderAsContainer = true === data.renderAsContainer;
 
     // What a channel will actually draw: the generator's arrangement when the editor is scoped to
     // one, and the component's own rows otherwise.
@@ -354,6 +403,7 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                      own components and this wrapper is not one of them. */ }
                 <div className="bg-[#1a1a1e] p-4">
                     <DiscordMessage author="VoiceChannels" app timestamp="" avatar="/vc.png">
+                        <PreviewShell asContainer={ renderAsContainer } accentColor={ embed?.color }>
                         <DiscordEmbed
                             title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, mergedDefaultVars ), "title" ) }
                             description={ embed
@@ -374,7 +424,12 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                         { elementRows && elementRows.length > 0 && (
                             <div className="discord-action-rows">
                                 { elementRows.map( ( row, rowIndex ) => (
-                                    <div key={ rowIndex } className="discord-embed-button-row">
+                                    <Fragment key={ rowIndex }>
+                                    { renderAsContainer && <DiscordContainerSeparator /> }
+                                    { renderAsContainer && rowHeaderOf( row ) && (
+                                        <DiscordContainerHeader>{ rowHeaderOf( row ) }</DiscordContainerHeader>
+                                    ) }
+                                    <div className="discord-embed-button-row">
                                         { row.map( ( element ) => {
                                             if ( isSelectMenu( element ) ) {
                                                 const stateTrigger = getStateTransitionTrigger( element.name );
@@ -522,9 +577,11 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                                             return <div key={ element.name }>{ button }</div>;
                                         } ) }
                                     </div>
+                                    </Fragment>
                                 ) ) }
                             </div>
                         ) }
+                        </PreviewShell>
                     </DiscordMessage>
                 </div>
 

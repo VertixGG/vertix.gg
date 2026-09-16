@@ -25,7 +25,7 @@ export class SetupEditButtonsUpdateExistingButton extends UIElementButtonBase {
     }
 
     protected async getStyle(): Promise<UIButtonStyleTypes> {
-        return "primary";
+        return "success";
     }
 
     protected async getEmoji(): Promise<string> {

@@ -4,6 +4,7 @@
 //   1. every translatable UI entity in exports/ui/ exists in en.json
 //   2. every entry in en.json exists in each other locale
 //   3. every baked select menu holds the same options as the menu it translates, in every locale
+//   4. every baked list holds an entry per item of the list it translates, in every locale
 //
 // Exits non-zero when something is missing, so it can gate CI. Pass --json for
 // machine-readable output, or --locale=<code> to list one locale's gaps.
@@ -117,6 +118,88 @@ function compareMenuOptions( expected, actual ) {
     ].filter( Boolean ).join( " and " );
 }
 
+/**
+ * Function collectArrayOptionMaps() :: The per item copy each formatted list in the export carries.
+ *
+ * An embed that prints a list of things - the buttons a generator has, the candidates in a vote -
+ * renders each one through `arrayOptions.<var>.options`, a map from the item's own id to the line
+ * describing it. The template engine looks the id up and prints the id itself when the map has no
+ * entry for it, so a list that has fallen behind what it describes does not fail, it prints `lfm`
+ * where it meant a name and an emoji.
+ *
+ * Nothing above sees this: the embed has its entry, and the entry has its `arrayOptions`, so both
+ * the entity comparison and the menu one call it covered.
+ */
+function collectArrayOptionMaps( node, acc = new Map() ) {
+    if ( Array.isArray( node ) ) {
+        node.forEach( ( item ) => collectArrayOptionMaps( item, acc ) );
+    } else if ( node && typeof node === "object" ) {
+        // An embed appears in the export as a reference carrying its definition, never under
+        // "name" - which is the group around it.
+        if ( typeof node.embed === "string" && node.definition?.arrayOptions ) {
+            addArrayOptionMaps( acc, node.embed, node.definition.arrayOptions );
+        }
+
+        Object.values( node ).forEach( ( value ) => collectArrayOptionMaps( value, acc ) );
+    }
+    return acc;
+}
+
+function collectLanguageArrayOptionMaps( language ) {
+    const lists = new Map();
+
+    for ( const embed of language?.embeds || [] ) {
+        addArrayOptionMaps( lists, embed?.name, embed?.content?.arrayOptions );
+    }
+
+    return lists;
+}
+
+/**
+ * Function addArrayOptionMaps() :: Files one embed's lists under the embed and the var naming each.
+ *
+ * An embed can print more than one list, so the var is half of what identifies a list - two of
+ * them under the same embed are two separate pieces of copy that fall behind separately.
+ */
+function addArrayOptionMaps( acc, name, arrayOptions ) {
+    if ( typeof name !== "string" || ! arrayOptions || typeof arrayOptions !== "object" ) {
+        return;
+    }
+
+    for ( const [ key, entry ] of Object.entries( arrayOptions ) ) {
+        const options = entry?.options;
+
+        // A list whose items need no copy of their own has no map, and one is not missing from it.
+        if ( ! options || typeof options !== "object" || Array.isArray( options ) || ! Object.keys( options ).length ) {
+            continue;
+        }
+
+        acc.set( `${ name } [${ key }]`, { name, key, options } );
+    }
+}
+
+/**
+ * Function compareArrayOptionMaps() :: How a baked list differs from the one it translates.
+ *
+ * Ids rather than lines, because the lines are the translation - what has to match is which items
+ * the list knows about. Unlike a menu there is no position to fall back on: the engine looks an id
+ * up and prints it verbatim when it is not there, so a missing id is the defect itself.
+ */
+function compareArrayOptionMaps( expected, actual ) {
+    const expectedIds = Object.keys( expected ),
+        missing = expectedIds.filter( ( id ) => ! ( id in actual ) ),
+        extra = Object.keys( actual ).filter( ( id ) => ! ( id in expected ) );
+
+    if ( ! missing.length && ! extra.length ) {
+        return null;
+    }
+
+    return [
+        missing.length ? `is missing ${ missing.map( ( id ) => `'${ id }'` ).join( ", " ) }` : "",
+        extra.length ? `has ${ extra.map( ( id ) => `'${ id }'` ).join( ", " ) } the list does not` : ""
+    ].filter( Boolean ).join( " and " );
+}
+
 // A flow names its states and transitions after what they open, so a transition to a modal is
 // called "...Transitions/OpenNameModal" and ends in a translatable suffix while being a node in a
 // state machine rather than anything with copy. Matched on the path rather than the suffix,
@@ -148,10 +231,12 @@ const onlyLocale = ( args.find( ( arg ) => arg.startsWith( "--locale=" ) ) || ""
 const enLanguage = readJson( join( LANG_DIR, "en.json" ) );
 const enNames = collectNames( enLanguage );
 const enMenus = collectLanguageMenus( enLanguage );
+const enLists = collectLanguageArrayOptionMaps( enLanguage );
 
 // 1. exports/ui -> en.json
 const exportNames = new Set();
 const exportMenus = new Map();
+const exportLists = new Map();
 
 for ( const file of [ "components.json", "adapters.json", "flows.json" ] ) {
     const full = join( EXPORTS_DIR, file );
@@ -161,6 +246,7 @@ for ( const file of [ "components.json", "adapters.json", "flows.json" ] ) {
 
         collectNames( definitions, exportNames );
         collectMenuOptions( definitions, exportMenus );
+        collectArrayOptionMaps( definitions, exportLists );
     }
 }
 
@@ -173,6 +259,8 @@ const missingFromEn = [ ...exportNames ].filter( ( name ) => isTranslatable( nam
 const menuDrift = [];
 const positionalMenus = [];
 const untranslatedMenus = [];
+const listDrift = [];
+const untranslatedLists = [];
 
 for ( const [ name, options ] of enMenus ) {
     const expected = exportMenus.get( name );
@@ -189,6 +277,21 @@ for ( const [ name, options ] of enMenus ) {
 
     if ( ! options.every( ( option ) => undefined !== option.value ) ) {
         positionalMenus.push( { locale: "en", name } );
+    }
+}
+
+// 4. exports/ui -> en.json, item by item.
+for ( const [ id, { name, key, options } ] of enLists ) {
+    const expected = exportLists.get( id );
+
+    if ( ! expected ) {
+        continue;
+    }
+
+    const difference = compareArrayOptionMaps( expected.options, options );
+
+    if ( difference ) {
+        listDrift.push( { locale: "en", name, key, difference } );
     }
 }
 
@@ -244,6 +347,29 @@ for ( const file of readdirSync( LANG_DIR ).sort() ) {
         }
     }
 
+    // Walked from en.json's lists for the same reason as the menus: a list the locale never baked
+    // is invisible from its own file, and is the one that falls back to english underneath a
+    // translated embed.
+    const localeLists = collectLanguageArrayOptionMaps( language );
+
+    for ( const [ id, { name, key, options } ] of enLists ) {
+        const localeList = localeLists.get( id );
+
+        if ( ! localeList ) {
+            if ( names.has( name ) ) {
+                untranslatedLists.push( { locale: code, name, key, count: Object.keys( options ).length } );
+            }
+
+            continue;
+        }
+
+        const difference = compareArrayOptionMaps( options, localeList.options );
+
+        if ( difference ) {
+            listDrift.push( { locale: code, name, key, difference } );
+        }
+    }
+
     locales[ code ] = {
         present: enNames.size - missing.length,
         total: enNames.size,
@@ -255,10 +381,12 @@ for ( const file of readdirSync( LANG_DIR ).sort() ) {
 const failed = missingFromEn.length > 0
     || menuDrift.length > 0
     || untranslatedMenus.length > 0
+    || listDrift.length > 0
+    || untranslatedLists.length > 0
     || Object.values( locales ).some( ( locale ) => locale.missing.length > 0 );
 
 if ( asJson ) {
-    console.log( JSON.stringify( { missingFromEn, menuDrift, untranslatedMenus, positionalMenus, locales, ok: ! failed }, null, 2 ) );
+    console.log( JSON.stringify( { missingFromEn, menuDrift, untranslatedMenus, positionalMenus, listDrift, untranslatedLists, locales, ok: ! failed }, null, 2 ) );
 } else {
     if ( missingFromEn.length ) {
         console.error( `\nMissing from en.json (${ missingFromEn.length }) - defined in the UI but has no copy:` );
@@ -276,6 +404,17 @@ if ( asJson ) {
         console.error( `\nSelect menus with untranslated options (${ untranslatedMenus.length }) - the entity is translated, its options are not:` );
         untranslatedMenus.forEach( ( { locale, name, count } ) =>
             console.error( `  [${ locale }] ${ name } - ${ count } option(s) left in english` ) );
+    }
+
+    if ( listDrift.length ) {
+        console.error( `\nLists out of step (${ listDrift.length }) - baked items no longer match the list:` );
+        listDrift.forEach( ( { locale, name, key, difference } ) => console.error( `  [${ locale }] ${ name } [${ key }] ${ difference }` ) );
+    }
+
+    if ( untranslatedLists.length ) {
+        console.error( `\nLists with untranslated items (${ untranslatedLists.length }) - the embed is translated, its items are not:` );
+        untranslatedLists.forEach( ( { locale, name, key, count } ) =>
+            console.error( `  [${ locale }] ${ name } [${ key }] - ${ count } item(s) left in english` ) );
     }
 
     // Not a failure: every one of these is a menu whose options have not moved, and failing on

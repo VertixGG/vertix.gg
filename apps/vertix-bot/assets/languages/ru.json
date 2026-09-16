@@ -71,6 +71,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "Создать заново"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/ServerOptionsBackButton",
         "content": {
           "label": "Назад"
@@ -817,7 +823,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Создать мастер-канал",
+          "placeholder": "Создать мастер-канал",
+          "header": "Новый мастер-канал",
           "selectOptions": [
             {
               "label": "Dynamic Channel (V2)",
@@ -837,7 +844,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
         "content": {
-          "placeholder": "❖ ∙ Редактировать мастер-канал(ы)"
+          "placeholder": "Изменить мастер-канал",
+          "header": "Мастер-каналы"
         }
       },
       {
@@ -880,6 +888,7 @@
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Выберите кнопки",
+          "header": "Кнопки в этом наборе",
           "selectOptions": [
             {
               "label": "Переименовать",
@@ -991,13 +1000,15 @@
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Задать роли собственные кнопки"
+          "placeholder": "➕ Задать роли собственные кнопки",
+          "header": "Исключения для ролей"
         }
       },
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 Редактирование",
+          "header": "Редактирование",
           "selectOptions": [
             {
               "label": "Кнопки по умолчанию",
@@ -1050,6 +1061,7 @@
         "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Выберите кнопки",
+          "header": "Кнопки в этом наборе",
           "selectOptions": [
             {
               "label": "Переименовать",
@@ -1279,13 +1291,15 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Задать роли собственные кнопки"
+          "placeholder": "➕ Задать роли собственные кнопки",
+          "header": "Исключения для ролей"
         }
       },
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 Редактирование",
+          "header": "Редактирование",
           "selectOptions": [
             {
               "label": "Кнопки по умолчанию",
@@ -1520,11 +1534,21 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Настройка VoiceChannels",
-        "description": "Откройте для себя безграничные возможности **VoiceChannels**!\nНастройте и оптимизируйте свой сервер до совершенства.\n\nЧтобы создать новый мастер-канал, просто нажмите:\n`(➕ Создать мастер-канал)` кнопку.\n\nМастер-каналы — это генераторы динамических голосовых каналов, каждый со своей уникальной конфигурацией.\n\nНаша функция запрещённых слов позволяет настраивать ограничения на уровне сервера для названий динамических каналов.\n\n_**Текущие мастер-каналы**_:\n{masterChannelMessage}\n\n_**Запрещённые слова сервера**_:\n{badwordsMessage}\n\n_**Голосовая роль сервера**_:\n{voiceRoleMessage}\n\n_**Проверенные роли сервера**_:\n{verifiedRolesMessage}\n\n_**Роли персонала сервера**_:\n{staffRolesMessage}\n\n-# 💡 Вы можете установить канал логов, редактируя мастер-канал.\n",
+        "description": "Откройте для себя безграничные возможности **VoiceChannels**!\nНастройте и оптимизируйте свой сервер до совершенства.\n\nМастер-каналы — это генераторы динамических голосовых каналов, каждый со своей уникальной конфигурацией.\n\nНаша функция запрещённых слов позволяет настраивать ограничения на уровне сервера для названий динамических каналов.\n\n_**Текущие мастер-каналы**_:\n{masterChannelMessage}\n\n_**Запрещённые слова сервера**_:\n{badwordsMessage}\n\n_**Голосовая роль сервера**_:\n{voiceRoleMessage}\n\n_**Проверенные роли сервера**_:\n{verifiedRolesMessage}\n\n_**Роли персонала сервера**_:\n{staffRolesMessage}",
+        "footer": "{tipMessage}",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
             "{masterChannelMessageDefault}": "**Нет**"
+          },
+          "tipMessage": {
+            "{tip-logs-channel}": "💡 Вы можете установить канал логов, редактируя мастер-канал.",
+            "{tip-badwords}": "💡 Запрещённые слова задаются один раз для сервера и ограничивают названия всех динамических каналов.",
+            "{tip-inherited-roles}": "💡 Генератор показывает *(из настроек сервера)*, пока вы не зададите ему собственные роли.",
+            "{tip-templates}": "💡 Участники могут сохранить название, лимит и приватность канала как шаблон и использовать его снова.",
+            "{tip-autosave}": "💡 С автосохранением следующий канал участника открывается таким, каким он оставил предыдущий.",
+            "{tip-lfm-pings}": "💡 Объявление о поиске упоминает только разрешённые вами роли — если ролей нет, оно никогда не пингует.",
+            "{tip-privacy-default}": "💡 Выберите, каким будет новый канал: публичным, приватным или скрытым."
           },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
@@ -3496,6 +3520,7 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
               "status": "<emoji name='Megaphone'> ∙ **Статус**",
               "knock": "<emoji name='KnockChannel'> ∙ **Постучать**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           }
@@ -3726,6 +3751,7 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Шаблоны**",
               "status": "<emoji name='Megaphone'> ∙ **Статус**",
               "knock": "<emoji name='KnockChannel'> ∙ **Постучать**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Забрать**"
             }
           }

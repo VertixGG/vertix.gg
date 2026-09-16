@@ -71,6 +71,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "Regenerar"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/ServerOptionsBackButton",
         "content": {
           "label": "Atrás"
@@ -817,7 +823,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Crear canal maestro",
+          "placeholder": "Crear un canal maestro",
+          "header": "Nuevo canal maestro",
           "selectOptions": [
             {
               "label": "Dynamic Channel (V2)",
@@ -837,7 +844,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
         "content": {
-          "placeholder": "❖ ∙ Editar canal(es) maestro(s)"
+          "placeholder": "Editar un canal maestro",
+          "header": "Canales maestros"
         }
       },
       {
@@ -880,6 +888,7 @@
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Seleccionar botones",
+          "header": "Botones de este conjunto",
           "selectOptions": [
             {
               "label": "Renombrar",
@@ -991,13 +1000,15 @@
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Dar botones propios a un rol"
+          "placeholder": "➕ Dar botones propios a un rol",
+          "header": "Excepciones de roles"
         }
       },
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 Editando",
+          "header": "Editando",
           "selectOptions": [
             {
               "label": "Botones por defecto",
@@ -1050,6 +1061,7 @@
         "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Seleccionar botones",
+          "header": "Botones de este conjunto",
           "selectOptions": [
             {
               "label": "Renombrar",
@@ -1279,13 +1291,15 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Dar botones propios a un rol"
+          "placeholder": "➕ Dar botones propios a un rol",
+          "header": "Excepciones de roles"
         }
       },
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 Editando",
+          "header": "Editando",
           "selectOptions": [
             {
               "label": "Botones por defecto",
@@ -1520,11 +1534,21 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Configurar VoiceChannels",
-        "description": "¡Descubre las posibilidades ilimitadas de **VoiceChannels**!\nPersonaliza y optimiza tu servidor a la perfección.\n\nPara crear un nuevo canal maestro simplemente haz clic en:\nel botón `(➕ Crear Canal Maestro)`.\n\nLos canales maestros son generadores de canales de voz dinámicos, cada uno con su propia configuración única.\n\nNuestra función de palabras prohibidas permite la configuración a nivel de servidor para limitar los nombres de canales dinámicos.\n\n_**Canales maestros actuales**_:\n{masterChannelMessage}\n\n_**Palabras prohibidas del servidor**_:\n{badwordsMessage}\n\n_**Rol de voz del servidor**_:\n{voiceRoleMessage}\n\n_**Roles verificados del servidor**_:\n{verifiedRolesMessage}\n\n_**Roles del staff del servidor**_:\n{staffRolesMessage}\n\n-# 💡 Puedes establecer un canal de registros editando el canal maestro.\n",
+        "description": "¡Descubre las posibilidades ilimitadas de **VoiceChannels**!\nPersonaliza y optimiza tu servidor a la perfección.\n\nLos canales maestros son generadores de canales de voz dinámicos, cada uno con su propia configuración única.\n\nNuestra función de palabras prohibidas permite la configuración a nivel de servidor para limitar los nombres de canales dinámicos.\n\n_**Canales maestros actuales**_:\n{masterChannelMessage}\n\n_**Palabras prohibidas del servidor**_:\n{badwordsMessage}\n\n_**Rol de voz del servidor**_:\n{voiceRoleMessage}\n\n_**Roles verificados del servidor**_:\n{verifiedRolesMessage}\n\n_**Roles del staff del servidor**_:\n{staffRolesMessage}",
+        "footer": "{tipMessage}",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
             "{masterChannelMessageDefault}": "**Ninguno**"
+          },
+          "tipMessage": {
+            "{tip-logs-channel}": "💡 Puedes establecer un canal de registros editando el canal maestro.",
+            "{tip-badwords}": "💡 Las palabras prohibidas se configuran una vez para el servidor y limitan cada nombre de canal dinámico.",
+            "{tip-inherited-roles}": "💡 Un generador muestra *(de las opciones del servidor)* hasta que le des roles propios.",
+            "{tip-templates}": "💡 Los miembros pueden guardar el nombre, el límite y la privacidad de un canal como plantilla y reutilizarla.",
+            "{tip-autosave}": "💡 Con el guardado automático, el siguiente canal de un miembro se abre como dejó el anterior.",
+            "{tip-lfm-pings}": "💡 Una publicación de búsqueda solo menciona los roles que permitas — sin ninguno, nunca hace ping.",
+            "{tip-privacy-default}": "💡 Elige cómo empieza un canal nuevo: público, privado u oculto."
           },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
@@ -3496,6 +3520,7 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Estado**",
               "knock": "<emoji name='KnockChannel'> ∙ **Llamar**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
@@ -3726,6 +3751,7 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Estado**",
               "knock": "<emoji name='KnockChannel'> ∙ **Llamar**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }

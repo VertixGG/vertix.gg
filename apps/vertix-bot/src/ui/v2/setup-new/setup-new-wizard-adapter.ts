@@ -186,6 +186,7 @@ const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, Wiz
 )
     .setComponents( {
         name: "VertixBot/UI-V2/SetupNewWizardComponent",
+        renderAsContainer: true,
         components: [ SetupStep1Component, SetupStep2Component, SetupStep3Component ]
     } )
     .setEmbedsGroups( [

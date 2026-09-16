@@ -224,6 +224,24 @@ type FlowTriggerRegistrar = (
 /** How many times a body is allowed to name something it wanted before it is given up on. */
 const MAX_LOGIC_BINDS = 4;
 
+/** An ISO-8601 moment, as `JSON.stringify` writes a `Date`. */
+const ISO_MOMENT = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g;
+
+/**
+ * Function withoutClock() :: One answer from a body, with the time taken out of it.
+ *
+ * A body is kept only if it still answers the same thing after being written out and read back, and
+ * the two runs that decide that are a moment apart. One built on `Date.now()` answers a different
+ * millisecond each time and is then thrown out for disagreeing with itself - which is not a
+ * disagreement about anything, and cost `ClaimVoteWonEmbedGroup` its end time on some runs of the
+ * export and not others. An embed that loses one stops counting down on the page, silently.
+ *
+ * Only moments are blanked, so a body that answers differently in any other way is still caught.
+ */
+function withoutClock( answer: string ): string {
+    return answer.replace( ISO_MOMENT, "<moment>" );
+}
+
 /**
  * Function compileEmbedLogic() :: A written-out function, back in one piece.
  *
@@ -724,6 +742,8 @@ export class UIDefinitionExporter extends UIBase {
                 metadata?.defaultMarkdownsGroup ??
                 this.safeCall( () => componentClass.getDefaultMarkdownsGroup?.() ) ??
                 null,
+            renderAsContainer:
+                this.safeCall( () => componentClass.shouldRenderAsContainer?.() ) ?? false,
             hooks: [],
             options: embedAudit.total
                 ? {
@@ -968,6 +988,7 @@ export class UIDefinitionExporter extends UIBase {
                 getEmoji?: () => Promise<string>;
                 getURL?: () => Promise<string>;
                 getPlaceholder?: () => Promise<string>;
+                getHeader?: () => Promise<string>;
                 getOptions?: () => JsonObject;
                 getLogic?: () => Promise<JsonObject>;
             };
@@ -1075,6 +1096,16 @@ export class UIDefinitionExporter extends UIBase {
             }
         }
 
+        if ( proto.getHeader ) {
+            try {
+                const header = await proto.getHeader.call( {} );
+                if ( header ) {
+                    definition.header = header;
+                }
+            } catch {
+            }
+        }
+
         if ( definition.elementType === "select-menu" ) {
             const selectOptions = await this.extractSelectOptionsForElement( element, name );
             if ( selectOptions?.length ) {
@@ -1103,6 +1134,10 @@ export class UIDefinitionExporter extends UIBase {
 
         if ( content.placeholder ) {
             definition.placeholder = content.placeholder;
+        }
+
+        if ( content.header ) {
+            definition.header = content.header;
         }
 
         if ( ! content.selectOptions?.length || ! definition.selectOptions?.length ) {
@@ -2082,6 +2117,8 @@ export class UIDefinitionExporter extends UIBase {
     /**
      * Function toResolveLogic() :: One of an embed's functions, written out - if it survives it.
      *
+     * @see withoutClock - why the two runs below are compared with the time taken out.
+     *
      * Written out is not the same as runnable. Most of these bodies are written against the embed's
      * own vars - the object of `{token}` names sitting beside them in the module - by closing over
      * it rather than by taking the parameter that holds it, and nothing can see that from outside.
@@ -2128,6 +2165,8 @@ export class UIDefinitionExporter extends UIBase {
             return undefined;
         }
 
+        const compared = withoutClock( answer );
+
         const binds: string[] = [];
 
         for ( let attempt = 0; attempt <= MAX_LOGIC_BINDS; attempt++ ) {
@@ -2136,7 +2175,7 @@ export class UIDefinitionExporter extends UIBase {
 
                 const ran = built && await walk( built );
 
-                if ( ran && "object" === typeof ran && JSON.stringify( ran ) === answer ) {
+                if ( ran && "object" === typeof ran && withoutClock( JSON.stringify( ran ) ) === compared ) {
                     return binds.length ? { source, binds } : { source };
                 }
 

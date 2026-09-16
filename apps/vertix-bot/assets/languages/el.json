@@ -71,6 +71,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "Αναδημιουργία"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/ServerOptionsBackButton",
         "content": {
           "label": "Πίσω"
@@ -817,7 +823,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Δημιουργία κύριου καναλιού",
+          "placeholder": "Δημιουργία κύριου καναλιού",
+          "header": "Νέο κύριο κανάλι",
           "selectOptions": [
             {
               "label": "Dynamic Channel (V2)",
@@ -837,7 +844,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
         "content": {
-          "placeholder": "❖ ∙ Επεξεργασία κύριου καναλιού"
+          "placeholder": "Επεξεργασία κύριου καναλιού",
+          "header": "Κύρια κανάλια"
         }
       },
       {
@@ -880,6 +888,7 @@
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Επιλέξτε κουμπιά",
+          "header": "Κουμπιά αυτού του συνόλου",
           "selectOptions": [
             {
               "label": "Μετονομασία",
@@ -991,13 +1000,15 @@
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Δώσε σε έναν ρόλο δικά του κουμπιά"
+          "placeholder": "➕ Δώσε σε έναν ρόλο δικά του κουμπιά",
+          "header": "Εξαιρέσεις ρόλων"
         }
       },
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 Επεξεργασία",
+          "header": "Επεξεργασία",
           "selectOptions": [
             {
               "label": "Προεπιλεγμένα κουμπιά",
@@ -1050,6 +1061,7 @@
         "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Επιλέξτε κουμπιά",
+          "header": "Κουμπιά αυτού του συνόλου",
           "selectOptions": [
             {
               "label": "Μετονομασία",
@@ -1279,13 +1291,15 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Δώσε σε έναν ρόλο δικά του κουμπιά"
+          "placeholder": "➕ Δώσε σε έναν ρόλο δικά του κουμπιά",
+          "header": "Εξαιρέσεις ρόλων"
         }
       },
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 Επεξεργασία",
+          "header": "Επεξεργασία",
           "selectOptions": [
             {
               "label": "Προεπιλεγμένα κουμπιά",
@@ -1520,11 +1534,21 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Ρύθμιση VoiceChannels",
-        "description": "Ανακαλύψτε τις απεριόριστες δυνατότητες του **VoiceChannels**!\nΠροσαρμόστε και βελτιστοποιήστε τον διακομιστή σας στην τελειότητα.\n\nΓια να δημιουργήσετε ένα νέο κύριο κανάλι απλά κάντε κλικ:\n`(➕ Δημιουργία κύριου καναλιού)` κουμπί.\n\nΤα κύρια κανάλια είναι γεννήτριες δυναμικών φωνητικών καναλιών, καθένα με τη δική του μοναδική διαμόρφωση.\n\nΗ λειτουργία απαγορευμένων λέξεων επιτρέπει διαμόρφωση σε επίπεδο διακομιστή για τον περιορισμό ονομάτων δυναμικών καναλιών.\n\n_**Τρέχοντα κύρια κανάλια**_:\n{masterChannelMessage}\n\n_**Απαγορευμένες λέξεις διακομιστή**_:\n{badwordsMessage}\n\n_**Ρόλος φωνής διακομιστή**_:\n{voiceRoleMessage}\n\n_**Επαληθευμένοι ρόλοι διακομιστή**_:\n{verifiedRolesMessage}\n\n_**Ρόλοι προσωπικού διακομιστή**_:\n{staffRolesMessage}\n\n-# 💡 Μπορείτε να ορίσετε κανάλι αρχείων επεξεργάζοντας το κύριο κανάλι.\n",
+        "description": "Ανακαλύψτε τις απεριόριστες δυνατότητες του **VoiceChannels**!\nΠροσαρμόστε και βελτιστοποιήστε τον διακομιστή σας στην τελειότητα.\n\nΤα κύρια κανάλια είναι γεννήτριες δυναμικών φωνητικών καναλιών, καθένα με τη δική του μοναδική διαμόρφωση.\n\nΗ λειτουργία απαγορευμένων λέξεων επιτρέπει διαμόρφωση σε επίπεδο διακομιστή για τον περιορισμό ονομάτων δυναμικών καναλιών.\n\n_**Τρέχοντα κύρια κανάλια**_:\n{masterChannelMessage}\n\n_**Απαγορευμένες λέξεις διακομιστή**_:\n{badwordsMessage}\n\n_**Ρόλος φωνής διακομιστή**_:\n{voiceRoleMessage}\n\n_**Επαληθευμένοι ρόλοι διακομιστή**_:\n{verifiedRolesMessage}\n\n_**Ρόλοι προσωπικού διακομιστή**_:\n{staffRolesMessage}",
+        "footer": "{tipMessage}",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
             "{masterChannelMessageDefault}": "**Κανένα**"
+          },
+          "tipMessage": {
+            "{tip-logs-channel}": "💡 Μπορείτε να ορίσετε κανάλι αρχείων επεξεργάζοντας το κύριο κανάλι.",
+            "{tip-badwords}": "💡 Οι απαγορευμένες λέξεις ορίζονται μία φορά για τον διακομιστή και περιορίζουν κάθε όνομα δυναμικού καναλιού.",
+            "{tip-inherited-roles}": "💡 Μια γεννήτρια δείχνει *(από τις επιλογές διακομιστή)* μέχρι να της δώσετε δικούς της ρόλους.",
+            "{tip-templates}": "💡 Τα μέλη μπορούν να αποθηκεύσουν το όνομα, το όριο και το απόρρητο ενός καναλιού ως πρότυπο και να το ξαναχρησιμοποιήσουν.",
+            "{tip-autosave}": "💡 Με την αυτόματη αποθήκευση, το επόμενο κανάλι ενός μέλους ανοίγει όπως άφησε το προηγούμενο.",
+            "{tip-lfm-pings}": "💡 Μια ανάρτηση αναζήτησης αναφέρει μόνο τους ρόλους που επιτρέπετε — χωρίς κανέναν, δεν κάνει ποτέ ping.",
+            "{tip-privacy-default}": "💡 Επιλέξτε πώς ξεκινά ένα νέο κανάλι: δημόσιο, ιδιωτικό ή κρυφό."
           },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
@@ -3496,6 +3520,7 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
               "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }
@@ -3726,6 +3751,7 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Κατάσταση**",
               "knock": "<emoji name='KnockChannel'> ∙ **Χτύπα**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**"
             }
           }

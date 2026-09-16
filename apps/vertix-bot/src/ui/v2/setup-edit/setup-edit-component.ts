@@ -34,6 +34,7 @@ import { SetupEditDefaultPrivacyEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edi
 import { SetupEditDefaultUserLimitEmbed } from "@vertix.gg/bot/src/ui/v2/setup-edit/edit-defaults/setup-edit-default-user-limit-embed";
 
 const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V2/ConfigComponent" )
+    .setRenderAsContainer( true )
     .addElementsGroup( SetupEditElementsGroup )
     .addElementsGroup( SetupEditButtonsElementsGroup )
     .addElementsGroup( SetupEditVerifiedRolesElementsGroup )

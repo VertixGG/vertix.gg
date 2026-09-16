@@ -15,6 +15,14 @@ export class LanguageComponent extends UIComponentBase {
         return UIInstancesTypes.Dynamic;
     }
 
+    /**
+     * Drawn as a container because the setup screen is: this takes over that screen's own reply,
+     * which was already sent with a flag no later edit can remove.
+     */
+    public static shouldRenderAsContainer() {
+        return true;
+    }
+
     public static getElements() {
         return [ [ LanguageSelectMenu ], [ DoneButton ] ];
     }

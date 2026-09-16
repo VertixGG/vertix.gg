@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { DiscordButton } from "./discord-button";
+import { DiscordContainer, DiscordContainerHeader, DiscordContainerSeparator } from "./discord-container";
 import { DiscordEmbed } from "./discord-embed";
 import { DiscordSelectMenu } from "./discord-select-menu";
 import { DiscordSelectMenuDropdown } from "./discord-select-menu-dropdown";
@@ -233,6 +234,67 @@ export function DiscordUIComponentRenderer( {
 
     const elementsGroup = selectElementsGroup( component, preferredElementsGroup, hideElements );
 
+    const rowsContext = {
+        variables: variables,
+        elementOverrides: elementOverrides,
+        onElementClick,
+        emojiIconSrcByUnicode,
+        // Kept with the embeds: a label that names the clock agrees with the text.
+        selectMenus,
+        expandedElementName,
+        onToggleExpand: ( elementName: string ) => {
+            setExpandedElementName( ( prev ) => prev === elementName ? null : elementName );
+        },
+        onSelectOption: onSelectOption
+            ? ( elementName: string, optionIndex: number ) => {
+                setExpandedElementName( null );
+                onSelectOption( elementName, optionIndex );
+            }
+            : undefined,
+    };
+
+    if ( component.renderAsContainer ) {
+        // The bar down the left is one colour for the whole screen, so the first embed that names
+        // one answers for all of them - the same choice `UIContainerRenderer` makes.
+        const accentColor = resolvedEmbeds.find( ( embed ) => undefined !== embed.color )?.color;
+
+        const footers = resolvedEmbeds
+            .map( ( embed ) => embed.footer )
+            .filter( ( footer ): footer is string => Boolean( footer?.length ) );
+
+        return (
+            <DiscordContainer accentColor={ accentColor }>
+                { resolvedEmbeds.map( ( embed, index ) => (
+                    <DiscordEmbed
+                        key={ `embed-${ index }` }
+                        title={ embed.title }
+                        description={ embed.description }
+                        thumbnail={ embed.thumbnail ? { url: embed.thumbnail } : undefined }
+                        image={ embed.image ? { url: embed.image, media: imageMedia } : undefined }
+                        color={ embed.color }
+                        // Drawn below the rows instead, which is the one place an embed could never
+                        // put it - so it is taken off the embed rather than printed twice.
+                        footer={ undefined }
+                        emojiIconSrcByUnicode={ emojiIconSrcByUnicode }
+                    />
+                ) ) }
+
+                { elementsGroup && renderElementRows( elementsGroup.items, {
+                    ...rowsContext,
+                    withHeaders: true,
+                    precededByContent: resolvedEmbeds.length > 0,
+                } ) }
+
+                { footers.length > 0 && (
+                    <>
+                        <DiscordContainerSeparator divider={ false } />
+                        <div className="discord-container-footer">{ footers.join( " " ) }</div>
+                    </>
+                ) }
+            </DiscordContainer>
+        );
+    }
+
     return (
         <>
             { resolvedEmbeds.map( ( embed, index ) => (
@@ -250,24 +312,7 @@ export function DiscordUIComponentRenderer( {
 
             { elementsGroup && (
                 <div className="discord-action-rows">
-                    { renderElementRows( elementsGroup.items, {
-                        variables: variables,
-                        elementOverrides: elementOverrides,
-                        onElementClick,
-                        emojiIconSrcByUnicode,
-                        // Kept with the embeds: a label that names the clock agrees with the text.
-                        selectMenus,
-                        expandedElementName,
-                        onToggleExpand: ( elementName ) => {
-                            setExpandedElementName( ( prev ) => prev === elementName ? null : elementName );
-                        },
-                        onSelectOption: onSelectOption
-                            ? ( elementName, optionIndex ) => {
-                                setExpandedElementName( null );
-                                onSelectOption( elementName, optionIndex );
-                            }
-                            : undefined,
-                    } ) }
+                    { renderElementRows( elementsGroup.items, rowsContext ) }
                 </div>
             ) }
         </>
@@ -722,6 +767,15 @@ function renderElementRows(
         onToggleExpand: ( elementName: string ) => void;
         onSelectOption?: ( elementName: string, optionIndex: number ) => void;
         onElementClick?: ( elementName: string ) => void;
+        /**
+         * Draw each row under the heading it declared, with a rule between one and the next.
+         *
+         * Only a container has anywhere to put these. On a classic message the rows sit below an
+         * embed discord printed for itself, and a heading between two of them has nowhere to go.
+         */
+        withHeaders?: boolean;
+        /** Whether something is already drawn above the first row, which then needs a rule too. */
+        precededByContent?: boolean;
     },
 ): React.ReactNode {
     const result: Array<React.ReactNode> = [];
@@ -737,6 +791,22 @@ function renderElementRows(
         const chunked = chunkBySize( visibleRow, 5 );
 
         for ( const chunk of chunked ) {
+            if ( context.withHeaders && ( rowIndex || context.precededByContent ) ) {
+                result.push( <DiscordContainerSeparator key={ `separator-${ rowIndex }` } /> );
+            }
+
+            // Taken from the chunk rather than the row, so a row too wide to draw in one piece is
+            // labelled once rather than once per piece - which is how the bot pairs them.
+            const header = context.withHeaders
+                ? chunk.find( ( item ) => item.definition.header )?.definition.header
+                : undefined;
+
+            if ( header ) {
+                result.push(
+                    <DiscordContainerHeader key={ `header-${ rowIndex }` }>{ header }</DiscordContainerHeader>
+                );
+            }
+
             result.push(
                 <div key={ `row-${ rowIndex }` } className="discord-embed-button-row">
                     { chunk.map( ( item ) => renderElement( item, context ) ) }

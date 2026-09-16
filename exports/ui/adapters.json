@@ -150,6 +150,10 @@
             {
                 "hook": "getReplyArgs",
                 "handler": "VertixBot/UI-General/SetupAdapter/Hooks/GetReplyArgs"
+            },
+            {
+                "hook": "onBeforeBuild",
+                "handler": "VertixBot/UI-General/SetupAdapter/Hooks/OnBeforeBuild"
             }
         ]
     },

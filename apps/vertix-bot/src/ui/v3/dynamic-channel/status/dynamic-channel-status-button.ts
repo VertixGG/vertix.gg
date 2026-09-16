@@ -24,7 +24,7 @@ export class DynamicChannelStatusButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelStatusButton.getEmoji() }  ∙ **Status**`;
+        return `${ DynamicChannelStatusButton.getEmoji() } ∙ **Status**`;
     }
 
     public async getLabelForMenu() {

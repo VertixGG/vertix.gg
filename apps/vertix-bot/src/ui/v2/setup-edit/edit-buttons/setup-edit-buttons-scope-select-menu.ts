@@ -34,6 +34,10 @@ export class SetupEditButtonsScopeSelectMenu extends UIElementStringSelectMenu {
         return UIInstancesTypes.Dynamic;
     }
 
+    protected async getHeader(): Promise<string> {
+        return "Editing";
+    }
+
     protected async getPlaceholder(): Promise<string> {
         return "🎚 Editing";
     }

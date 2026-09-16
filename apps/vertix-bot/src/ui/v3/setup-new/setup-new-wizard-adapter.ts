@@ -12,7 +12,6 @@ import { UIEmbedsGroupBase } from "@vertix.gg/gui/src/bases/ui-embeds-group-base
 
 import { WizardAdapterBuilder } from "@vertix.gg/gui/src/builders/wizard-adapter-builder";
 
-import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import {
     verifiedRolesFromEveryoneRole,
     verifiedRolesFromSelectedRoles
@@ -22,7 +21,7 @@ import { DEFAULT_SETUP_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master
 
 import { isPassingBotGuildPermissions } from "@vertix.gg/bot/src/ui/general/admin/bot-permissions-requirement";
 
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import { SetupMasterCreateV3Button } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-v3-button";
 import { SetupMasterCreateSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-create-select-menu";
@@ -185,6 +184,7 @@ async function onVerifiedRolesEveryoneSelected(
 
 const SetupStep1Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep1Embed", STEP_1_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( () => "Step 1 - Set Dynamic Channels Template Name" )
     .setDescription( ( vars ) =>
         "You can specify a default name for dynamic channels that will be used when they are opened.\n\n" +
@@ -203,6 +203,7 @@ const SetupStep1Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep1Embed", 
 
 const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", STEP_2_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( () => "Step 2 - Dynamic Channels Setup" )
     .setDescription( ( vars ) =>
@@ -256,28 +257,21 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
             [ vars.noButtonsFooter ]: "Note: Without buttons members will not be able to manage their dynamic channels. no embed or interface will be shown to them.\n"
         }
     } ) )
-    .setArrayOptions( {
+    .setArrayOptions( () => ( {
         dynamicChannelButtonsTemplate: {
             format: "- ( {value} ){separator}",
             separator: "\n",
-            options: {
-                "rename": EmojiManager.getToken( "ChannelRename" ) + "  ∙ **Rename**",
-                "limit": EmojiManager.getToken( "UserLimit" ) + " ∙ **User Limit**",
-                "access": EmojiManager.getToken( "ChannelPermissions" ) + " ∙ **Access**",
-                "invite": EmojiManager.getToken( "InviteChannel" ) + " ∙ **Invite**",
-                "privacy": EmojiManager.getToken( "ChannelPrivacy" ) + " ∙ **Privacy**",
-                "region": EmojiManager.getToken( "ChannelRegion" ) + " ∙ **Region**",
-                "edit-primary-message": EmojiManager.getToken( "EditChannelMessage" ) + " ∙ **Edit Primary Message**",
-                "clear-chat": EmojiManager.getToken( "ClearChat" ) + " ∙ **Clear Chat**",
-                "rest-channel": EmojiManager.getToken( "ResetChannel" ) + "  ∙ **Reset**",
-                "transfer": EmojiManager.getToken( "TransferChannel" ) + " ∙ **Transfer**",
-                "templates": EmojiManager.getToken( "ChannelTemplates" ) + " ∙ **Templates**",
-                "status": EmojiManager.getToken( "Megaphone" ) + " ∙ **Status**",
-                "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**",
-                "knock": EmojiManager.getToken( "KnockChannel" ) + " ∙ **Knock**"
-            }
+            // Read off the catalogue rather than listed here, so a button added to the group cannot
+            // be left out of the list that describes it - the one that was printed as its own id.
+            // Each button answers with its own line, which is where the emoji and the wording for it
+            // already live.
+            options: DynamicChannelPrimaryMessageElementsGroup.getAll().reduce( ( acc, button ) => {
+                acc[ button.getId() ] = button.getLabelForEmbed();
+
+                return acc;
+            }, {} as Record<string, string> )
         }
-    } )
+    } ) )
     .setLogic( async( args ) => {
         const vars = STEP_2_EMBED_VARS;
         const buttonsLength = args.dynamicChannelButtonsTemplate?.length ?? 0;
@@ -308,6 +302,7 @@ const SetupStep2Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep2Embed", 
 
 const SetupStep3Embed = new EmbedBuilder( "VertixBot/UI-V3/SetupNewStep3Embed", STEP_3_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( () => "Step 3 - Select Verified Roles" )
     .setDescription( ( vars ) =>
         "Verified roles are the roles that the privacy buttons work on.\n\n" +
@@ -384,6 +379,7 @@ const SetupStep3Component = new ComponentBuilder( "VertixBot/UI-V3/SetupStep3Com
 const SetupNewWizardAdapter = new WizardAdapterBuilder<BaseGuildTextChannel, WizardInteractions>( "VertixBot/UI-V3/SetupNewWizardAdapter" )
     .setComponents( {
         name: "VertixBot/UI-V3/SetupNewWizardComponent",
+        renderAsContainer: true,
         components: [ SetupStep1Component, SetupStep2Component, SetupStep3Component ]
     } )
     .setEmbedsGroups( [

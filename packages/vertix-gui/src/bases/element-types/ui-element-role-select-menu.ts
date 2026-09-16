@@ -24,12 +24,26 @@ export abstract class UIElementRoleSelectMenu extends UIElementBase<APIRoleSelec
     }
 
     public async getTranslatableContent(): Promise<UIElementSelectMenuLanguageContent> {
-        return {
+        const result: UIElementSelectMenuLanguageContent = {
             placeholder: await this.getPlaceholder?.()
         };
+
+        const header = await this.getHeader?.();
+
+        if ( header ) {
+            result.header = header;
+        }
+
+        return result;
     }
 
     protected async getPlaceholder?(): Promise<string>;
+
+    /**
+     * The heading drawn over this menu by a screen that renders as a container, the same way a
+     * string select declares one - a row is labelled by whatever is in it, whichever kind it is.
+     */
+    protected async getHeader?(): Promise<string>;
 
     /**
      * @default 1
@@ -104,5 +118,16 @@ export abstract class UIElementRoleSelectMenu extends UIElementBase<APIRoleSelec
         }
 
         return result;
+    }
+
+    protected async getSchemaInternal() {
+        const schema = await super.getSchemaInternal(),
+            header = this.content?.header || ( await this.getHeader?.() );
+
+        if ( header ) {
+            schema.header = header;
+        }
+
+        return schema;
     }
 }

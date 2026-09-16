@@ -249,7 +249,8 @@
                         "badwordsMessage": "**None**",
                         "voiceRoleMessage": "**None**",
                         "verifiedRolesMessage": "**@everyone** *(default)*",
-                        "staffRolesMessage": "**None**"
+                        "staffRolesMessage": "**None**",
+                        "tipMessage": ""
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
                     "previewElementsGroup": "VertixBot/UI-General/SetupElementsGroup"
@@ -314,7 +315,8 @@
                         "badwordsMessage": "**None**",
                         "voiceRoleMessage": "**None**",
                         "verifiedRolesMessage": "**@everyone** *(default)*",
-                        "staffRolesMessage": "**None**"
+                        "staffRolesMessage": "**None**",
+                        "tipMessage": ""
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupServerOptionsEmbedGroup",
                     "previewElementsGroup": "VertixBot/UI-General/ServerOptionsElementsGroup"
@@ -336,7 +338,8 @@
                         "badwordsMessage": "**None**",
                         "voiceRoleMessage": "**None**",
                         "verifiedRolesMessage": "**@everyone** *(default)*",
-                        "staffRolesMessage": "**None**"
+                        "staffRolesMessage": "**None**",
+                        "tipMessage": ""
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
                     "previewElementsGroup": "VertixBot/UI-General/VoiceRoleElementsGroup"
@@ -358,7 +361,8 @@
                         "badwordsMessage": "**None**",
                         "voiceRoleMessage": "**None**",
                         "verifiedRolesMessage": "**@everyone** *(default)*",
-                        "staffRolesMessage": "**None**"
+                        "staffRolesMessage": "**None**",
+                        "tipMessage": ""
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
                     "previewElementsGroup": "VertixBot/UI-General/VerifiedRolesElementsGroup"
@@ -380,7 +384,8 @@
                         "badwordsMessage": "**None**",
                         "voiceRoleMessage": "**None**",
                         "verifiedRolesMessage": "**@everyone** *(default)*",
-                        "staffRolesMessage": "**None**"
+                        "staffRolesMessage": "**None**",
+                        "tipMessage": ""
                     },
                     "previewEmbedsGroup": "VertixBot/UI-General/SetupEmbedGroup",
                     "previewElementsGroup": "VertixBot/UI-General/StaffRolesElementsGroup"

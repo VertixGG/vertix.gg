@@ -24,7 +24,7 @@ export class DynamicChannelTemplatesButton extends DynamicChannelButtonBase {
     }
 
     public getLabelForEmbed() {
-        return `${ DynamicChannelTemplatesButton.getEmoji() }  ∙ **Templates**`;
+        return `${ DynamicChannelTemplatesButton.getEmoji() } ∙ **Templates**`;
     }
 
     public async getLabelForMenu() {

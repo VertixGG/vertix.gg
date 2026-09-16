@@ -26,7 +26,7 @@ import {
     verifiedRolesFromSelectedRoles
 } from "@vertix.gg/bot/src/ui/general/verified-roles/verified-roles-utils";
 
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 
@@ -54,7 +54,6 @@ import { SetupEditButtonsUpdateExistingButton } from "@vertix.gg/bot/src/ui/v3/s
 import { SetupEditButtonsClearRoleOverrideButton } from "@vertix.gg/bot/src/ui/v3/setup-edit/edit-buttons/setup-edit-buttons-clear-role-override-button";
 import { DynamicChannelPrimaryMessageElementsGroup } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
-import { EmojiManager } from "@vertix.gg/bot/src/managers/emoji-manager";
 import { SetupEditSelectEditOptionMenu } from "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-select-edit-option-menu";
 
 import {
@@ -114,6 +113,7 @@ const ROSTER_LIMIT = 15;
 
 const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_BUTTONS_EMBED_VARS>( "VertixBot/UI-V3/SetupEditButtonsEmbed", SETUP_EDIT_BUTTONS_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🎚  Buttons Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
@@ -196,28 +196,21 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_BUTTONS
                 "its own owner should get."
         }
     } ) )
-    .setArrayOptions( {
+    .setArrayOptions( () => ( {
         buttonsList: {
             format: "> - {value}{separator}",
             separator: "\n",
-            options: {
-                "rename": EmojiManager.getToken( "ChannelRename" ) + "  ∙ **Rename**",
-                "limit": EmojiManager.getToken( "UserLimit" ) + " ∙ **User Limit**",
-                "access": EmojiManager.getToken( "ChannelPermissions" ) + " ∙ **Access**",
-                "invite": EmojiManager.getToken( "InviteChannel" ) + " ∙ **Invite**",
-                "privacy": EmojiManager.getToken( "ChannelPrivacy" ) + " ∙ **Privacy**",
-                "region": EmojiManager.getToken( "ChannelRegion" ) + " ∙ **Region**",
-                "edit-primary-message": EmojiManager.getToken( "EditChannelMessage" ) + " ∙ **Edit Primary Message**",
-                "clear-chat": EmojiManager.getToken( "ClearChat" ) + " ∙ **Clear Chat**",
-                "rest-channel": EmojiManager.getToken( "ResetChannel" ) + "  ∙ **Reset**",
-                "transfer": EmojiManager.getToken( "TransferChannel" ) + " ∙ **Transfer**",
-                "templates": EmojiManager.getToken( "ChannelTemplates" ) + " ∙ **Templates**",
-                "status": EmojiManager.getToken( "Megaphone" ) + " ∙ **Status**",
-                "claim-button": EmojiManager.getToken( "ClaimChannel" ) + " ∙ **Claim**",
-                "knock": EmojiManager.getToken( "KnockChannel" ) + " ∙ **Knock**"
-            }
+            // Read off the catalogue rather than listed here, so a button added to the group cannot
+            // be left out of the list that describes it - the one that was printed as its own id.
+            // Each button answers with its own line, which is where the emoji and the wording for it
+            // already live.
+            options: DynamicChannelPrimaryMessageElementsGroup.getAll().reduce( ( acc, button ) => {
+                acc[ button.getId() ] = button.getLabelForEmbed();
+
+                return acc;
+            }, {} as Record<string, string> )
         }
-    } )
+    } ) )
     .setLogic( ( args, v ) => {
         const roleId = ( args.dynamicChannelButtonsRoleId as string | null | undefined ) ?? null,
             notice = ( args.dynamicChannelButtonsNotice as string | null | undefined ) ?? null,
@@ -310,6 +303,7 @@ const SetupEditButtonsEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_BUTTONS
 
 const SetupEditVerifiedRolesEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEditVerifiedRolesEmbed", SETUP_EDIT_VERIFIED_ROLES_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🛡️  Edit Verified Roles Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
@@ -347,6 +341,7 @@ const SetupEditVerifiedRolesEmbed = new EmbedBuilder( "VertixBot/UI-V3/SetupEdit
 
 const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_STAFF_ROLES_EMBED_VARS>( "VertixBot/UI-V3/SetupEditStaffRolesEmbed", SETUP_EDIT_STAFF_ROLES_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🔑  Edit Staff Roles Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
@@ -391,6 +386,7 @@ const SetupEditStaffRolesEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_STAF
 const SetupEditEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_EMBED_VARS>( "VertixBot/UI-V3/SetupEditEmbed", SETUP_EDIT_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( ( v ) => `🔧  Configure Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
         "Configure master channel according to your preferences.\n\n" +
@@ -587,15 +583,14 @@ const SetupEditButtonsElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3
         const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
         const { WizardBackButton } = uiService.$$.getSystemElements();
 
-        // Back on a row of its own, under the two that act on what is being edited. It leaves the
-        // screen rather than changing anything on it, and sharing a row with the pair that do put
-        // the way out in the middle of the work.
+        // Back leads the row rather than sitting under it, which is the arrangement the V2 screen
+        // has always had - reading left to right, the way out comes before the two that act on what
+        // is being edited.
         return [
             [ SetupEditButtonsScopeSelectMenu ],
             [ SetupEditButtonsRoleSelectMenu ],
             [ ChannelButtonsTemplateSelectMenu ],
-            [ SetupEditButtonsClearRoleOverrideButton, SetupEditButtonsUpdateExistingButton ],
-            [ WizardBackButton ]
+            [ WizardBackButton, SetupEditButtonsClearRoleOverrideButton, SetupEditButtonsUpdateExistingButton ]
         ];
     } )
     .build();
@@ -610,6 +605,7 @@ const SetupEditVerifiedRolesElementsGroup = new ElementsGroupBuilder( "VertixBot
 
 const SetupEditVoiceRoleEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_VOICE_ROLE_EMBED_VARS>( "VertixBot/UI-V3/SetupEditVoiceRoleEmbed", SETUP_EDIT_VOICE_ROLE_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🎙️  Edit Voice Role Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
@@ -655,6 +651,7 @@ const SetupEditVoiceRoleEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_VOICE
 
 const SetupEditDefaultPrivacyEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_DEFAULT_PRIVACY_EMBED_VARS>( "VertixBot/UI-V3/SetupEditDefaultPrivacyEmbed", SETUP_EDIT_DEFAULT_PRIVACY_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `🛡️  Edit Default Privacy Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
@@ -686,6 +683,7 @@ const SetupEditDefaultPrivacyEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_
 
 const SetupEditDefaultUserLimitEmbed = new EmbedBuilder<UIArgs, typeof SETUP_EDIT_DEFAULT_USER_LIMIT_EMBED_VARS>( "VertixBot/UI-V3/SetupEditDefaultUserLimitEmbed", SETUP_EDIT_DEFAULT_USER_LIMIT_EMBED_VARS )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `✋  Edit Default User Limit Of Master Channel #${ v.index }` )
     .setDescription( ( v ) =>
@@ -751,6 +749,7 @@ const SetupEditStaffRolesElementsGroup = new ElementsGroupBuilder( "VertixBot/UI
     .build();
 
 const SetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ConfigComponent" )
+    .setRenderAsContainer( true )
     .addElementsGroup( SetupEditElementsGroup )
     .addElementsGroup( SetupEditButtonsElementsGroup )
     .addElementsGroup( SetupEditVerifiedRolesElementsGroup )

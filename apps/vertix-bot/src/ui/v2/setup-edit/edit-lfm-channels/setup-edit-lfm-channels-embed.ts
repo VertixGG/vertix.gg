@@ -5,7 +5,7 @@ import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/ba
 
 import { dynamicChannelLfmTimingsResolve } from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import {
     MILLISECONDS_PER_MINUTE,
@@ -51,6 +51,7 @@ function composeDuration( milliseconds: number ) {
 const SetupEditLfmChannelsEmbed = new EmbedBuilder<UIArgs, typeof vars>( "VertixBot/UI-V2/SetupEditLfmChannelsEmbed", vars )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( () => `🔎  Edit LFM Of Master Channel #${ vars.index }` )
     .setDescription( () => (

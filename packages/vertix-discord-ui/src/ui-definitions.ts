@@ -33,6 +33,14 @@ export interface UIElementDefinitionBase {
     name: string;
     elementType: UIElementType;
     instanceType: UIInstanceType;
+    /**
+     * The heading this element's row is drawn under, when the screen is a container.
+     *
+     * A row takes the heading of the first element in it that declares one, which is how the bot
+     * pairs them in `buildLabelledRowsBySchema()`. An embed has nowhere to put these, so they are
+     * read only when the component asks to be drawn as a container.
+     */
+    header?: string;
 }
 
 export interface UIButtonDefinition extends UIElementDefinitionBase {
@@ -152,6 +160,8 @@ export interface UIComponent {
     modalDefinitions: ReadonlyArray<UIModalDefinition>;
     defaultElementsGroup: string | null;
     defaultEmbedsGroup: string | null;
+    /** Drawn as one container, with each row's heading kept beside the row it names. */
+    renderAsContainer?: boolean;
 }
 
 const UI_COMPONENTS_URL = "/exports/ui/components.json";
@@ -262,6 +272,7 @@ function parseUIComponent( value: JsonValue ): UIComponent | null {
         modalDefinitions,
         defaultElementsGroup: asNullableString( value[ "defaultElementsGroup" ] ),
         defaultEmbedsGroup: asNullableString( value[ "defaultEmbedsGroup" ] ),
+        renderAsContainer: true === asBoolean( value[ "renderAsContainer" ] ),
     };
 }
 
@@ -431,6 +442,7 @@ function parseElementDefinition( value: JsonObject ): UIElementDefinition | null
             style: isButtonStyle( style ) ? style : undefined,
             emoji: emoji ?? undefined,
             url: url ?? undefined,
+            header: asString( value[ "header" ] ) ?? undefined,
         };
     }
 
@@ -444,6 +456,7 @@ function parseElementDefinition( value: JsonObject ): UIElementDefinition | null
             instanceType,
             placeholder: placeholder ?? undefined,
             selectOptions: selectOptions.length > 0 ? selectOptions : undefined,
+            header: asString( value[ "header" ] ) ?? undefined,
         };
     }
 

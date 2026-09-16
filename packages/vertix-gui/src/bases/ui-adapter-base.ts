@@ -32,8 +32,16 @@ import { UIInteractionMiddleware } from "@vertix.gg/gui/src/bases/ui-interaction
 
 import { UI_LANGUAGES_INITIAL_CODE } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
+import { UIContainerRenderer } from "@vertix.gg/gui/src/runtime/ui-container-renderer";
+
 import type { UIAdapterReplyContext, UIAdapterStartContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type {
+    UIAdapterBuildSource,
+    UIArgs,
+    UIContainerEmbedAttributes,
+    UIEntitySchemaBase,
+    UIMessageOptions
+} from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type { UIService } from "@vertix.gg/gui/src//ui-service";
 
@@ -41,12 +49,12 @@ import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 import type {
     MessagePayload,
-    BaseMessageOptions,
     ButtonInteraction,
     ChannelType,
     Client,
     CommandInteraction,
     InteractionEditReplyOptions,
+    MessageActionRowComponentBuilder,
     MessageComponentInteraction,
     ModalComponentData,
     ModalSubmitInteraction,
@@ -528,7 +536,10 @@ export abstract class UIAdapterBase<
 
         const message = this.getMessage( "edit", interaction, newArgs );
 
-        if ( interaction.isUserSelectMenu() || interaction.isChannelSelectMenu() ) {
+        // A container's components are the container itself rather than rows of menus, and it can
+        // carry no embeds - so the rewrite below has nothing to walk and nothing to send. Deferring
+        // and editing redraws the same screen either way, which is what that branch is for.
+        if ( ! this.shouldRenderAsContainer() && ( interaction.isUserSelectMenu() || interaction.isChannelSelectMenu() ) ) {
             const disabledComponents = JSON.parse( JSON.stringify( message.components ) );
 
             disabledComponents.forEach( ( row: any ) => {
@@ -1094,12 +1105,16 @@ export abstract class UIAdapterBase<
         };
     }
 
+    protected shouldRenderAsContainer(): boolean {
+        return ( this.constructor as typeof UIAdapterBase ).getComponent().shouldRenderAsContainer();
+    }
+
     protected getMessage(
         _from?: UIAdapterBuildSource,
         _context?: TChannel | TInteraction,
         _argsFromManager?: UIArgs
-    ): BaseMessageOptions {
-        const result: BaseMessageOptions = {
+    ): UIMessageOptions {
+        const result: UIMessageOptions = {
             embeds: [],
             components: [],
             content: ""
@@ -1109,6 +1124,15 @@ export abstract class UIAdapterBase<
 
         switch ( schema.type ) {
             case "component":
+                if ( this.shouldRenderAsContainer() ) {
+                    return UIContainerRenderer.$.render(
+                        ( schema.entities.embeds ?? [] ).map(
+                            ( embed: UIEntitySchemaBase ) => embed.attributes as UIContainerEmbedAttributes
+                        ),
+                        this.buildLabelledRowsBySchema( schema.entities.elements ?? [] )
+                    );
+                }
+
                 if ( schema.entities.embeds ) {
                     result.embeds = schema.entities.embeds.map( ( embed: any ) => embed.attributes );
                 }
@@ -1224,11 +1248,9 @@ export abstract class UIAdapterBase<
 
         this.$$.staticLogger.warn( this.isArgsExpiredInternal, errorLog );
 
-        const options: InteractionEditReplyOptions = {
-            components: [],
-            embeds: [],
-            content: "The interaction has expired. Please create new one."
-        };
+        const notice = "The interaction has expired. Please create new one.";
+
+        const rows: ActionRowBuilder<MessageActionRowComponentBuilder>[] = [];
 
         // TODO: Make dedicated method for this.
         // TODO: Add to FAQ.
@@ -1245,10 +1267,16 @@ export abstract class UIAdapterBase<
 
             const buttonBuilder = new ButtonBuilder( buttonData.attributes );
 
-            const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents( buttonBuilder );
-
-            options.components = [ actionRow ];
+            rows.push( new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents( buttonBuilder ) );
         }
+
+        // The screen being replaced is whatever this adapter draws, and a container takes no
+        // `content` and no `embeds` - discord refuses the edit outright over one, which is the
+        // notice failing to arrive at all and the way back out of an expired screen disappearing
+        // with it.
+        const options: UIMessageOptions = this.shouldRenderAsContainer()
+            ? UIContainerRenderer.$.render( [ { description: notice } ], rows.map( ( row ) => ( { row } ) ) )
+            : { components: rows, embeds: [], content: notice };
 
         await interaction.editReply( options );
 

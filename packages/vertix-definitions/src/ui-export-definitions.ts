@@ -46,6 +46,13 @@ export interface UIExportElementDefinition {
      */
     options?: Record<string, string>;
     selectOptions?: SelectOptionDefinition[];
+    /**
+     * The heading this element's row is drawn under, when the screen is a container.
+     *
+     * A row takes the heading of the first element in it that declares one. An embed has nowhere to
+     * put these, so they are read only where the screen is drawn as a container.
+     */
+    header?: string;
 }
 
 export interface UIExportElementItem {
@@ -91,6 +98,8 @@ export interface UIExportedComponent {
     defaultElementsGroup: string | null;
     defaultEmbedsGroup: string | null;
     defaultMarkdownsGroup: string | null;
+    /** Drawn as one container, with each row's heading kept beside the row it names. */
+    renderAsContainer?: boolean;
     hooks: string[];
     options?: {
         embedAudit: {

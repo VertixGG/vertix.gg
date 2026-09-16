@@ -1,0 +1,77 @@
+@import "./discord-tokens.css";
+
+/* The box an embed would have drawn, holding the rows as well. Same surface, border and left bar as
+   `.discord-embed-content`, so a screen that converts does not change colour on the way. */
+.discord-container.discord-container {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 516px;
+    width: max-content;
+    margin-top: 8px;
+    padding-block: 0.75rem;
+    padding-inline: 1rem;
+    background-color: var(--discord-background-surface-high);
+    border: 1px solid var(--discord-border-subtle);
+    border-left-width: 4px;
+    border-left-style: solid;
+    border-radius: 4px;
+    color: var(--discord-text-default);
+    font-family: var(--discord-font-primary);
+    font-size: 0.875rem;
+    line-height: 1.125rem;
+}
+
+/* The embed inside is the same drawing without its own box - the container is holding that now.
+   Its width cap goes too, or the inner cap and the outer one both apply and the text stops short. */
+.discord-container .discord-embed,
+.discord-container .discord-embed.discord-embed {
+    margin-top: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+.discord-container .discord-embed-content {
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+}
+
+/* Rows sit flush: the container already spaces its children, and the embed's own row margin would
+   add to that unevenly depending on whether a heading came before it. */
+.discord-container .discord-embed-button-row {
+    margin: 0;
+}
+
+.discord-container .discord-action-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.discord-container-header {
+    font-weight: 600;
+    color: var(--discord-text-default);
+    line-height: 1.25rem;
+}
+
+.discord-container-separator {
+    height: 1px;
+    border: 0;
+    background-color: var(--discord-border-subtle);
+    opacity: 0.48;
+}
+
+/* The gap without the line. */
+.discord-container-spacer {
+    height: 1rem;
+}
+
+.discord-container-footer {
+    color: var(--discord-text-muted);
+    font-size: 0.75rem;
+    line-height: 1rem;
+}

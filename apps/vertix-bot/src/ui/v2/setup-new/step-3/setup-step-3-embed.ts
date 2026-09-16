@@ -2,7 +2,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
@@ -20,6 +20,7 @@ const SetupStep3Embed = new EmbedBuilder<UIArgs, typeof SETUP_STEP_3_VARS>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( "Step 3 - Select Verified Roles" )
     .setDescription( () => (

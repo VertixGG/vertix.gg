@@ -31,6 +31,13 @@ export interface IWizardComponentConfig {
     name: string;
     components: UIComponentTypeConstructor[];
     baseComponent?: typeof UIWizardComponentBase;
+    /**
+     * Draw as a container rather than as an embed with rows under it.
+     *
+     * A wizard opened from another screen takes over that screen's message, so this has to match
+     * whatever opened it - the flag a container is sent with cannot be removed by a later edit.
+     */
+    renderAsContainer?: boolean;
 }
 
 type WizardAdapterBaseConstructor<TChannel extends UIAdapterStartContext, TInteraction extends UIAdapterReplyContext> =
@@ -164,6 +171,10 @@ export class WizardAdapterBuilder<
 
                     public static getComponents() {
                         return builder.componentConfig!.components;
+                    }
+
+                    public static shouldRenderAsContainer() {
+                        return true === builder.componentConfig!.renderAsContainer;
                     }
 
                     public static getEmbedsGroups() {

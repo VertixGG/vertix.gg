@@ -38,11 +38,16 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
 
         const result: UIElementSelectMenuLanguageContent = {},
             placeholder = await this.getPlaceholder?.(),
+            header = await this.getHeader?.(),
             selectOptions = await this.getSelectOptions(),
             options = this.getOptions();
 
         if ( placeholder ) {
             result.placeholder = placeholder;
+        }
+
+        if ( header ) {
+            result.header = header;
         }
 
         if ( selectOptions.length ) {
@@ -59,6 +64,14 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
     protected abstract getSelectOptions(): Promise<APISelectMenuOption[]>;
 
     protected async getPlaceholder?(): Promise<string>;
+
+    /**
+     * The heading drawn over this menu by a screen that renders as a container.
+     *
+     * A menu that does not answer gets no heading, and a screen rendered as an embed ignores the
+     * answer either way - an embed has no place to put text between its rows.
+     */
+    protected async getHeader?(): Promise<string>;
 
     /**
      * @default 1
@@ -144,6 +157,17 @@ export abstract class UIElementStringSelectMenu extends UIElementBase<APIStringS
         }
 
         return result;
+    }
+
+    protected async getSchemaInternal() {
+        const schema = await super.getSchemaInternal(),
+            header = this.content?.header || ( await this.getHeader?.() );
+
+        if ( header ) {
+            schema.header = header;
+        }
+
+        return schema;
     }
 
     protected getOptions(): UIBaseTemplateOptions {

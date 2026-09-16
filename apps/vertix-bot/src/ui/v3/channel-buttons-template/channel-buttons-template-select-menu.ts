@@ -15,6 +15,10 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
         return UIInstancesTypes.Dynamic;
     }
 
+    protected async getHeader(): Promise<string> {
+        return "Buttons In This Set";
+    }
+
     protected async getPlaceholder(): Promise<string> {
         return "🎚 Select Buttons";
     }

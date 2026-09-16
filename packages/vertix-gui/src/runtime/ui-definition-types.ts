@@ -33,6 +33,7 @@ export interface ElementDefinition {
     emoji?: string;
     url?: string;
     placeholder?: string;
+    header?: string;
     disabled?: boolean;
     options?: JsonObject;
     selectOptions?: SelectOptionDefinition[];
@@ -160,6 +161,14 @@ export interface ComponentDefinition {
     defaultElementsGroup?: string | null;
     defaultEmbedsGroup?: string | null;
     defaultMarkdownsGroup?: string | null;
+    /**
+     * Whether the screen is drawn as one container rather than as an embed with its rows beneath.
+     *
+     * Exported because it is a layout the reader can see: a container keeps each row's heading with
+     * the row it names, which an embed cannot, so a page drawing this component from the export has
+     * to know which of the two it is looking at or it draws the arrangement the bot replaced.
+     */
+    renderAsContainer?: boolean;
     hooks: HookReference[];
     options?: JsonObject;
 }

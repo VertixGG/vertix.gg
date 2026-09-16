@@ -26,6 +26,8 @@ export interface ComponentPreview {
     embedDefinition?: UIExportEmbedDefinition;
     allEmbedDefinitions?: Array<{ groupName: string; definition: UIExportEmbedDefinition }>;
     elementRows: ElementData[][];
+    /** Drawn as one container, the way the bot draws this component. */
+    renderAsContainer?: boolean;
     modals: string[];
     modalDefinitions: Array<{
         name: string;
@@ -316,6 +318,7 @@ export function extractComponentPreview(
         // `UI-V2/DynamicChannel` and `UI-V3/DynamicChannel` share a last segment.
         name: component.name.split( "/" ).pop() ?? component.name,
         fullName: component.name,
+        renderAsContainer: true === component.renderAsContainer,
         embedName: firstEmbed?.embed,
         embed: definition ? {
             title: definition.title,

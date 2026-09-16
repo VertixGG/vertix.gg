@@ -10,6 +10,10 @@ export class SetupMasterEditSelectMenu extends UIElementStringSelectMenu {
         return UIInstancesTypes.Dynamic;
     }
 
+    protected async getHeader(): Promise<string> {
+        return "Master Channels";
+    }
+
     protected async getPlaceholder(): Promise<string> {
         return "❖ ∙ Edit Master Channel(s)";
     }

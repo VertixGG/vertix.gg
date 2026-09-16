@@ -75,7 +75,11 @@ export const SETUP_EMPTY_VARIABLES = {
     badwordsMessage: "**None**",
     voiceRoleMessage: "**None**",
     verifiedRolesMessage: "**@everyone** *(default)*",
-    staffRolesMessage: "**None**"
+    staffRolesMessage: "**None**",
+    // The footer is a tip the screen turns over on a clock, and nothing here is running one. Empty
+    // rather than frozen on whichever tip is first: a page holding one of seven reads as though
+    // that is the tip, and an empty one draws no footer line at all.
+    tipMessage: ""
 };
 
 /**

@@ -1,6 +1,8 @@
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 
+import { VERTIX_BRAND_THUMBNAIL_URL } from "@vertix.gg/bot/src/definitions/app";
+
 import { DynamicChannelElementsGroup } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/primary-message/dynamic-channel-elements-group";
 
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -17,6 +19,7 @@ const ChannelButtonsTemplateEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-V2/ChannelButtonsTemplateEmbed",
     vars
 )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setDescription( () => vars.dynamicChannelButtonsTemplate )
     .setArrayOptions( () => {
         const result: Record<string, { format: string; separator: string; options: Record<string, string> }> = {

@@ -5,7 +5,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 import { EmbedBuilder } from "@vertix.gg/gui/src/builders/embed-builder";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import type { MasterChannelConfigInterface } from "@vertix.gg/data/src/interfaces/master-channel-config";
 
@@ -23,6 +23,7 @@ const SetupStep1Embed = new EmbedBuilder<UIArgs, typeof SETUP_STEP_1_VARS>(
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( "Step 1 - Set Dynamic Channels Template Name" )
     .setDescription( () => (
         "You can specify a default name for dynamic channels that will be used when they are opened.\n\n" +

@@ -14,7 +14,7 @@ import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
 import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/data/src/config/scaling-channel-config";
 
-import { VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
+import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.gg/bot/src/definitions/app";
 
 import { SetupScalingConfigModal } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-config-modal";
 import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
@@ -66,6 +66,7 @@ const ScalingSetupEditEmbed = new EmbedBuilder<UIArgs, typeof SCALING_SETUP_EDIT
     SCALING_SETUP_EDIT_VARS
 )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setImage( UI_IMAGE_EMPTY_LINE_URL )
     .setTitle( ( v ) => `📈  Auto-Scaling Channels #${ v.scalingIndex }` )
     .setDescription( ( v ) =>
@@ -91,6 +92,7 @@ const ScalingSetupEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-V3
     .build();
 
 const ScalingSetupEditComponent = new ComponentBuilder( "VertixBot/UI-V3/ScalingSetupEditComponent" )
+    .setRenderAsContainer( true )
     .addElementsGroup( ScalingSetupEditElementsGroup )
     .addEmbedsGroup( UIEmbedsGroupBase.createSingleGroup( ScalingSetupEditEmbed ) )
     .addModal( SetupScalingConfigModal )

@@ -11,6 +11,10 @@ export class SetupEditButtonsRoleSelectMenu extends UIElementRoleSelectMenu {
         return UIInstancesTypes.Dynamic;
     }
 
+    protected async getHeader(): Promise<string> {
+        return "Role Overrides";
+    }
+
     protected async getPlaceholder() {
         return "➕ Give a role its own buttons";
     }

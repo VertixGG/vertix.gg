@@ -34,6 +34,18 @@ export abstract class UIComponentBase extends UIComponentInfraBase implements UI
     }
 
     /**
+     * Whether this component's entities draw as a container rather than as an embed with its rows
+     * underneath.
+     *
+     * The answer belongs to every component that can reach the same message, not to one of them:
+     * the `IsComponentsV2` flag cannot be taken back off a message once sent, so a screen taking
+     * over another's reply has to draw the way the screen that opened it did.
+     */
+    public static shouldRenderAsContainer(): boolean {
+        return false;
+    }
+
+    /**
      * Function getEntities() :: Returns all entities of the component, will return all types if no args are passed.
      */
     public static getEntities( args: UIGetEntitiesArgs = {} ): UIEntityTypes {

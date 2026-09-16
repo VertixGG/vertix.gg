@@ -71,6 +71,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/RegenerateButton",
+        "content": {
+          "label": "Regenerate"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/ServerOptionsBackButton",
         "content": {
           "label": "Back"
@@ -825,7 +831,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterCreateSelectMenu",
         "content": {
-          "placeholder": "➕ ∙ Create Master Channel",
+          "placeholder": "Create a master channel",
+          "header": "New Master Channel",
           "selectOptions": [
             {
               "label": "Dynamic Channel (V2)",
@@ -845,7 +852,8 @@
       {
         "name": "VertixBot/UI-General/SetupMasterEditSelectMenu",
         "content": {
-          "placeholder": "❖ ∙ Edit Master Channel(s)"
+          "placeholder": "Edit a master channel",
+          "header": "Master Channels"
         }
       },
       {
@@ -889,6 +897,7 @@
         "name": "VertixBot/UI-V2/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Select Buttons",
+          "header": "Buttons In This Set",
           "selectOptions": [
             {
               "label": "Rename",
@@ -1000,13 +1009,15 @@
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Give a role its own buttons"
+          "placeholder": "➕ Give a role its own buttons",
+          "header": "Role Overrides"
         }
       },
       {
         "name": "VertixBot/UI-V2/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 Editing",
+          "header": "Editing",
           "selectOptions": [
             {
               "label": "Default buttons",
@@ -1059,6 +1070,7 @@
         "name": "VertixBot/UI-V3/ChannelButtonsTemplateSelectMenu",
         "content": {
           "placeholder": "🎚 Select Buttons",
+          "header": "Buttons In This Set",
           "selectOptions": [
             {
               "label": "Rename",
@@ -1288,13 +1300,15 @@
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
         "content": {
-          "placeholder": "➕ Give a role its own buttons"
+          "placeholder": "➕ Give a role its own buttons",
+          "header": "Role Overrides"
         }
       },
       {
         "name": "VertixBot/UI-V3/SetupEditButtonsScopeSelectMenu",
         "content": {
           "placeholder": "🎚 Editing",
+          "header": "Editing",
           "selectOptions": [
             {
               "label": "Default buttons",
@@ -1535,11 +1549,21 @@
       "name": "VertixBot/UI-General/SetupEmbed",
       "content": {
         "title": "🛠  Setup Vertix",
-        "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nTo create a new master channel just click:\n`(➕ Create Master Channel)` button.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n_**Server Verified Roles**_:\n{verifiedRolesMessage}\n\n_**Server Staff Roles**_:\n{staffRolesMessage}\n\n-# 💡 You can set logs channel by editing the master channel.\n",
+        "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n_**Server Verified Roles**_:\n{verifiedRolesMessage}\n\n_**Server Staff Roles**_:\n{staffRolesMessage}",
+        "footer": "{tipMessage}",
         "options": {
           "masterChannelMessage": {
             "{masterChannels}": "\n{masterChannels}",
             "{masterChannelMessageDefault}": "**None**"
+          },
+          "tipMessage": {
+            "{tip-logs-channel}": "💡 You can set logs channel by editing the master channel.",
+            "{tip-badwords}": "💡 Badwords are set once for the server and limit every dynamic channel name.",
+            "{tip-inherited-roles}": "💡 A generator reads *(from the server options)* until you give it roles of its own.",
+            "{tip-templates}": "💡 Members can save a channel's name, limit and privacy as a template and reuse it later.",
+            "{tip-autosave}": "💡 With auto save on, a member's next channel opens the way they left their last one.",
+            "{tip-lfm-pings}": "💡 A looking-for-more post only mentions the roles you allow — choose none and it never pings.",
+            "{tip-privacy-default}": "💡 Pick what a new channel starts as: public, private or hidden."
           },
           "badwordsMessage": {
             "{badwords}": "`{badwords}`",
@@ -3543,7 +3567,8 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Status**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Knock**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Knock**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**"
             }
           }
         }
@@ -3758,7 +3783,8 @@
               "templates": "<emoji name='ChannelTemplates'> ∙ **Templates**",
               "status": "<emoji name='Megaphone'> ∙ **Status**",
               "claim-button": "<emoji name='ClaimChannel'> ∙ **Claim**",
-              "knock": "<emoji name='KnockChannel'> ∙ **Knock**"
+              "knock": "<emoji name='KnockChannel'> ∙ **Knock**",
+              "lfm": "<emoji name='LfmChannel'> ∙ **LFM**"
             }
           }
         }

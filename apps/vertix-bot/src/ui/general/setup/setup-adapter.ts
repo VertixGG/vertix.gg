@@ -89,7 +89,16 @@ import {
 } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-server-options-embeds";
 import { SetupBadwordsEmbed } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-badwords-embed";
 
-import { SETUP_EMBED_VARS } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
+import { VERTIX_BRAND_THUMBNAIL_URL } from "@vertix.gg/bot/src/definitions/app";
+
+import {
+    SETUP_EMBED_VARS,
+    SETUP_TIPS,
+    SETUP_TIPS_STEP,
+    SETUP_TIP_VARS
+} from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
+
+import { SetupTipsRotation } from "@vertix.gg/bot/src/ui/general/setup/setup-tips-rotation";
 
 import {
     MASTER_CHANNEL_TYPE_SCALING,
@@ -612,13 +621,11 @@ async function onLanguageChooseClicked(
 }
 
 const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilder<ISetupArgs>( "VertixBot/UI-General/SetupEmbed", SETUP_EMBED_VARS ) )
-    .setImage( "https://i.ibb.co/wsqNGmk/dynamic-channel-line-370.png" )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( "🛠  Setup Vertix" )
     .setDescription( ( vars ) =>
         "Discover the limitless possibilities of **Vertix**!\n" +
         "Customize and optimize your server to perfection.\n\n" +
-        "To create a new master channel just click:\n" +
-        "`(➕ Create Master Channel)` button.\n\n" +
         "Master Channels are dynamic voice channel generators, each with its own unique configuration.\n\n" +
         "Our badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n" +
         "_**Current master channels**_:\n" +
@@ -634,10 +641,9 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         vars.verifiedRolesMessage +
         "\n\n" +
         "_**Server Staff Roles**_:\n" +
-        vars.staffRolesMessage +
-        "\n\n" +
-        "-# 💡 You can set logs channel by editing the master channel.\n"
+        vars.staffRolesMessage
     )
+    .setFooterText( ( vars ) => String( vars.tipMessage ) )
     .setArrayOptions( ( { masterChannelsOptions, value, separator } ) => {
         if ( !masterChannelsOptions || typeof masterChannelsOptions !== "object" || Array.isArray( masterChannelsOptions ) ) {
             throw new Error( "Invalid masterChannelsOptions" );
@@ -687,6 +693,11 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                 [ masterChannelsKey ]: "\n" + masterChannels,
                 [ masterChannelMessageDefaultKey ]: "**None**"
             },
+            tipMessage: SETUP_TIPS.reduce( ( acc, tip ) => {
+                acc[ SETUP_TIP_VARS[ tip.id ] ] = tip.text;
+
+                return acc;
+            }, {} as Record<string, string> ),
             badwordsMessage: {
                 [ badwordsKey ]: "`" + badwords + "`",
                 [ badwordsMessageDefaultKey ]: "**None**"
@@ -860,6 +871,12 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             result.staffRolesMessage = vars.staffRolesMessageDefault;
         }
 
+        // Counted rather than bounded by whoever set it, so a screen left open long enough comes
+        // back round to the first tip instead of running off the end of the pool.
+        const tip = SETUP_TIPS[ ( args?.tipIndex ?? 0 ) % SETUP_TIPS.length ];
+
+        result.tipMessage = SETUP_TIP_VARS[ tip.id ];
+
         return result;
     } )
     .setDefaultVars( () => ( {
@@ -907,6 +924,7 @@ const SetupMasterEditElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-Gen
     .build();
 
 const SetupComponent = new ComponentBuilder( "VertixBot/UI-General/SetupComponent" )
+    .setRenderAsContainer( true )
     .addElementsGroup( SetupElementsGroup )
     .addElementsGroup( SetupMasterCreateElementsGroup )
     .addElementsGroup( SetupMasterEditElementsGroup )
@@ -951,6 +969,53 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             return new UICustomIdHashStrategy().getId( hash );
         }
     } )
+    /**
+     * Hands the footer's tip on while the screen is still being watched.
+     *
+     * Every build reschedules, so the pending turn belongs to the screen on display rather than to
+     * one navigated away from - and the turn it schedules re-enters here, which is what keeps the
+     * rotation going without a loop of its own.
+     *
+     * `tipIndex` survives the rebuild because `getReplyArgs()` below answers it only for a caller
+     * that brought none - the first draw, where it picks where to start - and `fillGapsFrom()`
+     * leaves a key the adapter did not answer as the caller passed it.
+     */
+    .onBeforeBuildPrototype( async( context, args, from, interaction ) => {
+        if ( ! interaction || ( "reply" !== from && "edit" !== from ) ) {
+            return;
+        }
+
+        // Only the screen that draws a tip turns them over. Every other step of this adapter has
+        // its own embed and no footer to put one in, so rotating there would redraw a screen the
+        // member is working in to change nothing they can see.
+        if ( SETUP_TIPS_STEP !== context.getCurrentExecutionStep( interaction )?.name ) {
+            SetupTipsRotation.$.cancel( interaction.user.id );
+
+            return;
+        }
+
+        const index = args.tipIndex ?? 0,
+            tip = SETUP_TIPS[ index % SETUP_TIPS.length ];
+
+        SetupTipsRotation.$.schedule( interaction.user.id, tip.timeout, async() => {
+            // The message is only still this screen's while this adapter's args are on it. An
+            // adapter that takes it over - the editor, the wizard, the language picker - takes
+            // them off as it goes, and `editReply()` is built to draw a screen onto a message it
+            // never wrote, so a tip landing here would put the setup screen back over whatever the
+            // member had navigated to and lose their place.
+            if ( ! context.getArgs( interaction ) ) {
+                return;
+            }
+
+            // `null` is the screen saying it cannot be reached - dismissed, or its token outlived
+            // by discord's fifteen minutes. Rescheduling nothing is what ends the rotation.
+            if ( ! context.getScreenOwner( interaction.user.id ) ) {
+                return;
+            }
+
+            await context.editReply( interaction, { tipIndex: index + 1 } );
+        } );
+    } )
     .getReplyArgs( async( _context, interaction, argsFromManager ) => {
         if ( !interaction ) {
             return {};
@@ -982,6 +1047,18 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             args.maxMasterChannels = argsFromManager.maxMasterChannels;
         }
 
+        // Where the footer starts, drawn once per screen. Opening always on the first tip left the
+        // ones after it to whoever sat still long enough to be handed them - for the last of three,
+        // two full timeouts of not touching anything, which is not how setup gets used.
+        //
+        // Seeded only when the caller did not bring one. `fillGapsFrom()` leaves a key this does
+        // not answer as the caller passed it, and that is what carries the rotation's `index + 1`
+        // across a rebuild; answered every time, the footer would draw again from somewhere new on
+        // every redraw and never advance.
+        if ( undefined === argsFromManager?.tipIndex ) {
+            args.tipIndex = Math.floor( Math.random() * SETUP_TIPS.length );
+        }
+
         return args;
     } )
     .defineTransactions( tx => {
@@ -995,7 +1072,8 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                     badwordsMessage: "**None**",
                     voiceRoleMessage: "**None**",
                     verifiedRolesMessage: "**@everyone** *(default)*",
-                    staffRolesMessage: "**None**"
+                    staffRolesMessage: "**None**",
+                    tipMessage: ""
                 }
             } )
             .addState( "MasterCreate", {
@@ -1022,7 +1100,8 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                     badwordsMessage: "**None**",
                     voiceRoleMessage: "**None**",
                     verifiedRolesMessage: "**@everyone** *(default)*",
-                    staffRolesMessage: "**None**"
+                    staffRolesMessage: "**None**",
+                    tipMessage: ""
                 }
             } )
             .addState( "ServerOptionsVoiceRole", {
@@ -1034,7 +1113,8 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                     badwordsMessage: "**None**",
                     voiceRoleMessage: "**None**",
                     verifiedRolesMessage: "**@everyone** *(default)*",
-                    staffRolesMessage: "**None**"
+                    staffRolesMessage: "**None**",
+                    tipMessage: ""
                 }
             } )
             .addState( "ServerOptionsVerifiedRoles", {
@@ -1046,7 +1126,8 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                     badwordsMessage: "**None**",
                     voiceRoleMessage: "**None**",
                     verifiedRolesMessage: "**@everyone** *(default)*",
-                    staffRolesMessage: "**None**"
+                    staffRolesMessage: "**None**",
+                    tipMessage: ""
                 }
             } )
             .addState( "ServerOptionsStaffRoles", {
@@ -1058,7 +1139,8 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                     badwordsMessage: "**None**",
                     voiceRoleMessage: "**None**",
                     verifiedRolesMessage: "**@everyone** *(default)*",
-                    staffRolesMessage: "**None**"
+                    staffRolesMessage: "**None**",
+                    tipMessage: ""
                 }
             } )
             .addState( "ServerOptionsBadwords", {

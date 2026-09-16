@@ -13,7 +13,6 @@ import type {
     ButtonInteraction,
     MessageComponentInteraction,
     ModalSubmitInteraction,
-    BaseMessageOptions,
     Message,
     StringSelectMenuInteraction,
     UserSelectMenuInteraction
@@ -38,6 +37,7 @@ import type {
     UIEntitySchemaBase,
     UIAdapterBuildSource,
     UIComponentTypeConstructor,
+    UIMessageOptions,
 } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type {
@@ -376,10 +376,11 @@ export class AdapterBuilderBase<
                     from?: UIAdapterBuildSource,
                     context?: TChannel | TInteraction,
                     argsFromManager?: UIArgs
-                ): BaseMessageOptions {
+                ): UIMessageOptions {
                     const message = super.getMessage( from, context, argsFromManager );
 
-                    if ( builder.messageContentHandler ) {
+                    // A container carries no `content` - discord refuses the whole message over one.
+                    if ( builder.messageContentHandler && ! this.shouldRenderAsContainer() ) {
                         message.content = builder.messageContentHandler(
                             this.getContext(),
                             argsFromManager as TArgs

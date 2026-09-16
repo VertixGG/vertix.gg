@@ -119,7 +119,10 @@ export class ChannelTemplateModel extends ModelDataOwnerBase<
             { templates: normalizedTemplates }
         );
 
-        await this.dataDelete( { ownerId: user.id, key: legacyGlobalKey } ).catch( () => {} );
+        // Was wrapped in a bare `.catch( () => {} )` to survive deleting a legacy row that is not
+        // there, which swallowed every other failure with it. `dataDelete()` now answers `null` for
+        // an absent row on its own.
+        await this.dataDelete( { ownerId: user.id, key: legacyGlobalKey } );
 
         return normalizedTemplates;
     }

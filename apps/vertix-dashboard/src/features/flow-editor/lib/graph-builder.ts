@@ -7,6 +7,7 @@ import {
     createFlowToComponentEdge,
     createComponentToModalEdge,
     createComponentToFlowEdge,
+    createHubToFlowEdge,
     createComponentToFlowExitEdge,
     createComponentToComponentEdge,
     createComponentToStateFallbackEdge,
@@ -17,6 +18,7 @@ import {
 import {
     findButtonFlowConnections,
     findButtonModalConnections,
+    findHubComponents,
     getFlowStateComponents,
     getInitialComponent
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
@@ -1530,6 +1532,7 @@ class FlowGraphBuilder {
         this.buildFlowNodes();
         this.buildSystemFlowComponents();
         this.buildFlowComponents();
+        this.buildOrphanComponents();
         this.buildSystemFlowTransitions();
         this.markModuleEdgesRoutedElsewhere();
 
@@ -1676,6 +1679,13 @@ class FlowGraphBuilder {
     private buildSystemFlowComponents(): void {
         this.data.systemFlows.filter( ( flow ) => this.isSystemFlowDrawn( flow.name ) ).forEach( flow => {
             const flowId = this.flowIdMap.get( flow.name )!;
+            const hubComponents = findHubComponents( flow, this.data.components );
+
+            if ( hubComponents.length ) {
+                this.buildHubComponents( flow, flowId, hubComponents );
+                return;
+            }
+
             const initialComp = getInitialComponent( flow, this.data.components );
 
             if ( !initialComp ) {
@@ -1715,6 +1725,141 @@ class FlowGraphBuilder {
 
                 this.addEdge( createComponentToModalEdge( compId, modalId, sourceHandle ) );
             } );
+        } );
+    }
+
+    /**
+     * A router drawn with the screens it is pressed from, and the lines those presses make.
+     *
+     * The mappings say which control opens which flow; the screen carrying those controls is found
+     * by the control ids themselves. Both halves were exported all along and nothing joined them,
+     * so the router drew a screen picked for having "DynamicChannel" somewhere in its name - which
+     * landed on the notice telling a member they have no channel - while the fifteen-button message
+     * the buttons are actually on sat apart from the canvas with nothing attached to it.
+     *
+     * Each mapping is drawn from the screen that carries its control rather than from the router,
+     * so what the canvas shows is the press: this button, on this screen, opens that flow.
+     */
+    private buildHubComponents( flow: UIExportedFlow, flowId: string, hubComponents: UIExportedComponent[] ): void {
+        hubComponents.forEach( ( hubComponent, index ) => {
+            const compPreview = extractComponentPreview( hubComponent );
+            const compId = `comp-sys-${ flow.name }-${ hubComponent.name }`;
+
+            if ( 0 === index ) {
+                this.systemFlowCompIds.set( flow.name, compId );
+            }
+
+            const buttonModalConnections = findButtonModalConnections( flow, compPreview.modals );
+            const buttonFlowConnections = findButtonFlowConnections( flow );
+            const { buttonModalTriggers, buttonFlowTriggers } = TriggerBuilder.build( buttonModalConnections, buttonFlowConnections, compPreview.elementRows );
+
+            this.allNodes.push( createComponentNode(
+                compId,
+                compPreview,
+                buttonModalTriggers,
+                buttonFlowTriggers,
+                [],
+                undefined,
+                undefined,
+                flow.name
+            ) );
+            this.addEdge( createFlowToComponentEdge( flowId, compId, flow.name ) );
+
+            /*
+             * A variant's own lines left out, the variant itself kept.
+             *
+             * The panel shown in the master channel carries the same grid as the channel's own
+             * message and its adapter says so, which is why the bot generates no second flow for
+             * it. Drawing its fifteen as well would put back exactly the duplicate that
+             * declaration exists to prevent - so it keeps the one line saying the router opens it,
+             * and the moves are read off the screen that owns them.
+             */
+            if ( true === hubComponent.routesDrawnElsewhere ) {
+                return;
+            }
+
+            const elementNames = new Set( compPreview.elementRows.flat().map( element => element.name ) );
+
+            flow.edgeSourceMappings?.forEach( mapping => {
+                if ( mapping.targetFlowName === flow.name || ! elementNames.has( mapping.triggeringElementId ) ) {
+                    return;
+                }
+
+                const targetFlowId = this.flowIdMap.get( mapping.targetFlowName );
+
+                if ( targetFlowId ) {
+                    this.addEdge( createHubToFlowEdge( compId, targetFlowId, mapping.triggeringElementId, mapping.targetFlowName ) );
+                }
+            } );
+        } );
+    }
+
+    /**
+     * The screens no flow names, drawn anyway.
+     *
+     * A third of the components are in this state. Twelve are the product's refusals - the screen a
+     * member gets for acting on a channel that is not theirs, or for a command in the wrong place,
+     * or the one that names the three permissions the bot is missing. They ship, they have real
+     * embeds, and no flow declares which failed check leads to them, so nothing put them on the
+     * canvas. The rest are screens the bot draws constantly - the channel control panel among them -
+     * which say more about the export than about the screens.
+     *
+     * Either way the sidebar lists them, and clicking one found no node and did nothing at all. A
+     * dead click reads as a broken editor, and a screen nobody can reach is exactly the sort of
+     * thing a person opens this editor to find.
+     *
+     * Drawn from the component's own defaults, because an orphan has no state to say otherwise -
+     * which is the one case where the component's usual controls genuinely are what it puts up.
+     */
+    private buildOrphanComponents(): void {
+        const drawn = new Set<string>();
+
+        this.data.flows.forEach( ( flow ) => {
+            flow.states?.forEach( ( state ) => {
+                const component = state.options?.[ "component" ];
+
+                if ( "string" === typeof component ) {
+                    drawn.add( component );
+                }
+
+                /*
+                 * A wizard step is its step component, whatever the state calls its host.
+                 *
+                 * Each of the six setup steps is one state of the wizard, and the state names the
+                 * wizard as its component and the step as its execution step - the step is where
+                 * its buttons and its wording come from. Read for the component alone, all six
+                 * looked like screens no flow draws, and each was given a second node beside the
+                 * step it already is.
+                 */
+                const executionStep = state.options?.[ "executionStep" ];
+
+                if ( "string" === typeof executionStep ) {
+                    drawn.add( executionStep );
+                }
+            } );
+        } );
+
+        this.data.systemFlows.forEach( ( flow ) => {
+            findHubComponents( flow, this.data.components ).forEach( ( component ) => {
+                drawn.add( component.name );
+            } );
+        } );
+
+        this.data.components.forEach( ( component ) => {
+            if ( drawn.has( component.name ) || this.isHiddenExtraModule( component.name ) ) {
+                return;
+            }
+
+            const compPreview = PreviewResolver.resolve( component, undefined, undefined, true );
+
+            this.allNodes.push( createComponentNode(
+                `comp-orphan-${ component.name }`,
+                compPreview,
+                [],
+                [],
+                [],
+                component.name.split( "/" ).pop() ?? component.name
+            ) );
         } );
     }
 

@@ -55,7 +55,9 @@ async function buildAdapter( options: {
         builder.setInteractionRequirements( options.handler as never );
     }
 
-    const Generated = builder.build() as unknown as typeof UIAdapterBase<never, never>;
+    // As a constructor rather than as `typeof UIAdapterBase`, which is abstract and so cannot be
+    // newed - what the builder hands back is a concrete subclass of it.
+    const Generated = builder.build() as unknown as new( options: never ) => UIAdapterBase<never, never>;
 
     return new Generated( { instanceType: UIInstancesTypes.Dynamic } as never );
 }

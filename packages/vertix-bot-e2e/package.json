@@ -1,0 +1,25 @@
+{
+    "name": "@vertix.gg/bot-e2e",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "type": "module",
+    "private": true,
+    "exports": {
+        "./package.json": "./package.json",
+        "./src/*": "./src/*.ts"
+    },
+    "scripts": {
+        "vertix-bot-e2e:catalog": "bun run scripts/dump-bot-catalog.ts",
+        "vertix-bot-e2e:install": "bunx --bun playwright install chromium",
+        "vertix-bot-e2e:login": "bun run vertix-bot-e2e:install && bunx --bun playwright test --project=discord-session --headed",
+        "vertix-bot-e2e:login:second": "bun run vertix-bot-e2e:install && bunx --bun playwright test --project=discord-session-second --headed",
+        "vertix-bot-e2e:report": "bunx --bun playwright show-report .e2e/report",
+        "vertix-bot-e2e:test": "bun run vertix-bot-e2e:install && bunx --bun playwright test",
+        "vertix-bot-e2e:typecheck": "bunx --bun tsc --noEmit"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.62.1",
+        "@vertix.gg/bot": "workspace:*",
+        "@vertix.gg/prisma": "workspace:*",
+        "bun-types": "latest"
+    }
+}

@@ -7,6 +7,9 @@ export const tests = [
         ignores: [
             "**/eslint.config.*",
             "**/*jest.config.ts",
+            // The e2e suite's working directory - saved sessions, the generated catalog, reports and
+            // throwaway probes. Gitignored, outside the package's tsconfig, and not source.
+            "packages/vertix-bot-e2e/.e2e/**",
         ],
     },
     {

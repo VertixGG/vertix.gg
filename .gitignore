@@ -42,6 +42,9 @@ packages/**/dist/**/*.js.map
 
 .tmp/
 
+# e2e run artefacts: discord session, generated catalog, reports
+packages/vertix-bot-e2e/.e2e/
+
 temp/
 
 apps/vertix-api/ui-hash-tables.json

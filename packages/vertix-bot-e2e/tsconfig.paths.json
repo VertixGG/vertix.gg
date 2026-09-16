@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "outDir": "dist",
+        "baseUrl": "./"
+    },
+    "include": [
+        "src/**/*.ts",
+        "tests/**/*.ts",
+        "scripts/**/*.ts",
+        "playwright.config.ts"
+    ],
+    "exclude": [
+        "dist",
+        ".e2e"
+    ]
+}

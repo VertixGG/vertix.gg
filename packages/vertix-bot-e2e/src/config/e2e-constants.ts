@@ -1,0 +1,76 @@
+export const E2E_PATHS = {
+    WORK_DIR: ".e2e",
+    BROWSER_CACHE: ".e2e/cache",
+    AUTH_STATE: ".e2e/auth/discord-state.json",
+    AUTH_STATE_SECOND: ".e2e/auth/discord-state-second.json",
+    CATALOG: ".e2e/catalog/bot-catalog.json",
+    REPORT: ".e2e/report",
+    RESULTS: ".e2e/results",
+    LANGUAGE_SOURCE: "apps/vertix-bot/assets/languages/en.json"
+} as const;
+
+export const E2E_TIMEOUTS = {
+    APP_READY_MS: 90_000,
+    COMMAND_SEARCH_MS: 10_000,
+    CHAT_VISIBLE_MS: 15_000,
+    ACTION_MS: 15_000,
+    BOT_REPLY_MS: 20_000,
+    MODAL_OPEN_MS: 15_000,
+    VOICE_CONNECT_MS: 30_000,
+    DYNAMIC_CHANNEL_CREATE_MS: 30_000,
+    // What was measured, rather than what it was assumed to be. A channel left alone is gone the
+    // moment its last member leaves: the bot deletes on `members.size === 0` with nothing in
+    // between, and a probe watching one read 404 on its first poll. The same deletion inside a full
+    // run has outlasted both thirty seconds and ninety, and the channel is always gone afterwards.
+    //
+    // Why it slows is not established. The bot itself does not queue - `ChannelService.delete()`
+    // drops the row and calls discord straight after - so the wait is somewhere past that, and
+    // discord's limits on channel operations are the obvious suspect rather than a finding. Three
+    // minutes covers what has been seen without pretending to know the cause; a bot that has really
+    // stopped deleting still fails here.
+    CHANNEL_REMOVED_MS: 180_000,
+    GUILD_RESET_MS: 120_000,
+    INTERACTIVE_LOGIN_MS: 300_000,
+    TEST_MS: 180_000,
+    EXPECT_MS: 20_000
+} as const;
+
+export const E2E_RETRIES = {
+    COMMAND_SEARCH: 3,
+    CHANNEL_OPEN: 2
+} as const;
+
+/**
+ * The bot's own limits, mirrored because they are not exported.
+ *
+ * `MAX_TIMEOUT_PER_CREATE` in `master-channel-service.ts` refuses a member a second dynamic channel
+ * within ten seconds of their last one, answering "you are requesting channel too fast" instead of
+ * creating one - which a test reads as a channel that never appeared. Tests join generators far
+ * faster than a person would, so the suite waits the bot out rather than arguing with it.
+ *
+ * If that constant moves, this is the place that has to move with it.
+ */
+export const BOT_LIMITS = {
+    DYNAMIC_CHANNEL_CREATE_THROTTLE_MS: 10_000,
+    CREATE_THROTTLE_MARGIN_MS: 2_000
+} as const;
+
+export const E2E_INTERVALS = {
+    POLL_MS: 500,
+
+    // Listing every channel in the guild is a far heavier question than asking after one, and asking
+    // it twice a second earns a rate limit whose back-off looks exactly like the suite hanging.
+    LIST_POLL_MS: 1_500,
+    SETTLE_MS: 1_500
+} as const;
+
+export const DISCORD_URLS = {
+    BASE: "https://discord.com",
+    LOGIN: "https://discord.com/login",
+    API: "https://discord.com/api/v10"
+} as const;
+
+export const DISCORD_LIMITS = {
+    CHANNEL_NAME_MAX: 100,
+    REST_RETRY_LIMIT: 3
+} as const;

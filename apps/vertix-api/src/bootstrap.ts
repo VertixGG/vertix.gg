@@ -155,7 +155,17 @@ export class UIRuntimeLoader extends InitializeBase {
         }
 
         const rootPath = path.resolve( zFindRootPackageJsonPath(), ".." );
-        const uiSourcePath = path.join( rootPath, "packages", "vertix-bot", "src", "ui" );
+
+        /*
+         * The bot is an app, not a package.
+         *
+         * Pointed at `packages/vertix-bot` this names a directory that has never existed, so
+         * `watch()` threw ENOENT straight into the catch below and became a warning - and the
+         * definitions this process serves have therefore never once reloaded on a source change.
+         * Nothing said so, because a watcher that is not watching looks exactly like a tree that is
+         * not changing.
+         */
+        const uiSourcePath = path.join( rootPath, "apps", "vertix-bot", "src", "ui" );
 
         this.logger.info( this.startWatching, `Watching for UI source changes in: ${ uiSourcePath }` );
 

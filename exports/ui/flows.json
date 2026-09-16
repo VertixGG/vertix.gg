@@ -598,7 +598,7 @@
                     {
                         "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/VoiceRoleMenu",
                         "sourceEntity": "VertixBot/UI-General/VoiceRoleMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptionsVoiceRole",
                             "executionStep": "VertixBot/UI-General/SetupVoiceRole"
@@ -614,7 +614,7 @@
                     {
                         "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/VerifiedRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/VerifiedRolesMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptionsVerifiedRoles",
                             "executionStep": "VertixBot/UI-General/SetupVerifiedRoles"
@@ -630,7 +630,7 @@
                     {
                         "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/StaffRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/StaffRolesMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-General/SetupFlow/States/ServerOptionsStaffRoles",
                             "executionStep": "VertixBot/UI-General/SetupStaffRoles"
@@ -2931,7 +2931,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/States/Granted",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsGranted"
@@ -2963,7 +2963,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/States/Denied",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsDenied"
@@ -2995,7 +2995,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/States/Blocked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsBlocked"
@@ -3027,7 +3027,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/States/Unblocked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsUnBlocked"
@@ -3059,7 +3059,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsAccessCommandFlow/States/Kicked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsKick"
@@ -3336,7 +3336,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Granted",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsGranted"
@@ -3368,7 +3368,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsGrantMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Granted",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsGranted"
@@ -3400,7 +3400,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Denied",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsDenied"
@@ -3432,7 +3432,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsDenyMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Denied",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsDenied"
@@ -3464,7 +3464,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Blocked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsBlocked"
@@ -3496,7 +3496,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsBlockMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Blocked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsBlocked"
@@ -3528,7 +3528,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Unblocked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsUnBlocked"
@@ -3560,7 +3560,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsUnblockMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Unblocked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsUnBlocked"
@@ -3592,7 +3592,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Kicked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsKick"
@@ -3624,7 +3624,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
                         "sourceEntity": "VertixBot/UI-V2/DynamicChannelPermissionsKickMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelPermissionsFlow/States/Kicked",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelPermissionsKick"
@@ -4622,7 +4622,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/LogChannelSelectMenu",
                         "sourceEntity": "VertixBot/UI-V2/LogChannelSelectMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "channel-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/MasterOverview",
                             "executionStep": "VertixBot/UI-V2/SetupEditMaster"
@@ -4707,7 +4707,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
                         "sourceEntity": "VertixBot/UI-V2/SetupEditButtonsRoleSelectMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/Buttons",
                             "executionStep": "VertixBot/UI-V2/SetupEditButtons"
@@ -4771,7 +4771,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/VerifiedRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/VerifiedRolesMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/VerifiedRoles",
                             "executionStep": "VertixBot/UI-V2/SetupEditVerifiedRoles"
@@ -4835,7 +4835,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/StaffRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/StaffRolesMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/StaffRoles",
                             "executionStep": "VertixBot/UI-V2/SetupEditStaffRoles"
@@ -4867,7 +4867,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-General/VoiceRoleMenu",
                         "sourceEntity": "VertixBot/UI-General/VoiceRoleMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/VoiceRole",
                             "executionStep": "VertixBot/UI-V2/SetupEditVoiceRole"
@@ -4899,7 +4899,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/LfmChannelsSelectMenu",
                         "sourceEntity": "VertixBot/UI-V2/LfmChannelsSelectMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "channel-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
                             "executionStep": "VertixBot/UI-V2/SetupEditLfmChannels"
@@ -4915,7 +4915,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/SetupEditFlow/Handlers/VertixBot/UI-V2/LfmPingRolesSelectMenu",
                         "sourceEntity": "VertixBot/UI-V2/LfmPingRolesSelectMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupEditFlow/States/LfmChannels",
                             "executionStep": "VertixBot/UI-V2/SetupEditLfmChannels"
@@ -5296,7 +5296,7 @@
                     {
                         "handlerId": "VertixBot/UI-V2/SetupNewWizardFlow/Handlers/VertixBot/UI-General/VerifiedRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/VerifiedRolesMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/SetupNewWizardFlow/States/Step3",
                             "executionStep": "VertixBot/UI-V2/SetupStep3Component"
@@ -8077,7 +8077,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Granted",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsGranted"
@@ -8109,7 +8109,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsDenyMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Denied",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsDenied"
@@ -8141,7 +8141,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsBlockMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Blocked",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsBlocked"
@@ -8173,7 +8173,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsUnblockMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Unblocked",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked"
@@ -8205,7 +8205,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/Handlers/VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
                         "sourceEntity": "VertixBot/UI-V3/DynamicChannelPermissionsKickMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "user-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/DynamicChannelPermissionsFlow/States/Kicked",
                             "executionStep": "VertixBot/UI-V3/DynamicChannelPermissionsKick"
@@ -11553,7 +11553,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/LogChannelSelectMenu",
                         "sourceEntity": "VertixBot/UI-V3/LogChannelSelectMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "channel-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditMaster",
                             "executionStep": "VertixBot/UI-V3/SetupEditMaster"
@@ -11642,7 +11642,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
                         "sourceEntity": "VertixBot/UI-V3/SetupEditButtonsRoleSelectMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditButtons",
                             "executionStep": "VertixBot/UI-V3/SetupEditButtons"
@@ -11706,7 +11706,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/VerifiedRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/VerifiedRolesMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditVerifiedRoles",
                             "executionStep": "VertixBot/UI-V3/SetupEditVerifiedRoles"
@@ -11763,7 +11763,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/StaffRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/StaffRolesMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditStaffRoles",
                             "executionStep": "VertixBot/UI-V3/SetupEditStaffRoles"
@@ -11795,7 +11795,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/SetupEditFlow/Handlers/VertixBot/UI-General/VoiceRoleMenu",
                         "sourceEntity": "VertixBot/UI-General/VoiceRoleMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupEditFlow/States/EditVoiceRole",
                             "executionStep": "VertixBot/UI-V3/SetupEditVoiceRole"
@@ -12181,7 +12181,7 @@
                     {
                         "handlerId": "VertixBot/UI-V3/SetupNewWizardFlow/Handlers/VertixBot/UI-General/VerifiedRolesMenu",
                         "sourceEntity": "VertixBot/UI-General/VerifiedRolesMenu",
-                        "handlerKind": "string-select",
+                        "handlerKind": "role-select",
                         "navigation": {
                             "targetState": "VertixBot/UI-V3/SetupNewWizardFlow/States/Step3",
                             "executionStep": "VertixBot/UI-V3/SetupStep3Component"

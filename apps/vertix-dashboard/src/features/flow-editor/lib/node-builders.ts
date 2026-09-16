@@ -89,6 +89,7 @@ export function createComponentNode(
             allEmbedDefinitions: compPreview.allEmbedDefinitions,
             previewVars: compPreview.previewVars,
             elementRows: compPreview.elementRows,
+            ephemeral: compPreview.ephemeral,
             renderAsContainer: compPreview.renderAsContainer,
             buttonModalTriggers,
             buttonFlowTriggers,

@@ -74,6 +74,8 @@ type ComponentNodeData = Record<
     previewElementRows?: ElementData[][];
     /** Drawn as one container, the way the bot draws this component. */
     renderAsContainer?: boolean;
+    /** Whether only the member who acted sees this screen. */
+    ephemeral?: boolean;
     buttonModalTriggers?: ButtonModalTrigger[];
     buttonFlowTriggers?: ButtonFlowTrigger[];
     stateTransitionTriggers?: StateTransitionTrigger[];
@@ -402,7 +404,13 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                      paints itself with - written out because that variable is scoped to discord-ui's
                      own components and this wrapper is not one of them. */ }
                 <div className="bg-[#1a1a1e] p-4">
-                    <DiscordMessage author="VoiceChannels" app timestamp="" avatar="/vc.png">
+                    <DiscordMessage
+                        author="VoiceChannels"
+                        app
+                        timestamp=""
+                        avatar="/vc.png"
+                        ephemeral={ true === data.ephemeral }
+                    >
                         <PreviewShell asContainer={ renderAsContainer } accentColor={ embed?.color }>
                         <DiscordEmbed
                             title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, mergedDefaultVars ), "title" ) }

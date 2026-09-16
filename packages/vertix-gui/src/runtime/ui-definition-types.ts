@@ -73,12 +73,26 @@ export interface EmbedContentDefinition {
     defaultVars?: JsonObject;
 }
 
+/**
+ * What a member does to cause a move.
+ *
+ * The select kinds are not decoration: a string select offers the options the bot declared, while
+ * the other four open discord's own picker over the whole guild. Collapsed into one kind, a screen
+ * that says "choose any member" reads as "choose from this list", which is a different product.
+ *
+ * `modal` and `modal-button` describe the interaction rather than the control - a form submitted on
+ * its own, and the pairing where one declaration names both the button and the form it opens - so
+ * neither is derivable from an element's type and neither is overwritten by it.
+ */
 export type FlowTriggerHandlerKind =
     | "button"
     | "modal"
     | "modal-button"
     | "string-select"
     | "user-select"
+    | "role-select"
+    | "channel-select"
+    | "mentionable-select"
     | "command"
     | "unknown";
 

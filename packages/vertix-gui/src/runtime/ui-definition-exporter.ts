@@ -224,6 +224,21 @@ type FlowTriggerRegistrar = (
 /** How many times a body is allowed to name something it wanted before it is given up on. */
 const MAX_LOGIC_BINDS = 4;
 
+/**
+ * What kind of trigger a control of each type makes.
+ *
+ * A text input is absent on purpose: it lives inside a modal and never causes a move of its own.
+ */
+const HANDLER_KIND_BY_ELEMENT_TYPE: Partial<Record<ElementDefinition[ "elementType" ], FlowTriggerHandlerKind>> = {
+    "button": "button",
+    "button-url": "button",
+    "select-menu": "string-select",
+    "user-select": "user-select",
+    "role-select": "role-select",
+    "channel-select": "channel-select",
+    "mentionable-select": "mentionable-select"
+};
+
 /** An ISO-8601 moment, as `JSON.stringify` writes a `Date`. */
 const ISO_MOMENT = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g;
 
@@ -577,6 +592,55 @@ export class UIDefinitionExporter extends UIBase {
                 missingDefinition: globalEmbedStats.missingDefinition
             }
         };
+
+        /*
+         * The kind of each trigger, taken from the control rather than from the control's name.
+         *
+         * `inferHandlerKind()` pattern-matches the name, and a name is not the fact: a role, user
+         * and channel picker all end in "Menu", so all three came out "string-select" - and a screen
+         * that opens discord's own picker over the whole guild read as one offering a list the bot
+         * wrote. The element already says what it is, off discord's own component type, so that
+         * answer is used instead. Done here because it is the one place where every component has
+         * been collected and every flow generated.
+         *
+         * `modal`, `modal-button` and `command` say what the interaction is rather than what the
+         * control is, so no element type can answer for them and none is applied.
+         */
+        const handlerKindByElement = new Map<string, FlowTriggerHandlerKind>();
+
+        for ( const component of components.values() ) {
+            for ( const group of component.elementsGroups ) {
+                for ( const row of group.items ) {
+                    for ( const item of row ) {
+                        const kind = item.definition
+                            ? HANDLER_KIND_BY_ELEMENT_TYPE[ item.definition.elementType ]
+                            : undefined;
+
+                        if ( kind ) {
+                            handlerKindByElement.set( item.element, kind );
+                        }
+                    }
+                }
+            }
+        }
+
+        for ( const flow of flows ) {
+            for ( const transition of flow.transitions ) {
+                for ( const trigger of transition.triggeredBy ?? [] ) {
+                    if ( "modal" === trigger.handlerKind
+                        || "modal-button" === trigger.handlerKind
+                        || "command" === trigger.handlerKind ) {
+                        continue;
+                    }
+
+                    const declared = handlerKindByElement.get( trigger.sourceEntity );
+
+                    if ( declared ) {
+                        trigger.handlerKind = declared;
+                    }
+                }
+            }
+        }
 
         const collections: UIDefinitionCollections = {
             components: Array.from( components.values() ),

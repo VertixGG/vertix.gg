@@ -21,6 +21,7 @@ import {
     getInitialComponent
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/flow-helpers";
 import {
+    buildElementLabelIndex,
     extractComponentPreview,
     getButtonHandlePosition,
     sortModalsByButtonOrder
@@ -127,22 +128,36 @@ class WizardAnalyzer {
 }
 
 class PreviewResolver {
-    public static resolve( component: UIExportedComponent, options?: FlowStateComponent[ "options" ], previewEmbedsGroup?: string ): ComponentPreview {
+    public static resolve(
+        component: UIExportedComponent,
+        options?: FlowStateComponent[ "options" ],
+        previewEmbedsGroup?: string,
+        /** True only for the screen the flow opens on; see `extractComponentPreview`. */
+        drawsComponentDefaults = true
+    ): ComponentPreview {
         const executionStep = typeof options?.[ "executionStep" ] === "string" ? options[ "executionStep" ] : undefined;
         const compPreview = extractComponentPreview(
             component,
             executionStep,
             previewEmbedsGroup,
-            this.getPreviewElementsGroup( options )
+            this.getPreviewElementsGroup( options ),
+            drawsComponentDefaults
         );
         const defaultVars = this.getDefaultVars( options, compPreview.embedDefinition );
 
+        const ephemeral = "ephemeral" === options?.[ "navigationType" ];
+
         if ( !compPreview.embed ) {
-            return { ...compPreview, previewVars: Object.keys( defaultVars ).length > 0 ? defaultVars : undefined };
+            return {
+                ...compPreview,
+                ephemeral,
+                previewVars: Object.keys( defaultVars ).length > 0 ? defaultVars : undefined
+            };
         }
 
         return {
             ...compPreview,
+            ephemeral,
             previewVars: Object.keys( defaultVars ).length > 0 ? defaultVars : undefined,
             embed: {
                 ...compPreview.embed,
@@ -270,6 +285,55 @@ class TriggerBuilder {
 
 const logger = zCore.modules.createLogger( "graph-builder" );
 
+/**
+ * Whether a trigger puts a modal up.
+ *
+ * Two kinds do. A plain `modal` is the form submitted on its own; a `modal-button` is the pairing
+ * `bindModalWithButton()` records, where one declaration says both which button opens the form and
+ * which form it opens. Nineteen of the bot's pairings are the second kind, and testing only for the
+ * first drew every one of them as nothing at all.
+ */
+function isModalTrigger( trigger: { handlerKind?: string; sourceEntity?: string } ): boolean {
+    return ( "modal" === trigger.handlerKind || "modal-button" === trigger.handlerKind )
+        && Boolean( trigger.sourceEntity );
+}
+
+/**
+ * The modal a trigger puts up.
+ *
+ * A pairing names the control first and the form second, `Button::Modal`, so the whole string names
+ * neither - matched against a component's modals it finds none.
+ */
+function modalNameOf( trigger: { handlerKind?: string; sourceEntity?: string } ): string {
+    const entity = trigger.sourceEntity ?? "";
+
+    if ( "modal-button" !== trigger.handlerKind ) {
+        return entity;
+    }
+
+    return entity.split( "::" )[ 1 ] ?? entity;
+}
+
+/**
+ * The kinds that are a control on a screen - something a member presses or picks.
+ *
+ * Listed once. Written out at each use the list was three kinds long, and a picker over the guild's
+ * own roles or channels was not among them - so teaching the export to say which picker it is would
+ * have dropped those moves off the canvas rather than drawing them correctly.
+ */
+const CONTROL_HANDLER_KINDS: ReadonlyArray<string> = [
+    "button",
+    "string-select",
+    "user-select",
+    "role-select",
+    "channel-select",
+    "mentionable-select"
+];
+
+function isControlKind( handlerKind: string | undefined ): boolean {
+    return CONTROL_HANDLER_KINDS.includes( handlerKind ?? "" );
+}
+
 class EdgeBuilder {
     private readonly addEdge: ( edge: Edge ) => void;
     private readonly context: FlowContext;
@@ -346,11 +410,11 @@ class EdgeBuilder {
                 return;
             }
 
-            const modalTriggers = t.triggeredBy.filter( tr => tr.handlerKind === "modal" && tr.sourceEntity );
+            const modalTriggers = t.triggeredBy.filter( isModalTrigger );
             const buttonTrigger = t.triggeredBy.find( tr => tr.handlerKind === "button" && tr.sourceEntity );
 
             modalTriggers.forEach( modalTrigger => {
-                const modalName = modalTrigger.sourceEntity!;
+                const modalName = modalNameOf( modalTrigger );
 
                 if ( !componentModals.includes( modalName ) ) {
                     return;
@@ -405,8 +469,8 @@ class EdgeBuilder {
             }
 
             ( transition.triggeredBy ?? [] ).forEach( tr => {
-                if ( tr.handlerKind === "modal" && tr.sourceEntity ) {
-                    modalNames.add( tr.sourceEntity );
+                if ( isModalTrigger( tr ) ) {
+                    modalNames.add( modalNameOf( tr ) );
                 }
             } );
         } );
@@ -471,7 +535,7 @@ class EdgeBuilder {
 
         transitions.forEach( transition => {
             const trigger = ( transition.triggeredBy ?? [] ).find( t =>
-                [ "string-select", "button", "user-select" ].includes( t.handlerKind )
+                isControlKind( t.handlerKind )
             );
 
             if ( !trigger ) {
@@ -491,7 +555,7 @@ class EdgeBuilder {
 
         transitions.forEach( transition => {
             const trigger = ( transition.triggeredBy ?? [] ).find( t =>
-                [ "string-select", "button", "user-select" ].includes( t.handlerKind )
+                isControlKind( t.handlerKind )
             );
 
             if ( !trigger ) {
@@ -554,7 +618,7 @@ class EdgeBuilder {
             t.from === initialStateKey &&
             t.to !== initialStateKey && // Skip self-transitions
             stateKeys.has( t.to ) &&
-            t.triggeredBy?.some( tr => [ "string-select", "button", "user-select" ].includes( tr.handlerKind ) )
+            t.triggeredBy?.some( tr => isControlKind( tr.handlerKind ) )
         );
 
         const edgeSourceTransitions = this.getEdgeSourceMappingTransitions( elementRows );
@@ -569,7 +633,7 @@ class EdgeBuilder {
 
         combined.forEach( transition => {
             const trigger = ( transition.triggeredBy ?? [] ).find( tr =>
-                [ "string-select", "button", "user-select" ].includes( tr.handlerKind )
+                isControlKind( tr.handlerKind )
             );
             const key = `${ transition.to }::${ trigger?.handlerKind ?? "none" }::${ trigger?.sourceEntity ?? "" }`;
             if ( seen.has( key ) ) {
@@ -621,7 +685,7 @@ class EdgeBuilder {
             }
 
             const element = elementByName.get( mapping.triggeringElementId );
-            const handlerKind = this.inferHandlerKind( element, mapping.triggeringElementId );
+            const handlerKind = this.controlKindOf( element, mapping.triggeringElementId );
 
             return [ {
                 to: transition.to,
@@ -674,10 +738,10 @@ class EdgeBuilder {
             }
 
             // Find modal triggers on this self-transition
-            const modalTriggers = ( transition.triggeredBy ?? [] ).filter( tr => tr.handlerKind === "modal" && tr.sourceEntity );
+            const modalTriggers = ( transition.triggeredBy ?? [] ).filter( isModalTrigger );
 
             modalTriggers.forEach( ( modalTrigger, idx ) => {
-                const modalName = modalTrigger.sourceEntity!;
+                const modalName = modalNameOf( modalTrigger );
 
                 // Check if this modal is in the component's modals
                 if ( !compPreview.modals.includes( modalName ) ) {
@@ -702,19 +766,23 @@ class EdgeBuilder {
         } );
     }
 
-    private inferHandlerKind( element: ElementData | undefined, elementName: string ): "button" | "string-select" | "user-select" {
+    /**
+     * What kind of control this is, as the control itself declares it.
+     *
+     * The name is not the fact. Read off the name, a picker over the guild's roles came out as a
+     * list the bot wrote, because both end in "Menu" - and the element had said which it was all
+     * along. The name answers only where no element is to hand.
+     */
+    private controlKindOf( element: ElementData | undefined, elementName: string ): string {
         const elementType = element?.definition?.elementType;
 
-        if ( elementType === "user-select" ) {
-            return "user-select";
+        if ( elementType && "unknown" !== elementType ) {
+            return "select-menu" === elementType
+                ? "string-select"
+                : elementType.startsWith( "button" ) ? "button" : elementType;
         }
-        if ( elementType?.includes( "select" ) ) {
-            return "string-select";
-        }
-        if ( elementName.toLowerCase().includes( "select" ) ) {
-            return "string-select";
-        }
-        return "button";
+
+        return elementName.toLowerCase().includes( "select" ) ? "string-select" : "button";
     }
 
 }
@@ -792,7 +860,7 @@ class FlowPatternDetector {
 
     public static hasSelectMenuEdges( flow: UIExportedFlow, stateKeys: Set<string> ): boolean {
         const hasSelectMenuTransitions = flow.transitions.some( t =>
-            stateKeys.has( t.to ) && t.triggeredBy?.some( tr => [ "string-select", "button", "user-select" ].includes( tr.handlerKind ) )
+            stateKeys.has( t.to ) && t.triggeredBy?.some( tr => isControlKind( tr.handlerKind ) )
         );
 
         if ( hasSelectMenuTransitions ) {
@@ -1048,6 +1116,32 @@ class MultiStateFlowBuilder {
         return [ ...new Set( names ) ];
     }
 
+    private elementLabels: Map<string, string> | undefined;
+
+    /**
+     * What the control says on it, for an arrow that control causes.
+     *
+     * Falls back to the control's own name where it says nothing a member reads - a menu with
+     * neither a label nor a placeholder, or an element this flow's components do not draw.
+     */
+    private controlLabelFor( sourceEntity: string | undefined ): string | undefined {
+        if ( ! sourceEntity ) {
+            return undefined;
+        }
+
+        if ( ! this.elementLabels ) {
+            this.elementLabels = buildElementLabelIndex(
+                this.context.stateComponents.map( ( stateComp ) => stateComp.component )
+            );
+        }
+
+        // `Button::Modal`, as a modal opened by a button is recorded. The control is the button;
+        // the modal is what it puts up.
+        const element = sourceEntity.split( "::" )[ 0 ] ?? sourceEntity;
+
+        return this.elementLabels.get( element ) ?? element.split( "/" ).pop();
+    }
+
     private addDeclaredTransitionEdges( modalFirstNodeId?: string ): void {
         ( this.context.flow.transitions ?? [] ).forEach( ( transition ) => {
             const { from, to } = transition;
@@ -1090,7 +1184,7 @@ class MultiStateFlowBuilder {
             // rank each other in a circle, which a ranking cannot satisfy either.
             const isBackEdge = ( this.stateDepths.get( to ) ?? 0 ) <= ( this.stateDepths.get( from ) ?? 0 );
 
-            const triggerName = trigger?.split( "/" ).pop();
+            const triggerName = this.controlLabelFor( trigger );
 
             // What the bot looked at to take this branch, where nobody pressed anything. Declared
             // beside the transition, so a branch reads as its condition rather than as an omission.
@@ -1124,7 +1218,12 @@ class MultiStateFlowBuilder {
     private precomputeElementRows(): void {
         this.context.stateComponents.forEach( stateComp => {
             const previewEmbedsGroup = PreviewResolver.getPreviewEmbedsGroup( stateComp.options );
-            const compPreview = PreviewResolver.resolve( stateComp.component, stateComp.options, previewEmbedsGroup );
+            const compPreview = PreviewResolver.resolve(
+                stateComp.component,
+                stateComp.options,
+                previewEmbedsGroup,
+                stateComp.stateKey === this.context.initialStateKey
+            );
 
             this.context.stateKeyToElementRows.set( stateComp.stateKey, compPreview.elementRows );
         } );
@@ -1174,7 +1273,12 @@ class MultiStateFlowBuilder {
             }
 
             const previewEmbedsGroup = PreviewResolver.getPreviewEmbedsGroup( stateComp.options );
-            const compPreview = PreviewResolver.resolve( stateComp.component, stateComp.options, previewEmbedsGroup );
+            const compPreview = PreviewResolver.resolve(
+                stateComp.component,
+                stateComp.options,
+                previewEmbedsGroup,
+                stateComp.stateKey === this.context.initialStateKey
+            );
             const compId = `comp-${ this.context.flow.name }-${ stateComp.component.name }-${ stepIndex }`;
 
             this.context.stateKeyToCompId.set( stateComp.stateKey, compId );
@@ -1253,11 +1357,11 @@ class MultiStateFlowBuilder {
                 return;
             }
 
-            const modalTriggers = t.triggeredBy.filter( tr => tr.handlerKind === "modal" && tr.sourceEntity );
+            const modalTriggers = t.triggeredBy.filter( isModalTrigger );
             const buttonTrigger = t.triggeredBy.find( tr => tr.handlerKind === "button" && tr.sourceEntity );
 
             modalTriggers.forEach( modalTrigger => {
-                const modalName = modalTrigger.sourceEntity!;
+                const modalName = modalNameOf( modalTrigger );
 
                 if ( !componentModals.includes( modalName ) || !buttonTrigger?.sourceEntity ) {
                     return;
@@ -1289,7 +1393,7 @@ class MultiStateFlowBuilder {
             }
 
             t.triggeredBy.forEach( trigger => {
-                if ( ![ "string-select", "user-select", "button" ].includes( trigger.handlerKind ) ) {
+                if ( ! isControlKind( trigger.handlerKind ) ) {
                     return;
                 }
 
@@ -1648,7 +1752,17 @@ class FlowGraphBuilder {
             stateKeyToIndex: new Map( stateComponents.map( ( sc, i ) => [ sc.stateKey, i ] ) ),
             stateKeyToCompId: new Map(),
             stateKeyToElementRows: new Map(),
-            initialStateKey: stateComponents[ 0 ]?.stateKey ?? "",
+            /*
+             * The state the flow says it opens on, not the first one it happens to list.
+             *
+             * Every flow declares `initialState`, and eight of the fifty-six open on a state that
+             * is not first in the list - the permissions, transfer, invite, knock and templates
+             * flows among them. Taken from the order, those eight have their opening screen, their
+             * wizard step numbering and their whole layout worked out from the wrong node.
+             */
+            initialStateKey: ( "string" === typeof flow.initialState && flow.initialState )
+                || stateComponents[ 0 ]?.stateKey
+                || "",
             wizardConnectedTargets: new Set(),
             flowIdMap: this.flowIdMap
         };

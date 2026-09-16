@@ -26,6 +26,15 @@ export interface ComponentPreview {
     embedDefinition?: UIExportEmbedDefinition;
     allEmbedDefinitions?: Array<{ groupName: string; definition: UIExportEmbedDefinition }>;
     elementRows: ElementData[][];
+    /**
+     * Whether only the member who acted can see this screen.
+     *
+     * The state says so itself - `navigationType: "ephemeral"` on 123 of the 258 states that draw
+     * one. `editReply` is not counted: it edits whatever reply came before, so whether that one is
+     * private is the earlier state's answer and not this one's, and reading it as private here
+     * would be guessing on 44 more.
+     */
+    ephemeral?: boolean;
     /** Drawn as one container, the way the bot draws this component. */
     renderAsContainer?: boolean;
     modals: string[];
@@ -222,11 +231,59 @@ function findElementsGroupByExecutionStep(
     return bestMatch;
 }
 
+/**
+ * Function buildElementLabelIndex() :: What each control says on it, by the control's name.
+ *
+ * An arrow on the canvas is read by somebody looking at the screens either side of it, and those
+ * screens are drawn in the member's words - a button that says "Rename". Naming the arrow
+ * `DynamicChannelRenameButton` makes the reader translate, and nothing else on the canvas asks them
+ * to. The wording is already in the same payload the screens are drawn from.
+ *
+ * A select menu has no label, so its placeholder stands in - that is the line a member reads on it.
+ */
+export function buildElementLabelIndex( components: ReadonlyArray<UIExportedComponent> ): Map<string, string> {
+    const index = new Map<string, string>();
+
+    components.forEach( ( component ) => {
+        component.elementsGroups.forEach( ( group ) => {
+            group.items.forEach( ( row ) => {
+                row.forEach( ( item ) => {
+                    if ( index.has( item.element ) ) {
+                        return;
+                    }
+
+                    const definition = item.definition;
+
+                    const said = definition && "label" in definition && definition.label
+                        ? definition.label
+                        : definition && "placeholder" in definition ? definition.placeholder : undefined;
+
+                    if ( said && said.trim().length ) {
+                        index.set( item.element, said.trim() );
+                    }
+                } );
+            } );
+        } );
+    } );
+
+    return index;
+}
+
 export function extractComponentPreview(
     component: UIExportedComponent,
     executionStep?: string,
     embedGroupName?: string,
-    elementsGroupName?: string
+    elementsGroupName?: string,
+    /**
+     * Whether a screen naming no group of its own still draws the component's usual controls.
+     *
+     * True only of the screen a flow opens on. `send()` puts that one up without walking a step, so
+     * whatever the component came with is what a member sees. Every screen after it is reached by
+     * `setStepInternal()`, which calls `clearElements()` when the step names no group - so a state
+     * that names none has no controls at all, and drawing the component's default there shows a row
+     * the bot has just taken away.
+     */
+    drawsComponentDefaults = true
 ): ComponentPreview {
     const embedGroupOverride = embedGroupName ? findEmbedGroupByName( component, embedGroupName ) : undefined;
     const selectedEmbedsGroup = embedGroupOverride ??
@@ -262,11 +319,22 @@ export function extractComponentPreview(
 
     // Then by execution step, then the component's default
     const elementsGroupByStep = findElementsGroupByExecutionStep( component, executionStep );
+
+    /*
+     * A screen that names no group and is not the one the flow opens on draws no controls.
+     *
+     * The step it is reached by cleared them. Falling through to the execution step or the
+     * component's default here is what had the rename, limit, status, clear-chat, invite, knock,
+     * reset and transfer outcomes - and every permissions result - drawn with a row of buttons the
+     * member is not offered. The website's own simulator reads the same field the same way.
+     */
     const selectedElementsGroup = elementsGroupByName
-        ?? elementsGroupByStep
-        ?? ( component.defaultElementsGroup
-            ? component.elementsGroups.find( group => isDefaultElementsGroup( group.name, component.defaultElementsGroup ?? "" ) )
-            : component.elementsGroups[ 0 ] );
+        ?? ( drawsComponentDefaults
+            ? ( elementsGroupByStep
+                ?? ( component.defaultElementsGroup
+                    ? component.elementsGroups.find( group => isDefaultElementsGroup( group.name, component.defaultElementsGroup ?? "" ) )
+                    : component.elementsGroups[ 0 ] ) )
+            : undefined );
 
     selectedElementsGroup?.items.forEach( row => {
         const rowElements = row.map( item => ( {
@@ -282,7 +350,13 @@ export function extractComponentPreview(
         }
     } );
 
-    if ( !selectedElementsGroup ) {
+    /*
+     * Nothing named a group and the screen is allowed its component's usual controls, so every
+     * group it has is drawn - which is a guess, and a loud one: a component with a group per screen
+     * puts all of them up at once. Kept only where a fallback is wanted at all. A screen reached by
+     * a step that cleared its controls asks for none, and none is what it gets.
+     */
+    if ( ! selectedElementsGroup && drawsComponentDefaults ) {
         component.elementsGroups.forEach( group => {
             group.items.forEach( row => {
                 const rowElements = row.map( item => ( {

@@ -7,6 +7,8 @@ import { deepMerge } from "@vertix.gg/utils/src/object";
 import { ModelBaseCachedWithModel } from "@vertix.gg/data/src/bases/model-base";
 import { DataTypeFactory } from "@vertix.gg/data/src/factory/data-type-factory";
 
+import { isRecordNotFound } from "@vertix.gg/data/src/utils/prisma-errors";
+
 import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
 import type { TDataDefaultResult } from "@vertix.gg/data/src/factory/data-type-factory";
@@ -22,16 +24,6 @@ export interface TDataVersioningDefaultUniqueKeys {
 
 export interface TDataVersioningOptions {
     cache: boolean;
-}
-
-/**
- * Prisma's "an operation failed because it depends on one or more records that were required but
- * not found". Matched on the code rather than the error class so this does not have to import
- * prisma's runtime just to recognise it.
- */
-function isRecordNotFound( error: unknown ): boolean {
-    return "object" === typeof error && null !== error && "code" in error &&
-        "P2025" === ( error as { code?: unknown } ).code;
 }
 
 export function DataVersioningModelFactory<

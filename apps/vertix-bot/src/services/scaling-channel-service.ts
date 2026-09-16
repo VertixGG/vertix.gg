@@ -12,6 +12,8 @@ import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service
 
 import { ScalingChannelDataModel } from "@vertix.gg/data/src/models/master-channel/scaling-channel-data-model";
 
+import { isDatabaseUnavailable } from "@vertix.gg/data/src/utils/prisma-errors";
+
 import { varsReplaceIndexPlaceholder, varsHasIndexPlaceholder } from "@vertix.gg/base/src/utils/vars-utils";
 
 import { ChannelType } from "discord.js";
@@ -53,6 +55,10 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
 }> {
     private readonly debugger: Debugger;
     private reindexInterval?: NodeJS.Timeout;
+
+    // Whether the last pass found the database unreachable, so the condition is reported when it
+    // starts and when it ends rather than on every pass in between.
+    private isDatabaseUnavailable = false;
 
     public static getName() {
         return "VertixBot/Services/ScalingChannel";
@@ -380,6 +386,42 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         return varsReplaceIndexPlaceholder( prefix, index );
     }
 
+    /**
+     * Function reportReindexFailure() :: Says what went wrong with a reindex pass, once.
+     *
+     * The pass runs every five minutes forever, so a failure that lasts reports itself until it
+     * stops. When the database is unreachable that is not a scaling channel problem at all, and
+     * saying it was - under a stack trace naming whichever query happened to be in flight - hides
+     * the one fact worth having. A seven hour outage went out as seventy six copies of "Failed to
+     * reindex scaling channels", each with the cause buried fifteen lines down.
+     *
+     * So an unreachable database is named as such, reported once, and reported again only when it
+     * comes back. Anything else is still an error every time, because anything else is a fault in
+     * this pass rather than a condition it is waiting out.
+     */
+    private reportReindexFailure( error: unknown ) {
+        if ( !isDatabaseUnavailable( error ) ) {
+            this.isDatabaseUnavailable = false;
+
+            this.logger.error( this.scheduleScalingReindex, "Failed to reindex scaling channels", error );
+
+            return;
+        }
+
+        if ( this.isDatabaseUnavailable ) {
+            return;
+        }
+
+        this.isDatabaseUnavailable = true;
+
+        this.logger.error(
+            this.scheduleScalingReindex,
+            "Database is unreachable - scaling channels cannot be reindexed, and nothing else that " +
+                "reads the database will work either. Reported once; the next line about it will be " +
+                "that it is back."
+        );
+    }
+
     private scheduleScalingReindex() {
         if ( this.reindexInterval ) {
             return;
@@ -387,15 +429,19 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
 
         const intervalMs = 5 * 60 * 1000;
 
-        this.reindexInterval = setInterval( () => {
-            this.reindexScalingChannels().catch( ( error ) => {
-                this.logger.error( this.scheduleScalingReindex, "Failed to reindex scaling channels", error );
-            } );
-        }, intervalMs );
+        const pass = () => this.reindexScalingChannels()
+            .then( () => {
+                if ( this.isDatabaseUnavailable ) {
+                    this.isDatabaseUnavailable = false;
 
-        this.reindexScalingChannels().catch( ( error ) => {
-            this.logger.error( this.scheduleScalingReindex, "Failed to reindex scaling channels", error );
-        } );
+                    this.logger.info( this.scheduleScalingReindex, "Database is reachable again" );
+                }
+            } )
+            .catch( ( error ) => this.reportReindexFailure( error ) );
+
+        this.reindexInterval = setInterval( pass, intervalMs );
+
+        pass();
     }
 
     private async reindexScalingChannels() {

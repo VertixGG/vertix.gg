@@ -1,7 +1,5 @@
 import { Fragment, useMemo, useState } from "react";
 
-import type { ComponentProps } from "react";
-
 import { Handle, Position, useStore } from "@xyflow/react";
 
 import {
@@ -18,6 +16,8 @@ import {
     isSelectMenu,
     COMPONENT_NODE_MAX_WIDTH
 } from "@vertix.gg/dashboard/src/features/flow-editor/lib/element-metrics";
+
+import type { ComponentProps } from "react";
 
 import type { Node, NodeProps } from "@xyflow/react";
 import type { UIExportElementDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
@@ -412,183 +412,183 @@ export function ComponentNode( props: NodeProps<ComponentNodeType> ) {
                         ephemeral={ true === data.ephemeral }
                     >
                         <PreviewShell asContainer={ renderAsContainer } accentColor={ embed?.color }>
-                        <DiscordEmbed
-                            title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, mergedDefaultVars ), "title" ) }
-                            description={ embed
-                                ? embed.description
-                                    ? replaceInlineDiscordEmojis( applyDefaultVars( embed.description, mergedDefaultVars ) )
-                                    : undefined
-                                : "Component preview"
-                            }
-                            color={ embed?.color || 0x5865f2 }
-                            // The legend is fetched by url, and that url carries the buttons it is
-                            // a legend for - so it needs its variables filled in like any other
-                            // part of the embed, or it renders every button the bot ships.
-                            image={ embed?.image
-                                ? { ...embed.image, url: applyDefaultVars( embed.image.url, mergedDefaultVars ) }
-                                : undefined }
-                            thumbnail={ embed?.thumbnail }
-                        />
-                        { elementRows && elementRows.length > 0 && (
-                            <div className="discord-action-rows">
-                                { elementRows.map( ( row, rowIndex ) => (
-                                    <Fragment key={ rowIndex }>
-                                    { renderAsContainer && <DiscordContainerSeparator /> }
-                                    { renderAsContainer && rowHeaderOf( row ) && (
-                                        <DiscordContainerHeader>{ rowHeaderOf( row ) }</DiscordContainerHeader>
-                                    ) }
-                                    <div className="discord-embed-button-row">
-                                        { row.map( ( element ) => {
-                                            if ( isSelectMenu( element ) ) {
-                                                const stateTrigger = getStateTransitionTrigger( element.name );
-                                                const flowTrigger = getFlowTrigger( element.name );
-                                                const edgeOptions = selectOptionsByElementName.get( element.name ) ?? [];
+                            <DiscordEmbed
+                                title={ replaceInlineDiscordEmojis( applyDefaultVars( embed?.title || label, mergedDefaultVars ), "title" ) }
+                                description={ embed
+                                    ? embed.description
+                                        ? replaceInlineDiscordEmojis( applyDefaultVars( embed.description, mergedDefaultVars ) )
+                                        : undefined
+                                    : "Component preview"
+                                }
+                                color={ embed?.color || 0x5865f2 }
+                                // The legend is fetched by url, and that url carries the buttons it is
+                                // a legend for - so it needs its variables filled in like any other
+                                // part of the embed, or it renders every button the bot ships.
+                                image={ embed?.image
+                                    ? { ...embed.image, url: applyDefaultVars( embed.image.url, mergedDefaultVars ) }
+                                    : undefined }
+                                thumbnail={ embed?.thumbnail }
+                            />
+                            { elementRows && elementRows.length > 0 && (
+                                <div className="discord-action-rows">
+                                    { elementRows.map( ( row, rowIndex ) => (
+                                        <Fragment key={ rowIndex }>
+                                            { renderAsContainer && <DiscordContainerSeparator /> }
+                                            { renderAsContainer && rowHeaderOf( row ) && (
+                                                <DiscordContainerHeader>{ rowHeaderOf( row ) }</DiscordContainerHeader>
+                                            ) }
+                                            <div className="discord-embed-button-row">
+                                                { row.map( ( element ) => {
+                                                    if ( isSelectMenu( element ) ) {
+                                                        const stateTrigger = getStateTransitionTrigger( element.name );
+                                                        const flowTrigger = getFlowTrigger( element.name );
+                                                        const edgeOptions = selectOptionsByElementName.get( element.name ) ?? [];
 
-                                                // Prefer options from element definition (selectOptions), fall back to edge-derived options
-                                                const definitionOptions = element.definition?.selectOptions?.map( opt => {
-                                                    const emojiStr = normalizeEmoji( opt.emoji );
-                                                    const label = opt.label ?? opt.value ?? "";
-                                                    // Only prepend unicode emojis to label — skip custom Discord emoji strings (<:name:id>)
-                                                    const isUnicodeEmoji = emojiStr && !emojiStr.startsWith( "<" );
-                                                    return {
-                                                        value: opt.value ?? "",
-                                                        label: isUnicodeEmoji ? `${ emojiStr } ${ label }` : label
-                                                    };
-                                                } ) ?? [];
+                                                        // Prefer options from element definition (selectOptions), fall back to edge-derived options
+                                                        const definitionOptions = element.definition?.selectOptions?.map( opt => {
+                                                            const emojiStr = normalizeEmoji( opt.emoji );
+                                                            const label = opt.label ?? opt.value ?? "";
+                                                            // Only prepend unicode emojis to label — skip custom Discord emoji strings (<:name:id>)
+                                                            const isUnicodeEmoji = emojiStr && !emojiStr.startsWith( "<" );
+                                                            return {
+                                                                value: opt.value ?? "",
+                                                                label: isUnicodeEmoji ? `${ emojiStr } ${ label }` : label
+                                                            };
+                                                        } ) ?? [];
 
-                                                const options = definitionOptions.length > 0 ? definitionOptions : edgeOptions;
-                                                const selectedValue = selectedSelectValues[ element.name ] ?? "";
+                                                        const options = definitionOptions.length > 0 ? definitionOptions : edgeOptions;
+                                                        const selectedValue = selectedSelectValues[ element.name ] ?? "";
 
-                                                const hasHandle = stateTrigger || flowTrigger;
-                                                const handlePosition = stateTrigger?.handlePosition ?? flowTrigger?.handlePosition ?? "bottom";
+                                                        const hasHandle = stateTrigger || flowTrigger;
+                                                        const handlePosition = stateTrigger?.handlePosition ?? flowTrigger?.handlePosition ?? "bottom";
 
-                                                return (
-                                                    <div key={ element.name } className="relative w-[400px] max-w-full">
-                                                        <div className="relative">
-                                                            <select
-                                                                value={ selectedValue }
-                                                                disabled={ element.definition?.disabled }
-                                                                onChange={ ( e ) => {
-                                                                    setSelectedSelectValues( prev => ( {
-                                                                        ...prev,
-                                                                        [ element.name ]: e.target.value
-                                                                    } ) );
-                                                                } }
-                                                                // Discord's own select box: 400px wide unless the column is narrower, 40px
-                                                                // tall, 8px radius, and 12px/42px of padding around a 16px label. It is a
-                                                                // well rather than a card - black at 12% with a grey hairline - and the
-                                                                // label is a placeholder, so it takes the dimmer of the two greys.
-                                                                className="w-full h-10 appearance-none pl-3 pr-[42px] bg-black/12 border border-[rgba(151,151,159,0.2)] rounded-lg text-[#8f9196] text-base focus:outline-none focus:ring-2 focus:ring-purple-500/40"
-                                                            >
-                                                                <option value="" disabled>
-                                                                    { getSelectPlaceholder( element, mergedDefaultVars ) }
-                                                                </option>
-                                                                { options.length > 0 ? options.map( ( option ) => (
-                                                                    <option key={ option.value } value={ option.value }>
-                                                                        { option.label }
-                                                                    </option>
-                                                                ) ) : (
-                                                                    <option value="__empty" disabled>
-                                                                        No options
-                                                                    </option>
+                                                        return (
+                                                            <div key={ element.name } className="relative w-[400px] max-w-full">
+                                                                <div className="relative">
+                                                                    <select
+                                                                        value={ selectedValue }
+                                                                        disabled={ element.definition?.disabled }
+                                                                        onChange={ ( e ) => {
+                                                                            setSelectedSelectValues( prev => ( {
+                                                                                ...prev,
+                                                                                [ element.name ]: e.target.value
+                                                                            } ) );
+                                                                        } }
+                                                                        // Discord's own select box: 400px wide unless the column is narrower, 40px
+                                                                        // tall, 8px radius, and 12px/42px of padding around a 16px label. It is a
+                                                                        // well rather than a card - black at 12% with a grey hairline - and the
+                                                                        // label is a placeholder, so it takes the dimmer of the two greys.
+                                                                        className="w-full h-10 appearance-none pl-3 pr-[42px] bg-black/12 border border-[rgba(151,151,159,0.2)] rounded-lg text-[#8f9196] text-base focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+                                                                    >
+                                                                        <option value="" disabled>
+                                                                            { getSelectPlaceholder( element, mergedDefaultVars ) }
+                                                                        </option>
+                                                                        { options.length > 0 ? options.map( ( option ) => (
+                                                                            <option key={ option.value } value={ option.value }>
+                                                                                { option.label }
+                                                                            </option>
+                                                                        ) ) : (
+                                                                            <option value="__empty" disabled>
+                                                                                No options
+                                                                            </option>
+                                                                        ) }
+                                                                    </select>
+                                                                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                                                            <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
+
+                                                                { hasHandle && (
+                                                                    <Handle
+                                                                        type="source"
+                                                                        position={ positionMap[ handlePosition ] }
+                                                                        id={ `btn-${ element.name }` }
+                                                                        className={ flowTrigger ? "bg-blue-400! w-2! h-2!" : "bg-emerald-400! w-2! h-2!" }
+                                                                    />
                                                                 ) }
-                                                            </select>
-                                                            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                                                    <path d="M7 10l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                                                </svg>
                                                             </div>
-                                                        </div>
+                                                        );
+                                                    }
 
-                                                        { hasHandle && (
-                                                            <Handle
-                                                                type="source"
-                                                                position={ positionMap[ handlePosition ] }
-                                                                id={ `btn-${ element.name }` }
-                                                                className={ flowTrigger ? "bg-blue-400! w-2! h-2!" : "bg-emerald-400! w-2! h-2!" }
-                                                            />
-                                                        ) }
-                                                    </div>
-                                                );
-                                            }
+                                                    const variant = getButtonVariant( element );
+                                                    const emoji = getButtonEmoji( element );
+                                                    const renderedEmoji = renderButtonEmoji( emoji );
+                                                    const modalTrigger = getModalTrigger( element.name );
+                                                    const flowTrigger = getFlowTrigger( element.name );
+                                                    const stateTrigger = getStateTransitionTrigger( element.name );
 
-                                            const variant = getButtonVariant( element );
-                                            const emoji = getButtonEmoji( element );
-                                            const renderedEmoji = renderButtonEmoji( emoji );
-                                            const modalTrigger = getModalTrigger( element.name );
-                                            const flowTrigger = getFlowTrigger( element.name );
-                                            const stateTrigger = getStateTransitionTrigger( element.name );
-
-                                            const button = (
-                                                <DiscordButton
-                                                    variant={ variant }
-                                                    label={ resolveElementLabel( element, mergedDefaultVars ) }
-                                                    emoji={ renderedEmoji.emoji }
-                                                    icon={ renderedEmoji.icon }
-                                                    trailingIcon={ variant === "link" ? (
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M10 5V3H5.375C4.06519 3 3 4.06519 3 5.375V18.625C3 19.936 4.06519 21 5.375 21H18.625C19.936 21 21 19.936 21 18.625V14H19V19H5V5H10Z" />
-                                                            <path d="M21 2.99902H14V4.99902H17.586L9.29297 13.292L10.707 14.706L19 6.41302V9.99902H21V2.99902Z" />
-                                                        </svg>
-                                                    ) : undefined }
-                                                />
-                                            );
-
-                                            if ( modalTrigger ) {
-                                                const handlePos = positionMap[ modalTrigger.handlePosition ?? "bottom" ];
-
-                                                return (
-                                                    <div key={ element.name } className="relative">
-                                                        { button }
-                                                        <Handle
-                                                            type="source"
-                                                            position={ handlePos }
-                                                            id={ `btn-${ element.name }` }
-                                                            className="bg-pink-400! w-2! h-2!"
+                                                    const button = (
+                                                        <DiscordButton
+                                                            variant={ variant }
+                                                            label={ resolveElementLabel( element, mergedDefaultVars ) }
+                                                            emoji={ renderedEmoji.emoji }
+                                                            icon={ renderedEmoji.icon }
+                                                            trailingIcon={ variant === "link" ? (
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path d="M10 5V3H5.375C4.06519 3 3 4.06519 3 5.375V18.625C3 19.936 4.06519 21 5.375 21H18.625C19.936 21 21 19.936 21 18.625V14H19V19H5V5H10Z" />
+                                                                    <path d="M21 2.99902H14V4.99902H17.586L9.29297 13.292L10.707 14.706L19 6.41302V9.99902H21V2.99902Z" />
+                                                                </svg>
+                                                            ) : undefined }
                                                         />
-                                                    </div>
-                                                );
-                                            }
+                                                    );
 
-                                            if ( flowTrigger ) {
-                                                const handlePos = positionMap[ flowTrigger.handlePosition ?? "bottom" ];
+                                                    if ( modalTrigger ) {
+                                                        const handlePos = positionMap[ modalTrigger.handlePosition ?? "bottom" ];
 
-                                                return (
-                                                    <div key={ element.name } className="relative">
-                                                        { button }
-                                                        <Handle
-                                                            type="source"
-                                                            position={ handlePos }
-                                                            id={ `btn-${ element.name }` }
-                                                            className="bg-amber-400! w-2! h-2!"
-                                                        />
-                                                    </div>
-                                                );
-                                            }
+                                                        return (
+                                                            <div key={ element.name } className="relative">
+                                                                { button }
+                                                                <Handle
+                                                                    type="source"
+                                                                    position={ handlePos }
+                                                                    id={ `btn-${ element.name }` }
+                                                                    className="bg-pink-400! w-2! h-2!"
+                                                                />
+                                                            </div>
+                                                        );
+                                                    }
 
-                                            if ( stateTrigger ) {
-                                                const handlePos = positionMap[ stateTrigger.handlePosition ?? "bottom" ];
+                                                    if ( flowTrigger ) {
+                                                        const handlePos = positionMap[ flowTrigger.handlePosition ?? "bottom" ];
 
-                                                return (
-                                                    <div key={ element.name } className="relative">
-                                                        { button }
-                                                        <Handle
-                                                            type="source"
-                                                            position={ handlePos }
-                                                            id={ `btn-${ element.name }` }
-                                                            className="bg-emerald-400! w-2! h-2!"
-                                                        />
-                                                    </div>
-                                                );
-                                            }
+                                                        return (
+                                                            <div key={ element.name } className="relative">
+                                                                { button }
+                                                                <Handle
+                                                                    type="source"
+                                                                    position={ handlePos }
+                                                                    id={ `btn-${ element.name }` }
+                                                                    className="bg-amber-400! w-2! h-2!"
+                                                                />
+                                                            </div>
+                                                        );
+                                                    }
 
-                                            return <div key={ element.name }>{ button }</div>;
-                                        } ) }
-                                    </div>
-                                    </Fragment>
-                                ) ) }
-                            </div>
-                        ) }
+                                                    if ( stateTrigger ) {
+                                                        const handlePos = positionMap[ stateTrigger.handlePosition ?? "bottom" ];
+
+                                                        return (
+                                                            <div key={ element.name } className="relative">
+                                                                { button }
+                                                                <Handle
+                                                                    type="source"
+                                                                    position={ handlePos }
+                                                                    id={ `btn-${ element.name }` }
+                                                                    className="bg-emerald-400! w-2! h-2!"
+                                                                />
+                                                            </div>
+                                                        );
+                                                    }
+
+                                                    return <div key={ element.name }>{ button }</div>;
+                                                } ) }
+                                            </div>
+                                        </Fragment>
+                                    ) ) }
+                                </div>
+                            ) }
                         </PreviewShell>
                     </DiscordMessage>
                 </div>

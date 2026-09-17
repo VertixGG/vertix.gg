@@ -407,6 +407,24 @@ export class UIDefinitionExporter extends UIBase {
 
                         const adapterMetadata = this.getAdapterMetadata( adapterClass );
 
+                        /*
+                         * A screen whose adapter says another already accounts for it, marked as such.
+                         *
+                         * `setHidden` is read just below to decide against generating a second flow,
+                         * and that was the whole of its effect - the reason went no further than this
+                         * function. Downstream that left the master channel's panel and the channel's
+                         * own message indistinguishable: same kind, same module, same elements group,
+                         * no bindings on either, so anything drawing from the export drew both of
+                         * them routing to the same fifteen flows.
+                         */
+                        if ( adapterMetadata?.transactions?.getHidden() ) {
+                            const duplicatedScreen = components.get( definition.component );
+
+                            if ( duplicatedScreen ) {
+                                duplicatedScreen.routesDrawnElsewhere = true;
+                            }
+                        }
+
                         // Generate virtual flow from adapter transactions if defined (skip hidden flows and duplicates of system flows)
                         if ( includeFlows && adapterMetadata?.transactions && !adapterMetadata.transactions.getHidden() ) {
                             const virtualFlow = VirtualFlowGenerator.generate(

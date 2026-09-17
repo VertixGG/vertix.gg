@@ -58,6 +58,21 @@ body {
     z-index: 30;
 }
 
+/*
+ * The screens sit under the lines, and the one being read sits over them.
+ *
+ * Giving the layer a z-index of its own made it a stacking context, which caps everything inside
+ * it: a screen could be raised as high as it liked and still came out under the lines, because the
+ * lines are a sibling layer at 30 rather than anything within reach of the screen. Left to resolve
+ * against the canvas itself, a screen's own z-index is measured against that 30 - so the usual 0
+ * keeps them under the lines exactly as before, and only a selection rises.
+ *
+ * `!important` because react flow writes each node's z-index inline.
+ */
 .flow-viewer .react-flow__nodes {
-    z-index: 10;
+    z-index: auto;
+}
+
+.flow-viewer .react-flow__node.selected {
+    z-index: 40 !important;
 }

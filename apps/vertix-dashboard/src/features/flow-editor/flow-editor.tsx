@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
+import { ReactFlowProvider } from "@xyflow/react";
 
 import { withCommands } from "@zenflux/react-commander/with-commands";
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
@@ -214,7 +215,17 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
                     </div>
                 </header>
                 <div className="flex-1">
-                    <FlowViewer />
+                    { /*
+                       * The canvas's own store, put one level above the canvas.
+                       *
+                       * React flow makes a store per `<ReactFlow>` and keeps it out of reach of the
+                       * component that renders one, so the viewer could not ask whether the screens
+                       * had been measured yet - and until it could, the first layout was the only
+                       * layout, worked out from a guessed height.
+                       */ }
+                    <ReactFlowProvider>
+                        <FlowViewer />
+                    </ReactFlowProvider>
                 </div>
             </div>
 

@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useEffect, useRef, useState } from "react";
-import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState } from "@xyflow/react";
+import { ReactFlow, Background, Controls, MiniMap, useNodesState, useEdgesState, useNodesInitialized } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
 
@@ -435,6 +435,7 @@ export function FlowViewer() {
 
     const [ nodes, setNodes, onNodesChange ] = useNodesState( initialNodes );
     const [ edges, setEdges, onEdgesChange ] = useEdgesState( initialEdges );
+    const nodesInitialized = useNodesInitialized();
 
     // Track the last layout reference to distinguish structural vs content-only changes
     const prevLayoutRef = useRef( layoutedNodes );
@@ -591,6 +592,39 @@ export function FlowViewer() {
         setNodes( [ ...layoutedNodes ] );
         setEdges( [ ...layoutedEdges ] );
     }, [ nodes, edges, setNodes, setEdges ] );
+
+    /*
+     * The first layout is laid out blind, so it is done again once the screens have been measured.
+     *
+     * Dagre is given a height per node, and a component's height is the one dimension nothing
+     * estimates - the width is worked out from the controls, the height falls back to a flat 700.
+     * Every rank therefore sits 1000 apart whatever is in it, and a screen taller than that runs
+     * into the rank below: the setup editor's screens are 950 to 1260 tall, so its two config
+     * screens overlapped each other by 113 and the row beneath them by 261.
+     *
+     * React flow measures each node as it renders and the layout is right the moment it is run
+     * against those measurements - which is why the Auto Layout button has always fixed this, and
+     * why the fix is to stop making the reader press it.
+     */
+    const measuredLayoutRef = useRef<Node[] | null>( null );
+
+    useEffect( () => {
+        if ( ! nodesInitialized || measuredLayoutRef.current === layoutedNodes ) {
+            return;
+        }
+
+        measuredLayoutRef.current = layoutedNodes;
+
+        onLayout();
+
+        const reactFlowInstance = reactFlowInstanceRef.current;
+
+        if ( reactFlowInstance ) {
+            setTimeout( () => {
+                reactFlowInstance.fitView( { padding: 0.2, duration: 300 } );
+            }, 50 );
+        }
+    }, [ nodesInitialized, layoutedNodes, onLayout ] );
 
     const onNodeClick = useCallback( ( _event: React.MouseEvent, node: Node ) => {
         handleNodeSelect( node );

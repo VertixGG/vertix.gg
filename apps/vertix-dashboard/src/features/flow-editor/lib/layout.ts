@@ -23,6 +23,9 @@ const DEFAULT_OPTIONS: Required<LayoutOptions> = {
     nodeSep: LAYOUT_OPTIONS.NODE_SEPARATION
 };
 
+/** How far out to either side a modal stack is tried before it settles for the old placement. */
+const MODAL_PLACEMENT_ATTEMPTS = 6;
+
 const NODE_TYPE_DIMENSIONS: Record<string, { width: number; height: number }> = {
     moduleNode: NODE_DIMENSIONS.MODULE,
     flowNode: NODE_DIMENSIONS.FLOW,
@@ -44,9 +47,23 @@ function getNodeDimensions( node: Node, opts: Required<LayoutOptions> ): { width
         };
     }
 
-    return NODE_TYPE_DIMENSIONS[ node.type ?? "default" ] ?? {
+    const declared = NODE_TYPE_DIMENSIONS[ node.type ?? "default" ] ?? {
         width: opts.nodeWidth,
         height: opts.nodeHeight
+    };
+
+    /*
+     * A measured node is whatever it measured, whatever its kind was assumed to be.
+     *
+     * Only components read their measurements here, and a modal is as variable as they are - it is
+     * as tall as the inputs it declares, where the figure stood at a flat 520. The stack is put
+     * beside its screen and then checked against everything else for collisions, and a modal a
+     * hundred and thirty short of its real height passed a check it should have failed, which is
+     * how one came to sit on top of a screen two ranks away.
+     */
+    return {
+        width: node.measured?.width ?? declared.width,
+        height: node.measured?.height ?? declared.height
     };
 }
 
@@ -228,7 +245,35 @@ function resolveModalOverlaps(
         );
     };
 
-    // For each parent's modals, if any overlap a main node, move the entire stack to the right
+    const stackClearsAt = ( modalIds: string[], x: number ): boolean =>
+        modalIds.every( modalId => {
+            const modal = layoutedNodesById.get( modalId );
+
+            if ( !modal ) {
+                return true;
+            }
+
+            const dims = getNodeDimensions( modal, opts );
+            const top = modal.position.y;
+            const bottom = top + dims.height;
+
+            return ! mainBounds.some( b =>
+                !( x + dims.width < b.left || x > b.right || bottom < b.top || top > b.bottom )
+            );
+        } );
+
+    /*
+     * For each parent's modals, if any overlap a main node, put the stack somewhere it does not.
+     *
+     * Moving it to the right of its screen was one attempt at one alternative, taken without
+     * looking at what was already there - so a stack whose right side was occupied too stayed
+     * exactly as overlapped as it began, which is how the V2 setup editor's delete form came to
+     * sit on top of the screen for editing a voice role.
+     *
+     * The sides are tried alternately, stepping out by the stack's own width each time, and the
+     * first that clears everything is taken. Failing all of them it goes right, as before - a
+     * modal has to be drawn somewhere, and that was the old answer.
+     */
     parentToModalIds.forEach( ( modalIds, parentId ) => {
         const anyOverlap = modalIds.some( id => hasOverlap( id ) );
         if ( !anyOverlap ) {
@@ -241,21 +286,35 @@ function resolveModalOverlaps(
         }
 
         const parentDims = getNodeDimensions( parentNode, opts );
+        const stackWidth = modalIds.reduce( ( widest, modalId ) => {
+            const modal = layoutedNodesById.get( modalId );
 
-        // Move all modals in this group to the right side
+            return modal ? Math.max( widest, getNodeDimensions( modal, opts ).width ) : widest;
+        }, 0 );
+
+        const step = stackWidth + modalGap;
+        const rightOfParent = parentNode.position.x + parentDims.width + modalGap;
+        const leftOfParent = parentNode.position.x - stackWidth - modalGap;
+
+        const candidates: number[] = [ rightOfParent ];
+
+        for ( let attempt = 1; attempt <= MODAL_PLACEMENT_ATTEMPTS; attempt++ ) {
+            candidates.push( leftOfParent - attempt * step );
+            candidates.push( rightOfParent + attempt * step );
+        }
+
+        const chosen = candidates.find( x => stackClearsAt( modalIds, x ) ) ?? rightOfParent;
+
         modalIds.forEach( modalId => {
             const modal = layoutedNodesById.get( modalId );
             if ( !modal ) {
                 return;
             }
 
-            // Shift x from left-of-parent to right-of-parent
-            const newX = parentNode.position.x + parentDims.width + modalGap;
-
             layoutedNodesById.set( modalId, {
                 ...modal,
                 position: {
-                    x: newX,
+                    x: chosen,
                     y: modal.position.y
                 }
             } );

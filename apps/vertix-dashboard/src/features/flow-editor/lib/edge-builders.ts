@@ -84,26 +84,6 @@ export function createComponentToFlowEdge(
     };
 }
 
-/**
- * Function createHubToFlowEdge() :: A control on a router's screen, and the flow it opens.
- *
- * Named after the screen rather than the router, unlike the edge above it. A router can be pressed
- * from more than one screen - the channel's own message and the master channel's panel carry the
- * same grid - and a name carrying only the router made those two screens' lines one line, so
- * whichever was drawn second silently lost all of them.
- */
-export function createHubToFlowEdge(
-    compId: string,
-    targetFlowId: string,
-    buttonName: string,
-    targetFlowName: string
-): Edge {
-    return {
-        ...createComponentToFlowEdge( compId, targetFlowId, buttonName, targetFlowName, compId ),
-        id: `edge-btn-flow-${ compId }-${ buttonName }-${ targetFlowName }`
-    };
-}
-
 export const FLOW_EXIT_HANDLE_ID = "exit";
 
 export function createComponentToFlowExitEdge(

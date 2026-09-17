@@ -9,7 +9,6 @@ import { buildFlowGraph } from "@vertix.gg/dashboard/src/features/flow-editor/li
 import { useSelectedGuildStore } from "@vertix.gg/dashboard/src/hooks/use-selected-guild";
 import { useLanguageStore } from "@vertix.gg/dashboard/src/hooks/use-language-store";
 import { useEditorScopeStore } from "@vertix.gg/dashboard/src/features/flow-editor/hooks/use-editor-scope";
-import { useCanvasFiltersStore } from "@vertix.gg/dashboard/src/hooks/use-canvas-filters-store";
 import { CustomizationQuery } from "@vertix.gg/dashboard/src/features/flow-editor/query/customization-query";
 
 import type { Node } from "@xyflow/react";
@@ -186,20 +185,7 @@ export class SelectEntityCommand extends CommandBase<FlowEditorState, { entityTy
             return;
         }
 
-        /*
-         * Built the way the canvas is built, filters and all.
-         *
-         * Handed no options this drew a different graph from the one on screen: extra modules are
-         * off by default, so every flow another module owns was missing from the copy being
-         * searched while sitting in plain view on the canvas - and a hidden router came back. The
-         * entry was findable, the node was there, and the click failed anyway.
-         */
-        const { showsExtraModules, hiddenSystemFlows } = useCanvasFiltersStore.getState();
-
-        const graphNodes = buildFlowGraph( this.state.moduleFlowsData, {
-            includesExtraModules: showsExtraModules,
-            hiddenSystemFlows
-        } ).nodes;
+        const graphNodes = buildFlowGraph( this.state.moduleFlowsData ).nodes;
         let matchedNode: Node | undefined;
 
         if ( entityType === "flow" || entityType === "systemFlow" ) {
@@ -223,18 +209,6 @@ export class SelectEntityCommand extends CommandBase<FlowEditorState, { entityTy
                 centerOnSelect: true
             } );
         }
-
-        /*
-         * Nothing on the canvas answers to this, and saying so is the whole of the fix.
-         *
-         * Falling off the end here returned without setting anything, so the sidebar row lit up and
-         * the canvas did not move - which reads as a broken editor rather than as an entry with
-         * nothing behind it. Every component has a node now, so reaching this means the entity is
-         * one the graph genuinely does not hold, and the reader is better told than left guessing.
-         */
-        return this.setState( {
-            error: `Nothing on the canvas draws '${ entityName }'.`
-        } );
     }
 }
 

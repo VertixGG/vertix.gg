@@ -100,8 +100,6 @@ export interface UIExportedComponent {
     defaultMarkdownsGroup: string | null;
     /** Drawn as one container, with each row's heading kept beside the row it names. */
     renderAsContainer?: boolean;
-    /** The moves out of this screen are drawn from another screen that makes the same ones. */
-    routesDrawnElsewhere?: boolean;
     hooks: string[];
     options?: {
         embedAudit: {

@@ -183,19 +183,6 @@ export interface ComponentDefinition {
      * to know which of the two it is looking at or it draws the arrangement the bot replaced.
      */
     renderAsContainer?: boolean;
-    /**
-     * Whether the moves leaving this screen are drawn from another screen that makes the same ones.
-     *
-     * Set from the adapter's `setHidden`, which a variant uses to say a screen it duplicates is
-     * already accounted for - the channel's own message and the master channel's panel put up one
-     * grid of buttons between them and lead to the same fifteen places. The flag stops at the
-     * exporter otherwise, so anything reading the export sees two screens it cannot tell apart and
-     * draws the fifteen twice.
-     *
-     * The screen is still a screen, and still worth drawing. It is the lines out of it that would
-     * be the second copy.
-     */
-    routesDrawnElsewhere?: boolean;
     hooks: HookReference[];
     options?: JsonObject;
 }

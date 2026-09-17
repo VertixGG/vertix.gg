@@ -3472,8 +3472,7 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        },
-        "routesDrawnElsewhere": true
+        }
     },
     {
         "name": "VertixBot/UI-V2/DynamicChannelPermissionsAccessComponent",
@@ -9065,8 +9064,7 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        },
-        "routesDrawnElsewhere": true
+        }
     },
     {
         "name": "VertixBot/UI-V3/DynamicChannelPermissionsComponent",

@@ -177,60 +177,9 @@ export function getInitialComponent( flow: UIExportedFlow, allComponents: UIExpo
         return sameModuleMatch;
     }
 
-    return findHubComponents( flow, allComponents )[ 0 ] ?? null;
-}
-
-function componentElementNames( component: UIExportedComponent ): Set<string> {
-    const names = new Set<string>();
-
-    component.elementsGroups.forEach( group => {
-        group.items.forEach( row => {
-            row.forEach( item => {
-                if ( item.element ) {
-                    names.add( item.element );
-                }
-            } );
-        } );
-    } );
-
-    return names;
-}
-
-/**
- * Function findHubComponents() :: The screens a router is pressed from.
- *
- * A router declares which control opens which flow and says nothing about where that control is
- * drawn, so the two halves of the dynamic channel - fifteen buttons on one side, fifteen
- * destinations on the other - were exported without ever being joined. The canvas drew the router
- * with no screen and the screen with no router, and the fifteen flows they lead to appeared to
- * start from nowhere.
- *
- * The join is the element itself. A component carrying every control the router routes from is a
- * screen that router is pressed from - not a guess about it, since the control ids are the same
- * strings on both sides. Carrying only some of them is a control reused elsewhere, which is why
- * this is `every` and not `some`: the clear-chat button also sits on the clear-chat screen, and
- * that screen is not a way into all fifteen.
- *
- * Several can qualify, and where they do all of them are true - the primary message in the channel
- * and the panel in the master channel put up the same grid and bind it to the same transitions.
- */
-export function findHubComponents( flow: UIExportedFlow, allComponents: UIExportedComponent[] ): UIExportedComponent[] {
-    const triggers = ( flow.edgeSourceMappings ?? [] )
-        .filter( mapping => mapping.targetFlowName !== flow.name )
-        .map( mapping => mapping.triggeringElementId );
-
-    if ( ! triggers.length ) {
-        return [];
-    }
-
-    const hubs = allComponents.filter( component => {
-        const elements = componentElementNames( component );
-
-        return triggers.every( trigger => elements.has( trigger ) );
-    } );
-
-    // The screen that owns the moves first, so the router's own screen is the one it opens on.
-    return hubs.sort( ( left, right ) =>
-        Number( true === left.routesDrawnElsewhere ) - Number( true === right.routesDrawnElsewhere )
-    );
+    return allComponents.find( c => {
+        const compParts = c.name.split( "/" );
+        const compShortName = compParts[ compParts.length - 1 ];
+        return compShortName.includes( flowShortName.replace( "Flow", "" ) );
+    } ) ?? null;
 }

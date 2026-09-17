@@ -176,16 +176,24 @@ export class UIArgsManager extends InitializeBase {
 
         const object = this.data[ self ];
 
-        if ( typeof object === "object" ) {
-            this.debugger.dumpDown( this.deleteArgs, object[ id ], `Deleted args with id: '${ self + "~" + id }'` );
+        // Nothing to forget is not a failure, and it says nothing about the id it was asked for.
+        //
+        // The warning this replaces claimed the id was not found, but it only ever fired when the
+        // *owner* had no bucket at all - so it named an id that had nothing to do with the branch it
+        // came from, and stayed silent in the case it actually described, an id missing from a
+        // bucket that exists. A screen whose args were already dropped, or which never stored any,
+        // reached here and was reported for it either way depending on what some unrelated screen
+        // of the same owner had done.
+        if ( "object" !== typeof object ) {
+            return;
+        }
 
-            delete object[ id ];
+        this.debugger.dumpDown( this.deleteArgs, object[ id ], `Deleted args with id: '${ self + "~" + id }'` );
 
-            if ( Object.keys( object ).length === 0 ) {
-                delete this.data[ self ];
-            }
-        } else {
-            this.logger.warn( this.deleteArgs, `Args with id: '${ self + "~" + id }' not found` );
+        delete object[ id ];
+
+        if ( Object.keys( object ).length === 0 ) {
+            delete this.data[ self ];
         }
     }
 

@@ -842,6 +842,7 @@
                             "instanceType": "Dynamic",
                             "title": "🤷  You have reached your master channels limit",
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
                             },
@@ -865,6 +866,7 @@
                             "instanceType": "Dynamic",
                             "title": "⏱️  Claim Configuration",
                             "description": "When the owner of a dynamic channel leaves it, Vertix waits a while before offering the channel to whoever is still inside. They then vote on who takes it over.\n\nPick a value below to change it. A value marked {defaultMarker} follows the bot's own configuration rather than a choice made here, and an empty field puts it back to that.\n\n**🚪 Owner Away Before Claimable** ∙ {valueClaimTimeout}\nHow long the owner can be gone before the channel is offered to the others.\n\n**🔁 Claim Check Interval** ∙ {valueClaimInterval}\nHow often Vertix looks for abandoned channels, which is also how close to the wait above the offer actually lands.\n\n**🗳️ Vote Duration** ∙ {valueVoteTimeout}\nHow long a claim vote stays open once it starts.\n\n**➕ Vote Time Per Candidate** ∙ {valueVoteAddTime}\nAdded to the running vote each time someone new puts themselves forward.\n",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "color": 3369963,
                             "options": {
                                 "defaultMarker": "*(default)*"
@@ -6574,6 +6576,7 @@
                             "instanceType": "Dynamic",
                             "title": "🤷  You have reached your master channels limit",
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
                             },
@@ -13037,6 +13040,7 @@
                             "instanceType": "Dynamic",
                             "title": "🤷  You have reached your master channels limit",
                             "description": "You can create up to **{maxMasterChannels}** Master Channels in total.",
+                            "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "vars": {
                                 "maxMasterChannels": "{maxMasterChannels}"
                             },

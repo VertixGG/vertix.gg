@@ -7,6 +7,8 @@ import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
 
+import { VERTIX_BRAND_THUMBNAIL_URL } from "@vertix.gg/bot/src/definitions/app";
+
 import { timingsMillisecondsToSeconds } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-claim-modals";
 
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
@@ -41,6 +43,7 @@ const SetupClaimEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand(
     )
 )
     .setInstanceType( UIInstancesTypes.Dynamic )
+    .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( "⏱️  Claim Configuration" )
     .setDescription( ( vars ) =>
         "When the owner of a dynamic channel leaves it, Vertix waits a while before offering the " +

@@ -8,9 +8,9 @@ const WelcomeEmbed = new EmbedBuilder( "VertixBot/UI-General/WelcomeEmbed" )
     .setColor( VERTIX_DEFAULT_COLOR_BRAND )
     .setImage( "https://i.imgur.com/x8jMguN.gif" )
     .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
-    .setTitle( "༄ Vertix is here, let's get started!" )
+    .setTitle( "༄ VoiceChannels is here, let's get started!" )
     .setDescription(
-        "Welcome to Vertix, an incredible addition to your server!\n" +
+        "Welcome to VoiceChannels, an incredible addition to your server!\n" +
         "Let's collaborate and make your server even better.\n\n" +
         "**Bot Setup**\n" +
         "- Type `/setup` or press `(🛠 Setup)` button.\n" +

@@ -1321,7 +1321,14 @@ export class DynamicChannelClaimManager extends InitializeBase {
         // An emptied room is deleted, so the record has to go with it - the sweep on the next
         // startup reads these before it reads discord, and one left behind describes a room that
         // is not there.
-        await this.forgetClaimState( channel );
+        //
+        // Unmarked rather than only forgotten, because the claimable set is held in memory and the
+        // record is not the same thing as the set. A room abandoned long enough to be offered and
+        // then emptied was in both, and dropping the row alone left it claimable for the rest of the
+        // process: `/voice claim` went on offering a channel discord had already deleted, the count
+        // climbing by one every time it happened, and picking one sent the member to a vote in a
+        // room that was not there.
+        await this.unmarkChannelAsClaimable( channel );
     }
 
     private async onUpdateChannelOwnership(

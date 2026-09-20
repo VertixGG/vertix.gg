@@ -3,15 +3,75 @@ import { expect, test } from "@vertix.gg/bot-e2e/src/fixtures/e2e-fixtures";
 import { BotCatalog } from "@vertix.gg/bot-e2e/src/catalog/bot-catalog";
 import { E2E_TIMEOUTS } from "@vertix.gg/bot-e2e/src/config/e2e-constants";
 
+import { normalizeDiscordText } from "@vertix.gg/bot-e2e/src/discord/discord-text";
+
 import type { DiscordApp } from "@vertix.gg/bot-e2e/src/discord/discord-app";
 import type { VertixScreen } from "@vertix.gg/bot-e2e/src/vertix/vertix-screen";
+
+import type { Locator } from "@playwright/test";
 
 // The offer alone can take two and a half minutes of that - see `CLAIM_OFFER_MS`.
 const CLAIM_TEST_MS = 330_000;
 
-// Asked for, not granted: the bot floors the owner-away timeout at a minute, so this buys the
-// shortest wait there is rather than a five second one. `CLAIM_OFFER_MS` is what waits it out.
-const SHORT_TIMING_SECONDS = "5";
+/**
+ * The shortest each claim timing is allowed to be, in seconds, beside what the screen calls it.
+ *
+ * These are the floors themselves, out of `GUILD_TIMINGS_BOUNDS` - not values chosen for being
+ * small. Anything under them is refused rather than clamped: the bot answers `"was not saved"` on an
+ * ephemeral nobody here is reading, leaves the guild on its ten minute default, and the test then
+ * sits out the very wait it believed it had just shortened. Together they put the offer between
+ * thirty and forty seconds after the owner goes, which `CLAIM_OFFER_MS` covers several times over.
+ */
+const CLAIM_TIMINGS = [
+    {
+        value: "claim-owner-away",
+        modal: "VertixBot/UI-General/SetupClaimTimeoutModal",
+        seconds: "30",
+        label: "Owner Away Before Claimable"
+    },
+    {
+        value: "claim-check-interval",
+        modal: "VertixBot/UI-General/SetupClaimSweepIntervalModal",
+        seconds: "10",
+        label: "Claim Check Interval"
+    }
+] as const;
+
+type TClaimTiming = typeof CLAIM_TIMINGS[ number ];
+
+/**
+ * What the claim screen shows for one timing right now - `"30s"`, or `"600s (default)"`.
+ *
+ * Taken line by line rather than from the normalized whole, because normalizing collapses the
+ * newlines the embed separates its four timings by, after which every value reads as being on every
+ * line. The marker is the embed's own way of saying a value is inherited rather than the guild's.
+ */
+async function claimTimingValue( app: DiscordApp, claim: Locator, label: string ): Promise<string> {
+    const description = await app.messages.embedDescription( claim ).innerText().catch( () => "" );
+
+    const line = description
+        .split( "\n" )
+        .map( ( raw ) => normalizeDiscordText( raw ) )
+        .find( ( raw ) => raw.includes( label ) );
+
+    return line?.split( "\u2219" )[ 1 ]?.trim() ?? "";
+}
+
+/**
+ * That the bot kept what the modal just submitted, which it will not always have done.
+ *
+ * A refused value costs nothing visible - the modal closes either way and the screen behind it is
+ * simply never edited - so without this the precondition fails in silence, and the test standing on
+ * it goes on to blame the bot for never offering a claim it was never asked early enough for.
+ */
+async function expectTimingTaken( app: DiscordApp, claim: Locator, timing: TClaimTiming ): Promise<void> {
+    await expect
+        .poll( () => claimTimingValue( app, claim, timing.label ), {
+            timeout: E2E_TIMEOUTS.BOT_REPLY_MS,
+            message: `the bot did not take ${ timing.seconds }s for "${ timing.label }"`
+        } )
+        .toBe( `${ timing.seconds }s` );
+}
 
 /**
  * Claiming a channel whose owner walked off, which takes two people by definition.
@@ -37,21 +97,20 @@ async function lowerClaimTimings( app: DiscordApp, screen: VertixScreen ): Promi
         BotCatalog.$.embedTitle( "VertixBot/UI-General/SetupClaimEmbed" )
     );
 
-    for ( const [ value, modal ] of [
-        [ "claim-owner-away", "VertixBot/UI-General/SetupClaimTimeoutModal" ],
-        [ "claim-check-interval", "VertixBot/UI-General/SetupClaimSweepIntervalModal" ]
-    ] ) {
+    for ( const timing of CLAIM_TIMINGS ) {
         await app.messages.chooseOption(
             claim,
             BotCatalog.$.selectPlaceholder( "VertixBot/UI-General/SetupClaimSelectOptionMenu" ),
-            BotCatalog.$.selectOptionLabel( "VertixBot/UI-General/SetupClaimSelectOptionMenu", value )
+            BotCatalog.$.selectOptionLabel( "VertixBot/UI-General/SetupClaimSelectOptionMenu", timing.value )
         );
 
-        await app.modal.waitForTitle( BotCatalog.$.modalTitle( modal ) );
+        await app.modal.waitForTitle( BotCatalog.$.modalTitle( timing.modal ) );
 
-        await app.modal.fillField( 0, SHORT_TIMING_SECONDS );
+        await app.modal.fillField( 0, timing.seconds );
 
         await app.modal.submit();
+
+        await expectTimingTaken( app, claim, timing );
     }
 }
 
@@ -103,8 +162,15 @@ test.describe( "claim with a second member", () => {
 
         const mark = await second.messages.mark();
 
+        // Pressed by its emoji rather than its label. The button inherits `DynamicChannelButtonBase`,
+        // whose `isLabelOmitted()` is true, so `"Claim"` is a name it carries in the language file and
+        // nowhere in the message - what discord draws is the `:ClaimChannel:` image on its own, and a
+        // button filtered by text matches nothing at all.
         await second.messages
-            .labelledButton( claimable as NonNullable<typeof claimable>, BotCatalog.$.buttonLabel( "VertixBot/UI-V3/ClaimStartButton" ) )
+            .componentButton(
+                claimable as NonNullable<typeof claimable>,
+                BotCatalog.$.panelButton( "VertixBot/UI-V3/DynamicChannelClaimChannelButton" ).emojiName
+            )
             .click();
 
         const vote = await second.messages.waitForReply( mark ).catch( () => claimable );

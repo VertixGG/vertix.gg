@@ -30,7 +30,11 @@ const DynamicChannelLfmUnavailableEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setOptions( () => ( {
         reason: {
             [ vars.reasonNotConfigured ]:
-                "Nobody has set up a channel for these posts yet. An admin picks one in the setup screen.",
+                // Two things have to be true before this button can do anything, and an
+                // admin reading only half of that goes looking for the other half in the
+                // wrong screen: the button is out of the set a generator starts with, so
+                // it has to be switched on as well as pointed somewhere.
+                "Nobody has set this up yet. An admin runs `/setup`, turns the **LFM** button on in the channel interface, and picks the channels these posts go to.",
             [ vars.reasonDestinationUnavailable ]:
                 "The channels these posts go to are not ones you can see. An admin picks them in the setup screen.",
             [ vars.reasonHidden ]:

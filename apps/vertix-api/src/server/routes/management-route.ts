@@ -79,6 +79,8 @@ interface UpdateDynamicSettingsBody {
     dynamicChannelStaffRoles?: string[];
     dynamicChannelVoiceRoleId?: string | null;
     dynamicChannelLogsChannelId?: string | null;
+    dynamicChannelLfmChannelIds?: string[];
+    dynamicChannelLfmPingRoleIds?: string[];
     dynamicChannelButtonsTemplate?: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
     dynamicChannelButtonsRowBreaks?: number[];

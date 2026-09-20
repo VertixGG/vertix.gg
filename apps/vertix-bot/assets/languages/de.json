@@ -1928,7 +1928,7 @@
         "description": "{reason}",
         "options": {
           "reason": {
-            "{reasonNotConfigured}": "Es wurde noch kein Kanal für diese Beiträge eingerichtet. Ein Admin wählt ihn im Setup aus.",
+            "{reasonNotConfigured}": "Das ist noch nicht eingerichtet. Ein Admin führt `/setup` aus, schaltet die Schaltfläche **LFM** in der Kanaloberfläche ein und wählt die Kanäle, in die diese Beiträge gehen.",
             "{reasonDestinationUnavailable}": "Die Kanäle, in die diese Beiträge gehen, kannst du nicht sehen. Ein Admin wählt sie im Setup-Bildschirm aus.",
             "{reasonHidden}": "Dein Kanal ist versteckt, also würde ihn ohnehin niemand finden. Mach ihn zuerst sichtbar.",
             "{reasonPrivate}": "Dein Kanal ist privat, also käme niemand herein, den du einlädst. Mach ihn zuerst öffentlich.",
@@ -3806,7 +3806,7 @@
         "description": "{reason}",
         "options": {
           "reason": {
-            "{reasonNotConfigured}": "Es wurde noch kein Kanal für diese Beiträge eingerichtet. Ein Admin wählt ihn im Setup aus.",
+            "{reasonNotConfigured}": "Das ist noch nicht eingerichtet. Ein Admin führt `/setup` aus, schaltet die Schaltfläche **LFM** in der Kanaloberfläche ein und wählt die Kanäle, in die diese Beiträge gehen.",
             "{reasonDestinationUnavailable}": "Die Kanäle, in die diese Beiträge gehen, kannst du nicht sehen. Ein Admin wählt sie im Setup-Bildschirm aus.",
             "{reasonHidden}": "Dein Kanal ist versteckt, also würde ihn ohnehin niemand finden. Mach ihn zuerst sichtbar.",
             "{reasonPrivate}": "Dein Kanal ist privat, also käme niemand herein, den du einlädst. Mach ihn zuerst öffentlich.",

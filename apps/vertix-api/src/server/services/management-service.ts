@@ -144,6 +144,11 @@ function readDynamicSettings( settingsData: Record<string, unknown>, defaults: R
         dynamicChannelStaffRoles: read<string[]>( "dynamicChannelStaffRoles" ) ?? [],
         dynamicChannelVoiceRoleId: read<string | null>( "dynamicChannelVoiceRoleId" ) ?? null,
         dynamicChannelLogsChannelId: read<string | null>( "dynamicChannelLogsChannelId" ) ?? null,
+        // The boards this generator's channels may advertise on, and who gets pinged when one
+        // does. Empty is the honest answer rather than a missing one: it is what the bot reads as
+        // nobody having set the feature up, and what its refusal tells an admin to go and fix.
+        dynamicChannelLfmChannelIds: read<string[]>( "dynamicChannelLfmChannelIds" ) ?? [],
+        dynamicChannelLfmPingRoleIds: read<string[]>( "dynamicChannelLfmPingRoleIds" ) ?? [],
         dynamicChannelButtonsTemplate: read<string[]>( "dynamicChannelButtonsTemplate" ) ?? [],
         dynamicChannelButtonsTemplateByRole: read<Record<string, string[]>>( "dynamicChannelButtonsTemplateByRole" ) ?? {},
         // Not a setting the bot's configuration carries: absent means no arrangement of its own,
@@ -163,6 +168,8 @@ export interface DynamicSettings {
     dynamicChannelStaffRoles: string[];
     dynamicChannelVoiceRoleId: string | null;
     dynamicChannelLogsChannelId: string | null;
+    dynamicChannelLfmChannelIds: string[];
+    dynamicChannelLfmPingRoleIds: string[];
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole: Record<string, string[]>;
     dynamicChannelButtonsRowBreaks: number[];
@@ -251,6 +258,8 @@ export interface UpdateDynamicSettingsInput {
     dynamicChannelStaffRoles?: string[];
     dynamicChannelVoiceRoleId?: string | null;
     dynamicChannelLogsChannelId?: string | null;
+    dynamicChannelLfmChannelIds?: string[];
+    dynamicChannelLfmPingRoleIds?: string[];
     dynamicChannelButtonsTemplate?: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
     dynamicChannelButtonsRowBreaks?: number[];

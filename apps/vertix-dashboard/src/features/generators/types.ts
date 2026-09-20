@@ -37,6 +37,16 @@ export interface DynamicSettings {
     /** Null defers to the guild wide voice role. */
     dynamicChannelVoiceRoleId: string | null;
     dynamicChannelLogsChannelId: string | null;
+    /**
+     * The channels this generator's rooms may advertise themselves on, and who gets pinged when
+     * one does. Empty means the feature is off.
+     *
+     * Optional because an api that predates them answers without them, and the dashboard ships
+     * separately from it - typed as always present, the compiler was satisfied and the settings
+     * form crashed on the first render against a live server.
+     */
+    dynamicChannelLfmChannelIds?: string[];
+    dynamicChannelLfmPingRoleIds?: string[];
     /** The buttons a generator's channels carry, by id, in the order the interface draws them. */
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole: Record<string, string[]>;
@@ -124,6 +134,8 @@ export interface UpdateDynamicSettingsInput {
     dynamicChannelStaffRoles?: string[];
     dynamicChannelVoiceRoleId?: string | null;
     dynamicChannelLogsChannelId?: string | null;
+    dynamicChannelLfmChannelIds?: string[];
+    dynamicChannelLfmPingRoleIds?: string[];
 }
 
 export interface DiscordChannelInfo {

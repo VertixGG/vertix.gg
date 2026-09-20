@@ -2619,7 +2619,7 @@
                             "color": 16738560,
                             "options": {
                                 "reason": {
-                                    "{reasonNotConfigured}": "Nobody has set up a channel for these posts yet. An admin picks one in the setup screen.",
+                                    "{reasonNotConfigured}": "Nobody has set this up yet. An admin runs `/setup`, turns the **LFM** button on in the channel interface, and picks the channels these posts go to.",
                                     "{reasonDestinationUnavailable}": "The channels these posts go to are not ones you can see. An admin picks them in the setup screen.",
                                     "{reasonHidden}": "Your channel is hidden, so nobody could find it anyway. Show it first.",
                                     "{reasonPrivate}": "Your channel is private, so nobody you invite could get in. Make it public first.",
@@ -8644,7 +8644,7 @@
                             "color": 16738560,
                             "options": {
                                 "reason": {
-                                    "{reasonNotConfigured}": "Nobody has set up a channel for these posts yet. An admin picks one in the setup screen.",
+                                    "{reasonNotConfigured}": "Nobody has set this up yet. An admin runs `/setup`, turns the **LFM** button on in the channel interface, and picks the channels these posts go to.",
                                     "{reasonDestinationUnavailable}": "The channels these posts go to are not ones you can see. An admin picks them in the setup screen.",
                                     "{reasonHidden}": "Your channel is hidden, so nobody could find it anyway. Show it first.",
                                     "{reasonPrivate}": "Your channel is private, so nobody you invite could get in. Make it public first.",

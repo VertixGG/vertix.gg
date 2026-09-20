@@ -12,6 +12,8 @@ export interface DynamicConfigFormState {
     defaultUserLimit: number | null;
     verifiedRoles: string[];
     staffRoles: string[];
+    lfmChannelIds: string[];
+    lfmPingRoleIds: string[];
     /** Null defers to the guild wide voice role. */
     voiceRoleId: string | null;
     logsChannelId: string | null;
@@ -30,6 +32,8 @@ export const DYNAMIC_CONFIG_FORM_INITIAL_STATE: DynamicConfigFormState = {
     defaultUserLimit: null,
     verifiedRoles: [],
     staffRoles: [],
+    lfmChannelIds: [],
+    lfmPingRoleIds: [],
     voiceRoleId: null,
     logsChannelId: null
 };
@@ -58,6 +62,8 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
             defaultUserLimit: args.settings.dynamicChannelDefaultUserLimit,
             verifiedRoles: args.settings.dynamicChannelVerifiedRoles,
             staffRoles: args.settings.dynamicChannelStaffRoles,
+            lfmChannelIds: args.settings.dynamicChannelLfmChannelIds ?? [],
+            lfmPingRoleIds: args.settings.dynamicChannelLfmPingRoleIds ?? [],
             voiceRoleId: args.settings.dynamicChannelVoiceRoleId,
             logsChannelId: args.settings.dynamicChannelLogsChannelId
         } );
@@ -144,6 +150,26 @@ export class UpdateStaffRolesCommand extends CommandBase<DynamicConfigFormState,
     }
 }
 
+export class UpdateLfmChannelsCommand extends CommandBase<DynamicConfigFormState, { value: string[] }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateLfmChannels";
+    }
+
+    public apply( args: { value: string[] } ) {
+        return this.setState( { lfmChannelIds: args.value } );
+    }
+}
+
+export class UpdateLfmPingRolesCommand extends CommandBase<DynamicConfigFormState, { value: string[] }> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateLfmPingRoles";
+    }
+
+    public apply( args: { value: string[] } ) {
+        return this.setState( { lfmPingRoleIds: args.value } );
+    }
+}
+
 export class UpdateVoiceRoleCommand extends CommandBase<DynamicConfigFormState, { value: string | null }> {
     public static getName() {
         return "Dashboard/Generators/DynamicConfigForm/UpdateVoiceRole";
@@ -174,6 +200,8 @@ export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     UpdateDefaultUserLimitCommand,
     UpdateVerifiedRolesCommand,
     UpdateStaffRolesCommand,
+    UpdateLfmChannelsCommand,
+    UpdateLfmPingRolesCommand,
     UpdateVoiceRoleCommand,
     UpdateLogsChannelCommand
 ] as const;

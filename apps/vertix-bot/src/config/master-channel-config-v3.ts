@@ -1,3 +1,4 @@
+import { DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS } from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 import { VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
 
@@ -51,6 +52,23 @@ export class MasterChannelConfigV3 extends ConfigBase<MasterChannelConfigInterfa
             dynamicChannelControlChannelId: null,
 
             dynamicChannelLogsChannelId: null,
+
+            // Carried for the same reason the row breaks above are: this configuration is the
+            // whitelist a write to a generator's row is filtered against, so a key absent here is
+            // a setting that cannot be stored at all. V3 draws the Lfm button, and without these
+            // every attempt to point it at a channel was dropped on the floor - leaving a button
+            // that could only ever answer that nobody had configured it.
+            dynamicChannelLfmChannelIds: [],
+
+            dynamicChannelLfmPingRoleIds: [],
+
+            dynamicChannelLfmPostCooldownMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.postCooldown,
+
+            dynamicChannelLfmPingCooldownMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.pingCooldown,
+
+            dynamicChannelLfmPostExpiryMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.postExpiry,
+
+            dynamicChannelLfmOccupancyDebounceMs: DYNAMIC_CHANNEL_LFM_TIMINGS_FALLBACKS.occupancyDebounce,
 
             dynamicChannelMentionable: true,
 

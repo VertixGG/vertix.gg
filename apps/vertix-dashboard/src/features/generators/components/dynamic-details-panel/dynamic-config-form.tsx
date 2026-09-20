@@ -10,6 +10,7 @@ import { Save, X } from "lucide-react";
 import { DiscordButton } from "@vertix.gg/discord-ui/src";
 
 import {
+    ChannelCheckList,
     ChannelRadioList,
     RoleCheckList,
     RoleRadioList,
@@ -88,6 +89,8 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
             staffRoles: state.staffRoles,
             voiceRoleId: state.voiceRoleId,
             logsChannelId: state.logsChannelId,
+            lfmChannelIds: state.lfmChannelIds,
+            lfmPingRoleIds: state.lfmPingRoleIds,
         } )
     );
 
@@ -109,7 +112,9 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
         state.voiceRoleId !== ( settings.dynamicChannelVoiceRoleId ) ||
         state.logsChannelId !== ( settings.dynamicChannelLogsChannelId ) ||
         !sameRoles( state.verifiedRoles, settings.dynamicChannelVerifiedRoles ) ||
-        !sameRoles( state.staffRoles, settings.dynamicChannelStaffRoles );
+        !sameRoles( state.staffRoles, settings.dynamicChannelStaffRoles ) ||
+        !sameRoles( state.lfmChannelIds, settings.dynamicChannelLfmChannelIds ?? [] ) ||
+        !sameRoles( state.lfmPingRoleIds, settings.dynamicChannelLfmPingRoleIds ?? [] );
 
     const handleSave = () => {
         updateDynamicSettings.run( {
@@ -125,12 +130,22 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 dynamicChannelStaffRoles: state.staffRoles,
                 dynamicChannelVoiceRoleId: state.voiceRoleId,
                 dynamicChannelLogsChannelId: state.logsChannelId,
+                dynamicChannelLfmChannelIds: state.lfmChannelIds,
+                dynamicChannelLfmPingRoleIds: state.lfmPingRoleIds,
             }
         } );
         onClose();
     };
 
     const handleCancel = onClose;
+
+    const handleUpdateLfmChannels = ( value: string[] ) => {
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateLfmChannels", { value } );
+    };
+
+    const handleUpdateLfmPingRoles = ( value: string[] ) => {
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateLfmPingRoles", { value } );
+    };
 
     const handleUpdateNameTemplate = ( value: string ) => {
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateNameTemplate", { value } );
@@ -284,6 +299,33 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                     disabled={ isSaving }
                     emptyLabel="Roles could not be loaded from Discord"
                     onChange={ handleUpdateVerifiedRoles }
+                />
+
+                {
+                    /*
+                     * Where a room may advertise itself, and who hears about it. Empty is what the
+                     * bot reads as the feature being off - and it says as much to anyone who
+                     * presses the button, pointing them back at the setup screen.
+                     */
+                }
+                <ChannelCheckList
+                    label="Looking-for-members boards"
+                    hint="Where a room with space left may advertise itself. None switches the feature off"
+                    channels={ textChannels }
+                    selected={ state.lfmChannelIds }
+                    disabled={ isSaving }
+                    emptyLabel="Channels could not be loaded from Discord"
+                    onChange={ handleUpdateLfmChannels }
+                />
+
+                <RoleCheckList
+                    label="Looking-for-members pings"
+                    hint="Who gets mentioned when a room posts. None mentions nobody"
+                    roles={ roles }
+                    selected={ state.lfmPingRoleIds }
+                    disabled={ isSaving }
+                    emptyLabel="Roles could not be loaded from Discord"
+                    onChange={ handleUpdateLfmPingRoles }
                 />
 
                 <RoleCheckList

@@ -402,6 +402,62 @@ export function RoleRadioList( {
     );
 }
 
+interface ChannelCheckListProps {
+    label: string;
+    hint: string;
+    channels: GuildDiscordChannel[];
+    selected: string[];
+    disabled?: boolean;
+    emptyLabel: string;
+    onChange: ( value: string[] ) => void;
+}
+
+/**
+ * The channels a setting applies to, where it can apply to several.
+ *
+ * Beside the radio list rather than replacing it: a setting with one answer and a setting with
+ * many are different questions, and a checklist offering a single logs channel would invite an
+ * admin to pick two and lose one on save.
+ */
+export function ChannelCheckList( {
+    label,
+    hint,
+    channels,
+    selected,
+    disabled,
+    emptyLabel,
+    onChange
+}: ChannelCheckListProps ) {
+    const toggle = ( channelId: string ) => {
+        onChange(
+            selected.includes( channelId )
+                ? selected.filter( ( id ) => id !== channelId )
+                : [ ...selected, channelId ]
+        );
+    };
+
+    return (
+        <SelectListFrame label={ label } hint={ hint } isEmpty={ !channels.length } emptyLabel={ emptyLabel }>
+            { channels.map( ( channel ) => (
+                <SelectRow
+                    key={ channel.id }
+                    marker={ <span className="text-text-muted shrink-0">#</span> }
+                    name={ channel.name }
+                    disabled={ disabled }
+                >
+                    <input
+                        type="checkbox"
+                        checked={ selected.includes( channel.id ) }
+                        disabled={ disabled }
+                        onChange={ () => toggle( channel.id ) }
+                        className="accent-accent"
+                    />
+                </SelectRow>
+            ) ) }
+        </SelectListFrame>
+    );
+}
+
 interface RoleCheckListProps {
     label: string;
     hint: string;

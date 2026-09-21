@@ -451,15 +451,51 @@
         }
       },
       {
-        "name": "VertixBot/UI-General/HelpGuideButton",
-        "content": {
-          "label": "Setup Guide"
-        }
-      },
-      {
         "name": "VertixBot/UI-General/HelpSupportButton",
         "content": {
           "label": "Support Server"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpDashboardButton",
+        "content": {
+          "label": "Dashboard"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpWebsiteButton",
+        "content": {
+          "label": "Website"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpSetupGuideButton",
+        "content": {
+          "label": "Setup"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpJoinToCreateButton",
+        "content": {
+          "label": "Join to Create"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpFeaturesButton",
+        "content": {
+          "label": "Features"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpLogsChannelButton",
+        "content": {
+          "label": "Logs Channel"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/HelpChannelNamesButton",
+        "content": {
+          "label": "Channel Names"
         }
       }
     ],
@@ -3833,7 +3869,7 @@
       "name": "VertixBot/UI-General/HelpEmbed",
       "content": {
         "title": "❔ VoiceChannels help",
-        "description": "VoiceChannels gives your server voice channels that create themselves. Join the generator channel and you get your own, which is deleted when the last person leaves.\n\n**Your channel**\nAnything below works while you are in a channel you own.\n`/voice rename` ∙ name it\n`/voice limit` ∙ how many may join\n`/voice privacy` ∙ public, private or hidden\n`/voice status` ∙ the status shown on it\n`/voice access` ∙ grant, deny or kick members\n\n**Anyone**\n`/voice invite` ∙ invite someone to a channel\n`/voice claim` ∙ take over a channel whose owner left\n`/welcome` ∙ what the bot does and how to start\n\n**Server admins**\n`/setup` ∙ set up and configure the bot\n`/manage new-generator` ∙ add another generator\n`/manage edit` ∙ edit an existing one\n`/manage roles` ∙ voice, verified and staff roles\n`/manage server-options` ∙ roles, bad words and claim timings\n`/manage language` ∙ the language the bot speaks here\n\nNew here? The guide below walks through setup in a few minutes. Anything else, ask us in the support server - we read it."
+        "description": "VoiceChannels gives your server voice channels that create themselves. Join the generator channel and you get your own, which is deleted when the last person leaves.\n\n**Your channel**\nAnything below works while you are in a channel you own.\n`/voice rename` ∙ name it\n`/voice limit` ∙ how many may join\n`/voice privacy` ∙ public, private or hidden\n`/voice status` ∙ the status shown on it\n`/voice access` ∙ grant, deny or kick members\n\n**Anyone**\n`/voice invite` ∙ invite someone to a channel\n`/voice claim` ∙ take over a channel whose owner left\n`/welcome` ∙ what the bot does and how to start\n\n**Server admins**\n`/setup` ∙ set up and configure the bot\n`/manage new-generator` ∙ add another generator\n`/manage edit` ∙ edit an existing one\n`/manage roles` ∙ voice, verified and staff roles\n`/manage server-options` ∙ roles, bad words and claim timings\n`/manage language` ∙ the language the bot speaks here\n\nNew here? Start with **Setup** below - it walks the whole thing in a few minutes. **Dashboard** configures everything without typing a command, and if none of the guides help, the **Support Server** is a person."
       }
     }
   ],

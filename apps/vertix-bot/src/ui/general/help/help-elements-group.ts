@@ -1,6 +1,18 @@
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
-import { HelpGuideButton } from "@vertix.gg/bot/src/ui/general/help/help-guide-button";
+import {
+    HelpChannelNamesButton,
+    HelpFeaturesButton,
+    HelpJoinToCreateButton,
+    HelpLogsChannelButton,
+    HelpSetupGuideButton
+} from "@vertix.gg/bot/src/ui/general/help/help-guide-buttons";
+
+import {
+    HelpDashboardButton,
+    HelpWebsiteButton
+} from "@vertix.gg/bot/src/ui/general/help/help-links-buttons";
+
 import { HelpSupportButton } from "@vertix.gg/bot/src/ui/general/help/help-support-button";
 
 export class HelpElementsGroup extends UIElementsGroupBase {
@@ -8,11 +20,31 @@ export class HelpElementsGroup extends UIElementsGroupBase {
         return "VertixBot/UI-General/HelpElementsGroup";
     }
 
-    // Both are links. A link button is drawn by discord and pressed without ever reaching the bot,
-    // so the screen keeps working whatever the bot was or was not granted.
+    /**
+     * Two rows: the guides, then where to go.
+     *
+     * The guides are ordered as someone meets the bot rather than by importance - set it up,
+     * understand what the generator does, turn features on, then the two narrower pages. Five is
+     * discord's limit for one row, which is also all the guides worth putting here.
+     *
+     * The second row answers a different question: somewhere to configure it, somewhere to read
+     * about it, and someone to ask. Support sits last because it is what is left when the rest has
+     * not helped.
+     */
     public static getItems() {
         return [
-            [ HelpGuideButton, HelpSupportButton ]
+            [
+                HelpSetupGuideButton,
+                HelpJoinToCreateButton,
+                HelpFeaturesButton,
+                HelpLogsChannelButton,
+                HelpChannelNamesButton
+            ],
+            [
+                HelpDashboardButton,
+                HelpWebsiteButton,
+                HelpSupportButton
+            ]
         ];
     }
 }

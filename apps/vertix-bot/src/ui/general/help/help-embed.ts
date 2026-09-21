@@ -12,7 +12,10 @@ import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.
  *
  * Nothing here asks the bot for anything. Help is the screen someone reaches when the rest is not
  * working, so it must not be the second thing that fails: no channel is read, no permission is
- * required, and the two buttons beside it are links.
+ * required, and every button beside it is a link, which discord opens without the bot involved.
+ *
+ * The guides are named rather than linked inline - they are buttons underneath, and a paragraph of
+ * markdown links saying the same thing twice reads as clutter.
  */
 const HelpEmbed = new EmbedBuilder( "VertixBot/UI-General/HelpEmbed" )
     .setInstanceType( UIInstancesTypes.Static )
@@ -44,8 +47,9 @@ const HelpEmbed = new EmbedBuilder( "VertixBot/UI-General/HelpEmbed" )
         "`/manage server-options` ∙ roles, bad words and claim timings\n" +
         "`/manage language` ∙ the language the bot speaks here\n\n" +
 
-        "New here? The guide below walks through setup in a few minutes. " +
-        "Anything else, ask us in the support server - we read it."
+        "New here? Start with **Setup** below - it walks the whole thing in a few minutes. " +
+        "**Dashboard** configures everything without typing a command, and if none of the guides " +
+        "help, the **Support Server** is a person."
     )
     .build();
 

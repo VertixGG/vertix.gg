@@ -1,3 +1,5 @@
+import { BILLING_FREE_MAX_MASTER_CHANNELS } from "@vertix.gg/definitions/src/billing-definitions";
+
 import { ConfigBase } from "@vertix.gg/data/src/bases/config-base";
 
 import type { GuildConfigInterface } from "@vertix.gg/data/src/interfaces/guild-config";
@@ -29,7 +31,7 @@ export class GuildConfig extends ConfigBase<GuildConfigInterface> {
 
     protected getDefaults(): GuildConfigInterface[ "defaults" ] {
         return {
-            maxMasterChannels: 2,
+            maxMasterChannels: BILLING_FREE_MAX_MASTER_CHANNELS,
             maxActiveDynamicChannels: 20
         };
     }

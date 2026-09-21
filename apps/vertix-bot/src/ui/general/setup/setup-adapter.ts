@@ -35,6 +35,8 @@ import { UIHashService } from "@vertix.gg/gui/src/ui-hash-service";
 
 import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/data/src/config/scaling-channel-config";
 
+import { formatMasterChannelAllowance } from "@vertix.gg/definitions/src/billing-definitions";
+
 import { LanguageSelectMenu } from "@vertix.gg/bot/src/ui/general/language/language-select-menu";
 
 import { SetupMasterEditSelectMenu } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-master-edit-select-menu";
@@ -276,7 +278,7 @@ async function onCreateMasterChannelClicked<TInteraction extends SetupMessageCom
         component.switchEmbedsGroup( "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup" );
 
         await context.ephemeral( interaction, {
-            maxMasterChannels: limit
+            maxMasterChannels: formatMasterChannelAllowance( limit )
         } );
 
         return;
@@ -321,7 +323,7 @@ async function onCreateScalingChannelClicked<TInteraction extends SetupMessageCo
         component.switchEmbedsGroup( "VertixBot/UI-General/SetupMaxMasterChannelsEmbedGroup" );
 
         await context.ephemeral( interaction, {
-            maxMasterChannels: limit
+            maxMasterChannels: formatMasterChannelAllowance( limit )
         } );
 
         return;

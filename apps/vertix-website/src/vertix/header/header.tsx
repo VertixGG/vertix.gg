@@ -209,6 +209,8 @@ export default function Header() {
                                     { title: "Name Placeholders", href: "/posts/channel-name-placeholders" },
                                 ] }/>
 
+                                <NavbarItem title="Plans" href="/pricing"/>
+
                                 <NavbarItem title="Change log" href="/changelog"/>
                             </ul>
                         </NavbarDropdownGroup>

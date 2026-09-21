@@ -1,4 +1,3 @@
-import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-definitions";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
@@ -112,8 +111,10 @@ const DynamicChannelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             visibilityState: args.isHidden ? visibilityStateHidden : visibilityStateShown,
             region: resolveRegionVar( args.region ),
 
-            // Printed in the kilobits discord's own interface says, not the bits its api takes.
-            bitrate: bitrateToKilobits( args.bitrate as number ),
+            // Handed over already in kilobits. An embed's logic is serialised into the ui
+            // export and re-compiled in a browser, where an imported helper does not exist -
+            // so the arithmetic is done where the argument is built, not here.
+            bitrate: args.bitrate,
             limitValue: args.userLimit,
             regionValue: args.region
         };

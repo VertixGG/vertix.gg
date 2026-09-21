@@ -1,6 +1,5 @@
 import { getNaming } from "@vertix.gg/data/src/config/naming";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
-import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-definitions";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
@@ -125,9 +124,10 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             region: resolveRegionVar( args.region ),
             regionEmoji: DynamicChannelRegionButton.getEmoji(),
 
-            // Printed in the kilobits discord's own interface says, not the bits its api takes -
-            // `96000` in a settings list reads as a mistake.
-            bitrate: bitrateToKilobits( args.bitrate as number ),
+            // Handed over already in kilobits. An embed's logic is serialised into the ui
+            // export and re-compiled in a browser, where an imported helper does not exist -
+            // so the arithmetic is done where the argument is built, not here.
+            bitrate: args.bitrate,
 
             dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
             // Declared above and used by the image url, but a var is only filled from here - left

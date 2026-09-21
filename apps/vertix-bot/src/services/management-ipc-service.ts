@@ -4,6 +4,8 @@ import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
+import { isUnlimitedAllowance } from "@vertix.gg/definitions/src/billing-definitions";
+
 import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ipc-definitions";
 
 import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
@@ -253,7 +255,10 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             "VertixBot/Services/Entitlement"
         ).getMaxMasterChannels( guildId );
 
-        return { maxMasterChannels };
+        // `JSON.stringify( Infinity )` is `null`, so an unlimited allowance is sent as null on
+        // purpose rather than by accident. The reader already treats null as nothing to hold
+        // anybody to, which is what unlimited means there.
+        return { maxMasterChannels: isUnlimitedAllowance( maxMasterChannels ) ? null : maxMasterChannels };
     }
 
     /**

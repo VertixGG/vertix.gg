@@ -33,6 +33,11 @@ const routes = [
     },
     // ---
     {
+        path: "/pricing",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/pricing" ) ),
+    },
+    // ---
+    {
         path: "/changelog",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/changelog" ) ),
     },

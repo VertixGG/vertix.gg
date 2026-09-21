@@ -1,4 +1,3 @@
-import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-definitions";
 import { UI_IMAGE_EMPTY_LINE_URL, UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
@@ -68,9 +67,11 @@ const DynamicChannelRegionEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         };
 
         // Read off the channel rather than off the menu, so a channel sitting above what its guild
-        // would now allow still reports what it actually is.
+        // would now allow still reports what it actually is. Already in kilobits when it arrives:
+        // this body is serialised into the ui export and re-compiled in a browser, where an
+        // imported helper does not exist.
         if ( args.bitrate ) {
-            result.bitrate = bitrateToKilobits( args.bitrate as number );
+            result.bitrate = args.bitrate;
         }
 
         return result;

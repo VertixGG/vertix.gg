@@ -106,7 +106,11 @@ export interface ISetupArgs extends UIArgs {
     staffRoleIds?: string[];
     /** Also the `@everyone` role id, which is how a generator that narrowed nothing is spotted. */
     guildId?: string;
-    maxMasterChannels?: number;
+    /**
+     * What the screen prints, already worded - `Unlimited` is not a number and the top tier has no
+     * ceiling, so this is the formatted allowance rather than the allowance.
+     */
+    maxMasterChannels?: string;
     scalingPrefix?: string;
     scalingMaxMembers?: number;
     scalingMasterChannelIndex?: string | number;

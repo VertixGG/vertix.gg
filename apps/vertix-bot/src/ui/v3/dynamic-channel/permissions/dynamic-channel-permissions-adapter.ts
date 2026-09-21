@@ -1,3 +1,4 @@
+import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
@@ -363,7 +364,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             state: await dynamicChannelService.getChannelPrivacyState( channel ),
             channelId: channel.id,
             region: channel.rtcRegion,
-            bitrate: channel.bitrate
+            bitrate: bitrateToKilobits( channel.bitrate )
         };
 
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {

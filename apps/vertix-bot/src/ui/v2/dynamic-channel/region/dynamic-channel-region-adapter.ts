@@ -1,3 +1,4 @@
+import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { VoiceChannel } from "discord.js";
@@ -46,7 +47,7 @@ async function getArgs( channel: VoiceChannel ) {
     return {
         region: channel.rtcRegion,
 
-        bitrate: channel.bitrate,
+        bitrate: bitrateToKilobits( channel.bitrate ),
 
         // A property of the guild rather than a number written down here, so a server that boosts on
         // friday sees the wider menu on friday rather than after a deploy.

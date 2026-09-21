@@ -1,3 +1,4 @@
+import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { getNaming } from "@vertix.gg/data/src/config/naming";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { UserMasterChannelDataModel } from "@vertix.gg/data/src/models/data/user-master-channel-data-model";
@@ -115,7 +116,7 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
 
             // Zero rather than a number that looks like a bitrate, so a panel drawn without a
             // channel behind it says nothing instead of claiming a quality nobody set.
-            bitrate: channel?.bitrate ?? identifier.bitrate ?? 0,
+            bitrate: bitrateToKilobits( channel?.bitrate ?? identifier.bitrate ?? 0 ),
 
             dynamicChannelButtonsTemplate: []
         };

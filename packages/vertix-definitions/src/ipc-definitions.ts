@@ -118,8 +118,14 @@ export interface GetGeneratorDefaultsResponse {
 }
 
 export interface GetConfigLimitsResponse {
-    /** How many dynamic generators a guild may have. */
-    maxMasterChannels: number;
+    /**
+     * How many generators a guild may have, or null for no ceiling.
+     *
+     * Null rather than a very large number, because an unlimited allowance is `Infinity` on the bot
+     * and `JSON.stringify` turns that into null anyway - said here so the reader is written for it
+     * rather than meeting it.
+     */
+    maxMasterChannels: number | null;
 }
 
 export interface IPCDiscordChannelInfo {

@@ -132,6 +132,15 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.7,
     },
     {
+        path: "/pricing",
+        sourcePath: "src/vertix/pages/pricing.tsx",
+        title: "Plans and Pricing | VoiceChannels",
+        description:
+            "Every feature is free. A plan buys how many generators a server may run at once - "
+            + "two free, five on Plus, fifteen on Pro, bought inside Discord.",
+        priority: 0.8,
+    },
+    {
         path: "/changelog",
         sourcePath: "src/vertix/pages/changelog.tsx",
         title: "Changelog | VoiceChannels",

@@ -1,3 +1,4 @@
+import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import { VoiceChannel } from "discord.js";
@@ -26,7 +27,7 @@ async function getArgs( channel: VoiceChannel ) {
 
         // What the channel is, rather than what the menu would offer it - a server that lost a boost
         // keeps the channels it already set, so the two can honestly disagree.
-        bitrate: channel.bitrate,
+        bitrate: bitrateToKilobits( channel.bitrate ),
 
         // A property of the guild rather than a number written down here, so a server that boosts on
         // friday sees the wider menu on friday rather than after a deploy.

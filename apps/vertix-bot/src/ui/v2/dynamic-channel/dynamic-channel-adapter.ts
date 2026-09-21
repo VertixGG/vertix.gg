@@ -1,3 +1,4 @@
+import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { VoiceChannel } from "discord.js";
 
 import { splitTemplate } from "@vertix.gg/utils/src/button-rows";
@@ -114,7 +115,7 @@ async function getAllArgs( channel: VoiceChannel, ownerRoleIds: string[] = [] ) 
             channelId: channel.id,
 
             region: channel.rtcRegion,
-            bitrate: channel.bitrate
+            bitrate: bitrateToKilobits( channel.bitrate )
         },
         masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 

@@ -63,15 +63,23 @@ happened to restart — see `M-07`.
 Numbers to settle; everything below reads them from one place, so changing them is changing one
 table.
 
-| tier | generators | price | SKU |
-|---|---|---|---|
-| Free | 2 | — | none |
-| Plus | 5 | $4 / month | one guild-subscription SKU |
-| Pro | 15 | $10 / month | one guild-subscription SKU |
+| tier | generators | on top of free | price | SKU |
+|---|---|---|---|---|
+| Free | 2 | — | — | none |
+| Plus | 4 | +2 | $2 / month | `DISCORD_SKU_PLUS` |
+| Pro | 9 | +7 | $4 / month | `DISCORD_SKU_PRO` |
+| Ultimate | unlimited | — | $10 / month | `DISCORD_SKU_ULTIMATE` |
 
 Free stays at 2, which is what `maxMasterChannels` already defaults to, so a server that never pays
-sees exactly what it sees today. Above Pro, the manual grant that exists now goes on being the
-answer — a server that needs 40 generators is a conversation, not a checkout.
+sees exactly what it sees today — and every tier is a total rather than an addition, because a total
+is what there is to enforce against. The site quotes the addition, because "seven more than I have"
+is the question somebody comparing plans is actually asking.
+
+**Unlimited is `Infinity`**, so `Math.max` and `<` mean what they say and no arithmetic has to know
+it is special. It does not survive JSON, which matters at exactly one place - the IPC answer the
+dashboard reads - where it is converted to `null` deliberately. `formatMasterChannelAllowance()` is
+what every screen prints it through, because the one that does not is the one that shows somebody
+the word `Infinity`.
 
 ---
 
@@ -196,7 +204,10 @@ paid path. Left undone rather than written slow and then disabled.
   `DISCORD_SKU_PLUS` and `DISCORD_SKU_PRO`. Until then `readBillingTiers()` returns nothing, the bot
   asks Discord about nothing, and every server sits on what it was granted - which is today's
   behaviour exactly.
-- **The tier numbers and prices.** Plus 5 and Pro 15 are in `billing-definitions.ts` as placeholders.
+- **The prices are quoted in two places and charged in one.** A SKU's price is set in Discord's
+  dashboard and is not readable back from an entitlement, so a tier repriced there has to be
+  repriced in `billing-definitions.ts` too, or the site quotes one figure while the store charges
+  another.
 - Whether the free tier stays at 2 once there is something to sell.
 - `M-13`, once the SKUs exist.
 

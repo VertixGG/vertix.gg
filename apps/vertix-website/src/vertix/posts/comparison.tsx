@@ -16,8 +16,8 @@ const CONTENDERS: Contender[] = [
         accent: "var(--color-vc-mint)",
         servers: "—",
         rating: "—",
-        price: "$1",
-        priceNote: "per month, per generator past the first two",
+        price: "$2",
+        priceNote: "per month, 1 server - and a free tier with every feature",
         isUs: true,
     },
     {
@@ -206,7 +206,7 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
         group: "What it costs",
         rows: [
             { capability: "Generators on the free tier", cells: [ "2", "1", "Capped, not published", "2" ] },
-            { capability: "What it costs to add more", cells: [ "$1 each", "\u00A33.99 a month", "EUR 4 a month", "$3.99 a month" ] },
+            { capability: "What it costs to add more", cells: [ "$2, $4 or $10 a month", "\u00A33.99 a month", "EUR 4 a month", "$3.99 a month" ] },
             { capability: "Every feature on the free tier", cells: [ "Yes", null, null, null ] },
             { capability: "No vote-gated commands", cells: [ "Yes", null, null, null ] },
         ],

@@ -6,7 +6,8 @@ export const API_ROUTES = {
     LANGUAGE_TRANSLATIONS: "/languages/translations/:code",
     BUTTON_SHEET: "/tools/button-sheet.png",
     BUTTON_EMOJIS: "/tools/button-emojis.json",
-    BUTTON_CATALOGUE: "/tools/buttons.json"
+    BUTTON_CATALOGUE: "/tools/buttons.json",
+    PADDLE_WEBHOOK: "/webhooks/paddle"
 } as const;
 
 export const API_PREFIX = "/api";

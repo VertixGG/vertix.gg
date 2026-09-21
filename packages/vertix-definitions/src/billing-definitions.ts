@@ -1,20 +1,31 @@
 /**
  * What a server may buy, and what each purchase allows.
  *
- * Discord sells these as guild subscriptions: one SKU, one entitlement, no quantity - a guild holds
- * at most one entitlement per SKU and nothing stacks. So an allowance cannot be bought a generator
- * at a time; it is bought a tier at a time, and this is the ladder of tiers.
+ * Sold through paddle, which is a merchant of record - it sells to the customer, collects the sales
+ * tax and pays us. That is what makes selling from here possible at all: discord's own subscriptions
+ * are sold from the US, the EU and the UK only.
  *
- * The ids themselves are not here. A SKU id belongs to one discord application, and the bot runs
- * against a different application in development than in production, so the id is environment and
- * the shape is code.
+ * An allowance is bought a tier at a time rather than a generator at a time, which was discord's
+ * constraint rather than paddle's - it is kept because the ladder a per-generator price would need
+ * is a worse thing to put in front of somebody than three plans.
+ *
+ * The ids themselves are not here. A price id belongs to one paddle account and the sandbox is a
+ * different account from the live one, so the id is environment and the shape is code.
  */
 export interface IBillingTier {
     /** What the tier is called, for the screens and the log. */
     name: string;
 
-    /** The discord SKU id whose entitlement grants it, as the environment supplies it. */
-    skuId: string;
+    /**
+     * What names it in a url - `…/billing?plan=pro`.
+     *
+     * Its own field rather than the name lowercased, so renaming a plan on the site does not quietly
+     * break every link to it that is already out there.
+     */
+    slug: string;
+
+    /** The paddle price id - `pri_…` - a subscription on this tier is billed against. */
+    priceId: string;
 
     /** How many generators a guild holding it may have. */
     maxMasterChannels: number;
@@ -74,11 +85,12 @@ export function formatMasterChannelAllowance( maxMasterChannels: number ): strin
  * while the store charges another.
  */
 export const BILLING_TIER_DEFINITIONS = [
-    { name: "Plus", environmentKey: "DISCORD_SKU_PLUS", maxMasterChannels: 4, monthlyPriceUsd: 2 },
-    { name: "Pro", environmentKey: "DISCORD_SKU_PRO", maxMasterChannels: 9, monthlyPriceUsd: 4 },
+    { name: "Plus", slug: "plus", environmentKey: "PADDLE_PRICE_PLUS", maxMasterChannels: 4, monthlyPriceUsd: 2 },
+    { name: "Pro", slug: "pro", environmentKey: "PADDLE_PRICE_PRO", maxMasterChannels: 9, monthlyPriceUsd: 4 },
     {
         name: "Ultimate",
-        environmentKey: "DISCORD_SKU_ULTIMATE",
+        slug: "ultimate",
+        environmentKey: "PADDLE_PRICE_ULTIMATE",
         maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS,
         monthlyPriceUsd: 10
     }
@@ -92,19 +104,19 @@ export const BILLING_TIER_DEFINITIONS = [
  * be able to take it away; equally, a server that outgrows its grant should not have to have it
  * raised again by hand.
  *
- * An entitlement naming a SKU this deployment does not know is worth nothing here. That is not a
- * failure: it is what a SKU published after this build, or belonging to another application,
+ * A subscription on a price this deployment does not know is worth nothing here. That is not a
+ * failure: it is what a price added after this build, or belonging to the other paddle account,
  * correctly amounts to.
  */
 export function resolveMaxMasterChannels( options: {
     granted: number;
-    entitledSkuIds: readonly string[];
+    paidPriceIds: readonly string[];
     tiers: readonly IBillingTier[];
 } ): number {
-    const { granted, entitledSkuIds, tiers } = options;
+    const { granted, paidPriceIds, tiers } = options;
 
     const entitled = tiers
-        .filter( ( tier ) => entitledSkuIds.includes( tier.skuId ) )
+        .filter( ( tier ) => paidPriceIds.includes( tier.priceId ) )
         .map( ( tier ) => tier.maxMasterChannels );
 
     return Math.max( granted, ...entitled );
@@ -114,15 +126,16 @@ export function resolveMaxMasterChannels( options: {
  * Function readBillingTiers() :: The tiers this deployment can actually sell.
  *
  * A tier whose id is not in the environment is dropped rather than carried with an empty id: an
- * empty id would match an entitlement that names no SKU, and hand out the tier to everybody.
+ * empty id would match a subscription that names no price, and hand out the tier to everybody.
  */
 export function readBillingTiers( environment: Record<string, string | undefined> ): IBillingTier[] {
     return BILLING_TIER_DEFINITIONS
         .map( ( tier ) => ( {
             name: tier.name,
-            skuId: environment[ tier.environmentKey ]?.trim() ?? "",
+            slug: tier.slug,
+            priceId: environment[ tier.environmentKey ]?.trim() ?? "",
             maxMasterChannels: tier.maxMasterChannels,
             monthlyPriceUsd: tier.monthlyPriceUsd
         } ) )
-        .filter( ( tier ) => tier.skuId.length > 0 );
+        .filter( ( tier ) => tier.priceId.length > 0 );
 }

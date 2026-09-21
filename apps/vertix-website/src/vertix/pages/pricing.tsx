@@ -5,7 +5,7 @@ import {
     isUnlimitedAllowance
 } from "@vertix.gg/definitions/src/billing-definitions";
 
-import { DISCORD_STORE_URL } from "@vertix.gg/website/src/vertix/shared/discord-app";
+import { planCheckoutUrl } from "@vertix.gg/website/src/vertix/shared/discord-app";
 
 /**
  * What a server pays for, and what it gets without paying.
@@ -14,9 +14,9 @@ import { DISCORD_STORE_URL } from "@vertix.gg/website/src/vertix/shared/discord-
  * and this page reads the same table. A plan quoted here that the bot does not honour is the one
  * mistake this page cannot be allowed to make.
  *
- * There is no checkout on this page and there will not be one. Subscriptions are discord's own: a
- * server buys them inside discord, discord takes the payment, and the bot is told by an entitlement.
- * So the buttons leave for discord rather than pretending to sell anything here.
+ * There is no checkout on this page and there will not be one. A plan is bought for one server, and
+ * this page has no idea which server anybody has - the dashboard does, being signed in with discord
+ * with a guild open, so the buttons go there and the checkout starts where the answer already is.
  */
 
 interface IPlan {
@@ -26,6 +26,8 @@ interface IPlan {
     allowance: string;
     /** The line under the allowance, which is what somebody comparing plans is actually reading. */
     note: string;
+    /** Where its button goes - the dashboard's billing page, already on this plan. */
+    href: string;
     /** The one plan a page like this should point at, and only one. */
     isFeatured: boolean;
     isFree: boolean;
@@ -59,6 +61,7 @@ const PLANS: IPlan[] = [
         price: "$0",
         allowance: `${ BILLING_FREE_MAX_MASTER_CHANNELS } generators`,
         note: "the starting point",
+        href: "/invite-vertix",
         isFeatured: false,
         isFree: true
     },
@@ -69,6 +72,7 @@ const PLANS: IPlan[] = [
             ? formatMasterChannelAllowance( tier.maxMasterChannels )
             : `${ formatMasterChannelAllowance( tier.maxMasterChannels ) } generators`,
         note: describeAllowance( tier.maxMasterChannels ),
+        href: planCheckoutUrl( tier.slug ),
         isFeatured: FEATURED_TIER_NAME === tier.name,
         isFree: false
     } ) )
@@ -93,9 +97,9 @@ const IN_EVERY_PLAN = [
 const QUESTIONS = [
     {
         question: "Where do I buy one?",
-        answer: "Inside Discord. Plans are Discord's own subscriptions - it takes the payment and "
-            + "handles the renewal, and we never see a card. The buttons above open the store page "
-            + "for the bot."
+        answer: "From the dashboard, on the server you want to buy it for - a plan covers one "
+            + "server, so it has to know which. Payment is handled by Paddle, who take the card "
+            + "and the tax; we never see either."
     },
     {
         question: "What happens if I go over my plan?",
@@ -150,7 +154,7 @@ function PlanCard( { plan }: { plan: IPlan } ) {
             </div>
 
             <a className={ `vc-btn vc-btn-effect mt-auto w-full ${ plan.isFeatured ? "vc-btn-primary" : "" }` }
-                href={ plan.isFree ? "/invite-vertix" : DISCORD_STORE_URL }
+                href={ plan.href }
                 target={ plan.isFree ? undefined : "_blank" }
                 rel={ plan.isFree ? undefined : "noreferrer" }>
                 { plan.isFree ? "Invite the bot" : `Get ${ plan.name }` }

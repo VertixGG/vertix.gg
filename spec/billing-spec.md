@@ -1,9 +1,9 @@
 # Billing spec
 
-> **Status: built, except the SKUs and the e2e.** Everything below is in the working tree. The
-> Discord facts were read off the developer documentation and the installed discord.js, not recalled.
-> Two things are deliberately not done and are called out at the end: the SKUs themselves, which are
-> created in Discord's dashboard rather than in code, and `M-13`.
+> **Status: the limits are built; the payment rail is being replaced.** The room cap and the
+> enforcement are in `main` and provider-agnostic - they only ever ask how many generators a guild is
+> allowed. What is being torn out is where that number comes from: Discord's own subscriptions, which
+> **cannot be used from Israel**.
 
 Two limits that do not exist today:
 
@@ -33,42 +33,56 @@ next generator anybody makes.
 
 ---
 
-## Discord's rules
+## Why not Discord
 
-Read off the developer docs and `discord.js@14.27.0`. Three of these shape the design.
+Discord sells guild subscriptions itself, which is what this was built against. It is not available
+to us.
 
 | | |
 |---|---|
-| SKU types | user subscription, guild subscription, consumable, durable |
-| Scope | a **guild subscription** grants benefits to everyone in one server — the right scope here |
-| **An app may publish user subscriptions or guild subscriptions, never both** | so this is a guild-subscription app, permanently |
-| SKUs per app | 50 |
-| **No quantity on an entitlement** | a guild holds at most one active entitlement per SKU, and nothing stacks |
-| Reading them | `client.application.entitlements.fetch( { guild, excludeEnded: true } )`, or the `entitlements` field on any interaction payload |
-| Testing | `entitlements.createTest( { sku, guild } )` — a real entitlement without real money |
+| Premium Apps are sold from | the US, the EU and the UK only |
+| The eligibility checklist | nine rows, **eight green** - the ninth is "payouts set up with a valid payment method in an **eligible country**" |
+| Israel | not eligible, so the SKU step never unlocks |
 
-**The quantity rule is why the pricing changed.** "$1 a month per generator" needed one SKU bought
-N times, and Discord has no such thing. It could have been a ladder — `+1 generator $1`, `+2 $2` —
-with the guild on one rung; **settled as a few fixed tiers instead.**
+Worth recording because the work was done: the app is verified, team-owned, 2FA'd, has its terms and
+privacy links and is not quarantined. Nothing about the app was the problem.
 
-**Cancellation fires no entitlement event.** The docs are explicit: when somebody cancels, the app
-gets `SUBSCRIPTION_UPDATE` with `status: 2 (ending)` and nothing else until the period actually
-ends. Anything built on `entitlementDelete` alone would go on serving a cancelled server until it
-happened to restart — see `M-07`.
+**Stripe is out too**, and for a wider reason - Israel is absent from Stripe's supported countries
+entirely, not even in preview. So a direct card integration is not available either.
 
----
+## Paddle
+
+A merchant of record: it sells to the customer, collects and remits the sales tax, and pays us. That
+is what makes it work from here - Paddle sells software businesses anywhere outside its ~29
+unsupported countries, and Israel is not one of them.
+
+| | |
+|---|---|
+| What a tier is | a **price** - `pri_…` - rather than a SKU |
+| Attaching a guild to a purchase | `custom_data` on the checkout, which Paddle copies onto the subscription and sends back on every webhook |
+| Events | `subscription.created`, `subscription.updated` (the catch-all, including renewals and cancellations), `subscription.canceled`, `subscription.paused`, `subscription.past_due` |
+| Status | `active`, `trialing`, `past_due`, `paused`, `canceled` |
+| When it runs out | `current_billing_period.ends_at` |
+| A cancellation that has not happened yet | `scheduled_change: { action: "cancel", effective_at }` |
+| Signature | `Paddle-Signature: ts=…;h1=…`, HMAC-SHA256 over `ts:rawBody`, five second tolerance, compared timing-safe |
+
+**The cancellation design survives the move intact.** Discord fired no entitlement event on
+cancellation and the answer was to cache no longer than the entitlement's own ending time. Paddle
+says the same thing in its own words - a cancellation is a `scheduled_change` until the period is
+up, and `current_billing_period.ends_at` is when it actually stops. Same rule, same field, different
+provider.
 
 ## The tiers
 
 Numbers to settle; everything below reads them from one place, so changing them is changing one
 table.
 
-| tier | generators | on top of free | price | SKU |
+| tier | generators | on top of free | price | price id |
 |---|---|---|---|---|
 | Free | 2 | — | — | none |
-| Plus | 4 | +2 | $2 / month | `DISCORD_SKU_PLUS` |
-| Pro | 9 | +7 | $4 / month | `DISCORD_SKU_PRO` |
-| Ultimate | unlimited | — | $10 / month | `DISCORD_SKU_ULTIMATE` |
+| Plus | 4 | +2 | $2 / month | `PADDLE_PRICE_PLUS` |
+| Pro | 9 | +7 | $4 / month | `PADDLE_PRICE_PRO` |
+| Ultimate | unlimited | — | $10 / month | `PADDLE_PRICE_ULTIMATE` |
 
 Free stays at 2, which is what `maxMasterChannels` already defaults to, so a server that never pays
 sees exactly what it sees today — and every tier is a total rather than an addition, because a total
@@ -120,76 +134,72 @@ all five of the pool's growth paths funnel through — a join with nowhere to pu
 of empty rooms it keeps ahead of demand, and the first room it is given at setup. One check rather
 than five, and a member who joins a pool that still has room is placed in it as normal.
 
-### The entitlement
+### The subscription
 
-**`M-05` — the SKUs, in the config.** A table mapping SKU id to the generators it grants, in
-`packages/vertix-definitions/src/billing-definitions.ts`: ids from the Discord dashboard, the
-allowance each carries, and the free allowance under them. Ids rather than names, because a name is
-editable in Discord's dashboard and an id is not.
+**`M-05` — the tiers name a Paddle price.** The table in
+`packages/vertix-definitions/src/billing-definitions.ts` stays as it is; the `skuId` field becomes a
+`priceId`, read from the environment for the same reason - a price belongs to one Paddle account and
+the sandbox is a different account from the live one.
 
-**`M-06` — reading what a guild has.** An `EntitlementService` on the bot, holding a guild's
-allowance and answering from memory rather than asking Discord on every voice join.
+**`M-14` — a row per subscription.** `Subscription` on the bot schema: the guild it covers, the
+Paddle subscription id, the price id it is on, its status, and when the paid period ends. Written
+only by the webhook and read only by the service.
 
-Filled two ways. `entitlements.fetch( { guild, excludeEnded: true } )` when a guild is asked about
-and nothing is remembered, and the `entitlementCreate` / `entitlementUpdate` / `entitlementDelete`
-gateway events, which only *forget* the guild rather than piece its state together — an event can be
-missed while the bot is down and an answer read fresh cannot be.
+Keyed by guild rather than by customer. A customer is a person and may pay for several servers; what
+is being sold is an allowance for one server, and that is what has to be looked up on a voice join.
 
-The `entitlements` field on interaction payloads is left unused. It would keep an actively-used
-server fresher for free, but it is a second way in to the same cache for a saving the ten-minute
-expiry already makes, and reading it wrong is how the two would come to disagree.
+**`M-15` — the webhook.** A route on `vertix-api`, because the bot has no public surface and should
+not grow one.
 
-**`M-07` — noticing a cancellation, without the event.** `subscriptionUpdate` is the only signal a
-cancellation gives, and **discord.js's `Subscription` carries no guild id** — so there is nothing to
-invalidate by even if it is listened to. It is not listened to.
+It verifies before it reads: HMAC-SHA256 over `ts:rawBody` with the notification destination's
+secret, compared timing-safe, and rejected if `ts` is more than five seconds old. That needs the
+**raw** body - a JSON parser that has already run makes the signature unverifiable, so the route
+takes the body unparsed.
 
-What is used instead is the entitlement's own ending time. An answer is cached no longer than the
-soonest `endsTimestamp` among the entitlements it was built from, so the allowance drops at the
-moment the subscription does whether or not anything announced it. That is strictly better than
-reacting to the event: it also survives the bot being down when the event fired.
+`subscription.updated` alone would very nearly do, being the catch-all, but `created`, `canceled`,
+`paused` and `past_due` are handled as well: they carry the same subscription object, and handling
+them is a `switch` rather than a second implementation.
 
-**`M-08` — what a guild is allowed.** The **higher** of the tier its entitlement grants and whatever
-its settings row was granted by hand. A manual grant is what is given to a server for a reason, and
-paying should never take something away.
+**`M-16` — where a checkout starts.** From the dashboard, which is already logged in with Discord
+and already knows which guild is being managed - so the guild id goes into `custom_data` without
+anybody being asked "which server is this for?", which is the question Discord's own store would
+have had to ask.
 
-**`M-09` — which generators are the active ones.** The first N by `createdAt`, N being `M-08`.
-Nothing is stored and nobody chooses: the same generators stay active on every evaluation, and a
-server that pays sees the rest wake up without touching anything.
+A checkout that arrives with no guild id is a purchase nobody can be given anything for. The
+dashboard is the only thing that opens one, so that is a bug rather than a case to handle - but it
+is logged loudly rather than dropped, because the money is real.
 
-**`M-10` — a generator past the allowance makes no rooms.** The second refusal in the same place as
-`M-03`, with its own wording: the server is over its allowance, this generator is one of the extras,
-and here is where to fix it. Rooms already open are left alone — nothing is deleted, nothing is
-kicked, and the generator starts working again the moment the entitlement lands.
+**`M-06` — reading what a guild has.** The same `EntitlementService`, with `readEntitledSkuIds()`
+replaced by a read of the row from `M-14`. Everything above it is untouched: the allowance is still
+the higher of the grant and the tier, the coverage is still oldest-first, and both refusals are
+already written.
 
-The control panel goes on answering. Renaming a room that exists is not the thing being sold.
+A row counts only while it is `active` or `trialing`, and only until `ends_at`. `past_due` is a
+payment that failed rather than a subscription that ended, and Paddle retries it - but it is not
+paid, so it is not an allowance.
 
-**`M-11` — where a server can see it.** Both the setup screen and the dashboard printed the
-allowance already, and both now print the resolved one: every reader of it goes through
-`getMaxMasterChannels()`, including the IPC handler the dashboard asks, so the two cannot disagree
-about what a server is allowed.
+**`M-07` — noticing a cancellation, still without waiting for an event.** The cached answer expires
+no later than `ends_at`, exactly as it did against Discord. A cancellation scheduled for the end of
+the period changes nothing until then, which is what the customer paid for.
 
-The setup screen's list of generators marks a paused one in its heading. The dashboard is not marked
-per generator — it is told the number and greys out the way to make another, which it already did.
+**`M-08`, `M-09`, `M-10`, `M-11` — unchanged.** They never knew where the number came from.
 
-**No purchase button yet**, because there is no SKU to point one at. Discord draws the purchase
-itself from a `premiumButton` once the SKUs exist, so this is a screen change and not a checkout.
+**`M-17` — the Discord entitlement code comes out.** `readEntitledSkuIds()`, the
+`entitlementCreate`/`Update`/`Delete` listener and its registration. Left in, it is a second source
+of truth that can never be right.
 
 ### Tests
 
-**`M-12` — the allowance resolution is a unit test.** Tier plus manual grant, an expired entitlement,
-an entitlement ending later today, no entitlement at all. This is where the arithmetic lives and it
-needs no Discord.
+**`M-12` — the allowance resolution is a unit test.** Already written and still correct: tier plus
+manual grant, an unknown price id, nothing configured to sell. It never knew who was selling.
 
-**`M-13` — not done, and not cheaply doable yet.** The room cap would need twenty rooms opened
-against `CHANNEL_OPEN_SPACING_MS`, which is minutes of deliberate waiting for one assertion - the
-suite has already had one pass at removing exactly that kind of cost. The entitlement refusal needs
-a SKU to hand `createTest()`, and there is none until they are created.
+**`M-18` — the signature check is a unit test.** A body and a secret in, a verdict out: a good
+signature, a tampered body, a timestamp six seconds old, a header that is not the right shape. This
+is the one piece of new code that money depends on and it needs no network to test.
 
-The cheapest honest version, once the SKUs exist: lower `maxActiveDynamicChannels` for the test guild
-via its settings row, open three rooms, assert the fourth is refused - and `createTest()` for the
-paid path. Left undone rather than written slow and then disabled.
-
----
+**`M-13` — still not doable cheaply.** The room cap would need twenty rooms opened against
+`CHANNEL_OPEN_SPACING_MS`. The paid path is more testable than it was, though: Paddle has a sandbox,
+so a webhook can be replayed at the API without anybody paying anything.
 
 ## Deliberately not here
 
@@ -200,16 +210,11 @@ paid path. Left undone rather than written slow and then disabled.
 
 ## Still open
 
-- **The SKUs.** They are created in Discord's dashboard, under Monetization, and their ids go in
-  `DISCORD_SKU_PLUS` and `DISCORD_SKU_PRO`. Until then `readBillingTiers()` returns nothing, the bot
-  asks Discord about nothing, and every server sits on what it was granted - which is today's
-  behaviour exactly.
-- **The prices are quoted in two places and charged in one.** A SKU's price is set in Discord's
-  dashboard and is not readable back from an entitlement, so a tier repriced there has to be
-  repriced in `billing-definitions.ts` too, or the site quotes one figure while the store charges
-  another.
+- **A Paddle account, and three prices in it.** Their ids go in the environment, sandbox first.
+- **Prices are quoted in two places and charged in one.** A price set in Paddle is not read back by
+  anything here, so a tier repriced there has to be repriced in `billing-definitions.ts` too.
 - Whether the free tier stays at 2 once there is something to sell.
-- `M-13`, once the SKUs exist.
+- `M-13`, once the sandbox is set up.
 
 ---
 
@@ -217,12 +222,15 @@ paid path. Left undone rather than written slow and then disabled.
 
 Each step leaves the tree working.
 
-1. `M-01`, `M-02`, `M-03` and the notice — the room cap, which needs no payment rail at all and is
-   useful on its own.
-2. `M-04`, once decided.
-3. `M-05` and `M-12` — the tier table and the arithmetic, tested before anything reads Discord.
-4. `M-06`, `M-07` — the entitlement service, logging what it resolves and enforcing nothing.
-5. `M-08`, `M-09`, `M-10` — enforcement, once the logs from step 4 show the allowances coming out
-   right on a live bot.
-6. `M-11` — setup and dashboard.
-7. `M-13`, and the SKUs created in the Discord dashboard.
+1. `M-17` — take the Discord entitlement code out, so there is one source of truth at every moment.
+2. `M-05`, `M-14` — the price table and the row it is matched against.
+3. `M-15`, `M-18` — the webhook and its signature check, logging what it would write and writing
+   nothing.
+4. Turn the writes on, against the Paddle sandbox.
+5. `M-06`, `M-07` — the service reads the row, still enforcing nothing beyond what it enforces today.
+6. `M-16` — the dashboard opens a checkout.
+7. `M-13`, and the live prices.
+
+**Already done and not repeated here:** the room cap (`M-01` to `M-04`), the enforcement and both
+refusals (`M-08` to `M-11`), and the plans page. None of them are affected by the change of
+provider - which is the point of the allowance having been one number all along.

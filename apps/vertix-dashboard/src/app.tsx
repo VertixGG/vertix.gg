@@ -22,6 +22,7 @@ import { HomePage } from "@vertix.gg/dashboard/src/pages/home-page";
 import { InterfaceEditorPage } from "@vertix.gg/dashboard/src/pages/interface-editor-page";
 import { GeneratorsPage } from "@vertix.gg/dashboard/src/pages/generators-page";
 import { ServerConfigPage } from "@vertix.gg/dashboard/src/pages/server-config-page";
+import { BillingPage } from "@vertix.gg/dashboard/src/pages/billing-page";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
@@ -69,6 +70,7 @@ export function App() {
                             <Route path="/generators/:masterChannelId" element={ <GeneratorsPage /> } />
                             <Route path="/generators/:masterChannelId/edit" element={ <GeneratorsPage /> } />
                             <Route path="/server-options" element={ <ServerConfigPage /> } />
+                            <Route path="/billing" element={ <BillingPage /> } />
 
                             { /* The page was called Management until it was named after what it
                                  actually holds. */ }

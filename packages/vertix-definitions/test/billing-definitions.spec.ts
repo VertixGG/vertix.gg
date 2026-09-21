@@ -13,16 +13,16 @@ const FREE = 2;
 // Doubles rather than the real ladder: what is being checked is the arithmetic, and a test that
 // restated today's prices would fail the next time they were changed for no reason worth knowing.
 const TIERS: IBillingTier[] = [
-    { name: "Plus", skuId: "sku-plus", maxMasterChannels: 5, monthlyPriceUsd: 2 },
-    { name: "Pro", skuId: "sku-pro", maxMasterChannels: 15, monthlyPriceUsd: 4 },
-    { name: "Ultimate", skuId: "sku-unlimited", maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS, monthlyPriceUsd: 10 }
+    { name: "Plus", slug: "plus", priceId: "pri_plus", maxMasterChannels: 5, monthlyPriceUsd: 2 },
+    { name: "Pro", slug: "pro", priceId: "pri_pro", maxMasterChannels: 15, monthlyPriceUsd: 4 },
+    { name: "Ultimate", slug: "ultimate", priceId: "pri_unlimited", maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS, monthlyPriceUsd: 10 }
 ];
 
 describe( "VertixDefinitions/Billing", () => {
     describe( "resolveMaxMasterChannels()", () => {
         it( "should leave a server that pays for nothing on what it was granted", () => {
             // Act.
-            const allowed = resolveMaxMasterChannels( { granted: FREE, entitledSkuIds: [], tiers: TIERS } );
+            const allowed = resolveMaxMasterChannels( { granted: FREE, paidPriceIds: [], tiers: TIERS } );
 
             // Assert.
             expect( allowed ).toBe( FREE );
@@ -32,7 +32,7 @@ describe( "VertixDefinitions/Billing", () => {
             // Act.
             const allowed = resolveMaxMasterChannels( {
                 granted: FREE,
-                entitledSkuIds: [ "sku-plus" ],
+                paidPriceIds: [ "pri_plus" ],
                 tiers: TIERS
             } );
 
@@ -40,12 +40,12 @@ describe( "VertixDefinitions/Billing", () => {
             expect( allowed ).toBe( 5 );
         } );
 
-        it( "should take the best tier when a guild somehow holds two", () => {
-            // Act - discord upgrades by ending one subscription and starting another, and the two
-            // can overlap for as long as the first one's period has left to run.
+        it( "should take the best tier when a guild somehow has two subscriptions", () => {
+            // Act - an upgrade can leave the old subscription running until its period is up, so
+            // the two overlap for as long as the customer already paid for.
             const allowed = resolveMaxMasterChannels( {
                 granted: FREE,
-                entitledSkuIds: [ "sku-plus", "sku-pro" ],
+                paidPriceIds: [ "pri_plus", "pri_pro" ],
                 tiers: TIERS
             } );
 
@@ -57,7 +57,7 @@ describe( "VertixDefinitions/Billing", () => {
             // Act - a server given forty generators for a reason, now paying for Plus.
             const allowed = resolveMaxMasterChannels( {
                 granted: 40,
-                entitledSkuIds: [ "sku-plus" ],
+                paidPriceIds: [ "pri_plus" ],
                 tiers: TIERS
             } );
 
@@ -65,11 +65,11 @@ describe( "VertixDefinitions/Billing", () => {
             expect( allowed ).toBe( 40 );
         } );
 
-        it( "should ignore an entitlement for a sku this build does not know", () => {
-            // Act - a SKU published after this deployment, or belonging to another application.
+        it( "should ignore a subscription on a price this build does not know", () => {
+            // Act - a price added after this deployment, or belonging to the other paddle account.
             const allowed = resolveMaxMasterChannels( {
                 granted: FREE,
-                entitledSkuIds: [ "sku-from-the-future" ],
+                paidPriceIds: [ "pri_from_the_future" ],
                 tiers: TIERS
             } );
 
@@ -81,7 +81,7 @@ describe( "VertixDefinitions/Billing", () => {
             // Act.
             const allowed = resolveMaxMasterChannels( {
                 granted: FREE,
-                entitledSkuIds: [ "sku-plus" ],
+                paidPriceIds: [ "pri_plus" ],
                 tiers: []
             } );
 
@@ -95,7 +95,7 @@ describe( "VertixDefinitions/Billing", () => {
             // Act.
             const allowed = resolveMaxMasterChannels( {
                 granted: 40,
-                entitledSkuIds: [ "sku-unlimited" ],
+                paidPriceIds: [ "pri_unlimited" ],
                 tiers: TIERS
             } );
 
@@ -120,27 +120,27 @@ describe( "VertixDefinitions/Billing", () => {
         it( "should read the ids the environment supplies", () => {
             // Act.
             const tiers = readBillingTiers( {
-                DISCORD_SKU_PLUS: "1234",
-                DISCORD_SKU_PRO: "5678",
-                DISCORD_SKU_ULTIMATE: "9012"
+                PADDLE_PRICE_PLUS: "1234",
+                PADDLE_PRICE_PRO: "5678",
+                PADDLE_PRICE_ULTIMATE: "9012"
             } );
 
             // Assert.
-            expect( tiers.map( ( tier ) => [ tier.name, tier.skuId ] ) )
+            expect( tiers.map( ( tier ) => [ tier.name, tier.priceId ] ) )
                 .toEqual( [ [ "Plus", "1234" ], [ "Pro", "5678" ], [ "Ultimate", "9012" ] ] );
         } );
 
         it( "should drop a tier this deployment has no id for", () => {
             // Act.
-            const tiers = readBillingTiers( { DISCORD_SKU_PLUS: "1234" } );
+            const tiers = readBillingTiers( { PADDLE_PRICE_PLUS: "1234" } );
 
-            // Assert - carried with an empty id it would match an entitlement naming no sku at all.
+            // Assert - carried with an empty id it would match a subscription naming no price at all.
             expect( tiers.map( ( tier ) => tier.name ) ).toEqual( [ "Plus" ] );
         } );
 
         it( "should drop a tier whose id is whitespace", () => {
             // Act - an env file with the key present and nothing after it.
-            const tiers = readBillingTiers( { DISCORD_SKU_PLUS: "   ", DISCORD_SKU_PRO: "5678" } );
+            const tiers = readBillingTiers( { PADDLE_PRICE_PLUS: "   ", PADDLE_PRICE_PRO: "5678" } );
 
             // Assert.
             expect( tiers.map( ( tier ) => tier.name ) ).toEqual( [ "Pro" ] );
@@ -148,7 +148,7 @@ describe( "VertixDefinitions/Billing", () => {
 
         it( "should carry the price, which is what the site quotes", () => {
             // Act.
-            const tiers = readBillingTiers( { DISCORD_SKU_PLUS: "1234" } );
+            const tiers = readBillingTiers( { PADDLE_PRICE_PLUS: "1234" } );
 
             // Assert.
             expect( tiers[ 0 ].monthlyPriceUsd ).toBeGreaterThan( 0 );

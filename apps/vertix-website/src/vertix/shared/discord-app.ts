@@ -10,9 +10,22 @@ export const DISCORD_APP_ID = "1538844311062581339";
 /**
  * Where a server buys a plan.
  *
- * The application's own store page rather than a link per plan. A per-SKU link exists -
- * `/store/:skuId` - but a SKU id belongs to one application and lives in the bot's environment, so
- * linking that way would mean publishing those ids to the browser and keeping them in step here as
- * well. The store page lists every plan and is one link that cannot go stale.
+ * The dashboard, because that is the only thing that knows which server is being paid for - it is
+ * already signed in with discord and already has a guild open, so a checkout started from there
+ * carries the guild without anybody being asked for it.
+ *
+ * It was discord's own store page for a while. Discord sells guild subscriptions from the US, the
+ * EU and the UK only, so that store can never have anything in it for us.
  */
-export const DISCORD_STORE_URL = `https://discord.com/application-directory/${ DISCORD_APP_ID }/store`;
+const DASHBOARD_URL = "https://dashboard.voicechannels.online";
+
+/**
+ * Function planCheckoutUrl() :: The dashboard's billing page, on the plan somebody picked.
+ *
+ * The plan travels in the address so that pressing `Get Pro` here opens `Pro` there, rather than a
+ * list to pick from a second time. The guild does not travel: this page has no idea which server
+ * anybody has, and the dashboard does.
+ */
+export function planCheckoutUrl( slug: string ): string {
+    return `${ DASHBOARD_URL }/billing?plan=${ encodeURIComponent( slug ) }`;
+}

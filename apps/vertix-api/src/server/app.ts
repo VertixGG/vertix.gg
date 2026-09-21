@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 
 import healthRoutePlugin from "@vertix.gg/api/src/server/routes/health-route";
+import paddleWebhookRoutePlugin from "@vertix.gg/api/src/server/routes/paddle-webhook-route";
 import buttonSheetRoutePlugin from "@vertix.gg/api/src/server/routes/button-sheet-route";
 import buttonEmojisRoutePlugin from "@vertix.gg/api/src/server/routes/button-emojis-route";
 import modulesRoutePlugin from "@vertix.gg/api/src/server/routes/modules-route";
@@ -73,6 +74,9 @@ export async function createApp(): Promise<FastifyInstance> {
     await fastify.register( authRoutePlugin, { prefix: API_PREFIX } );
 
     await fastify.register( healthRoutePlugin, { prefix: API_PREFIX } );
+
+    // Outside `requireAuth`: paddle has no session and authenticates by signing what it sends.
+    await fastify.register( paddleWebhookRoutePlugin, { prefix: API_PREFIX } );
 
     await fastify.register( buttonSheetRoutePlugin, { prefix: API_PREFIX } );
 

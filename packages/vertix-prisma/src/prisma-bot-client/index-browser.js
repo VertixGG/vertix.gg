@@ -259,6 +259,19 @@ exports.Prisma.AICaptchaChallengeScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SubscriptionScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  paddleSubscriptionId: 'paddleSubscriptionId',
+  paddleCustomerId: 'paddleCustomerId',
+  priceId: 'priceId',
+  status: 'status',
+  currentPeriodEnd: 'currentPeriodEnd',
+  scheduledToCancelAt: 'scheduledToCancelAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -296,7 +309,8 @@ exports.Prisma.ModelName = {
   UserData: 'UserData',
   UserChannelData: 'UserChannelData',
   AIChannelPrompt: 'AIChannelPrompt',
-  AICaptchaChallenge: 'AICaptchaChallenge'
+  AICaptchaChallenge: 'AICaptchaChallenge',
+  Subscription: 'Subscription'
 };
 
 /**

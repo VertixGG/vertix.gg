@@ -302,3 +302,41 @@ model AICaptchaChallenge {
   @@unique([channelId, userId])
   @@index([expiresAt])
 }
+
+/// What a server pays for, as paddle last told us.
+///
+/// Written only by the webhook and read only by the entitlement service, which is what keeps this
+/// from becoming a second opinion about the allowance: paddle is the source of truth and this is
+/// the copy the bot can read on a voice join without an http request.
+///
+/// Keyed by guild rather than by customer. A customer is a person and may pay for several servers;
+/// what is sold is an allowance for one server, and that is the question asked on every join.
+///
+/// `priceId` rather than a tier name, because a tier is this deployment's reading of a price and a
+/// name is a thing somebody renames in the paddle dashboard.
+model Subscription {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  /// The discord guild this pays for, taken from the checkout's `custom_data`.
+  guildId             String   @unique
+  // ---
+  /// Paddle's own ids, kept so a row can be reconciled against paddle by hand.
+  paddleSubscriptionId String  @unique
+  paddleCustomerId    String?
+  // ---
+  /// The price the subscription is billed against - `pri_…`.
+  priceId             String
+  /// Paddle's own word: active, trialing, past_due, paused or canceled.
+  status              String
+  // ---
+  /// The end of the period already paid for, which is when an allowance stops - whether the
+  /// subscription was cancelled, or simply ran out.
+  currentPeriodEnd    DateTime?
+  /// Set when a cancellation is scheduled but has not happened yet.
+  scheduledToCancelAt DateTime?
+  // ---
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([status])
+}

@@ -75,6 +75,15 @@ export default defineConfig( ( { mode } ) => {
         },
         define: {
             "import.meta.env.API_PUBLIC_URL": JSON.stringify( apiBaseUrl ),
+
+            // Paddle's own public configuration. The client token is meant to be in the page - it is
+            // what their script authenticates with - and the price ids are not secret either; the
+            // api key, which is, never comes near this bundle.
+            "import.meta.env.PADDLE_CLIENT_TOKEN": JSON.stringify( env.PADDLE_CLIENT_TOKEN || "" ),
+            "import.meta.env.PADDLE_ENVIRONMENT": JSON.stringify( env.PADDLE_ENVIRONMENT || "sandbox" ),
+            "import.meta.env.PADDLE_PRICE_PLUS": JSON.stringify( env.PADDLE_PRICE_PLUS || "" ),
+            "import.meta.env.PADDLE_PRICE_PRO": JSON.stringify( env.PADDLE_PRICE_PRO || "" ),
+            "import.meta.env.PADDLE_PRICE_ULTIMATE": JSON.stringify( env.PADDLE_PRICE_ULTIMATE || "" ),
             "VITE_API_PORT": JSON.stringify( apiPort ),
             "VITE_API_HOST": JSON.stringify( apiHost ),
             "__ZENFLUX_DEBUG__": JSON.stringify( true ),

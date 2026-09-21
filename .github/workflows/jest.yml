@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: File Diff
     outputs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
@@ -31,7 +31,7 @@ jobs:
             package*.json
             .github/**/*.yml
   jest:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: [ 'file-diff' ]
     name: Test
     steps:

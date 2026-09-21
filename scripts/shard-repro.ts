@@ -19,10 +19,14 @@
  * gateway connection as that bot, and a bot the gateway thinks is two things at once is a bot
  * answering everything twice.
  */
-import { Client } from "discord.js";
+import { Client, Partials } from "discord.js";
 
-const TOKEN_ENV_NAME = process.argv[ 2 ] || "VERTIX_AI_DISCORD_TOKEN",
-    SHARD_COUNT = Math.max( 1, Number.parseInt( process.argv[ 3 ] || "2", 10 ) || 2 ),
+import { createClientCacheFactory, createClientSweepers } from "@vertix.gg/bot/src/definitions/client-cache";
+
+const AS_VERTIX = process.argv.includes( "--as-vertix" );
+
+const TOKEN_ENV_NAME = process.argv.filter( ( a ) => ! a.startsWith( "--" ) )[ 2 ] || "VERTIX_AI_DISCORD_TOKEN",
+    SHARD_COUNT = Math.max( 1, Number.parseInt( process.argv.filter( ( a ) => ! a.startsWith( "--" ) )[ 3 ] || "2", 10 ) || 2 ),
     READY_TIMEOUT_MS = 30_000;
 
 const token = ( process.env[ TOKEN_ENV_NAME ] || "" ).trim();
@@ -46,8 +50,27 @@ const shardFor = ( guildId: string, shardCount: number ) =>
  * identify limits of even a brand new application, and nothing here needs them up together.
  */
 async function reportShard( shardId: number, shardCount: number ): Promise<string[]> {
-    const client = new Client( { intents: [ "Guilds" ], shards: [ shardId ], shardCount } ),
-        label = `shards:[${ shardId }] of ${ shardCount }`;
+    // `--as-vertix` builds the client the bot builds - its intents, partials, cache factory and
+    // sweepers - and nothing else: no services, no command registration, no database. If the split
+    // holds here and not in the bot, the difference is something the bot does after this point.
+    const client = AS_VERTIX
+        ? new Client( {
+            intents: [
+                "GuildIntegrations",
+                "Guilds",
+                "GuildVoiceStates",
+                "GuildPresences",
+                "DirectMessages"
+            ],
+            partials: [ Partials.Channel ],
+            shards: [ shardId ],
+            shardCount,
+            makeCache: createClientCacheFactory(),
+            sweepers: createClientSweepers()
+        } )
+        : new Client( { intents: [ "Guilds" ], shards: [ shardId ], shardCount } );
+
+    const label = `shards:[${ shardId }] of ${ shardCount }${ AS_VERTIX ? " (vertix options)" : "" }`;
 
     const settled = new Promise<string[]>( ( resolve ) => {
         let done = false;

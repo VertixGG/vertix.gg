@@ -57,6 +57,8 @@ import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-v
 import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
 import type { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 import type { UIDataBase } from "@vertix.gg/gui/src/bases/ui-data-base";
+
+import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { RegisterableClass } from "@vertix.gg/gui/src/runtime/ui-class-registry";
 
 type AdapterWithComponent = {
@@ -1036,7 +1038,20 @@ export async function entryPoint( options: {
         return;
     }
 
-    CleanupWorker.$.handle( client ).catch( ( error ) => {
-        GlobalLogger.$.error( entryPoint, "Startup channel cleanup failed", error );
+    // Deferred to ready rather than started here.
+    //
+    // `botInitialize()` returns once `client.login()` resolves, which is the gateway handshake
+    // starting - the guilds have not arrived yet. The sweep asks `client.guilds.cache` which rows
+    // belong to this process, so started here it read an empty cache: on a sharded bot it would
+    // sweep nothing and say the database was clean, which is the one wrong answer that looks like
+    // a right one.
+    ServiceLocator.$.get<AppService>( "VertixBot/Services/App" ).onceReady( async() => {
+        // Not awaited inside the callback, because `AppService.onReady()` awaits these together
+        // before it returns. The sweep is chunked and paced and runs as long as the guild count
+        // says, and nothing about answering an interaction waits on it - the same reason the panel
+        // refresh alongside it is not awaited either.
+        void CleanupWorker.$.handle( client ).catch( ( error ) => {
+            GlobalLogger.$.error( entryPoint, "Startup channel cleanup failed", error );
+        } );
     } );
 }

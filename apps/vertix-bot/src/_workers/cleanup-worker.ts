@@ -2,8 +2,6 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ChannelType, Client, GatewayIntentBits } from "discord.js";
 
-import { ownsGuild } from "@vertix.gg/bot/src/definitions/sharding";
-
 import type { DiscordAPIError } from "discord.js";
 
 import type { default as loginType } from "@vertix.gg/base/src/discord/login";
@@ -69,6 +67,25 @@ class CleanupWorker extends InitializeBase {
             .filter( ( guildId ) => guildId.length > 0 );
     }
 
+    /**
+     * The guilds this process is actually holding, minus the ones a dev box is told to leave alone.
+     *
+     * This is what bounds the sweep. `ownsGuild()` answers the same question arithmetically, but it
+     * answers it about a row already in hand - the query still had to read every row in the table to
+     * produce one. A shard's own guild ids are a list the database can be given, and `Channel` is
+     * indexed on `guildId`, so the same sweep becomes a bounded indexed read instead of a collection
+     * scan repeated once per shard.
+     *
+     * Read from the cache rather than computed, which is also why the caller has to be past `ready`:
+     * before then this is empty and the sweep would quietly do nothing.
+     */
+    private getOwnedGuildIds( client: Client ): string[] {
+        const excludedGuildIds = new Set( this.getExcludedGuildIds() );
+
+        return [ ... client.guilds.cache.keys() ]
+            .filter( ( guildId ) => ! excludedGuildIds.has( guildId ) );
+    }
+
     private getGuildExclusionFilter(): { guildId?: { notIn: string[] } } {
         const excludedGuildIds = this.getExcludedGuildIds();
 
@@ -103,10 +120,26 @@ class CleanupWorker extends InitializeBase {
     private async removeNonExistentChannelsByType( client: Client, channelType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {
         const prisma = PrismaBotClient.$.getClient();
 
-        const channels = await prisma.channel.findMany( {
+        const ownedGuildIds = this.getOwnedGuildIds( client );
+
+        if ( ! ownedGuildIds.length ) {
+            this.logger.info(
+                this.removeNonExistentChannelsByType,
+                `No guilds held by this process, nothing of type '${ channelType }' to check.`
+            );
+
+            return;
+        }
+
+        // Asked of the database rather than filtered afterwards. The rows the database knows about
+        // span every guild the bot has ever had a channel in, and it knows nothing about shards, so
+        // reading them all and discarding the others meant every process paid for the whole table -
+        // and did it on a column with no index. Named this way the read is bounded by the guilds this
+        // process holds, and `@@index([guildId])` serves it.
+        const owned = await prisma.channel.findMany( {
             where: {
                 internalType: channelType,
-                ... this.getGuildExclusionFilter()
+                guildId: { in: ownedGuildIds }
             },
             select: {
                 id: true,
@@ -115,17 +148,10 @@ class CleanupWorker extends InitializeBase {
             }
         } );
 
-        // The rows come from the database, which knows nothing about shards, so this list names
-        // every guild the bot has ever had a channel in. Left unfiltered, every process cleans the
-        // whole database - the same rest calls and the same deletions done once per shard - and
-        // `guilds.fetch()` below drags each of those guilds into a cache that was sharded not to
-        // hold them. Filtered, the shards divide the work and together still cover all of it.
-        const owned = channels.filter( ( channel ) => ownsGuild( channel.guildId ) );
-
         this.logger.info(
             this.removeNonExistentChannelsByType,
-            `Found ${ channels.length } channels of type '${ channelType }' to check` +
-            ( owned.length === channels.length ? "." : `, ${ owned.length } of them on this shard.` )
+            `Found ${ owned.length } channels of type '${ channelType }' to check` +
+            ` across ${ ownedGuildIds.length } guild(s) held here.`
         );
 
         if ( !owned.length ) {
@@ -143,31 +169,23 @@ class CleanupWorker extends InitializeBase {
 
             const deletePromises = chunk.map( async( channel ) => {
                 try {
-                    const guild = await this.lookup(
-                        () => client.guilds.fetch( channel.guildId ),
-                        DISCORD_ERROR_UNKNOWN_GUILD
-                    );
+                    // Read, not fetched. Every row here was selected because its guild is in this
+                    // process's cache, so there is nothing to ask discord - and asking was what used
+                    // to drag guilds in over rest, which ignores sharding and undid the split.
+                    const guild = client.guilds.cache.get( channel.guildId );
 
-                    if ( "unreachable" === guild.state ) {
+                    // Absent means the bot was removed from that guild since the query ran - the
+                    // sweep is chunked and paced, so it runs for minutes. `guildDelete` deletes the
+                    // guild's rows through `GuildManager.onLeave()`, which knows that happened;
+                    // this loop would only be guessing, so it leaves the row for next time.
+                    if ( ! guild ) {
                         ++skippedCount;
 
                         return;
                     }
 
-                    if ( "gone" === guild.state ) {
-                        await prisma.channel.deleteMany( { where: { id: channel.id } } );
-                        ++deletedCount;
-
-                        this.logger.info(
-                            this.removeNonExistentChannelsByType,
-                            `Guild not found - Channel '${ channel.channelId }' (${ channelType }) deleted from db.`
-                        );
-
-                        return;
-                    }
-
                     const discordChannel = await this.lookup(
-                        () => guild.value.channels.fetch( channel.channelId ),
+                        () => guild.channels.fetch( channel.channelId ),
                         DISCORD_ERROR_UNKNOWN_CHANNEL
                     );
 
@@ -424,6 +442,19 @@ class CleanupWorker extends InitializeBase {
             } );
 
             await login( client, async() => {
+                // `login()` resolves when the gateway handshake starts, not when the guilds arrive,
+                // and the sweep is bounded by `client.guilds.cache` - run on login it would find an
+                // empty cache and report a clean database however much was in it.
+                await new Promise<void>( ( resolve ) => {
+                    if ( client.isReady() ) {
+                        resolve();
+
+                        return;
+                    }
+
+                    client.once( "ready", () => resolve() );
+                } );
+
                 await this.removeNonExistentChannels( client );
                 // await this.handleChannels( client );
                 // await this.handleGuilds( client );

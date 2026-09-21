@@ -48,6 +48,12 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
 
             dynamicChannelControlChannelId: null,
 
+            // Declared here because this configuration is the whitelist a write to a
+            // generator's row is filtered against - `setStrictData()` drops any key it
+            // does not find here, silently. Absent, the panel's id could never be stored
+            // and every restart would go back to searching for the message.
+            dynamicChannelControlMessageId: null,
+
             dynamicChannelLfmChannelIds: [],
 
             dynamicChannelLfmPingRoleIds: [],

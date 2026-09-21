@@ -26,6 +26,20 @@ export interface MasterChannelSettingsInterface {
      */
     dynamicChannelButtonsRowBreaks?: number[];
     dynamicChannelControlChannelId: string | null;
+    /**
+     * The panel message itself, so it can be edited without being searched for.
+     *
+     * Redrawing the panel used to mean fetching a hundred messages out of the control channel and
+     * picking the bot's earliest - a REST call per generator, on every restart, to rediscover
+     * something that never moves. Remembering the id makes it one fetch by id, and it is written
+     * back whenever the search or a fresh send establishes it, so a generator pays for the search
+     * at most once.
+     *
+     * Null is not an error: it means nobody has established it yet. A stale id is not either - the
+     * message can be deleted by hand - which is why the search is kept as the fallback rather than
+     * removed.
+     */
+    dynamicChannelControlMessageId: string | null;
     dynamicChannelLfmChannelIds?: string[];
     /**
      * The roles an lfm post is allowed to mention, chosen by an admin.

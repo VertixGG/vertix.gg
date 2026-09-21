@@ -1101,6 +1101,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelAutoStatus: newAutoStatus,
             dynamicChannelButtonsTemplate: newButtons,
             dynamicChannelControlChannelId: newControlChannelId,
+            // No panel exists yet - the one below creates it, and establishes this.
+            dynamicChannelControlMessageId: null,
             // Since `LogsChannelId` not defined in the creation process but later via configuration.
             dynamicChannelLogsChannelId: settings.dynamicChannelLogsChannelId,
             dynamicChannelMentionable: newMentionable,

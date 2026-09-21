@@ -790,4 +790,25 @@ export class MasterChannelDataManager extends InitializeBase {
             dynamicChannelControlChannelId: channelId
         } );
     }
+
+    /**
+     * Function setChannelControlMessageId() :: Remembers which message the control panel is.
+     *
+     * Written whenever the panel is established - by a fresh send, or by the search that used to
+     * happen on every restart - so the search runs at most once per generator instead of once per
+     * generator per restart.
+     *
+     * Not admin-logged: this is bookkeeping about a message the admin already knows about, not a
+     * setting anybody chose.
+     */
+    public async setChannelControlMessageId( masterChannelDB: ChannelExtended, messageId: string | null ) {
+        this.logger.log(
+            this.setChannelControlMessageId,
+            `Master channel id: '${ masterChannelDB.id }' - Setting control panel message: '${ messageId }'`
+        );
+
+        return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
+            dynamicChannelControlMessageId: messageId
+        } );
+    }
 }

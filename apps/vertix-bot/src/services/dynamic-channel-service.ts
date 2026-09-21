@@ -3793,16 +3793,39 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         const client = this.services.appService.getClient();
 
-        const messages = await controlChannel.messages.fetch( { limit: messageFetchLimit } );
-        const firstBotMessage = messages
-            .filter( m => m.author.id === client.user.id )
-            .sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp )
-            .first();
+        // One fetch by id, rather than a hundred messages to find something that never moves. That
+        // search was a REST call per generator on every restart, against a global budget of about
+        // fifty a second - the last part of startup still proportional to how many generators exist.
+        const storedMessageId = settings.dynamicChannelControlMessageId;
 
-        if ( firstBotMessage ) {
-            await panelAdapter.editMessage( firstBotMessage, panelArgs );
+        let panelMessage = storedMessageId
+            ? await controlChannel.messages.fetch( storedMessageId ).catch( () => null )
+            : null;
+
+        if ( ! panelMessage ) {
+            // Nothing stored yet, or what was stored has since been deleted. The search is kept for
+            // both: it is how a generator that predates this gets its id, and how one whose panel
+            // somebody removed finds the replacement.
+            const messages = await controlChannel.messages.fetch( { limit: messageFetchLimit } );
+
+            panelMessage = messages
+                .filter( m => m.author.id === client.user.id )
+                .sort( ( a, b ) => a.createdTimestamp - b.createdTimestamp )
+                .first() ?? null;
+        }
+
+        if ( panelMessage ) {
+            await panelAdapter.editMessage( panelMessage, panelArgs );
         } else {
-            await panelAdapter.send( controlChannel, panelArgs );
+            panelMessage = await panelAdapter.send( controlChannel, panelArgs ) ?? null;
+        }
+
+        // Written back only when it differs from what is already stored, so a restart that found the
+        // panel exactly where it expected does not also write a row for every generator.
+        if ( panelMessage && panelMessage.id !== storedMessageId ) {
+            await MasterChannelDataManager.$
+                .setChannelControlMessageId( masterChannelDB, panelMessage.id )
+                .catch( ( error ) => this.logger.error( this.refreshControlPanel, "", error ) );
         }
 
         return true;

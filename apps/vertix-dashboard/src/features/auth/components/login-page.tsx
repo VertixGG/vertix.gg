@@ -1,7 +1,34 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
+import {
+    BILLING_FREE_MAX_MASTER_CHANNELS,
+    BILLING_TIER_DEFINITIONS,
+    formatMasterChannelAllowance
+} from "@vertix.gg/definitions/src/billing-definitions";
+
 import { getDiscordLoginUrl } from "@vertix.gg/dashboard/src/features/auth/api";
+
+import { LegalLinks } from "@vertix.gg/dashboard/src/components/legal-links";
+
+/**
+ * What is sold, spelled out for the only page here that does not need an account.
+ *
+ * Drawn from the shared tier table so it cannot quote a price the checkout does not charge, with
+ * the free tier in front of the paid ones because most servers never leave it.
+ */
+const PLAN_SUMMARY = [
+    {
+        name: "Free",
+        price: "$0",
+        allowance: formatMasterChannelAllowance( BILLING_FREE_MAX_MASTER_CHANNELS )
+    },
+    ... BILLING_TIER_DEFINITIONS.map( ( tier ) => ( {
+        name: tier.name,
+        price: `$${ tier.monthlyPriceUsd } / month`,
+        allowance: formatMasterChannelAllowance( tier.maxMasterChannels )
+    } ) )
+];
 
 const ERROR_MESSAGES: Record<string, string> = {
     no_code: "Authentication failed: No code received",
@@ -15,7 +42,7 @@ export function LoginPage() {
     const error = searchParams.get( "error" );
 
     useEffect( () => {
-        document.title = "Login - VoiceChannels Dashboard";
+        document.title = "VoiceChannels Dashboard - manage your Discord voice channels";
     }, [] );
 
     const handleLogin = () => {
@@ -23,16 +50,55 @@ export function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center py-10">
             <div className="max-w-md w-full mx-4">
                 <div className="bg-surface rounded-lg border border-border p-8">
                     <div className="text-center mb-8">
-                        <img src="/robot.png" alt="Robot" className="w-16 h-16 mx-auto mb-4" />
+                        <img src="/robot.png" alt="VoiceChannels" className="w-16 h-16 mx-auto mb-4" />
                         <h1 className="text-2xl font-bold text-text-accent mb-2">
-                            Dashboard
+                            VoiceChannels Dashboard
                         </h1>
-                        <p className="text-text-secondary">
-                            Sign in with Discord to continue
+                        <p className="text-text-secondary mb-0">
+                            Sign in with Discord to manage your server
+                        </p>
+                    </div>
+
+                    { /* Said here, on the one page somebody can reach without signing in.
+                         Everything past this point is behind discord, so a visitor - or a
+                         reviewer - who only ever sees this screen would otherwise find a login
+                         and nothing that says what is being logged in to, or what is sold. */ }
+                    <div className="mb-8 text-sm text-text-muted">
+                        <p className="mb-3">
+                            <strong className="text-text-primary">VoiceChannels</strong> is a Discord
+                            bot that creates temporary voice channels on demand. Members join a
+                            generator channel and get their own room, which they rename, lock or
+                            hand over from a panel in Discord - and which disappears once it empties.
+                        </p>
+
+                        <p className="mb-3">
+                            This dashboard is where a server owner sets those generators up, and
+                            where a plan is bought.
+                        </p>
+
+                        <ul className="flex flex-col gap-1 mb-3">
+                            { PLAN_SUMMARY.map( ( plan ) => (
+                                <li key={ plan.name } className="flex justify-between gap-4">
+                                    <span className="text-text-primary">{ plan.name }</span>
+                                    <span>{ plan.price } &middot; { plan.allowance } generators</span>
+                                </li>
+                            ) ) }
+                        </ul>
+
+                        <p className="mb-0">
+                            Every feature is in every plan, including the free one; a plan only
+                            raises how many generators a server may run at once. Billing is handled
+                            by Paddle, our merchant of record.{ " " }
+                            <a href="https://voicechannels.online"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-accent hover:underline">
+                                More about VoiceChannels
+                            </a>.
                         </p>
                     </div>
 
@@ -53,6 +119,8 @@ export function LoginPage() {
                         </svg>
                         Continue with Discord
                     </button>
+
+                    <LegalLinks className="mt-6" />
                 </div>
             </div>
         </div>

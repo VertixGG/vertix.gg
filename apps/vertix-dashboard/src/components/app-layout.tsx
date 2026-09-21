@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { useCommandState } from "@zenflux/react-commander/hooks";
 
 import { Sidebar } from "@vertix.gg/dashboard/src/components/sidebar";
+import { LegalLinks } from "@vertix.gg/dashboard/src/components/legal-links";
 import { BotPresenceGate } from "@vertix.gg/dashboard/src/features/bot-presence/components/bot-presence-gate";
 import { TourGate } from "@vertix.gg/dashboard/src/features/onboarding/components/tour-gate";
 import { DYNAMIC_CHANNEL_COLOR_TOUR } from "@vertix.gg/dashboard/src/features/onboarding/tours/dynamic-channel-color-tour";
@@ -27,6 +28,8 @@ export function AppLayout() {
 
             <main className="flex-1 flex flex-col min-w-0">
                 <Outlet />
+
+                <LegalLinks className="py-2 border-t border-border shrink-0" />
             </main>
 
             { /* Before the presence gate rather than after it: both draw at the same height, so

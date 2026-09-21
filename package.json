@@ -131,6 +131,7 @@
         "bun": "latest",
         "bun-types": "latest",
         "cross-env": "^7.0.3",
+        "discord.js": "^14.27.0",
         "eslint": "^9.39.5",
         "eslint-import-resolver-typescript": "^4.4.5",
         "eslint-plugin-react": "^7.37.5",

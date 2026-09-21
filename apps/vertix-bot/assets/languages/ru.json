@@ -672,16 +672,20 @@
           "placeholder": "⌘ ∙ Конфигурация",
           "selectOptions": [
             {
-              "label": "{dynamicChannelMentionableLabel} {state}"
+              "label": "{dynamicChannelMentionableLabel} {state}",
+              "value": "dynamicChannelMentionable:1"
             },
             {
-              "label": "{dynamicChannelAutoSaveLabel} {state}"
+              "label": "{dynamicChannelAutoSaveLabel} {state}",
+              "value": "dynamicChannelAutoSave:1"
             },
             {
-              "label": "{dynamicChannelAutoStatusLabel} {state}"
+              "label": "{dynamicChannelAutoStatusLabel} {state}",
+              "value": "dynamicChannelAutoStatus:0"
             },
             {
-              "label": "{dynamicChannelLogsChannelLabel} {state}"
+              "label": "{dynamicChannelLogsChannelLabel} {state}",
+              "value": "dynamicChannelLogsChannel:0"
             }
           ],
           "options": {
@@ -902,7 +906,8 @@
           "placeholder": "🛡️ ∙ Роль Everyone",
           "selectOptions": [
             {
-              "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}"
+              "label": "{dynamicChannelIncludeEveryoneRoleLabel} {state}",
+              "value": "dynamicChannelIncludeEveryoneRole:1"
             }
           ],
           "options": {

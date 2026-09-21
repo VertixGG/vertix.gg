@@ -25,6 +25,8 @@ import { VERSION_SCALING_CHANNEL_UI_V1 } from "@vertix.gg/data/src/config/scalin
 
 import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
+
+import { ownsGuild } from "@vertix.gg/bot/src/definitions/sharding";
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
 
@@ -494,12 +496,23 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         );
 
         for ( const { masterChannel } of scalingConfigs ) {
-            const guild = await ChannelUtils.cacheOrFetchGuild( masterChannel.guildId );
+            // This list comes from the database, which knows nothing about shards, so it names
+            // every guild rather than the ones this process holds.
+            if ( ! ownsGuild( masterChannel.guildId ) ) {
+                continue;
+            }
+
+            // Read from the cache rather than fetching. A fetch materialises the guild here over
+            // REST no matter which shard owns it - which is how every process came to hold every
+            // guild, and then to do this work for servers that were not its own. What the gateway
+            // delivered is exactly what this process is responsible for; a guild missing from it
+            // has not arrived yet, and the next pass is five minutes away.
+            const guild = this.services.appService.getClient().guilds.cache.get( masterChannel.guildId );
 
             if ( !guild ) {
                 this.debugger.log(
                     this.reindexScalingChannels,
-                    `Guild ${ masterChannel.guildId } not found, skipping master ${ masterChannel.id }`
+                    `Guild ${ masterChannel.guildId } not in cache, skipping master ${ masterChannel.id }`
                 );
                 continue;
             }

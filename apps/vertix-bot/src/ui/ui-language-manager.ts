@@ -600,11 +600,29 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
 
             // Ensure entities not already exist.
             entities.forEach( ( entity ) => {
-                if ( allEntities.find( ( e ) => e.getName() === entity.getName() ) ) {
-                    this.logger.warn(
-                        this.ensureInitialLanguage,
-                        `Entity with name: '${ entity.getName() }' already exists, skipping...`
-                    );
+                const collected = allEntities.find( ( e ) => e.getName() === entity.getName() );
+
+                if ( collected ) {
+                    // Meeting the same class twice is what sharing looks like, not a fault - every
+                    // wizard draws the one back button, so it arrives once per wizard and is counted
+                    // once. Said at warn level it was 492 alarms a boot, all of them fine, which is
+                    // the volume that hides the one line that is not.
+                    //
+                    // Two *different* classes answering to one name is the case worth hearing, and
+                    // it is a real hazard: the second is dropped here, so its copy never reaches a
+                    // language file and reads later as a translation that quietly went missing.
+                    if ( collected === entity ) {
+                        this.logger.log(
+                            this.ensureInitialLanguage,
+                            `Entity with name: '${ entity.getName() }' already collected, skipping...`
+                        );
+                    } else {
+                        this.logger.warn(
+                            this.ensureInitialLanguage,
+                            `Entity with name: '${ entity.getName() }' is declared by two different classes, skipping the second`
+                        );
+                    }
+
                     return;
                 }
 

@@ -68,7 +68,12 @@ module.exports = {
             name: "vertix-api",
             cwd: path.join( ROOT, "apps", "vertix-api" ),
             script: PM2_EXEC,
-            args: "--wait-redis bun --bun --hot src/index-bun.ts",
+            // No `--hot` here, unlike the dev script. A pull writes its files one at a time and the
+            // hot reloader fires on each, so the API spends the length of a deploy reloading against
+            // a half-written tree - long enough to serve `Cannot find module` for a route whose file
+            // has not landed yet, and worse, to come back with a module list that is empty and still
+            // answer 200. A deploy restarts this process explicitly instead.
+            args: "--wait-redis bun --bun src/index-bun.ts",
             env: { LOGGER_PROCESS_NAME: "vertix-api" },
             interpreter: "bash",
         },

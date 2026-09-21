@@ -15,6 +15,7 @@ import {
 /** What a button answers to, whichever version it belongs to. */
 interface ButtonLike {
     getId(): string | number;
+    isInDefaultSet(): boolean;
 }
 
 /**

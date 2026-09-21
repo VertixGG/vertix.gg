@@ -28,9 +28,9 @@ export const GENERAL_COMMAND_DEFINITIONS: ICommandDefinition[] = [
         name: "help",
         description: "Get help with VoiceChannels.",
         tier: COMMAND_TIERS.ANY,
-        adapterName: "VertixBot/UI-General/FeedbackAdapter",
+        adapterName: "VertixBot/UI-General/HelpAdapter",
         flowTransition: "VertixBot/Commands/Help",
-        flowTargetState: "VertixBot/UI-General/FeedbackFlow/States/Default"
+        flowTargetState: "VertixBot/UI-General/HelpFlow/States/Initial"
     },
     {
         name: "welcome",

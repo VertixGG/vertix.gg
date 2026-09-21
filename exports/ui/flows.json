@@ -95,6 +95,34 @@
         }
     },
     {
+        "name": "VertixBot/UI-General/HelpFlow",
+        "module": "VertixBot/UI-General/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-General/HelpFlow/States/Initial",
+        "states": [
+            {
+                "key": "VertixBot/UI-General/HelpFlow/States/Initial",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-General/HelpComponent",
+                    "previewElementsGroup": "VertixBot/UI-General/HelpElementsGroup"
+                }
+            }
+        ],
+        "transitions": [],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
         "name": "VertixBot/UI-General/LanguageFlow",
         "module": "VertixBot/UI-General/Module",
         "flowKind": "virtual",
@@ -1329,7 +1357,7 @@
             },
             {
                 "from": "VertixBot/Commands/Help",
-                "to": "VertixBot/UI-General/FeedbackFlow/States/Default"
+                "to": "VertixBot/UI-General/HelpFlow/States/Initial"
             },
             {
                 "from": "VertixBot/Commands/Welcome",
@@ -1499,10 +1527,10 @@
                 "integrationType": "COMMAND"
             },
             {
-                "flowName": "VertixBot/UI-General/FeedbackFlow",
+                "flowName": "VertixBot/UI-General/HelpFlow",
                 "description": "Handoff: Help",
                 "sourceState": "VertixBot/UI-General/CommandsFlow/States/Initial",
-                "targetState": "VertixBot/UI-General/FeedbackFlow/States/Default",
+                "targetState": "VertixBot/UI-General/HelpFlow/States/Initial",
                 "transition": "VertixBot/Commands/Help",
                 "requiredData": [],
                 "integrationType": "COMMAND"

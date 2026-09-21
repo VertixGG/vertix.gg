@@ -28,6 +28,30 @@
         ]
     },
     {
+        "name": "VertixBot/UI-General/HelpAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-General/HelpComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Static",
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": "VertixBot/UI-General/HelpElementsGroup",
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-General/HelpAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-General/LanguageAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-General/LanguageComponent",

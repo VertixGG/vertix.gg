@@ -6,6 +6,7 @@ import { UICustomIdHashStrategy } from "@vertix.gg/gui/src/ui-custom-id-strategi
 import { SetupAdapter } from "@vertix.gg/bot/src/ui/general/setup/setup-adapter";
 import { WelcomeAdapter } from "@vertix.gg/bot/src/ui/general/welcome/welcome-adapter";
 import { FeedbackAdapter } from "@vertix.gg/bot/src/ui/general/feedback/feedback-adapter";
+import { HelpAdapter } from "@vertix.gg/bot/src/ui/general/help/help-adapter";
 import { LanguageAdapter } from "@vertix.gg/bot/src/ui/general/language/language-adapter";
 import { NotYourChannelAdapter } from "@vertix.gg/bot/src/ui/general/not-your-channel/not-your-channel-adapter";
 import { NoActiveDynamicChannelAdapter } from "@vertix.gg/bot/src/ui/general/no-active-dynamic-channel/no-active-dynamic-channel-adapter";
@@ -34,6 +35,7 @@ export class UIModuleGeneral extends UIModuleBase {
     public static getAdapters() {
         return [
             FeedbackAdapter,
+            HelpAdapter,
             LanguageAdapter,
             SetupAdapter,
             WelcomeAdapter,

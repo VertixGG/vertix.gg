@@ -1,10 +1,10 @@
 {
     "schemaVersion": "1.0.0",
-    "exportedAt": "2026-09-20T11:41:29.259Z",
+    "exportedAt": "2026-09-21T08:32:38.658Z",
     "counts": {
-        "components": 65,
-        "adapters": 66,
-        "flows": 56
+        "components": 66,
+        "adapters": 67,
+        "flows": 57
     },
     "modules": [
         "VertixBot/UI-General/Module",
@@ -14,15 +14,15 @@
     "moduleSummary": [
         {
             "module": "VertixBot/UI-General/Module",
-            "components": 16,
-            "adapters": 16,
-            "flows": 4,
+            "components": 17,
+            "adapters": 17,
+            "flows": 5,
             "embeds": {
-                "total": 23,
-                "withDefinition": 23,
+                "total": 24,
+                "withDefinition": 24,
                 "missingDefinition": 0
             },
-            "componentsWithEmbeds": 16,
+            "componentsWithEmbeds": 17,
             "componentsWithMissingEmbeds": 0
         },
         {
@@ -53,8 +53,8 @@
         }
     ],
     "embedCoverage": {
-        "total": 189,
-        "withDefinition": 189,
+        "total": 190,
+        "withDefinition": 190,
         "missingDefinition": 0
     }
 }

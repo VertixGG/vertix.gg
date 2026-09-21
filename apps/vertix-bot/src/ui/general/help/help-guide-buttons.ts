@@ -16,8 +16,10 @@ const POSTS = "https://voicechannels.online/posts";
  * reaching the bot, so these work on a server that granted the bot nothing at all. That is the
  * whole point of this screen.
  *
- * `comparison` is deliberately not here. It is a page for people choosing a bot, and whoever is
- * reading help has already chosen.
+ * `comparison` is not here: it is a page for people choosing a bot, and whoever is reading help
+ * has already chosen. Nor are the logs channel and channel name pages - both answer a question
+ * somebody has after they are set up, and putting every guide here made the row a list to read
+ * rather than three things to press.
  */
 export class HelpSetupGuideButton extends UIElementButtonUrlBase {
     public static getName() {
@@ -73,38 +75,3 @@ export class HelpFeaturesButton extends UIElementButtonUrlBase {
     }
 }
 
-export class HelpLogsChannelButton extends UIElementButtonUrlBase {
-    public static getName() {
-        return "VertixBot/UI-General/HelpLogsChannelButton";
-    }
-
-    public static getInstanceType() {
-        return UIInstancesTypes.Static;
-    }
-
-    protected async getLabel() {
-        return "Logs Channel";
-    }
-
-    protected async getURL(): Promise<string> {
-        return `${ POSTS }/how-to-setup-logs-channel`;
-    }
-}
-
-export class HelpChannelNamesButton extends UIElementButtonUrlBase {
-    public static getName() {
-        return "VertixBot/UI-General/HelpChannelNamesButton";
-    }
-
-    public static getInstanceType() {
-        return UIInstancesTypes.Static;
-    }
-
-    protected async getLabel() {
-        return "Channel Names";
-    }
-
-    protected async getURL(): Promise<string> {
-        return `${ POSTS }/channel-name-placeholders`;
-    }
-}

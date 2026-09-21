@@ -36,8 +36,7 @@ const HelpEmbed = new EmbedBuilder( "VertixBot/UI-General/HelpEmbed" )
 
         "**Anyone**\n" +
         "`/voice invite` ∙ invite someone to a channel\n" +
-        "`/voice claim` ∙ take over a channel whose owner left\n" +
-        "`/welcome` ∙ what the bot does and how to start\n\n" +
+        "`/voice claim` ∙ take over a channel whose owner left\n\n" +
 
         "**Server admins**\n" +
         "`/setup` ∙ set up and configure the bot\n" +

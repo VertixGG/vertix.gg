@@ -1,10 +1,8 @@
 import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-base";
 
 import {
-    HelpChannelNamesButton,
     HelpFeaturesButton,
     HelpJoinToCreateButton,
-    HelpLogsChannelButton,
     HelpSetupGuideButton
 } from "@vertix.gg/bot/src/ui/general/help/help-guide-buttons";
 
@@ -23,9 +21,10 @@ export class HelpElementsGroup extends UIElementsGroupBase {
     /**
      * Two rows: the guides, then where to go.
      *
-     * The guides are ordered as someone meets the bot rather than by importance - set it up,
-     * understand what the generator does, turn features on, then the two narrower pages. Five is
-     * discord's limit for one row, which is also all the guides worth putting here.
+     * The guides are ordered as someone meets the bot: set it up, understand what the generator
+     * does, turn features on. Three rather than every guide there is - the logs channel and the
+     * channel name pages answer questions somebody has once they are running, and with them there
+     * the row read as a list rather than as three things to press.
      *
      * The second row answers a different question: somewhere to configure it, somewhere to read
      * about it, and someone to ask. Support sits last because it is what is left when the rest has
@@ -36,9 +35,7 @@ export class HelpElementsGroup extends UIElementsGroupBase {
             [
                 HelpSetupGuideButton,
                 HelpJoinToCreateButton,
-                HelpFeaturesButton,
-                HelpLogsChannelButton,
-                HelpChannelNamesButton
+                HelpFeaturesButton
             ],
             [
                 HelpDashboardButton,

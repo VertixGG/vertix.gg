@@ -176,6 +176,14 @@ const LOGS_CHANNEL_UNUSABLE_ERRORS: number[] = [
     RESTJSONErrorCodes.MissingPermissions
 ];
 
+/**
+ * How many guild ids the startup diagnostic prints before it stops.
+ *
+ * Enough to read a split by eye at the scale this is being debugged at, and short enough that a bot
+ * in thousands of guilds does not write one unreadable line per process per restart.
+ */
+const GUILD_ID_LOG_LIMIT = 25;
+
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
     channelService: ChannelService;
@@ -3664,6 +3672,18 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             this.refreshControlPanels,
             `Refreshing ${ guilds.length } guild(s) that have a generator, of ${ client.guilds.cache.size } ` +
             `the bot is in (by shard - ${ shardBreakdown || "none" })`
+        );
+
+        // The ids themselves, because a count cannot show two processes holding the *same* guild -
+        // and that overlap, not the total, is what makes two bots answer one server. Capped: this
+        // is a diagnostic for a handful of guilds, and a bot with thousands should not put them all
+        // on one line.
+        const cachedIds = [ ... client.guilds.cache.keys() ];
+
+        this.logger.info(
+            this.refreshControlPanels,
+            `Guilds held: ${ cachedIds.slice( 0, GUILD_ID_LOG_LIMIT ).join( "," ) }` +
+            ( cachedIds.length > GUILD_ID_LOG_LIMIT ? ` (+${ cachedIds.length - GUILD_ID_LOG_LIMIT } more)` : "" )
         );
 
         for ( let i = 0; i < guilds.length; i += chunkSize ) {

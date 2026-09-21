@@ -34,8 +34,19 @@ async function registerServices() {
     ServiceLocator.$.unregister( IPCService.getName() );
     ServiceLocator.$.register( IPCService );
 
-    await ServiceLocator.$.waitFor( IPCService.getName(), { timeout: 10000 } );
+    const ipcService = await ServiceLocator.$.waitFor<typeof IPCService.prototype>(
+        IPCService.getName(),
+        { timeout: 10000 }
+    );
     logger.info( registerServices, "IPC service ready" );
+
+    // The api is the process that writes most of what the bot then reads back out of a cache - a
+    // settings save from the dashboard lands here. Without this it would be the bot's ttl deciding
+    // how long the two disagreed.
+    const { CacheInvalidation } = await import( "@vertix.gg/base/src/modules/ipc" );
+
+    await CacheInvalidation.$.install( ipcService );
+    logger.info( registerServices, "Cache invalidation installed" );
 
     // Register and wait for Discord service
     const { DiscordService } = await import( "@vertix.gg/api/src/server/services/discord-service" );

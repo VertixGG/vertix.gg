@@ -44,6 +44,8 @@ import GlobalLogger from "@vertix.gg/bot/src/global-logger";
 
 import { BotCustomizationProvider } from "@vertix.gg/bot/src/providers/bot-customization-provider";
 
+import type { IPCService } from "@vertix.gg/base/src/modules/ipc/ipc-service";
+
 import type { InteractionHandler } from "@vertix.gg/gui/src/runtime/interaction-handler-registry";
 
 import type { ConfigBase, ConfigBaseInterface } from "@vertix.gg/data/src/bases/config-base";
@@ -500,6 +502,9 @@ async function registerIPCService() {
         } else {
             GlobalLogger.$.warn( registerIPCService, "IPC service already registered but Redis not available" );
         }
+
+        await installCacheInvalidation( existing );
+
         return;
     }
 
@@ -514,6 +519,21 @@ async function registerIPCService() {
     } else {
         GlobalLogger.$.warn( registerIPCService, "IPC service registered but Redis not available - dashboard management features will be disabled" );
     }
+
+    await installCacheInvalidation( ipcService );
+}
+
+/**
+ * Lets the data caches hear about rows the dashboard, the api or another bot process changed.
+ *
+ * Done on both paths above, the fresh registration and the hot-reload one, because the hook it
+ * installs lives on the module rather than on the service - a reload that skipped it would leave
+ * the caches announcing nothing while still believing they were in step.
+ */
+async function installCacheInvalidation( ipcService: IPCService ) {
+    const { CacheInvalidation } = await import( "@vertix.gg/base/src/modules/ipc" );
+
+    await CacheInvalidation.$.install( ipcService );
 }
 
 async function registerDummyIPCService() {

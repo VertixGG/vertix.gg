@@ -3,8 +3,13 @@ import { jest } from "@jest/globals";
 import {
     CACHE_NO_EXPIRY,
     CACHE_UNBOUNDED,
-    CacheBase
+    CacheBase,
+    setCacheInvalidationPublisher
 } from "@vertix.gg/base/src/bases/cache-base";
+
+import type { ICacheInvalidationMessage } from "@vertix.gg/definitions/src/cache-ipc-definitions";
+
+const THIS_CACHE = "VertixBase/Test/CacheBase";
 
 const A_TTL = 1_000,
     A_MAX = 3;
@@ -18,7 +23,7 @@ const A_TTL = 1_000,
  */
 class TestCache extends CacheBase<string> {
     public static getName() {
-        return "VertixBase/Test/CacheBase";
+        return THIS_CACHE;
     }
 
     public constructor(
@@ -240,6 +245,155 @@ describe( "VertixBase/Bases/CacheBase", () => {
             cache.snapshot().set( "b", "2" );
 
             expect( cache.read( "b" ) ).toBeUndefined();
+        } );
+    } );
+
+    describe( "cross-process invalidation", () => {
+        let announced: Array<Omit<ICacheInvalidationMessage, "origin">>;
+
+        beforeEach( () => {
+            announced = [];
+
+            setCacheInvalidationPublisher( ( message ) => {
+                announced.push( message );
+            } );
+        } );
+
+        afterEach( () => {
+            setCacheInvalidationPublisher( null );
+        } );
+
+        describe( "announcing", () => {
+            it( "should announce a deleted key, naming its own cache", () => {
+                new TestCache().drop( "guild-1" );
+
+                expect( announced ).toEqual( [ { cache: THIS_CACHE, key: "guild-1" } ] );
+            } );
+
+            // One message carrying the prefix, not one per matching key - a guild with fifty
+            // settings rows would otherwise put fifty messages on the wire for one save.
+            it( "should announce a prefix once rather than once per matching key", () => {
+                const cache = new TestCache( CACHE_UNBOUNDED );
+
+                cache.write( "guild-1-a", "1" );
+                cache.write( "guild-1-b", "2" );
+                cache.write( "guild-1-c", "3" );
+
+                cache.dropPrefix( "guild-1" );
+
+                expect( announced ).toEqual( [ { cache: THIS_CACHE, prefix: "guild-1" } ] );
+            } );
+
+            // Whoever wrote the row often does not hold the entry - the api saves what the bot has
+            // cached. Announcing only on a local hit would skip exactly that case.
+            it( "should announce even when this process held nothing", () => {
+                const cache = new TestCache();
+
+                expect( cache.drop( "never-cached" ) ).toBe( false );
+                expect( announced ).toHaveLength( 1 );
+            } );
+
+            // These are one process reclaiming its own memory, not a row changing. Announcing them
+            // would have every process drop a perfectly good entry whenever any one of them filled up.
+            it( "should stay silent on expiry and on eviction", () => {
+                const expiring = new TestCache( 1, A_TTL );
+
+                expiring.write( "a", "1" );
+                advance( A_TTL );
+                expiring.read( "a" );
+
+                expiring.write( "b", "2" );
+                expiring.write( "c", "3" );
+
+                expect( announced ).toHaveLength( 0 );
+            } );
+        } );
+
+        describe( "applying", () => {
+            it( "should drop a key another process announced", () => {
+                const cache = new TestCache();
+
+                cache.write( "guild-1", "settings" );
+
+                expect( CacheBase.applyInvalidation( {
+                    origin: "somewhere-else",
+                    cache: THIS_CACHE,
+                    key: "guild-1"
+                } ) ).toBe( true );
+
+                expect( cache.read( "guild-1" ) ).toBeUndefined();
+            } );
+
+            it( "should drop every key under an announced prefix", () => {
+                const cache = new TestCache( CACHE_UNBOUNDED );
+
+                cache.write( "guild-1-a", "1" );
+                cache.write( "guild-1-b", "2" );
+                cache.write( "guild-2-a", "3" );
+
+                CacheBase.applyInvalidation( {
+                    origin: "somewhere-else",
+                    cache: THIS_CACHE,
+                    prefix: "guild-1"
+                } );
+
+                expect( cache.read( "guild-1-a" ) ).toBeUndefined();
+                expect( cache.read( "guild-1-b" ) ).toBeUndefined();
+                expect( cache.read( "guild-2-a" ) ).toBe( "3" );
+            } );
+
+            // The one that matters. If applying a message went back through `deleteCache()` it
+            // would announce it onward, and two processes would invalidate each other forever.
+            it( "should not re-announce what it was told", () => {
+                const cache = new TestCache();
+
+                cache.write( "guild-1", "settings" );
+
+                CacheBase.applyInvalidation( {
+                    origin: "somewhere-else",
+                    cache: THIS_CACHE,
+                    key: "guild-1"
+                } );
+
+                expect( announced ).toHaveLength( 0 );
+            } );
+
+            // A process that does not run that model is the normal case, not an error.
+            it( "should report a miss for a cache this process does not have", () => {
+                expect( CacheBase.applyInvalidation( {
+                    origin: "somewhere-else",
+                    cache: "VertixData/Models/NotHere",
+                    key: "guild-1"
+                } ) ).toBe( false );
+            } );
+        } );
+
+        describe( "failing open", () => {
+            // The write that triggered this already succeeded and the local entry is already gone.
+            // Losing the announcement costs staleness for one ttl; throwing would cost the save.
+            it( "should still delete when no publisher is installed", () => {
+                setCacheInvalidationPublisher( null );
+
+                const cache = new TestCache();
+
+                cache.write( "a", "1" );
+
+                expect( () => cache.drop( "a" ) ).not.toThrow();
+                expect( cache.read( "a" ) ).toBeUndefined();
+            } );
+
+            it( "should still delete when the publisher throws", () => {
+                setCacheInvalidationPublisher( () => {
+                    throw new Error( "redis is down" );
+                } );
+
+                const cache = new TestCache();
+
+                cache.write( "a", "1" );
+
+                expect( () => cache.drop( "a" ) ).not.toThrow();
+                expect( cache.read( "a" ) ).toBeUndefined();
+            } );
         } );
     } );
 } );

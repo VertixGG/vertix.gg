@@ -398,7 +398,9 @@
         "tough-cookie": "^4.1.2",
       },
       "devDependencies": {
+        "@jest/types": "^30.5.1",
         "@types/tough-cookie": "^4.0.2",
+        "@zenflux/tsconfig-to-swc": "0.1.21",
       },
     },
   },
@@ -4316,6 +4318,8 @@
 
     "@verdaccio/web/lodash": ["lodash@4.17.21", "", {}, "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="],
 
+    "@vertix.gg/bot/jest": ["jest@30.5.2", "", { "dependencies": { "@jest/core": "30.5.2", "@jest/types": "30.5.1", "import-local": "^3.2.0", "jest-cli": "30.5.2" }, "peerDependencies": { "node-notifier": "^8.0.1 || ^9.0.0 || ^10.0.0" }, "optionalPeers": ["node-notifier"], "bin": { "jest": "bin/jest.js" } }, "sha512-3gnpdBIza8ijCl3iMV9ChE3hSt1+46865qqod863gQtJr1DixOkAU5DoGbi3u+XlRcw++BhZQMu/y4xBdHBvSQ=="],
+
     "@vertix.gg/dashboard/typescript": ["typescript@5.7.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw=="],
 
     "@vertix.gg/discord-ui/@types/react": ["@types/react@18.3.31", "", { "dependencies": { "@types/prop-types": "*", "csstype": "^3.2.2" } }, "sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw=="],
@@ -5370,6 +5374,10 @@
 
     "@verdaccio/web/express/type-is": ["type-is@1.6.18", "", { "dependencies": { "media-typer": "0.3.0", "mime-types": "~2.1.24" } }, "sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g=="],
 
+    "@vertix.gg/bot/jest/@jest/core": ["@jest/core@30.5.2", "", { "dependencies": { "@jest/console": "30.5.2", "@jest/pattern": "30.5.0", "@jest/reporters": "30.5.2", "@jest/test-result": "30.5.2", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "ansi-escapes": "^4.3.2", "chalk": "^4.1.2", "ci-info": "^4.2.0", "exit-x": "^0.2.2", "fast-json-stable-stringify": "^2.1.0", "graceful-fs": "^4.2.11", "jest-changed-files": "30.5.1", "jest-config": "30.5.2", "jest-haste-map": "30.5.1", "jest-message-util": "30.5.1", "jest-regex-util": "30.5.0", "jest-resolve": "30.5.1", "jest-resolve-dependencies": "30.5.2", "jest-runner": "30.5.2", "jest-runtime": "30.5.2", "jest-snapshot": "30.5.2", "jest-util": "30.5.1", "jest-validate": "30.5.1", "jest-watcher": "30.5.2", "pretty-format": "30.5.1", "slash": "^3.0.0" }, "peerDependencies": { "node-notifier": "^8.0.1 || ^9.0.0 || ^10.0.0" }, "optionalPeers": ["node-notifier"] }, "sha512-/jqvFWoJF7LV1a6AUpYMbMm+2yIYsHJfR474H0SCzr9k8tnO/jl9wRg6zSG6lxgf6EozNlCG4amFzWsbZSvvZA=="],
+
+    "@vertix.gg/bot/jest/jest-cli": ["jest-cli@30.5.2", "", { "dependencies": { "@jest/core": "30.5.2", "@jest/test-result": "30.5.2", "@jest/types": "30.5.1", "chalk": "^4.1.2", "exit-x": "^0.2.2", "import-local": "^3.2.0", "jest-config": "30.5.2", "jest-util": "30.5.1", "jest-validate": "30.5.1", "yargs": "^17.7.2" }, "peerDependencies": { "node-notifier": "^8.0.1 || ^9.0.0 || ^10.0.0" }, "optionalPeers": ["node-notifier"], "bin": { "jest": "bin/jest.js" } }, "sha512-YYYxUUVjFgPvgEleKNKMaYGIFgR3l3832Cl0kRL/oCiDZ03v7wImUtquHl2OOBCCNgprjZgBN5bczS/JklPBDg=="],
+
     "@vertix.gg/discord-ui/react-dom/scheduler": ["scheduler@0.23.2", "", { "dependencies": { "loose-envify": "^1.1.0" } }, "sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ=="],
 
     "@vertix.gg/website/@vitejs/plugin-react/@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-beta.27", "", {}, "sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA=="],
@@ -6234,6 +6242,42 @@
 
     "@verdaccio/web/express/type-is/mime-types": ["mime-types@2.1.35", "", { "dependencies": { "mime-db": "1.52.0" } }, "sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw=="],
 
+    "@vertix.gg/bot/jest/@jest/core/@jest/console": ["@jest/console@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "jest-message-util": "30.5.1", "jest-util": "30.5.1", "slash": "^3.0.0" } }, "sha512-e8sQC4pCMHPBrPX7Hk8TJr+DM5dkUnImSTNag8SEWFAFAF6xIz4AJvCKapnrdHnZxep4bxw4PhG+ZbimYBMyKw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/reporters": ["@jest/reporters@30.5.2", "", { "dependencies": { "@bcoe/v8-coverage": "^0.2.3", "@jest/console": "30.5.2", "@jest/test-result": "30.5.2", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "@jridgewell/trace-mapping": "^0.3.31", "@types/node": "*", "chalk": "^4.1.2", "collect-v8-coverage": "^1.0.2", "exit-x": "^0.2.2", "glob": "^13.0.6", "graceful-fs": "^4.2.11", "istanbul-lib-coverage": "^3.0.0", "istanbul-lib-instrument": "^6.0.0", "istanbul-lib-report": "^3.0.0", "istanbul-lib-source-maps": "^5.0.0", "istanbul-reports": "^3.1.3", "jest-message-util": "30.5.1", "jest-util": "30.5.1", "jest-worker": "30.5.1", "slash": "^3.0.0", "string-length": "^4.0.2", "v8-to-istanbul": "^9.0.1" }, "peerDependencies": { "node-notifier": "^8.0.1 || ^9.0.0 || ^10.0.0" }, "optionalPeers": ["node-notifier"] }, "sha512-ev6E9iG73twQcfAfoTnviuYkr3yOrYbzAtMFCimv2fxHXPIp9PBt2u1wNMt0aYWgl8FPwIcS8oqRJg6alnht4Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/test-result": ["@jest/test-result@30.5.2", "", { "dependencies": { "@jest/console": "30.5.2", "@jest/types": "30.5.1", "@types/istanbul-lib-coverage": "^2.0.6", "collect-v8-coverage": "^1.0.2" } }, "sha512-eO6YU5rsLfs60ne694e0IAmRgeBnoA8mu0nlxXDbl/1j5km0o2vO9/VbbUIKIH+WRKKEI+ELgwraRGn2Lhep8g=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform": ["@jest/transform@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@jest/types": "30.5.1", "@jridgewell/trace-mapping": "^0.3.31", "babel-plugin-istanbul": "^8.0.0", "chalk": "^4.1.2", "convert-source-map": "^2.0.0", "fast-json-stable-stringify": "^2.1.0", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "pirates": "^4.0.7", "slash": "^3.0.0", "write-file-atomic": "^5.0.1" } }, "sha512-LBGwmaE886C41jDZ65eqR1YbXM7642MK3ZhTowZd5+xDlrDLuf4ePuDdDmVSvcr8NTVJ3MqxLkMbUCzuigUaoQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/ci-info": ["ci-info@4.4.0", "", {}, "sha512-77PSwercCZU2Fc4sX94eF8k8Pxte6JAwL4/ICZLFjJLqegs7kCuAsqqj/70NQF6TvDpgFjkubQB2FW2ZZddvQg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-changed-files": ["jest-changed-files@30.5.1", "", { "dependencies": { "execa": "^5.1.1", "jest-util": "30.5.1", "p-limit": "^3.1.0" } }, "sha512-0+bvMM/ENhDI29Z8q1r4HxiDIi4G5tnBmSw4esfPQoj9q8Nik7KIyuxHkTVnnniJQf05SxpGaKDQ+4h28ynGPg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config": ["jest-config@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@jest/get-type": "30.5.0", "@jest/pattern": "30.5.0", "@jest/test-sequencer": "30.5.2", "@jest/types": "30.5.1", "babel-jest": "30.5.2", "chalk": "^4.1.2", "ci-info": "^4.2.0", "deepmerge": "^4.3.1", "glob": "^13.0.6", "graceful-fs": "^4.2.11", "jest-circus": "30.5.2", "jest-docblock": "30.5.0", "jest-environment-node": "30.5.2", "jest-regex-util": "30.5.0", "jest-resolve": "30.5.1", "jest-runner": "30.5.2", "jest-util": "30.5.1", "jest-validate": "30.5.1", "parse-json": "^5.2.0", "pretty-format": "30.5.1", "slash": "^3.0.0", "strip-json-comments": "^3.1.1" }, "peerDependencies": { "@types/node": "*", "esbuild-register": ">=3.4.0", "ts-node": ">=9.0.0" }, "optionalPeers": ["@types/node", "esbuild-register", "ts-node"] }, "sha512-U6221OZekabePvGcGPf4raIBKMvYQWFHvhobDJRojOYaFMj2HaGytAdknjDhYc6JTz2fdHW9+6k0wWUDaNeOFQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-haste-map": ["jest-haste-map@30.5.1", "", { "dependencies": { "@jest/types": "30.5.1", "@parcel/watcher": "^2.6.0", "@types/node": "*", "anymatch": "^3.1.3", "fb-watchman": "^2.0.2", "fdir": "^6.5.0", "graceful-fs": "^4.2.11", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "jest-worker": "30.5.1", "picomatch": "^4.0.3" } }, "sha512-VIFgt67jW480YDxKfEv9IYQKrFpYt7bOCMn3VsnjK7AK9qo7p6acpnA1DHwsVOULE3dTaYew/6JaTD/d0VDHoQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-resolve": ["jest-resolve@30.5.1", "", { "dependencies": { "chalk": "^4.1.2", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-util": "30.5.1", "jest-validate": "30.5.1", "slash": "^3.0.0", "unrs-resolver": "^1.12.1" } }, "sha512-wprhLejRtwN6h8ZgaqC0eYjGJ1uMdGPT/+b3eFncbG4NWuuP9QL+vWwRinu9waw7hkOLcpMJGVJAMgBwsPssMQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-resolve-dependencies": ["jest-resolve-dependencies@30.5.2", "", { "dependencies": { "jest-regex-util": "30.5.0", "jest-snapshot": "30.5.2" } }, "sha512-GMI0DP5enX9Z2qW2zFy1bOkrCfWAOPRJQ7qHt0pdfrxBPsgWxglMPrRSK2TX/wRWYxcPRSLFg3Z88qPOzHx7FQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner": ["jest-runner@30.5.2", "", { "dependencies": { "@jest/console": "30.5.2", "@jest/environment": "30.5.2", "@jest/source-map": "30.5.2", "@jest/test-result": "30.5.2", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "emittery": "^0.13.1", "exit-x": "^0.2.2", "graceful-fs": "^4.2.11", "jest-docblock": "30.5.0", "jest-environment-node": "30.5.2", "jest-haste-map": "30.5.1", "jest-leak-detector": "30.5.1", "jest-message-util": "30.5.1", "jest-resolve": "30.5.1", "jest-runtime": "30.5.2", "jest-util": "30.5.1", "jest-watcher": "30.5.2", "jest-worker": "30.5.1", "p-limit": "^3.1.0" } }, "sha512-/B6px7hiiNhVSRwuv9AGn0nawYvwsHeQZ3ItTd5Gp2diFd0EOKaWVeWqcbw3L88vx1GfpCKjQkxWItZCTl11Rw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime": ["jest-runtime@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/fake-timers": "30.5.2", "@jest/globals": "30.5.2", "@jest/source-map": "30.5.2", "@jest/test-result": "30.5.2", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "cjs-module-lexer": "^2.2.0", "collect-v8-coverage": "^1.0.2", "es-module-lexer": "^2.1.0", "glob": "^13.0.6", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-regex-util": "30.5.0", "jest-resolve": "30.5.1", "jest-snapshot": "30.5.2", "jest-util": "30.5.1", "slash": "^3.0.0", "strip-bom": "^4.0.0" } }, "sha512-0paUAHBlheai10A3XSy9Xh+YBG0IROy+/qzcDPzQ/nbbXrznQzeWy5qniICWK6d3W3scaRQCVAbXdcK0ibBq4w=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-snapshot": ["jest-snapshot@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@babel/generator": "^7.27.5", "@babel/plugin-syntax-jsx": "^7.27.1", "@babel/plugin-syntax-typescript": "^7.27.1", "@babel/types": "^7.27.3", "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "@jest/snapshot-utils": "30.5.1", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "babel-preset-current-node-syntax": "^1.2.0", "chalk": "^4.1.2", "expect": "30.5.2", "graceful-fs": "^4.2.11", "jest-diff": "30.5.2", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-util": "30.5.1", "pretty-format": "30.5.1", "semver": "^7.7.2", "synckit": "^0.11.8" } }, "sha512-jKIdes25AnAH73dOCi2qE6J6vHJ6L2vyBS11M89kT50DVJcLTf2AOjvcc+2vVaN8lUbY5v2R83aqXo3Ro9fqYA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-validate": ["jest-validate@30.5.1", "", { "dependencies": { "@jest/get-type": "30.5.0", "@jest/types": "30.5.1", "camelcase": "^6.3.0", "chalk": "^4.1.2", "leven": "^3.1.0", "pretty-format": "30.5.1" } }, "sha512-i/buJ56wTpxihE93hQYNMfdOThS87+HGvLZzZJmU4xggPcdTYQq051iwALLCHp3q+SkCGH+EFejQZz5EbBSkkg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-watcher": ["jest-watcher@30.5.2", "", { "dependencies": { "@jest/test-result": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "ansi-escapes": "^4.3.2", "chalk": "^4.1.2", "emittery": "^0.13.1", "jest-util": "30.5.1", "string-length": "^4.0.2" } }, "sha512-rqRgg4R11GA9m1UsEZwQeixHsgZReCn6TOHAHtIH33yXrIvoX0OGPA20Yzzjkz7X40fZvcRSxEpQppYPcWzmcQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/@jest/test-result": ["@jest/test-result@30.5.2", "", { "dependencies": { "@jest/console": "30.5.2", "@jest/types": "30.5.1", "@types/istanbul-lib-coverage": "^2.0.6", "collect-v8-coverage": "^1.0.2" } }, "sha512-eO6YU5rsLfs60ne694e0IAmRgeBnoA8mu0nlxXDbl/1j5km0o2vO9/VbbUIKIH+WRKKEI+ELgwraRGn2Lhep8g=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config": ["jest-config@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@jest/get-type": "30.5.0", "@jest/pattern": "30.5.0", "@jest/test-sequencer": "30.5.2", "@jest/types": "30.5.1", "babel-jest": "30.5.2", "chalk": "^4.1.2", "ci-info": "^4.2.0", "deepmerge": "^4.3.1", "glob": "^13.0.6", "graceful-fs": "^4.2.11", "jest-circus": "30.5.2", "jest-docblock": "30.5.0", "jest-environment-node": "30.5.2", "jest-regex-util": "30.5.0", "jest-resolve": "30.5.1", "jest-runner": "30.5.2", "jest-util": "30.5.1", "jest-validate": "30.5.1", "parse-json": "^5.2.0", "pretty-format": "30.5.1", "slash": "^3.0.0", "strip-json-comments": "^3.1.1" }, "peerDependencies": { "@types/node": "*", "esbuild-register": ">=3.4.0", "ts-node": ">=9.0.0" }, "optionalPeers": ["@types/node", "esbuild-register", "ts-node"] }, "sha512-U6221OZekabePvGcGPf4raIBKMvYQWFHvhobDJRojOYaFMj2HaGytAdknjDhYc6JTz2fdHW9+6k0wWUDaNeOFQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-validate": ["jest-validate@30.5.1", "", { "dependencies": { "@jest/get-type": "30.5.0", "@jest/types": "30.5.1", "camelcase": "^6.3.0", "chalk": "^4.1.2", "leven": "^3.1.0", "pretty-format": "30.5.1" } }, "sha512-i/buJ56wTpxihE93hQYNMfdOThS87+HGvLZzZJmU4xggPcdTYQq051iwALLCHp3q+SkCGH+EFejQZz5EbBSkkg=="],
+
     "@zenflux/core/fastmcp/file-type/@tokenizer/inflate": ["@tokenizer/inflate@0.4.1", "", { "dependencies": { "debug": "^4.4.3", "token-types": "^6.1.1" } }, "sha512-2mAv+8pkG6GIZiF1kNg1jAjh27IDxEPKwdGul3snfztFerfPGI1LjDezZp3i7BElXompqEtPmoPx6c2wgtWsOA=="],
 
     "@zenflux/core/fastmcp/xsschema/effect": ["effect@3.18.4", "", { "dependencies": { "@standard-schema/spec": "^1.0.0", "fast-check": "^3.23.1" } }, "sha512-b1LXQJLe9D11wfnOKAk3PKxuqYshQ0Heez+y5pnkd3jLj1yx9QhM72zZ9uUrOQyNvrs2GZZd/3maL0ZV18YuDA=="],
@@ -6896,6 +6940,90 @@
 
     "@verdaccio/web/express/type-is/mime-types/mime-db": ["mime-db@1.52.0", "", {}, "sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg=="],
 
+    "@vertix.gg/bot/jest/@jest/core/@jest/reporters/glob": ["glob@13.0.6", "", { "dependencies": { "minimatch": "^10.2.2", "minipass": "^7.1.3", "path-scurry": "^2.0.2" } }, "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/reporters/istanbul-lib-source-maps": ["istanbul-lib-source-maps@5.0.6", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.23", "debug": "^4.1.1", "istanbul-lib-coverage": "^3.0.0" } }, "sha512-yg2d+Em4KizZC5niWhQaIomgf5WlL4vOOjZ5xGCmF8SnPE/mDWWXgvRExdcpCgh9lLRRa1/fSYp2ymmbJ1pI+A=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/reporters/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul": ["babel-plugin-istanbul@8.0.0", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.0.0", "@istanbuljs/load-nyc-config": "^1.0.0", "@istanbuljs/schema": "^0.1.3", "istanbul-lib-instrument": "^6.0.2", "test-exclude": "^7.0.1" } }, "sha512-18wCskrN3DgbuBmp1gr7LBGT8xdz5xhQQqFvFhVxbkl8VBCrMKQ2YtqBWtUal1Zrc1HTuX0011+Brjw78TCFkg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/write-file-atomic": ["write-file-atomic@5.0.1", "", { "dependencies": { "imurmurhash": "^0.1.4", "signal-exit": "^4.0.1" } }, "sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-changed-files/execa": ["execa@5.1.1", "", { "dependencies": { "cross-spawn": "^7.0.3", "get-stream": "^6.0.0", "human-signals": "^2.1.0", "is-stream": "^2.0.0", "merge-stream": "^2.0.0", "npm-run-path": "^4.0.1", "onetime": "^5.1.2", "signal-exit": "^3.0.3", "strip-final-newline": "^2.0.0" } }, "sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/@jest/test-sequencer": ["@jest/test-sequencer@30.5.2", "", { "dependencies": { "@jest/test-result": "30.5.2", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "slash": "^3.0.0" } }, "sha512-bmij8jZyYAC47ExT2GeP7PcrlwSNS+Bp3KeRuBH88gpcxqDv6fljN8PemS4J/lLZ79xb6mpaennQTTq0zUAVVg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest": ["babel-jest@30.5.2", "", { "dependencies": { "@jest/transform": "30.5.2", "@types/babel__core": "^7.20.5", "babel-plugin-istanbul": "^8.0.0", "babel-preset-jest": "30.5.0", "chalk": "^4.1.2", "graceful-fs": "^4.2.11", "slash": "^3.0.0" }, "peerDependencies": { "@babel/core": "^7.11.0 || ^8.0.0-0" } }, "sha512-ES8WeJ2fNWPEDunyAtUfJ12nHyaWUloCHdkfK2oW5uSoQSUmjNKdWiGaXJITJwvFEWoD/evHEg/QoCXAvLaQqQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/glob": ["glob@13.0.6", "", { "dependencies": { "minimatch": "^10.2.2", "minipass": "^7.1.3", "path-scurry": "^2.0.2" } }, "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus": ["jest-circus@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/expect": "30.5.2", "@jest/test-result": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "co": "^4.6.0", "dedent": "^1.6.0", "is-generator-fn": "^2.1.0", "jest-each": "30.5.2", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-runtime": "30.5.2", "jest-snapshot": "30.5.2", "jest-util": "30.5.1", "p-limit": "^3.1.0", "pretty-format": "30.5.1", "pure-rand": "^7.0.0", "slash": "^3.0.0", "stack-utils": "^2.0.6" } }, "sha512-vffFgjs5JSJ9q4ds1vNW3klKYPJfYfIY61LT/zaZgvTeASJOWZUt8LBfHgIcV4rwxlPBLl/ePBGccHEclS4PlQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-docblock": ["jest-docblock@30.5.0", "", { "dependencies": { "detect-newline": "^3.1.0" } }, "sha512-NwDqcxtoZi33RhuW+zJS/RVA3rmheQ8BnwpYZuc/Eruaz6seQb7+aoCeDZu/3X7W2XmD8DbSo9Pn72DbKsBFYw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-environment-node": ["jest-environment-node@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2", "jest-util": "30.5.1", "jest-validate": "30.5.1" } }, "sha512-Ciz4KgTGIbojxSKpuFImgWJj5EyqfE8xMq9NxWmOXnQywHHS03H9Mv+vaCB29J5pr3JBrY27WbRV18rBdjh8Dg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-haste-map/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/@jest/environment": ["@jest/environment@30.5.2", "", { "dependencies": { "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2" } }, "sha512-nwFPOUMbmsjNNRCpnJpB9HbSZu4C07wDDds++5j+j1MezzPLxMPDdbdUVjr2o4RULDOValnDd70taPFI1EtxAg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/@jest/source-map": ["@jest/source-map@30.5.2", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "callsites": "^3.1.0", "convert-source-map": "^2.0.0", "graceful-fs": "^4.2.11" } }, "sha512-c5CehvkbfHX6yyNg7bMn2ylqlp9AHXuZ/3hPH/Lh5bxD/vefd/lV9HBjMqXef9yQNqkdwyZvkLSVSwB38hy8Qw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/jest-docblock": ["jest-docblock@30.5.0", "", { "dependencies": { "detect-newline": "^3.1.0" } }, "sha512-NwDqcxtoZi33RhuW+zJS/RVA3rmheQ8BnwpYZuc/Eruaz6seQb7+aoCeDZu/3X7W2XmD8DbSo9Pn72DbKsBFYw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/jest-environment-node": ["jest-environment-node@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2", "jest-util": "30.5.1", "jest-validate": "30.5.1" } }, "sha512-Ciz4KgTGIbojxSKpuFImgWJj5EyqfE8xMq9NxWmOXnQywHHS03H9Mv+vaCB29J5pr3JBrY27WbRV18rBdjh8Dg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/jest-leak-detector": ["jest-leak-detector@30.5.1", "", { "dependencies": { "@jest/get-type": "30.5.0", "pretty-format": "30.5.1" } }, "sha512-gt4GT2aWgEoCNTcBe4rqS74xTIUJxi+UD9SNSu9aOk5LmTEd6fS5KSTmAKAfitCCktQHNN+upUuL6EkBfFbMDQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/environment": ["@jest/environment@30.5.2", "", { "dependencies": { "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2" } }, "sha512-nwFPOUMbmsjNNRCpnJpB9HbSZu4C07wDDds++5j+j1MezzPLxMPDdbdUVjr2o4RULDOValnDd70taPFI1EtxAg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/globals": ["@jest/globals@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/expect": "30.5.2", "@jest/types": "30.5.1", "jest-mock": "30.5.2" } }, "sha512-62zfS+dL+M5aTNHXCNLyqD+j4oqxTIzDYrZbpqMP8Yn+gvlAGyzC6BSPNb1ZmFOakV1RtFYX/O3FCQXSWmQdgg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/source-map": ["@jest/source-map@30.5.2", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "callsites": "^3.1.0", "convert-source-map": "^2.0.0", "graceful-fs": "^4.2.11" } }, "sha512-c5CehvkbfHX6yyNg7bMn2ylqlp9AHXuZ/3hPH/Lh5bxD/vefd/lV9HBjMqXef9yQNqkdwyZvkLSVSwB38hy8Qw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/cjs-module-lexer": ["cjs-module-lexer@2.2.1", "", {}, "sha512-Ca8swihM+/4yKecYHY52kgJd300hi2lADU/a1RxNTRe+RJ9jvqQlESpbz9DnG9mowez8qwXHB8qYdIUw9e+F5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/glob": ["glob@13.0.6", "", { "dependencies": { "minimatch": "^10.2.2", "minipass": "^7.1.3", "path-scurry": "^2.0.2" } }, "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/strip-bom": ["strip-bom@4.0.0", "", {}, "sha512-3xurFv5tEgii33Zi8Jtp55wEIILR9eh34FAW00PZf+JnSsTmV/ioewSgQl97JHvgjoRGwPShsWm+IdrxB35d0w=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-snapshot/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-snapshot/expect": ["expect@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-0LNuMvs8/5mRYhnCR4k+lGV7fqPMs6Bnksda4S3zsCUmdxBpAn4zU4NNzXdq1pMKe/H4W5t/zVIDSJ/H3e0vDA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-snapshot/jest-diff": ["jest-diff@30.5.2", "", { "dependencies": { "@jest/diff-sequences": "30.5.0", "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "pretty-format": "30.5.1" } }, "sha512-rBtHnI6BWTiWj3lM7fOLVfChx7R9B0u9VV3PRHawKs79x6ZjW1QoSrKenaigNGWlvhtoi2BqvDbABDie+Os3xQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-snapshot/jest-matcher-utils": ["jest-matcher-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "jest-diff": "30.5.2", "pretty-format": "30.5.1" } }, "sha512-lFkB365PTIHOhPzwrb9T6gvlDnPpOZ7/c3ewOKKB7bzztqjVrtlyRL2MkyfJXpyY2u2SKw001JKrTx14fBUFcQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-snapshot/semver": ["semver@7.8.5", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/@jest/test-result/@jest/console": ["@jest/console@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "jest-message-util": "30.5.1", "jest-util": "30.5.1", "slash": "^3.0.0" } }, "sha512-e8sQC4pCMHPBrPX7Hk8TJr+DM5dkUnImSTNag8SEWFAFAF6xIz4AJvCKapnrdHnZxep4bxw4PhG+ZbimYBMyKw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/@jest/test-sequencer": ["@jest/test-sequencer@30.5.2", "", { "dependencies": { "@jest/test-result": "30.5.2", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "slash": "^3.0.0" } }, "sha512-bmij8jZyYAC47ExT2GeP7PcrlwSNS+Bp3KeRuBH88gpcxqDv6fljN8PemS4J/lLZ79xb6mpaennQTTq0zUAVVg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest": ["babel-jest@30.5.2", "", { "dependencies": { "@jest/transform": "30.5.2", "@types/babel__core": "^7.20.5", "babel-plugin-istanbul": "^8.0.0", "babel-preset-jest": "30.5.0", "chalk": "^4.1.2", "graceful-fs": "^4.2.11", "slash": "^3.0.0" }, "peerDependencies": { "@babel/core": "^7.11.0 || ^8.0.0-0" } }, "sha512-ES8WeJ2fNWPEDunyAtUfJ12nHyaWUloCHdkfK2oW5uSoQSUmjNKdWiGaXJITJwvFEWoD/evHEg/QoCXAvLaQqQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/ci-info": ["ci-info@4.4.0", "", {}, "sha512-77PSwercCZU2Fc4sX94eF8k8Pxte6JAwL4/ICZLFjJLqegs7kCuAsqqj/70NQF6TvDpgFjkubQB2FW2ZZddvQg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/glob": ["glob@13.0.6", "", { "dependencies": { "minimatch": "^10.2.2", "minipass": "^7.1.3", "path-scurry": "^2.0.2" } }, "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus": ["jest-circus@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/expect": "30.5.2", "@jest/test-result": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "co": "^4.6.0", "dedent": "^1.6.0", "is-generator-fn": "^2.1.0", "jest-each": "30.5.2", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-runtime": "30.5.2", "jest-snapshot": "30.5.2", "jest-util": "30.5.1", "p-limit": "^3.1.0", "pretty-format": "30.5.1", "pure-rand": "^7.0.0", "slash": "^3.0.0", "stack-utils": "^2.0.6" } }, "sha512-vffFgjs5JSJ9q4ds1vNW3klKYPJfYfIY61LT/zaZgvTeASJOWZUt8LBfHgIcV4rwxlPBLl/ePBGccHEclS4PlQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-docblock": ["jest-docblock@30.5.0", "", { "dependencies": { "detect-newline": "^3.1.0" } }, "sha512-NwDqcxtoZi33RhuW+zJS/RVA3rmheQ8BnwpYZuc/Eruaz6seQb7+aoCeDZu/3X7W2XmD8DbSo9Pn72DbKsBFYw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-environment-node": ["jest-environment-node@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2", "jest-util": "30.5.1", "jest-validate": "30.5.1" } }, "sha512-Ciz4KgTGIbojxSKpuFImgWJj5EyqfE8xMq9NxWmOXnQywHHS03H9Mv+vaCB29J5pr3JBrY27WbRV18rBdjh8Dg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-resolve": ["jest-resolve@30.5.1", "", { "dependencies": { "chalk": "^4.1.2", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-util": "30.5.1", "jest-validate": "30.5.1", "slash": "^3.0.0", "unrs-resolver": "^1.12.1" } }, "sha512-wprhLejRtwN6h8ZgaqC0eYjGJ1uMdGPT/+b3eFncbG4NWuuP9QL+vWwRinu9waw7hkOLcpMJGVJAMgBwsPssMQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner": ["jest-runner@30.5.2", "", { "dependencies": { "@jest/console": "30.5.2", "@jest/environment": "30.5.2", "@jest/source-map": "30.5.2", "@jest/test-result": "30.5.2", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "emittery": "^0.13.1", "exit-x": "^0.2.2", "graceful-fs": "^4.2.11", "jest-docblock": "30.5.0", "jest-environment-node": "30.5.2", "jest-haste-map": "30.5.1", "jest-leak-detector": "30.5.1", "jest-message-util": "30.5.1", "jest-resolve": "30.5.1", "jest-runtime": "30.5.2", "jest-util": "30.5.1", "jest-watcher": "30.5.2", "jest-worker": "30.5.1", "p-limit": "^3.1.0" } }, "sha512-/B6px7hiiNhVSRwuv9AGn0nawYvwsHeQZ3ItTd5Gp2diFd0EOKaWVeWqcbw3L88vx1GfpCKjQkxWItZCTl11Rw=="],
+
     "@zenflux/core/fastmcp/xsschema/effect/fast-check": ["fast-check@3.23.2", "", { "dependencies": { "pure-rand": "^6.1.0" } }, "sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A=="],
 
     "@zenflux/core/fastmcp/yargs/cliui/string-width": ["string-width@7.2.0", "", { "dependencies": { "emoji-regex": "^10.3.0", "get-east-asian-width": "^1.0.0", "strip-ansi": "^7.1.0" } }, "sha512-tsaTIkKW9b4N+AEj+SVA+WhJzV7/zMhcSu78mLKWSk7cXMOSHsBKFWUs0fWwq8QyK3MgJBQRX6Gbi4kYbdvGkQ=="],
@@ -7546,6 +7674,116 @@
 
     "@verdaccio/server-fastify/fastify/pino/pino-abstract-transport/readable-stream/string_decoder": ["string_decoder@1.3.0", "", { "dependencies": { "safe-buffer": "~5.2.0" } }, "sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA=="],
 
+    "@vertix.gg/bot/jest/@jest/core/@jest/reporters/glob/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/reporters/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude": ["test-exclude@7.0.2", "", { "dependencies": { "@istanbuljs/schema": "^0.1.2", "glob": "^10.4.1", "minimatch": "^10.2.2" } }, "sha512-u9E6A+ZDYdp7a4WnarkXPZOx8Ilz46+kby6p1yZ8zsGTz9gYa6FIS7lj2oezzNKmtdyyJNNmmXDppga5GB7kSw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-changed-files/execa/get-stream": ["get-stream@6.0.1", "", {}, "sha512-ts6Wi+2j3jQjqi70w5AlN8DFnkSwC+MqmxEzdEALB2qXZYV3X/b1CTfgPLGJNMeAWxdPfU8FO1ms3NUfaHCPYg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-changed-files/execa/human-signals": ["human-signals@2.1.0", "", {}, "sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-changed-files/execa/is-stream": ["is-stream@2.0.1", "", {}, "sha512-hFoiJiTl63nn+kstHGBtewWSKnQLpyb155KHheA1l39uvtO9nWIop1p3udqPcUd/xbF1VLMO4n7OI6p7RbngDg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-changed-files/execa/npm-run-path": ["npm-run-path@4.0.1", "", { "dependencies": { "path-key": "^3.0.0" } }, "sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-changed-files/execa/signal-exit": ["signal-exit@3.0.7", "", {}, "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-changed-files/execa/strip-final-newline": ["strip-final-newline@2.0.0", "", {}, "sha512-BrpvfNAE3dcvq7ll3xVumzjKjZQ5tI1sEUIKr3Uoks0XUl45St3FlatVqef9prk4jRDzhW6WZg+3bk93y6pLjA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul": ["babel-plugin-istanbul@8.0.0", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.0.0", "@istanbuljs/load-nyc-config": "^1.0.0", "@istanbuljs/schema": "^0.1.3", "istanbul-lib-instrument": "^6.0.2", "test-exclude": "^7.0.1" } }, "sha512-18wCskrN3DgbuBmp1gr7LBGT8xdz5xhQQqFvFhVxbkl8VBCrMKQ2YtqBWtUal1Zrc1HTuX0011+Brjw78TCFkg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-preset-jest": ["babel-preset-jest@30.5.0", "", { "dependencies": { "babel-plugin-jest-hoist": "30.5.0", "babel-preset-current-node-syntax": "^1.2.0" }, "peerDependencies": { "@babel/core": "^7.11.0 || ^8.0.0-beta.1 || ^8.0.0" } }, "sha512-ZGPn5ClP4lBDpuOK8W1yQIOy359HmbnZv3suucAlIe+SEE9yDsxV4S2PjSbH2Vc97U+WmzYD7vw3kr8NsQ/i6w=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/glob/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/@jest/environment": ["@jest/environment@30.5.2", "", { "dependencies": { "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2" } }, "sha512-nwFPOUMbmsjNNRCpnJpB9HbSZu4C07wDDds++5j+j1MezzPLxMPDdbdUVjr2o4RULDOValnDd70taPFI1EtxAg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/@jest/expect": ["@jest/expect@30.5.2", "", { "dependencies": { "expect": "30.5.2", "jest-snapshot": "30.5.2" } }, "sha512-2E+1Pg6jJxbRjLNLpciC71iri/3qsKJL222/aXJEFwC0VdUSvfS+JZQQLEVjUYYc8t8pQu2MGE3cF2+bNTYRsg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/jest-each": ["jest-each@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0", "@jest/types": "30.5.1", "chalk": "^4.1.2", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "pretty-format": "30.5.1" } }, "sha512-GRrW+7fmmgmkvyfEBqc1QFdWnF1Ex5yG6Y6AWL4TTxnkWlKIT98dsKh3P3UuWm6v4XsQwVE6DEzXIPMzWJ3ZbA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/jest-matcher-utils": ["jest-matcher-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "jest-diff": "30.5.2", "pretty-format": "30.5.1" } }, "sha512-lFkB365PTIHOhPzwrb9T6gvlDnPpOZ7/c3ewOKKB7bzztqjVrtlyRL2MkyfJXpyY2u2SKw001JKrTx14fBUFcQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/pure-rand": ["pure-rand@7.0.1", "", {}, "sha512-oTUZM/NAZS8p7ANR3SHh30kXB+zK2r2BPcEn/awJIbOvq82WoMN4p62AWWp3Hhw50G0xMsw1mhIBLqHw64EcNQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-environment-node/@jest/environment": ["@jest/environment@30.5.2", "", { "dependencies": { "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2" } }, "sha512-nwFPOUMbmsjNNRCpnJpB9HbSZu4C07wDDds++5j+j1MezzPLxMPDdbdUVjr2o4RULDOValnDd70taPFI1EtxAg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-environment-node/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-environment-node/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-haste-map/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/@jest/environment/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/@jest/environment/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/jest-environment-node/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/jest-environment-node/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/globals/@jest/expect": ["@jest/expect@30.5.2", "", { "dependencies": { "expect": "30.5.2", "jest-snapshot": "30.5.2" } }, "sha512-2E+1Pg6jJxbRjLNLpciC71iri/3qsKJL222/aXJEFwC0VdUSvfS+JZQQLEVjUYYc8t8pQu2MGE3cF2+bNTYRsg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/glob/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-snapshot/expect/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/@jest/test-sequencer/jest-haste-map": ["jest-haste-map@30.5.1", "", { "dependencies": { "@jest/types": "30.5.1", "@parcel/watcher": "^2.6.0", "@types/node": "*", "anymatch": "^3.1.3", "fb-watchman": "^2.0.2", "fdir": "^6.5.0", "graceful-fs": "^4.2.11", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "jest-worker": "30.5.1", "picomatch": "^4.0.3" } }, "sha512-VIFgt67jW480YDxKfEv9IYQKrFpYt7bOCMn3VsnjK7AK9qo7p6acpnA1DHwsVOULE3dTaYew/6JaTD/d0VDHoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/@jest/transform": ["@jest/transform@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@jest/types": "30.5.1", "@jridgewell/trace-mapping": "^0.3.31", "babel-plugin-istanbul": "^8.0.0", "chalk": "^4.1.2", "convert-source-map": "^2.0.0", "fast-json-stable-stringify": "^2.1.0", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "pirates": "^4.0.7", "slash": "^3.0.0", "write-file-atomic": "^5.0.1" } }, "sha512-LBGwmaE886C41jDZ65eqR1YbXM7642MK3ZhTowZd5+xDlrDLuf4ePuDdDmVSvcr8NTVJ3MqxLkMbUCzuigUaoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul": ["babel-plugin-istanbul@8.0.0", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.0.0", "@istanbuljs/load-nyc-config": "^1.0.0", "@istanbuljs/schema": "^0.1.3", "istanbul-lib-instrument": "^6.0.2", "test-exclude": "^7.0.1" } }, "sha512-18wCskrN3DgbuBmp1gr7LBGT8xdz5xhQQqFvFhVxbkl8VBCrMKQ2YtqBWtUal1Zrc1HTuX0011+Brjw78TCFkg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-preset-jest": ["babel-preset-jest@30.5.0", "", { "dependencies": { "babel-plugin-jest-hoist": "30.5.0", "babel-preset-current-node-syntax": "^1.2.0" }, "peerDependencies": { "@babel/core": "^7.11.0 || ^8.0.0-beta.1 || ^8.0.0" } }, "sha512-ZGPn5ClP4lBDpuOK8W1yQIOy359HmbnZv3suucAlIe+SEE9yDsxV4S2PjSbH2Vc97U+WmzYD7vw3kr8NsQ/i6w=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/glob/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/@jest/environment": ["@jest/environment@30.5.2", "", { "dependencies": { "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2" } }, "sha512-nwFPOUMbmsjNNRCpnJpB9HbSZu4C07wDDds++5j+j1MezzPLxMPDdbdUVjr2o4RULDOValnDd70taPFI1EtxAg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/@jest/expect": ["@jest/expect@30.5.2", "", { "dependencies": { "expect": "30.5.2", "jest-snapshot": "30.5.2" } }, "sha512-2E+1Pg6jJxbRjLNLpciC71iri/3qsKJL222/aXJEFwC0VdUSvfS+JZQQLEVjUYYc8t8pQu2MGE3cF2+bNTYRsg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-each": ["jest-each@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0", "@jest/types": "30.5.1", "chalk": "^4.1.2", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "pretty-format": "30.5.1" } }, "sha512-GRrW+7fmmgmkvyfEBqc1QFdWnF1Ex5yG6Y6AWL4TTxnkWlKIT98dsKh3P3UuWm6v4XsQwVE6DEzXIPMzWJ3ZbA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-matcher-utils": ["jest-matcher-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "jest-diff": "30.5.2", "pretty-format": "30.5.1" } }, "sha512-lFkB365PTIHOhPzwrb9T6gvlDnPpOZ7/c3ewOKKB7bzztqjVrtlyRL2MkyfJXpyY2u2SKw001JKrTx14fBUFcQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime": ["jest-runtime@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/fake-timers": "30.5.2", "@jest/globals": "30.5.2", "@jest/source-map": "30.5.2", "@jest/test-result": "30.5.2", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "cjs-module-lexer": "^2.2.0", "collect-v8-coverage": "^1.0.2", "es-module-lexer": "^2.1.0", "glob": "^13.0.6", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-regex-util": "30.5.0", "jest-resolve": "30.5.1", "jest-snapshot": "30.5.2", "jest-util": "30.5.1", "slash": "^3.0.0", "strip-bom": "^4.0.0" } }, "sha512-0paUAHBlheai10A3XSy9Xh+YBG0IROy+/qzcDPzQ/nbbXrznQzeWy5qniICWK6d3W3scaRQCVAbXdcK0ibBq4w=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot": ["jest-snapshot@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@babel/generator": "^7.27.5", "@babel/plugin-syntax-jsx": "^7.27.1", "@babel/plugin-syntax-typescript": "^7.27.1", "@babel/types": "^7.27.3", "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "@jest/snapshot-utils": "30.5.1", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "babel-preset-current-node-syntax": "^1.2.0", "chalk": "^4.1.2", "expect": "30.5.2", "graceful-fs": "^4.2.11", "jest-diff": "30.5.2", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-util": "30.5.1", "pretty-format": "30.5.1", "semver": "^7.7.2", "synckit": "^0.11.8" } }, "sha512-jKIdes25AnAH73dOCi2qE6J6vHJ6L2vyBS11M89kT50DVJcLTf2AOjvcc+2vVaN8lUbY5v2R83aqXo3Ro9fqYA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/pure-rand": ["pure-rand@7.0.1", "", {}, "sha512-oTUZM/NAZS8p7ANR3SHh30kXB+zK2r2BPcEn/awJIbOvq82WoMN4p62AWWp3Hhw50G0xMsw1mhIBLqHw64EcNQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-environment-node/@jest/environment": ["@jest/environment@30.5.2", "", { "dependencies": { "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2" } }, "sha512-nwFPOUMbmsjNNRCpnJpB9HbSZu4C07wDDds++5j+j1MezzPLxMPDdbdUVjr2o4RULDOValnDd70taPFI1EtxAg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-environment-node/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-environment-node/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-resolve/jest-haste-map": ["jest-haste-map@30.5.1", "", { "dependencies": { "@jest/types": "30.5.1", "@parcel/watcher": "^2.6.0", "@types/node": "*", "anymatch": "^3.1.3", "fb-watchman": "^2.0.2", "fdir": "^6.5.0", "graceful-fs": "^4.2.11", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "jest-worker": "30.5.1", "picomatch": "^4.0.3" } }, "sha512-VIFgt67jW480YDxKfEv9IYQKrFpYt7bOCMn3VsnjK7AK9qo7p6acpnA1DHwsVOULE3dTaYew/6JaTD/d0VDHoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/console": ["@jest/console@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "jest-message-util": "30.5.1", "jest-util": "30.5.1", "slash": "^3.0.0" } }, "sha512-e8sQC4pCMHPBrPX7Hk8TJr+DM5dkUnImSTNag8SEWFAFAF6xIz4AJvCKapnrdHnZxep4bxw4PhG+ZbimYBMyKw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/environment": ["@jest/environment@30.5.2", "", { "dependencies": { "@jest/fake-timers": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-mock": "30.5.2" } }, "sha512-nwFPOUMbmsjNNRCpnJpB9HbSZu4C07wDDds++5j+j1MezzPLxMPDdbdUVjr2o4RULDOValnDd70taPFI1EtxAg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/source-map": ["@jest/source-map@30.5.2", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "callsites": "^3.1.0", "convert-source-map": "^2.0.0", "graceful-fs": "^4.2.11" } }, "sha512-c5CehvkbfHX6yyNg7bMn2ylqlp9AHXuZ/3hPH/Lh5bxD/vefd/lV9HBjMqXef9yQNqkdwyZvkLSVSwB38hy8Qw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform": ["@jest/transform@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@jest/types": "30.5.1", "@jridgewell/trace-mapping": "^0.3.31", "babel-plugin-istanbul": "^8.0.0", "chalk": "^4.1.2", "convert-source-map": "^2.0.0", "fast-json-stable-stringify": "^2.1.0", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "pirates": "^4.0.7", "slash": "^3.0.0", "write-file-atomic": "^5.0.1" } }, "sha512-LBGwmaE886C41jDZ65eqR1YbXM7642MK3ZhTowZd5+xDlrDLuf4ePuDdDmVSvcr8NTVJ3MqxLkMbUCzuigUaoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-haste-map": ["jest-haste-map@30.5.1", "", { "dependencies": { "@jest/types": "30.5.1", "@parcel/watcher": "^2.6.0", "@types/node": "*", "anymatch": "^3.1.3", "fb-watchman": "^2.0.2", "fdir": "^6.5.0", "graceful-fs": "^4.2.11", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "jest-worker": "30.5.1", "picomatch": "^4.0.3" } }, "sha512-VIFgt67jW480YDxKfEv9IYQKrFpYt7bOCMn3VsnjK7AK9qo7p6acpnA1DHwsVOULE3dTaYew/6JaTD/d0VDHoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-leak-detector": ["jest-leak-detector@30.5.1", "", { "dependencies": { "@jest/get-type": "30.5.0", "pretty-format": "30.5.1" } }, "sha512-gt4GT2aWgEoCNTcBe4rqS74xTIUJxi+UD9SNSu9aOk5LmTEd6fS5KSTmAKAfitCCktQHNN+upUuL6EkBfFbMDQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime": ["jest-runtime@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/fake-timers": "30.5.2", "@jest/globals": "30.5.2", "@jest/source-map": "30.5.2", "@jest/test-result": "30.5.2", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "chalk": "^4.1.2", "cjs-module-lexer": "^2.2.0", "collect-v8-coverage": "^1.0.2", "es-module-lexer": "^2.1.0", "glob": "^13.0.6", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-regex-util": "30.5.0", "jest-resolve": "30.5.1", "jest-snapshot": "30.5.2", "jest-util": "30.5.1", "slash": "^3.0.0", "strip-bom": "^4.0.0" } }, "sha512-0paUAHBlheai10A3XSy9Xh+YBG0IROy+/qzcDPzQ/nbbXrznQzeWy5qniICWK6d3W3scaRQCVAbXdcK0ibBq4w=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-watcher": ["jest-watcher@30.5.2", "", { "dependencies": { "@jest/test-result": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "ansi-escapes": "^4.3.2", "chalk": "^4.1.2", "emittery": "^0.13.1", "jest-util": "30.5.1", "string-length": "^4.0.2" } }, "sha512-rqRgg4R11GA9m1UsEZwQeixHsgZReCn6TOHAHtIH33yXrIvoX0OGPA20Yzzjkz7X40fZvcRSxEpQppYPcWzmcQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
     "@zenflux/core/fastmcp/yargs/cliui/string-width/emoji-regex": ["emoji-regex@10.6.0", "", {}, "sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A=="],
 
     "@zenflux/core/fastmcp/yargs/cliui/strip-ansi/ansi-regex": ["ansi-regex@6.3.0", "", {}, "sha512-WpDfL7NO6j7tH88IDBNVdUJxDh9nmCteAVW9dsep846XdwF4naCBK+/tGLX3KJgcpgMRXCFlTM2hKGoK9FsdrQ=="],
@@ -8077,6 +8315,108 @@
     "jest/@jest/core/jest-runtime/glob/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
 
     "@verdaccio/auth/@verdaccio/logger/@verdaccio/logger-commons/@verdaccio/logger-prettify/pino-abstract-transport/readable-stream/string_decoder": ["string_decoder@1.3.0", "", { "dependencies": { "safe-buffer": "~5.2.0" } }, "sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/reporters/glob/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude/glob": ["glob@10.5.0", "", { "dependencies": { "foreground-child": "^3.1.0", "jackspeak": "^3.1.2", "minimatch": "^9.0.4", "minipass": "^7.1.2", "package-json-from-dist": "^1.0.0", "path-scurry": "^1.11.1" }, "bin": { "glob": "dist/esm/bin.mjs" } }, "sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude": ["test-exclude@7.0.2", "", { "dependencies": { "@istanbuljs/schema": "^0.1.2", "glob": "^10.4.1", "minimatch": "^10.2.2" } }, "sha512-u9E6A+ZDYdp7a4WnarkXPZOx8Ilz46+kby6p1yZ8zsGTz9gYa6FIS7lj2oezzNKmtdyyJNNmmXDppga5GB7kSw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-preset-jest/babel-plugin-jest-hoist": ["babel-plugin-jest-hoist@30.5.0", "", { "dependencies": { "@types/babel__core": "^7.20.5" } }, "sha512-gtGo1B+u14jrZQv6TdSWIWkTqclboo7Qn+dFAGUOIuXLFuJKAdg3U5MIWzZnW4vfUb4dX9skmAMiby86e/SF4A=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/glob/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/@jest/environment/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/@jest/environment/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/@jest/expect/expect": ["expect@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-0LNuMvs8/5mRYhnCR4k+lGV7fqPMs6Bnksda4S3zsCUmdxBpAn4zU4NNzXdq1pMKe/H4W5t/zVIDSJ/H3e0vDA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/jest-matcher-utils/jest-diff": ["jest-diff@30.5.2", "", { "dependencies": { "@jest/diff-sequences": "30.5.0", "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "pretty-format": "30.5.1" } }, "sha512-rBtHnI6BWTiWj3lM7fOLVfChx7R9B0u9VV3PRHawKs79x6ZjW1QoSrKenaigNGWlvhtoi2BqvDbABDie+Os3xQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-environment-node/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/@jest/environment/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runner/jest-environment-node/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/globals/@jest/expect/expect": ["expect@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-0LNuMvs8/5mRYhnCR4k+lGV7fqPMs6Bnksda4S3zsCUmdxBpAn4zU4NNzXdq1pMKe/H4W5t/zVIDSJ/H3e0vDA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/glob/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/@jest/test-sequencer/jest-haste-map/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/@jest/transform/jest-haste-map": ["jest-haste-map@30.5.1", "", { "dependencies": { "@jest/types": "30.5.1", "@parcel/watcher": "^2.6.0", "@types/node": "*", "anymatch": "^3.1.3", "fb-watchman": "^2.0.2", "fdir": "^6.5.0", "graceful-fs": "^4.2.11", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "jest-worker": "30.5.1", "picomatch": "^4.0.3" } }, "sha512-VIFgt67jW480YDxKfEv9IYQKrFpYt7bOCMn3VsnjK7AK9qo7p6acpnA1DHwsVOULE3dTaYew/6JaTD/d0VDHoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/@jest/transform/write-file-atomic": ["write-file-atomic@5.0.1", "", { "dependencies": { "imurmurhash": "^0.1.4", "signal-exit": "^4.0.1" } }, "sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude": ["test-exclude@7.0.2", "", { "dependencies": { "@istanbuljs/schema": "^0.1.2", "glob": "^10.4.1", "minimatch": "^10.2.2" } }, "sha512-u9E6A+ZDYdp7a4WnarkXPZOx8Ilz46+kby6p1yZ8zsGTz9gYa6FIS7lj2oezzNKmtdyyJNNmmXDppga5GB7kSw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-preset-jest/babel-plugin-jest-hoist": ["babel-plugin-jest-hoist@30.5.0", "", { "dependencies": { "@types/babel__core": "^7.20.5" } }, "sha512-gtGo1B+u14jrZQv6TdSWIWkTqclboo7Qn+dFAGUOIuXLFuJKAdg3U5MIWzZnW4vfUb4dX9skmAMiby86e/SF4A=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/glob/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/@jest/environment/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/@jest/environment/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/@jest/expect/expect": ["expect@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-0LNuMvs8/5mRYhnCR4k+lGV7fqPMs6Bnksda4S3zsCUmdxBpAn4zU4NNzXdq1pMKe/H4W5t/zVIDSJ/H3e0vDA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-matcher-utils/jest-diff": ["jest-diff@30.5.2", "", { "dependencies": { "@jest/diff-sequences": "30.5.0", "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "pretty-format": "30.5.1" } }, "sha512-rBtHnI6BWTiWj3lM7fOLVfChx7R9B0u9VV3PRHawKs79x6ZjW1QoSrKenaigNGWlvhtoi2BqvDbABDie+Os3xQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/globals": ["@jest/globals@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/expect": "30.5.2", "@jest/types": "30.5.1", "jest-mock": "30.5.2" } }, "sha512-62zfS+dL+M5aTNHXCNLyqD+j4oqxTIzDYrZbpqMP8Yn+gvlAGyzC6BSPNb1ZmFOakV1RtFYX/O3FCQXSWmQdgg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/source-map": ["@jest/source-map@30.5.2", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "callsites": "^3.1.0", "convert-source-map": "^2.0.0", "graceful-fs": "^4.2.11" } }, "sha512-c5CehvkbfHX6yyNg7bMn2ylqlp9AHXuZ/3hPH/Lh5bxD/vefd/lV9HBjMqXef9yQNqkdwyZvkLSVSwB38hy8Qw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform": ["@jest/transform@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@jest/types": "30.5.1", "@jridgewell/trace-mapping": "^0.3.31", "babel-plugin-istanbul": "^8.0.0", "chalk": "^4.1.2", "convert-source-map": "^2.0.0", "fast-json-stable-stringify": "^2.1.0", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "pirates": "^4.0.7", "slash": "^3.0.0", "write-file-atomic": "^5.0.1" } }, "sha512-LBGwmaE886C41jDZ65eqR1YbXM7642MK3ZhTowZd5+xDlrDLuf4ePuDdDmVSvcr8NTVJ3MqxLkMbUCzuigUaoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/cjs-module-lexer": ["cjs-module-lexer@2.2.1", "", {}, "sha512-Ca8swihM+/4yKecYHY52kgJd300hi2lADU/a1RxNTRe+RJ9jvqQlESpbz9DnG9mowez8qwXHB8qYdIUw9e+F5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/jest-haste-map": ["jest-haste-map@30.5.1", "", { "dependencies": { "@jest/types": "30.5.1", "@parcel/watcher": "^2.6.0", "@types/node": "*", "anymatch": "^3.1.3", "fb-watchman": "^2.0.2", "fdir": "^6.5.0", "graceful-fs": "^4.2.11", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "jest-worker": "30.5.1", "picomatch": "^4.0.3" } }, "sha512-VIFgt67jW480YDxKfEv9IYQKrFpYt7bOCMn3VsnjK7AK9qo7p6acpnA1DHwsVOULE3dTaYew/6JaTD/d0VDHoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/strip-bom": ["strip-bom@4.0.0", "", {}, "sha512-3xurFv5tEgii33Zi8Jtp55wEIILR9eh34FAW00PZf+JnSsTmV/ioewSgQl97JHvgjoRGwPShsWm+IdrxB35d0w=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform": ["@jest/transform@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@jest/types": "30.5.1", "@jridgewell/trace-mapping": "^0.3.31", "babel-plugin-istanbul": "^8.0.0", "chalk": "^4.1.2", "convert-source-map": "^2.0.0", "fast-json-stable-stringify": "^2.1.0", "graceful-fs": "^4.2.11", "jest-haste-map": "30.5.1", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "pirates": "^4.0.7", "slash": "^3.0.0", "write-file-atomic": "^5.0.1" } }, "sha512-LBGwmaE886C41jDZ65eqR1YbXM7642MK3ZhTowZd5+xDlrDLuf4ePuDdDmVSvcr8NTVJ3MqxLkMbUCzuigUaoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/expect": ["expect@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-0LNuMvs8/5mRYhnCR4k+lGV7fqPMs6Bnksda4S3zsCUmdxBpAn4zU4NNzXdq1pMKe/H4W5t/zVIDSJ/H3e0vDA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/jest-diff": ["jest-diff@30.5.2", "", { "dependencies": { "@jest/diff-sequences": "30.5.0", "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "pretty-format": "30.5.1" } }, "sha512-rBtHnI6BWTiWj3lM7fOLVfChx7R9B0u9VV3PRHawKs79x6ZjW1QoSrKenaigNGWlvhtoi2BqvDbABDie+Os3xQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/semver": ["semver@7.8.5", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-environment-node/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-resolve/jest-haste-map/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/environment/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/environment/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul": ["babel-plugin-istanbul@8.0.0", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.0.0", "@istanbuljs/load-nyc-config": "^1.0.0", "@istanbuljs/schema": "^0.1.3", "istanbul-lib-instrument": "^6.0.2", "test-exclude": "^7.0.1" } }, "sha512-18wCskrN3DgbuBmp1gr7LBGT8xdz5xhQQqFvFhVxbkl8VBCrMKQ2YtqBWtUal1Zrc1HTuX0011+Brjw78TCFkg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/write-file-atomic": ["write-file-atomic@5.0.1", "", { "dependencies": { "imurmurhash": "^0.1.4", "signal-exit": "^4.0.1" } }, "sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/@jest/fake-timers": ["@jest/fake-timers@30.5.2", "", { "dependencies": { "@jest/types": "30.5.1", "@sinonjs/fake-timers": "^15.4.0", "@types/node": "*", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-GKk0h0tKT5SpDPxDhPg3r9mm5s8/YCBzVNMOGdRiQXwUiMsjU10mVPlMaQstH6/cu50vOb8N9oQUMETHuwwxKw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/@jest/globals": ["@jest/globals@30.5.2", "", { "dependencies": { "@jest/environment": "30.5.2", "@jest/expect": "30.5.2", "@jest/types": "30.5.1", "jest-mock": "30.5.2" } }, "sha512-62zfS+dL+M5aTNHXCNLyqD+j4oqxTIzDYrZbpqMP8Yn+gvlAGyzC6BSPNb1ZmFOakV1RtFYX/O3FCQXSWmQdgg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/cjs-module-lexer": ["cjs-module-lexer@2.2.1", "", {}, "sha512-Ca8swihM+/4yKecYHY52kgJd300hi2lADU/a1RxNTRe+RJ9jvqQlESpbz9DnG9mowez8qwXHB8qYdIUw9e+F5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/jest-snapshot": ["jest-snapshot@30.5.2", "", { "dependencies": { "@babel/core": "^7.27.4", "@babel/generator": "^7.27.5", "@babel/plugin-syntax-jsx": "^7.27.1", "@babel/plugin-syntax-typescript": "^7.27.1", "@babel/types": "^7.27.3", "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "@jest/snapshot-utils": "30.5.1", "@jest/transform": "30.5.2", "@jest/types": "30.5.1", "babel-preset-current-node-syntax": "^1.2.0", "chalk": "^4.1.2", "expect": "30.5.2", "graceful-fs": "^4.2.11", "jest-diff": "30.5.2", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-util": "30.5.1", "pretty-format": "30.5.1", "semver": "^7.7.2", "synckit": "^0.11.8" } }, "sha512-jKIdes25AnAH73dOCi2qE6J6vHJ6L2vyBS11M89kT50DVJcLTf2AOjvcc+2vVaN8lUbY5v2R83aqXo3Ro9fqYA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/strip-bom": ["strip-bom@4.0.0", "", {}, "sha512-3xurFv5tEgii33Zi8Jtp55wEIILR9eh34FAW00PZf+JnSsTmV/ioewSgQl97JHvgjoRGwPShsWm+IdrxB35d0w=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
 
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/@npmcli/map-workspaces/glob/path-scurry": ["path-scurry@1.11.1", "", { "dependencies": { "lru-cache": "^10.2.0", "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0" } }, "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA=="],
 
@@ -8634,6 +8974,84 @@
 
     "jest/@jest/core/jest-runtime/glob/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
 
+    "@vertix.gg/bot/jest/@jest/core/@jest/reporters/glob/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude/glob/minimatch": ["minimatch@9.0.9", "", { "dependencies": { "brace-expansion": "^2.0.2" } }, "sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude/glob/path-scurry": ["path-scurry@1.11.1", "", { "dependencies": { "lru-cache": "^10.2.0", "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0" } }, "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob": ["glob@10.5.0", "", { "dependencies": { "foreground-child": "^3.1.0", "jackspeak": "^3.1.2", "minimatch": "^9.0.4", "minipass": "^7.1.2", "package-json-from-dist": "^1.0.0", "path-scurry": "^1.11.1" }, "bin": { "glob": "dist/esm/bin.mjs" } }, "sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/glob/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/@jest/environment/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/@jest/expect/expect/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/jest-circus/@jest/expect/expect/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/globals/@jest/expect/expect/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/globals/@jest/expect/expect/jest-matcher-utils": ["jest-matcher-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "jest-diff": "30.5.2", "pretty-format": "30.5.1" } }, "sha512-lFkB365PTIHOhPzwrb9T6gvlDnPpOZ7/c3ewOKKB7bzztqjVrtlyRL2MkyfJXpyY2u2SKw001JKrTx14fBUFcQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/glob/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/@jest/test-sequencer/jest-haste-map/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/@jest/transform/jest-haste-map/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob": ["glob@10.5.0", "", { "dependencies": { "foreground-child": "^3.1.0", "jackspeak": "^3.1.2", "minimatch": "^9.0.4", "minipass": "^7.1.2", "package-json-from-dist": "^1.0.0", "path-scurry": "^1.11.1" }, "bin": { "glob": "dist/esm/bin.mjs" } }, "sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/glob/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/@jest/environment/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/@jest/expect/expect/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/@jest/expect/expect/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul": ["babel-plugin-istanbul@8.0.0", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.0.0", "@istanbuljs/load-nyc-config": "^1.0.0", "@istanbuljs/schema": "^0.1.3", "istanbul-lib-instrument": "^6.0.2", "test-exclude": "^7.0.1" } }, "sha512-18wCskrN3DgbuBmp1gr7LBGT8xdz5xhQQqFvFhVxbkl8VBCrMKQ2YtqBWtUal1Zrc1HTuX0011+Brjw78TCFkg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/write-file-atomic": ["write-file-atomic@5.0.1", "", { "dependencies": { "imurmurhash": "^0.1.4", "signal-exit": "^4.0.1" } }, "sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/jest-haste-map/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul": ["babel-plugin-istanbul@8.0.0", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.0.0", "@istanbuljs/load-nyc-config": "^1.0.0", "@istanbuljs/schema": "^0.1.3", "istanbul-lib-instrument": "^6.0.2", "test-exclude": "^7.0.1" } }, "sha512-18wCskrN3DgbuBmp1gr7LBGT8xdz5xhQQqFvFhVxbkl8VBCrMKQ2YtqBWtUal1Zrc1HTuX0011+Brjw78TCFkg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/jest-haste-map": ["jest-haste-map@30.5.1", "", { "dependencies": { "@jest/types": "30.5.1", "@parcel/watcher": "^2.6.0", "@types/node": "*", "anymatch": "^3.1.3", "fb-watchman": "^2.0.2", "fdir": "^6.5.0", "graceful-fs": "^4.2.11", "jest-regex-util": "30.5.0", "jest-util": "30.5.1", "jest-worker": "30.5.1", "picomatch": "^4.0.3" } }, "sha512-VIFgt67jW480YDxKfEv9IYQKrFpYt7bOCMn3VsnjK7AK9qo7p6acpnA1DHwsVOULE3dTaYew/6JaTD/d0VDHoQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/write-file-atomic": ["write-file-atomic@5.0.1", "", { "dependencies": { "imurmurhash": "^0.1.4", "signal-exit": "^4.0.1" } }, "sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/expect/jest-mock": ["jest-mock@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/types": "30.5.1", "@types/node": "*", "jest-util": "30.5.1" } }, "sha512-KTHb37Fhj8xY8qPFvTFaFJHcdsumQp+ExsUlgoX232Agmc706gagBs53+CYvulV7MVQo9AgXOUxsqzzVBoJlrA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-resolve/jest-haste-map/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/environment/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude": ["test-exclude@7.0.2", "", { "dependencies": { "@istanbuljs/schema": "^0.1.2", "glob": "^10.4.1", "minimatch": "^10.2.2" } }, "sha512-u9E6A+ZDYdp7a4WnarkXPZOx8Ilz46+kby6p1yZ8zsGTz9gYa6FIS7lj2oezzNKmtdyyJNNmmXDppga5GB7kSw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/@jest/globals/@jest/expect": ["@jest/expect@30.5.2", "", { "dependencies": { "expect": "30.5.2", "jest-snapshot": "30.5.2" } }, "sha512-2E+1Pg6jJxbRjLNLpciC71iri/3qsKJL222/aXJEFwC0VdUSvfS+JZQQLEVjUYYc8t8pQu2MGE3cF2+bNTYRsg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/jest-mock/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/jest-snapshot/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/jest-snapshot/expect": ["expect@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-0LNuMvs8/5mRYhnCR4k+lGV7fqPMs6Bnksda4S3zsCUmdxBpAn4zU4NNzXdq1pMKe/H4W5t/zVIDSJ/H3e0vDA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/jest-snapshot/jest-diff": ["jest-diff@30.5.2", "", { "dependencies": { "@jest/diff-sequences": "30.5.0", "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "pretty-format": "30.5.1" } }, "sha512-rBtHnI6BWTiWj3lM7fOLVfChx7R9B0u9VV3PRHawKs79x6ZjW1QoSrKenaigNGWlvhtoi2BqvDbABDie+Os3xQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/jest-snapshot/jest-matcher-utils": ["jest-matcher-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "jest-diff": "30.5.2", "pretty-format": "30.5.1" } }, "sha512-lFkB365PTIHOhPzwrb9T6gvlDnPpOZ7/c3ewOKKB7bzztqjVrtlyRL2MkyfJXpyY2u2SKw001JKrTx14fBUFcQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/jest-snapshot/semver": ["semver@7.8.5", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA=="],
+
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/@npmcli/package-json/@npmcli/git/which/isexe": ["isexe@3.1.5", "", {}, "sha512-6B3tLtFqtQS4ekarvLVMZ+X+VlvQekbe4taUkf/rhVO3d/h0M2rfARm/pXLcPEsjjMsFgrFgSrhQIxcSVrBz8w=="],
 
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/@npmcli/run-script/node-gyp/glob/path-scurry": ["path-scurry@1.11.1", "", { "dependencies": { "lru-cache": "^10.2.0", "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0" } }, "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA=="],
@@ -9082,6 +9500,42 @@
 
     "jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
 
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude/glob/minimatch/brace-expansion": ["brace-expansion@2.1.4", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude/glob/path-scurry/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob/minimatch": ["minimatch@9.0.9", "", { "dependencies": { "brace-expansion": "^2.0.2" } }, "sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob/path-scurry": ["path-scurry@1.11.1", "", { "dependencies": { "lru-cache": "^10.2.0", "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0" } }, "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-runtime/@jest/globals/@jest/expect/expect/jest-matcher-utils/jest-diff": ["jest-diff@30.5.2", "", { "dependencies": { "@jest/diff-sequences": "30.5.0", "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "pretty-format": "30.5.1" } }, "sha512-rBtHnI6BWTiWj3lM7fOLVfChx7R9B0u9VV3PRHawKs79x6ZjW1QoSrKenaigNGWlvhtoi2BqvDbABDie+Os3xQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/@jest/transform/jest-haste-map/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob/minimatch": ["minimatch@9.0.9", "", { "dependencies": { "brace-expansion": "^2.0.2" } }, "sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob/path-scurry": ["path-scurry@1.11.1", "", { "dependencies": { "lru-cache": "^10.2.0", "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0" } }, "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude": ["test-exclude@7.0.2", "", { "dependencies": { "@istanbuljs/schema": "^0.1.2", "glob": "^10.4.1", "minimatch": "^10.2.2" } }, "sha512-u9E6A+ZDYdp7a4WnarkXPZOx8Ilz46+kby6p1yZ8zsGTz9gYa6FIS7lj2oezzNKmtdyyJNNmmXDppga5GB7kSw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/jest-haste-map/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude": ["test-exclude@7.0.2", "", { "dependencies": { "@istanbuljs/schema": "^0.1.2", "glob": "^10.4.1", "minimatch": "^10.2.2" } }, "sha512-u9E6A+ZDYdp7a4WnarkXPZOx8Ilz46+kby6p1yZ8zsGTz9gYa6FIS7lj2oezzNKmtdyyJNNmmXDppga5GB7kSw=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/jest-haste-map/jest-worker": ["jest-worker@30.5.1", "", { "dependencies": { "@types/node": "*", "@ungap/structured-clone": "^1.3.0", "jest-util": "30.5.1", "merge-stream": "^2.0.0", "supports-color": "^8.1.1" } }, "sha512-Cbxh5v7AoLuFRmFJSM4/aHdQ68rjXvUWr716EE0Dh3I7T+T/3FgFKhOERGXHcU2Meftq9+9zxPM3TSNyI9D+HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude/glob": ["glob@10.5.0", "", { "dependencies": { "foreground-child": "^3.1.0", "jackspeak": "^3.1.2", "minimatch": "^9.0.4", "minipass": "^7.1.2", "package-json-from-dist": "^1.0.0", "path-scurry": "^1.11.1" }, "bin": { "glob": "dist/esm/bin.mjs" } }, "sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/@jest/globals/@jest/expect/expect": ["expect@30.5.2", "", { "dependencies": { "@jest/expect-utils": "30.5.2", "@jest/get-type": "30.5.0", "jest-matcher-utils": "30.5.2", "jest-message-util": "30.5.1", "jest-mock": "30.5.2", "jest-util": "30.5.1" } }, "sha512-0LNuMvs8/5mRYhnCR4k+lGV7fqPMs6Bnksda4S3zsCUmdxBpAn4zU4NNzXdq1pMKe/H4W5t/zVIDSJ/H3e0vDA=="],
+
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/@npmcli/run-script/node-gyp/make-fetch-happen/@npmcli/agent/agent-base": ["agent-base@7.1.4", "", {}, "sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ=="],
 
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/@npmcli/run-script/node-gyp/make-fetch-happen/@npmcli/agent/https-proxy-agent": ["https-proxy-agent@7.0.6", "", { "dependencies": { "agent-base": "^7.1.2", "debug": "4" } }, "sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw=="],
@@ -9360,6 +9814,38 @@
 
     "jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
 
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob/minimatch/brace-expansion": ["brace-expansion@2.1.4", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob/path-scurry/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
+
+    "@vertix.gg/bot/jest/@jest/core/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob/minimatch/brace-expansion": ["brace-expansion@2.1.4", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/glob/path-scurry/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/babel-jest/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/glob": ["glob@10.5.0", "", { "dependencies": { "foreground-child": "^3.1.0", "jackspeak": "^3.1.2", "minimatch": "^9.0.4", "minipass": "^7.1.2", "package-json-from-dist": "^1.0.0", "path-scurry": "^1.11.1" }, "bin": { "glob": "dist/esm/bin.mjs" } }, "sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude/glob": ["glob@10.5.0", "", { "dependencies": { "foreground-child": "^3.1.0", "jackspeak": "^3.1.2", "minimatch": "^9.0.4", "minipass": "^7.1.2", "package-json-from-dist": "^1.0.0", "path-scurry": "^1.11.1" }, "bin": { "glob": "dist/esm/bin.mjs" } }, "sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/jest-haste-map/jest-worker/supports-color": ["supports-color@8.1.1", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude/glob/minimatch": ["minimatch@9.0.9", "", { "dependencies": { "brace-expansion": "^2.0.2" } }, "sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude/glob/path-scurry": ["path-scurry@1.11.1", "", { "dependencies": { "lru-cache": "^10.2.0", "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0" } }, "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/@jest/globals/@jest/expect/expect/@jest/expect-utils": ["@jest/expect-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0" } }, "sha512-d/HOLSrJUlBIl6n3LzOa7cjW3xdePm5H5gQw2lixZ/0h157l9sw3mLblzFqnPcTbhDzhRQdBOX3A3KcG73nm5Q=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/@jest/globals/@jest/expect/expect/jest-matcher-utils": ["jest-matcher-utils@30.5.2", "", { "dependencies": { "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "jest-diff": "30.5.2", "pretty-format": "30.5.1" } }, "sha512-lFkB365PTIHOhPzwrb9T6gvlDnPpOZ7/c3ewOKKB7bzztqjVrtlyRL2MkyfJXpyY2u2SKw001JKrTx14fBUFcQ=="],
+
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/@npmcli/run-script/node-gyp/make-fetch-happen/minipass-fetch/minipass-sized/minipass": ["minipass@3.3.6", "", { "dependencies": { "yallist": "^4.0.0" } }, "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="],
 
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/@npmcli/run-script/node-gyp/make-fetch-happen/minipass-fetch/minizlib/minipass": ["minipass@3.3.6", "", { "dependencies": { "yallist": "^4.0.0" } }, "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="],
@@ -9512,6 +9998,26 @@
 
     "jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
 
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/glob/minimatch": ["minimatch@9.0.9", "", { "dependencies": { "brace-expansion": "^2.0.2" } }, "sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/glob/path-scurry": ["path-scurry@1.11.1", "", { "dependencies": { "lru-cache": "^10.2.0", "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0" } }, "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude/glob/minimatch": ["minimatch@9.0.9", "", { "dependencies": { "brace-expansion": "^2.0.2" } }, "sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude/glob/path-scurry": ["path-scurry@1.11.1", "", { "dependencies": { "lru-cache": "^10.2.0", "minipass": "^5.0.0 || ^6.0.2 || ^7.0.0" } }, "sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion": ["brace-expansion@5.0.9", "", { "dependencies": { "balanced-match": "^4.0.2" } }, "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude/glob/minimatch/brace-expansion": ["brace-expansion@2.1.4", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude/glob/path-scurry/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-runner/jest-runtime/@jest/globals/@jest/expect/expect/jest-matcher-utils/jest-diff": ["jest-diff@30.5.2", "", { "dependencies": { "@jest/diff-sequences": "30.5.0", "@jest/get-type": "30.5.0", "chalk": "^4.1.2", "pretty-format": "30.5.1" } }, "sha512-rBtHnI6BWTiWj3lM7fOLVfChx7R9B0u9VV3PRHawKs79x6ZjW1QoSrKenaigNGWlvhtoi2BqvDbABDie+Os3xQ=="],
+
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/@npmcli/run-script/node-gyp/make-fetch-happen/minipass-fetch/minipass-sized/minipass/yallist": ["yallist@4.0.0", "", {}, "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A=="],
 
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/pacote/sigstore/@sigstore/sign/make-fetch-happen/minipass-fetch/minipass-sized/minipass": ["minipass@3.3.6", "", { "dependencies": { "yallist": "^4.0.0" } }, "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="],
@@ -9571,6 +10077,18 @@
     "@zenflux/worker/@zenflux/typescript-vm/libnpmpublish/sigstore/@sigstore/tuf/tuf-js/make-fetch-happen/minipass-fetch/minipass-sized/minipass/yallist": ["yallist@4.0.0", "", {}, "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A=="],
 
     "@zenflux/worker/@zenflux/typescript-vm/pacote/sigstore/@sigstore/tuf/tuf-js/make-fetch-happen/minipass-fetch/minipass-sized/minipass/yallist": ["yallist@4.0.0", "", {}, "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/glob/minimatch/brace-expansion": ["brace-expansion@2.1.4", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/glob/path-scurry/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-runtime/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude/glob/minimatch/brace-expansion": ["brace-expansion@2.1.4", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude/glob/path-scurry/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
+
+    "@vertix.gg/bot/jest/jest-cli/jest-config/jest-circus/jest-snapshot/@jest/transform/babel-plugin-istanbul/test-exclude/minimatch/brace-expansion/balanced-match": ["balanced-match@4.0.4", "", {}, "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA=="],
 
     "@zenflux/runner/@zenflux/typescript-vm/libnpmpack/@npmcli/arborist/pacote/sigstore/@sigstore/sign/make-fetch-happen/minipass-fetch/minipass-sized/minipass/yallist": ["yallist@4.0.0", "", {}, "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A=="],
 

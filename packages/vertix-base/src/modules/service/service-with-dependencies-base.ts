@@ -30,7 +30,10 @@ export abstract class ServiceWithDependenciesBase<D extends { [key: string]: Ser
                     fulfilled: this.services
                 }
             } ).then( ( service ) => {
-                ( this.services as any )[ alias ] = service;
+                // `services` is keyed by the dependency aliases this service declared, and the
+                // alias here arrives as a plain string off `Object.entries` - so the map is
+                // addressed as one rather than the shape it happens to have.
+                ( this.services as Record<string, ServiceBase> )[ alias ] = service;
 
                 return service;
             } );

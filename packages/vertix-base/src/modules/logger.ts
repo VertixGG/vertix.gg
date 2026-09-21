@@ -17,7 +17,28 @@ const DEFAULT_LOG_LEVEL = "5";
 
 export type ICaller = string | Function;
 
-const registeredNames: any = {};
+/**
+ * One line of a parsed stack, as this file reads them.
+ *
+ * `object` and `isNew` are absent on a line that named neither - a bare function rather than a
+ * method or a constructor - which is why the caller reaches them optionally.
+ */
+interface IStackLine {
+    context: string;
+    file: string;
+    object?: string;
+    isNew?: boolean;
+}
+
+/**
+ * Names that have been taken, guarding against two loggers answering to one.
+ *
+ * **Nothing ever puts anything in it**, so the check below cannot fire - the guard has never run.
+ * Left inert rather than wired up: it throws from a constructor, so turning it on would take the
+ * bot down at boot the first time two loggers were found sharing a name, and whether any do is not
+ * something this file can answer.
+ */
+const registeredNames: Record<string, boolean> = {};
 
 interface LoggerOptions {
     skipEventBusHook?: boolean;
@@ -128,6 +149,16 @@ export class Logger extends ObjectBase {
         this.messagePrefixes.push( prefix );
     }
 
+    /**
+     * The `any` on `params` is deliberate, and the project's rule is knowingly set aside for these.
+     *
+     * Almost every call logging something logs a caught error, and typescript types a `catch`
+     * binding as `unknown` - so the parameter has to accept it. A union that admits `unknown` *is*
+     * `unknown`, which is no narrower and equally forbidden, and narrowing at the call sites means
+     * a guard in front of two hundred and forty log lines whose only job is to satisfy the
+     * signature. Tightened to a printable union, this package still compiles while the bot, the api
+     * and the gui report two hundred and forty errors between them, all of them `unknown`.
+     */
     public log( caller: ICaller, message: string, ...params: any[] ): void {
         this.output( DEFAULT_LOG_PREFIX, caller, message, ...params );
     }
@@ -184,7 +215,7 @@ export class Logger extends ObjectBase {
         return result;
     }
 
-    private getStackTrace(): any[] {
+    private getStackTrace(): IStackLine[] {
         const stackTrace = ( new Error().stack || "" ).split( "\n" );
         const stackLines = stackTrace.slice( 1 ); // Skip the first line containing "Error"
 
@@ -197,7 +228,7 @@ export class Logger extends ObjectBase {
 
             if ( match ) {
                 const [ , context, file ] = match;
-                const parsedLine: any = { context, file };
+                const parsedLine: IStackLine = { context, file };
 
                 if ( line.startsWith( "new" ) ) {
                     parsedLine.isNew = true;
@@ -216,16 +247,16 @@ export class Logger extends ObjectBase {
     public getPreviousSource(): string {
         // TODO: Take those from env.
         const stack = this.getStackTrace()
-            .filter( ( line: any ) => line.file.includes( "/src/" ) )
-            .filter( ( line: any ) => !line.file.includes( "logger.ts" ) )
-            .filter( ( line: any ) => !line.file.includes( "debugger.ts" ) )
-            .filter( ( line: any ) => !line.file.includes( "/node_modules/" ) );
+            .filter( ( line ) => line.file.includes( "/src/" ) )
+            .filter( ( line ) => !line.file.includes( "logger.ts" ) )
+            .filter( ( line ) => !line.file.includes( "debugger.ts" ) )
+            .filter( ( line ) => !line.file.includes( "/node_modules/" ) );
 
         let previousSource = "";
 
         const previousCaller = stack[ 1 ]?.object?.split( "." );
 
-        if ( previousCaller?.length > 1 ) {
+        if ( previousCaller && previousCaller.length > 1 ) {
             const previousCallerName = previousCaller[ 0 ],
                 previousCallerMethod = previousCaller[ 1 ];
 

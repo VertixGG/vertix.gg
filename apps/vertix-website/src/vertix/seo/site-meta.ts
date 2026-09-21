@@ -178,6 +178,13 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.3,
     },
     {
+        path: "/refund-policy",
+        sourcePath: "src/vertix/pages/legal-polices/refund-policy.tsx",
+        title: "Refund Policy | VoiceChannels",
+        description: "Refunds, cancelling, and what happens to your server when a VoiceChannels plan ends.",
+        priority: 0.3,
+    },
+    {
         path: "/welcome",
         sourcePath: "src/vertix/pages/welcome.tsx",
         title: "Welcome to VoiceChannels",

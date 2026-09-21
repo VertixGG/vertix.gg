@@ -174,7 +174,27 @@ export class AppService extends ServiceBase {
 
     private pingInterval() {
         setInterval( () => {
-            this.logger.log( this.pingInterval, `Ping: ${ this.client.ws.ping }ms` );
+            // The guild cache is reported here rather than at startup because startup is the one
+            // moment it cannot be read honestly: rest fetches are still landing, so a process can
+            // look clean for no better reason than that its line printed early. Sampled every
+            // thirty seconds it settles, and a count that keeps climbing is a process still being
+            // handed guilds it was not sharded to hold.
+            const byShard = new Map<number, number>();
+
+            for ( const guild of this.client.guilds.cache.values() ) {
+                byShard.set( guild.shardId, ( byShard.get( guild.shardId ) ?? 0 ) + 1 );
+            }
+
+            const breakdown = [ ... byShard ]
+                .sort( ( [ a ], [ b ] ) => a - b )
+                .map( ( [ shardId, count ] ) => `${ shardId }:${ count }` )
+                .join( " " );
+
+            this.logger.log(
+                this.pingInterval,
+                `Ping: ${ this.client.ws.ping }ms, guilds: ${ this.client.guilds.cache.size } ` +
+                `(by shard - ${ breakdown || "none" })`
+            );
         }, 30000 );
     }
 

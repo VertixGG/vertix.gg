@@ -76,7 +76,8 @@
 - PRs must state affected packages, schema/env updates, screenshots for GUI/website work, and the commands you ran (`vertix:jest`, `vertix:eslint`).
 
 ## Running Instances
-- Two bots run against the **same database**: `VoiceChannels` is production on the box (`pm2`, `vertix-bot`), and `TestVC` is the maintainer's local checkout. Identical data, different code.
+- Two bots run against the **same database**: `VoiceChannels` is production on the box (`pm2`, `vertix-bot-0` and `vertix-bot-1`), and `TestVC` is the maintainer's local checkout. Identical data, different code.
+- Production is **sharded across two processes**, so a guild is served by exactly one of them - `(guild_id >> 22) % 2` decides which, and `ownsGuild()` is how the code asks. Restarting or reading the logs of one shard therefore says nothing about a guild that lives on the other, which is the likeliest reason a fix looks like it did not deploy. `PM2_BOT_SHARD_COUNT` in `ecosystem.config.cjs` sets the count; `=1` rolls back to a single unsharded `vertix-bot`.
 - So a screenshot from `TestVC` proves nothing about what is deployed, and reading the database proves nothing about which code produced the screenshot. Establish which bot a report came from before diagnosing: a local instance can be behind the box by any number of commits while every row you query looks correct.
 - When behaviour and stored data disagree, check `git log -1` on the box against the commit that introduced the behaviour, and ask which bot was in the screenshot, before going further into the code.
 

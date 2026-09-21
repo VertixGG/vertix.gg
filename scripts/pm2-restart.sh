@@ -63,9 +63,42 @@ start_app() {
 
 echo "pm2-restart: tearing down"
 
+# Which bot apps pm2 currently has, whatever shard count started them.
+#
+# Asked of pm2 rather than of the ecosystem because the two disagree exactly when it matters:
+# changing the shard count means the apps to tear down are named differently from the apps about to
+# start - `vertix-bot-0` and `vertix-bot-1` on the way back to one, `vertix-bot` on the way up. An
+# app this does not name survives to the `pm2 delete all` below, which runs after the logger is
+# already gone, which is the one thing the ordered teardown exists to avoid.
+running_bot_apps() {
+    pm2 jlist 2>/dev/null | node -e '
+        const chunks = [];
+
+        process.stdin.on( "data", ( chunk ) => chunks.push( chunk ) );
+        process.stdin.on( "end", () => {
+            let apps = [];
+
+            try {
+                apps = JSON.parse( chunks.join( "" ) || "[]" );
+            } catch ( error ) {
+                apps = [];
+            }
+
+            process.stdout.write(
+                apps.map( ( app ) => app.name )
+                    .filter( ( name ) => /^vertix-bot(-[0-9]+)?$/.test( name ) )
+                    .join( " " )
+            );
+        } );
+    ' 2>/dev/null || true
+}
+
 # Reverse of the start order, so the logger is still up while everything that
 # logs to it is going down, and is the last of the named apps to go.
-for app in pm2-dashboard vertix-bot vertix-api vertix-redis vertix-logger; do
+#
+# `vertix-bot` is named on its own as well as discovered, so the plain unsharded case never depends
+# on that json parse; deleting an app that is not there is already a no-op here.
+for app in pm2-dashboard $( running_bot_apps ) vertix-bot vertix-api vertix-redis vertix-logger; do
     pm2 delete "$app" --silent 2>/dev/null || true
 done
 
@@ -90,9 +123,9 @@ start_app vertix-api
 wait_for_port "127.0.0.1" "$( env_value API_PORT 3021 )" "api"
 
 # Asked of the ecosystem rather than spelled out, because how many bot processes there are is
-# decided there by PM2_BOT_SHARD_COUNT - one `vertix-bot` by default, `vertix-bot-0`, `vertix-bot-1`
-# and so on when the bot is split. Spelled out here the two would drift, and the drift would look
-# like a shard that simply never started.
+# decided there by PM2_BOT_SHARD_COUNT - `vertix-bot-0` and `vertix-bot-1` by default, a single
+# `vertix-bot` when it is rolled back to one. Spelled out here the two would drift, and the drift
+# would look like a shard that simply never started.
 BOT_APPS="$( node -e "process.stdout.write( require( '$ECOSYSTEM' ).botAppNames.join( ' ' ) )" )"
 
 for bot_app in $BOT_APPS; do

@@ -37,24 +37,31 @@ const shared = {
 /**
  * How many processes the bot is split across.
  *
- * One - the default, and what every start does unless told otherwise - is a single `vertix-bot`
- * with no shard environment at all, which is the bot exactly as it has always run. `SHARD_COUNT`
- * and `SHARD_IDS` both being absent is what `getShardClientOptions()` reads as unsharded.
+ * Two by default: `vertix-bot-0` and `vertix-bot-1`, one process each and one shard each, with
+ * `SHARD_COUNT` and `SHARD_IDS` named per process. Deliberately not a `ShardingManager` - that
+ * spawns a child per shard, and the comment at the top of this file is about why a process tree is
+ * the one thing pm2 cannot supervise here.
  *
- * Above one, the same app becomes `vertix-bot-0`, `vertix-bot-1` and so on, one process each and
- * one shard each. Deliberately not a `ShardingManager`: that spawns a child per shard, and the
- * comment at the top of this file is about why a process tree is the one thing pm2 cannot supervise
- * here.
+ * The default is here rather than in the shell because the shell is where it kept getting lost. A
+ * deploy that forgot to export it did not fail - it started one `vertix-bot`, which serves every
+ * guild perfectly well and reads as healthy, so the only sign of having silently unsharded was a
+ * guild count nobody was looking at. A default that has to be remembered on every deploy is not a
+ * default.
  *
- * Set at start time rather than in `.env`, because pm2 does not read `.env` and because rolling
- * back should not need a commit:
+ * One is the rollback, and still a real configuration: a single `vertix-bot` with no shard
+ * environment at all, which is the bot as it ran before any of this. `SHARD_COUNT` and `SHARD_IDS`
+ * both being absent is what `getShardClientOptions()` reads as unsharded.
  *
- *   PM2_BOT_SHARD_COUNT=2 bun run vertix:pm2:restart    split
- *   bun run vertix:pm2:restart                          back to one
+ *   bun run vertix:pm2:restart                          two shards
+ *   PM2_BOT_SHARD_COUNT=1 bun run vertix:pm2:restart    back to one
+ *
+ * Raising this is a question for discord before it is a question for pm2: past the shard count the
+ * gateway recommends, identifies have to be paced against `max_concurrency` rather than started in
+ * a row the way scripts/pm2-restart.sh starts them.
  */
 const BOT_SHARD_COUNT = Math.max(
     1,
-    Number.parseInt( process.env.PM2_BOT_SHARD_COUNT || "1", 10 ) || 1
+    Number.parseInt( process.env.PM2_BOT_SHARD_COUNT || "2", 10 ) || 2
 );
 
 /**

@@ -7,6 +7,8 @@ import {
     ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 
+import type { ILogEntry } from "@vertix.gg/logger/src/log-entry";
+
 const LOGGER_SERVER_HTTP_PORT = process.env.LOGGER_SERVER_HTTP_PORT ? parseInt( process.env.LOGGER_SERVER_HTTP_PORT, 10 ) : 3090;
 const LOGGER_SERVER_HOST = process.env.LOGGER_SERVER_HOST || "localhost";
 const LOGGER_SERVER_URL = `http://${ LOGGER_SERVER_HOST }:${ LOGGER_SERVER_HTTP_PORT }`;
@@ -23,7 +25,7 @@ const server = new Server(
     }
 );
 
-async function fetchLogs( limit: number = 50, startTime?: number, endTime?: number ): Promise<any[]> {
+async function fetchLogs( limit: number = 50, startTime?: number, endTime?: number ): Promise<ILogEntry[]> {
     const params = new URLSearchParams( { limit: limit.toString() } );
     if ( startTime ) params.set( "startTime", startTime.toString() );
     if ( endTime ) params.set( "endTime", endTime.toString() );
@@ -32,7 +34,7 @@ async function fetchLogs( limit: number = 50, startTime?: number, endTime?: numb
     if ( !response.ok ) {
         throw new Error( `Failed to fetch logs: ${ response.status } ${ response.statusText }` );
     }
-    return response.json() as Promise<any[]>;
+    return response.json() as Promise<ILogEntry[]>;
 }
 
 async function fetchLogsInfo(): Promise<{ logCount: number; httpPort: number }> {

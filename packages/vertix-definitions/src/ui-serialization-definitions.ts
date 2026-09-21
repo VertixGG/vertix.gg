@@ -56,7 +56,7 @@ export interface UISerializationComponent {
 
 export interface UISerializationContext {
     parent?: UIComponentBase;
-    properties?: Record<string, any>;
+    properties?: Record<string, UISerializationFlowAttributeValue>;
 }
 
 export interface UISerializationComponentSchemaResult extends Partial<UISerializationFlowComponent> {
@@ -66,6 +66,6 @@ export interface UISerializationComponentSchemaResult extends Partial<UISerializ
 export type UISerializationModalFieldSchema = Record<string, UISerializationFlowAttributeValue> | undefined;
 
 export interface UISerializationModalSchema extends UIPortableSchemaBase {
-    entities: Array<Array<UISerializationModalFieldSchema>> | { [key: string]: any };
+    entities: Array<Array<UISerializationModalFieldSchema>> | Record<string, UISerializationFlowAttributeValue>;
 }
 

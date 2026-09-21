@@ -24,6 +24,19 @@ type QueryEvent = {
     target: string;
 };
 
+/**
+ * What prisma sends on `error`, `info` and `warn`.
+ *
+ * Written out beside `QueryEvent` rather than imported, for the same reason that one is: the
+ * generated client is required through CJS because prisma does not ship ESM, so its types are not
+ * in hand at the point these handlers are declared.
+ */
+type LogEvent = {
+    timestamp: Date;
+    message: string;
+    target: string;
+};
+
 // TODO Rename its not instance, its singleton, facade, etc. or just PrismaBot
 export class PrismaBotClient extends ObjectBase {
     private static instance: PrismaBotClient;
@@ -117,11 +130,11 @@ export class PrismaBotClient extends ObjectBase {
         return this.client;
     }
 
-    private async onError( error: any ) {
+    private async onError( error: LogEvent ) {
         this.logger.error( this.onError, "", error );
     }
 
-    private async onInfo( message: any ) {
+    private async onInfo( message: LogEvent ) {
         this.logger.info( this.onInfo, "", message );
     }
 
@@ -129,7 +142,7 @@ export class PrismaBotClient extends ObjectBase {
         this.debugger.dumpDown( this.onQuery, data.query );
     }
 
-    private async onWarn( message: any ) {
+    private async onWarn( message: LogEvent ) {
         this.logger.warn( this.onWarn, "", message );
     }
 }

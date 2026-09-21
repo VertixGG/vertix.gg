@@ -52,6 +52,15 @@ export class UIDefinitionsUnavailableError extends Error {
 // this module through multiple paths (e.g. workspace alias vs relative import).
 const GLOBAL_KEY = Symbol.for( "vertix.gg/api/UIRuntimeLoader" );
 
+/**
+ * `globalThis`, as the one thing this keeps on it.
+ *
+ * A symbol key registered globally, so the loader survives a module being evaluated twice - which
+ * it is, under a watcher that reloads. Typed here rather than cast at each use, so the three places
+ * that touch it agree about what is there.
+ */
+const globalStore = globalThis as typeof globalThis & { [ GLOBAL_KEY ]?: UIRuntimeLoader };
+
 export class UIRuntimeLoader extends InitializeBase {
     private exportData: UIExportData | null = null;
 
@@ -73,10 +82,11 @@ export class UIRuntimeLoader extends InitializeBase {
     }
 
     public static getInstance(): UIRuntimeLoader {
-        if ( !( globalThis as any )[ GLOBAL_KEY ] ) {
-            ( globalThis as any )[ GLOBAL_KEY ] = new UIRuntimeLoader();
+        if ( ! globalStore[ GLOBAL_KEY ] ) {
+            globalStore[ GLOBAL_KEY ] = new UIRuntimeLoader();
         }
-        return ( globalThis as any )[ GLOBAL_KEY ];
+
+        return globalStore[ GLOBAL_KEY ];
     }
 
     protected initialize(): void {

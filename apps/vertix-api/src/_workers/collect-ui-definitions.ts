@@ -11,14 +11,23 @@
  * - Exits with code 1 on error.
  */
 
+/**
+ * Anything somebody hands to `console`, since all of it goes through `String()`.
+ *
+ * Written out rather than left open: these five are assigned over the real console, and a signature
+ * that accepts everything is how a worker whose stdout is reserved for one json document ends up
+ * with a log line in the middle of it.
+ */
+type TPrintable = string | number | boolean | bigint | symbol | object | null | undefined;
+
 // Redirect ALL console output to stderr BEFORE any imports.
 // The Logger class (and many libraries) use console.log which writes to stdout.
 // We reserve stdout exclusively for the JSON result.
-console.log = ( ...args: any[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
-console.info = ( ...args: any[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
-console.debug = ( ...args: any[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
-console.warn = ( ...args: any[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
-console.error = ( ...args: any[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
+console.log = ( ...args: TPrintable[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
+console.info = ( ...args: TPrintable[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
+console.debug = ( ...args: TPrintable[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
+console.warn = ( ...args: TPrintable[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
+console.error = ( ...args: TPrintable[] ) => process.stderr.write( args.map( String ).join( " " ) + "\n" );
 
 function log( message: string ) {
     process.stderr.write( `[collect-ui-defs] ${ message }\n` );

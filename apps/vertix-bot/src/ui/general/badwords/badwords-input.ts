@@ -29,7 +29,14 @@ export class BadwordsInput extends UIElementInputBase {
     }
 
     protected override async getValue( context?: SerializationContext ): Promise<string> {
-        const initialBadwords = context?.properties?.initialData?.badwords;
+        const initialData = context?.properties?.initialData;
+
+        // `properties` carries whatever the caller put there, so the shape is checked rather than
+        // assumed. It used to be reached through `any`, which read the same and checked nothing -
+        // a caller passing a string got a silent `undefined` here instead of an empty field.
+        const initialBadwords = initialData && "object" === typeof initialData && ! Array.isArray( initialData )
+            ? initialData.badwords
+            : undefined;
 
         if ( Array.isArray( initialBadwords ) ) {
             return initialBadwords.join( ", " );

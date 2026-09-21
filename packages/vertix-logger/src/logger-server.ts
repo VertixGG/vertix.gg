@@ -7,8 +7,10 @@ import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
 import type { IncomingMessage, ServerResponse } from "http";
 
+import type { ILogEntry } from "@vertix.gg/logger/src/log-entry";
+
 const MAX_LOGS = 10000;
-const logs: any[] = [];
+const logs: ILogEntry[] = [];
 
 export interface LoggerServerOptions {
     httpPort?: number;
@@ -129,7 +131,7 @@ export class LoggerServer extends ObjectBase {
 
                 req.on( "end", () => {
                     try {
-                        const logEntry = JSON.parse( body );
+                        const logEntry = JSON.parse( body ) as ILogEntry;
 
                         if ( !logEntry.timestamp ) {
                             logEntry.timestamp = new Date().getTime();

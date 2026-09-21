@@ -49,11 +49,10 @@ export async function selectGuild( guild: Guild ): Promise<SelectedGuild> {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify( {
-            guildId: guild.id,
-            guildName: guild.name,
-            guildIcon: guild.icon
-        } )
+        // Only the id. The api takes the name and icon from discord's own answer, because it has
+        // to ask discord whether this guild is yours in any case - and a name supplied from here
+        // would be a name this side chose for something drawn on every screen.
+        body: JSON.stringify( { guildId: guild.id } )
     } );
 
     if ( !response.ok ) {

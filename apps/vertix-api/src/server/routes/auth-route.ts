@@ -12,6 +12,8 @@ import {
 } from "@vertix.gg/api/src/server/services/auth-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
+import { resolveGuildOwnership } from "@vertix.gg/api/src/server/middleware/guild-access";
+
 import type { DiscordGuild } from "@vertix.gg/api/src/server/services/auth-service";
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 
@@ -138,20 +140,50 @@ async function handleGetGuilds( request: FastifyRequest, reply: FastifyReply ) {
     }
 }
 
+/**
+ * Function handleSelectGuild() :: Put a guild in the session, once discord agrees it is theirs.
+ *
+ * **This is the check the guild routes rest on.** They compare the id in their url against
+ * `session.selectedGuild` and refuse a mismatch, which is only worth anything if the selected guild
+ * was somebody's to select - and it used to be written straight out of the request body, so
+ * choosing another server's id was all it took to be let into it.
+ *
+ * The name and icon are taken from discord's answer rather than from the body for the same reason:
+ * they are drawn in the dashboard's sidebar, and a caller who can name a guild whatever it likes
+ * can put whatever it likes on that screen.
+ */
 async function handleSelectGuild(
-    request: FastifyRequest<{ Body: { guildId: string; guildName: string; guildIcon: string | null } }>,
+    request: FastifyRequest<{ Body: { guildId: string } }>,
     reply: FastifyReply
 ) {
     if ( !request.session.userId ) {
         return reply.status( 401 ).send( { error: "Not authenticated" } );
     }
 
-    const { guildId, guildName, guildIcon } = request.body;
+    const { guildId } = request.body;
+
+    if ( !guildId ) {
+        return reply.status( 400 ).send( { error: "guildId is required" } );
+    }
+
+    const ownership = await resolveGuildOwnership( request.session.userId, guildId );
+
+    if ( "no-token" === ownership.outcome ) {
+        return reply.status( 401 ).send( { error: "Token expired, please re-login" } );
+    }
+
+    if ( "not-owned" === ownership.outcome ) {
+        // 403 rather than 404 here, unlike the routes that read a guild from their url: the caller
+        // named this guild itself, so it already knows the id exists to be refused.
+        return reply.status( 403 ).send( { error: "Access denied" } );
+    }
 
     request.session.selectedGuild = {
-        id: guildId,
-        name: guildName,
-        icon: guildIcon
+        id: ownership.guild.id,
+        name: ownership.guild.name,
+        icon: ownership.guild.icon
+            ? `https://cdn.discordapp.com/icons/${ ownership.guild.id }/${ ownership.guild.icon }.png`
+            : null
     };
 
     await request.session.save();

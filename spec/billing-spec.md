@@ -1,11 +1,11 @@
 # Billing spec
 
-> **Status: the limits are built; the payment rail is being replaced.** The room cap and the
-> enforcement are in `main` and provider-agnostic - they only ever ask how many generators a guild is
-> allowed. What is being torn out is where that number comes from: Discord's own subscriptions, which
-> **cannot be used from Israel**.
+> **Status: built, and proven end to end against the Paddle sandbox.** A real purchase has gone
+> through checkout, the webhook, the row and back out as an allowance, and a real cancellation has
+> been recorded. What is left is not code: Paddle's live account needs seller verification and both
+> domains approved before it can take money. Going live is a change of environment variables.
 
-Two limits that do not exist today:
+Two limits, both now enforced:
 
 1. A generator makes at most **20 live rooms** at once.
 2. A server's generators past its allowance **stop making rooms** until it pays.
@@ -20,16 +20,15 @@ Two limits that do not exist today:
 |  | today |
 |---|---|
 | Generators per guild | `maxMasterChannels`, default **2** — [guild-config.ts](../packages/vertix-data/src/config/guild-config.ts) |
-| Where that is enforced | **creation only** — the bot's setup flow, and `findMasterChannelLimitRefusal()` in the API |
-| Raising it for a guild | by hand, as a settings row on the guild |
-| Rooms per generator | **no limit at all** |
-| Payment | **none.** No `Subscription` model, no checkout, no webhook |
-| Discord entitlements | the `entitlement*` events appear once, in a debug logging list in [vertix.ts](../apps/vertix-bot/src/vertix.ts:55). Nothing consumes them |
+| Rooms per generator | `maxActiveDynamicChannels`, default **20** |
+| Where the allowance is decided | [entitlement-service.ts](../apps/vertix-bot/src/services/entitlement-service.ts) — the higher of the grant and the tier paid for |
+| Where it is enforced | `onJoinMasterChannel()` and `createScaledChannel()`, both answering through `ChannelCreateFailedAdapter` |
+| Payment | **Paddle**, working in sandbox: checkout from the dashboard, signed webhook, `Subscription` row |
+| Seeing and cancelling | the dashboard's Subscription page, with Paddle's own hosted pages behind it |
+| Discord entitlements | gone — the listener and its registration were removed |
 
-Two consequences. There is no ongoing check anywhere — a generator, once made, works forever, so
-enforcement is a new idea rather than a tightened number. And **no server is over its allowance
-today**, so nothing has to be grandfathered and no migration is needed; the rules below bite on the
-next generator anybody makes.
+The allowance is asked for on every join rather than cached anywhere, and the row it reads carries
+its own expiry, so nothing has to come and tell the bot when a subscription lapses.
 
 ---
 
@@ -65,6 +64,19 @@ unsupported countries, and Israel is not one of them.
 | When it runs out | `current_billing_period.ends_at` |
 | A cancellation that has not happened yet | `scheduled_change: { action: "cancel", effective_at }` |
 | Signature | `Paddle-Signature: ts=…;h1=…`, HMAC-SHA256 over `ts:rawBody`, five second tolerance, compared timing-safe |
+| Ordering | `occurred_at` on the event. Arrival order is not it — Paddle retries, and a retried older event can land after a newer one |
+| Cancel and change-card links | **not on the webhook.** `GET /subscriptions/{id}` only, and not to be stored: they carry temporary tokens |
+
+**Two things about Paddle that had to be learned by looking rather than assuming**, both recorded
+here because each cost a wrong implementation:
+
+A checkout fails with a bare `Something went wrong` when the account has no **default payment link**
+set, and refuses to save one until the domain it names is approved. Nothing in the failure says so.
+
+`management_urls` is **not in the webhook payload**. A real delivered `subscription.created` carries
+`custom_data`, `current_billing_period`, `scheduled_change` and `occurred_at`, and no management
+urls at all. They live on the API, behind a key holding `subscription.read` **and** customer portal
+session (write) — the second is what makes the link authenticated rather than a bare portal address.
 
 **The cancellation design survives the move intact.** Discord fired no entitlement event on
 cancellation and the answer was to cache no longer than the entitlement's own ending time. Paddle
@@ -101,12 +113,12 @@ the word `Infinity`.
 
 ### The room cap
 
-**`M-01` — one number, in the config.** `maxActiveDynamicChannels`, default `20`, on
+**`M-01` — one number, in the config. Done.** `maxActiveDynamicChannels`, default `20`, on
 `GuildConfigDefaultsInterface` beside `maxMasterChannels`. Guild-wide rather than per generator, for
 the same reason the one beside it is: an allowance is a property of what a server is entitled to,
 not of how one of its generators was set up.
 
-**`M-02` — counting the live rooms.** `ChannelModel` already links a room to its generator through
+**`M-02` — counting the live rooms. Done.** `ChannelModel` already links a room to its generator through
 `ownerChannelId`, so the count is a `channel.count()` on `ownerChannelId` plus
 `internalType: DYNAMIC_CHANNEL`.
 
@@ -115,7 +127,7 @@ panel as well as its rooms, and it is shared with whatever else an admin put the
 would make the cap drift with things that are not rooms. The rows are also what the cleanup worker
 keeps honest, so a room Discord lost is already not counted.
 
-**`M-03` — the refusal.** In `onJoinMasterChannel()`
+**`M-03` — the refusal. Done.** In `onJoinMasterChannel()`
 ([master-channel-service.ts:404](../apps/vertix-bot/src/services/master-channel-service.ts:404)),
 before `createDynamicChannel()`: over the cap, no room is made and the member is told, left standing
 in the generator.
@@ -125,7 +137,7 @@ them a warning — so this is a second reason on a path that has one. The notice
 existing `ChannelCreateFailedAdapter`, which already distinguishes a full category; this is a second
 reason on that embed rather than a screen of its own.
 
-**`M-04` — scaling pools carry it too. Settled: applied.** A pool that can make unlimited rooms is
+**`M-04` — scaling pools carry it too. Done.** A pool that can make unlimited rooms is
 the obvious way around a per-generator cap, and 20 is already below Discord's ceiling of 50 channels
 in a category, so a pool was bounded either way.
 
@@ -136,70 +148,100 @@ than five, and a member who joins a pool that still has room is placed in it as 
 
 ### The subscription
 
-**`M-05` — the tiers name a Paddle price.** The table in
-`packages/vertix-definitions/src/billing-definitions.ts` stays as it is; the `skuId` field becomes a
-`priceId`, read from the environment for the same reason - a price belongs to one Paddle account and
-the sandbox is a different account from the live one.
+**`M-05` — the tiers name a Paddle price. Done.** One table in
+`packages/vertix-definitions/src/billing-definitions.ts`, price ids read from the environment,
+because a price belongs to one Paddle account and the sandbox is a different account from the live
+one. A tier whose id is not in the environment is dropped rather than carried with an empty id — an
+empty id would match a subscription that names no price and hand the tier to everybody.
 
-**`M-14` — a row per subscription.** `Subscription` on the bot schema: the guild it covers, the
-Paddle subscription id, the price id it is on, its status, and when the paid period ends. Written
-only by the webhook and read only by the service.
+**`M-14` — a row per subscription. Done.** `Subscription` on the bot schema, keyed by guild rather
+than by customer: a customer is a person and may pay for several servers, and what is sold is an
+allowance for one server. Written only by the webhook, read only by the service and the API.
 
-Keyed by guild rather than by customer. A customer is a person and may pay for several servers; what
-is being sold is an allowance for one server, and that is what has to be looked up on a voice join.
+**`M-15` — the webhook. Done.** A route on `vertix-api`, because the bot has no public surface and
+should not grow one. It verifies before it reads, over the **raw** body — a JSON parser that has
+already run makes the signature unverifiable. A failed write answers 500 so Paddle retries: a
+payment that reached us and not the database is the failure somebody discovers by not getting what
+they paid for.
 
-**`M-15` — the webhook.** A route on `vertix-api`, because the bot has no public surface and should
-not grow one.
+**`M-16` — where a checkout starts. Done.** From the dashboard, which is already signed in with
+Discord and already knows which guild is open, so the guild id goes into `custom_data` without
+anybody being asked which server this is for. **Proven**: a real sandbox purchase came back through
+the webhook carrying the right guild id, which was the one assumption nothing else could test.
 
-It verifies before it reads: HMAC-SHA256 over `ts:rawBody` with the notification destination's
-secret, compared timing-safe, and rejected if `ts` is more than five seconds old. That needs the
-**raw** body - a JSON parser that has already run makes the signature unverifiable, so the route
-takes the body unparsed.
+A checkout arriving with no guild id is a purchase nobody can be given anything for. The dashboard
+is the only thing that opens one, so that is a bug rather than a case — logged loudly, because the
+money is real.
 
-`subscription.updated` alone would very nearly do, being the catch-all, but `created`, `canceled`,
-`paused` and `past_due` are handled as well: they carry the same subscription object, and handling
-them is a `switch` rather than a second implementation.
+**`M-06` — reading what a guild has. Done.** The allowance is the higher of the grant and the tier
+paid for; the coverage is oldest-first. A grant is given for a reason and paying should not be able
+to take it away.
 
-**`M-16` — where a checkout starts.** From the dashboard, which is already logged in with Discord
-and already knows which guild is being managed - so the guild id goes into `custom_data` without
-anybody being asked "which server is this for?", which is the question Discord's own store would
-have had to ask.
+**`M-07` — noticing a cancellation without waiting for an event. Done.** The period already paid for
+decides it *before* the status does, so a cancelled subscription runs out on its own and no event
+has to arrive to end it. The status is the fallback for a row with no period, and it errs generous:
+a renewal whose event went missing leaves `active` against a stale date, and the strict reading
+would take a plan from somebody who is paying.
 
-A checkout that arrives with no guild id is a purchase nobody can be given anything for. The
-dashboard is the only thing that opens one, so that is a bug rather than a case to handle - but it
-is logged loudly rather than dropped, because the money is real.
+**`M-17` — the Discord entitlement code comes out. Done.** A source of truth that can never be right
+is worse than none.
 
-**`M-06` — reading what a guild has.** The same `EntitlementService`, with `readEntitledSkuIds()`
-replaced by a read of the row from `M-14`. Everything above it is untouched: the allowance is still
-the higher of the grant and the tier, the coverage is still oldest-first, and both refusals are
-already written.
+**`M-19` — a late event cannot undo a newer one. Done.** The row is replaced wholesale, which is
+what makes a repeated delivery harmless — Paddle sends the entire subscription every time, not a
+diff. What a wholesale replace does not survive is a *delayed* event: a retry of an older one
+landing after a newer one would bring a cancelled subscription back to life. Decided on
+`occurred_at`, never on arrival. Equal timestamps are applied (the same event twice, and the write
+is idempotent); an event carrying no timestamp is applied too, because refusing on missing ordering
+information would lose a real subscription to a shape nobody predicted.
 
-A row counts only while it is `active` or `trialing`, and only until `ends_at`. `past_due` is a
-payment that failed rather than a subscription that ended, and Paddle retries it - but it is not
-paid, so it is not an allowance.
+**`M-20` — the management links are fetched, never stored. Done.** See the correction above: they
+are not on the webhook, and Paddle says not to keep them. A stored one is a link that stops working
+at a moment nobody chose, on the screen somebody is using to stop paying. Without `PADDLE_API_KEY`
+the lookup answers nulls and the buttons are simply not offered; a failed lookup is logged rather
+than raised, because the plan, the renewal date and the allowance are all still true without it.
 
-**`M-07` — noticing a cancellation, still without waiting for an event.** The cached answer expires
-no later than `ends_at`, exactly as it did against Discord. A cancellation scheduled for the end of
-the period changes nothing until then, which is what the customer paid for.
+**`M-21` — a guild can only be acted on by somebody who owns it. Done.** The guild routes were never
+missing a check — they compare their url's `guildId` against `session.selectedGuild`. What they
+rested on was a value the caller picked: `POST /auth/select-guild` wrote that straight out of the
+request body. Selection now asks Discord, and the stored name and icon come from Discord's answer
+rather than the body, since they are drawn in the sidebar.
 
-**`M-08`, `M-09`, `M-10`, `M-11` — unchanged.** They never knew where the number came from.
+The owned-guild list is cached on the session for five minutes, and the listing route fills it —
+Discord rate limits `/users/@me/guilds`, and listing then selecting is two calls inside a second.
+When Discord cannot be reached at all, a list up to an hour old is used rather than failing.
 
-**`M-17` — the Discord entitlement code comes out.** `readEntitledSkuIds()`, the
-`entitlementCreate`/`Update`/`Delete` listener and its registration. Left in, it is a second source
-of truth that can never be right.
+**`M-22` — a server can see what it pays for. Done.** `GET /subscription/:guildId`, guarded by
+ownership, answering the plan, the renewal or cancellation date, the allowance already spelled the
+way a screen prints it, and Paddle's management links. The dashboard draws it as **Subscription** in
+the sidebar; arriving with `?plan=…` opens that checkout unless the server already holds it.
+
+The allowance crosses the wire as words rather than a number because the top tier is `Infinity`,
+`JSON.stringify` turns that into `null`, and a number meaning unlimited is indistinguishable from
+one meaning nothing was found.
 
 ### Tests
 
-**`M-12` — the allowance resolution is a unit test.** Already written and still correct: tier plus
-manual grant, an unknown price id, nothing configured to sell. It never knew who was selling.
+**`M-12` — the allowance resolution. Done.** Tier plus manual grant, an unknown price id, nothing
+configured to sell, and the entitling rule: a cancelled subscription lasting out its period and
+stopping after, a stale `active` still honoured.
 
-**`M-18` — the signature check is a unit test.** A body and a secret in, a verdict out: a good
-signature, a tampered body, a timestamp six seconds old, a header that is not the right shape. This
-is the one piece of new code that money depends on and it needs no network to test.
+**`M-18` — the signature check. Done.** A body and a secret in, a verdict out: a good signature, a
+tampered body, a timestamp six seconds old, a header that is not the right shape, and a body that
+was parsed and re-serialised on the way in — the mistake a JSON body parser makes for you.
 
-**`M-13` — still not doable cheaply.** The room cap would need twenty rooms opened against
-`CHANNEL_OPEN_SPACING_MS`. The paid path is more testable than it was, though: Paddle has a sandbox,
-so a webhook can be replayed at the API without anybody paying anything.
+**`M-23` — the allowance reaches the right generators. Done.** Fifteen tests over
+`EntitlementService`, which had no coverage at all while the money path had plenty. The ordering is
+the part worth pinning: the oldest keep working and the extras stop, nobody chooses and nothing is
+stored, so an allowance that reaches the wrong generators is worse than one that reaches none.
+Checked by breaking it — swapping `slice( 0, allowed )` for `slice( -allowed )` fails five of them.
+
+**`M-13` — the room cap, still not doable cheaply.** Twenty rooms against `CHANNEL_OPEN_SPACING_MS`.
+
+**`M-24` — `vertix-api` has no test harness at all.** No `test/` directory, no `jest.config.ts`, and
+it appears in neither runner. So the ownership guard, its two cache windows and the Paddle lookup
+are covered by nothing. Per the repository guidelines a package gaining its first spec needs the
+config, the tsconfig, a `<name>:jest` script and a line in both runners — otherwise it passes by
+never running.
 
 ## Deliberately not here
 
@@ -210,27 +252,56 @@ so a webhook can be replayed at the API without anybody paying anything.
 
 ## Still open
 
-- **A Paddle account, and three prices in it.** Their ids go in the environment, sandbox first.
-- **Prices are quoted in two places and charged in one.** A price set in Paddle is not read back by
-  anything here, so a tier repriced there has to be repriced in `billing-definitions.ts` too.
+**Going live is not a code change.** Both environment-dependent places already read
+`PADDLE_ENVIRONMENT`, and `production` is a value Paddle.js accepts. What remains is Paddle's own:
+
+| | who |
+|---|---|
+| Seller verification — identity, business details | **theirs** |
+| Payouts — a bank account | **theirs** |
+| Domain approval for `voicechannels.online` **and** `dashboard.voicechannels.online` | Paddle's review; both submitted, pending |
+| The default payment link | blocked on the approval above, and required before any checkout works |
+| A live API key — `subscription.read` + customer portal session (write) | **theirs**, pasted straight into `.env` |
+| Swapping the seven `PADDLE_*` vars, rebuilding the dashboard, restarting the API | mine |
+
+The live catalogue, the notification destination and the client-side token already exist.
+Subdomains are not approved by default — the checkout runs on `dashboard.`, so the apex alone is not
+enough.
+
+**The dashboard's prices are baked in at build time**, through vite `define`, so a swap of the
+environment is not complete until the dashboard is rebuilt and redeployed. A config-only change
+leaves the old price ids in the bundle.
+
+Also open:
+
+- **Prices are quoted in two places and charged in one.** Nothing reads Paddle's number back, so a
+  tier repriced there has to be repriced in `billing-definitions.ts` too.
+- **`M-24`** — the API test harness.
+- **`M-13`** — the room cap end to end.
+- A stale sandbox subscription row will need clearing at the cutover: it names a sandbox price that
+  matches nothing live, so it would quietly stop granting anything.
 - Whether the free tier stays at 2 once there is something to sell.
-- `M-13`, once the sandbox is set up.
+- Resuming a scheduled cancellation. Buying the same plan again would create a *second* subscription
+  and charge for it immediately; resuming is `scheduled_change: null` and needs `subscription.write`.
+  Until then, `?plan=…` deliberately does not auto-open a checkout for a plan already held.
 
 ---
 
 ## Order of work
 
-Each step leaves the tree working.
+Steps 1 to 7 are done — the Discord code out, the price table and row, the webhook and its signature
+check, the writes turned on against the sandbox, the service reading the row, the dashboard opening
+a checkout, and the sandbox purchase that proved `custom_data` survives the trip.
 
-1. `M-17` — take the Discord entitlement code out, so there is one source of truth at every moment.
-2. `M-05`, `M-14` — the price table and the row it is matched against.
-3. `M-15`, `M-18` — the webhook and its signature check, logging what it would write and writing
-   nothing.
-4. Turn the writes on, against the Paddle sandbox.
-5. `M-06`, `M-07` — the service reads the row, still enforcing nothing beyond what it enforces today.
-6. `M-16` — the dashboard opens a checkout.
-7. `M-13`, and the live prices.
+What is left, in order:
+
+1. Paddle verification and payouts.
+2. Domain approval, then the default payment link.
+3. The live API key, into `.env`.
+4. Swap the environment, rebuild and redeploy the dashboard, restart the API, clear the stale row.
+5. A real purchase on live, then a real cancellation.
+6. `M-24` and `M-13`.
 
 **Already done and not repeated here:** the room cap (`M-01` to `M-04`), the enforcement and both
-refusals (`M-08` to `M-11`), and the plans page. None of them are affected by the change of
-provider - which is the point of the allowance having been one number all along.
+refusals (`M-08` to `M-11`), and the plans page. None of them were affected by the change of
+provider — which is the point of the allowance having been one number all along.

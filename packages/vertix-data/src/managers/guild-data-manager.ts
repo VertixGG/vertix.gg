@@ -84,7 +84,11 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
 
         const data = await this.getSettingsData( guildId, null, cache, true );
 
-        if ( data?.object ) {
+        // Checked rather than assumed. A stored value is json, which is a string or a number just
+        // as readily as an object, and spreading a string yields its characters under numeric keys
+        // - a settings object that looks populated and answers nothing anybody asked for. Reached
+        // through `any` this was a spread of whatever happened to be in the row.
+        if ( data?.object && "object" === typeof data.object && ! Array.isArray( data.object ) ) {
             return { ... defaults, ... data.object };
         }
 

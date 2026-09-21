@@ -30,7 +30,7 @@ export interface IDataUpdateArgs extends IDataGetArgs {
 }
 
 export interface DataResult {
-    object: PrismaBot.Prisma.JsonValue | any;
+    object: PrismaBot.Prisma.JsonValue;
     id: string;
     key: string;
     type: string;
@@ -84,7 +84,7 @@ export interface IDataInnerModel {
             version: string;
             type: TDataDataTypes;
             values?: string[];
-            object?: Record<string, any>;
+            object?: PrismaBot.Prisma.InputJsonObject;
         };
     } ): Promise<any>;
 
@@ -93,7 +93,7 @@ export interface IDataInnerModel {
             data: {
                 type: TDataDataTypes;
                 values?: string[];
-                object?: Record<string, any>;
+                object?: PrismaBot.Prisma.InputJsonObject;
             };
         }
     ): Promise<any>;

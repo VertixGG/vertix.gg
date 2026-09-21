@@ -50,5 +50,7 @@ test.describe( "claim", () => {
         await dynamicChannels.close( channel );
     } );
 
-    test.skip( "a vote decides the new owner - needs a second connected member, which one account cannot be", async() => {} );
+    // A vote deciding the new owner lives in `claim-second-member.spec.ts`, which has the second
+    // account it takes. This file held an empty skip saying one account could not do it - true, and
+    // by then no longer the reason it was missing.
 } );

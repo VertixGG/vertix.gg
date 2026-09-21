@@ -8,6 +8,9 @@ function sleep( milliseconds: number ): Promise<void> {
     return new Promise( ( resolve ) => setTimeout( resolve, milliseconds ) );
 }
 
+/** Discord's own numbering for an overwrite that belongs to a member rather than to a role. */
+const MEMBER_OVERWRITE = 1;
+
 /**
  * What the guild actually contains, asked of discord rather than read off the sidebar.
  *
@@ -105,10 +108,13 @@ export class GuildState {
      * stopped drawing it, and this then says the bot did not remove something the bot removed. The
      * channel's own endpoint answers 404 and answers it sooner.
      */
-    public async waitForChannelGone( channelId: string ): Promise<void> {
+    public async waitForChannelGone(
+        channelId: string,
+        timeout: number = E2E_TIMEOUTS.CHANNEL_REMOVED_MS
+    ): Promise<void> {
         const gone = await this.waitFor(
             async() => await this.channelExists( channelId ) ? null : true,
-            E2E_TIMEOUTS.CHANNEL_REMOVED_MS
+            timeout
         );
 
         if ( ! gone ) {
@@ -133,6 +139,38 @@ export class GuildState {
         }
 
         return renamed;
+    }
+
+    /**
+     * Who discord thinks owns a dynamic channel, which is not something the bot writes down anywhere
+     * a test can read.
+     *
+     * Ownership shows up as a member overwrite granting the owner their channel back - the bot drops
+     * the previous owner's on the way through - so the overwrites are the record, and asking discord
+     * for them is asking the thing that actually changed. A screen saying the channel was handed over
+     * is the bot's account of itself; this is the effect.
+     */
+    public async channelOwnerOverwrites( channelId: string ): Promise<string[]> {
+        const channel = await this.channel( channelId );
+
+        return ( channel.permission_overwrites ?? [] )
+            .filter( ( overwrite ) => MEMBER_OVERWRITE === overwrite.type && "0" !== overwrite.allow )
+            .map( ( overwrite ) => overwrite.id );
+    }
+
+    public async waitForChannelOwnedBy( channelId: string, memberId: string ): Promise<void> {
+        const owned = await this.waitFor(
+            async() => ( await this.channelOwnerOverwrites( channelId ) ).includes( memberId ) ? true : null,
+            E2E_TIMEOUTS.CHANNEL_REMOVED_MS
+        );
+
+        if ( ! owned ) {
+            const holders = await this.channelOwnerOverwrites( channelId );
+
+            throw new Error(
+                `Channel ${ channelId } was not handed to ${ memberId } - it grants ${ JSON.stringify( holders ) }.`
+            );
+        }
     }
 
     public async waitForUserLimit( channelId: string, expectedLimit: number ): Promise<IRestChannel> {

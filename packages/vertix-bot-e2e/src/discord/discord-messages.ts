@@ -11,6 +11,14 @@ import { matchesCopy, normalizeDiscordText, templateToPattern } from "@vertix.gg
 import type { Locator, Page } from "@playwright/test";
 
 /**
+ * How far back `waitForScreen()` reads before giving up on this poll.
+ *
+ * A channel's own history is not worth walking on every tick - the screen being waited for is one the
+ * bot has just drawn, and everything older is another test's leftovers or another bot's furniture.
+ */
+const MESSAGES_SEARCHED = 15;
+
+/**
  * What the message list looked like before an interaction.
  *
  * Not just a watermark, because a reply is not always a new message: several `/manage` rows open the
@@ -152,6 +160,56 @@ export class DiscordMessages {
         );
     }
 
+    /**
+     * The message showing a given screen, found by what it says rather than by when it arrived.
+     *
+     * `waitForReply()` answers "what did the bot do after this mark", which is the right question
+     * about a press and the wrong one about a screen the bot sends on its own clock. The mark is
+     * taken as soon as the channel is open, before discord has finished drawing the messages already
+     * in it - so the control panel that was there all along is missing from the mark, counts as
+     * having *arrived* rather than changed, and is handed back as the answer. The claim offer then
+     * loses to a panel that was never waiting for anything, and the press lands on a disabled button.
+     *
+     * Asking for the screen by name cannot be fooled that way, and says what it did find when the
+     * screen never turns up.
+     */
+    public async waitForScreen( expectedTitle: string, timeout: number = E2E_TIMEOUTS.BOT_REPLY_MS ): Promise<Locator> {
+        const deadline = Date.now() + timeout;
+
+        let seen: string[] = [];
+
+        while ( Date.now() < deadline ) {
+            const ids = await this.ids();
+
+            seen = [];
+
+            // Newest first: a channel can hold more than one of the same screen over its life, and
+            // the one being waited for is always the most recent.
+            for ( const id of ids.slice( -MESSAGES_SEARCHED ).reverse() ) {
+                const message = this.byId( id );
+
+                const title = await this.titleText( message );
+
+                if ( ! title ) {
+                    continue;
+                }
+
+                seen.push( title );
+
+                if ( matchesCopy( title, expectedTitle ) && await this.isFromApplication( message ) ) {
+                    return message;
+                }
+            }
+
+            await this.page.waitForTimeout( E2E_INTERVALS.POLL_MS );
+        }
+
+        throw new Error(
+            `${ this.applicationName } never showed "${ normalizeDiscordText( expectedTitle ) }" within ` +
+            `${ timeout }ms. The screens on show were:\n${ seen.map( ( title ) => `    ${ title }` ).join( "\n" ) || "    none" }`
+        );
+    }
+
     public async isEphemeral( message: Locator ): Promise<boolean> {
         return message.locator( DISCORD_DOM.EPHEMERAL_MARKER ).first().isVisible().catch( () => false );
     }
@@ -215,11 +273,22 @@ export class DiscordMessages {
         return "";
     }
 
-    public async expectEmbedTitle( message: Locator, expectedTitle: string ): Promise<void> {
+    /**
+     * A screen's title, waited for.
+     *
+     * The timeout is the bot answering a press, which is what nearly every caller is waiting on. A
+     * screen that becomes another screen on its own clock - a claim vote redraws itself until it runs
+     * out - is waiting for that clock instead, and says so by passing its own.
+     */
+    public async expectEmbedTitle(
+        message: Locator,
+        expectedTitle: string,
+        timeout: number = E2E_TIMEOUTS.BOT_REPLY_MS
+    ): Promise<void> {
         // Waited for by reading rather than by asserting the embed visible: a container screen has no
         // embed to become visible, and waiting for one that never arrives fails as a timeout on a
         // locator instead of saying which title turned up.
-        const deadline = Date.now() + E2E_TIMEOUTS.BOT_REPLY_MS;
+        const deadline = Date.now() + timeout;
 
         let actual = "";
 
@@ -526,13 +595,18 @@ export class DiscordMessages {
     public async chooseFirstOption( message: Locator, placeholder: string ): Promise<string> {
         await ( await this.resolveSelectMenu( message, placeholder ) ).click();
 
-        const option = this.page.locator( DISCORD_DOM.SELECT_MENU_OPTION ).first();
+        const option = () => this.page.locator( DISCORD_DOM.SELECT_MENU_OPTION ).first();
 
-        await option.waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } );
+        await option().waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } );
 
-        const label = await option.innerText();
+        // Read before the press, and not worth failing over: no caller uses what comes back, and a
+        // menu still filling itself in will happily replace this row between the read and the click.
+        const label = await option().innerText().catch( () => "" );
 
-        await option.click();
+        // Through `clickOption()` rather than pressed directly, for the reason written there - the
+        // generator picker redraws as the guild's channels arrive, and this one had been holding the
+        // row it found rather than the locator, so the redraw detached it mid-click.
+        await this.clickOption( option );
 
         await this.page.keyboard.press( "Escape" );
 
@@ -576,9 +650,15 @@ export class DiscordMessages {
         const author = message.locator( DISCORD_DOM.MESSAGE_AUTHOR ).first();
 
         if ( await author.isVisible().catch( () => false ) ) {
-            const name = await author.innerText();
+            // Caught, like the visibility check above it. Discord redraws the message list while this
+            // is walking it, and a header that was visible a moment ago is torn out between the two
+            // calls - which threw a fifteen second timeout out of `waitForReply()` and took the test
+            // with it, over a message it was only asking about.
+            const name = await author.innerText().catch( () => "" );
 
-            return name.includes( this.applicationName );
+            if ( name ) {
+                return name.includes( this.applicationName );
+            }
         }
 
         return message.locator( DISCORD_DOM.MESSAGE_ACCESSORIES ).first().isVisible().catch( () => false );

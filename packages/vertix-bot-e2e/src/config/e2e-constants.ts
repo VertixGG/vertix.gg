@@ -27,15 +27,31 @@ export const E2E_TIMEOUTS = {
     // use the whole budget leaves nothing for the opening and the pacing that come before it, so the
     // test died on its own clock rather than on this one, saying only that time ran out.
     CHANNEL_REMOVED_MS: 60_000,
+
+    // The same wait for the two tests whose whole subject is the deletion, run late in a suite that
+    // has been churning channels for an hour. Discord rate limits channel operations per guild and
+    // the deletes queue behind one another, so the bot's request is made at once and carried out
+    // minutes later - both channels that failed this way were gone by the time the run finished. A
+    // minute is the right patience for a channel being tidied up beside the thing under test; it is
+    // the wrong patience when the tidying up *is* the thing under test.
+    CHANNEL_REMOVED_SLOW_MS: 150_000,
     GUILD_RESET_MS: 120_000,
     INTERACTIVE_LOGIN_MS: 300_000,
     // A claim is not offered when the owner leaves, but when the owner has been gone long enough and
-    // the sweep has come round to notice. Neither can be hurried: the bot floors the owner-away
-    // timeout at a minute however small a number the server options are given - the suite asks for
-    // five seconds and is given sixty - and the sweep that checks it runs on its own minute. So the
-    // wait is the two of them and a margin, and nothing like the twenty seconds allowed for the bot
+    // the sweep has come round to notice. The suite asks for the floors `GUILD_TIMINGS_BOUNDS`
+    // allows - thirty seconds away, looked for every ten - so the offer lands within forty seconds of
+    // the owner going. The rest is margin, and nothing like the twenty seconds allowed for the bot
     // simply answering a press.
+    //
+    // This said the bot floored the timeout at a minute and handed back sixty for the five it was
+    // asked. It does neither: a value under the floor is refused outright and the guild keeps the ten
+    // minute default, which is what made this wait look too short for years of it being far too long.
     CLAIM_OFFER_MS: 150_000,
+
+    // A vote is not answered, it runs out. The bot redraws the message the vote is drawn on until the
+    // duration the guild chose has passed and only then announces a winner, so what this waits for is
+    // that duration elapsing rather than the bot replying to anything.
+    CLAIM_VOTE_MS: 90_000,
 
     TEST_MS: 180_000,
     EXPECT_MS: 20_000

@@ -21,6 +21,19 @@ export interface IRestVoiceState {
     channel_id: string | null;
 }
 
+/**
+ * One entry of a channel's permission overwrites, named as discord sends them.
+ *
+ * `type` is discord's own numbering - `0` is a role and `1` is a member - and the two bitfields
+ * arrive as decimal strings, since they do not fit a javascript number.
+ */
+export interface IRestOverwrite {
+    id: string;
+    type: number;
+    allow: string;
+    deny: string;
+}
+
 export interface IRestChannel {
     id: string;
     name: string;
@@ -29,6 +42,7 @@ export interface IRestChannel {
     user_limit?: number;
     rtc_region?: string | null;
     position?: number;
+    permission_overwrites?: IRestOverwrite[];
 }
 
 interface IRateLimitBody {

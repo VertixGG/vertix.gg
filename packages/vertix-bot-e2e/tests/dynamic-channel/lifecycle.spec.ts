@@ -1,7 +1,17 @@
 import { expect, test } from "@vertix.gg/bot-e2e/src/fixtures/e2e-fixtures";
 
 import { BotCatalog } from "@vertix.gg/bot-e2e/src/catalog/bot-catalog";
+import { E2E_TIMEOUTS } from "@vertix.gg/bot-e2e/src/config/e2e-constants";
 import { templateToPattern } from "@vertix.gg/bot-e2e/src/discord/discord-text";
+
+/**
+ * Room for one channel to be opened and then waited out all the way to gone.
+ *
+ * Opening already spends up to `CHANNEL_OPEN_SPACING_MS` holding back for discord, and the deletion
+ * these two are about can take `CHANNEL_REMOVED_SLOW_MS` on top - which together is more than the
+ * default a test gets, so the two that wait for the delete say how long they need.
+ */
+const DELETE_TEST_MS = 300_000;
 
 /**
  * The whole point of the bot, start to finish.
@@ -39,11 +49,13 @@ test.describe( "dynamic channel lifecycle", () => {
     } );
 
     test( "leaving the channel removes it", async( { app, guild, dynamicChannels, v3Generator } ) => {
+        test.setTimeout( DELETE_TEST_MS );
+
         const channel = await dynamicChannels.open( v3Generator.channelId );
 
         await app.voice.disconnect();
 
-        await guild.waitForChannelGone( channel.channelId );
+        await guild.waitForChannelGone( channel.channelId, E2E_TIMEOUTS.CHANNEL_REMOVED_SLOW_MS );
 
         const remaining = await guild.voiceChannelIds();
 
@@ -51,11 +63,13 @@ test.describe( "dynamic channel lifecycle", () => {
     } );
 
     test( "the generator itself is not removed with the channel", async( { app, guild, dynamicChannels, v3Generator } ) => {
+        test.setTimeout( DELETE_TEST_MS );
+
         const channel = await dynamicChannels.open( v3Generator.channelId );
 
         await app.voice.disconnect();
 
-        await guild.waitForChannelGone( channel.channelId );
+        await guild.waitForChannelGone( channel.channelId, E2E_TIMEOUTS.CHANNEL_REMOVED_SLOW_MS );
 
         const generator = await guild.channel( v3Generator.channelId );
 

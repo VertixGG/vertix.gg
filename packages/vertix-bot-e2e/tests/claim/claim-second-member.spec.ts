@@ -34,6 +34,23 @@ const CLAIM_TIMINGS = [
         modal: "VertixBot/UI-General/SetupClaimSweepIntervalModal",
         seconds: "10",
         label: "Claim Check Interval"
+    },
+    // Not the floor. The vote has to stay open long enough to be stood for - the offer, the press and
+    // the screen that answers it are several round trips - and five seconds is a race the suite would
+    // lose under load. Thirty is short enough to sit through and long enough not to.
+    {
+        value: "vote-duration",
+        modal: "VertixBot/UI-General/SetupVoteTimeoutModal",
+        seconds: "30",
+        label: "Vote Duration"
+    },
+    // The floor, and never actually applied here: the bot adds this for the second candidate onward,
+    // and two accounts can only produce one. Set so the screen behind it is covered at all.
+    {
+        value: "vote-time-per-candidate",
+        modal: "VertixBot/UI-General/SetupVoteAddTimeModal",
+        seconds: "5",
+        label: "Vote Time Per Candidate"
     }
 ] as const;
 
@@ -98,6 +115,13 @@ async function lowerClaimTimings( app: DiscordApp, screen: VertixScreen ): Promi
     );
 
     for ( const timing of CLAIM_TIMINGS ) {
+        // Timings outlive the run that set them - `resetTestGuild()` empties the guild, it does not
+        // touch its settings - so on every run after the first these are already ours, and setting
+        // them again is four screens and four modals to arrive back where we started.
+        if ( `${ timing.seconds }s` === await claimTimingValue( app, claim, timing.label ) ) {
+            continue;
+        }
+
         await app.messages.chooseOption(
             claim,
             BotCatalog.$.selectPlaceholder( "VertixBot/UI-General/SetupClaimSelectOptionMenu" ),
@@ -140,25 +164,16 @@ test.describe( "claim with a second member", () => {
 
         expect( await second.voice.connectedChannelId() ).toBe( channel.channelId );
 
-        // Watching before the thing happens, and marked before it too. The bot offers the claim the
-        // moment the owner goes, so a mark taken afterwards is taken after the message it is waiting
-        // for has already arrived - and the wait then times out on a screen that is already showing
-        // the answer. The member also has to be looking at the channel for it to be on their screen
-        // at all.
+        // The member has to be looking at the channel for the offer to be on their screen at all.
         await second.channels.open( channel.channelId );
-
-        const claimMark = await second.messages.mark();
 
         await app.voice.disconnect();
 
-        const claimable = await second.messages.waitForReply( claimMark, E2E_TIMEOUTS.CLAIM_OFFER_MS ).catch( () => null );
+        const claimable = await second.messages
+            .waitForScreen( BotCatalog.$.embedTitle( "VertixBot/UI-V3/ClaimStartEmbed" ), E2E_TIMEOUTS.CLAIM_OFFER_MS )
+            .catch( () => null );
 
         expect( claimable, "the bot never offered the channel for claiming" ).not.toBeNull();
-
-        await second.messages.expectEmbedTitle(
-            claimable as NonNullable<typeof claimable>,
-            BotCatalog.$.embedTitle( "VertixBot/UI-V3/ClaimStartEmbed" )
-        );
 
         const mark = await second.messages.mark();
 
@@ -183,6 +198,90 @@ test.describe( "claim with a second member", () => {
         await second.voice.disconnect();
 
         await guild.waitForChannelGone( channel.channelId );
+    } );
+
+    /**
+     * The half of claiming that actually changes something.
+     *
+     * Everything up to here is the offer: the channel is advertised, the button is pressed, a vote
+     * opens. None of that moves the channel. The vote runs itself out on its own clock, announces a
+     * winner, and only then is the channel handed over - which is the part a member is really asking
+     * for, and the part `claim.spec.ts` carried a placeholder for rather than a test.
+     *
+     * Ownership is checked against discord rather than against the screen that claims it. The bot
+     * drops the previous owner's overwrite and grants the winner one, so the overwrites are the
+     * record - and a screen reading "has claimed the channel" is the bot's account of itself, which
+     * is the thing under test and cannot also be the evidence.
+     */
+    test( "the vote runs out and the channel changes hands", async( {
+        app,
+        screen,
+        guild,
+        dynamicChannels,
+        v3Generator,
+        secondMember
+    } ) => {
+        test.setTimeout( CLAIM_TEST_MS );
+
+        test.skip( ! secondMember, "needs a second member in the test guild - see the README" );
+
+        const second = secondMember as DiscordApp;
+
+        await lowerClaimTimings( app, screen );
+
+        const channel = await dynamicChannels.open( v3Generator.channelId, "v3" );
+
+        await second.voice.join( channel.channelId );
+
+        await second.channels.open( channel.channelId );
+
+        await app.voice.disconnect();
+
+        const claimable = await second.messages
+            .waitForScreen( BotCatalog.$.embedTitle( "VertixBot/UI-V3/ClaimStartEmbed" ), E2E_TIMEOUTS.CLAIM_OFFER_MS );
+
+        const voteMark = await second.messages.mark();
+
+        await second.messages
+            .componentButton(
+                claimable,
+                BotCatalog.$.panelButton( "VertixBot/UI-V3/DynamicChannelClaimChannelButton" ).emojiName
+            )
+            .click();
+
+        // The vote opens by editing the offer rather than replacing it, so a press that draws no new
+        // message has still been answered - which is why the offer is what this falls back to.
+        const vote = await second.messages.waitForReply( voteMark ).catch( () => claimable );
+
+        await second.messages.expectEmbedTitle(
+            vote,
+            BotCatalog.$.embedTitle( "VertixBot/UI-V3/ClaimVoteStepInEmbed" )
+        );
+
+        // Standing for it. The first candidate does not extend the vote - the bot adds time from the
+        // second onward - so this presses without buying itself any.
+        await second.messages
+            .labelledButton( vote, BotCatalog.$.buttonLabel( "VertixBot/UI-V3/ClaimVoteStepInButton" ) )
+            .click();
+
+        // Waited out rather than replied to: the result arrives on the same message when the vote's
+        // own clock runs down, which is `CLAIM_VOTE_MS` and not the time a press takes to answer.
+        await second.messages.expectEmbedTitle(
+            vote,
+            BotCatalog.$.embedTitle( "VertixBot/UI-V3/ClaimVoteWonEmbed" ),
+            E2E_TIMEOUTS.CLAIM_VOTE_MS
+        );
+
+        await guild.waitForChannelOwnedBy( channel.channelId, second.voice.accountId as string );
+
+        expect(
+            await guild.channelOwnerOverwrites( channel.channelId ),
+            "the member who lost the channel kept their grant on it"
+        ).not.toContain( app.voice.accountId as string );
+
+        await second.voice.disconnect();
+
+        await guild.waitForChannelGone( channel.channelId ).catch( () => undefined );
     } );
 
     test( "the claim button refuses from outside the channel", async( { app, ownedChannel } ) => {

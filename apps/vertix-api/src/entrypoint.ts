@@ -84,11 +84,23 @@ export async function entryPoint() {
     // Initialize services
     await registerServices();
 
-    // Bootstrap headless UI runtime and load exports eagerly
-    // Reloads automatically when UI source files change (file watcher)
+    /*
+     * Bootstrap headless UI runtime and load exports eagerly.
+     * Reloads automatically when UI source files change (file watcher).
+     *
+     * Not fatal. The definitions are what the interface editor draws and nothing else needs them,
+     * so a tree they cannot be collected from is a reason for that one screen to say so - not for
+     * the api to refuse to start and take the dashboard, the management routes and the bot's own
+     * ipc with it. The next request that wants them tries again.
+     */
     logger.info( entryPoint, "Loading UI runtime exports..." );
-    await uiRuntimeLoader.loadExports();
-    logger.info( entryPoint, "UI runtime exports loaded" );
+
+    try {
+        await uiRuntimeLoader.loadExports();
+        logger.info( entryPoint, "UI runtime exports loaded" );
+    } catch( error ) {
+        logger.error( entryPoint, `UI runtime exports unavailable, starting without them: ${ error }` );
+    }
 
     const server = new Server();
     await server.start();

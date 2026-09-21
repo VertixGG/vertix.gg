@@ -26,7 +26,21 @@ export class ModulesQuery extends QueryListModuleBase<ModuleInfo> {
         this.defineEndpoint<{ modules: ModuleInfo[] }, ModuleInfo[]>( "Dashboard/FlowEditor", {
             method: "GET",
             path: "modules",
-            prepareData: ( apiResponse ) => apiResponse.modules
+            /*
+             * A read the api refused arrives here as null, which the client does deliberately so a
+             * screen can render the absence of a resource rather than an error body wearing its
+             * name. This is the one screen that cannot: the module list is what every panel in the
+             * editor is built from, and an empty one is a bot that declares no modules - a
+             * different thing from an api that could not be asked, and the two looked identical
+             * for a day. So it is raised, and the boundary around the page says which it was.
+             */
+            prepareData: ( apiResponse ) => {
+                if ( ! apiResponse ) {
+                    throw new Error( "The api could not be asked for the interface definitions" );
+                }
+
+                return apiResponse.modules;
+            }
         } );
     }
 

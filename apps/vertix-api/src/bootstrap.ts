@@ -22,6 +22,32 @@ import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 const WATCH_DEBOUNCE_MS = 500;
 
+/**
+ * How long a failed collection is believed before it is attempted again.
+ *
+ * Collecting means bootstrapping the whole of the bot's ui runtime in this process, so retrying it
+ * on every request would turn a broken deploy into a machine that is busy failing. Long enough
+ * that a burst of requests costs one attempt, short enough that a restart of the bot, or a pull
+ * finishing, heals the api without one of its own.
+ */
+const COLLECT_RETRY_COOLDOWN_MS = 30_000;
+
+/**
+ * The ui definitions could not be collected, and nothing is being served in their place.
+ *
+ * Distinct from any other failure a route can have, because it is the one a caller may usefully
+ * retry: the previous behaviour was to answer with an empty export, which is indistinguishable
+ * from a bot that genuinely declares nothing and left the editor drawing a blank canvas with a
+ * healthy response behind it.
+ */
+export class UIDefinitionsUnavailableError extends Error {
+    public constructor( public readonly cause: unknown ) {
+        super( `UI definitions are unavailable: ${ cause instanceof Error ? cause.message : String( cause ) }` );
+
+        this.name = "UIDefinitionsUnavailableError";
+    }
+}
+
 // Use a globalThis symbol to guarantee a single instance even when Bun resolves
 // this module through multiple paths (e.g. workspace alias vs relative import).
 const GLOBAL_KEY = Symbol.for( "vertix.gg/api/UIRuntimeLoader" );
@@ -39,6 +65,9 @@ export class UIRuntimeLoader extends InitializeBase {
 
     private loadingPromise: Promise<UIExportData> | null = null;
 
+    /** The last collection that failed, and when - what the cooldown is measured against. */
+    private lastFailure: { error: UIDefinitionsUnavailableError; at: number } | null = null;
+
     public static getName(): string {
         return "VertixAPI/Bootstrap/UIRuntimeLoader";
     }
@@ -54,6 +83,15 @@ export class UIRuntimeLoader extends InitializeBase {
         this.logger.log( this.initialize, "UI Runtime Loader initialized" );
     }
 
+    /**
+     * Function loadExports() :: The collected ui definitions, collecting them if nobody has yet.
+     *
+     * Throws rather than answering with nothing when the collection fails. A failure is not cached
+     * as data - it is remembered only for as long as the cooldown, after which the next caller
+     * tries again - so a process that failed once heals itself instead of serving an empty export
+     * for the rest of its life. Which is what it did: a single failed bootstrap under `--hot`
+     * left every later request answering `{ modules: [] }` with a 200.
+     */
     public async loadExports(): Promise<UIExportData> {
         if ( this.exportData ) {
             return this.exportData;
@@ -64,7 +102,14 @@ export class UIRuntimeLoader extends InitializeBase {
             return this.loadingPromise;
         }
 
-        this.loadingPromise = this.doLoadExports();
+        if ( this.lastFailure && Date.now() - this.lastFailure.at < COLLECT_RETRY_COOLDOWN_MS ) {
+            throw this.lastFailure.error;
+        }
+
+        // Cleared either way round, so a rejection is not held as the answer to every later call.
+        this.loadingPromise = this.doLoadExports().finally( () => {
+            this.loadingPromise = null;
+        } );
 
         return this.loadingPromise;
     }
@@ -121,6 +166,8 @@ export class UIRuntimeLoader extends InitializeBase {
 
             this.exportData.meta.exportedAt = new Date().toISOString();
 
+            this.lastFailure = null;
+
             this.logger.info(
                 this.doCollectDefinitions,
                 `Collected${ isReload ? " (reload)" : "" }: ${ this.exportData.meta.counts.flows } flows, ${ this.exportData.meta.counts.components } components, ${ this.exportData.adapters.length } adapters`
@@ -131,19 +178,26 @@ export class UIRuntimeLoader extends InitializeBase {
                 `Failed to collect UI definitions: ${ error }`
             );
 
-            this.exportData = {
-                meta: {
-                    schemaVersion: "1.0.0",
-                    exportedAt: new Date().toISOString(),
-                    counts: { components: 0, adapters: 0, flows: 0 },
-                    modules: [],
-                    moduleSummary: [],
-                    embedCoverage: { total: 0, withDefinition: 0, missingDefinition: 0 }
-                },
-                components: [],
-                flows: [],
-                adapters: []
-            };
+            /*
+             * A reload that fails keeps what was already collected.
+             *
+             * The definitions on screen came from a tree that did compile; an edit that does not
+             * is a reason to go on showing them rather than to replace them with nothing, and the
+             * next save reloads again. The watcher's caller logs it.
+             */
+            if ( isReload ) {
+                throw error;
+            }
+
+            /*
+             * A first collection that fails is remembered as a failure rather than written down as
+             * an empty export. Nothing is served in its place - the callers answer that the
+             * definitions are unavailable, which is the difference between a bot that declares no
+             * modules and an api that could not ask.
+             */
+            this.lastFailure = { error: new UIDefinitionsUnavailableError( error ), at: Date.now() };
+
+            throw this.lastFailure.error;
         } finally {
             this.reloading = false;
         }
@@ -375,7 +429,19 @@ async function collectUIDefinitionsInWorker(): Promise<object> {
 
         return resultData;
     } catch( err ) {
-        throw new Error( `Failed to parse subprocess result: ${ err }\nstdout (first 500 chars): ${ stdoutText.slice( 0, 500 ) }` );
+        /*
+         * Stderr leads, because it is where the reason is.
+         *
+         * A subprocess that fails part way through writes the json it had got as far as and exits
+         * zero, so what arrives here is `Unterminated string` - the shape of the wreckage rather
+         * than the cause of it, and the api's log named that and nothing else while the real
+         * error, a ui adapter that would not register, sat in stderr one line above.
+         */
+        throw new Error(
+            `Failed to parse subprocess result: ${ err }\n` +
+            `stderr (last 2000 chars): ${ stderrText.trim().slice( -2000 ) || "(empty)" }\n` +
+            `stdout (first 500 chars): ${ stdoutText.slice( 0, 500 ) }`
+        );
     }
 }
 

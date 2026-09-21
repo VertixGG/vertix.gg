@@ -1,6 +1,13 @@
 import { getFlowData } from "@vertix.gg/api/src/server/services/flow-service";
 import { ERROR_MESSAGES, API_ROUTES } from "@vertix.gg/api/src/server/constants";
-import { handleError, sendBadRequest, sendNotFound } from "@vertix.gg/api/src/server/utils/error-handler";
+import { UIDefinitionsUnavailableError } from "@vertix.gg/api/src/bootstrap";
+
+import {
+    handleError,
+    sendBadRequest,
+    sendNotFound,
+    sendServiceUnavailable
+} from "@vertix.gg/api/src/server/utils/error-handler";
 
 import type { FlowQuerystring } from "@vertix.gg/api/src/server/types";
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
@@ -17,6 +24,13 @@ async function handleGetFlow( request: FastifyRequest<{ Querystring: FlowQueryst
         const response = await getFlowData( moduleName, flowName );
         return response;
     } catch( error ) {
+        // Checked before the message test below, whose own message says "unavailable" rather than
+        // "not found" but which has no business deciding this either way.
+        if ( error instanceof UIDefinitionsUnavailableError ) {
+            sendServiceUnavailable( handleGetFlow, error, reply, ERROR_MESSAGES.UI_DEFINITIONS_UNAVAILABLE );
+            return;
+        }
+
         if ( error instanceof Error && error.message.includes( "not found" ) ) {
             sendNotFound( reply, error.message );
             return;

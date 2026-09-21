@@ -14,6 +14,11 @@ import { UI_PEER_IDENTITIES } from "@vertix.gg/definitions/src/ui-ipc-definition
 
 import * as handlers from "@vertix.gg/bot/src/listeners";
 
+import {
+    createClientCacheFactory,
+    createClientSweepers
+} from "@vertix.gg/bot/src/definitions/client-cache";
+
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
@@ -168,7 +173,9 @@ export default async function Main( { enableListeners }: {
             "DirectMessages"
         ],
         partials: [ Partials.Channel ],
-        shards: "auto"
+        shards: "auto",
+        makeCache: createClientCacheFactory(),
+        sweepers: createClientSweepers()
     } );
 
     debugDiscordApiEvents( logger, client );
@@ -221,7 +228,13 @@ export default async function Main( { enableListeners }: {
                     ... ( "false" === process.env.AI_CHAT_MEMBER_INTENT?.trim() ? [] : [ "GuildMembers" as const ] )
                 ],
                 partials: [ Partials.Channel ],
-                shards: "auto"
+                shards: "auto",
+                // A second `Client` is a second set of caches in the same process, not a view onto
+                // the first one's - a user active in both is held twice. This one carries
+                // `GuildMembers` and `MessageContent`, so it is the client that would otherwise
+                // accumulate a GuildMember for everyone who has ever spoken.
+                makeCache: createClientCacheFactory(),
+                sweepers: createClientSweepers()
             } );
 
             debugDiscordApiEvents( logger, aiClient );

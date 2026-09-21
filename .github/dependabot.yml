@@ -1,11 +1,39 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
+# Dependabot version updates.
+#
+# Security updates are a separate, repository-level setting and do not read this
+# file - which is why the placeholder config this replaced still let CVE bumps
+# through while never once scheduling a version update.
+#
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
+
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # The workspace resolves from the root bun.lock, so one entry covers
+  # packages/*, apps/* and assets.
+  - package-ecosystem: "bun"
+    directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "Upgrade:"
+    # Minors and patches arrive as one reviewable PR; a major gets its own, since
+    # the point of a major is that it needs reading.
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # The half that would have caught `ubuntu-20.04` going away under the Jest
+  # workflow, along with `checkout@v3` and `setup-bun@v1`.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "Upgrade:"
+    groups:
+      actions:
+        patterns:
+          - "*"

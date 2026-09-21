@@ -86,7 +86,9 @@ export async function getDiscordGuilds( accessToken: string ): Promise<DiscordGu
     } );
 
     if ( !response.ok ) {
-        throw new Error( "Failed to fetch Discord guilds" );
+        // The status matters here: 429 is discord rate limiting this endpoint, which is a
+        // different problem from 401, and a message that says neither costs an hour to diagnose.
+        throw new Error( `Failed to fetch Discord guilds: ${ response.status }` );
     }
 
     return await response.json() as DiscordGuild[];

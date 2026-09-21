@@ -12,7 +12,9 @@ import {
 } from "@vertix.gg/api/src/server/services/auth-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
-import { resolveGuildOwnership } from "@vertix.gg/api/src/server/middleware/guild-access";
+import { cacheOwnedGuilds, resolveGuildOwnership } from "@vertix.gg/api/src/server/middleware/guild-access";
+
+import type { IOwnedGuild } from "@vertix.gg/api/src/server/middleware/guild-access";
 
 import type { DiscordGuild } from "@vertix.gg/api/src/server/services/auth-service";
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
@@ -28,6 +30,14 @@ declare module "fastify" {
         userId?: string;
         oauthState?: string;
         selectedGuild?: SelectedGuild;
+
+        /**
+         * The guilds discord last said this user owns, and when it said so.
+         *
+         * Kept because discord rate limits `/users/@me/guilds`, and listing then selecting - which
+         * is the dashboard's normal flow - is two calls inside a second.
+         */
+        ownedGuilds?: { guilds: IOwnedGuild[]; fetchedAt: number };
     }
 }
 
@@ -122,6 +132,10 @@ async function handleGetGuilds( request: FastifyRequest, reply: FastifyReply ) {
 
         const guilds = await getDiscordGuilds( accessToken );
 
+        // The same answer the next request needs. Kept now so selecting a guild immediately
+        // afterwards does not ask discord a second time and meet its rate limit.
+        cacheOwnedGuilds( request, guilds );
+
         const ownedGuilds = guilds
             .filter( ( guild: DiscordGuild ) => guild.owner )
             .map( ( guild: DiscordGuild ) => ( {
@@ -166,7 +180,7 @@ async function handleSelectGuild(
         return reply.status( 400 ).send( { error: "guildId is required" } );
     }
 
-    const ownership = await resolveGuildOwnership( request.session.userId, guildId );
+    const ownership = await resolveGuildOwnership( request, guildId );
 
     if ( "no-token" === ownership.outcome ) {
         return reply.status( 401 ).send( { error: "Token expired, please re-login" } );

@@ -34,13 +34,18 @@ import type {
     TGuildTimingsOverrides
 } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
-import type { GuildConfigInterface } from "@vertix.gg/data/src/interfaces/guild-config";
+import type { GuildConfigDefaultsInterface, GuildConfigInterface } from "@vertix.gg/data/src/interfaces/guild-config";
 import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 import type { Guild } from "discord.js";
 
-interface IGuildSettings {
-    maxMasterChannels: number;
-}
+/**
+ * What `getAllSettings()` answers with.
+ *
+ * The config's own shape rather than a restatement of it. Written out separately the two drifted the
+ * moment a second allowance was added - the config grew a field, this did not, and a caller reading
+ * it was told the field does not exist.
+ */
+type IGuildSettings = GuildConfigDefaultsInterface;
 
 export class GuildDataManager extends ManagerDataBase<GuildModel> {
     /**
@@ -64,14 +69,26 @@ export class GuildDataManager extends ManagerDataBase<GuildModel> {
         super( shouldDebugCache );
     }
 
+    /**
+     * What a guild is allowed, its own row over the defaults.
+     *
+     * Merged rather than either-or. A row is written the moment a guild is granted one thing, and it
+     * carries only what was granted - so returning it whole meant every setting added after that row
+     * was written came back undefined for exactly the guilds somebody had already looked at.
+     */
     public async getAllSettings( guildId: string, cache = false ): Promise<IGuildSettings> {
+        const defaults = ConfigManager.$.get<GuildConfigInterface>(
+            "Vertix/Config/Guild",
+            VERSION_GUILD_CONFIG_V1
+        ).data;
+
         const data = await this.getSettingsData( guildId, null, cache, true );
 
         if ( data?.object ) {
-            return data.object;
+            return { ... defaults, ... data.object };
         }
 
-        return ConfigManager.$.get<GuildConfigInterface>( "Vertix/Config/Guild", VERSION_GUILD_CONFIG_V1 ).data;
+        return defaults;
     }
 
     public async getBadwords( guildId: string ): Promise<string[]> {

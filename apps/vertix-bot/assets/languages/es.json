@@ -965,6 +965,10 @@
               "value": "12"
             },
             {
+              "label": "Región",
+              "value": "19"
+            },
+            {
               "label": "Estado",
               "value": "13"
             },
@@ -1554,7 +1558,9 @@
         "description": "Entrar en <#{masterChannelId}> no creó un canal para ti.\n\n{reason}",
         "options": {
           "reason": {
+            "{reasonNotCovered}": "Este servidor tiene más generadores de los que permite su plan, y este es uno de los adicionales, así que ahora mismo no crea canales.\n\nLos generadores que se crearon primero siguen funcionando. Un administrador del servidor puede mejorar el plan para volver a activar este, o eliminar un generador que ya no se use.",
             "{reasonCategoryFull}": "La categoría donde vive este canal está llena. Discord permite 50 canales por categoría y ya se alcanzó ese límite.\n\nAvisa a un administrador del servidor: puede liberar un canal o mover el generador a otra categoría.",
+            "{reasonGeneratorFull}": "Este generador ya tiene {maxActiveDynamicChannels} canales abiertos, que es el máximo que puede tener a la vez.\n\nSe liberará uno cuando un canal se vacíe. Si están todos en uso, un administrador del servidor puede crear otro generador.",
             "{reasonUnknown}": "Normalmente esto significa que el servidor alcanzó algún límite de Discord, o que se quitó un permiso que el bot necesita.\n\nAvisa a un administrador del servidor. El motivo queda registrado en los logs del bot."
           }
         }

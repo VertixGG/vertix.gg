@@ -1,13 +1,12 @@
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
 import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ipc-definitions";
 
 import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
-
-import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
@@ -16,6 +15,8 @@ import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version
 import { ChannelType } from "discord.js";
 
 import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
+
+import type { EntitlementService } from "@vertix.gg/bot/src/services/entitlement-service";
 
 import type { NewsChannel, TextChannel } from "discord.js";
 
@@ -248,7 +249,9 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
      * the bot reads the row, and not in the dashboard, which asks this.
      */
     private async getConfigLimits( guildId: string ): Promise<GetConfigLimitsResponse> {
-        const { maxMasterChannels } = await GuildDataManager.$.getAllSettings( guildId );
+        const maxMasterChannels = await ServiceLocator.$.get<EntitlementService>(
+            "VertixBot/Services/Entitlement"
+        ).getMaxMasterChannels( guildId );
 
         return { maxMasterChannels };
     }

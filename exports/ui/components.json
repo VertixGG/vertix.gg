@@ -926,7 +926,8 @@
                                 "labelAutoSave": "{labelAutoSave}",
                                 "labelVersion": "{labelVersion}",
                                 "labelScalingPrefix": "{labelScalingPrefix}",
-                                "labelMaxMembers": "{labelMaxMembers}"
+                                "labelMaxMembers": "{labelMaxMembers}",
+                                "labelNotCovered": "{labelNotCovered}"
                             },
                             "defaultVars": {
                                 "none": "**None**",
@@ -942,6 +943,7 @@
                                 "labelLogsChannel": "▹ Logs Channel:",
                                 "labelAutoSave": "▹ Auto Save:",
                                 "labelVersion": "▹ UI Version:",
+                                "labelNotCovered": "⏸️ **Paused** - past this server's plan",
                                 "labelScalingPrefix": "▹ Scaling Prefix:",
                                 "labelMaxMembers": "▹ Max Members:"
                             }
@@ -1467,6 +1469,8 @@
                             "options": {
                                 "reason": {
                                     "{reasonCategoryFull}": "The category this channel lives in is full. Discord allows 50 channels per category, and it has reached that.\n\nPlease let a server admin know - they can free a channel or move the generator to another category.",
+                                    "{reasonGeneratorFull}": "This generator already has {maxActiveDynamicChannels} channels open, which is as many as it may have at once.\n\nOne will free up when a channel empties out. If they are all in use, a server admin can set up another generator.",
+                                    "{reasonNotCovered}": "This server has more generators than its plan allows, and this is one of the extra ones - so it is not making channels at the moment.\n\nThe generators it set up first are still working. A server admin can upgrade the plan to switch this one back on, or delete a generator it no longer uses.",
                                     "{reasonUnknown}": "This usually means the server reached one of Discord's limits, or that a permission the bot needs was removed.\n\nPlease let a server admin know. The reason is written to the bot logs."
                                 }
                             },
@@ -1474,15 +1478,19 @@
                                 "masterChannelId": "{masterChannelId}",
                                 "reason": "{reason}",
                                 "reasonCategoryFull": "{reasonCategoryFull}",
+                                "reasonGeneratorFull": "{reasonGeneratorFull}",
+                                "reasonNotCovered": "{reasonNotCovered}",
+                                "maxActiveDynamicChannels": "{maxActiveDynamicChannels}",
                                 "reasonUnknown": "{reasonUnknown}"
                             },
                             "defaultVars": {
-                                "masterChannelId": "123456789"
+                                "masterChannelId": "123456789",
+                                "maxActiveDynamicChannels": "20"
                             },
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "(args) => ({\n  masterChannelId: args.masterChannelId,\n  reason: args.isCategoryFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonCategoryFull : CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown\n})",
+                                        "source": "(args) => {\n  const reason = args.isNotCovered ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonNotCovered : args.isGeneratorFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonGeneratorFull : args.isCategoryFull ? CHANNEL_CREATE_FAILED_EMBED_VARS.reasonCategoryFull : CHANNEL_CREATE_FAILED_EMBED_VARS.reasonUnknown;\n  return {\n    masterChannelId: args.masterChannelId,\n    maxActiveDynamicChannels: args.maxActiveDynamicChannels,\n    reason\n  };\n}",
                                         "binds": [
                                             "CHANNEL_CREATE_FAILED_EMBED_VARS"
                                         ]
@@ -5536,7 +5544,7 @@
                                         "emoji": "🔀"
                                     },
                                     {
-                                        "label": "Status",
+                                        "label": "Region",
                                         "value": "19",
                                         "emoji": "🌍"
                                     },
@@ -6629,7 +6637,7 @@
                                         "emoji": "🔀"
                                     },
                                     {
-                                        "label": "Status",
+                                        "label": "Region",
                                         "value": "19",
                                         "emoji": "🌍"
                                     },
@@ -7117,7 +7125,7 @@
                                         "emoji": "🔀"
                                     },
                                     {
-                                        "label": "Status",
+                                        "label": "Region",
                                         "value": "19",
                                         "emoji": "🌍"
                                     },

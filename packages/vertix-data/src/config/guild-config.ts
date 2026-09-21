@@ -29,7 +29,8 @@ export class GuildConfig extends ConfigBase<GuildConfigInterface> {
 
     protected getDefaults(): GuildConfigInterface[ "defaults" ] {
         return {
-            maxMasterChannels: 2
+            maxMasterChannels: 2,
+            maxActiveDynamicChannels: 20
         };
     }
 }

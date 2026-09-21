@@ -974,6 +974,10 @@
               "value": "12"
             },
             {
+              "label": "Region",
+              "value": "19"
+            },
+            {
               "label": "Status",
               "value": "13"
             },
@@ -1563,7 +1567,9 @@
         "description": "Joining <#{masterChannelId}> did not create a channel for you.\n\n{reason}",
         "options": {
           "reason": {
+            "{reasonNotCovered}": "This server has more generators than its plan allows, and this is one of the extra ones - so it is not making channels at the moment.\n\nThe generators it set up first are still working. A server admin can upgrade the plan to switch this one back on, or delete a generator it no longer uses.",
             "{reasonCategoryFull}": "The category this channel lives in is full. Discord allows 50 channels per category, and it has reached that.\n\nPlease let a server admin know - they can free a channel or move the generator to another category.",
+            "{reasonGeneratorFull}": "This generator already has {maxActiveDynamicChannels} channels open, which is as many as it may have at once.\n\nOne will free up when a channel empties out. If they are all in use, a server admin can set up another generator.",
             "{reasonUnknown}": "This usually means the server reached one of Discord's limits, or that a permission the bot needs was removed.\n\nPlease let a server admin know. The reason is written to the bot logs."
           }
         }

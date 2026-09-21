@@ -113,6 +113,8 @@ import type { JsonValue } from "@vertix.gg/gui/src/runtime/ui-definition-types";
 
 import type ScalingChannelService from "@vertix.gg/bot/src/services/scaling-channel-service";
 
+import type { EntitlementService } from "@vertix.gg/bot/src/services/entitlement-service";
+
 import type { ISetupArgs } from "@vertix.gg/bot/src/ui/general/setup/setup-definitions";
 
 import type UIService from "@vertix.gg/gui/src/ui-service";
@@ -263,7 +265,8 @@ async function onCreateMasterChannelClicked<TInteraction extends SetupMessageCom
 ) {
     const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" ),
         guildId = interaction.guild.id,
-        limit = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
+        limit = await ServiceLocator.$.get<EntitlementService>( "VertixBot/Services/Entitlement" )
+            .getMaxMasterChannels( guildId ),
         hasReachedLimit = await masterChannelService.isReachedMasterLimit( guildId, limit );
 
     if ( hasReachedLimit ) {
@@ -307,7 +310,8 @@ async function onCreateScalingChannelClicked<TInteraction extends SetupMessageCo
 ) {
     const masterChannelService = ServiceLocator.$.get<MasterChannelService>( "VertixBot/Services/MasterChannel" ),
         guildId = interaction.guild.id,
-        limit = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
+        limit = await ServiceLocator.$.get<EntitlementService>( "VertixBot/Services/Entitlement" )
+            .getMaxMasterChannels( guildId ),
         hasReachedLimit = await masterChannelService.isReachedMasterLimit( guildId, limit );
 
     if ( hasReachedLimit ) {
@@ -738,6 +742,18 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 
         const channels = args?.masterChannels || [];
 
+        // Asked once for the whole list rather than per row, and only where there is a list to
+        // mark. Null is a server inside its allowance, where nothing is paused.
+        const covered = channels.length
+            ? await ServiceLocator.$.get<EntitlementService>( "VertixBot/Services/Entitlement" )
+                .getCoveredMasterChannelIds( channels[ 0 ].guildId )
+            : null;
+
+        const heading = ( channel: { id: string }, index: number ) =>
+            covered && ! covered.has( channel.id )
+                ? `**#${ index + 1 }** ${ vars.labelNotCovered }`
+                : `**#${ index + 1 }**`;
+
         const masterChannels = await Promise.all( channels.map( async( channel: any, index: number ) => {
             const version = channel?.version || channel?.data?.[ 0 ]?.version || "V2";
 
@@ -749,7 +765,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
                     || scalingConfig.scalingChannelMaxMembersPerChannel;
 
                 return [
-                    `**#${ index + 1 }**`,
+                    heading( channel, index ),
                     `${ vars.labelName } <#${ channel.channelId }>`,
                     `${ vars.labelChannelId } \`${ channel.channelId }\``,
                     `${ vars.labelScalingPrefix } \`${ prefix }\``,
@@ -818,7 +834,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
             const autoSaveDisplay = data.dynamicChannelAutoSave ? vars.autoSaveOn : vars.autoSaveOff;
 
             return [
-                `**#${ index + 1 }**`,
+                heading( channel, index ),
                 `${ vars.labelName } <#${ channel.channelId }>`,
                 `${ vars.labelChannelId } \`${ channel.channelId }\``,
                 `${ vars.labelDynamicChannelsName } \`${ nameTemplate }\``,
@@ -893,6 +909,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
         labelLogsChannel: "▹ Logs Channel:",
         labelAutoSave: "▹ Auto Save:",
         labelVersion: "▹ UI Version:",
+        labelNotCovered: "⏸️ **Paused** - past this server's plan",
         labelScalingPrefix: "▹ Scaling Prefix:",
         labelMaxMembers: "▹ Max Members:",
     } ) )

@@ -304,6 +304,60 @@ export class ChannelModel extends ModelWithDataBase<
         } );
     }
 
+    /**
+     * Function getDynamicsCountByMasterId() :: How many rooms one generator has open.
+     *
+     * Counted off the rows rather than off the category. A category holds the generator's own
+     * channel and its control panel as well as its rooms, and an admin may have put anything else
+     * in there - measuring it would make the cap drift with things that are not rooms. The rows are
+     * what the cleanup worker keeps honest, so a room discord lost is already not counted.
+     *
+     * `masterChannelId` is the generator's **discord** id here, because that is what a dynamic
+     * channel's row stores in `ownerChannelId` - the same id its sibling `getDynamicsByMasterId()`
+     * takes. Scaling rooms store their master's row id instead, which is why the two have a
+     * counting method each rather than one between them.
+     */
+    public async getDynamicsCountByMasterId( guildId: string, masterChannelId: string ) {
+        const total = await this.model.count( {
+            where: {
+                guildId,
+                ownerChannelId: masterChannelId,
+                internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.DYNAMIC_CHANNEL
+            }
+        } );
+
+        this.debugger.log(
+            this.getDynamicsCountByMasterId,
+            `Guild id: '${ guildId }' master channel id: '${ masterChannelId }' - Rooms open is '${ total }'`
+        );
+
+        return total;
+    }
+
+    /**
+     * Function getScalingChannelsCountByMasterId() :: How many rooms one scaling pool has open.
+     *
+     * `masterChannelId` is the generator's **row** id here, which is what a scaling room stores -
+     * the same id its sibling `getScalingChannelsByMasterId()` takes. See the note on the method
+     * above about why the two are not one.
+     */
+    public async getScalingChannelsCountByMasterId( guildId: string, masterChannelId: string ) {
+        const total = await this.model.count( {
+            where: {
+                guildId,
+                ownerChannelId: masterChannelId,
+                internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES.SCALING_CHANNEL
+            }
+        } );
+
+        this.debugger.log(
+            this.getScalingChannelsCountByMasterId,
+            `Guild id: '${ guildId }' master channel id: '${ masterChannelId }' - Rooms open is '${ total }'`
+        );
+
+        return total;
+    }
+
     public async getByChannelId( channelId: string | null, cache = true ) {
         // ...
         if ( !channelId ) {
@@ -353,6 +407,28 @@ export class ChannelModel extends ModelWithDataBase<
         this.debugger.log( this.getMastersCount, `Guild id: '${ guildId }' - Total master channels is '${ total }'` );
 
         return total;
+    }
+
+    /**
+     * Function getMasterIdsByCreation() :: A guild's generators, oldest first, as row ids.
+     *
+     * Which generators an allowance covers is answered from this: the first N are the ones it
+     * reaches. Ordered by when the row was written rather than by anything a server can change, so
+     * the same generators stay covered every time it is asked - an order taken from a name or a
+     * position would move the moment somebody renamed or dragged one, and a server would find a
+     * different generator switched off than the last time it looked.
+     */
+    public async getMasterIdsByCreation( guildId: string ) {
+        const masters = await this.model.findMany( {
+            where: {
+                guildId,
+                internalType: { in: MASTER_INTERNAL_TYPES }
+            },
+            orderBy: { createdAt: "asc" },
+            select: { id: true }
+        } );
+
+        return masters.map( ( master ) => master.id );
     }
 
     public async isMaster( channelId: string, cache = true ) {

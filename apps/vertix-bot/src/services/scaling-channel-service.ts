@@ -1,7 +1,10 @@
 import { getNaming } from "@vertix.gg/data/src/config/naming";
 import "@vertix.gg/prisma/bot-client";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
@@ -24,6 +27,8 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 import { DEFAULT_MASTER_CHANNEL_CREATE_BOT_PERMISSIONS } from "@vertix.gg/bot/src/definitions/master-channel";
+
+import type { EntitlementService } from "@vertix.gg/bot/src/services/entitlement-service";
 
 import type { IPCDiscordChannelInfo } from "@vertix.gg/definitions/src/ipc-definitions";
 
@@ -356,6 +361,42 @@ export class ScalingChannelService extends ServiceWithDependenciesBase<{
         index: number
     ) {
         const name = this.assembleScalingChannelName( prefix, index );
+
+        // A pool the plan does not reach grows not at all, which is asked before the cap for the
+        // same reason the join path asks it first: being full is true of it and beside the point.
+        const isCovered = await ServiceLocator.$
+            .get<EntitlementService>( "VertixBot/Services/Entitlement" )
+            .isMasterChannelCovered( guild.id, master.id );
+
+        if ( ! isCovered ) {
+            this.logger.warn(
+                this.createScaledChannel,
+                `Guild id: '${ guild.id }' - Scaling master '${ master.id }' is past the server's ` +
+                    `allowance, refusing to create '${ name }'`
+            );
+
+            return null;
+        }
+
+        // Every way a pool grows comes through here - a join with nowhere to put somebody, the
+        // buffer of empty rooms it keeps ahead of demand, and the first room it is given at setup -
+        // so the cap is asked once, here, rather than at each of them.
+        //
+        // A pool is what a per generator cap would otherwise be walked around with, since growing
+        // on demand is the whole of what it does. Discord stops it at fifty channels to a category
+        // in any case; this stops it sooner and says so.
+        const roomsLimit = ( await GuildDataManager.$.getAllSettings( guild.id ) ).maxActiveDynamicChannels,
+            roomsOpen = await ChannelModel.$.getScalingChannelsCountByMasterId( guild.id, master.id );
+
+        if ( roomsOpen >= roomsLimit ) {
+            this.logger.warn(
+                this.createScaledChannel,
+                `Guild id: '${ guild.id }' - Scaling master '${ master.id }' is at its limit of ` +
+                    `'${ roomsLimit }' open channels, refusing to create '${ name }'`
+            );
+
+            return null;
+        }
 
         this.logger.log( this.createScaledChannel, `Creating new scaling channel: ${ name } (limit: ${ maxMembers }) in guild ${ guild.name }` );
 

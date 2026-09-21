@@ -178,5 +178,6 @@ export const SETUP_EMBED_VARS = {
     labelAutoSave: uiUtilsWrapAsTemplate( "labelAutoSave" ),
     labelVersion: uiUtilsWrapAsTemplate( "labelVersion" ),
     labelScalingPrefix: uiUtilsWrapAsTemplate( "labelScalingPrefix" ),
-    labelMaxMembers: uiUtilsWrapAsTemplate( "labelMaxMembers" )
+    labelMaxMembers: uiUtilsWrapAsTemplate( "labelMaxMembers" ),
+    labelNotCovered: uiUtilsWrapAsTemplate( "labelNotCovered" )
 };

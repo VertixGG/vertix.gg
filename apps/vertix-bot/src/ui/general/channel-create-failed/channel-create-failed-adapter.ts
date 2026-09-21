@@ -20,7 +20,10 @@ const ChannelCreateFailedAdapter = new AdapterBuilderBase<
     .setComponent( ChannelCreateFailedComponent )
     .getReplyArgs( async( _context, _interaction, argsFromManager ) => ( {
         masterChannelId: argsFromManager?.masterChannelId,
-        isCategoryFull: argsFromManager?.isCategoryFull
+        isCategoryFull: argsFromManager?.isCategoryFull,
+        isGeneratorFull: argsFromManager?.isGeneratorFull,
+        isNotCovered: argsFromManager?.isNotCovered,
+        maxActiveDynamicChannels: argsFromManager?.maxActiveDynamicChannels
     } ) )
     .disableMiddleware()
     .build();

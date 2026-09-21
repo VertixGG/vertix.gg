@@ -5,6 +5,7 @@ import { DISCORD_CATEGORY_CHANNELS_LIMIT } from "@vertix.gg/definitions/src/disc
 
 import { MasterChannelDataManager } from "@vertix.gg/data/src/managers/master-channel-data-manager";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { MasterChannelDataModelV3 } from "@vertix.gg/data/src/models/master-channel/master-channel-data-model-v3";
 
@@ -18,6 +19,7 @@ import { ChannelType, EmbedBuilder, OverwriteType, PermissionsBitField } from "d
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
 
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 
 import { CategoryModel } from "@vertix.gg/data/src/models/category-model";
@@ -36,6 +38,8 @@ import { CategoryManager } from "@vertix.gg/bot/src/managers/category-manager";
 import { PermissionsManager } from "@vertix.gg/bot/src/managers/permissions-manager";
 
 import { ChannelUtils } from "@vertix.gg/bot/src/utils/channel-utils";
+
+import type { EntitlementService } from "@vertix.gg/bot/src/services/entitlement-service";
 
 import type { ChannelExtended } from "@vertix.gg/data/src/models/channel/channel-client-extend";
 
@@ -576,6 +580,37 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             }
         }
 
+        // Asked before the room cap, because a generator the plan does not reach makes no rooms at
+        // all - telling somebody it is full would be true and useless.
+        const entitlementService = ServiceLocator.$.get<EntitlementService>( "VertixBot/Services/Entitlement" );
+
+        if ( ! await entitlementService.isMasterChannelCovered( guild.id, masterChannelDB.id ) ) {
+            this.logger.warn(
+                this.onJoinMasterChannel,
+                `Guild id: '${ guild.id }' - Master channel id: '${ masterChannelDB.channelId }' is past the ` +
+                    "server's allowance, refusing to create a channel"
+            );
+
+            await this.notifyChannelCreateFailed( newState, { isNotCovered: true } );
+
+            return;
+        }
+
+        const roomsLimit = ( await GuildDataManager.$.getAllSettings( guild.id ) ).maxActiveDynamicChannels,
+            roomsOpen = await ChannelModel.$.getDynamicsCountByMasterId( guild.id, masterChannelDB.channelId );
+
+        if ( roomsOpen >= roomsLimit ) {
+            this.logger.warn(
+                this.onJoinMasterChannel,
+                `Guild id: '${ guild.id }' - Master channel id: '${ masterChannelDB.channelId }' is at its ` +
+                    `limit of '${ roomsLimit }' open channels, refusing to create another`
+            );
+
+            await this.notifyChannelCreateFailed( newState, { isGeneratorFull: true, roomsLimit } );
+
+            return;
+        }
+
         try {
             // Create a new dynamic channel for the user.
             const dynamic = await this.services.dynamicChannelService.createDynamicChannel( {
@@ -614,7 +649,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
      * Without this the three layers below only write to the log and return, so the user sits in the
      * master channel with nothing happening and no reason given - which reads as the bot being down.
      */
-    private async notifyChannelCreateFailed( newState: VoiceState ) {
+    private async notifyChannelCreateFailed(
+        newState: VoiceState,
+        refusal?: { isGeneratorFull: true; roomsLimit: number } | { isNotCovered: true }
+    ) {
         const userId = newState.member?.id;
 
         if ( !userId ) {
@@ -634,7 +672,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
 
         await adapter.sendToUser( newState.guild.id, userId, {
             masterChannelId: newState.channelId,
-            isCategoryFull: this.isCategoryFull( newState.channel?.parent ?? null )
+            isCategoryFull: this.isCategoryFull( newState.channel?.parent ?? null ),
+            isGeneratorFull: refusal && "isGeneratorFull" in refusal,
+            maxActiveDynamicChannels: refusal && "isGeneratorFull" in refusal ? refusal.roomsLimit : undefined,
+            isNotCovered: refusal && "isNotCovered" in refusal
         } );
     }
 

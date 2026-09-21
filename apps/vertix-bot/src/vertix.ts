@@ -195,6 +195,29 @@ export default async function Main( { enableListeners }: {
         sweepers: createClientSweepers()
     } );
 
+    // Names whoever pulls a guild in over rest, which the gateway's own sharding cannot explain.
+    // A rest fetch puts a guild in the cache whatever shard owns it, so on a sharded process this
+    // is the one way a guild arrives that was not handed over at identify - and reading code has
+    // not found the caller. The stack does.
+    //
+    // Off unless DEBUG_GUILD_FETCH is set, and `info` rather than `debug` because debug is a no-op
+    // below LOGGER_LOG_LEVEL=6.
+    if ( isDebugTypeEnabled( "GUILD_FETCH" ) ) {
+        const guilds = client.guilds as unknown as { fetch: ( ... args: unknown[] ) => unknown },
+            originalFetch = guilds.fetch.bind( guilds );
+
+        guilds.fetch = ( ... args: unknown[] ) => {
+            logger.info(
+                Main,
+                `guilds.fetch( ${ JSON.stringify( args[ 0 ] ) } ) called from:\n${ new Error().stack }`
+            );
+
+            return originalFetch( ... args );
+        };
+
+        logger.info( Main, "DEBUG_GUILD_FETCH is on - guild fetches will be traced" );
+    }
+
     debugDiscordApiEvents( logger, client );
 
     debugDiscordApiRestEvents( logger, client );

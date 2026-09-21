@@ -65,7 +65,7 @@ const BOT_SHARD_COUNT = Math.max(
  * rather than committed, so a debug run is a restart and leaving it out turns it off.
  */
 const DEBUG_PASSTHROUGH = Object.fromEntries(
-    [ "DEBUG_DISCORD", "DEBUG_DISCORD_REST" ]
+    [ "DEBUG_DISCORD", "DEBUG_DISCORD_REST", "DEBUG_GUILD_FETCH" ]
         .filter( ( key ) => process.env[ key ] )
         .map( ( key ) => [ key, process.env[ key ] ] )
 );

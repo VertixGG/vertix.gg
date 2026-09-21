@@ -127,6 +127,33 @@ export function isSubscriptionEntitling(
 }
 
 /**
+ * Function shouldApplySubscriptionEvent() :: Whether this event is worth writing down.
+ *
+ * Webhooks are not a queue. Paddle retries what it thinks failed, and a retry of an older event can
+ * land after a newer one has already been written - which, with a row that is replaced wholesale,
+ * would bring a cancelled subscription back to life.
+ *
+ * Decided on paddle's `occurred_at` rather than on arrival, because arrival order is the thing that
+ * cannot be trusted. Only an event that is *definitely* older is refused: equal timestamps are the
+ * same event delivered twice, and writing it again changes nothing.
+ *
+ * An event carrying no timestamp is applied. That is not an endorsement - it is that refusing a
+ * write on missing ordering information would lose a real subscription to a shape nobody predicted.
+ */
+export function shouldApplySubscriptionEvent( options: {
+    storedOccurredAt: Date | null;
+    incomingOccurredAt: Date | null;
+} ): boolean {
+    const { storedOccurredAt, incomingOccurredAt } = options;
+
+    if ( null === storedOccurredAt || null === incomingOccurredAt ) {
+        return true;
+    }
+
+    return incomingOccurredAt.getTime() >= storedOccurredAt.getTime();
+}
+
+/**
  * Function resolveMaxMasterChannels() :: How many generators a guild may have.
  *
  * The **higher** of what it was granted and what it pays for, never the newer of the two. A grant is

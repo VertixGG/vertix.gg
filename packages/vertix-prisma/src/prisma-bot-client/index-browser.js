@@ -268,6 +268,7 @@ exports.Prisma.SubscriptionScalarFieldEnum = {
   status: 'status',
   currentPeriodEnd: 'currentPeriodEnd',
   scheduledToCancelAt: 'scheduledToCancelAt',
+  occurredAt: 'occurredAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

@@ -3,6 +3,7 @@ import {
     formatMasterChannelAllowance,
     isSubscriptionEntitling,
     isUnlimitedAllowance,
+    shouldApplySubscriptionEvent,
     readBillingTiers,
     resolveMaxMasterChannels
 } from "@vertix.gg/definitions/src/billing-definitions";
@@ -255,6 +256,79 @@ describe( "VertixDefinitions/Billing", () => {
 
             // Assert.
             expect( entitling ).toBe( true );
+        } );
+    } );
+
+    describe( "shouldApplySubscriptionEvent()", () => {
+        const EARLIER = new Date( "2026-09-21T12:00:00.000Z" );
+        const LATER = new Date( "2026-09-21T12:05:00.000Z" );
+
+        it( "should apply an event newer than what is stored", () => {
+            // Act.
+            const apply = shouldApplySubscriptionEvent( {
+                storedOccurredAt: EARLIER,
+                incomingOccurredAt: LATER
+            } );
+
+            // Assert.
+            expect( apply ).toBe( true );
+        } );
+
+        it( "should drop an event older than what is stored", () => {
+            // Act - a retry of something paddle thought failed, arriving after the truth.
+            const apply = shouldApplySubscriptionEvent( {
+                storedOccurredAt: LATER,
+                incomingOccurredAt: EARLIER
+            } );
+
+            // Assert.
+            expect( apply ).toBe( false );
+        } );
+
+        it( "should apply the same event delivered twice", () => {
+            // Act - equal timestamps are one event arriving again, and the write is idempotent.
+            const apply = shouldApplySubscriptionEvent( {
+                storedOccurredAt: EARLIER,
+                incomingOccurredAt: EARLIER
+            } );
+
+            // Assert.
+            expect( apply ).toBe( true );
+        } );
+
+        it( "should apply anything when there is no row to compare against", () => {
+            // Act.
+            const apply = shouldApplySubscriptionEvent( {
+                storedOccurredAt: null,
+                incomingOccurredAt: EARLIER
+            } );
+
+            // Assert.
+            expect( apply ).toBe( true );
+        } );
+
+        it( "should apply an event that carries no timestamp rather than lose it", () => {
+            // Act - refusing on missing ordering information would drop a real subscription for a
+            // payload shape nobody predicted, which is the worse of the two failures.
+            const apply = shouldApplySubscriptionEvent( {
+                storedOccurredAt: LATER,
+                incomingOccurredAt: null
+            } );
+
+            // Assert.
+            expect( apply ).toBe( true );
+        } );
+
+        it( "should not let a delayed event bring a cancelled subscription back", () => {
+            // Act - the whole reason this exists. The row says cancelled because the newer event
+            // landed first; the late `active` one must not overwrite it.
+            const apply = shouldApplySubscriptionEvent( {
+                storedOccurredAt: LATER,
+                incomingOccurredAt: EARLIER
+            } );
+
+            // Assert.
+            expect( apply ).toBe( false );
         } );
     } );
 } );

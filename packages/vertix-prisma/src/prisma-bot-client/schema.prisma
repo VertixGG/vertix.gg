@@ -335,6 +335,10 @@ model Subscription {
   /// Set when a cancellation is scheduled but has not happened yet.
   scheduledToCancelAt  DateTime?
   // ---
+  /// When paddle says the event that wrote this row happened - not when we received it.
+  /// Kept so a delayed event cannot overwrite a newer one that arrived first.
+  occurredAt           DateTime?
+  // ---
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 

@@ -17,6 +17,10 @@ import type { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastif
  */
 interface IPaddleSubscriptionEvent {
     event_type: string;
+
+    /** When paddle says this happened. Not when it arrived - the two disagree on a retry. */
+    occurred_at?: string;
+
     data?: {
         id?: string;
         status?: string;
@@ -75,7 +79,8 @@ function readSubscription( event: IPaddleSubscriptionEvent ) {
         priceId: data.items?.[ 0 ]?.price?.id ?? null,
         status: data.status ?? null,
         currentPeriodEnd: data.current_billing_period?.ends_at ?? null,
-        scheduledToCancelAt: scheduledCancel
+        scheduledToCancelAt: scheduledCancel,
+        occurredAt: event.occurred_at ?? null
     };
 }
 
@@ -175,16 +180,19 @@ const paddleWebhookRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInst
             return reply.send( { ok: true } );
         }
 
+        let written: boolean;
+
         try {
-            await SubscriptionModel.$.upsert( {
+            ( { written } = await SubscriptionModel.$.upsert( {
                 guildId: subscription.guildId,
                 paddleSubscriptionId: subscription.paddleSubscriptionId,
                 paddleCustomerId: subscription.paddleCustomerId,
                 priceId: subscription.priceId,
                 status: subscription.status,
                 currentPeriodEnd: toDate( subscription.currentPeriodEnd ),
-                scheduledToCancelAt: toDate( subscription.scheduledToCancelAt )
-            } );
+                scheduledToCancelAt: toDate( subscription.scheduledToCancelAt ),
+                occurredAt: toDate( subscription.occurredAt )
+            } ) );
         } catch( error ) {
             // Answered 500 so paddle retries. A payment that reached us and did not reach the
             // database is the one failure here somebody finds out about by not getting what they
@@ -195,6 +203,17 @@ const paddleWebhookRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInst
             );
 
             return reply.code( 500 ).send( { error: "not recorded" } );
+        }
+
+        if ( ! written ) {
+            // Paddle retried something we have already moved past. Answered 200: it is not a
+            // failure, and asking for it again would only bring the same stale event back.
+            request.log.info(
+                `Paddle ${ event.event_type } dropped as older than what guild ` +
+                `'${ subscription.guildId }' already has`
+            );
+
+            return reply.send( { ok: true } );
         }
 
         request.log.info(

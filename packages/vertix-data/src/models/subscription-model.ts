@@ -1,5 +1,7 @@
 import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
+import { shouldApplySubscriptionEvent } from "@vertix.gg/definitions/src/billing-definitions";
+
 import { ModelBase } from "@vertix.gg/data/src/bases/model-base";
 
 import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
@@ -19,6 +21,9 @@ export interface ISubscriptionRecord {
     status: string;
     currentPeriodEnd: Date | null;
     scheduledToCancelAt: Date | null;
+
+    /** When paddle says the event happened, which is what decides whether it is worth applying. */
+    occurredAt: Date | null;
 }
 
 /**
@@ -58,19 +63,36 @@ export class SubscriptionModel extends ModelBase<PrismaBot.PrismaClient> {
      * Function upsert() :: Record what paddle last said about a server.
      *
      * The row is replaced wholesale because paddle sends the entire subscription on every event
-     * rather than a diff. That is also what makes the write safe to repeat: events arrive twice or
-     * out of order, and a replace survives both where an incremental update would not.
+     * rather than a diff, which makes a repeated delivery harmless. What a wholesale replace does
+     * *not* survive is a delayed event arriving after a newer one - that would write the older
+     * truth over the newer one - so the event's own timestamp is checked before anything is
+     * written, and one that is definitely older is dropped.
+     *
+     * Reported rather than thrown, because a dropped event is the system working.
      */
-    public async upsert( record: ISubscriptionRecord ) {
+    public async upsert( record: ISubscriptionRecord ): Promise<{ written: boolean }> {
         const { guildId, ...rest } = record;
+
+        const existing = await this.prisma.subscription.findUnique( { where: { guildId } } );
+
+        if ( existing && ! shouldApplySubscriptionEvent( {
+            storedOccurredAt: existing.occurredAt,
+            incomingOccurredAt: record.occurredAt
+        } ) ) {
+            this.debugger.log( this.upsert, `Guild id: '${ guildId }' - Event is older than the stored one, dropped` );
+
+            return { written: false };
+        }
 
         this.debugger.dumpDown( this.upsert, record );
 
-        return this.prisma.subscription.upsert( {
+        await this.prisma.subscription.upsert( {
             where: { guildId },
             create: { guildId, ... rest },
             update: rest
         } );
+
+        return { written: true };
     }
 
     protected getClient() {

@@ -47,26 +47,27 @@ test.describe( "v2 control panel", () => {
         await dynamicChannels.close( channel );
     } );
 
-    test( "the v2 panel offers region, and keeps bitrate off itself", async( { app, dynamicChannels, v2Generator } ) => {
+    test( "the v2 panel keeps region and bitrate off itself", async( { app, dynamicChannels, v2Generator } ) => {
         const channel = await dynamicChannels.open( v2Generator.channelId, "v2" );
 
         const panel = await dynamicChannels.panel( channel );
 
-        // The region button is in v2's default set, so a generator nobody curated carries it -
-        // including the ones made before it existed, which are handed today's default because their
-        // stored set still matches the fingerprint in `button-ids.ts`. That compensation is the whole
-        // reason this draws at all on an old server, and nothing else asserts it.
+        // The button exists and is offered on the buttons screen - what it is not is part of the set
+        // a generator is created with.
         expect(
             BotCatalog.$.panelButtonsV2.map( ( button ) => button.name ),
             "the v2 panel lost its region button"
         ).toContain( "VertixBot/UI-V2/DynamicChannelRegionButton" );
 
+        // A generator nobody curated does not carry it. A set that gains a button on its own is an
+        // arrangement somebody chose being overruled by a deploy, so region is opted into rather than
+        // handed out - and `/voice region` reaches the same screen without taking a slot at all.
         await expect(
             app.messages.labelledButton( panel, BotCatalog.$.panelButtonV2( "VertixBot/UI-V2/DynamicChannelRegionButton" ).label )
-        ).toBeVisible();
+        ).toHaveCount( 0 );
 
-        // Bitrate stays a menu on the screen that button opens. A button of its own would take a
-        // slot in a set an admin arranged, to ask a question the region screen already asks.
+        // Bitrate stays a menu on the screen that button opens, for the same reason and one more: it
+        // asks a question the region screen already asks.
         await expect(
             app.messages.selectMenu( panel, BotCatalog.$.selectPlaceholder( "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu" ) )
         ).toHaveCount( 0 );

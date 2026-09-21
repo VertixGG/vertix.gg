@@ -118,24 +118,27 @@ describe( "VertixBot/Definitions/ButtonIds", () => {
      * saying which side of the fingerprint it falls on fails this, rather than silently hiding the
      * button from every generator that never curated its buttons.
      *
-     * Two kinds of button fall outside the fingerprint, and they are excluded for opposite reasons.
-     * Lfm is out of the default set, so no generator ever stored it. Region is in the default set
-     * but was added after the fingerprint was written, so the generators made since store it and
-     * the ones made before are handed it by the compensation - which is what
-     * `V2_DEFAULT_BUTTONS_ADDED_SINCE` records.
+     * Two kinds of button fall outside the fingerprint. One is out of the default set, so no
+     * generator ever stored it - lfm and region are both this. The other joined the default set
+     * after the fingerprint was written, so the generators made since store it and the ones made
+     * before are handed it by the compensation, which is what `V2_DEFAULT_BUTTONS_ADDED_SINCE`
+     * records; it is empty while v2 gains only opt-in buttons.
+     *
+     * Asked of the buttons rather than listed here. This excluded lfm by its number, so region
+     * leaving the default set would have failed this test for being absent from a fingerprint it
+     * was never meant to be in.
      */
     it( "fingerprints the set as it stood before lfm", async() => {
         const { v2Buttons } = await loadGroups();
 
         const pickable = v2Buttons
-            .map( ( button ) => String( button.getId() ) )
-            .filter( ( id ) => V2_BUTTONS.some( ( button ) => button.id === id ) );
+            .filter( ( button ) => V2_BUTTONS.some( ( known ) => known.id === String( button.getId() ) ) );
 
-        const outsideTheFingerprint = ( id: string ) =>
-            "15" === id || V2_DEFAULT_BUTTONS_ADDED_SINCE.includes( id );
+        const inTheFingerprint = ( button: typeof pickable[ number ] ) =>
+            button.isInDefaultSet() && ! V2_DEFAULT_BUTTONS_ADDED_SINCE.includes( String( button.getId() ) );
 
         expect( [ ...V2_DEFAULT_BUTTONS_BEFORE_LFM ].sort() )
-            .toEqual( pickable.filter( ( id ) => ! outsideTheFingerprint( id ) ).sort() );
+            .toEqual( pickable.filter( inTheFingerprint ).map( ( button ) => String( button.getId() ) ).sort() );
     } );
 
     describe( "isUntouchedV2DefaultSet()", () => {

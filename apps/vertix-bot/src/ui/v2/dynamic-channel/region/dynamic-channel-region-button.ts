@@ -20,6 +20,18 @@ export class DynamicChannelRegionButton extends DynamicChannelButtonBase {
         return 19;
     }
 
+    /**
+     * Offered on the buttons screen rather than drawn on every panel.
+     *
+     * A generator that was set up before this existed has an arrangement somebody chose, and a set
+     * that gains a button on its own is that choice being overruled by a deploy. Region is one press
+     * away for anyone who wants it, and `/voice region` reaches the same screen without a panel slot
+     * at all - so nothing is out of reach for not being here.
+     */
+    public isInDefaultSet(): boolean {
+        return false;
+    }
+
     public getSortId() {
         return 8;
     }

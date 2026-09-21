@@ -235,13 +235,29 @@ the part worth pinning: the oldest keep working and the extras stop, nobody choo
 stored, so an allowance that reaches the wrong generators is worse than one that reaches none.
 Checked by breaking it — swapping `slice( 0, allowed )` for `slice( -allowed )` fails five of them.
 
-**`M-13` — the room cap, still not doable cheaply.** Twenty rooms against `CHANNEL_OPEN_SPACING_MS`.
+**`M-13` — the room cap. Done, and not the way it was scoped.** This was written off as too
+expensive because an end-to-end version needs twenty rooms opened against
+`CHANNEL_OPEN_SPACING_MS`. That is still true, and it was the wrong thing to measure: the rule is
+two questions asked in a particular order, and neither of them needs a room to exist.
 
-**`M-24` — `vertix-api` has no test harness at all.** No `test/` directory, no `jest.config.ts`, and
-it appears in neither runner. So the ownership guard, its two cache windows and the Paddle lookup
-are covered by nothing. Per the repository guidelines a package gaining its first spec needs the
-config, the tsconfig, a `<name>:jest` script and a line in both runners — otherwise it passes by
-never running.
+The decision moved out of `onJoinMasterChannel` into `findChannelCreateRefusal` — two hundred lines
+of Discord state were the reason it looked untestable, and none of that is what decides this.
+Eight tests: the twentieth room still made and the twenty-first refused, the guild's own limit
+carried rather than the default, and the plan refused ahead of the cap when both are true — checked
+by asking whether the rooms were counted at all, which they are not.
+
+Checked by breaking it twice. `>=` to `>` fails two; asking the cap before the plan fails two.
+
+**`M-24` — `vertix-api` has a test harness. Done.** It had none at all, which was fine while it was
+routes over a database and stopped being fine when the thing deciding whether you may act on
+somebody else's server started living there. Registered in **both** runners, because a package in
+neither passes by never running.
+
+Twenty-four tests. Ownership refused for a guild somebody is only a member of; a stale sign-in
+reported as its own outcome rather than a refusal; the five-minute list answering without touching
+Discord, and the hour-long stale window used when Discord cannot be reached and not used past it.
+Checked by dropping the `owner` filter — treating membership as ownership, which is the actual
+vulnerability — which fails four.
 
 ## Deliberately not here
 
@@ -276,8 +292,6 @@ Also open:
 
 - **Prices are quoted in two places and charged in one.** Nothing reads Paddle's number back, so a
   tier repriced there has to be repriced in `billing-definitions.ts` too.
-- **`M-24`** — the API test harness.
-- **`M-13`** — the room cap end to end.
 - A stale sandbox subscription row will need clearing at the cutover: it names a sandbox price that
   matches nothing live, so it would quietly stop granting anything.
 - Whether the free tier stays at 2 once there is something to sell.
@@ -300,8 +314,6 @@ What is left, in order:
 3. The live API key, into `.env`.
 4. Swap the environment, rebuild and redeploy the dashboard, restart the API, clear the stale row.
 5. A real purchase on live, then a real cancellation.
-6. `M-24` and `M-13`.
-
 **Already done and not repeated here:** the room cap (`M-01` to `M-04`), the enforcement and both
 refusals (`M-08` to `M-11`), and the plans page. None of them were affected by the change of
 provider — which is the point of the allowance having been one number all along.

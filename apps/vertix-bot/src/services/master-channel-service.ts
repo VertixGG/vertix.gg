@@ -104,6 +104,17 @@ interface IMasterChannelCreateResult {
     db?: ChannelExtended;
 }
 
+/**
+ * Why a generator will not make a room.
+ *
+ * A closed set rather than a message, because the screen that shows it picks its own words per
+ * reason - and `isGeneratorFull` carries the limit, since "full" without the number it is full at
+ * leaves somebody guessing how many they would have to close.
+ */
+export type TChannelCreateRefusal =
+    | { isNotCovered: true }
+    | { isGeneratorFull: true; roomsLimit: number };
+
 const MAX_TIMEOUT_PER_CREATE = 10 * 1000;
 
 interface ICreateControlChannelArgs {
@@ -580,33 +591,10 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             }
         }
 
-        // Asked before the room cap, because a generator the plan does not reach makes no rooms at
-        // all - telling somebody it is full would be true and useless.
-        const entitlementService = ServiceLocator.$.get<EntitlementService>( "VertixBot/Services/Entitlement" );
+        const refusal = await this.findChannelCreateRefusal( guild.id, masterChannelDB.id, masterChannelDB.channelId );
 
-        if ( ! await entitlementService.isMasterChannelCovered( guild.id, masterChannelDB.id ) ) {
-            this.logger.warn(
-                this.onJoinMasterChannel,
-                `Guild id: '${ guild.id }' - Master channel id: '${ masterChannelDB.channelId }' is past the ` +
-                    "server's allowance, refusing to create a channel"
-            );
-
-            await this.notifyChannelCreateFailed( newState, { isNotCovered: true } );
-
-            return;
-        }
-
-        const roomsLimit = ( await GuildDataManager.$.getAllSettings( guild.id ) ).maxActiveDynamicChannels,
-            roomsOpen = await ChannelModel.$.getDynamicsCountByMasterId( guild.id, masterChannelDB.channelId );
-
-        if ( roomsOpen >= roomsLimit ) {
-            this.logger.warn(
-                this.onJoinMasterChannel,
-                `Guild id: '${ guild.id }' - Master channel id: '${ masterChannelDB.channelId }' is at its ` +
-                    `limit of '${ roomsLimit }' open channels, refusing to create another`
-            );
-
-            await this.notifyChannelCreateFailed( newState, { isGeneratorFull: true, roomsLimit } );
+        if ( refusal ) {
+            await this.notifyChannelCreateFailed( newState, refusal );
 
             return;
         }
@@ -649,9 +637,53 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
      * Without this the three layers below only write to the log and return, so the user sits in the
      * master channel with nothing happening and no reason given - which reads as the bot being down.
      */
+    /**
+     * Function findChannelCreateRefusal() :: Why this generator will make no room, if it will not.
+     *
+     * The two reasons are asked in this order deliberately. A generator the plan does not reach
+     * makes no rooms at all, so telling somebody it is full would be true and useless - they would
+     * go and close one, and still be refused.
+     *
+     * Undefined rather than a reason is the ordinary case, which is why it reads as "find a reason
+     * to refuse" rather than "check whether it is allowed": there is nothing to answer with when a
+     * generator is simply working.
+     */
+    private async findChannelCreateRefusal(
+        guildId: string,
+        masterChannelDbId: string,
+        masterChannelId: string
+    ): Promise<TChannelCreateRefusal | undefined> {
+        const entitlementService = ServiceLocator.$.get<EntitlementService>( "VertixBot/Services/Entitlement" );
+
+        if ( ! await entitlementService.isMasterChannelCovered( guildId, masterChannelDbId ) ) {
+            this.logger.warn(
+                this.findChannelCreateRefusal,
+                `Guild id: '${ guildId }' - Master channel id: '${ masterChannelId }' is past the ` +
+                    "server's allowance, refusing to create a channel"
+            );
+
+            return { isNotCovered: true };
+        }
+
+        const roomsLimit = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxActiveDynamicChannels,
+            roomsOpen = await ChannelModel.$.getDynamicsCountByMasterId( guildId, masterChannelId );
+
+        if ( roomsOpen >= roomsLimit ) {
+            this.logger.warn(
+                this.findChannelCreateRefusal,
+                `Guild id: '${ guildId }' - Master channel id: '${ masterChannelId }' is at its ` +
+                    `limit of '${ roomsLimit }' open channels, refusing to create another`
+            );
+
+            return { isGeneratorFull: true, roomsLimit };
+        }
+
+        return undefined;
+    }
+
     private async notifyChannelCreateFailed(
         newState: VoiceState,
-        refusal?: { isGeneratorFull: true; roomsLimit: number } | { isNotCovered: true }
+        refusal?: TChannelCreateRefusal
     ) {
         const userId = newState.member?.id;
 

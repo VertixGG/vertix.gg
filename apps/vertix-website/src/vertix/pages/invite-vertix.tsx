@@ -1,4 +1,4 @@
-const CLIENT_ID = "1538844311062581339";
+import { DISCORD_APP_ID } from "@vertix.gg/website/src/vertix/shared/discord-app";
 
 /**
  * What each button asks Discord for.
@@ -30,7 +30,7 @@ export const onAddToServerClick = ( type: keyof typeof INVITE_PERMISSIONS ) => {
     window.gtag( "event", "add_to_server", { type, "send_to": "G-B87MBQLL99" } );
 
     window.open(
-        `https://discord.com/oauth2/authorize?client_id=${ CLIENT_ID }` +
+        `https://discord.com/oauth2/authorize?client_id=${ DISCORD_APP_ID }` +
         `&permissions=${ INVITE_PERMISSIONS[ type ] }&scope=bot%20applications.commands`
     );
 };

@@ -167,6 +167,17 @@ export default async function Main( { enableListeners }: {
 
     logger.log( Main, "Bot is starting..." );
 
+    // Said out loud because a process that is wrong about which shard it is does not fail - it
+    // quietly holds guilds that belong to another one, and the only symptom is two bots answering.
+    // `{"shards":"auto"}` here while SHARD_IDS is set means the pair disagreed and only one arrived.
+    const shardClientOptions = getShardClientOptions();
+
+    logger.info(
+        Main,
+        `Shard assignment: ${ JSON.stringify( shardClientOptions ) } ` +
+        `(SHARD_COUNT='${ process.env.SHARD_COUNT ?? "" }', SHARD_IDS='${ process.env.SHARD_IDS ?? "" }')`
+    );
+
     const client = new Client( {
         intents: [
             "GuildIntegrations",
@@ -177,9 +188,9 @@ export default async function Main( { enableListeners }: {
             "DirectMessages"
         ],
         partials: [ Partials.Channel ],
-        // `{ shards: "auto" }` unless SHARD_COUNT and SHARD_IDS are both set, which no deployment
-        // sets today - so this is the same client it has always been until someone splits it.
-        ... getShardClientOptions(),
+        // `{ shards: "auto" }` unless SHARD_COUNT and SHARD_IDS are both set. Resolved once above
+        // and reused, so what the log reports is the object the client was actually built with.
+        ... shardClientOptions,
         makeCache: createClientCacheFactory(),
         sweepers: createClientSweepers()
     } );

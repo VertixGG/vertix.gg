@@ -6,7 +6,7 @@ import { Client, Partials } from "discord.js";
 
 import login from "@vertix.gg/base/src/discord/login";
 
-import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
+import { isDebugEnabled, isDebugTypeEnabled } from "@vertix.gg/utils/src/environment";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
@@ -42,7 +42,7 @@ import type { ClientEvents } from "discord.js";
 import type { RestEvents } from "@discordjs/rest";
 
 function debugDiscordApiEvents( logger: Logger, client: Client<boolean> ) {
-    if ( isDebugEnabled( "DISCORD", "" ) ) {
+    if ( isDebugTypeEnabled( "DISCORD" ) ) {
         const debug = ( ...args: any[] ) => {
             logger.debug( pc.red( "DISCORD" ), "", args );
         };
@@ -138,7 +138,7 @@ function debugDiscordApiEvents( logger: Logger, client: Client<boolean> ) {
 }
 
 function debugDiscordApiRestEvents( logger: Logger, client: Client<boolean> ) {
-    if ( isDebugEnabled( "DISCORD_REST", "" ) ) {
+    if ( isDebugTypeEnabled( "DISCORD_REST" ) ) {
         const debug = ( ...args: any[] ) => {
             logger.debug( pc.red( "DISCORD REST" ), "", args );
         };

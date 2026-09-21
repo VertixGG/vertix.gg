@@ -57,6 +57,19 @@ const BOT_SHARD_COUNT = Math.max(
     Number.parseInt( process.env.PM2_BOT_SHARD_COUNT || "1", 10 ) || 1
 );
 
+/**
+ * Debug switches carried from the shell that starts pm2 into the app.
+ *
+ * pm2 does not read `.env`, and `pm2-exec.sh` only sets a key it does not already find - so without
+ * this, `DEBUG_DISCORD=... bun run vertix:pm2:restart` reaches the script and stops there. Carried
+ * rather than committed, so a debug run is a restart and leaving it out turns it off.
+ */
+const DEBUG_PASSTHROUGH = Object.fromEntries(
+    [ "DEBUG_DISCORD", "DEBUG_DISCORD_REST" ]
+        .filter( ( key ) => process.env[ key ] )
+        .map( ( key ) => [ key, process.env[ key ] ] )
+);
+
 function botApps() {
     const base = {
         ... shared,
@@ -67,7 +80,11 @@ function botApps() {
     };
 
     if ( 1 === BOT_SHARD_COUNT ) {
-        return [ { ... base, name: "vertix-bot", env: { LOGGER_PROCESS_NAME: "vertix-bot" } } ];
+        return [ {
+            ... base,
+            name: "vertix-bot",
+            env: { LOGGER_PROCESS_NAME: "vertix-bot", ... DEBUG_PASSTHROUGH },
+        } ];
     }
 
     // `pm2-exec.sh` only sets a key it does not already find in the environment, so what is named
@@ -79,6 +96,7 @@ function botApps() {
             LOGGER_PROCESS_NAME: `vertix-bot-${ shardId }`,
             SHARD_COUNT: String( BOT_SHARD_COUNT ),
             SHARD_IDS: String( shardId ),
+            ... DEBUG_PASSTHROUGH,
         },
     } ) );
 }

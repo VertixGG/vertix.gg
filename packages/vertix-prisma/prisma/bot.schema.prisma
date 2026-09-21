@@ -339,6 +339,12 @@ model Subscription {
   /// Kept so a delayed event cannot overwrite a newer one that arrived first.
   occurredAt          DateTime?
   // ---
+  /// Paddle's own hosted pages for this subscription, sent on every event. Stored rather than
+  /// built, because they carry a signed token - there is no way to construct one from the ids.
+  /// Anyone holding one can act on the subscription, so they are served to the guild owner only.
+  updatePaymentMethodUrl String?
+  cancelUrl              String?
+  // ---
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 

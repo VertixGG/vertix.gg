@@ -315,32 +315,38 @@ model AICaptchaChallenge {
 /// `priceId` rather than a tier name, because a tier is this deployment's reading of a price and a
 /// name is a thing somebody renames in the paddle dashboard.
 model Subscription {
-  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                     String    @id @default(auto()) @map("_id") @db.ObjectId
   // ---
   /// The discord guild this pays for, taken from the checkout's `custom_data`.
-  guildId              String    @unique
+  guildId                String    @unique
   // ---
   /// Paddle's own ids, kept so a row can be reconciled against paddle by hand.
-  paddleSubscriptionId String    @unique
-  paddleCustomerId     String?
+  paddleSubscriptionId   String    @unique
+  paddleCustomerId       String?
   // ---
   /// The price the subscription is billed against - `pri_…`.
-  priceId              String
+  priceId                String
   /// Paddle's own word: active, trialing, past_due, paused or canceled.
-  status               String
+  status                 String
   // ---
   /// The end of the period already paid for, which is when an allowance stops - whether the
   /// subscription was cancelled, or simply ran out.
-  currentPeriodEnd     DateTime?
+  currentPeriodEnd       DateTime?
   /// Set when a cancellation is scheduled but has not happened yet.
-  scheduledToCancelAt  DateTime?
+  scheduledToCancelAt    DateTime?
   // ---
   /// When paddle says the event that wrote this row happened - not when we received it.
   /// Kept so a delayed event cannot overwrite a newer one that arrived first.
-  occurredAt           DateTime?
+  occurredAt             DateTime?
   // ---
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  /// Paddle's own hosted pages for this subscription, sent on every event. Stored rather than
+  /// built, because they carry a signed token - there is no way to construct one from the ids.
+  /// Anyone holding one can act on the subscription, so they are served to the guild owner only.
+  updatePaymentMethodUrl String?
+  cancelUrl              String?
+  // ---
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
   @@index([status])
 }

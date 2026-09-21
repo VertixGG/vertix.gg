@@ -2,6 +2,7 @@ import Fastify from "fastify";
 
 import healthRoutePlugin from "@vertix.gg/api/src/server/routes/health-route";
 import paddleWebhookRoutePlugin from "@vertix.gg/api/src/server/routes/paddle-webhook-route";
+import subscriptionRoutePlugin from "@vertix.gg/api/src/server/routes/subscription-route";
 import buttonSheetRoutePlugin from "@vertix.gg/api/src/server/routes/button-sheet-route";
 import buttonEmojisRoutePlugin from "@vertix.gg/api/src/server/routes/button-emojis-route";
 import modulesRoutePlugin from "@vertix.gg/api/src/server/routes/modules-route";
@@ -91,6 +92,7 @@ export async function createApp(): Promise<FastifyInstance> {
         await protectedRoutes.register( managementRoutePlugin );
         await protectedRoutes.register( customizationRoutePlugin );
         await protectedRoutes.register( languageRoutePlugin );
+        await protectedRoutes.register( subscriptionRoutePlugin );
     }, { prefix: API_PREFIX } );
 
     warmEmojiManifest();

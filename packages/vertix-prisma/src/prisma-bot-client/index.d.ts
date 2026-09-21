@@ -14366,6 +14366,8 @@ export namespace Prisma {
     currentPeriodEnd: Date | null
     scheduledToCancelAt: Date | null
     occurredAt: Date | null
+    updatePaymentMethodUrl: string | null
+    cancelUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14380,6 +14382,8 @@ export namespace Prisma {
     currentPeriodEnd: Date | null
     scheduledToCancelAt: Date | null
     occurredAt: Date | null
+    updatePaymentMethodUrl: string | null
+    cancelUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14394,6 +14398,8 @@ export namespace Prisma {
     currentPeriodEnd: number
     scheduledToCancelAt: number
     occurredAt: number
+    updatePaymentMethodUrl: number
+    cancelUrl: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -14410,6 +14416,8 @@ export namespace Prisma {
     currentPeriodEnd?: true
     scheduledToCancelAt?: true
     occurredAt?: true
+    updatePaymentMethodUrl?: true
+    cancelUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14424,6 +14432,8 @@ export namespace Prisma {
     currentPeriodEnd?: true
     scheduledToCancelAt?: true
     occurredAt?: true
+    updatePaymentMethodUrl?: true
+    cancelUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14438,6 +14448,8 @@ export namespace Prisma {
     currentPeriodEnd?: true
     scheduledToCancelAt?: true
     occurredAt?: true
+    updatePaymentMethodUrl?: true
+    cancelUrl?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -14525,6 +14537,8 @@ export namespace Prisma {
     currentPeriodEnd: Date | null
     scheduledToCancelAt: Date | null
     occurredAt: Date | null
+    updatePaymentMethodUrl: string | null
+    cancelUrl: string | null
     createdAt: Date
     updatedAt: Date
     _count: SubscriptionCountAggregateOutputType | null
@@ -14556,6 +14570,8 @@ export namespace Prisma {
     currentPeriodEnd?: boolean
     scheduledToCancelAt?: boolean
     occurredAt?: boolean
+    updatePaymentMethodUrl?: boolean
+    cancelUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["subscription"]>
@@ -14572,11 +14588,13 @@ export namespace Prisma {
     currentPeriodEnd?: boolean
     scheduledToCancelAt?: boolean
     occurredAt?: boolean
+    updatePaymentMethodUrl?: boolean
+    cancelUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "paddleSubscriptionId" | "paddleCustomerId" | "priceId" | "status" | "currentPeriodEnd" | "scheduledToCancelAt" | "occurredAt" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
+  export type SubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "paddleSubscriptionId" | "paddleCustomerId" | "priceId" | "status" | "currentPeriodEnd" | "scheduledToCancelAt" | "occurredAt" | "updatePaymentMethodUrl" | "cancelUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
 
   export type $SubscriptionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Subscription"
@@ -14614,6 +14632,13 @@ export namespace Prisma {
        * Kept so a delayed event cannot overwrite a newer one that arrived first.
        */
       occurredAt: Date | null
+      /**
+       * Paddle's own hosted pages for this subscription, sent on every event. Stored rather than
+       * built, because they carry a signed token - there is no way to construct one from the ids.
+       * Anyone holding one can act on the subscription, so they are served to the guild owner only.
+       */
+      updatePaymentMethodUrl: string | null
+      cancelUrl: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["subscription"]>
@@ -15017,6 +15042,8 @@ export namespace Prisma {
     readonly currentPeriodEnd: FieldRef<"Subscription", 'DateTime'>
     readonly scheduledToCancelAt: FieldRef<"Subscription", 'DateTime'>
     readonly occurredAt: FieldRef<"Subscription", 'DateTime'>
+    readonly updatePaymentMethodUrl: FieldRef<"Subscription", 'String'>
+    readonly cancelUrl: FieldRef<"Subscription", 'String'>
     readonly createdAt: FieldRef<"Subscription", 'DateTime'>
     readonly updatedAt: FieldRef<"Subscription", 'DateTime'>
   }
@@ -15562,6 +15589,8 @@ export namespace Prisma {
     currentPeriodEnd: 'currentPeriodEnd',
     scheduledToCancelAt: 'scheduledToCancelAt',
     occurredAt: 'occurredAt',
+    updatePaymentMethodUrl: 'updatePaymentMethodUrl',
+    cancelUrl: 'cancelUrl',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -16616,6 +16645,8 @@ export namespace Prisma {
     currentPeriodEnd?: DateTimeNullableFilter<"Subscription"> | Date | string | null
     scheduledToCancelAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
     occurredAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    updatePaymentMethodUrl?: StringNullableFilter<"Subscription"> | string | null
+    cancelUrl?: StringNullableFilter<"Subscription"> | string | null
     createdAt?: DateTimeFilter<"Subscription"> | Date | string
     updatedAt?: DateTimeFilter<"Subscription"> | Date | string
   }
@@ -16630,6 +16661,8 @@ export namespace Prisma {
     currentPeriodEnd?: SortOrder
     scheduledToCancelAt?: SortOrder
     occurredAt?: SortOrder
+    updatePaymentMethodUrl?: SortOrder
+    cancelUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -16647,6 +16680,8 @@ export namespace Prisma {
     currentPeriodEnd?: DateTimeNullableFilter<"Subscription"> | Date | string | null
     scheduledToCancelAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
     occurredAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    updatePaymentMethodUrl?: StringNullableFilter<"Subscription"> | string | null
+    cancelUrl?: StringNullableFilter<"Subscription"> | string | null
     createdAt?: DateTimeFilter<"Subscription"> | Date | string
     updatedAt?: DateTimeFilter<"Subscription"> | Date | string
   }, "id" | "guildId" | "paddleSubscriptionId">
@@ -16661,6 +16696,8 @@ export namespace Prisma {
     currentPeriodEnd?: SortOrder
     scheduledToCancelAt?: SortOrder
     occurredAt?: SortOrder
+    updatePaymentMethodUrl?: SortOrder
+    cancelUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: SubscriptionCountOrderByAggregateInput
@@ -16681,6 +16718,8 @@ export namespace Prisma {
     currentPeriodEnd?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
     scheduledToCancelAt?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
     occurredAt?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
+    updatePaymentMethodUrl?: StringNullableWithAggregatesFilter<"Subscription"> | string | null
+    cancelUrl?: StringNullableWithAggregatesFilter<"Subscription"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Subscription"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   }
@@ -17677,6 +17716,8 @@ export namespace Prisma {
     currentPeriodEnd?: Date | string | null
     scheduledToCancelAt?: Date | string | null
     occurredAt?: Date | string | null
+    updatePaymentMethodUrl?: string | null
+    cancelUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17691,6 +17732,8 @@ export namespace Prisma {
     currentPeriodEnd?: Date | string | null
     scheduledToCancelAt?: Date | string | null
     occurredAt?: Date | string | null
+    updatePaymentMethodUrl?: string | null
+    cancelUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17704,6 +17747,8 @@ export namespace Prisma {
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scheduledToCancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     occurredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatePaymentMethodUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17717,6 +17762,8 @@ export namespace Prisma {
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scheduledToCancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     occurredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatePaymentMethodUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17731,6 +17778,8 @@ export namespace Prisma {
     currentPeriodEnd?: Date | string | null
     scheduledToCancelAt?: Date | string | null
     occurredAt?: Date | string | null
+    updatePaymentMethodUrl?: string | null
+    cancelUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17744,6 +17793,8 @@ export namespace Prisma {
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scheduledToCancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     occurredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatePaymentMethodUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17757,6 +17808,8 @@ export namespace Prisma {
     currentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scheduledToCancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     occurredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatePaymentMethodUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18529,6 +18582,8 @@ export namespace Prisma {
     currentPeriodEnd?: SortOrder
     scheduledToCancelAt?: SortOrder
     occurredAt?: SortOrder
+    updatePaymentMethodUrl?: SortOrder
+    cancelUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18543,6 +18598,8 @@ export namespace Prisma {
     currentPeriodEnd?: SortOrder
     scheduledToCancelAt?: SortOrder
     occurredAt?: SortOrder
+    updatePaymentMethodUrl?: SortOrder
+    cancelUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18557,6 +18614,8 @@ export namespace Prisma {
     currentPeriodEnd?: SortOrder
     scheduledToCancelAt?: SortOrder
     occurredAt?: SortOrder
+    updatePaymentMethodUrl?: SortOrder
+    cancelUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }

@@ -7,7 +7,8 @@ export const API_ROUTES = {
     BUTTON_SHEET: "/tools/button-sheet.png",
     BUTTON_EMOJIS: "/tools/button-emojis.json",
     BUTTON_CATALOGUE: "/tools/buttons.json",
-    PADDLE_WEBHOOK: "/webhooks/paddle"
+    PADDLE_WEBHOOK: "/webhooks/paddle",
+    SUBSCRIPTION: "/subscription/:guildId"
 } as const;
 
 export const API_PREFIX = "/api";

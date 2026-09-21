@@ -29,6 +29,7 @@ interface IPaddleSubscriptionEvent {
         items?: Array<{ price?: { id?: string } }>;
         current_billing_period?: { ends_at?: string } | null;
         scheduled_change?: { action?: string; effective_at?: string } | null;
+        management_urls?: { update_payment_method?: string; cancel?: string } | null;
     };
 }
 
@@ -80,7 +81,9 @@ function readSubscription( event: IPaddleSubscriptionEvent ) {
         status: data.status ?? null,
         currentPeriodEnd: data.current_billing_period?.ends_at ?? null,
         scheduledToCancelAt: scheduledCancel,
-        occurredAt: event.occurred_at ?? null
+        occurredAt: event.occurred_at ?? null,
+        updatePaymentMethodUrl: data.management_urls?.update_payment_method ?? null,
+        cancelUrl: data.management_urls?.cancel ?? null
     };
 }
 
@@ -191,7 +194,9 @@ const paddleWebhookRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInst
                 status: subscription.status,
                 currentPeriodEnd: toDate( subscription.currentPeriodEnd ),
                 scheduledToCancelAt: toDate( subscription.scheduledToCancelAt ),
-                occurredAt: toDate( subscription.occurredAt )
+                occurredAt: toDate( subscription.occurredAt ),
+                updatePaymentMethodUrl: subscription.updatePaymentMethodUrl,
+                cancelUrl: subscription.cancelUrl
             } ) );
         } catch( error ) {
             // Answered 500 so paddle retries. A payment that reached us and did not reach the

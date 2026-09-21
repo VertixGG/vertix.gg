@@ -34,7 +34,12 @@ export const E2E_TIMEOUTS = {
     // minutes later - both channels that failed this way were gone by the time the run finished. A
     // minute is the right patience for a channel being tidied up beside the thing under test; it is
     // the wrong patience when the tidying up *is* the thing under test.
-    CHANNEL_REMOVED_SLOW_MS: 150_000,
+    //
+    // Two and a half minutes was the first guess at that and was not enough either, so this is now
+    // long enough to stop guessing: the wait returns the moment the channel goes, so a number this
+    // size costs nothing whenever discord is keeping up, and is only ever spent when it is not. What
+    // it buys is that a genuine regression - the bot not asking at all - still reports, just slowly.
+    CHANNEL_REMOVED_SLOW_MS: 240_000,
     GUILD_RESET_MS: 120_000,
     INTERACTIVE_LOGIN_MS: 300_000,
     // A claim is not offered when the owner leaves, but when the owner has been gone long enough and

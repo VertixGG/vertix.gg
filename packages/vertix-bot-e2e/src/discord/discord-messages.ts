@@ -18,6 +18,9 @@ import type { Locator, Page } from "@playwright/test";
  */
 const MESSAGES_SEARCHED = 15;
 
+/** How many times `openMenu()` will press a menu that answers by staying shut. */
+const MENU_OPEN_ATTEMPTS = 3;
+
 /**
  * What the message list looked like before an interaction.
  *
@@ -460,12 +463,48 @@ export class DiscordMessages {
         );
     }
 
+    /**
+     * Opens a menu and waits for it to list something, opening it again when it does not.
+     *
+     * A popout does not survive the message under it being redrawn. These menus sit on an ephemeral
+     * the bot edits, react tears the list out from under the press that opened it, and what is left
+     * is a shut menu and a wait for an option that can no longer arrive - the accessibility tree at
+     * one of these failures held no listbox and no options at all, which is a menu that is closed
+     * rather than one that is empty.
+     *
+     * `clickOption()` retries the press on an option; nothing retried the opening, so a menu that
+     * shut itself between the two was waited out three times over and then reported as a menu that
+     * offered nothing. Which is how "select menus offer no options" survived being looked into twice:
+     * it never reproduces on a quiet guild, because nothing is redrawing the message.
+     *
+     * Gives up quietly rather than throwing - every caller has its own account of what the menu
+     * should have offered, and those read better than anything this could say.
+     */
+    private async openMenu( message: Locator, placeholder: string ): Promise<void> {
+        for ( let attempt = 1; ; attempt++ ) {
+            await ( await this.resolveSelectMenu( message, placeholder ) ).click();
+
+            const listed = await this.page
+                .locator( DISCORD_DOM.SELECT_MENU_OPTION )
+                .first()
+                .waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } )
+                .then( () => true )
+                .catch( () => false );
+
+            if ( listed || MENU_OPEN_ATTEMPTS === attempt ) {
+                return;
+            }
+
+            await this.page.waitForTimeout( E2E_INTERVALS.SETTLE_MS );
+        }
+    }
+
     public async chooseOption( message: Locator, placeholder: string, optionLabel: string ): Promise<void> {
         if ( await this.isUserSelect( message, placeholder ) ) {
             return this.chooseMember( message, placeholder, optionLabel );
         }
 
-        await ( await this.resolveSelectMenu( message, placeholder ) ).click();
+        await this.openMenu( message, placeholder );
 
         const option = () => this.page
             .locator( DISCORD_DOM.SELECT_MENU_OPTION )
@@ -593,11 +632,9 @@ export class DiscordMessages {
      * there is nothing to match on. Returns what it picked, so a test can still say which.
      */
     public async chooseFirstOption( message: Locator, placeholder: string ): Promise<string> {
-        await ( await this.resolveSelectMenu( message, placeholder ) ).click();
+        await this.openMenu( message, placeholder );
 
         const option = () => this.page.locator( DISCORD_DOM.SELECT_MENU_OPTION ).first();
-
-        await option().waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } );
 
         // Read before the press, and not worth failing over: no caller uses what comes back, and a
         // menu still filling itself in will happily replace this row between the read and the click.
@@ -617,12 +654,7 @@ export class DiscordMessages {
      * What a menu offers, without choosing any of it.
      */
     public async optionLabelsOf( message: Locator, placeholder: string ): Promise<string[]> {
-        await ( await this.resolveSelectMenu( message, placeholder ) ).click();
-
-        await this.page
-            .locator( DISCORD_DOM.SELECT_MENU_OPTION )
-            .first()
-            .waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } );
+        await this.openMenu( message, placeholder );
 
         const labels = await this.optionLabels();
 

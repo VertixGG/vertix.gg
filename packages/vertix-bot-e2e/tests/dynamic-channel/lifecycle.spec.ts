@@ -11,7 +11,7 @@ import { templateToPattern } from "@vertix.gg/bot-e2e/src/discord/discord-text";
  * these two are about can take `CHANNEL_REMOVED_SLOW_MS` on top - which together is more than the
  * default a test gets, so the two that wait for the delete say how long they need.
  */
-const DELETE_TEST_MS = 300_000;
+const DELETE_TEST_MS = 420_000;
 
 /**
  * The whole point of the bot, start to finish.

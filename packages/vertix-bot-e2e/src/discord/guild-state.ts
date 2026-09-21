@@ -118,7 +118,13 @@ export class GuildState {
         );
 
         if ( ! gone ) {
-            throw new Error( `Channel ${ channelId } still exists - the bot did not remove it.` );
+            // Says how long it waited, because that is the open question. Every channel that has
+            // failed this way was gone by the time the run finished, so what is not known is how far
+            // past this the delete actually lands - and "still exists" on its own never said.
+            throw new Error(
+                `Channel ${ channelId } still exists after ${ Math.round( timeout / 1000 ) }s - ` +
+                "either the bot never asked discord to remove it, or discord has not got to it yet."
+            );
         }
     }
 

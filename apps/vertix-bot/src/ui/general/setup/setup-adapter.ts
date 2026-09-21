@@ -628,9 +628,9 @@ async function onLanguageChooseClicked(
 
 const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilder<ISetupArgs>( "VertixBot/UI-General/SetupEmbed", SETUP_EMBED_VARS ) )
     .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
-    .setTitle( "🛠  Setup Vertix" )
+    .setTitle( "🛠  Setup VoiceChannels" )
     .setDescription( ( vars ) =>
-        "Discover the limitless possibilities of **Vertix**!\n" +
+        "Discover the limitless possibilities of **VoiceChannels**!\n" +
         "Customize and optimize your server to perfection.\n\n" +
         "Master Channels are dynamic voice channel generators, each with its own unique configuration.\n\n" +
         "Our badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n" +

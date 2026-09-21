@@ -46,7 +46,7 @@ const SetupClaimEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand(
     .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( "⏱️  Claim Configuration" )
     .setDescription( ( vars ) =>
-        "When the owner of a dynamic channel leaves it, Vertix waits a while before offering the " +
+        "When the owner of a dynamic channel leaves it, VoiceChannels waits a while before offering the " +
         "channel to whoever is still inside. They then vote on who takes it over.\n\n" +
         "Pick a value below to change it. " +
         `A value marked ${ vars.defaultMarker } follows the bot's own configuration ` +
@@ -54,7 +54,7 @@ const SetupClaimEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand(
         `**🚪 Owner Away Before Claimable** ∙ ${ vars.valueClaimTimeout }\n` +
         "How long the owner can be gone before the channel is offered to the others.\n\n" +
         `**🔁 Claim Check Interval** ∙ ${ vars.valueClaimInterval }\n` +
-        "How often Vertix looks for abandoned channels, which is also how close to the wait " +
+        "How often VoiceChannels looks for abandoned channels, which is also how close to the wait " +
         "above the offer actually lands.\n\n" +
         `**🗳️ Vote Duration** ∙ ${ vars.valueVoteTimeout }\n` +
         "How long a claim vote stays open once it starts.\n\n" +

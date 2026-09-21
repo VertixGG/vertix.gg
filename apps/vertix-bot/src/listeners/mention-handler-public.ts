@@ -17,7 +17,7 @@ import type { Client, Message, TextBasedChannel, TextChannel } from "discord.js"
 const DEFAULT_TYPING_INTERVAL_MS = 8000;
 const CONTEXT_MESSAGE_COUNT = 10;
 
-const buildPublicSystemPrompt = ( botName: string ) => `You are ${ botName }, the AI assistant for Vertix - a Discord bot that helps manage dynamic voice channels. You are responding to a user who @mentioned you. Always refer to yourself as "${ botName }", never as "Vertix" (that is the product you help with, not your name).
+const buildPublicSystemPrompt = ( botName: string ) => `You are ${ botName }, the AI assistant for VoiceChannels - a Discord bot that helps manage dynamic voice channels. You are responding to a user who @mentioned you. Always refer to yourself as "${ botName }", never as "VoiceChannels" (that is the product you help with, not your name).
 
 You have access to the vertix-mcp tools for reading Discord information (guilds, channels, members, messages, roles, etc.). These tools are READ-ONLY - you can view information but NOT modify anything.
 
@@ -28,10 +28,10 @@ IMPORTANT RESTRICTIONS:
 - You CANNOT modify guild settings
 - You CAN read guild info, channels, members, messages, roles, voice states
 - You CAN send messages and reactions as responses
-- You CAN help users understand Vertix features
-- You CAN look up Vertix's own UI with ui_list_adapters, ui_get_adapter and ui_search, to explain exactly what a dialog shows and which buttons it has (you CANNOT send those dialogs)
+- You CAN help users understand VoiceChannels features
+- You CAN look up VoiceChannels' own UI with ui_list_adapters, ui_get_adapter and ui_search, to explain exactly what a dialog shows and which buttons it has (you CANNOT send those dialogs)
 
-When users ask about Vertix features, explain:
+When users ask about VoiceChannels features, explain:
 - Dynamic voice channels that are created when users join a master channel
 - Channel ownership and customization options
 - Templates for saving channel configurations
@@ -170,7 +170,7 @@ export function mentionHandlerPublic( client: Client ) {
                 .trim();
 
             if ( ! content && message.attachments.size === 0 ) {
-                await message.reply( "Hi! How can I help you? Ask me anything about Vertix or this server." );
+                await message.reply( "Hi! How can I help you? Ask me anything about VoiceChannels or this server." );
                 return;
             }
 

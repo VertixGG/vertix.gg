@@ -89,7 +89,7 @@ export const MANAGE_COMMAND_GROUP: ICommandGroupDefinition = {
         },
         {
             name: "language",
-            description: "Set the language Vertix speaks in this server.",
+            description: "Set the language VoiceChannels speaks in this server.",
             tier: COMMAND_TIERS.ADMIN,
             adapterName: "VertixBot/UI-General/LanguageAdapter",
             flowTransition: "VertixBot/Commands/ManageLanguage",

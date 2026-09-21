@@ -3346,7 +3346,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                             break;
 
                         case "action-on-bot-user":
-                            message = `${ tryingPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
+                            message = `${ tryingPrefix } - Nothing done, doing that on **VoiceChannels** are not allowed`;
                             break;
 
                         case "self-grant":
@@ -3377,7 +3377,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                             break;
 
                         case "action-on-bot-user":
-                            message = `${ tryingPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
+                            message = `${ tryingPrefix } - Nothing done, doing that on **VoiceChannels** are not allowed`;
                             break;
 
                         case "action-on-staff-user":
@@ -3412,7 +3412,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                         break;
 
                     case "action-on-bot-user":
-                        message = `${ tryingPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
+                        message = `${ tryingPrefix } - Nothing done, doing that on **VoiceChannels** are not allowed`;
                         break;
 
                     case "self-deny":
@@ -3442,7 +3442,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                         break;
 
                     case "action-on-bot-user":
-                        message = `${ tryingKickPrefix } - Nothing done, doing that on **Vertix** are not allowed`;
+                        message = `${ tryingKickPrefix } - Nothing done, doing that on **VoiceChannels** are not allowed`;
                         break;
 
                     case "action-on-staff-user":

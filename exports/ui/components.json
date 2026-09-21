@@ -69,8 +69,8 @@
                         "embed": "VertixBot/UI-General/FeedbackEmbed",
                         "definition": {
                             "instanceType": "Static",
-                            "title": "Appreciating your experience with Vertix",
-                            "description": "We want to thank you for your time and patience.\n\n**Your experience with Vertix is important to us, and we would love to hear your feedback.**\n\nWe strive to provide the best possible service, and your input can help us achieve that.\n\nIf you have any suggestions, concerns, or ideas on how we can improve Vertix, please don't hesitate to share them with us.\n\nYour feedback is highly appreciated and will contribute to making Vertix even better.\n\nThank you for using Vertix, and we look forward to hearing your thoughts!",
+                            "title": "Appreciating your experience with VoiceChannels",
+                            "description": "We want to thank you for your time and patience.\n\n**Your experience with VoiceChannels is important to us, and we would love to hear your feedback.**\n\nWe strive to provide the best possible service, and your input can help us achieve that.\n\nIf you have any suggestions, concerns, or ideas on how we can improve VoiceChannels, please don't hesitate to share them with us.\n\nYour feedback is highly appreciated and will contribute to making VoiceChannels even better.\n\nThank you for using VoiceChannels, and we look forward to hearing your thoughts!",
                             "color": 3369963
                         }
                     }
@@ -805,8 +805,8 @@
                         "embed": "VertixBot/UI-General/SetupEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "🛠  Setup Vertix",
-                            "description": "Discover the limitless possibilities of **Vertix**!\nCustomize and optimize your server to perfection.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n_**Server Verified Roles**_:\n{verifiedRolesMessage}\n\n_**Server Staff Roles**_:\n{staffRolesMessage}",
+                            "title": "🛠  Setup VoiceChannels",
+                            "description": "Discover the limitless possibilities of **VoiceChannels**!\nCustomize and optimize your server to perfection.\n\nMaster Channels are dynamic voice channel generators, each with its own unique configuration.\n\nOur badwords feature enables guild-level configuration for limiting dynamic channel names.\n\n_**Current master channels**_:\n{masterChannelMessage}\n\n_**Server Badwords**_:\n{badwordsMessage}\n\n_**Server Voice Role**_:\n{voiceRoleMessage}\n\n_**Server Verified Roles**_:\n{verifiedRolesMessage}\n\n_**Server Staff Roles**_:\n{staffRolesMessage}",
                             "footer": "{tipMessage}",
                             "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "color": 3369963,
@@ -983,7 +983,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "⏱️  Claim Configuration",
-                            "description": "When the owner of a dynamic channel leaves it, Vertix waits a while before offering the channel to whoever is still inside. They then vote on who takes it over.\n\nPick a value below to change it. A value marked {defaultMarker} follows the bot's own configuration rather than a choice made here, and an empty field puts it back to that.\n\n**🚪 Owner Away Before Claimable** ∙ {valueClaimTimeout}\nHow long the owner can be gone before the channel is offered to the others.\n\n**🔁 Claim Check Interval** ∙ {valueClaimInterval}\nHow often Vertix looks for abandoned channels, which is also how close to the wait above the offer actually lands.\n\n**🗳️ Vote Duration** ∙ {valueVoteTimeout}\nHow long a claim vote stays open once it starts.\n\n**➕ Vote Time Per Candidate** ∙ {valueVoteAddTime}\nAdded to the running vote each time someone new puts themselves forward.\n",
+                            "description": "When the owner of a dynamic channel leaves it, VoiceChannels waits a while before offering the channel to whoever is still inside. They then vote on who takes it over.\n\nPick a value below to change it. A value marked {defaultMarker} follows the bot's own configuration rather than a choice made here, and an empty field puts it back to that.\n\n**🚪 Owner Away Before Claimable** ∙ {valueClaimTimeout}\nHow long the owner can be gone before the channel is offered to the others.\n\n**🔁 Claim Check Interval** ∙ {valueClaimInterval}\nHow often VoiceChannels looks for abandoned channels, which is also how close to the wait above the offer actually lands.\n\n**🗳️ Vote Duration** ∙ {valueVoteTimeout}\nHow long a claim vote stays open once it starts.\n\n**➕ Vote Time Per Candidate** ∙ {valueVoteAddTime}\nAdded to the running vote each time someone new puts themselves forward.\n",
                             "thumbnail": "https://voicechannels.online/vc-naked.png",
                             "color": 3369963,
                             "options": {

@@ -19,6 +19,7 @@ import {
     SelectModuleCommand,
     SelectNodeCommand,
     SelectEntityCommand,
+    ClearNodeSelectionCommand,
     ClearErrorCommand,
     UpdateNodeDataCommand,
     RestoreNodeDataCommand,
@@ -59,6 +60,33 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
 
     const { isEditMode, editingFlowName, enterEditMode } = useEditMode();
     const guildId = useSelectedGuildId();
+    const clearNodeSelection = useCommand( "Dashboard/FlowEditor/ClearNodeSelection" );
+
+    /*
+     * Leaving edit mode drops the node that was being edited.
+     *
+     * The mode lives in a store beside the editor and the selection lives in the editor's own
+     * state, so exiting cleared the first and left the second: the overview came back with a node
+     * from the flow that had just been closed still selected on the canvas and still filling the
+     * details panel, over a graph that is no longer the one it came from.
+     *
+     * Done here rather than at the two buttons that exit, because it belongs to leaving rather than
+     * to either of the ways of asking.
+     */
+    const wasEditModeRef = useRef( isEditMode );
+
+    /** Whether edit mode has been left since this page was opened, which is what spends `edit`. */
+    const hasLeftEditModeRef = useRef( false );
+
+    useEffect( () => {
+        if ( wasEditModeRef.current && !isEditMode ) {
+            hasLeftEditModeRef.current = true;
+
+            clearNodeSelection.run( {} );
+        }
+
+        wasEditModeRef.current = isEditMode;
+    }, [ isEditMode, clearNodeSelection ] );
 
     // --- URL → State restoration ---
 
@@ -144,18 +172,30 @@ const FlowEditorComponent: DCommandFunctionComponent<FlowEditorProps, FlowEditor
             return;
         }
 
+        /*
+         * Only ever writes what state says, and only removes what the reader removed themselves.
+         *
+         * Every other parameter is carried through untouched - `generator` is the one that matters,
+         * since it is what a link from a generator's settings says the editor is arranging, and it
+         * belongs to nothing on this side that could put it back.
+         *
+         * `module` is never deleted. State having none is how it looks while a module is still
+         * being restored or swapped, not a request to forget which one the url named, and deleting
+         * it there takes the address apart underneath a reader who has not touched anything.
+         *
+         * `edit` goes only once edit mode has actually been left. Left to `editingFlowName` alone
+         * it would also go on any render where the store has not yet caught up with the url.
+         */
         setSearchParams( ( prev ) => {
             const next = new URLSearchParams( prev );
 
             if ( state.selectedModule ) {
                 next.set( "module", state.selectedModule );
-            } else {
-                next.delete( "module" );
             }
 
             if ( editingFlowName ) {
                 next.set( "edit", editingFlowName );
-            } else {
+            } else if ( hasLeftEditModeRef.current ) {
                 next.delete( "edit" );
             }
 
@@ -246,5 +286,14 @@ export const FlowEditor = withCommands<FlowEditorProps, FlowEditorState>(
     "Dashboard/FlowEditor",
     FlowEditorComponent,
     FLOW_EDITOR_INITIAL_STATE,
-    [ SelectModuleCommand, SelectNodeCommand, SelectEntityCommand, ClearErrorCommand, UpdateNodeDataCommand, RestoreNodeDataCommand, SaveNodeChangesCommand ]
+    [
+        SelectModuleCommand,
+        SelectNodeCommand,
+        SelectEntityCommand,
+        ClearNodeSelectionCommand,
+        ClearErrorCommand,
+        UpdateNodeDataCommand,
+        RestoreNodeDataCommand,
+        SaveNodeChangesCommand
+    ]
 );

@@ -86,7 +86,7 @@ export function useEditorScope( selectedModule: string | null | undefined ) {
     // `linked` is the generator the url names - which is how the editor is reached from a
     // generator's own settings, rather than from the module list. `selectGenerator` writes that
     // same url param, which is what the arrangement and the preview read.
-    const { generators, selected: linked, select: selectGenerator } = useEditorGenerator();
+    const { generators, isLoaded: areGeneratorsLoaded, selected: linked, select: selectGenerator } = useEditorGenerator();
 
     const masterChannelId = useEditorScopeStore( ( state ) => state.masterChannelId );
     const isChosen = useEditorScopeStore( ( state ) => state.isChosen );
@@ -107,11 +107,29 @@ export function useEditorScope( selectedModule: string | null | undefined ) {
     // the screen is no longer showing. Forgotten rather than cleared, so the next module can take
     // its own default from the link.
     useEffect( () => {
+        /*
+         * Only once there is something to judge the scope against.
+         *
+         * `available` is empty both while the generators are being fetched and before a module has
+         * been picked, and in neither case does that mean this module has no such generator - it
+         * means the question cannot be answered yet. Answering it anyway took the `generator` out
+         * of the address of a link that had only just been opened, and nothing puts it back: the
+         * param it would have been restored from is the one that was deleted.
+         *
+         * The module is the half that bit. Arriving from a generator's settings remounts the
+         * editor, which resets the selected module to nothing while this scope - held in a store
+         * beside it - still carries the generator chosen last time. So the first render after that
+         * navigation had a scope, no module, and an empty list, and dropped the param on sight.
+         */
+        if ( ! areGeneratorsLoaded || ! selectedModule ) {
+            return;
+        }
+
         if ( masterChannelId && ! available.some( ( generator ) => generator.channelId === masterChannelId ) ) {
             forget();
             selectGenerator( null );
         }
-    }, [ masterChannelId, available, forget, selectGenerator ] );
+    }, [ areGeneratorsLoaded, selectedModule, masterChannelId, available, forget, selectGenerator ] );
 
     // Arriving from a generator's settings, that generator is what the admin came here about - so
     // the editor opens on it rather than on the whole server, which is a wider thing than they

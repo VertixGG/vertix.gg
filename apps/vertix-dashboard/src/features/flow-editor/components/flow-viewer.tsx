@@ -608,8 +608,32 @@ export function FlowViewer() {
      */
     const measuredLayoutRef = useRef<Node[] | null>( null );
 
+    /*
+     * Whether react flow is holding the graph the layout above currently intends.
+     *
+     * In the commit where the layout changes it is not: the effect that replaces the nodes and this
+     * one both run, and this one's `onLayout` closes over the nodes of the render it was made in -
+     * the previous graph. Laying those out and setting them wrote the old graph back over the new
+     * one, and both effects then considered themselves done, so it stayed written. Leaving edit
+     * mode was where it showed: the overview was rebuilt, ninety three nodes were laid out, and the
+     * three nodes of the flow just closed stayed on the canvas.
+     */
+    const intendedNodeIds = useMemo(
+        () => new Set( initialNodes.map( ( node ) => node.id ) ),
+        [ initialNodes ]
+    );
+
+    const holdsIntendedGraph = nodes.length === initialNodes.length &&
+        nodes.every( ( node ) => intendedNodeIds.has( node.id ) );
+
     useEffect( () => {
         if ( ! nodesInitialized || measuredLayoutRef.current === layoutedNodes ) {
+            return;
+        }
+
+        // Measuring is the whole point of this pass, so it waits for the nodes it is meant to
+        // measure rather than laying out whichever ones are still there.
+        if ( ! holdsIntendedGraph ) {
             return;
         }
 
@@ -624,7 +648,7 @@ export function FlowViewer() {
                 reactFlowInstance.fitView( { padding: 0.2, duration: 300 } );
             }, 50 );
         }
-    }, [ nodesInitialized, layoutedNodes, onLayout ] );
+    }, [ nodesInitialized, layoutedNodes, onLayout, holdsIntendedGraph ] );
 
     const onNodeClick = useCallback( ( _event: React.MouseEvent, node: Node ) => {
         handleNodeSelect( node );

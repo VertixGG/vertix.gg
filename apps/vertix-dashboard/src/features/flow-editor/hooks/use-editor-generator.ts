@@ -74,6 +74,7 @@ export function useEditorGenerator() {
 
     const generators = useGeneratorsStore( ( state ) => state.generators );
     const isLoading = useGeneratorsStore( ( state ) => state.isLoading );
+    const loadedGuildId = useGeneratorsStore( ( state ) => state.loadedGuildId );
     const load = useGeneratorsStore( ( state ) => state.load );
 
     const generatorId = searchParams.get( "generator" );
@@ -107,5 +108,14 @@ export function useEditorGenerator() {
 
     const selected = generators.find( ( generator ) => generator.id === generatorId ) ?? null;
 
-    return { generators, generatorId, selected, isLoading, select, refresh };
+    /*
+     * Whether the list is an answer about this guild, rather than the empty one it starts as.
+     *
+     * The difference matters to anything that would act on a generator being absent: before the
+     * fetch lands, every generator is absent, and there is nothing to tell that apart from a
+     * server that has none.
+     */
+    const isLoaded = Boolean( guildId ) && loadedGuildId === guildId;
+
+    return { generators, generatorId, selected, isLoading, isLoaded, select, refresh };
 }

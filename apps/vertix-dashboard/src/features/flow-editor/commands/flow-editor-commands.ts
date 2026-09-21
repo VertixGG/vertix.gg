@@ -238,6 +238,31 @@ export class SelectEntityCommand extends CommandBase<FlowEditorState, { entityTy
     }
 }
 
+/**
+ * Nothing is being edited any more, so nothing is selected.
+ *
+ * The whole node slice rather than the selection alone: what was stashed for a node - what it
+ * looked like when it was opened, what it looked like when it was last saved, and any other node
+ * left dirty - only means anything while the flow they belong to is open. Left behind, they are
+ * measured against a node the next selection has no relation to.
+ */
+export class ClearNodeSelectionCommand extends CommandBase<FlowEditorState> {
+    public static getName(): string {
+        return "Dashboard/FlowEditor/ClearNodeSelection";
+    }
+
+    public apply() {
+        return this.setState( {
+            selectedNode: null,
+            originalNodeData: null,
+            lastSavedData: null,
+            hasUnsavedChanges: false,
+            dirtyNodes: {},
+            centerOnSelect: false
+        } );
+    }
+}
+
 export class ClearErrorCommand extends CommandBase<FlowEditorState> {
     public static getName(): string {
         return "Dashboard/FlowEditor/ClearError";

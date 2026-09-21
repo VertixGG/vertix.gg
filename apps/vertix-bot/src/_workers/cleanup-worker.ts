@@ -2,6 +2,8 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ChannelType, Client, GatewayIntentBits } from "discord.js";
 
+import { ownsGuild } from "@vertix.gg/bot/src/definitions/sharding";
+
 import type { DiscordAPIError } from "discord.js";
 
 import type { default as loginType } from "@vertix.gg/base/src/discord/login";
@@ -113,12 +115,20 @@ class CleanupWorker extends InitializeBase {
             }
         } );
 
+        // The rows come from the database, which knows nothing about shards, so this list names
+        // every guild the bot has ever had a channel in. Left unfiltered, every process cleans the
+        // whole database - the same rest calls and the same deletions done once per shard - and
+        // `guilds.fetch()` below drags each of those guilds into a cache that was sharded not to
+        // hold them. Filtered, the shards divide the work and together still cover all of it.
+        const owned = channels.filter( ( channel ) => ownsGuild( channel.guildId ) );
+
         this.logger.info(
             this.removeNonExistentChannelsByType,
-            `Found ${ channels.length } channels of type '${ channelType }' to check.`
+            `Found ${ channels.length } channels of type '${ channelType }' to check` +
+            ( owned.length === channels.length ? "." : `, ${ owned.length } of them on this shard.` )
         );
 
-        if ( !channels.length ) {
+        if ( !owned.length ) {
             return;
         }
 
@@ -127,9 +137,9 @@ class CleanupWorker extends InitializeBase {
         let currentIndex = 0;
         let startTime = Date.now();
 
-        while ( currentIndex < channels.length ) {
-            const chunkEndIndex = Math.min( currentIndex + CHUNK_SIZE, channels.length );
-            const chunk = channels.slice( currentIndex, chunkEndIndex );
+        while ( currentIndex < owned.length ) {
+            const chunkEndIndex = Math.min( currentIndex + CHUNK_SIZE, owned.length );
+            const chunk = owned.slice( currentIndex, chunkEndIndex );
 
             const deletePromises = chunk.map( async( channel ) => {
                 try {
@@ -190,7 +200,7 @@ class CleanupWorker extends InitializeBase {
             currentIndex += CHUNK_SIZE;
             const elapsedTime = Date.now() - startTime;
 
-            if ( elapsedTime < CHUNK_TIME_LIMIT && currentIndex < channels.length ) {
+            if ( elapsedTime < CHUNK_TIME_LIMIT && currentIndex < owned.length ) {
                 const delay = Math.max( CHUNK_DELAY - elapsedTime, 0 );
                 await new Promise( ( resolve ) => setTimeout( resolve, delay ) );
             }
@@ -200,7 +210,7 @@ class CleanupWorker extends InitializeBase {
 
         this.logger.info(
             this.removeNonExistentChannelsByType,
-            `Completed cleanup for '${ channelType }': ${ deletedCount }/${ channels.length } channels removed` +
+            `Completed cleanup for '${ channelType }': ${ deletedCount }/${ owned.length } channels removed` +
                 ( skippedCount ? `, ${ skippedCount } left alone because discord could not be asked.` : "." )
         );
     }

@@ -191,6 +191,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionButton",
+        "content": {
+          "label": "Région"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
         "content": {
           "label": "Effacer le chat"
@@ -1301,6 +1307,158 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionSelectMenu",
+        "content": {
+          "placeholder": "⌖ ∙ Sélectionner la région",
+          "selectOptions": [
+            {
+              "label": "Automatique",
+              "value": "auto"
+            },
+            {
+              "label": "Brésil",
+              "value": "brazil"
+            },
+            {
+              "label": "Hong Kong",
+              "value": "hongkong"
+            },
+            {
+              "label": "Inde",
+              "value": "india"
+            },
+            {
+              "label": "Japon",
+              "value": "japan"
+            },
+            {
+              "label": "Rotterdam",
+              "value": "rotterdam"
+            },
+            {
+              "label": "Russie",
+              "value": "russia"
+            },
+            {
+              "label": "Singapour",
+              "value": "singapore"
+            },
+            {
+              "label": "Afrique du Sud",
+              "value": "southafrica"
+            },
+            {
+              "label": "Sydney",
+              "value": "sydney"
+            },
+            {
+              "label": "États-Unis Centre",
+              "value": "us-central"
+            },
+            {
+              "label": "États-Unis Est",
+              "value": "us-east"
+            },
+            {
+              "label": "États-Unis Sud",
+              "value": "us-south"
+            },
+            {
+              "label": "États-Unis Ouest",
+              "value": "us-west"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu",
+        "content": {
+          "placeholder": "🎚 ∙ Sélectionner le débit",
+          "selectOptions": [
+            {
+              "label": "Valeur par défaut du générateur",
+              "value": "inherit"
+            },
+            {
+              "label": "8 kbps",
+              "value": "8000"
+            },
+            {
+              "label": "16 kbps",
+              "value": "16000"
+            },
+            {
+              "label": "32 kbps",
+              "value": "32000"
+            },
+            {
+              "label": "64 kbps",
+              "value": "64000"
+            },
+            {
+              "label": "96 kbps",
+              "value": "96000"
+            },
+            {
+              "label": "128 kbps",
+              "value": "128000"
+            },
+            {
+              "label": "256 kbps",
+              "value": "256000"
+            },
+            {
+              "label": "384 kbps",
+              "value": "384000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu",
+        "content": {
+          "placeholder": "🎚 ∙ Sélectionner le débit",
+          "selectOptions": [
+            {
+              "label": "Valeur par défaut du générateur",
+              "value": "inherit"
+            },
+            {
+              "label": "8 kbps",
+              "value": "8000"
+            },
+            {
+              "label": "16 kbps",
+              "value": "16000"
+            },
+            {
+              "label": "32 kbps",
+              "value": "32000"
+            },
+            {
+              "label": "64 kbps",
+              "value": "64000"
+            },
+            {
+              "label": "96 kbps",
+              "value": "96000"
+            },
+            {
+              "label": "128 kbps",
+              "value": "128000"
+            },
+            {
+              "label": "256 kbps",
+              "value": "256000"
+            },
+            {
+              "label": "384 kbps",
+              "value": "384000"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
         "content": {
           "placeholder": "📂 Sélectionne un modèle à appliquer…"
@@ -1870,7 +2028,7 @@
       "name": "VertixBot/UI-V2/DynamicChannelEmbed",
       "content": {
         "title": "༄ Gérez votre canal dynamique",
-        "description": "Assumez la responsabilité de gérer votre canal dynamique et personnalisez-le soigneusement selon vos préférences.\n\nVeuillez noter que seul le propriétaire du canal est autorisé à effectuer des modifications.\n\n_Paramètres actuels_ :\n- Nom : **{name}**\n- Limite d'utilisateurs : ✋ **{limit}**\n- État : {state}\n- État de visibilité : {visibilityState}\n- Région : 🌍 **{region}**",
+        "description": "Assumez la responsabilité de gérer votre canal dynamique et personnalisez-le soigneusement selon vos préférences.\n\nVeuillez noter que seul le propriétaire du canal est autorisé à effectuer des modifications.\n\n_Paramètres actuels_ :\n- Nom : **{name}**\n- Limite d'utilisateurs : ✋ **{limit}**\n- État : {state}\n- État de visibilité : {visibilityState}\n- Région : 🌍 **{region}**\n- Débit : 🎚 **{bitrate} kbps**",
         "options": {
           "limit": {
             "{limitDisplayValue}": "{limitValue}",
@@ -2430,7 +2588,8 @@
               "7": "😈 ∙ **Réclamer**",
               "12": "🔀 ∙ **Transférer**",
               "13": "📣 ∙ **Statut**",
-              "15": "🔎 ∙ **LFM**"
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **Région**"
             }
           }
         }
@@ -2531,7 +2690,8 @@
               "7": "😈 ∙ **Claim**",
               "12": "🔀 ∙ **Transfer**",
               "13": "📣 ∙ **Statut**",
-              "15": "🔎 ∙ **LFM**"
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **Région**"
             }
           },
           "verifiedRoles": {
@@ -2682,7 +2842,8 @@
               "7": "😈 ∙ **Claim**",
               "12": "🔀 ∙ **Transfer**",
               "13": "📣 ∙ **Statut**",
-              "15": "🔎 ∙ **LFM**"
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **Région**"
             }
           }
         }
@@ -3222,7 +3383,7 @@
       "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed",
       "content": {
         "title": "{title}",
-        "description": "{description}\n\n{renameEmoji} ・ Nom : **{name}**\n\n{limitEmoji} ・ Limite d'utilisateurs : **{limit}**\n\n{privacyEmoji} ・ État de confidentialité : **{state}**\n\n{regionEmoji} ・ Région :  **{region}**\n",
+        "description": "{description}\n\n{renameEmoji} ・ Nom : **{name}**\n\n{limitEmoji} ・ Limite d'utilisateurs : **{limit}**\n\n{privacyEmoji} ・ État de confidentialité : **{state}**\n\n{regionEmoji} ・ Région :  **{region}**\n\n🎚 ・ Débit : **{bitrate} kbps**\n",
         "options": {
           "title": {
             "{titleDisplayValue}": "{titleValue}",
@@ -3300,8 +3461,33 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelRegionEmbed",
       "content": {
-        "title": "{regionEmoji}  Définir la région vocale de votre canal",
-        "description": "-# La région détermine l'emplacement du serveur vocal.\n-# Elle doit être la plus proche possible de tous les membres du canal vocal.\n-# La valeur recommandée est `Automatique`\n\nRégion vocale actuelle : `{region}`",
+        "title": "{regionEmoji}  Définir la région vocale et la qualité de votre canal",
+        "description": "-# La région détermine l'emplacement du serveur vocal.\n-# Elle doit être la plus proche possible de tous les membres du canal vocal.\n-# La valeur recommandée est `Automatique`\n-# Un débit plus élevé sonne mieux et sollicite davantage la connexion de chacun.\n\nRégion vocale actuelle : `{region}`\nDébit actuel : `{bitrate} kbps`",
+        "options": {
+          "region": {
+            "{region-auto}": "Automatique",
+            "{region-brazil}": "Brésil",
+            "{region-hongkong}": "Hong Kong",
+            "{region-india}": "Inde",
+            "{region-japan}": "Japon",
+            "{region-rotterdam}": "Rotterdam",
+            "{region-russia}": "Russie",
+            "{region-singapore}": "Singapour",
+            "{region-southafrica}": "Afrique du Sud",
+            "{region-sydney}": "Sydney",
+            "{region-us-central}": "US Central",
+            "{region-us-east}": "US East",
+            "{region-us-south}": "US South",
+            "{region-us-west}": "US West"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelRegionEmbed",
+      "content": {
+        "title": "🌍  Définir la région vocale et la qualité de votre canal",
+        "description": "-# La région détermine l'emplacement du serveur vocal.\n-# Elle doit être la plus proche possible de tous les membres du canal vocal.\n-# La valeur recommandée est `Automatique`\n-# Un débit plus élevé sonne mieux et sollicite davantage la connexion de chacun.\n\nRégion vocale actuelle : `{region}`\nDébit actuel : `{bitrate} kbps`",
         "options": {
           "region": {
             "{region-auto}": "Automatique",

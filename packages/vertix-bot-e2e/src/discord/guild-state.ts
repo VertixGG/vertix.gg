@@ -198,6 +198,31 @@ export class GuildState {
         return limited;
     }
 
+    /**
+     * Function waitForBitrate() :: Waits until discord itself says the channel carries this bitrate.
+     *
+     * Asked of discord rather than read off the screen, because the menu drawing a choice and the
+     * channel taking it are two different things - and the bitrate is the one this feature is about.
+     */
+    public async waitForBitrate( channelId: string, expectedBitrate: number ): Promise<IRestChannel> {
+        const changed = await this.waitFor(
+            async() => {
+                const channel = await this.channel( channelId );
+
+                return channel.bitrate === expectedBitrate ? channel : null;
+            },
+            E2E_TIMEOUTS.CHANNEL_REMOVED_MS
+        );
+
+        if ( ! changed ) {
+            const current = await this.channel( channelId );
+
+            throw new Error( `Channel ${ channelId } has a bitrate of ${ current.bitrate }, expected ${ expectedBitrate }.` );
+        }
+
+        return changed;
+    }
+
     private async waitFor<TResult>(
         probe: () => Promise<TResult | null>,
         timeoutMs: number,

@@ -362,7 +362,8 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             userLimit: channel.userLimit,
             state: await dynamicChannelService.getChannelPrivacyState( channel ),
             channelId: channel.id,
-            region: channel.rtcRegion
+            region: channel.rtcRegion,
+            bitrate: channel.bitrate
         };
 
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {

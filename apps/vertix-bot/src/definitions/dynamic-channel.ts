@@ -82,6 +82,7 @@ export interface TDynamicChannelConfiguration {
 
     // @since 0.0.8
     region?: string;
+    bitrate?: number;
     primaryMessageTitle?: string;
     primaryMessageDescription?: string;
 }

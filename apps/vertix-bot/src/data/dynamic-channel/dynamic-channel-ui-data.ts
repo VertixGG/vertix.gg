@@ -33,6 +33,7 @@ export interface DynamicChannelUIDataIdentifier {
     channelName?: string;
     userLimit?: number;
     region?: string | null;
+    bitrate?: number;
     state?: string;
     ownerId?: string;
     masterChannelId?: string;
@@ -54,6 +55,7 @@ export interface DynamicChannelUIDataResult {
     state: string;
     channelId: string;
     region: string | null;
+    bitrate: number;
     dynamicChannelButtonsTemplate: string[];
     /** Where that set is divided into rows; empty means rows of five. */
     dynamicChannelButtonsRowBreaks?: number[];
@@ -110,6 +112,11 @@ export class DynamicChannelUIData extends UIDataBase<DynamicChannelUIDataResult>
             state,
             channelId: channelId ?? "unknown",
             region: channel?.rtcRegion ?? identifier.region ?? null,
+
+            // Zero rather than a number that looks like a bitrate, so a panel drawn without a
+            // channel behind it says nothing instead of claiming a quality nobody set.
+            bitrate: channel?.bitrate ?? identifier.bitrate ?? 0,
+
             dynamicChannelButtonsTemplate: []
         };
 

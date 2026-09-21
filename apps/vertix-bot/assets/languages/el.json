@@ -191,6 +191,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionButton",
+        "content": {
+          "label": "Περιοχή"
+        }
+      },
+      {
         "name": "VertixBot/UI-V2/DynamicChannelMetaClearChatButton",
         "content": {
           "label": "Καθαρισμός συνομιλίας"
@@ -1301,6 +1307,158 @@
         }
       },
       {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionSelectMenu",
+        "content": {
+          "placeholder": "⌖ ∙ Επιλέξτε περιοχή",
+          "selectOptions": [
+            {
+              "label": "Αυτόματο",
+              "value": "auto"
+            },
+            {
+              "label": "Βραζιλία",
+              "value": "brazil"
+            },
+            {
+              "label": "Χονγκ Κονγκ",
+              "value": "hongkong"
+            },
+            {
+              "label": "Ινδία",
+              "value": "india"
+            },
+            {
+              "label": "Ιαπωνία",
+              "value": "japan"
+            },
+            {
+              "label": "Ρότερνταμ",
+              "value": "rotterdam"
+            },
+            {
+              "label": "Ρωσία",
+              "value": "russia"
+            },
+            {
+              "label": "Σιγκαπούρη",
+              "value": "singapore"
+            },
+            {
+              "label": "Νότια Αφρική",
+              "value": "southafrica"
+            },
+            {
+              "label": "Σίδνεϊ",
+              "value": "sydney"
+            },
+            {
+              "label": "ΗΠΑ Κέντρο",
+              "value": "us-central"
+            },
+            {
+              "label": "ΗΠΑ Ανατολή",
+              "value": "us-east"
+            },
+            {
+              "label": "ΗΠΑ Νότος",
+              "value": "us-south"
+            },
+            {
+              "label": "ΗΠΑ Δύση",
+              "value": "us-west"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu",
+        "content": {
+          "placeholder": "🎚 ∙ Επιλέξτε bitrate",
+          "selectOptions": [
+            {
+              "label": "Προεπιλογή γεννήτριας",
+              "value": "inherit"
+            },
+            {
+              "label": "8 kbps",
+              "value": "8000"
+            },
+            {
+              "label": "16 kbps",
+              "value": "16000"
+            },
+            {
+              "label": "32 kbps",
+              "value": "32000"
+            },
+            {
+              "label": "64 kbps",
+              "value": "64000"
+            },
+            {
+              "label": "96 kbps",
+              "value": "96000"
+            },
+            {
+              "label": "128 kbps",
+              "value": "128000"
+            },
+            {
+              "label": "256 kbps",
+              "value": "256000"
+            },
+            {
+              "label": "384 kbps",
+              "value": "384000"
+            }
+          ]
+        }
+      },
+      {
+        "name": "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu",
+        "content": {
+          "placeholder": "🎚 ∙ Επιλέξτε bitrate",
+          "selectOptions": [
+            {
+              "label": "Προεπιλογή γεννήτριας",
+              "value": "inherit"
+            },
+            {
+              "label": "8 kbps",
+              "value": "8000"
+            },
+            {
+              "label": "16 kbps",
+              "value": "16000"
+            },
+            {
+              "label": "32 kbps",
+              "value": "32000"
+            },
+            {
+              "label": "64 kbps",
+              "value": "64000"
+            },
+            {
+              "label": "96 kbps",
+              "value": "96000"
+            },
+            {
+              "label": "128 kbps",
+              "value": "128000"
+            },
+            {
+              "label": "256 kbps",
+              "value": "256000"
+            },
+            {
+              "label": "384 kbps",
+              "value": "384000"
+            }
+          ]
+        }
+      },
+      {
         "name": "VertixBot/UI-V3/DynamicChannelTemplatesApplySelectMenu",
         "content": {
           "placeholder": "📂 Επιλέξτε πρότυπο για εφαρμογή…"
@@ -1870,7 +2028,7 @@
       "name": "VertixBot/UI-V2/DynamicChannelEmbed",
       "content": {
         "title": "༄ Διαχειριστείτε το δυναμικό σας κανάλι",
-        "description": "Αναλάβετε την ευθύνη διαχείρισης του δυναμικού σας καναλιού, προσαρμόζοντάς το σύμφωνα με τις προτιμήσεις σας.\n\nΛάβετε υπόψη ότι το δικαίωμα να κάνετε αλλαγές ανήκει αποκλειστικά στον ιδιοκτήτη του καναλιού.\n\n_Τρέχουσες ρυθμίσεις_:\n- Όνομα: **{name}**\n- Όριο χρηστών: ✋ **{limit}**\n- Κατάσταση: {state}\n- Κατάσταση ορατότητας: {visibilityState}\n- Περιοχή: 🌍 **{region}**",
+        "description": "Αναλάβετε την ευθύνη διαχείρισης του δυναμικού σας καναλιού, προσαρμόζοντάς το σύμφωνα με τις προτιμήσεις σας.\n\nΛάβετε υπόψη ότι το δικαίωμα να κάνετε αλλαγές ανήκει αποκλειστικά στον ιδιοκτήτη του καναλιού.\n\n_Τρέχουσες ρυθμίσεις_:\n- Όνομα: **{name}**\n- Όριο χρηστών: ✋ **{limit}**\n- Κατάσταση: {state}\n- Κατάσταση ορατότητας: {visibilityState}\n- Περιοχή: 🌍 **{region}**\n- Bitrate: 🎚 **{bitrate} kbps**",
         "options": {
           "limit": {
             "{limitDisplayValue}": "{limitValue}",
@@ -2430,7 +2588,8 @@
               "7": "😈 ∙ **Διεκδίκηση**",
               "12": "🔀 ∙ **Μεταβίβαση**",
               "13": "📣 ∙ **Κατάσταση**",
-              "15": "🔎 ∙ **LFM**"
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **Περιοχή**"
             }
           }
         }
@@ -2531,7 +2690,8 @@
               "7": "😈 ∙ **Διεκδίκηση**",
               "12": "🔀 ∙ **Μεταφορά**",
               "13": "📣 ∙ **Κατάσταση**",
-              "15": "🔎 ∙ **LFM**"
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **Περιοχή**"
             }
           },
           "verifiedRoles": {
@@ -2682,7 +2842,8 @@
               "7": "😈 ∙ **Διεκδίκηση**",
               "12": "🔀 ∙ **Μεταφορά**",
               "13": "📣 ∙ **Κατάσταση**",
-              "15": "🔎 ∙ **LFM**"
+              "15": "🔎 ∙ **LFM**",
+              "19": "🌍 ∙ **Περιοχή**"
             }
           }
         }
@@ -3222,7 +3383,7 @@
       "name": "VertixBot/UI-V3/DynamicChannelPrimaryMessageEmbed",
       "content": {
         "title": "{title}",
-        "description": "{description}\n\n{renameEmoji} ・ Όνομα: **{name}**\n\n{limitEmoji} ・ Όριο χρηστών: **{limit}**\n\n{privacyEmoji} ・ Κατάσταση απορρήτου: **{state}**\n\n{regionEmoji} ・ Περιοχή:  **{region}**\n",
+        "description": "{description}\n\n{renameEmoji} ・ Όνομα: **{name}**\n\n{limitEmoji} ・ Όριο χρηστών: **{limit}**\n\n{privacyEmoji} ・ Κατάσταση απορρήτου: **{state}**\n\n{regionEmoji} ・ Περιοχή:  **{region}**\n\n🎚 ・ Bitrate: **{bitrate} kbps**\n",
         "options": {
           "title": {
             "{titleDisplayValue}": "{titleValue}",
@@ -3300,8 +3461,33 @@
     {
       "name": "VertixBot/UI-V3/DynamicChannelRegionEmbed",
       "content": {
-        "title": "{regionEmoji}  Ορισμός περιοχής φωνής για το κανάλι σας",
-        "description": "-# Η περιοχή καθορίζει την τοποθεσία του διακομιστή φωνής.\n-# Θα πρέπει να είναι η πλησιέστερη σε όλα τα μέλη του φωνητικού καναλιού.\n-# Συνιστάται το `Αυτόματα`\n\nΤρέχουσα περιοχή φωνής: `{region}`",
+        "title": "{regionEmoji}  Ορισμός περιοχής φωνής και ποιότητας για το κανάλι σας",
+        "description": "-# Η περιοχή καθορίζει την τοποθεσία του διακομιστή φωνής.\n-# Θα πρέπει να είναι η πλησιέστερη σε όλα τα μέλη του φωνητικού καναλιού.\n-# Συνιστάται το `Αυτόματα`\n-# Υψηλότερο bitrate ακούγεται καλύτερα και απαιτεί περισσότερα από τη σύνδεση όλων.\n\nΤρέχουσα περιοχή φωνής: `{region}`\nΤρέχον bitrate: `{bitrate} kbps`",
+        "options": {
+          "region": {
+            "{region-auto}": "Αυτόματα",
+            "{region-brazil}": "Βραζιλία",
+            "{region-hongkong}": "Χονγκ Κονγκ",
+            "{region-india}": "Ινδία",
+            "{region-japan}": "Ιαπωνία",
+            "{region-rotterdam}": "Ρότερνταμ",
+            "{region-russia}": "Ρωσία",
+            "{region-singapore}": "Σιγκαπούρη",
+            "{region-southafrica}": "Νότια Αφρική",
+            "{region-sydney}": "Σίδνεϊ",
+            "{region-us-central}": "US Central",
+            "{region-us-east}": "US East",
+            "{region-us-south}": "US South",
+            "{region-us-west}": "US West"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-V2/DynamicChannelRegionEmbed",
+      "content": {
+        "title": "🌍  Ορισμός περιοχής φωνής και ποιότητας για το κανάλι σας",
+        "description": "-# Η περιοχή καθορίζει την τοποθεσία του διακομιστή φωνής.\n-# Θα πρέπει να είναι η πλησιέστερη σε όλα τα μέλη του φωνητικού καναλιού.\n-# Συνιστάται το `Αυτόματα`\n-# Υψηλότερο bitrate ακούγεται καλύτερα και απαιτεί περισσότερα από τη σύνδεση όλων.\n\nΤρέχουσα περιοχή φωνής: `{region}`\nΤρέχον bitrate: `{bitrate} kbps`",
         "options": {
           "region": {
             "{region-auto}": "Αυτόματα",

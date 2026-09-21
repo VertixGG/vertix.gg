@@ -57,7 +57,8 @@ export const V2_BUTTONS = [
     { element: "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton", id: "7", shared: "claim-button" },
     { element: "VertixBot/UI-V2/DynamicChannelTransferOwnerButton", id: "12", shared: "transfer" },
     { element: "VertixBot/UI-V2/DynamicChannelMetaStatusButton", id: "13", shared: "status" },
-    { element: "VertixBot/UI-V2/DynamicChannelLfmButton", id: "15", shared: "lfm" }
+    { element: "VertixBot/UI-V2/DynamicChannelLfmButton", id: "15", shared: "lfm" },
+    { element: "VertixBot/UI-V2/DynamicChannelRegionButton", id: "19", shared: "region" }
 ] as const;
 
 /**
@@ -70,12 +71,31 @@ export const V2_BUTTONS = [
  *
  * Held as a literal rather than computed, because it has to go on meaning what it meant then: it
  * is the fingerprint of an untouched set, and a set derived from today's group would match today
- * rather than the day it was written. Every further button added to v2 needs its own entry here
- * for the same reason.
+ * rather than the day it was written.
+ *
+ * It is still the only fingerprint after the region button, because lfm never changed what a new
+ * generator stores - it is out of the default set, so the ten below stayed the whole of it. Region
+ * is in that set, so from now on a new generator stores eleven: the next button added to v2 needs a
+ * `..._BEFORE_<IT>` of those eleven beside this one, or the generators made in between match
+ * nothing and never draw it.
  */
 export const V2_DEFAULT_BUTTONS_BEFORE_LFM: ReadonlyArray<string> = Object.freeze(
     [ "0", "1", "2", "3", "4", "5", "6", "12", "13", "7" ]
 );
+
+/**
+ * The buttons that joined v2's default set after the fingerprint above was taken.
+ *
+ * Not every button added to v2 needs a fingerprint of its own - only one that changes what a new
+ * generator stores. Lfm did not, being out of the default set; region does, so the sets in the wild
+ * are now two: the ten above, written by every generator made before it, and those ten plus this
+ * one. The ten still identify an untouched generator, and the compensation hands it today's
+ * default, which is where these come from.
+ *
+ * Held beside the fingerprint rather than derived from the group, so that the next button added to
+ * v2 has to be thought about rather than appearing here by arithmetic.
+ */
+export const V2_DEFAULT_BUTTONS_ADDED_SINCE: ReadonlyArray<string> = Object.freeze( [ "19" ] );
 
 /**
  * Function isUntouchedV2DefaultSet() :: Whether a stored set is a default nobody has curated.

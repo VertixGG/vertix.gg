@@ -50,6 +50,7 @@ export const DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES = {
     limit: "Unlimited",
     state: "🌐 Public",
     region: "Automatic",
+    bitrate: "64",
     renameEmoji: DYNAMIC_CHANNEL_V3_EMOJIS.rename,
     limitEmoji: DYNAMIC_CHANNEL_V3_EMOJIS.limit,
     privacyEmoji: DYNAMIC_CHANNEL_V3_EMOJIS.privacy,

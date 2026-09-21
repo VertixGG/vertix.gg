@@ -64,6 +64,36 @@ test.describe( "privacy, region and access", () => {
         await dynamicChannels.close( channel );
     } );
 
+    test( "region carries the bitrate menu, and a choice reaches the channel", async( { app, guild, dynamicChannels, v3Generator } ) => {
+        const channel = await dynamicChannels.open( v3Generator.channelId );
+
+        const panel = await dynamicChannels.panel( channel );
+
+        const mark = await app.messages.mark();
+
+        await app.messages
+            .componentButton( panel, BotCatalog.$.panelButton( "VertixBot/UI-V3/DynamicChannelRegionButton" ).emojiName )
+            .click();
+
+        const screen = await app.messages.waitForReply( mark );
+
+        await expect(
+            app.messages.selectMenu( screen, BotCatalog.$.selectPlaceholder( "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu" ) )
+        ).toBeVisible();
+
+        await app.messages.chooseOption(
+            screen,
+            BotCatalog.$.selectPlaceholder( "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu" ),
+            BotCatalog.$.selectOptionLabel( "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu", "64000" )
+        );
+
+        // 64 kbps rather than one of the higher steps, because every guild may use it - the ones
+        // above 96 are boost tiers, and a test server that is not boosted would never be offered them.
+        await guild.waitForBitrate( channel.channelId, 64_000 );
+
+        await dynamicChannels.close( channel );
+    } );
+
     test( "access opens the permissions screen with its menus", async( { app, dynamicChannels, v3Generator } ) => {
         const channel = await dynamicChannels.open( v3Generator.channelId );
 

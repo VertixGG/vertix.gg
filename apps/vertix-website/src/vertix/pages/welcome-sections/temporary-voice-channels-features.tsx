@@ -27,6 +27,7 @@ export default function TemporaryVoiceChannelsFeatures() {
                             state: "🌐 **Public**",
                             visibilityState: "🐵 **Shown**",
                             region: "**Automatic**",
+                            bitrate: "64",
                         } }
                         elementOverrides={ {
                             "VertixBot/UI-V2/DynamicChannelPermissionsStateButton": { label: "Private" },
@@ -84,6 +85,7 @@ export default function TemporaryVoiceChannelsFeatures() {
                             limit: "Unlimited",
                             state: "🌐 Public",
                             region: "Automatic",
+                            bitrate: "64",
                             renameEmoji: "<emoji name='ChannelRename'>",
                             limitEmoji: "<emoji name='UserLimit'>",
                             privacyEmoji: "<emoji name='ChannelPrivacy'>",

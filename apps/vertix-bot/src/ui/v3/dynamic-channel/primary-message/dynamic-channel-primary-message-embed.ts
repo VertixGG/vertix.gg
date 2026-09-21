@@ -1,5 +1,6 @@
 import { getNaming } from "@vertix.gg/data/src/config/naming";
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
+import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-definitions";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
@@ -39,6 +40,7 @@ const vars = {
 
     region: DYNAMIC_CHANNEL_REGION_VARS.region,
     regionEmoji: DYNAMIC_CHANNEL_REGION_VARS.regionEmoji,
+    bitrate: uiUtilsWrapAsTemplate( "bitrate" ),
     regionAutomatic: uiUtilsWrapAsTemplate( "regionAutomatic" ),
 
     // A var per region, which is what the option map below answers with a name in the reader's
@@ -86,7 +88,8 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         `${ vars.renameEmoji } ・ Name: **${ vars.name }**\n\n` +
         `${ vars.limitEmoji } ・ User Limit: **${ vars.limit }**\n\n` +
         `${ vars.privacyEmoji } ・ Privacy State: **${ vars.state }**\n\n` +
-        `${ vars.regionEmoji } ・ Region:  **${ vars.region }**\n`
+        `${ vars.regionEmoji } ・ Region:  **${ vars.region }**\n\n` +
+        `🎚 ・ Bitrate: **${ vars.bitrate } kbps**\n`
     ) )
     .setOptions( () => {
         return {
@@ -121,6 +124,11 @@ const DynamicChannelPrimaryMessageEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             description: args.description || getNaming().dynamicChannelPrimaryMessageDescription,
             region: resolveRegionVar( args.region ),
             regionEmoji: DynamicChannelRegionButton.getEmoji(),
+
+            // Printed in the kilobits discord's own interface says, not the bits its api takes -
+            // `96000` in a settings list reads as a mistake.
+            bitrate: bitrateToKilobits( args.bitrate as number ),
+
             dynamicChannelButtonsTemplate: args.dynamicChannelButtonsTemplate,
             // Declared above and used by the image url, but a var is only filled from here - left
             // out, the legend was drawn five to a row whatever the buttons below it did.

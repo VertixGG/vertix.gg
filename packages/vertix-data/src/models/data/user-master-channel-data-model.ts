@@ -72,6 +72,7 @@ export class UserMasterChannelDataModel extends ModelDataOwnerStrictDataBase<
             dynamicChannelAllowedUserIds: [],
             dynamicChannelBlockedUserIds: [],
             dynamicChannelRegion: "",
+            dynamicChannelBitrate: -1,
             dynamicChannelPrimaryMessage: {}
         };
     }

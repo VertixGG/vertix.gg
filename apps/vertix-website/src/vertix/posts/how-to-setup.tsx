@@ -83,6 +83,7 @@ export default function HowToSetup() {
                                     state: "🌐 **Public**",
                                     visibilityState: "😎 **Shown**",
                                     region: "**Automatic**",
+                                    bitrate: "64",
                                     displayText: "Private",
                                 } }
                                 elementOverrides={ {

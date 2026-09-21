@@ -41,6 +41,7 @@ export interface IRestChannel {
     parent_id: string | null;
     user_limit?: number;
     rtc_region?: string | null;
+    bitrate?: number;
     position?: number;
     permission_overwrites?: IRestOverwrite[];
 }

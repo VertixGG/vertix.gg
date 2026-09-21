@@ -1,3 +1,4 @@
+import { bitrateToKilobits } from "@vertix.gg/definitions/src/bitrate-definitions";
 import { DEFAULT_RTC_REGIONS } from "@vertix.gg/definitions/src/rtc-region-definitions";
 
 import { uiUtilsWrapAsTemplate } from "@vertix.gg/gui/src/ui-utils";
@@ -26,6 +27,7 @@ const vars = {
     limit: uiUtilsWrapAsTemplate( "limit" ),
     state: uiUtilsWrapAsTemplate( "state" ),
     region: uiUtilsWrapAsTemplate( "region" ),
+    bitrate: uiUtilsWrapAsTemplate( "bitrate" ),
 
     limitDisplayValue: uiUtilsWrapAsTemplate( "limitDisplayValue" ),
     limitDisplayUnlimited: uiUtilsWrapAsTemplate( "limitDisplayUnlimited" ),
@@ -71,7 +73,8 @@ const DynamicChannelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         `- User Limit: ✋ **${ vars.limit }**\n` +
         `- State: ${ vars.state }\n` +
         `- Visibility State: ${ vars.visibilityState }\n` +
-        `- Region: 🌍 **${ vars.region }**`
+        `- Region: 🌍 **${ vars.region }**\n` +
+        `- Bitrate: 🎚 **${ vars.bitrate } kbps**`
     ) )
     .setOptions( () => ( {
         limit: {
@@ -108,6 +111,9 @@ const DynamicChannelEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             state: args.isPrivate ? statePrivate : statePublic,
             visibilityState: args.isHidden ? visibilityStateHidden : visibilityStateShown,
             region: resolveRegionVar( args.region ),
+
+            // Printed in the kilobits discord's own interface says, not the bits its api takes.
+            bitrate: bitrateToKilobits( args.bitrate as number ),
             limitValue: args.userLimit,
             regionValue: args.region
         };

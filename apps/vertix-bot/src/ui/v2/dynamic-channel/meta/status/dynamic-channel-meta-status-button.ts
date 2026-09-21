@@ -10,7 +10,7 @@ export class DynamicChannelMetaStatusButton extends DynamicChannelButtonBase {
     }
 
     public getSortId() {
-        return 8;
+        return 9;
     }
 
     public getLabelForEmbed() {

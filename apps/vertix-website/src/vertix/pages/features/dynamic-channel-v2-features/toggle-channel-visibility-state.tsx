@@ -32,6 +32,7 @@ export default function ToggleChannelVisibilityState() {
                                     state: "🌐 **Public**",
                                     visibilityState: "🙈 **Hidden**",
                                     region: "**Automatic**",
+                                    bitrate: "64",
                                 } }
                                 elementOverrides={ {
                                     "VertixBot/UI-V2/DynamicChannelMetaRenameButton": { label: "Rename" },
@@ -80,6 +81,7 @@ export default function ToggleChannelVisibilityState() {
                                 state: "🌐 **Public**",
                                 visibilityState: "🐵 **Shown**",
                                 region: "**Automatic**",
+                                bitrate: "64",
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-V2/DynamicChannelMetaRenameButton": { label: "Rename" },

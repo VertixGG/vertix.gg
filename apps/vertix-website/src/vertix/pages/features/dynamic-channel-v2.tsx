@@ -7,6 +7,7 @@ import ClearChat from "./dynamic-channel-v2-features/clear-chat";
 import ToggleChannelState from "./dynamic-channel-v2-features/toggle-channel-state";
 import ToggleChannelVisibilityState from "./dynamic-channel-v2-features/toggle-channel-visibility-state";
 import Access from "./dynamic-channel-v2-features/access";
+import Region from "./dynamic-channel-v2-features/region";
 import Status from "./dynamic-channel-v2-features/status";
 import ResetChannel from "./dynamic-channel-v2-features/reset-channel";
 import TransferChannel from "./dynamic-channel-v2-features/transfer-channel";
@@ -26,6 +27,7 @@ const FEATURE_OPTIONS = [
     { label: "🚫 Toggle Channel State (Public/Private)", value: "toggle-channel-state" },
     { label: "🙈 Toggle Visibility State (Shown/Hidden)", value: "toggle-visibility-state" },
     { label: "👥 Access Management", value: "access" },
+    { label: "🌍 Region & Bitrate", value: "region" },
     { label: "📣 Channel Status", value: "status" },
     { label: "🔃 Reset Channel", value: "reset-channel" },
     { label: "🔀 Transfer Channel", value: "transfer-channel" },
@@ -41,6 +43,7 @@ const FEATURE_COMPONENTS: Record<string, React.ReactNode> = {
     "toggle-channel-state": <ToggleChannelState />,
     "toggle-visibility-state": <ToggleChannelVisibilityState />,
     "access": <Access />,
+    "region": <Region />,
     "status": <Status />,
     "reset-channel": <ResetChannel />,
     "transfer-channel": <TransferChannel />,
@@ -84,6 +87,9 @@ export default function DynamicChannelV2Page() {
                     <hr />
 
                     <Access />
+                    <hr />
+
+                    <Region />
                     <hr />
 
                     <Status />

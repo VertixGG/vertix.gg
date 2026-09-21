@@ -1256,6 +1256,38 @@
         ]
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-V2/DynamicChannelRegionComponent",
+        "module": "VertixBot/UI-V2/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelRegion",
+                "elementsGroup": "VertixBot/UI-V2/DynamicChannelRegionElementsGroup",
+                "embedsGroup": "VertixBot/UI-V2/DynamicChannelRegionEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-V2/DynamicChannelRegionAdapter/Hooks/GetStartArgs"
+            },
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-V2/DynamicChannelRegionAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
@@ -2505,7 +2537,7 @@
         "executionSteps": [
             {
                 "key": "default",
-                "elementsGroup": "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup",
+                "elementsGroup": "VertixBot/UI-V3/DynamicChannelRegionElementsGroup",
                 "embedsGroup": "VertixBot/UI-V3/DynamicChannelRegionEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []

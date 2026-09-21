@@ -2496,6 +2496,17 @@
                     ],
                     [
                         {
+                            "element": "VertixBot/UI-V2/DynamicChannelRegionButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelRegionButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Region",
+                                "style": "secondary",
+                                "emoji": "🌍"
+                            }
+                        },
+                        {
                             "element": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
                             "definition": {
                                 "name": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
@@ -2541,7 +2552,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "༄ Manage your Dynamic Channel",
-                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\nPlease be advised that the privilege to make alterations is vested solely of the channel owner.\n\n_Current settings_:\n- Name: **{name}**\n- User Limit: ✋ **{limit}**\n- State: {state}\n- Visibility State: {visibilityState}\n- Region: 🌍 **{region}**",
+                            "description": "Embrace the responsibility of overseeing your dynamic channel, diligently customizing it according to your discerning preferences.\n\nPlease be advised that the privilege to make alterations is vested solely of the channel owner.\n\n_Current settings_:\n- Name: **{name}**\n- User Limit: ✋ **{limit}**\n- State: {state}\n- Visibility State: {visibilityState}\n- Region: 🌍 **{region}**\n- Bitrate: 🎚 **{bitrate} kbps**",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 3369963,
                             "options": {
@@ -2593,6 +2604,7 @@
                                 "limit": "{limit}",
                                 "state": "{state}",
                                 "region": "{region}",
+                                "bitrate": "{bitrate}",
                                 "limitDisplayValue": "{limitDisplayValue}",
                                 "limitDisplayUnlimited": "{limitDisplayUnlimited}",
                                 "limitValue": "{limitValue}",
@@ -3523,6 +3535,17 @@
                         }
                     ],
                     [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelRegionButton",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelRegionButton",
+                                "elementType": "button",
+                                "instanceType": "Dynamic",
+                                "label": "Region",
+                                "style": "secondary",
+                                "emoji": "🌍"
+                            }
+                        },
                         {
                             "element": "VertixBot/UI-V2/DynamicChannelMetaStatusButton",
                             "definition": {
@@ -4936,6 +4959,206 @@
         }
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionComponent",
+        "type": "component",
+        "instanceType": "Dynamic",
+        "modules": [
+            "VertixBot/UI-V2/Module"
+        ],
+        "elementsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelRegionElementsGroup",
+                "items": [
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelRegionSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelRegionSelectMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "⌖ ∙ Select Region",
+                                "selectOptions": [
+                                    {
+                                        "label": "Automatic",
+                                        "value": "auto"
+                                    },
+                                    {
+                                        "label": "Brazil",
+                                        "value": "brazil"
+                                    },
+                                    {
+                                        "label": "HongKong",
+                                        "value": "hongkong"
+                                    },
+                                    {
+                                        "label": "India",
+                                        "value": "india"
+                                    },
+                                    {
+                                        "label": "Japan",
+                                        "value": "japan"
+                                    },
+                                    {
+                                        "label": "Rotterdam",
+                                        "value": "rotterdam"
+                                    },
+                                    {
+                                        "label": "Russia",
+                                        "value": "russia"
+                                    },
+                                    {
+                                        "label": "Singapore",
+                                        "value": "singapore"
+                                    },
+                                    {
+                                        "label": "SouthAfrica",
+                                        "value": "southafrica"
+                                    },
+                                    {
+                                        "label": "Sydney",
+                                        "value": "sydney"
+                                    },
+                                    {
+                                        "label": "US Central",
+                                        "value": "us-central"
+                                    },
+                                    {
+                                        "label": "US East",
+                                        "value": "us-east"
+                                    },
+                                    {
+                                        "label": "US South",
+                                        "value": "us-south"
+                                    },
+                                    {
+                                        "label": "US West",
+                                        "value": "us-west"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🎚 ∙ Select Bitrate",
+                                "selectOptions": [
+                                    {
+                                        "label": "Generator default",
+                                        "value": "inherit"
+                                    },
+                                    {
+                                        "label": "8 kbps",
+                                        "value": "8000"
+                                    },
+                                    {
+                                        "label": "16 kbps",
+                                        "value": "16000"
+                                    },
+                                    {
+                                        "label": "32 kbps",
+                                        "value": "32000"
+                                    },
+                                    {
+                                        "label": "64 kbps",
+                                        "value": "64000"
+                                    },
+                                    {
+                                        "label": "96 kbps",
+                                        "value": "96000"
+                                    },
+                                    {
+                                        "label": "128 kbps",
+                                        "value": "128000"
+                                    },
+                                    {
+                                        "label": "256 kbps",
+                                        "value": "256000"
+                                    },
+                                    {
+                                        "label": "384 kbps",
+                                        "value": "384000"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                ]
+            }
+        ],
+        "embedsGroups": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelRegionEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-V2/DynamicChannelRegionEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "🌍  Set voice region and quality for your channel",
+                            "description": "-# The region determines the voice server's location.\n-# It should be the closest to all voice channel members.\n-# The recommended is `Automatic`\n-# A higher bitrate sounds better and asks more of everyone's connection.\n\nCurrent voice region: `{region}`\nCurrent bitrate: `{bitrate} kbps`",
+                            "image": "https://i.imgur.com/NthLO3W.png",
+                            "color": 4943761,
+                            "options": {
+                                "region": {
+                                    "{region-auto}": "Automatic",
+                                    "{region-brazil}": "Brazil",
+                                    "{region-hongkong}": "HongKong",
+                                    "{region-india}": "India",
+                                    "{region-japan}": "Japan",
+                                    "{region-rotterdam}": "Rotterdam",
+                                    "{region-russia}": "Russia",
+                                    "{region-singapore}": "Singapore",
+                                    "{region-southafrica}": "SouthAfrica",
+                                    "{region-sydney}": "Sydney",
+                                    "{region-us-central}": "US Central",
+                                    "{region-us-east}": "US East",
+                                    "{region-us-south}": "US South",
+                                    "{region-us-west}": "US West"
+                                }
+                            },
+                            "vars": {
+                                "region": "{region}",
+                                "bitrate": "{bitrate}",
+                                "region-auto": "{region-auto}",
+                                "region-brazil": "{region-brazil}",
+                                "region-hongkong": "{region-hongkong}",
+                                "region-india": "{region-india}",
+                                "region-japan": "{region-japan}",
+                                "region-rotterdam": "{region-rotterdam}",
+                                "region-russia": "{region-russia}",
+                                "region-singapore": "{region-singapore}",
+                                "region-southafrica": "{region-southafrica}",
+                                "region-sydney": "{region-sydney}",
+                                "region-us-central": "{region-us-central}",
+                                "region-us-east": "{region-us-east}",
+                                "region-us-south": "{region-us-south}",
+                                "region-us-west": "{region-us-west}"
+                            }
+                        }
+                    }
+                ]
+            }
+        ],
+        "modals": [],
+        "modalDefinitions": [],
+        "defaultElementsGroup": "VertixBot/UI-V2/DynamicChannelRegionElementsGroup",
+        "defaultEmbedsGroup": "VertixBot/UI-V2/DynamicChannelRegionEmbedGroup",
+        "defaultMarkdownsGroup": null,
+        "renderAsContainer": false,
+        "hooks": [],
+        "options": {
+            "embedAudit": {
+                "total": 1,
+                "withDefinition": 1,
+                "missingDefinition": 0
+            }
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
         "type": "component",
         "instanceType": "Dynamic",
@@ -5311,6 +5534,11 @@
                                         "label": "Transfer",
                                         "value": "12",
                                         "emoji": "🔀"
+                                    },
+                                    {
+                                        "label": "Status",
+                                        "value": "19",
+                                        "emoji": "🌍"
                                     },
                                     {
                                         "label": "Status",
@@ -5761,7 +5989,8 @@
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**",
                                         "13": "📣 ∙ **Status**",
-                                        "15": "🔎 ∙ **LFM**"
+                                        "15": "🔎 ∙ **LFM**",
+                                        "19": "🌍 ∙ **Region**"
                                     }
                                 },
                                 "verifiedRoles": {
@@ -5887,7 +6116,8 @@
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**",
                                         "13": "📣 ∙ **Status**",
-                                        "15": "🔎 ∙ **LFM**"
+                                        "15": "🔎 ∙ **LFM**",
+                                        "19": "🌍 ∙ **Region**"
                                     }
                                 }
                             },
@@ -6400,6 +6630,11 @@
                                     },
                                     {
                                         "label": "Status",
+                                        "value": "19",
+                                        "emoji": "🌍"
+                                    },
+                                    {
+                                        "label": "Status",
                                         "value": "13",
                                         "emoji": "📣"
                                     },
@@ -6606,7 +6841,8 @@
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**",
                                         "13": "📣 ∙ **Status**",
-                                        "15": "🔎 ∙ **LFM**"
+                                        "15": "🔎 ∙ **LFM**",
+                                        "19": "🌍 ∙ **Region**"
                                     }
                                 }
                             },
@@ -6882,6 +7118,11 @@
                                     },
                                     {
                                         "label": "Status",
+                                        "value": "19",
+                                        "emoji": "🌍"
+                                    },
+                                    {
+                                        "label": "Status",
                                         "value": "13",
                                         "emoji": "📣"
                                     },
@@ -6965,7 +7206,8 @@
                                         "7": "😈 ∙ **Claim**",
                                         "12": "🔀 ∙ **Transfer**",
                                         "13": "📣 ∙ **Status**",
-                                        "15": "🔎 ∙ **LFM**"
+                                        "15": "🔎 ∙ **LFM**",
+                                        "19": "🌍 ∙ **Region**"
                                     }
                                 }
                             },
@@ -7925,7 +8167,7 @@
                         "definition": {
                             "instanceType": "Dynamic",
                             "title": "{title}",
-                            "description": "{description}\n\n{renameEmoji} ・ Name: **{name}**\n\n{limitEmoji} ・ User Limit: **{limit}**\n\n{privacyEmoji} ・ Privacy State: **{state}**\n\n{regionEmoji} ・ Region:  **{region}**\n",
+                            "description": "{description}\n\n{renameEmoji} ・ Name: **{name}**\n\n{limitEmoji} ・ User Limit: **{limit}**\n\n{privacyEmoji} ・ Privacy State: **{state}**\n\n{regionEmoji} ・ Region:  **{region}**\n\n🎚 ・ Bitrate: **{bitrate} kbps**\n",
                             "image": "https://api.voicechannels.online/api/tools/button-sheet.png?cols=5&scale=3&items={dynamicChannelButtonsTemplate}&rows={dynamicChannelButtonsRowBreaks}",
                             "color": 3369963,
                             "options": {
@@ -7984,6 +8226,7 @@
                                 "privacyEmoji": "{privacyEmoji}",
                                 "region": "{region}",
                                 "regionEmoji": "{regionEmoji}",
+                                "bitrate": "{bitrate}",
                                 "regionAutomatic": "{regionAutomatic}",
                                 "region-auto": "{region-auto}",
                                 "region-brazil": "{region-brazil}",
@@ -10278,7 +10521,7 @@
         ],
         "elementsGroups": [
             {
-                "name": "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup",
+                "name": "VertixBot/UI-V3/DynamicChannelRegionElementsGroup",
                 "items": [
                     [
                         {
@@ -10348,6 +10591,55 @@
                                 ]
                             }
                         }
+                    ],
+                    [
+                        {
+                            "element": "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu",
+                            "definition": {
+                                "name": "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu",
+                                "elementType": "select-menu",
+                                "instanceType": "Dynamic",
+                                "placeholder": "🎚 ∙ Select Bitrate",
+                                "selectOptions": [
+                                    {
+                                        "label": "Generator default",
+                                        "value": "inherit"
+                                    },
+                                    {
+                                        "label": "8 kbps",
+                                        "value": "8000"
+                                    },
+                                    {
+                                        "label": "16 kbps",
+                                        "value": "16000"
+                                    },
+                                    {
+                                        "label": "32 kbps",
+                                        "value": "32000"
+                                    },
+                                    {
+                                        "label": "64 kbps",
+                                        "value": "64000"
+                                    },
+                                    {
+                                        "label": "96 kbps",
+                                        "value": "96000"
+                                    },
+                                    {
+                                        "label": "128 kbps",
+                                        "value": "128000"
+                                    },
+                                    {
+                                        "label": "256 kbps",
+                                        "value": "256000"
+                                    },
+                                    {
+                                        "label": "384 kbps",
+                                        "value": "384000"
+                                    }
+                                ]
+                            }
+                        }
                     ]
                 ]
             }
@@ -10360,8 +10652,8 @@
                         "embed": "VertixBot/UI-V3/DynamicChannelRegionEmbed",
                         "definition": {
                             "instanceType": "Dynamic",
-                            "title": "{regionEmoji}  Set voice region for your channel",
-                            "description": "-# The region determines the voice server's location.\n-# It should be the closest to all voice channel members.\n-# The recommended is `Automatic`\n\nCurrent voice region: `{region}`",
+                            "title": "{regionEmoji}  Set voice region and quality for your channel",
+                            "description": "-# The region determines the voice server's location.\n-# It should be the closest to all voice channel members.\n-# The recommended is `Automatic`\n-# A higher bitrate sounds better and asks more of everyone's connection.\n\nCurrent voice region: `{region}`\nCurrent bitrate: `{bitrate} kbps`",
                             "image": "https://i.imgur.com/NthLO3W.png",
                             "color": 4943761,
                             "options": {
@@ -10384,6 +10676,7 @@
                             },
                             "vars": {
                                 "region": "{region}",
+                                "bitrate": "{bitrate}",
                                 "regionOptions": "{regionOptions}",
                                 "regionEmoji": "{regionEmoji}",
                                 "region-auto": "{region-auto}",
@@ -10407,7 +10700,7 @@
                             "logic": {
                                 "sources": [
                                     {
-                                        "source": "async (args) => {\n  const result = {};\n  if (args.region)\n    result.region = vars[`region-${args.region}`];\n  else\n    result.region = vars[\"region-auto\"];\n  return result;\n}",
+                                        "source": "async (args) => {\n  const result = {};\n  if (args.bitrate)\n    result.bitrate = bitrateToKilobits(args.bitrate);\n  if (args.region)\n    result.region = vars[`region-${args.region}`];\n  else\n    result.region = vars[\"region-auto\"];\n  return result;\n}",
                                         "binds": [
                                             "vars"
                                         ]
@@ -10421,7 +10714,7 @@
         ],
         "modals": [],
         "modalDefinitions": [],
-        "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup",
+        "defaultElementsGroup": "VertixBot/UI-V3/DynamicChannelRegionElementsGroup",
         "defaultEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRegionEmbedGroup",
         "defaultMarkdownsGroup": null,
         "renderAsContainer": false,

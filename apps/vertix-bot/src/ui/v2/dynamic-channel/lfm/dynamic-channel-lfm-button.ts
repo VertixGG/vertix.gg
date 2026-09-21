@@ -10,7 +10,7 @@ export class DynamicChannelLfmButton extends DynamicChannelButtonBase {
     }
 
     public getSortId() {
-        return 9;
+        return 10;
     }
 
     /**

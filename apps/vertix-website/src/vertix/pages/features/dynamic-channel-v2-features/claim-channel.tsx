@@ -29,6 +29,7 @@ export default function ClaimChannel() {
                                 state: "🌐 **Public**",
                                 visibilityState: "🐵 **Shown**",
                                 region: "**Automatic**",
+                                bitrate: "64",
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-V2/DynamicChannelMetaRenameButton": { label: "Rename" },
@@ -77,6 +78,7 @@ export default function ClaimChannel() {
                                 state: "🌐 **Public**",
                                 visibilityState: "🐵 **Shown**",
                                 region: "**Automatic**",
+                                bitrate: "64",
                             } }
                             elementOverrides={ {
                                 "VertixBot/UI-V2/DynamicChannelMetaRenameButton": { label: "Rename" },

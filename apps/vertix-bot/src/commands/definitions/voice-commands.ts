@@ -11,9 +11,14 @@ import type { ICommandGroupDefinition } from "@vertix.gg/bot/src/commands/defini
  * across a group, so the tier is cleared per subcommand when it runs instead.
  *
  * A generator carries its own interface version, so `adapterNameV2` names the same feature in the
- * older interface wherever v2 has it. The six rows without one - `privacy`, `invite`, `knock`,
- * `region`, `templates`, `message` - are features v2 never had, and on a v2 generator they say so
- * rather than opening a v3 interface onto a channel that is not one.
+ * older interface wherever v2 has it. The five rows without one - `privacy`, `invite`, `knock`,
+ * `templates`, `message` - are features v2 never had, and on a v2 generator they say so rather than
+ * opening a v3 interface onto a channel that is not one.
+ *
+ * `region` was a sixth until it was given a screen of its own here. It is the one row whose v2
+ * interface is reached by this command and by nothing else - v2 carries no button for it, because a
+ * button is a slot in a set a generator stored, and one stored before the button existed goes on
+ * being drawn without it.
  *
  * `knock` is here despite asking about a channel somewhere in the guild rather than the one the
  * member is standing in. It stood on its own for a while for exactly that reason, and being alone
@@ -113,9 +118,10 @@ export const VOICE_COMMAND_GROUP: ICommandGroupDefinition = {
         },
         {
             name: "region",
-            description: "Change where your channel is hosted.",
+            description: "Change where your channel is hosted, and how good it sounds.",
             tier: COMMAND_TIERS.OWNER_OF_DYNAMIC,
             adapterName: "VertixBot/UI-V3/DynamicChannelRegionAdapter",
+            adapterNameV2: "VertixBot/UI-V2/DynamicChannelRegionAdapter",
             flowTransition: "VertixBot/Commands/VoiceRegion",
             flowTargetState: "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default"
         },

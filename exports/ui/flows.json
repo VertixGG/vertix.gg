@@ -3913,6 +3913,108 @@
         }
     },
     {
+        "name": "VertixBot/UI-V2/DynamicChannelRegionFlow",
+        "module": "VertixBot/UI-V2/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                "transitions": [
+                    "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/SelectRegion",
+                    "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/SelectBitrate"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelRegion",
+                    "component": "VertixBot/UI-V2/DynamicChannelRegionComponent",
+                    "previewDefaultVars": {
+                        "region": "Automatic",
+                        "bitrate": "64"
+                    },
+                    "previewEmbedsGroup": "VertixBot/UI-V2/DynamicChannelRegionEmbedGroup",
+                    "previewElementsGroup": "VertixBot/UI-V2/DynamicChannelRegionElementsGroup",
+                    "navigationType": "editReply"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/SelectRegion",
+                "from": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/DynamicChannelRegionFlow/Handlers/VertixBot/UI-V2/DynamicChannelRegionSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V2/DynamicChannelRegionSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                            "executionStep": "VertixBot/UI-V2/DynamicChannelRegion"
+                        },
+                        "mutations": [
+                            {
+                                "type": "set",
+                                "path": [
+                                    "region"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "mutations": [
+                    {
+                        "type": "set",
+                        "path": [
+                            "region"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/SelectBitrate",
+                "from": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/DynamicChannelRegionFlow/Handlers/VertixBot/UI-V2/DynamicChannelBitrateSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                            "executionStep": "VertixBot/UI-V2/DynamicChannelRegion"
+                        },
+                        "mutations": [
+                            {
+                                "type": "set",
+                                "path": [
+                                    "bitrate"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "mutations": [
+                    {
+                        "type": "set",
+                        "path": [
+                            "bitrate"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
         "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow",
         "module": "VertixBot/UI-V2/Module",
         "flowKind": "virtual",
@@ -5727,6 +5829,7 @@
                     "VertixBot/Commands/VoiceStatus",
                     "VertixBot/Commands/VoiceAccess",
                     "VertixBot/Commands/VoiceTransfer",
+                    "VertixBot/Commands/VoiceRegion",
                     "VertixBot/Commands/VoiceReset",
                     "VertixBot/Commands/VoiceClearChat",
                     "VertixBot/Commands/VoicePanel"
@@ -5761,6 +5864,10 @@
                 "to": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow"
             },
             {
+                "from": "VertixBot/Commands/VoiceRegion",
+                "to": "VertixBot/UI-V2/DynamicChannelRegionFlow"
+            },
+            {
                 "from": "VertixBot/Commands/VoiceReset",
                 "to": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelCommandFlow"
             },
@@ -5792,6 +5899,10 @@
             },
             {
                 "transition": "VertixBot/Commands/VoiceTransfer",
+                "fields": []
+            },
+            {
+                "transition": "VertixBot/Commands/VoiceRegion",
                 "fields": []
             },
             {
@@ -5845,6 +5956,14 @@
                 "description": "Slash command entry: VoiceTransfer",
                 "targetState": "VertixBot/UI-V2/CommandsFlow/States/Initial",
                 "transition": "VertixBot/Commands/VoiceTransfer",
+                "requiredData": [],
+                "integrationType": "COMMAND"
+            },
+            {
+                "flowName": "VertixBot/UI-V2/CommandsFlow",
+                "description": "Slash command entry: VoiceRegion",
+                "targetState": "VertixBot/UI-V2/CommandsFlow/States/Initial",
+                "transition": "VertixBot/Commands/VoiceRegion",
                 "requiredData": [],
                 "integrationType": "COMMAND"
             },
@@ -5916,6 +6035,15 @@
                 "sourceState": "VertixBot/UI-V2/CommandsFlow/States/Initial",
                 "targetState": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow",
                 "transition": "VertixBot/Commands/VoiceTransfer",
+                "requiredData": [],
+                "integrationType": "COMMAND"
+            },
+            {
+                "flowName": "VertixBot/UI-V2/DynamicChannelRegionFlow",
+                "description": "Handoff: VoiceRegion",
+                "sourceState": "VertixBot/UI-V2/CommandsFlow/States/Initial",
+                "targetState": "VertixBot/UI-V2/DynamicChannelRegionFlow",
+                "transition": "VertixBot/Commands/VoiceRegion",
                 "requiredData": [],
                 "integrationType": "COMMAND"
             },
@@ -8873,17 +9001,19 @@
             {
                 "key": "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default",
                 "transitions": [
-                    "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion"
+                    "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectRegion",
+                    "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectBitrate"
                 ],
                 "hooks": [],
                 "options": {
                     "executionStep": "default",
                     "component": "VertixBot/UI-V3/DynamicChannelRegionComponent",
                     "previewDefaultVars": {
-                        "region": "Automatic"
+                        "region": "Automatic",
+                        "bitrate": "64"
                     },
                     "previewEmbedsGroup": "VertixBot/UI-V3/DynamicChannelRegionEmbedGroup",
-                    "previewElementsGroup": "VertixBot/UI-V3/DynamicChannelRegionSelectMenuGroup",
+                    "previewElementsGroup": "VertixBot/UI-V3/DynamicChannelRegionElementsGroup",
                     "navigationType": "editReply"
                 }
             }
@@ -8917,6 +9047,38 @@
                         "type": "set",
                         "path": [
                             "region"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectBitrate",
+                "from": "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default",
+                "to": "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V3/DynamicChannelRegionFlow/Handlers/VertixBot/UI-V3/DynamicChannelBitrateSelectMenu",
+                        "sourceEntity": "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu",
+                        "handlerKind": "string-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default",
+                            "executionStep": "default"
+                        },
+                        "mutations": [
+                            {
+                                "type": "set",
+                                "path": [
+                                    "bitrate"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "mutations": [
+                    {
+                        "type": "set",
+                        "path": [
+                            "bitrate"
                         ]
                     }
                 ]

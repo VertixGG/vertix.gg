@@ -35,6 +35,7 @@ export default function DiscordDynamicChannelV3() {
                     limit: "Unlimited",
                     state: "🌐 Public",
                     region: "Automatic",
+                    bitrate: "64",
                     renameEmoji: "<emoji name='ChannelRename'>",
                     limitEmoji: "<emoji name='UserLimit'>",
                     privacyEmoji: "<emoji name='ChannelPrivacy'>",

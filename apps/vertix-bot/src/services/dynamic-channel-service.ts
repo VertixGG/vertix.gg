@@ -3,6 +3,12 @@ import "@vertix.gg/prisma/bot-client";
 
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
+import {
+    BITRATE_INHERIT_VALUE,
+    bitrateToKilobits,
+    clampBitrate
+} from "@vertix.gg/definitions/src/bitrate-definitions";
+
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { UserMasterChannelDataModel } from "@vertix.gg/data/src/models/data/user-master-channel-data-model";
@@ -1539,6 +1545,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         masterChannelDBId: string,
         options = {
             includeRegion: false,
+            includeBitrate: false,
             includePrimaryMessage: false
         }
     ): Promise<TDynamicChannelConfiguration> {
@@ -1546,6 +1553,10 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
         if ( options.includeRegion ) {
             optional.region = channel.rtcRegion ?? "auto";
+        }
+
+        if ( options.includeBitrate ) {
+            optional.bitrate = channel.bitrate;
         }
 
         if ( options.includePrimaryMessage ) {
@@ -1680,6 +1691,12 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             if ( savedData.dynamicChannelRegion ) {
                 defaultProperties.rtcRegion = savedData.dynamicChannelRegion ?? null;
+            }
+
+            // Clamped for the same reason the edit is: a saved 256 outlives the boost that allowed
+            // it, and an unclamped restore fails the channel's creation rather than its bitrate.
+            if ( savedData.dynamicChannelBitrate > 0 ) {
+                defaultProperties.bitrate = clampBitrate( savedData.dynamicChannelBitrate, guild.maximumBitrate );
             }
         }
 
@@ -2316,6 +2333,69 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         return result;
     }
 
+    /**
+     * Function editChannelBitrate() :: Sets how much of everyone's connection the channel asks for.
+     *
+     * Takes the menu's own value rather than a number, the way `editChannelRegion()` takes `auto` -
+     * what `inherit` resolves to, and whether the guild still allows what was picked, are questions
+     * about the channel rather than about the press, so they are answered here.
+     */
+    public async editChannelBitrate(
+        initiator: MessageComponentInteraction<"cached">,
+        channel: VoiceChannel,
+        newBitrate: string
+    ) {
+        let result = false;
+
+        const targetBitrate = await this.resolveBitrate( channel, newBitrate );
+
+        if ( channel.bitrate !== targetBitrate ) {
+            result = await channel
+                .setBitrate( targetBitrate )
+                .then( () => true )
+                .catch( ( error ) => {
+                    this.logger.error( this.editChannelBitrate, "", error );
+
+                    return false;
+                } );
+        }
+
+        await this.log( initiator, channel, this.editChannelBitrate, String( bitrateToKilobits( targetBitrate ) ), {
+            result
+        } );
+
+        if ( result ) {
+            await UserMasterChannelDataModel.$.setDataByDynamicChannel( initiator.user.id, channel, {
+                dynamicChannelBitrate: targetBitrate
+            } );
+
+            this.editPrimaryMessageDebounce( channel );
+        }
+
+        return result;
+    }
+
+    /**
+     * Function resolveBitrate() :: What a menu's value means for this channel, right now.
+     *
+     * Clamped rather than passed on, because the menu says what was allowed when the screen was
+     * drawn and the guild says what is allowed now - a server can lose a boost between the two, and
+     * discord answers a bitrate over the maximum by refusing the whole edit rather than trimming it.
+     */
+    private async resolveBitrate( channel: VoiceChannel, newBitrate: string ): Promise<number> {
+        const maximumBitrate = channel.guild.maximumBitrate;
+
+        if ( BITRATE_INHERIT_VALUE === newBitrate ) {
+            const masterChannel = await this.services.channelService.getMasterChannelByDynamicChannelId( channel.id );
+
+            return clampBitrate( masterChannel?.bitrate ?? channel.bitrate, maximumBitrate );
+        }
+
+        const parsed = parseInt( newBitrate );
+
+        return clampBitrate( Number.isNaN( parsed ) ? channel.bitrate : parsed, maximumBitrate );
+    }
+
     public async editChannelOwner(
         newOwnerId: string,
         previousOwnerId: string,
@@ -2542,6 +2622,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
         channel: VoiceChannel,
         options = {
             includeRegion: false,
+            includeBitrate: false,
             includePrimaryMessage: false
         }
     ): Promise<IDynamicResetChannelResult> {
@@ -2663,6 +2744,13 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
 
             if ( options.includeRegion ) {
                 userData.dynamicChannelRegion = currentChannelState.region;
+            }
+
+            // The generator's own bitrate is already back on the channel - reset writes the
+            // inherited properties - so this is the preference catching up with it. Left out, the
+            // next channel this owner opens comes back at the bitrate they reset away from.
+            if ( options.includeBitrate ) {
+                userData.dynamicChannelBitrate = currentChannelState.bitrate;
             }
 
             await UserMasterChannelDataModel.$.setDataByDynamicChannel( initiator.user.id, channel, userData );
@@ -3184,6 +3272,15 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 }
 
                 message = `🌍 \`${ initiatorDisplayName }\` set channel region to **${ action }**`;
+                break;
+
+            case this.editChannelBitrate:
+                if ( !meta.result ) {
+                    message = `🎚 \`${ initiatorDisplayName }\` tried to set channel bitrate but failed due unknown error`;
+                    break;
+                }
+
+                message = `🎚 \`${ initiatorDisplayName }\` set channel bitrate to **${ action } kbps**`;
                 break;
 
             case this.editChannelOwner:

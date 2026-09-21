@@ -47,6 +47,33 @@ test.describe( "v2 control panel", () => {
         await dynamicChannels.close( channel );
     } );
 
+    test( "the v2 panel offers region, and keeps bitrate off itself", async( { app, dynamicChannels, v2Generator } ) => {
+        const channel = await dynamicChannels.open( v2Generator.channelId, "v2" );
+
+        const panel = await dynamicChannels.panel( channel );
+
+        // The region button is in v2's default set, so a generator nobody curated carries it -
+        // including the ones made before it existed, which are handed today's default because their
+        // stored set still matches the fingerprint in `button-ids.ts`. That compensation is the whole
+        // reason this draws at all on an old server, and nothing else asserts it.
+        expect(
+            BotCatalog.$.panelButtonsV2.map( ( button ) => button.name ),
+            "the v2 panel lost its region button"
+        ).toContain( "VertixBot/UI-V2/DynamicChannelRegionButton" );
+
+        await expect(
+            app.messages.labelledButton( panel, BotCatalog.$.panelButtonV2( "VertixBot/UI-V2/DynamicChannelRegionButton" ).label )
+        ).toBeVisible();
+
+        // Bitrate stays a menu on the screen that button opens. A button of its own would take a
+        // slot in a set an admin arranged, to ask a question the region screen already asks.
+        await expect(
+            app.messages.selectMenu( panel, BotCatalog.$.selectPlaceholder( "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu" ) )
+        ).toHaveCount( 0 );
+
+        await dynamicChannels.close( channel );
+    } );
+
     for ( const button of BotCatalog.$.panelButtonsV2 ) {
         test( `pressing ${ button.name.split( "/" ).at( -1 ) } answers with something`, async( { app, dynamicChannels, v2Generator } ) => {
             const channel = await dynamicChannels.open( v2Generator.channelId, "v2" );

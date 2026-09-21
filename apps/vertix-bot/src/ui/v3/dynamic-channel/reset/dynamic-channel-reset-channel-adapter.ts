@@ -46,6 +46,7 @@ const DynamicChannelResetChannelAdapter = new DynamicExecutionAdapterBuilder<UID
                     const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
                     const result = await dynamicChannelService.resetChannel( interaction, interaction.channel, {
                         includeRegion: true,
+                        includeBitrate: true,
                         includePrimaryMessage: true
                     } );
 

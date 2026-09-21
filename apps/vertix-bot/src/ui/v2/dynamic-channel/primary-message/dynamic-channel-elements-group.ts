@@ -7,6 +7,7 @@ import { DynamicChannelMetaLimitButton } from "@vertix.gg/bot/src/ui/v2/dynamic-
 import { DynamicChannelMetaRenameButton } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/rename/dynamic-channel-meta-rename-button";
 import { DynamicChannelMetaStatusButton } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/meta/status/dynamic-channel-meta-status-button";
 import { DynamicChannelLfmButton } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/lfm/dynamic-channel-lfm-button";
+import { DynamicChannelRegionButton } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/region/dynamic-channel-region-button";
 import {
     DynamicChannelPermissionsAccessButton,
     DynamicChannelPermissionsStateButton,
@@ -67,6 +68,7 @@ export class DynamicChannelElementsGroup extends UIElementsGroupBase {
             DynamicChannelPermissionsStateButton,
             DynamicChannelPermissionsVisibilityButton,
             DynamicChannelPermissionsAccessButton,
+            DynamicChannelRegionButton,
 
             DynamicChannelPremiumResetChannelButton,
             DynamicChannelTransferOwnerButton,

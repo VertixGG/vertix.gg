@@ -50,6 +50,7 @@ export default function RenameChannel() {
                                     state: "🌐 **Public**",
                                     visibilityState: "🐵 **Shown**",
                                     region: "**Automatic**",
+                                    bitrate: "64",
                                 } }
                                 elementOverrides={ {
                                     "VertixBot/UI-V2/DynamicChannelMetaRenameButton": { label: "Rename" },

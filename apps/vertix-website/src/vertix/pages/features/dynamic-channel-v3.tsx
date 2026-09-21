@@ -50,7 +50,7 @@ function getFeatureOptions(): SearchableSelectOption[] {
         { label: "Invite", value: "invite-channel", icon: icon( inviteChannel, "Invite", "📨" ) },
         { label: "Knock", value: "knock-channel", icon: icon( knockChannel, "Knock", "🚪" ) },
         { label: "Privacy State", value: "privacy-state", icon: icon( privacy, "Privacy", "🚫" ) },
-        { label: "Region", value: "region", icon: icon( region, "Region", "🌍" ) },
+        { label: "Region & Bitrate", value: "region", icon: icon( region, "Region", "🌍" ) },
         { label: "Edit Primary Message", value: "edit-primary-message", icon: icon( editPrimaryMessage, "Edit Primary Message", "📝" ) },
         { label: "Channel Templates", value: "templates", icon: icon( templates, "Templates", "📂" ) },
         { label: "Channel Status", value: "status", icon: icon( status, "Status", "📢" ) },

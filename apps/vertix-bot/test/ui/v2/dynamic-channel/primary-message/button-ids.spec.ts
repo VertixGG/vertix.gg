@@ -5,6 +5,7 @@ import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-
 
 import {
     V2_BUTTONS,
+    V2_DEFAULT_BUTTONS_ADDED_SINCE,
     V2_DEFAULT_BUTTONS_BEFORE_LFM,
     V2_ELEMENT_TO_V3_BUTTON_ID,
     V2_TO_V3_BUTTON_IDS,
@@ -114,8 +115,14 @@ describe( "VertixBot/Definitions/ButtonIds", () => {
     /**
      * The fingerprint of an untouched set is a literal, so nothing stops it drifting from the set
      * it is meant to describe. Held against the group here: adding another v2 button without
-     * giving it its own fingerprint fails this rather than silently hiding the button from every
-     * generator that never curated its buttons.
+     * saying which side of the fingerprint it falls on fails this, rather than silently hiding the
+     * button from every generator that never curated its buttons.
+     *
+     * Two kinds of button fall outside the fingerprint, and they are excluded for opposite reasons.
+     * Lfm is out of the default set, so no generator ever stored it. Region is in the default set
+     * but was added after the fingerprint was written, so the generators made since store it and
+     * the ones made before are handed it by the compensation - which is what
+     * `V2_DEFAULT_BUTTONS_ADDED_SINCE` records.
      */
     it( "fingerprints the set as it stood before lfm", async() => {
         const { v2Buttons } = await loadGroups();
@@ -124,8 +131,11 @@ describe( "VertixBot/Definitions/ButtonIds", () => {
             .map( ( button ) => String( button.getId() ) )
             .filter( ( id ) => V2_BUTTONS.some( ( button ) => button.id === id ) );
 
+        const outsideTheFingerprint = ( id: string ) =>
+            "15" === id || V2_DEFAULT_BUTTONS_ADDED_SINCE.includes( id );
+
         expect( [ ...V2_DEFAULT_BUTTONS_BEFORE_LFM ].sort() )
-            .toEqual( pickable.filter( ( id ) => "15" !== id ).sort() );
+            .toEqual( pickable.filter( ( id ) => ! outsideTheFingerprint( id ) ).sort() );
     } );
 
     describe( "isUntouchedV2DefaultSet()", () => {

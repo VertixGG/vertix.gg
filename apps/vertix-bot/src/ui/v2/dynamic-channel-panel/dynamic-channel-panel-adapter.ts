@@ -70,7 +70,8 @@ async function getAllArgs( channel: VoiceChannel ) {
 
             channelId: channel.id,
 
-            region: channel.rtcRegion
+            region: channel.rtcRegion,
+            bitrate: channel.bitrate
         },
         masterChannelDB = await ChannelModel.$.getMasterByDynamicChannelId( channel.id );
 

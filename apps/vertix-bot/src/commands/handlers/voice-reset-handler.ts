@@ -30,6 +30,7 @@ export async function runVoiceReset(
     const result = await ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" )
         .resetChannel( interaction, channel, {
             includeRegion: true,
+            includeBitrate: true,
             includePrimaryMessage: true
         } );
 

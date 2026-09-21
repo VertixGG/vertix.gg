@@ -12,6 +12,36 @@ import { DynamicChannelV3Sidebar } from "@vertix.gg/website/src/vertix/component
 /** What a channel runs on until somebody says otherwise, and what the bot recommends. */
 const AUTOMATIC_REGION = "Automatic";
 
+/**
+ * The bitrate a channel is born at, in the kilobits the embed prints rather than the bits the api
+ * takes - this is a demonstration of what a reader sees, and nobody reads `64000`.
+ *
+ * A generator hands its own bitrate down to every channel it makes, so a channel nobody has touched
+ * is on whatever the generator is on. 64 is discord's own default for a fresh voice channel.
+ */
+const INHERITED_BITRATE = "64";
+
+/** The option that means no choice of the owner's, which resolves back to the generator's own. */
+const INHERIT_OPTION_VALUE = "inherit";
+
+/** Both menus sit in one state, so the transition is what tells which of them was used. */
+const BITRATE_TRANSITION = "VertixBot/UI-V3/DynamicChannelRegionFlow/Transitions/SelectBitrate";
+
+/**
+ * Function readBitrateOption() :: The number an option on the bitrate menu stands for.
+ *
+ * The menu is labelled in kilobits and valued in bits - `64 kbps` against `64000` - and the embed
+ * prints the kilobits, so the label is what is carried across. `Generator default` is the one option
+ * that is not a number at all, and stands for whatever the generator is on.
+ */
+function readBitrateOption( label: string, value: string ) {
+    if ( INHERIT_OPTION_VALUE === value ) {
+        return INHERITED_BITRATE;
+    }
+
+    return label.replace( " kbps", "" );
+}
+
 const CHANNEL_MEMBERS = [ DEMO_MEMBERS.owner, DEMO_MEMBERS.alex, DEMO_MEMBERS.jordan ];
 
 export default function Region() {
@@ -28,7 +58,12 @@ export default function Region() {
      */
     const [ region, setRegion ] = React.useState( AUTOMATIC_REGION );
 
+    /** How much of everyone's connection the channel asks for, as the same embed prints it. */
+    const [ bitrate, setBitrate ] = React.useState( INHERITED_BITRATE );
+
     const picked = AUTOMATIC_REGION !== region;
+
+    const raised = INHERITED_BITRATE !== bitrate;
 
     return (
         <div className="mb-12">
@@ -40,13 +75,14 @@ export default function Region() {
                         fallback="🌍"
                         className="text-h2 mr-4"
                     />
-                    <h2 className="text-h3 mb-0">Region</h2>
+                    <h2 className="text-h3 mb-0">Region & Bitrate</h2>
                 </div>
 
                 <button
                     type="button"
                     onClick={ () => {
                         setRegion( AUTOMATIC_REGION );
+                        setBitrate( INHERITED_BITRATE );
                         setRunKey( ( key ) => key + 1 );
                     } }
                     className="inline-flex items-center whitespace-nowrap rounded-md border border-white/15
@@ -61,8 +97,10 @@ export default function Region() {
                         <div className="text-h5 text-vc-ice-dim">
                             <p className="mb-3">
                                 <strong>
-                                    The region is where your channel&apos;s voice server sits. Discord picks one for
-                                    you; you can pin it somewhere closer to the people actually talking. Try it below.
+                                    One screen for the two things that decide how your channel sounds. The region is
+                                    where its voice server sits — Discord picks one for you, and you can pin it closer
+                                    to the people actually talking. The bitrate is how much of everyone&apos;s
+                                    connection it asks for. Try both below.
                                 </strong>
                             </p>
 
@@ -100,7 +138,8 @@ export default function Region() {
                                     variables: {
                                         ...DYNAMIC_CHANNEL_V3_PRIMARY_MESSAGE_VARIABLES,
                                         regionEmoji: DYNAMIC_CHANNEL_V3_EMOJIS.region,
-                                        region
+                                        region,
+                                        bitrate
                                     }
                                 } }
                                 allowedElements={ [ "VertixBot/UI-V3/DynamicChannelRegionButton" ] }
@@ -110,25 +149,28 @@ export default function Region() {
                                 guidance={ {
                                     "VertixBot/UI-V3/DynamicChannelFlow/States/Default": {
                                         title: <>Press <b>( 🌍 Region )</b> — it is lit up for you</>,
-                                        body: `Your channel is on ${ AUTOMATIC_REGION }, which is where Discord puts one to begin with.`
+                                        body: `Your channel is on ${ AUTOMATIC_REGION } at ${ INHERITED_BITRATE } kbps, which is where it starts.`
                                     },
                                     // One state, so what there is to say about it depends on
-                                    // whether anything has been picked yet rather than on where
-                                    // the flow stands - it never leaves this state.
-                                    "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default": picked
+                                    // what has been picked so far rather than on where the flow
+                                    // stands - it never leaves this state.
+                                    "VertixBot/UI-V3/DynamicChannelRegionFlow/States/Default": picked || raised
                                         ? {
-                                            title: <>Your channel now runs through <b>{ region }</b></>,
+                                            title: <>Your channel runs through <b>{ region }</b> at <b>{ bitrate } kbps</b></>,
                                             body: <>
                                                 The message rewrote itself in place, and the panel above agrees with it.
-                                                Pick another, or go back to <b>{ AUTOMATIC_REGION }</b> — which is the
-                                                one to leave it on unless everybody is in the same part of the world.
+                                                Leave the region on <b>{ AUTOMATIC_REGION }</b> unless everybody is in the
+                                                same part of the world, and remember a higher bitrate asks more of
+                                                everyone&apos;s connection — <b>Generator default</b> hands both back.
                                             </>
                                         }
                                         : {
-                                            title: "Pick a region from the menu",
+                                            title: "Two menus, and you can use either",
                                             body: <>
-                                                There are fourteen, and the bot recommends leaving it
-                                                on <b>{ AUTOMATIC_REGION }</b> — it follows the people in the channel.
+                                                Fourteen regions above, audio quality below. The bot recommends leaving
+                                                the region on <b>{ AUTOMATIC_REGION }</b> — it follows the people in the
+                                                channel — and only the servers with boosts are offered the steps
+                                                past <b>96 kbps</b>.
                                             </>
                                         }
                                 } }
@@ -140,9 +182,26 @@ export default function Region() {
                                             // prints for one, not the value underneath it.
                                             "VertixBot/UI-V3/DynamicChannelRegionSelectMenu": {
                                                 valuesFromOption: ( option ) => ( { region: option.label ?? "" } )
+                                            },
+                                            // Every step the bot declares, including the ones a
+                                            // server needs a boost for. The export is the whole
+                                            // list precisely so a page like this can show it.
+                                            "VertixBot/UI-V3/DynamicChannelBitrateSelectMenu": {
+                                                valuesFromOption: ( option ) => ( {
+                                                    bitrate: readBitrateOption( option.label ?? "", option.value ?? "" )
+                                                } )
                                             }
                                         },
-                                        onTransition: ( _transitionName, values ) => {
+                                        // Both menus live in this one state, so which of them was
+                                        // used is read off the transition rather than off the
+                                        // values - a menu that was not touched carries nothing.
+                                        onTransition: ( transitionName, values ) => {
+                                            if ( BITRATE_TRANSITION === transitionName ) {
+                                                setBitrate( values.bitrate );
+
+                                                return;
+                                            }
+
                                             setRegion( values.region );
                                         }
                                     }

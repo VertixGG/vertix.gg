@@ -8,6 +8,7 @@ export interface MasterChannelUserDataInterface {
     dynamicChannelAllowedUserIds: string[];
     dynamicChannelBlockedUserIds: string[];
     dynamicChannelRegion: string;
+    dynamicChannelBitrate: number;
     dynamicChannelPrimaryMessage: {
         title?: string;
         description?: string;

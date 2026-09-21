@@ -152,7 +152,7 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
             { capability: "Knock to be let in", cells: [ "Knock", "Vote", "Vote", "Paid" ] },
             { capability: "Send an invite to the room", cells: [ "Invite", "Vote", "Vote", "Paid" ] },
             { capability: "Change the voice region", cells: [ "Region", "Vote", "region", "Region" ] },
-            { capability: "Owner changes the bitrate", cells: [ null, "Vote", "bitrate", "Bitrate" ] },
+            { capability: "Owner changes the bitrate", cells: [ "Region screen", "Vote", "bitrate", "Bitrate" ] },
             { capability: "Text chat for the room", cells: [ "In-voice chat", "Vote", "Vote", "Paid" ] },
             { capability: "Save the room as a template", cells: [ "Templates", null, null, "Template" ] },
             { capability: "Reword the room's own panel", cells: [ "Edit Primary Message", "Paid", null, "Edit message" ] },

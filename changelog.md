@@ -1,5 +1,16 @@
 # Changelog
 
+**Version: 0.0.20 ~ 21/09/2026**
+- New Features:
+    - **Bitrate**: Set how much of everyone's connection your channel asks for, from the same screen that already sets its region - a second menu under the one that was there, on both interfaces. The steps run from 8 kbps up to 384, and a server is offered only the ones its boost tier allows, read fresh every time the screen is drawn - so a server that boosts today sees the wider list today rather than after we deploy something. `Generator default` hands the choice back to whatever the generator itself is on, which is also where every new channel starts. On a generator that remembers your settings the next channel you open comes back on the bitrate you left, and `Reset` puts it back to the generator's along with everything else.
+    - **Region On The Older Interface**: The older interface never had a region screen. `/voice region` answered that the feature was not in it, and a channel's region could be read on its own message and changed by nobody. It has that screen now - region and bitrate together - and a **Region** button on the panel, after Transfer, to open it. A server that never arranged its buttons is given it without doing anything; one that did keeps the set it chose, and adds it from the buttons screen when it wants it.
+- Improvements:
+    - **Both Panels Say What A Channel Sounds Like**: The control panel lists the bitrate under the region, written in the kilobits Discord's own interface uses rather than the raw number its API takes. Both interfaces, seven languages.
+- On The Site:
+    - The region pages carry the bitrate menu and let you work both of them, and the older interface has a page of its own for the screen it just gained. The comparison against the other three catches up on the one row where all of them beat us.
+
+---
+
 **Version: 0.0.19 ~ 15/09/2026**
 - New Features:
     - **Commands For Everything**: Every button on a channel's panel is now a slash command as well. `/voice rename`, `limit`, `privacy`, `status`, `access`, `invite`, `knock`, `claim`, `transfer`, `region`, `templates`, `message`, `reset`, `clear-chat` and `panel` open the same screens the buttons do, so a member can reach them without the panel in front of them. The admin screens gather under `/manage` - setup, new-generator, edit, roles, server-options, badwords and language. Where an older generator has no such screen, the command says so instead of opening the wrong one.

@@ -19,6 +19,12 @@ import {
     createClientSweepers
 } from "@vertix.gg/bot/src/definitions/client-cache";
 
+import {
+    getOwnedShardIds,
+    getShardClientOptions,
+    ownsSingletonWork
+} from "@vertix.gg/bot/src/definitions/sharding";
+
 import { GlobalLogger } from "@vertix.gg/bot/src/global-logger";
 
 import { TopGGManager } from "@vertix.gg/bot/src/managers/top-gg-manager";
@@ -173,7 +179,9 @@ export default async function Main( { enableListeners }: {
             "DirectMessages"
         ],
         partials: [ Partials.Channel ],
-        shards: "auto",
+        // `{ shards: "auto" }` unless SHARD_COUNT and SHARD_IDS are both set, which no deployment
+        // sets today - so this is the same client it has always been until someone splits it.
+        ... getShardClientOptions(),
         makeCache: createClientCacheFactory(),
         sweepers: createClientSweepers()
     } );
@@ -212,7 +220,16 @@ export default async function Main( { enableListeners }: {
             );
         }
 
-        if ( aiChatToken ) {
+        // The AI chat bot is a second application with its own token, not a second view of this one,
+        // so it belongs to the bot rather than to any shard. Started on every shard process it would
+        // open a full set of gateway connections per process and answer each mention that many
+        // times. Unsharded this is always true, so nothing changes today.
+        if ( aiChatToken && ! ownsSingletonWork() ) {
+            logger.info(
+                onLogin,
+                `AI Chat Bot is not started here - shards '${ getOwnedShardIds()?.join( "," ) }' do not include 0`
+            );
+        } else if ( aiChatToken ) {
             logger.info( onLogin, "Starting separate AI Chat Bot client..." );
 
             const aiClient = new Client( {

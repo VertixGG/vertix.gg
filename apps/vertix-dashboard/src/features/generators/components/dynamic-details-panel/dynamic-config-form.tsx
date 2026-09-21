@@ -21,11 +21,21 @@ import {
 import { dynamicChannelEditorLink } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
 
 import {
+    LFM_TIMING_FIELDS,
+    LFM_TIMING_SETTINGS_KEYS,
+    lfmTimingDraftsOf,
+    readLfmTimingDraft
+} from "@vertix.gg/dashboard/src/features/generators/lib/lfm-timings";
+
+import {
     DYNAMIC_CONFIG_FORM_INITIAL_STATE,
     DYNAMIC_CONFIG_FORM_COMMANDS
 } from "@vertix.gg/dashboard/src/features/generators/commands/dynamic-details-panel/dynamic-config-form-commands";
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
+import type {
+    TDynamicChannelLfmTimingsField
+} from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
 import type { DynamicConfigFormState } from "@vertix.gg/dashboard/src/features/generators/commands/dynamic-details-panel/dynamic-config-form-commands";
 import type {
     ChannelPrivacyState,
@@ -91,6 +101,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
             logsChannelId: state.logsChannelId,
             lfmChannelIds: state.lfmChannelIds,
             lfmPingRoleIds: state.lfmPingRoleIds,
+            lfmTimingDrafts: state.lfmTimingDrafts,
         } )
     );
 
@@ -102,7 +113,29 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/Initialize", { settings } );
     }, [] );
 
+    /*
+     * What the four clocks read as now, and what they read as when the form opened.
+     *
+     * Compared as the text of the fields rather than as the milliseconds behind them, so a stored
+     * value its own unit cannot write out exactly cannot make an untouched form look edited.
+     */
+    const lfmTimingResults = LFM_TIMING_FIELDS.map( ( entry ) => ( {
+        ... entry,
+        draft: state.lfmTimingDrafts[ entry.field ] ?? "",
+        ... readLfmTimingDraft( entry.field, state.lfmTimingDrafts[ entry.field ] ?? "" )
+    } ) );
+
+    const lfmTimingErrors = lfmTimingResults.filter( ( entry ) => entry.error );
+
+    const storedLfmTimingDrafts = lfmTimingDraftsOf( {
+        postCooldown: settings.dynamicChannelLfmPostCooldownMs,
+        pingCooldown: settings.dynamicChannelLfmPingCooldownMs,
+        postExpiry: settings.dynamicChannelLfmPostExpiryMs,
+        occupancyDebounce: settings.dynamicChannelLfmOccupancyDebounceMs
+    } );
+
     const hasChanges =
+        lfmTimingResults.some( ( { field, draft } ) => draft !== storedLfmTimingDrafts[ field ] ) ||
         state.nameTemplate !== ( settings.dynamicChannelNameTemplate ) ||
         state.autoSave !== ( settings.dynamicChannelAutoSave ) ||
         state.autoStatus !== ( settings.dynamicChannelAutoStatus ) ||
@@ -132,6 +165,12 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 dynamicChannelLogsChannelId: state.logsChannelId,
                 dynamicChannelLfmChannelIds: state.lfmChannelIds,
                 dynamicChannelLfmPingRoleIds: state.lfmPingRoleIds,
+                // Every field is in bounds by the time this runs - saving is refused while one is
+                // not, so there is no partial set to decide what to do with here.
+                ... lfmTimingResults.reduce( ( timings, { field, milliseconds } ) => ( {
+                    ... timings,
+                    [ LFM_TIMING_SETTINGS_KEYS[ field ] ]: milliseconds
+                } ), {} )
             }
         } );
         onClose();
@@ -145,6 +184,10 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
 
     const handleUpdateLfmPingRoles = ( value: string[] ) => {
         formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateLfmPingRoles", { value } );
+    };
+
+    const handleUpdateLfmTiming = ( field: TDynamicChannelLfmTimingsField, value: string ) => {
+        formCommands.run( "Dashboard/Generators/DynamicConfigForm/UpdateLfmTiming", { field, value } );
     };
 
     const handleUpdateNameTemplate = ( value: string ) => {
@@ -301,33 +344,6 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                     onChange={ handleUpdateVerifiedRoles }
                 />
 
-                {
-                    /*
-                     * Where a room may advertise itself, and who hears about it. Empty is what the
-                     * bot reads as the feature being off - and it says as much to anyone who
-                     * presses the button, pointing them back at the setup screen.
-                     */
-                }
-                <ChannelCheckList
-                    label="Looking-for-members boards"
-                    hint="Where a room with space left may advertise itself. None switches the feature off"
-                    channels={ textChannels }
-                    selected={ state.lfmChannelIds }
-                    disabled={ isSaving }
-                    emptyLabel="Channels could not be loaded from Discord"
-                    onChange={ handleUpdateLfmChannels }
-                />
-
-                <RoleCheckList
-                    label="Looking-for-members pings"
-                    hint="Who gets mentioned when a room posts. None mentions nobody"
-                    roles={ roles }
-                    selected={ state.lfmPingRoleIds }
-                    disabled={ isSaving }
-                    emptyLabel="Roles could not be loaded from Discord"
-                    onChange={ handleUpdateLfmPingRoles }
-                />
-
                 <RoleCheckList
                     label="Staff roles"
                     hint="Roles a private or hidden channel can never shut out"
@@ -365,6 +381,75 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 />
             </div>
 
+            { /*
+                 Everything the looking-for-members button does, in one place rather than scattered
+                 among the access lists it used to sit in - the boards are what switches it on, and
+                 the clocks are meaningless without them.
+              */ }
+            <div className="border-t border-border-muted pt-4 space-y-4">
+                <div>
+                    <h3 className="text-sm font-semibold text-text-primary mb-1">Looking for members</h3>
+                    <p className="text-xs text-text-muted mb-0">
+                        A room with space left can advertise itself on a board. Picking no board is what
+                        the bot reads as the feature being off, and the button also has to be switched on
+                        below before an owner sees it.
+                    </p>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <ChannelCheckList
+                        label="Boards"
+                        hint="Where a room with space left may advertise itself. None switches the feature off"
+                        channels={ textChannels }
+                        selected={ state.lfmChannelIds }
+                        disabled={ isSaving }
+                        emptyLabel="Channels could not be loaded from Discord"
+                        onChange={ handleUpdateLfmChannels }
+                    />
+
+                    <RoleCheckList
+                        label="Pings"
+                        hint="Who gets mentioned when a room posts. None mentions nobody"
+                        roles={ roles }
+                        selected={ state.lfmPingRoleIds }
+                        disabled={ isSaving }
+                        emptyLabel="Roles could not be loaded from Discord"
+                        onChange={ handleUpdateLfmPingRoles }
+                    />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                    { lfmTimingResults.map( ( { field, label, unit, hint, draft, error } ) => (
+                        <div key={ field }>
+                            <label className="block text-sm font-medium text-text-primary mb-1">
+                                { label }
+                            </label>
+
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    inputMode="decimal"
+                                    value={ draft }
+                                    onChange={ ( e ) => handleUpdateLfmTiming( field, e.target.value ) }
+                                    disabled={ isSaving }
+                                    className={ `${ fieldClassName } pr-20 ${ error ? "border-error" : "" }` }
+                                />
+                                <span className="absolute inset-y-0 right-3 flex items-center text-xs text-text-muted
+                                pointer-events-none">
+                                    { unit }
+                                </span>
+                            </div>
+
+                            { error ? (
+                                <p className="text-xs text-error mt-1 mb-0">{ error } { unit }</p>
+                            ) : (
+                                <p className="text-xs text-text-muted mt-1 mb-0">{ hint }</p>
+                            ) }
+                        </div>
+                    ) ) }
+                </div>
+            </div>
+
             <div className="border-t border-border-muted pt-4">
                 <label className="block text-sm font-medium text-text-primary mb-1">
                     Buttons
@@ -386,7 +471,7 @@ const DynamicConfigFormComponent: DCommandFunctionComponent<DynamicConfigFormPro
                 <DiscordButton
                     variant="primary"
                     onClick={ handleSave }
-                    disabled={ !hasChanges || isSaving }
+                    disabled={ !hasChanges || isSaving || 0 < lfmTimingErrors.length }
                     icon={ <Save className="w-4 h-4" /> }
                 >
                     { isSaving ? "Saving..." : "Save changes" }

@@ -1,5 +1,13 @@
 import { CommandBase } from "@zenflux/react-commander/command-base";
 
+import { lfmTimingDraftsOf } from "@vertix.gg/dashboard/src/features/generators/lib/lfm-timings";
+
+import type {
+    TDynamicChannelLfmTimingsField
+} from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
+
+import type { TLfmTimingDrafts } from "@vertix.gg/dashboard/src/features/generators/lib/lfm-timings";
+
 import type { ChannelPrivacyState, DynamicSettings } from "@vertix.gg/dashboard/src/features/generators/types";
 
 export interface DynamicConfigFormState {
@@ -14,6 +22,14 @@ export interface DynamicConfigFormState {
     staffRoles: string[];
     lfmChannelIds: string[];
     lfmPingRoleIds: string[];
+    /**
+     * The four LFM clocks as they are typed, in the unit each field is labelled with.
+     *
+     * Held as text rather than as numbers because a field being cleared on the way to a new value
+     * is not a request for a clock of zero, and a number out of bounds has to stay on screen to be
+     * corrected - the form refuses to save while one is, the same way the server screen does.
+     */
+    lfmTimingDrafts: TLfmTimingDrafts;
     /** Null defers to the guild wide voice role. */
     voiceRoleId: string | null;
     logsChannelId: string | null;
@@ -34,6 +50,7 @@ export const DYNAMIC_CONFIG_FORM_INITIAL_STATE: DynamicConfigFormState = {
     staffRoles: [],
     lfmChannelIds: [],
     lfmPingRoleIds: [],
+    lfmTimingDrafts: lfmTimingDraftsOf( {} ),
     voiceRoleId: null,
     logsChannelId: null
 };
@@ -64,6 +81,12 @@ export class InitializeCommand extends CommandBase<DynamicConfigFormState, { set
             staffRoles: args.settings.dynamicChannelStaffRoles,
             lfmChannelIds: args.settings.dynamicChannelLfmChannelIds ?? [],
             lfmPingRoleIds: args.settings.dynamicChannelLfmPingRoleIds ?? [],
+            lfmTimingDrafts: lfmTimingDraftsOf( {
+                postCooldown: args.settings.dynamicChannelLfmPostCooldownMs,
+                pingCooldown: args.settings.dynamicChannelLfmPingCooldownMs,
+                postExpiry: args.settings.dynamicChannelLfmPostExpiryMs,
+                occupancyDebounce: args.settings.dynamicChannelLfmOccupancyDebounceMs
+            } ),
             voiceRoleId: args.settings.dynamicChannelVoiceRoleId,
             logsChannelId: args.settings.dynamicChannelLogsChannelId
         } );
@@ -160,6 +183,21 @@ export class UpdateLfmChannelsCommand extends CommandBase<DynamicConfigFormState
     }
 }
 
+export class UpdateLfmTimingCommand extends CommandBase<
+    DynamicConfigFormState,
+    { field: TDynamicChannelLfmTimingsField; value: string }
+> {
+    public static getName() {
+        return "Dashboard/Generators/DynamicConfigForm/UpdateLfmTiming";
+    }
+
+    public apply( args: { field: TDynamicChannelLfmTimingsField; value: string } ) {
+        return this.setState( {
+            lfmTimingDrafts: { ... this.state.lfmTimingDrafts, [ args.field ]: args.value }
+        } );
+    }
+}
+
 export class UpdateLfmPingRolesCommand extends CommandBase<DynamicConfigFormState, { value: string[] }> {
     public static getName() {
         return "Dashboard/Generators/DynamicConfigForm/UpdateLfmPingRoles";
@@ -202,6 +240,7 @@ export const DYNAMIC_CONFIG_FORM_COMMANDS = [
     UpdateStaffRolesCommand,
     UpdateLfmChannelsCommand,
     UpdateLfmPingRolesCommand,
+    UpdateLfmTimingCommand,
     UpdateVoiceRoleCommand,
     UpdateLogsChannelCommand
 ] as const;

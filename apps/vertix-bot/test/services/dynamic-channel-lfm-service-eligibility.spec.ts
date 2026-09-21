@@ -52,7 +52,7 @@ async function askAbout( options: RoomOptions = {} ) {
 }
 
 describe( "VertixBot/Services/DynamicChannelLfm", () => {
-    let codes: typeof import("@vertix.gg/bot/src/definitions/dynamic-channel-lfm").DynamicChannelLfmPostResultCode;
+    let codes: typeof DynamicChannelLfmPostResultCode;
 
     beforeAll( async() => {
         ( { DynamicChannelLfmPostResultCode: codes } =

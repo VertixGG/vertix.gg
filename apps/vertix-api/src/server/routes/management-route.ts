@@ -81,6 +81,10 @@ interface UpdateDynamicSettingsBody {
     dynamicChannelLogsChannelId?: string | null;
     dynamicChannelLfmChannelIds?: string[];
     dynamicChannelLfmPingRoleIds?: string[];
+    dynamicChannelLfmPostCooldownMs?: number;
+    dynamicChannelLfmPingCooldownMs?: number;
+    dynamicChannelLfmPostExpiryMs?: number;
+    dynamicChannelLfmOccupancyDebounceMs?: number;
     dynamicChannelButtonsTemplate?: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
     dynamicChannelButtonsRowBreaks?: number[];

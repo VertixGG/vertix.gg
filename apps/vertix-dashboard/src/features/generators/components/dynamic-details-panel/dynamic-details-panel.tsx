@@ -9,6 +9,10 @@ import { DiscordButton } from "@vertix.gg/discord-ui/src";
 
 import { Link } from "react-router-dom";
 
+import {
+    dynamicChannelLfmTimingsResolve
+} from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
+
 import { DynamicChannelCard } from "./dynamic-channel-card";
 import DynamicConfigForm from "./dynamic-config-form";
 
@@ -16,6 +20,11 @@ import { SettingRow, SettingsGroup } from "@vertix.gg/dashboard/src/features/gen
 
 import { ButtonsSummary } from "@vertix.gg/dashboard/src/features/generators/components/buttons-picker";
 import { dynamicChannelEditorLink } from "@vertix.gg/dashboard/src/features/flow-editor/lib/editor-link";
+
+import {
+    LFM_TIMING_FIELDS,
+    formatLfmTiming
+} from "@vertix.gg/dashboard/src/features/generators/lib/lfm-timings";
 
 import {
     DYNAMIC_DETAILS_PANEL_INITIAL_STATE,
@@ -204,6 +213,20 @@ function formatChannel( id: string | null, options: GuildDiscordOptions | null )
     return name ? `#${ name }` : id;
 }
 
+/**
+ * Function formatChannels() :: The names of the channels a setting points at.
+ */
+function formatChannels( ids: string[], options: GuildDiscordOptions | null ): string {
+    return ids.map( ( id ) => formatChannel( id, options ) ).join( ", " );
+}
+
+const LFM_OFF_NOTE = (
+    <>
+        No board is picked, so the button refuses and tells whoever pressed it to ask an admin.
+        Picking one here is what switches the feature on.
+    </>
+);
+
 const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPanelProps, DynamicDetailsPanelState> = ( {
     details,
     discordOptions,
@@ -285,6 +308,15 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
         settings?.dynamicChannelButtonsTemplateByRole ?? {},
         discordOptions
     );
+
+    // Resolved rather than read straight, so an api too old to answer with these still shows the
+    // clocks the bot is actually running on instead of four blanks.
+    const lfmTimings = dynamicChannelLfmTimingsResolve( {
+        postCooldown: settings?.dynamicChannelLfmPostCooldownMs,
+        pingCooldown: settings?.dynamicChannelLfmPingCooldownMs,
+        postExpiry: settings?.dynamicChannelLfmPostExpiryMs,
+        occupancyDebounce: settings?.dynamicChannelLfmOccupancyDebounceMs
+    } );
 
     return (
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -445,6 +477,43 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                             label="Logs channel"
                                             value={ formatChannel( settings.dynamicChannelLogsChannelId, discordOptions ) }
                                         />
+                                    </SettingsGroup>
+
+                                    { /* The boards decide whether there is a feature here at all,
+                                         so they lead and the clocks only appear once there are. */ }
+                                    <SettingsGroup title="Looking for members">
+                                        <SettingRow
+                                            label="Boards"
+                                            value={ ( settings.dynamicChannelLfmChannelIds ?? [] ).length
+                                                ? formatChannels(
+                                                    settings.dynamicChannelLfmChannelIds ?? [],
+                                                    discordOptions
+                                                )
+                                                : "Off" }
+                                            note={ ( settings.dynamicChannelLfmChannelIds ?? [] ).length
+                                                ? undefined
+                                                : LFM_OFF_NOTE }
+                                        />
+
+                                        { ( settings.dynamicChannelLfmChannelIds ?? [] ).length ? (
+                                            <>
+                                                <SettingRow
+                                                    label="Pings"
+                                                    value={ formatRoles(
+                                                        settings.dynamicChannelLfmPingRoleIds ?? [],
+                                                        discordOptions
+                                                    ) }
+                                                />
+
+                                                { LFM_TIMING_FIELDS.map( ( { field, label } ) => (
+                                                    <SettingRow
+                                                        key={ field }
+                                                        label={ label }
+                                                        value={ formatLfmTiming( field, lfmTimings[ field ] ) }
+                                                    />
+                                                ) ) }
+                                            </>
+                                        ) : null }
                                     </SettingsGroup>
 
                                     { /* Buttons live in the interface editor now, where the set and

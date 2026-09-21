@@ -47,6 +47,15 @@ export interface DynamicSettings {
      */
     dynamicChannelLfmChannelIds?: string[];
     dynamicChannelLfmPingRoleIds?: string[];
+    /**
+     * The four clocks an LFM post runs on, in milliseconds. Optional for the same reason as the
+     * two lists above, and reported already resolved - the api answers with what the bot will run
+     * on rather than with what the row happens to hold.
+     */
+    dynamicChannelLfmPostCooldownMs?: number;
+    dynamicChannelLfmPingCooldownMs?: number;
+    dynamicChannelLfmPostExpiryMs?: number;
+    dynamicChannelLfmOccupancyDebounceMs?: number;
     /** The buttons a generator's channels carry, by id, in the order the interface draws them. */
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole: Record<string, string[]>;
@@ -136,6 +145,10 @@ export interface UpdateDynamicSettingsInput {
     dynamicChannelLogsChannelId?: string | null;
     dynamicChannelLfmChannelIds?: string[];
     dynamicChannelLfmPingRoleIds?: string[];
+    dynamicChannelLfmPostCooldownMs?: number;
+    dynamicChannelLfmPingCooldownMs?: number;
+    dynamicChannelLfmPostExpiryMs?: number;
+    dynamicChannelLfmOccupancyDebounceMs?: number;
 }
 
 export interface DiscordChannelInfo {

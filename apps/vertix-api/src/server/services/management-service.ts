@@ -18,6 +18,10 @@ import {
 
 import { GUILD_TIMINGS_FIELDS } from "@vertix.gg/definitions/src/guild-timings-definitions";
 
+import {
+    dynamicChannelLfmTimingsResolve
+} from "@vertix.gg/definitions/src/dynamic-channel-lfm-timings-definitions";
+
 import { GuildTimingsConfig } from "@vertix.gg/data/src/config/guild-timings-config";
 
 import type {
@@ -133,6 +137,13 @@ function getDynamicSettingsObject(
 function readDynamicSettings( settingsData: Record<string, unknown>, defaults: Record<string, unknown> ): DynamicSettings {
     const read = <T>( key: keyof DynamicSettings ) => ( settingsData[ key ] ?? defaults[ key ] ) as T;
 
+    const lfmTimings = dynamicChannelLfmTimingsResolve( {
+        postCooldown: read<number>( "dynamicChannelLfmPostCooldownMs" ),
+        pingCooldown: read<number>( "dynamicChannelLfmPingCooldownMs" ),
+        postExpiry: read<number>( "dynamicChannelLfmPostExpiryMs" ),
+        occupancyDebounce: read<number>( "dynamicChannelLfmOccupancyDebounceMs" )
+    } );
+
     return {
         dynamicChannelNameTemplate: read( "dynamicChannelNameTemplate" ),
         dynamicChannelAutoSave: read( "dynamicChannelAutoSave" ),
@@ -149,6 +160,14 @@ function readDynamicSettings( settingsData: Record<string, unknown>, defaults: R
         // nobody having set the feature up, and what its refusal tells an admin to go and fix.
         dynamicChannelLfmChannelIds: read<string[]>( "dynamicChannelLfmChannelIds" ) ?? [],
         dynamicChannelLfmPingRoleIds: read<string[]>( "dynamicChannelLfmPingRoleIds" ) ?? [],
+        // Resolved rather than reported as stored, because resolving is what the bot does on its
+        // own way in: a value that fell outside the bounds since it was written is one the bot
+        // drops back to the fallback, and a dashboard showing the stored number instead would be
+        // naming a clock nothing runs on.
+        dynamicChannelLfmPostCooldownMs: lfmTimings.postCooldown,
+        dynamicChannelLfmPingCooldownMs: lfmTimings.pingCooldown,
+        dynamicChannelLfmPostExpiryMs: lfmTimings.postExpiry,
+        dynamicChannelLfmOccupancyDebounceMs: lfmTimings.occupancyDebounce,
         dynamicChannelButtonsTemplate: read<string[]>( "dynamicChannelButtonsTemplate" ) ?? [],
         dynamicChannelButtonsTemplateByRole: read<Record<string, string[]>>( "dynamicChannelButtonsTemplateByRole" ) ?? {},
         // Not a setting the bot's configuration carries: absent means no arrangement of its own,
@@ -170,6 +189,11 @@ export interface DynamicSettings {
     dynamicChannelLogsChannelId: string | null;
     dynamicChannelLfmChannelIds: string[];
     dynamicChannelLfmPingRoleIds: string[];
+    /** The four clocks an LFM post runs on, in milliseconds, already resolved against the bounds. */
+    dynamicChannelLfmPostCooldownMs: number;
+    dynamicChannelLfmPingCooldownMs: number;
+    dynamicChannelLfmPostExpiryMs: number;
+    dynamicChannelLfmOccupancyDebounceMs: number;
     dynamicChannelButtonsTemplate: string[];
     dynamicChannelButtonsTemplateByRole: Record<string, string[]>;
     dynamicChannelButtonsRowBreaks: number[];
@@ -260,6 +284,10 @@ export interface UpdateDynamicSettingsInput {
     dynamicChannelLogsChannelId?: string | null;
     dynamicChannelLfmChannelIds?: string[];
     dynamicChannelLfmPingRoleIds?: string[];
+    dynamicChannelLfmPostCooldownMs?: number;
+    dynamicChannelLfmPingCooldownMs?: number;
+    dynamicChannelLfmPostExpiryMs?: number;
+    dynamicChannelLfmOccupancyDebounceMs?: number;
     dynamicChannelButtonsTemplate?: string[];
     dynamicChannelButtonsTemplateByRole?: Record<string, string[]>;
     dynamicChannelButtonsRowBreaks?: number[];

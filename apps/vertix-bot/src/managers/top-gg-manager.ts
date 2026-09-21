@@ -66,6 +66,20 @@ export class TopGGManager extends CacheBase<Date> {
         this.voteInterval = voteInterval;
     }
 
+    /**
+     * A vote is good for the whole top.gg window, so these entries have to outlive the default TTL.
+     *
+     * `isVoted()` already compares the cached `Date` against `voteInterval` itself, so expiring an
+     * entry sooner would not make the answer wrong - it would send every repeat question back to
+     * the top.gg API, once per user per fifteen minutes instead of once per twelve hours.
+     *
+     * Safe to answer from a field because the base reads this lazily, on the first get or set,
+     * rather than while `super()` is still running.
+     */
+    protected override getCacheTtlMs(): number {
+        return this.voteInterval;
+    }
+
     public getVoteUrl() {
         return TopGGManager.getVoteUrl();
     }

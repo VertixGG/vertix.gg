@@ -260,13 +260,12 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function getConfigLimits() :: The limits the configuration sets, read out of it.
+     * Function getConfigLimits() :: What this guild is allowed, for the screen that refuses at it.
      *
-     * Through `GuildDataManager`, which is the one place a guild's own allowance and the configured
-     * default are reconciled: a guild that was granted one carries a row, and one that was not
-     * falls back to the config. Read straight out of the config here instead, this answered the
-     * same number for every guild - so an allowance granted to a server applied in discord, where
-     * the bot reads the row, and not in the dashboard, which asks this.
+     * Through `EntitlementService`, which is the one place a grant, the configured default and a
+     * tier somebody pays for are reconciled - so the dashboard refuses at the same number discord
+     * does. Read straight out of the config here instead, this answered one number for every guild,
+     * and an allowance belonging to a server applied in discord and not in the dashboard.
      */
     private async getConfigLimits( guildId: string ): Promise<GetConfigLimitsResponse> {
         const maxMasterChannels = await ServiceLocator.$.get<EntitlementService>(

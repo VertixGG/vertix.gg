@@ -4,12 +4,16 @@ import { ChannelType, BaseGuildTextChannel, BaseGuildVoiceChannel } from "discor
 
 import { ServiceWithDependenciesBase } from "@vertix.gg/base/src/modules/service/service-with-dependencies-base";
 
+import { IPC_NO_RESPONSE } from "@vertix.gg/base/src/modules/ipc/ipc-service";
+
 import {
     UI_IPC_ACTIONS,
     UI_IPC_CHANNELS,
     UI_IPC_UNKNOWN_PEER_ERROR,
     UI_PEER_IDENTITIES
 } from "@vertix.gg/definitions/src/ui-ipc-definitions";
+
+import { ownsSingletonWork } from "@vertix.gg/bot/src/definitions/sharding";
 
 import {
     createDynamicAdapter,
@@ -133,10 +137,25 @@ export class UIIPCService extends ServiceWithDependenciesBase<{
         }
     }
 
-    private async handleIPCRequest( request: IPCRequest<UIIPCRequestPayload> ): Promise<UIIPCResponsePayload> {
+    private async handleIPCRequest(
+        request: IPCRequest<UIIPCRequestPayload>
+    ): Promise<UIIPCResponsePayload | typeof IPC_NO_RESPONSE> {
         const { payload } = request;
 
         this.logger.log( this.handleIPCRequest, `Received UI IPC request: ${ payload.action }` );
+
+        // This channel is about the bot rather than about a guild - registered peers, the adapter
+        // registry, the interactions log - and that registry lives in whichever process built it.
+        // Spread across shards it would answer differently depending on which replied first, so one
+        // process owns it. Unsharded that is this one, exactly as before.
+        if ( ! ownsSingletonWork() ) {
+            this.logger.log(
+                this.handleIPCRequest,
+                `Declining '${ payload.action }' - another process owns the UI registry`
+            );
+
+            return IPC_NO_RESPONSE;
+        }
 
         // Any traffic keeps a peer alive, not only what needs its identity.
         this.touchPeer( payload );

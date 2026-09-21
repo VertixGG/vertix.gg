@@ -107,4 +107,77 @@ describe( "VertixBot/Managers/TopGG", () => {
             apiInstance.hasVoted = originalHasVoted;
         } );
     } );
+
+    describe( "updateStats()", () => {
+        const originalCount = process.env.SHARD_COUNT,
+            originalIds = process.env.SHARD_IDS;
+
+        let posted: { serverCount?: number; shardId?: number; shardCount?: number }[];
+
+        const setShards = ( count?: string, ids?: string ) => {
+            count ? process.env.SHARD_COUNT = count : delete process.env.SHARD_COUNT;
+            ids ? process.env.SHARD_IDS = ids : delete process.env.SHARD_IDS;
+        };
+
+        /** One cached guild per entry, on the shard that entry names. */
+        const withGuildsOnShards = ( shardIds: number[] ) => {
+            topGGManager[ "client" ] = {
+                guilds: {
+                    cache: new Map( shardIds.map( ( shardId, index ) => [ String( index ), { shardId } ] ) )
+                }
+            } as never;
+        };
+
+        beforeEach( () => {
+            posted = [];
+
+            topGGManager[ "api" ] = {
+                postStats: async( stats: unknown ) => {
+                    posted.push( stats as { serverCount?: number } );
+
+                    return stats;
+                }
+            } as never;
+        } );
+
+        afterEach( () => setShards( originalCount, originalIds ) );
+
+        // Every deployment today.
+        it( "should post once for the whole bot when unsharded", async() => {
+            setShards( undefined, undefined );
+            withGuildsOnShards( [ 0, 0, 0 ] );
+
+            await topGGManager.updateStats();
+
+            expect( posted ).toEqual( [ { serverCount: 3, shardId: 0, shardCount: 1 } ] );
+        } );
+
+        // top.gg sums what each shard reports, so a process posts for the shards it holds and no
+        // others - the guild on shard 2 belongs to a different process.
+        it( "should post per owned shard, counting only that shard's guilds", async() => {
+            setShards( "4", "0,1" );
+            withGuildsOnShards( [ 0, 0, 1, 2 ] );
+
+            await topGGManager.updateStats();
+
+            expect( posted ).toEqual( [
+                { serverCount: 2, shardId: 0, shardCount: 4 },
+                { serverCount: 1, shardId: 1, shardCount: 4 }
+            ] );
+        } );
+
+        // A process that holds no shard 0 is not a special case - it reports its own shards and
+        // nothing else, the same as any other.
+        it( "should report its own shards when it does not hold shard 0", async() => {
+            setShards( "4", "2,3" );
+            withGuildsOnShards( [ 2, 3, 3 ] );
+
+            await topGGManager.updateStats();
+
+            expect( posted ).toEqual( [
+                { serverCount: 1, shardId: 2, shardCount: 4 },
+                { serverCount: 2, shardId: 3, shardCount: 4 }
+            ] );
+        } );
+    } );
 } );

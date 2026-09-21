@@ -9,8 +9,22 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import type { IPCMessage, IPCRequest, IPCResponse } from "./ipc-messages";
 
+/**
+ * Returned by a request handler that is not the one meant to answer.
+ *
+ * Every process subscribed to a request channel runs its handler, and this publishes a response for
+ * whatever the handler returns - so a process that simply returned `null` would put a successful,
+ * empty answer on the wire alongside the real one, and `request()` resolves on whichever arrives
+ * first. Declining has to mean saying nothing at all, which a return value cannot express on its own.
+ *
+ * Nothing is published for this, so a channel where *every* handler declines leaves the caller
+ * waiting for its timeout - which is the correct outcome: nobody could answer.
+ */
+export const IPC_NO_RESPONSE = Symbol( "IPC_NO_RESPONSE" );
+
 type MessageHandler<T = unknown> = ( message: IPCMessage<T> ) => void | Promise<void>;
-type RequestHandler<TReq = unknown, TRes = unknown> = ( request: IPCRequest<TReq> ) => Promise<TRes>;
+type RequestHandler<TReq = unknown, TRes = unknown> =
+    ( request: IPCRequest<TReq> ) => Promise<TRes | typeof IPC_NO_RESPONSE>;
 
 interface PendingRequest<T> {
     resolve: ( value: T ) => void;
@@ -210,6 +224,17 @@ export class IPCService<TChannel extends string = string> extends ServiceBase {
 
                 try {
                     const result = await requestHandler( request );
+
+                    // Said nothing rather than said nothing useful - see `IPC_NO_RESPONSE`.
+                    if ( IPC_NO_RESPONSE === result ) {
+                        this.logger.log(
+                            this.onRequest,
+                            `Declined request ${ request.requestId } on ${ requestChannel } - not for this process`
+                        );
+
+                        return;
+                    }
+
                     const response = createIPCResponse( responseChannel, request.requestId, result, true );
 
                     response.signature = signIPCEnvelope( response );

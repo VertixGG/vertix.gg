@@ -10,6 +10,8 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { Api } from "@top-gg/sdk";
 
+import { getOwnedShardIds, getShardCount } from "@vertix.gg/bot/src/definitions/sharding";
+
 import type TopGG from "@top-gg/sdk";
 
 import type { Client, CommandInteraction, MessageComponentInteraction } from "discord.js";
@@ -114,17 +116,47 @@ export class TopGGManager extends CacheBase<Date> {
             return;
         }
 
+        const shardCount = getShardCount(),
+            ownedShardIds = getOwnedShardIds();
+
+        // Unsharded, which is every deployment today: one post for the whole bot.
+        if ( null === shardCount || null === ownedShardIds ) {
+            return this.postShardStats( this.client.guilds.cache.size, 0, 1 );
+        }
+
+        // Sharded, top.gg sums what each shard reports, so a process posts for the shards it holds
+        // and for no others. Posting `guilds.cache.size` from every process as though it were the
+        // whole bot is what this replaces - the count would have flapped between whichever process
+        // posted last. `guild.shardId` is where discord actually routed the guild, so the split is
+        // the real one rather than an even division.
+        const countByShard = new Map<number, number>( ownedShardIds.map( ( id ) => [ id, 0 ] ) );
+
+        for ( const guild of this.client.guilds.cache.values() ) {
+            const current = countByShard.get( guild.shardId );
+
+            if ( undefined !== current ) {
+                countByShard.set( guild.shardId, current + 1 );
+            }
+        }
+
+        return Promise.all(
+            [ ... countByShard ].map( ( [ shardId, count ] ) =>
+                this.postShardStats( count, shardId, shardCount )
+            )
+        );
+    }
+
+    private postShardStats( serverCount: number, shardId: number, shardCount: number ) {
         return this.api
-            .postStats( {
-                serverCount: this.client.guilds.cache.size + 1000,
-                shardId: this.client.shard?.ids[ 0 ] ?? 0,
-                shardCount: this.client.shard?.count ?? 1
-            } )
+            .postStats( { serverCount, shardId, shardCount } )
             .then( () => {
-                this.logger.info( this.updateStats, "TopGG stats updated" );
+                this.logger.info(
+                    this.postShardStats,
+                    `TopGG stats updated - shard ${ shardId }/${ shardCount }, ${ serverCount } server(s)`
+                );
             } )
             .catch( ( e ) => {
-                this.logger.error( this.updateStats, "", e );
+                this.logger.error( this.postShardStats, "", e );
             } );
     }
 

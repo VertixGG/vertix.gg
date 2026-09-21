@@ -16,7 +16,11 @@ import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version
 
 import { ChannelType } from "discord.js";
 
+import { IPC_NO_RESPONSE } from "@vertix.gg/base/src/modules/ipc/ipc-service";
+
 import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
+
+import { ownsGuild, ownsSingletonWork } from "@vertix.gg/bot/src/definitions/sharding";
 
 import type { EntitlementService } from "@vertix.gg/bot/src/services/entitlement-service";
 
@@ -124,6 +128,20 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         const { payload } = message;
 
         this.logger.log( this.handleIPCMessage, `Received IPC message: ${ payload.action }` );
+
+        // Every process the bot runs in is subscribed to this channel, so without this a single
+        // dashboard action would be carried out once per process - including the destructive ones.
+        // Each of these payloads names a guild, and discord gives that guild to exactly one shard.
+        const guildId = ( payload.data as { guildId?: string } )?.guildId;
+
+        if ( guildId && ! ownsGuild( guildId ) ) {
+            this.logger.log(
+                this.handleIPCMessage,
+                `Ignoring '${ payload.action }' for guild '${ guildId }' - another shard holds it`
+            );
+
+            return;
+        }
 
         try {
             switch ( payload.action ) {
@@ -280,11 +298,26 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         request: IPCRequest<IPCManagementRequestPayload>
     ): Promise<
         GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
-        | GetConfigLimitsResponse | GetGeneratorDefaultsResponse
+        | GetConfigLimitsResponse | GetGeneratorDefaultsResponse | typeof IPC_NO_RESPONSE
     > {
         const { payload } = request;
 
         this.logger.log( this.handleIPCRequest, `Received IPC request: ${ payload.action }` );
+
+        // Same reasoning as the message handler, but a request also has to be *answered* exactly
+        // once: this publishes a response for whatever a handler returns, so a shard that is not
+        // the owner has to decline rather than return nothing. `GET_GENERATOR_DEFAULTS` is the one
+        // question with no guild in it, so it goes to whoever holds shard 0 instead.
+        const requestGuildId = ( payload as { guildId?: string } ).guildId;
+
+        if ( requestGuildId ? ! ownsGuild( requestGuildId ) : ! ownsSingletonWork() ) {
+            this.logger.log(
+                this.handleIPCRequest,
+                `Declining '${ payload.action }'${ requestGuildId ? ` for guild '${ requestGuildId }'` : "" } - not this process`
+            );
+
+            return IPC_NO_RESPONSE;
+        }
 
         switch ( payload.action ) {
             case IPC_REQUEST_ACTIONS.GET_SCALING_CHANNEL_INFO:

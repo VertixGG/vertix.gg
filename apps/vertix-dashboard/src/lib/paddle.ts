@@ -15,9 +15,13 @@ interface IPaddleCheckoutItem {
     quantity: number;
 }
 
+interface IPaddleEvent {
+    name: string;
+}
+
 interface IPaddle {
     Environment: { set: ( environment: string ) => void };
-    Initialize: ( options: { token: string } ) => void;
+    Initialize: ( options: { token: string; eventCallback?: ( event: IPaddleEvent ) => void } ) => void;
     Checkout: {
         open: ( options: {
             items: IPaddleCheckoutItem[];
@@ -69,6 +73,21 @@ export function isCheckoutAvailable(): boolean {
 
 let loading: Promise<IPaddle> | null = null;
 
+let completedListener: ( () => void ) | null = null;
+
+/**
+ * Function onCheckoutCompleted() :: Be told when somebody finishes paying.
+ *
+ * One listener rather than a list, because there is one screen that opens a checkout and it is the
+ * same screen that has to stop saying the server is on the free plan afterwards.
+ *
+ * Paddle's callback is set once, at `Initialize`, and cannot be passed per checkout - so the
+ * listener lives here and the screen registers into it.
+ */
+export function onCheckoutCompleted( listener: ( () => void ) | null ): void {
+    completedListener = listener;
+}
+
 /**
  * Function loadPaddle() :: Paddle's script, loaded once.
  *
@@ -98,7 +117,15 @@ function loadPaddle(): Promise<IPaddle> {
             }
 
             window.Paddle.Environment.set( getEnvironment() );
-            window.Paddle.Initialize( { token: getClientToken() } );
+
+            window.Paddle.Initialize( {
+                token: getClientToken(),
+                eventCallback: ( event ) => {
+                    if ( "checkout.completed" === event.name ) {
+                        completedListener?.();
+                    }
+                }
+            } );
 
             resolve( window.Paddle );
         };

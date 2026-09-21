@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
-import { Home, Boxes, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronUp } from "lucide-react";
+import { Home, Boxes, CreditCard, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronUp } from "lucide-react";
 
 import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
@@ -47,6 +47,14 @@ const navItems: NavItem[] = [
         label: "Interface Editor",
         path: "/interface-editor",
         icon: <Boxes className="w-5 h-5" />
+    },
+    {
+        // Hidden on the customization guild for the same reason as the rest: an allowance belongs
+        // to a real server, and that one is not one.
+        label: "Subscription",
+        path: "/billing",
+        icon: <CreditCard className="w-5 h-5" />,
+        hideForDefault: true
     }
 ];
 

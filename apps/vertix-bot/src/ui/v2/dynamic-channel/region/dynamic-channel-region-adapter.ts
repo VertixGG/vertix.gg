@@ -10,15 +10,37 @@ import {
     DynamicChannelRegionComponent
 } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/region/dynamic-channel-region-component";
 
+import {
+    DynamicChannelRegionButton
+} from "@vertix.gg/bot/src/ui/v2/dynamic-channel/region/dynamic-channel-region-button";
+
 import type {
     UIDefaultButtonChannelVoiceInteraction,
     UIDefaultStringSelectMenuChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
+import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
+import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 type DefaultInteraction =
     UIDefaultStringSelectMenuChannelVoiceInteraction
     | UIDefaultButtonChannelVoiceInteraction;
+
+/**
+ * Function onRegionButtonClicked() :: Draws this screen for the press that opened it.
+ *
+ * The panel hands the press over as it arrived, so what reaches here is an interaction whose custom
+ * id names the panel's button. An adapter answers a press by looking that button up among its own
+ * entities, which is why the button is excluded onto this one below - excluded meaning known but
+ * never drawn. Without both halves the press resolves to this adapter and then fails to find the
+ * button in it, and discord reports that the interaction failed.
+ */
+async function onRegionButtonClicked(
+    context: IExecutionAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>,
+    interaction: UIDefaultButtonChannelVoiceInteraction
+) {
+    return await context.ephemeralWithStep( interaction, "VertixBot/UI-V2/DynamicChannelRegion", {} );
+}
 
 async function getArgs( channel: VoiceChannel ) {
     return {
@@ -46,6 +68,7 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
     "VertixBot/UI-V2/DynamicChannelRegionAdapter"
 )
     .setComponent( DynamicChannelRegionComponent )
+    .setExcludedElements( [ DynamicChannelRegionButton ] )
     .defineTransactions( ( tx ) => {
         tx
             .setInitialState( "Default" )
@@ -69,6 +92,12 @@ const DynamicChannelRegionAdapter = new DynamicExecutionAdapterBuilder<DefaultIn
                 to: "Default",
                 mutations: [ { type: "set", path: [ "bitrate" ] } ]
             } )
+            .addTransition( "OpenRegion", { from: "Default", to: "Default" } )
+            .bindButton<UIDefaultButtonChannelVoiceInteraction>(
+                "VertixBot/UI-V2/DynamicChannelRegionButton",
+                "OpenRegion",
+                onRegionButtonClicked
+            )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceInteraction>(
                 "VertixBot/UI-V2/DynamicChannelRegionSelectMenu",
                 "SelectRegion",

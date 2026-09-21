@@ -3922,7 +3922,8 @@
                 "key": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
                 "transitions": [
                     "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/SelectRegion",
-                    "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/SelectBitrate"
+                    "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/SelectBitrate",
+                    "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/OpenRegion"
                 ],
                 "hooks": [],
                 "options": {
@@ -4000,6 +4001,22 @@
                         "path": [
                             "bitrate"
                         ]
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelRegionFlow/Transitions/OpenRegion",
+                "from": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                "to": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-V2/DynamicChannelRegionFlow/Handlers/VertixBot/UI-V2/DynamicChannelRegionButton",
+                        "sourceEntity": "VertixBot/UI-V2/DynamicChannelRegionButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-V2/DynamicChannelRegionFlow/States/Default",
+                            "executionStep": "VertixBot/UI-V2/DynamicChannelRegion"
+                        }
                     }
                 ]
             }

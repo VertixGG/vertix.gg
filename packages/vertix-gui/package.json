@@ -14,7 +14,7 @@
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
         "@zenflux/utils": "latest",
-        "discord.js": "latest",
+        "discord.js": "^14.27.0",
         "picocolors": "^1.1.1"
     },
     "devDependencies": {

@@ -9,7 +9,7 @@
         "@vertix.gg/base": "workspace:*",
         "cross-fetch": "^4.1.0",
         "discord-api-types": "latest",
-        "discord.js": "latest",
+        "discord.js": "^14.27.0",
         "tough-cookie": "^4.1.2"
     },
     "devDependencies": {

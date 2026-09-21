@@ -13,7 +13,7 @@
         "@vertix.gg/gui": "workspace:*",
         "@vertix.gg/prisma": "workspace:*",
         "@vertix.gg/utils": "workspace:*",
-        "discord.js": "latest",
+        "discord.js": "^14.27.0",
         "jest-diff": "^30.5.1",
         "prisma": "latest"
     }

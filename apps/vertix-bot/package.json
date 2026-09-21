@@ -31,7 +31,7 @@
         "@zenflux/utils": "latest",
         "cross-fetch": "^3.1.5",
         "discord-api-types": "latest",
-        "discord.js": "latest",
+        "discord.js": "^14.27.0",
         "dotenv": "^16.0.3",
         "jest-diff": "^30.5.1",
         "picocolors": "^1.0.1",

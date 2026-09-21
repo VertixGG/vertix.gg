@@ -193,3 +193,130 @@ describe( "VertixData/Bases/ModelDataOwnerBase/storedKeyNames", () => {
         expect( strays ).toEqual( [] );
     } );
 } );
+
+/**
+ * A concrete owner model whose every collaborator records rather than connects.
+ *
+ * Built with `Object.create` and not `new`: the real constructor stands up a data-versioning model
+ * against prisma, and none of that is what decides whether the owner lookup happens.
+ */
+class RecordingOwnerModel extends ModelDataOwnerBase<never, never, never, never> {
+    public static getName() {
+        return "VertixData/Test/RecordingOwnerModel";
+    }
+
+    public findUniqueCalls: unknown[] = [];
+
+    public resolvedKeys: unknown = null;
+
+    protected getModel() {
+        return {
+            findUnique: async( args: { where?: Record<string, unknown> } ) => {
+                this.findUniqueCalls.push( args?.where );
+
+                return { id: args?.where?.id ?? "resolved-from-row" };
+            }
+        } as never;
+    }
+
+    protected getDataModel() {
+        return {} as never;
+    }
+
+    protected getDataVersion() {
+        return "0.0.0" as never;
+    }
+
+    protected getDataUniqueKeyName() {
+        return "ownerId_key_version";
+    }
+
+    protected async dataGet( keys: unknown ) {
+        this.resolvedKeys = keys;
+
+        return { read: true } as never;
+    }
+
+    protected async dataUpsert( keys: unknown ) {
+        this.resolvedKeys = keys;
+
+        return { written: true } as never;
+    }
+
+    public read( args: unknown, keys: unknown ) {
+        return this.get( args as never, keys as never );
+    }
+
+    public write( args: unknown, keys: unknown ) {
+        return this.upsert( args as never, keys as never, {} as never );
+    }
+}
+
+function aRecordingModel() {
+    const model = Object.create( RecordingOwnerModel.prototype ) as RecordingOwnerModel;
+
+    Object.assign( model, {
+        findUniqueCalls: [],
+        resolvedKeys: null,
+        logger: { log: () => {}, info: () => {}, warn: () => {}, error: () => {} }
+    } );
+
+    return model;
+}
+
+describe( "VertixData/Bases/ModelDataOwnerBase - owner resolution", () => {
+    const SETTINGS_KEY = { key: "settings" },
+        OWNER_ID = "6a9ebc8e7bfc74b11bfc27b8";
+
+    describe( "reading", () => {
+        // `{ where: { id } }` is the shape every settings getter uses, and the query it used to make
+        // answered with the id it was given. Five of these run while one dynamic channel is created.
+        it( "should not query for the owner when the id is the whole of `where`", async() => {
+            const model = aRecordingModel();
+
+            await model.read( { where: { id: OWNER_ID } }, SETTINGS_KEY );
+
+            expect( model.findUniqueCalls ).toEqual( [] );
+            expect( model.resolvedKeys ).toEqual( { key: "settings", ownerId: OWNER_ID } );
+        } );
+
+        // Anything else names the owner by something that is not its id, and only the database can
+        // turn that into one.
+        it.each( [
+            [ "a different column", { channelId: "123" } ],
+            [ "an id alongside another column", { id: OWNER_ID, guildId: "456" } ],
+            [ "an empty id", { id: "" } ],
+            [ "a non-string id", { id: 42 } ]
+        ] )( "should fall back to the query given %s", async( _name, where ) => {
+            const model = aRecordingModel();
+
+            await model.read( { where }, SETTINGS_KEY );
+
+            expect( model.findUniqueCalls ).toEqual( [ where ] );
+        } );
+
+        it( "should reach the same keys either way", async() => {
+            const shortCircuited = aRecordingModel(),
+                queried = aRecordingModel();
+
+            await shortCircuited.read( { where: { id: OWNER_ID } }, SETTINGS_KEY );
+            await queried.read( { where: { channelId: "123" } }, SETTINGS_KEY );
+
+            expect( shortCircuited.resolvedKeys ).toEqual( { key: "settings", ownerId: OWNER_ID } );
+            expect( queried.resolvedKeys ).toEqual( { key: "settings", ownerId: "resolved-from-row" } );
+        } );
+    } );
+
+    describe( "writing", () => {
+        // The lookup is also an existence check, and a write is the one caller that needs it:
+        // data created under an owner that is gone is a row nothing will ever collect.
+        it( "should still query for the owner, even when the id is the whole of `where`", async() => {
+            const model = aRecordingModel();
+
+            await model.write( { where: { id: OWNER_ID } }, SETTINGS_KEY );
+
+            expect( model.findUniqueCalls ).toEqual( [ { id: OWNER_ID } ] );
+        } );
+    } );
+} );
+

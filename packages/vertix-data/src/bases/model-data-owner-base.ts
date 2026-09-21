@@ -160,11 +160,64 @@ export abstract class ModelDataOwnerBase<
         keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
         cache = true
     ) {
-        const keysWithOwner = await this.getUniqueKeys( keys, args, this.get );
+        const keysWithOwner = this.deriveOwnerKeysFromId( keys, args )
+            ?? await this.getUniqueKeys( keys, args, this.get );
 
         if ( !keysWithOwner ) return null;
 
         return this.dataGet<T>( keysWithOwner, cache );
+    }
+
+    /**
+     * Function deriveOwnerKeysFromId() :: The owner's keys without asking the database for them.
+     *
+     * `getUniqueKeys()` finds the owner with an uncached `findUnique` and then takes `id` off the
+     * row that comes back. When the query was `{ where: { id } }` that is the id it was handed: the
+     * round trip answers with its own input. Its only other effect is asserting the row exists.
+     *
+     * A read does not need that assertion. If the owner is gone its data went with it, so the read
+     * returns nothing either way - a missing owner and an owner with no data are the same answer
+     * here. A *write* does need it, because creating data under an owner that no longer exists
+     * leaves rows nothing will ever collect, so `create()`, `update()`, `upsert()` and `delete()`
+     * go on resolving the owner properly. This is used from `get()` and nowhere else.
+     *
+     * It is worth the narrowness: every cached settings read still paid for this. Creating one
+     * dynamic channel asks a generator for its autosave, user limit, staff roles, privacy state and
+     * verified roles, and those five share one cached data entry but were making five separate
+     * uncached `channel.findUnique` calls for the same row on the way to it.
+     *
+     * Only when `where` is exactly `{ id }`, and only while owner keys derive from `id` alone -
+     * `getOwnerUniqueKeys()` is the single place that decides that, and an override reading any
+     * other column has to revisit this.
+     */
+    private deriveOwnerKeysFromId(
+        keys: TWithOptionalProps<TDataModelUniqueKeys, "version" | "ownerId">,
+        args: Parameters<TModel[ "findUnique" ]>[ 0 ]
+    ): TWithOptionalProps<TDataModelUniqueKeys, "version"> | null {
+        const where = ( args as { where?: Record<string, unknown> } | undefined )?.where;
+
+        if ( ! where ) {
+            return null;
+        }
+
+        const names = Object.keys( where );
+
+        // Anything else - `{ channelId }`, `{ id, guildId }` - names the owner by something this
+        // cannot turn into an id, and falls through to the query that can.
+        if ( 1 !== names.length || "id" !== names[ 0 ] ) {
+            return null;
+        }
+
+        const id = where.id;
+
+        if ( "string" !== typeof id || ! id.length ) {
+            return null;
+        }
+
+        return {
+            ... keys,
+            ... this.getOwnerUniqueKeys( { id } )
+        } as TWithOptionalProps<TDataModelUniqueKeys, "version">;
     }
 
     protected async getWithOwner<T extends TDataType>(

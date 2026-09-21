@@ -60,7 +60,7 @@
         "vertix:gui:eslint": "bunx --bun eslint packages/vertix-gui",
         "vertix:gui:jest": "cd packages/vertix-gui && bun run vertix-gui:jest",
         "vertix:gui:typecheck": "cd packages/vertix-gui && bun run vertix-gui:typecheck",
-        "vertix:jest": "time ( bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:data:jest & bun run vertix:definitions:jest & bun run vertix:gui:jest & bun run vertix:utils:jest )",
+        "vertix:jest": "time ( bun run vertix:api:jest & bun run vertix:base:jest & bun run vertix:bot:jest & bun run vertix:data:jest & bun run vertix:definitions:jest & bun run vertix:gui:jest & bun run vertix:utils:jest )",
         "vertix:languages:check": "bun run --bun scripts/check-languages.js",
         "vertix:logger:dev": "cd packages/vertix-logger && bun run vertix-logger:dev",
         "vertix:logger:start": "cd packages/vertix-logger && bun run vertix-logger:start",
@@ -90,7 +90,8 @@
         "vertix:website:eslint": "bunx --bun eslint apps/vertix-website",
         "vertix:website:preview": "cd apps/vertix-website && bun run vertix-website:preview",
         "vertix:website:release": "cd apps/vertix-website && bun run vertix-website:release",
-        "vertix:website:typecheck": "cd apps/vertix-website && bun run vertix-website:typecheck"
+        "vertix:website:typecheck": "cd apps/vertix-website && bun run vertix-website:typecheck",
+        "vertix:api:jest": "cd apps/vertix-api && bun run vertix-api:jest"
     },
     "dependencies": {
         "@vertix.gg/ai": "workspace:*",

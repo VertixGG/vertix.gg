@@ -6,6 +6,7 @@
     "main": "index.ts",
     "type": "module",
     "scripts": {
+        "vertix-api:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects api",
         "vertix-api:typecheck": "bunx --bun tsc --noEmit",
         "vertix-api:bun:start:dev": "bunx dotenv-cli -e ../../.env -- bun run --bun --hot src/index-bun.ts",
         "vertix-api:ts-node:start:dev": "tsx --tsconfig tsconfig.json --trace-exit --trace-uncaught --enable-source-maps src/index.ts"
@@ -28,5 +29,9 @@
         "dotenv": "^16.0.3",
         "fastify": "^5.2.1",
         "picocolors": "^1.0.1"
+    },
+    "devDependencies": {
+        "@jest/types": "^30.5.1",
+        "@zenflux/tsconfig-to-swc": "0.1.21"
     }
 }

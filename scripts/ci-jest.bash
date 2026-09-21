@@ -12,6 +12,7 @@ bash key-gen.bash
 # back to root
 cd $CURRENT_DIR
 
+bun run vertix:api:jest - --ci --detectOpenHandles --runInBand
 bun run vertix:base:jest - --ci --detectOpenHandles --runInBand
 bun run vertix:bot:jest - --ci --detectOpenHandles --runInBand
 bun run vertix:data:jest - --ci --detectOpenHandles --runInBand

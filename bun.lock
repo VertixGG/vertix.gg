@@ -95,6 +95,10 @@
         "fastify": "^5.2.1",
         "picocolors": "^1.0.1",
       },
+      "devDependencies": {
+        "@jest/types": "^30.5.1",
+        "@zenflux/tsconfig-to-swc": "0.1.21",
+      },
     },
     "apps/vertix-bot": {
       "name": "@vertix.gg/bot",

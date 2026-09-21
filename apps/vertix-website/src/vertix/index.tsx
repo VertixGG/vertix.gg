@@ -64,6 +64,7 @@ const IndexContent = () => {
                     <ul className="flex list-none flex-wrap justify-end gap-1 pl-0 mb-0">
                         <li><a href="/privacy-policy" className={ FOOTER_LINK }>Privacy Policy</a></li>
                         <li><a href="/terms-of-service" className={ FOOTER_LINK }>Terms Of Service</a></li>
+                        <li><a href="/refund-policy" className={ FOOTER_LINK }>Refund Policy</a></li>
                         <li><a href="/credits" className={ FOOTER_LINK }>Credits</a></li>
                         <li><a href="mailto:leonidvinikov@gmail.com" className={ FOOTER_LINK }>Contact</a></li>
                     </ul>

@@ -18,6 +18,10 @@ const routes = [
         path: "/terms-of-service",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/legal-polices/terms-of-service" ) ),
     },
+    {
+        path: "/refund-policy",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix//pages/legal-polices/refund-policy" ) ),
+    },
     // ---
     {
         path: "/features/dynamic-channel-v2",

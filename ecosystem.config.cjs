@@ -34,7 +34,61 @@ const shared = {
     kill_timeout: 10000,
 };
 
+/**
+ * How many processes the bot is split across.
+ *
+ * One - the default, and what every start does unless told otherwise - is a single `vertix-bot`
+ * with no shard environment at all, which is the bot exactly as it has always run. `SHARD_COUNT`
+ * and `SHARD_IDS` both being absent is what `getShardClientOptions()` reads as unsharded.
+ *
+ * Above one, the same app becomes `vertix-bot-0`, `vertix-bot-1` and so on, one process each and
+ * one shard each. Deliberately not a `ShardingManager`: that spawns a child per shard, and the
+ * comment at the top of this file is about why a process tree is the one thing pm2 cannot supervise
+ * here.
+ *
+ * Set at start time rather than in `.env`, because pm2 does not read `.env` and because rolling
+ * back should not need a commit:
+ *
+ *   PM2_BOT_SHARD_COUNT=2 bun run vertix:pm2:restart    split
+ *   bun run vertix:pm2:restart                          back to one
+ */
+const BOT_SHARD_COUNT = Math.max(
+    1,
+    Number.parseInt( process.env.PM2_BOT_SHARD_COUNT || "1", 10 ) || 1
+);
+
+function botApps() {
+    const base = {
+        ... shared,
+        cwd: path.join( ROOT, "apps", "vertix-bot" ),
+        script: PM2_EXEC,
+        args: "--wait-redis bun src/index-bun.ts",
+        interpreter: "bash",
+    };
+
+    if ( 1 === BOT_SHARD_COUNT ) {
+        return [ { ... base, name: "vertix-bot", env: { LOGGER_PROCESS_NAME: "vertix-bot" } } ];
+    }
+
+    // `pm2-exec.sh` only sets a key it does not already find in the environment, so what is named
+    // here wins over `.env` - which is what lets each process be told a different shard.
+    return Array.from( { length: BOT_SHARD_COUNT }, ( _, shardId ) => ( {
+        ... base,
+        name: `vertix-bot-${ shardId }`,
+        env: {
+            LOGGER_PROCESS_NAME: `vertix-bot-${ shardId }`,
+            SHARD_COUNT: String( BOT_SHARD_COUNT ),
+            SHARD_IDS: String( shardId ),
+        },
+    } ) );
+}
+
 module.exports = {
+    /**
+     * The bot apps by name, so anything starting them in order asks here rather than guessing at
+     * the naming - `scripts/pm2-restart.sh` reads this.
+     */
+    botAppNames: botApps().map( ( app ) => app.name ),
     apps: [
         /**
          * First, and ahead of redis - which it can be, because it needs nothing itself.
@@ -77,15 +131,7 @@ module.exports = {
             env: { LOGGER_PROCESS_NAME: "vertix-api" },
             interpreter: "bash",
         },
-        {
-            ... shared,
-            name: "vertix-bot",
-            cwd: path.join( ROOT, "apps", "vertix-bot" ),
-            script: PM2_EXEC,
-            args: "--wait-redis bun src/index-bun.ts",
-            env: { LOGGER_PROCESS_NAME: "vertix-bot" },
-            interpreter: "bash",
-        },
+        ... botApps(),
         {
             ... shared,
             name: "pm2-dashboard",

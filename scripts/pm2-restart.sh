@@ -89,7 +89,16 @@ wait_for_port "localhost" 6379 "redis"
 start_app vertix-api
 wait_for_port "127.0.0.1" "$( env_value API_PORT 3021 )" "api"
 
-start_app vertix-bot
+# Asked of the ecosystem rather than spelled out, because how many bot processes there are is
+# decided there by PM2_BOT_SHARD_COUNT - one `vertix-bot` by default, `vertix-bot-0`, `vertix-bot-1`
+# and so on when the bot is split. Spelled out here the two would drift, and the drift would look
+# like a shard that simply never started.
+BOT_APPS="$( node -e "process.stdout.write( require( '$ECOSYSTEM' ).botAppNames.join( ' ' ) )" )"
+
+for bot_app in $BOT_APPS; do
+    start_app "$bot_app"
+done
+
 start_app pm2-dashboard
 
 pm2 save --silent

@@ -91,6 +91,15 @@ export class DiscordChannels {
      * reloaded once before the failure is believed.
      */
     public async open( channelId: string ): Promise<void> {
+        // Already looking at it, which is the common case: every test's fixture opens the command
+        // channel and the one before it usually left the client sitting there. The url is read rather
+        // than waited for, so a miss costs nothing and only a hit pays for `showsChannel()`.
+        if ( this.page.url().endsWith( `/${ channelId }` ) && await this.showsChannel( channelId ) ) {
+            await this.scrollToNewest();
+
+            return;
+        }
+
         const messages = this.page.locator( DISCORD_DOM.MESSAGE_LIST ).first();
 
         for ( let attempt = 1; attempt <= E2E_RETRIES.CHANNEL_OPEN; attempt++ ) {
@@ -184,11 +193,15 @@ export class DiscordChannels {
     private async scrollToNewest(): Promise<void> {
         const jump = this.page.locator( DISCORD_DOM.JUMP_TO_PRESENT ).first();
 
+        let moved = false;
+
         if ( await jump.isVisible().catch( () => false ) ) {
             await jump.click().catch( () => undefined );
+
+            moved = true;
         }
 
-        await this.page.evaluate( ( listSelector: string ) => {
+        const scrolled = await this.page.evaluate( ( listSelector: string ) => {
             // Walked up by what actually scrolls rather than by class name: the message list itself is
             // `scrollerInner`, which matches any sensible class guess and scrolls nothing. Its
             // scrollable ancestor is the one with content taller than itself.
@@ -198,12 +211,23 @@ export class DiscordChannels {
                 node = node.parentElement;
             }
 
-            if ( node ) {
-                node.scrollTop = node.scrollHeight;
+            if ( ! node ) {
+                return false;
             }
+
+            const before = node.scrollTop;
+
+            node.scrollTop = node.scrollHeight;
+
+            return node.scrollTop !== before;
         }, DISCORD_DOM.MESSAGE_LIST );
 
-        await this.page.waitForTimeout( E2E_INTERVALS.SETTLE_MS );
+        // Only when something actually moved. The settle is for discord redrawing after a jump, and
+        // the list is usually already at the bottom - every test's fixture opens the command channel
+        // it is already looking at, and each one was paying a second and a half to scroll nowhere.
+        if ( moved || scrolled ) {
+            await this.page.waitForTimeout( E2E_INTERVALS.SETTLE_MS );
+        }
     }
 
     /**

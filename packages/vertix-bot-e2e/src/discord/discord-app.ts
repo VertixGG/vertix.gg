@@ -20,6 +20,14 @@ import type { Page } from "@playwright/test";
  * anything about vertix; what the bot is expected to do lives in the tests, and what it says lives in
  * the catalog.
  */
+/**
+ * The pages whose guild member list has been loaded.
+ *
+ * Held here because the page outlives the `DiscordApp` wrapped around it - there is one client for
+ * the whole run and a new wrapper per test - and what this remembers is a property of the client.
+ */
+const membersLoadedFor = new WeakSet<Page>();
+
 export class DiscordApp {
     public readonly channels: DiscordChannels;
 
@@ -30,8 +38,6 @@ export class DiscordApp {
     public readonly modal: DiscordModal;
 
     public readonly voice: DiscordVoice;
-
-    private membersLoaded = false;
 
     public constructor( public readonly page: Page, accountId: string | null = signedInAccountId() ) {
         this.channels = new DiscordChannels( page );
@@ -92,11 +98,15 @@ export class DiscordApp {
      * going anywhere else to fetch a roster would take the screen under test with it.
      */
     public async ensureMembersLoaded(): Promise<void> {
-        if ( this.membersLoaded ) {
+        // Remembered against the page rather than against this object. The comment below has always
+        // said "once per session" and the guard was a field on `DiscordApp` - which the fixture
+        // builds fresh for every test, so the flag was newly false every time and the whole member
+        // list dance ran again. The page is the thing that actually lasts a session.
+        if ( membersLoadedFor.has( this.page ) ) {
             return;
         }
 
-        this.membersLoaded = true;
+        membersLoadedFor.add( this.page );
 
         await this.openCommandChannel();
 

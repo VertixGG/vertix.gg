@@ -79,6 +79,14 @@ export class DiscordVoice {
      * still in voice and moved out directly if it is.
      */
     public async disconnect(): Promise<void> {
+        // Asked first because the usual answer is no. Every test's fixture leaves voice on the way
+        // out and most of them never joined, and `waitForDisconnected()` settles for a second and a
+        // half before it answers - a pause that exists to let the client catch up with a
+        // disconnection that happened, and buys nothing for one that did not.
+        if ( ! await this.isConnected() ) {
+            return;
+        }
+
         const button = this.page.locator( DISCORD_DOM.VOICE_DISCONNECT ).first();
 
         if ( await button.isVisible().catch( () => false ) ) {

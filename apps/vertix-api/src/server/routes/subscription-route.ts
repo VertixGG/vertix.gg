@@ -12,6 +12,8 @@ import { API_ROUTES } from "@vertix.gg/api/src/server/constants";
 
 import { requireGuildOwner } from "@vertix.gg/api/src/server/middleware/guild-access";
 
+import { fetchManagementUrls } from "@vertix.gg/api/src/server/services/paddle-api-service";
+
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
 import type { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
@@ -42,6 +44,20 @@ async function handleGetSubscription(
         const tier = readBillingTiers( process.env )
             .find( ( candidate ) => candidate.priceId === subscription.priceId ) ?? null;
 
+        // Fetched live, never stored - paddle's links carry temporary tokens. Its failure is not
+        // this route's failure: the plan, the renewal date and the allowance are all still true
+        // without them, and losing the whole answer would be the worse trade.
+        let management = { updatePaymentMethodUrl: null as string | null, cancelUrl: null as string | null };
+
+        try {
+            management = await fetchManagementUrls( subscription.paddleSubscriptionId );
+        } catch( error ) {
+            request.log.warn(
+                error,
+                `Could not fetch paddle management urls for guild '${ guildId }' - the plan is shown without them`
+            );
+        }
+
         return {
             subscription: {
                 planName: tier?.name ?? null,
@@ -58,8 +74,8 @@ async function handleGetSubscription(
                 isEntitling: isSubscriptionEntitling( subscription ),
                 currentPeriodEnd: subscription.currentPeriodEnd?.toISOString() ?? null,
                 scheduledToCancelAt: subscription.scheduledToCancelAt?.toISOString() ?? null,
-                updatePaymentMethodUrl: subscription.updatePaymentMethodUrl,
-                cancelUrl: subscription.cancelUrl
+                updatePaymentMethodUrl: management.updatePaymentMethodUrl,
+                cancelUrl: management.cancelUrl
             }
         };
     } catch( error ) {

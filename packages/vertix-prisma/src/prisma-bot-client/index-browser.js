@@ -269,8 +269,6 @@ exports.Prisma.SubscriptionScalarFieldEnum = {
   currentPeriodEnd: 'currentPeriodEnd',
   scheduledToCancelAt: 'scheduledToCancelAt',
   occurredAt: 'occurredAt',
-  updatePaymentMethodUrl: 'updatePaymentMethodUrl',
-  cancelUrl: 'cancelUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

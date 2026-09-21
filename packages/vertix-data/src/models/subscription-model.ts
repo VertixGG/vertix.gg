@@ -25,9 +25,6 @@ export interface ISubscriptionRecord {
     /** When paddle says the event happened, which is what decides whether it is worth applying. */
     occurredAt: Date | null;
 
-    /** Paddle's hosted pages for changing a card and for cancelling. Sensitive - see the schema. */
-    updatePaymentMethodUrl: string | null;
-    cancelUrl: string | null;
 }
 
 /**

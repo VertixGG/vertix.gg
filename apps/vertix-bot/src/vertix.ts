@@ -170,8 +170,6 @@ export default async function Main( { enableListeners }: {
     const client = new Client( {
         intents: [
             "GuildIntegrations",
-            "GuildInvites",
-            "GuildPresences",
             "Guilds",
             "GuildVoiceStates",
             // Privileged: drives the game name shown in the dynamic channel status.

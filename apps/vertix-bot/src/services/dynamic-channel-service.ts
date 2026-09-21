@@ -3646,9 +3646,24 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             .map( ( guildId ) => client.guilds.cache.get( guildId ) )
             .filter( ( guild ): guild is Guild => undefined !== guild );
 
+        // `guild.shardId` is what discord.js computes from the guild's own id, so a cache holding
+        // guilds belonging to a shard this process did not ask for says the split did not happen -
+        // and says it in a way the total on its own cannot.
+        const byShard = new Map<number, number>();
+
+        for ( const guild of client.guilds.cache.values() ) {
+            byShard.set( guild.shardId, ( byShard.get( guild.shardId ) ?? 0 ) + 1 );
+        }
+
+        const shardBreakdown = [ ... byShard ]
+            .sort( ( [ a ], [ b ] ) => a - b )
+            .map( ( [ shardId, count ] ) => `${ shardId }:${ count }` )
+            .join( " " );
+
         this.logger.info(
             this.refreshControlPanels,
-            `Refreshing ${ guilds.length } guild(s) that have a generator, of ${ client.guilds.cache.size } the bot is in`
+            `Refreshing ${ guilds.length } guild(s) that have a generator, of ${ client.guilds.cache.size } ` +
+            `the bot is in (by shard - ${ shardBreakdown || "none" })`
         );
 
         for ( let i = 0; i < guilds.length; i += chunkSize ) {

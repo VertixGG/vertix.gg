@@ -5,23 +5,38 @@ import { BotCatalog } from "@vertix.gg/bot-e2e/src/catalog/bot-catalog";
 /**
  * The four commands that are not part of a group.
  *
- * `/help` and `/welcome` carry no permission on purpose - `spec/commands-spec.md` rows `G-01` and
- * `G-02` took the admin gate off them, and a member who cannot manage the server being unable to
- * read the help is the regression those rows exist to prevent.
+ * `/help` carries no permission on purpose - `spec/commands-spec.md` row `G-01` took the admin gate
+ * off it, and a member who cannot manage the server being unable to read the help is the regression
+ * that row exists to prevent. `/welcome` was beside it until it was declared `ADMIN`, which is why
+ * `/help` no longer points at it.
  */
 test.describe( "general commands", () => {
-    test( "/help opens the feedback interface, privately", async( { app } ) => {
+    test( "/help lists the three guides, privately", async( { app } ) => {
         await app.openCommandChannel();
 
         const reply = await app.commands.run( { group: null, name: "help" } );
 
-        await app.messages.expectEmbedTitle( reply, BotCatalog.$.embedTitle( "VertixBot/UI-General/FeedbackEmbed" ) );
+        await app.messages.expectEmbedTitle( reply, BotCatalog.$.embedTitle( "VertixBot/UI-General/HelpEmbed" ) );
 
         expect( await app.messages.isEphemeral( reply ) ).toBe( true );
 
         const labels = await app.messages.componentLabels( reply );
 
-        expect( labels ).toContain( BotCatalog.$.buttonLabel( "VertixBot/UI-General/FeedbackReportButton" ) );
+        // The guides only, in the order `HelpElementsGroup` draws them - set it up, understand what
+        // the generator does, turn features on. The row under them is dashboard, website and support,
+        // which discord draws as links rather than as buttons, so they are not read the same way.
+        for ( const entity of [
+            "VertixBot/UI-General/HelpSetupGuideButton",
+            "VertixBot/UI-General/HelpJoinToCreateButton",
+            "VertixBot/UI-General/HelpFeaturesButton"
+        ] ) {
+            const label = BotCatalog.$.buttonLabel( entity );
+
+            expect(
+                labels,
+                `/help did not offer "${ label }" - it offered ${ JSON.stringify( labels ) }`
+            ).toContain( label );
+        }
     } );
 
     test( "/welcome explains what the bot does", async( { app } ) => {

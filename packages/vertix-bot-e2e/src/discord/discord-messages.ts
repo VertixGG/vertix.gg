@@ -481,19 +481,30 @@ export class DiscordMessages {
      * should have offered, and those read better than anything this could say.
      */
     private async openMenu( message: Locator, placeholder: string ): Promise<void> {
-        for ( let attempt = 1; ; attempt++ ) {
+        const option = this.page.locator( DISCORD_DOM.SELECT_MENU_OPTION ).first();
+
+        for ( let attempt = 1; attempt <= MENU_OPEN_ATTEMPTS; attempt++ ) {
+            // Asked before pressing, because pressing an open menu shuts it. The first version of
+            // this did not ask, so its three attempts toggled the menu open, closed, open - which is
+            // worse than one press, and turned "the list was late" into "the list was never there".
+            if ( await option.isVisible().catch( () => false ) ) {
+                return;
+            }
+
             await ( await this.resolveSelectMenu( message, placeholder ) ).click();
 
-            const listed = await this.page
-                .locator( DISCORD_DOM.SELECT_MENU_OPTION )
-                .first()
+            const listed = await option
                 .waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } )
                 .then( () => true )
                 .catch( () => false );
 
-            if ( listed || MENU_OPEN_ATTEMPTS === attempt ) {
+            if ( listed ) {
                 return;
             }
+
+            // Whatever that press left behind is shut before the next one, so every attempt starts
+            // from the same place rather than from the last attempt's guess.
+            await this.page.keyboard.press( "Escape" ).catch( () => undefined );
 
             await this.page.waitForTimeout( E2E_INTERVALS.SETTLE_MS );
         }

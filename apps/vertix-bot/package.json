@@ -35,7 +35,7 @@
         "dotenv": "^16.0.3",
         "jest-diff": "^30.5.1",
         "picocolors": "^1.0.1",
-        "tough-cookie": "^6.0.0"
+        "tough-cookie": "^6.0.2"
     },
     "devDependencies": {
         "@jest/globals": "^30.5.1",

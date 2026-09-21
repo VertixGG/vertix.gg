@@ -17,15 +17,22 @@ and dispatched by a flat name lookup in `apps/vertix-bot/src/listeners/interacti
 |---|---|---|
 | `/setup` | `VertixBot/UI-General/SetupAdapter` | ManageGuild + ManageChannels + ManageRoles |
 | `/help` | `VertixBot/UI-General/FeedbackAdapter` | ManageGuild + ManageChannels + ManageRoles |
-| `/welcome` | `VertixBot/UI-General/WelcomeAdapter` | ManageGuild + ManageChannels + ManageRoles |
+| `/welcome` | `VertixBot/UI-General/WelcomeAdapter` | ManageGuild + ManageChannels + ManageRoles — kept, see `G-02` |
 | `/ping` | — file is empty, not registered | — |
 
 Two defects fall out of that table before any new command is added:
 
 - **`/help` opens the feedback adapter.** Either the name or the target is wrong.
+  **Settled**: it was the target. `/help` has a screen of its own now.
 - **`/help` and `/welcome` are admin-gated.** A member who cannot manage the guild cannot
   read the help. Every user-facing command below is therefore specified with no Discord
-  permission requirement, and the fix to these two is row `G-01`.
+  permission requirement.
+
+  **Settled, differently for each.** `/help` is ungated and its screen asks the server for
+  nothing at all. `/welcome` stays admin: it is the screen a server sees when the bot joins and
+  it ends in a Setup button, so it is the front of configuration rather than a description of
+  the bot - which is what `/help` is now for. The original reading of `G-02` was that the two
+  were the same kind of thing; they are not.
 
 ## The taxonomy
 
@@ -242,8 +249,8 @@ roles and the voice role are all on the `ServerOptions` screen, so one row reach
 
 | # | Command | Adapter | Change |
 |---|---|---|---|
-| G-01 | `/help` | `VertixBot/UI-General/FeedbackAdapter` | drop the admin gate; confirm the adapter is the intended one |
-| G-02 | `/welcome` | `VertixBot/UI-General/WelcomeAdapter` | drop the admin gate |
+| G-01 | `/help` | ~~`FeedbackAdapter`~~ → `VertixBot/UI-General/HelpAdapter` | **done** — its own screen, no gate, and nothing on it the bot must hold a permission to draw |
+| G-02 | `/welcome` | `VertixBot/UI-General/WelcomeAdapter` | **done, reversed** — declared `ADMIN` rather than ungated; see above |
 | ~~G-03~~ | ~~`/ping`~~ | **done** — the file was empty and registered nowhere; deleted |
 | G-04 | `/setup` | `SetupAdapter` | **done** — kept, and kept pointed where it was |
 
@@ -360,8 +367,8 @@ Build order, one commit per step, each reviewable on its own:
 1. ~~the bridge helper + tier plumbing + `CommandsFlow` derivation~~ — **done**, no new commands
 2. ~~`/voice`~~ — **done**, all 15 rows registered
 3. ~~`/manage`~~ — **done**, 7 rows
-4. ~~Group 3~~ — **done**: `/help` and `/welcome` ungated (`G-01`, `G-02`), `/ping` deleted
-   (`G-03`), `/setup` kept as it was (`G-04`)
+4. ~~Group 3~~ — **done**: `/help` ungated and given its own adapter (`G-01`), `/welcome`
+   declared `ADMIN` instead (`G-02`), `/ping` deleted (`G-03`), `/setup` kept as it was (`G-04`)
 
 Every row in this spec is now settled. What is left is written up rather than scheduled: the setup
 hub has no `/manage` row, `LFM` has no row at all, and `/voice claim` can point at a claim but not

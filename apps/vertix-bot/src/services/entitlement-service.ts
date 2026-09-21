@@ -1,5 +1,14 @@
+import process from "process";
+
 import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
+import { SubscriptionModel } from "@vertix.gg/data/src/models/subscription-model";
+
+import {
+    isSubscriptionEntitling,
+    readBillingTiers,
+    resolveMaxMasterChannels
+} from "@vertix.gg/definitions/src/billing-definitions";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
@@ -17,9 +26,9 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
  * where this is run from. That half is gone rather than switched off: a source of truth that can
  * never be right is worse than none at all.
  *
- * What replaces it is a subscription of our own, written by the paddle webhook and read here. Until
- * that read lands, an allowance is whatever a server was granted - which is what every server is on
- * today in any case, so nothing about this is a change in behaviour yet.
+ * What replaces it is a subscription of our own, written by the paddle webhook and read here. A
+ * server with no row, or one whose paid period has run out, is on whatever it was granted - which
+ * is every server that has never bought anything, so the free path stays the one that is exercised.
  */
 export class EntitlementService extends ServiceBase {
     private readonly debugger: Debugger;
@@ -40,9 +49,24 @@ export class EntitlementService extends ServiceBase {
     public async getMaxMasterChannels( guildId: string ): Promise<number> {
         const granted = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels;
 
-        this.debugger.log( this.getMaxMasterChannels, `Guild id: '${ guildId }' - Allowed '${ granted }'` );
+        const subscription = await SubscriptionModel.$.get( guildId );
 
-        return granted;
+        // A lapsed subscription buys nothing, and the row is kept rather than cleared - it is the
+        // record of what was bought, and only the question of whether it still counts is one the
+        // clock answers. Nothing has to come and delete it when a month runs out.
+        const paidPriceIds = subscription && isSubscriptionEntitling( subscription )
+            ? [ subscription.priceId ]
+            : [];
+
+        const allowed = resolveMaxMasterChannels( {
+            granted,
+            paidPriceIds,
+            tiers: readBillingTiers( process.env )
+        } );
+
+        this.debugger.log( this.getMaxMasterChannels, `Guild id: '${ guildId }' - Allowed '${ allowed }'` );
+
+        return allowed;
     }
 
     /**

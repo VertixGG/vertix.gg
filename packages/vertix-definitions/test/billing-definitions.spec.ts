@@ -1,6 +1,7 @@
 import {
     BILLING_UNLIMITED_MASTER_CHANNELS,
     formatMasterChannelAllowance,
+    isSubscriptionEntitling,
     isUnlimitedAllowance,
     readBillingTiers,
     resolveMaxMasterChannels
@@ -157,6 +158,103 @@ describe( "VertixDefinitions/Billing", () => {
         it( "should sell nothing when the environment says nothing", () => {
             // Assert.
             expect( readBillingTiers( {} ) ).toEqual( [] );
+        } );
+    } );
+
+    describe( "isSubscriptionEntitling()", () => {
+        // A fixed moment, so "still running" and "ran out" are arithmetic rather than a race.
+        const NOW = new Date( "2026-09-21T12:00:00.000Z" );
+
+        const laterThan = ( date: Date, days: number ) =>
+            new Date( date.getTime() + days * 24 * 60 * 60 * 1000 );
+
+        it( "should entitle a subscription being paid for", () => {
+            // Act.
+            const entitling = isSubscriptionEntitling(
+                { status: "active", currentPeriodEnd: laterThan( NOW, 10 ) },
+                NOW
+            );
+
+            // Assert.
+            expect( entitling ).toBe( true );
+        } );
+
+        it( "should entitle a trial, which is a subscription nobody has been charged for yet", () => {
+            // Act.
+            const entitling = isSubscriptionEntitling(
+                { status: "trialing", currentPeriodEnd: laterThan( NOW, 10 ) },
+                NOW
+            );
+
+            // Assert.
+            expect( entitling ).toBe( true );
+        } );
+
+        it( "should entitle a cancelled subscription until the month it paid for is up", () => {
+            // Act - the whole reason the period decides this rather than the status. Somebody who
+            // cancels on the second of the month has bought the rest of it.
+            const entitling = isSubscriptionEntitling(
+                { status: "canceled", currentPeriodEnd: laterThan( NOW, 10 ) },
+                NOW
+            );
+
+            // Assert.
+            expect( entitling ).toBe( true );
+        } );
+
+        it( "should stop entitling a cancelled subscription once that month is up", () => {
+            // Act - and nothing had to come and tell us. The row expired on its own.
+            const entitling = isSubscriptionEntitling(
+                { status: "canceled", currentPeriodEnd: laterThan( NOW, -1 ) },
+                NOW
+            );
+
+            // Assert.
+            expect( entitling ).toBe( false );
+        } );
+
+        it( "should keep entitling an active subscription whose renewal event went missing", () => {
+            // Act - the period is stale because nothing arrived to move it. Refusing here would
+            // take the plan from somebody who is paying, which is the worse of the two mistakes.
+            const entitling = isSubscriptionEntitling(
+                { status: "active", currentPeriodEnd: laterThan( NOW, -1 ) },
+                NOW
+            );
+
+            // Assert.
+            expect( entitling ).toBe( true );
+        } );
+
+        it( "should stop entitling one that went past due and stayed there", () => {
+            // Act.
+            const entitling = isSubscriptionEntitling(
+                { status: "past_due", currentPeriodEnd: laterThan( NOW, -1 ) },
+                NOW
+            );
+
+            // Assert.
+            expect( entitling ).toBe( false );
+        } );
+
+        it( "should fall back to the status when the row carries no period", () => {
+            // Act.
+            const active = isSubscriptionEntitling( { status: "active", currentPeriodEnd: null }, NOW );
+            const paused = isSubscriptionEntitling( { status: "paused", currentPeriodEnd: null }, NOW );
+
+            // Assert.
+            expect( active ).toBe( true );
+            expect( paused ).toBe( false );
+        } );
+
+        it( "should entitle a paused subscription for the period it already paid for", () => {
+            // Act - pausing is not a refund, so the time bought is still bought.
+            const entitling = isSubscriptionEntitling(
+                { status: "paused", currentPeriodEnd: laterThan( NOW, 10 ) },
+                NOW
+            );
+
+            // Assert.
+            expect( entitling ).toBe( true );
         } );
     } );
 } );

@@ -30,7 +30,7 @@ export interface IBillingTier {
     /** How many generators a guild holding it may have. */
     maxMasterChannels: number;
 
-    /** What discord charges for it a month, in whole dollars, for the pages that say so. */
+    /** What it costs a month, in whole dollars, for the pages that say so. */
     monthlyPriceUsd: number;
 }
 
@@ -79,10 +79,10 @@ export function formatMasterChannelAllowance( maxMasterChannels: number ): strin
  * The numbers are **totals, not extras** - a tier says how many generators a server may have
  * altogether, free ones included. Two on top of the free two is four, which is what `Plus` is.
  *
- * The price is quoted from here and charged by discord, which are two different places. Nothing can
- * read discord's own number back - a SKU's price is set in its dashboard and is not on the
- * entitlement - so a tier repriced there has to be repriced here too, or the site quotes one figure
- * while the store charges another.
+ * The price is quoted from here and charged by paddle, which are two different places. Nothing reads
+ * paddle's own number back - a price is set in its dashboard and the webhook carries only the id -
+ * so a tier repriced there has to be repriced here too, or the site quotes one figure while the
+ * checkout charges another.
  */
 export const BILLING_TIER_DEFINITIONS = [
     { name: "Plus", slug: "plus", environmentKey: "PADDLE_PRICE_PLUS", maxMasterChannels: 4, monthlyPriceUsd: 2 },
@@ -95,6 +95,36 @@ export const BILLING_TIER_DEFINITIONS = [
         monthlyPriceUsd: 10
     }
 ] as const;
+
+/**
+ * Paddle's words for a subscription somebody is paying for right now.
+ *
+ * `trialing` is one of them because a trial is a subscription that has not been charged yet, not one
+ * that is owed nothing - refusing it would withdraw the plan for exactly the period it exists to
+ * demonstrate.
+ */
+const BILLING_ENTITLING_STATUSES: readonly string[] = [ "active", "trialing" ];
+
+/**
+ * Function isSubscriptionEntitling() :: Whether this subscription still buys anything.
+ *
+ * The period already paid for decides it before the status does: somebody who cancels has bought the
+ * rest of the month and keeps it, and nothing has to tell us when that month ends - the row simply
+ * stops being true on its own. That is what makes a webhook we never received survivable.
+ *
+ * The status is what answers for a row carrying no period, and it errs generous on purpose. A
+ * renewal whose event went missing leaves `active` standing against a date now in the past, and the
+ * strict reading of that would take a plan away from somebody who is paying for it.
+ */
+export function isSubscriptionEntitling(
+    subscription: { status: string; currentPeriodEnd: Date | null },
+    now: Date = new Date()
+): boolean {
+    const withinPaidPeriod = null !== subscription.currentPeriodEnd
+        && subscription.currentPeriodEnd.getTime() > now.getTime();
+
+    return withinPaidPeriod || BILLING_ENTITLING_STATUSES.includes( subscription.status );
+}
 
 /**
  * Function resolveMaxMasterChannels() :: How many generators a guild may have.

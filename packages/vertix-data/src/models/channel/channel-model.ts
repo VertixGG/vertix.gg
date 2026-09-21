@@ -396,6 +396,45 @@ export class ChannelModel extends ModelWithDataBase<
      * Counted together, because what asks is the allowance, and the allowance is on setups rather
      * than on either kind of them.
      */
+    /**
+     * Function getAllMastersByGuild() :: Every generator there is, in one query, grouped by guild.
+     *
+     * The alternative is `getMasters()` once per guild, which is a round trip for each guild the
+     * bot was ever added to - and the overwhelming majority of them have no generator at all, so
+     * almost every one of those round trips returns nothing. At startup that is the difference
+     * between work proportional to how many servers the bot is in and work proportional to how many
+     * actually use it.
+     *
+     * Deliberately not cached: this is read once at boot, and holding every generator row in a
+     * cache keyed by guild would undo the ceiling those caches now have.
+     */
+    public async getAllMastersByGuild() {
+        const masters = await this.model.findMany( {
+            where: {
+                internalType: { in: MASTER_INTERNAL_TYPES }
+            }
+        } );
+
+        const byGuild = new Map<string, typeof masters>();
+
+        for ( const master of masters ) {
+            const existing = byGuild.get( master.guildId );
+
+            if ( existing ) {
+                existing.push( master );
+            } else {
+                byGuild.set( master.guildId, [ master ] );
+            }
+        }
+
+        this.debugger.log(
+            this.getAllMastersByGuild,
+            `Found ${ masters.length } generator(s) across ${ byGuild.size } guild(s)`
+        );
+
+        return byGuild;
+    }
+
     public async getMastersCount( guildId: string ) {
         const total = await this.model.count( {
             where: {

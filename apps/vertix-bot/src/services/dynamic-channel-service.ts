@@ -3635,21 +3635,42 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
     public async refreshControlPanels( client: Client<true>, chunkSize = 5, messageFetchLimit = 100 ) {
         this.logger.info( this.refreshControlPanels, "Starting control panels refresh..." );
 
-        const guilds = [ ...client.guilds.cache.values() ];
+        // One query for every generator there is, rather than one per guild. Guilds with no
+        // generator - which is most of them - are then never visited at all, instead of each
+        // costing a round trip to be told it has nothing.
+        const mastersByGuild = await ChannelModel.$.getAllMastersByGuild();
+
+        // A guild with a generator row the bot is no longer in drops out here: the row outlives the
+        // kick, and there is nothing to draw a panel on.
+        const guilds = [ ... mastersByGuild.keys() ]
+            .map( ( guildId ) => client.guilds.cache.get( guildId ) )
+            .filter( ( guild ): guild is Guild => undefined !== guild );
+
+        this.logger.info(
+            this.refreshControlPanels,
+            `Refreshing ${ guilds.length } guild(s) that have a generator, of ${ client.guilds.cache.size } the bot is in`
+        );
 
         for ( let i = 0; i < guilds.length; i += chunkSize ) {
             const chunk = guilds.slice( i, i + chunkSize );
 
             await Promise.all( chunk.map( ( guild ) =>
-                this.refreshControlPanelsForGuild( guild, messageFetchLimit )
+                this.refreshControlPanelsForGuild( guild, messageFetchLimit, mastersByGuild.get( guild.id ) )
             ) );
         }
 
         this.logger.info( this.refreshControlPanels, "Control panels refresh completed." );
     }
 
-    public async refreshControlPanelsForGuild( guild: Guild, messageFetchLimit = 100 ) {
-        const masterChannels = await ChannelModel.$.getMasters( guild.id );
+    public async refreshControlPanelsForGuild(
+        guild: Guild,
+        messageFetchLimit = 100,
+        knownMasterChannels?: ChannelExtended[]
+    ) {
+        // The startup pass has already read every generator in one query and hands this guild's in.
+        // A caller that has not - the language screen redrawing one guild, say - still gets the
+        // per-guild read.
+        const masterChannels = knownMasterChannels ?? await ChannelModel.$.getMasters( guild.id );
         let refreshedCount = 0;
 
         for ( const masterChannelDB of masterChannels ) {

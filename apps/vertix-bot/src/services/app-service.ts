@@ -14,8 +14,6 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { zFindRootPackageJsonPath } from "@zenflux/utils/workspace";
 
-import { VoiceRoleManager } from "@vertix.gg/bot/src/managers/voice-role-manager";
-
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
 
 import type { Client } from "discord.js";
@@ -105,28 +103,17 @@ export class AppService extends ServiceBase {
 
         await Promise.all( this.onceReadyCallbacks.map( callback => callback() ) );
 
-        await this.refreshControlPanels( client );
-
-        await this.reconcileVoiceRoles( client );
-    }
-
-    /**
-     * Function reconcileVoiceRoles() :: Reclaims the voice role from anyone who is no longer in a
-     * dynamic channel.
-     *
-     * The role is handed out on join and taken back on leave, so a process that dies in between
-     * leaves it behind permanently - discord has no notion of a temporary role.
-     */
-    private async reconcileVoiceRoles( client: Client<true> ) {
-        for ( const guild of client.guilds.cache.values() ) {
-            await VoiceRoleManager.$.reconcileGuild( guild ).catch( ( error ) => {
-                this.logger.error(
-                    this.reconcileVoiceRoles,
-                    `Guild id: '${ guild.id }' - Failed to reconcile voice roles`,
-                    error
-                );
-            } );
-        }
+        // Not awaited: everything below is catching up on what the previous process left behind,
+        // and none of it has to finish before the bot can answer an interaction. Awaited, it put
+        // work proportional to the number of guilds the bot has ever been added to in front of
+        // being usable at all.
+        //
+        // Voice roles are no longer swept here. `VoiceRoleManager.ensureGuildReconciled()` does one
+        // guild the first time that guild sees voice activity, which is both when the stale role
+        // could first be noticed and the only time it matters.
+        void this.refreshControlPanels( client ).catch( ( error ) => {
+            this.logger.error( this.onReady, "Failed to refresh control panels", error );
+        } );
     }
 
     private async refreshControlPanels( client: Client<true> ) {

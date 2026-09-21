@@ -16,6 +16,15 @@ import type { Guild, GuildMember, Role, Snowflake, VoiceState } from "discord.js
 export class VoiceRoleManager extends InitializeBase {
     private static instance: VoiceRoleManager;
 
+    /**
+     * Guilds this process has already reconciled, by id.
+     *
+     * Holds the in-flight promise rather than a flag so that concurrent voice events in one guild
+     * join the same reconcile instead of racing several. It grows with guilds that are *used*, not
+     * with guilds the bot is in.
+     */
+    private readonly reconciledGuilds = new Map<string, Promise<void>>();
+
     public static getName() {
         return "VertixBot/Managers/VoiceRole";
     }
@@ -46,6 +55,12 @@ export class VoiceRoleManager extends InitializeBase {
             return;
         }
 
+        // Not awaited: the reconcile is a cleanup of what a previous process left behind, and this
+        // member's own role should not wait on it. Order does not matter either way - a member who
+        // is in the channel reads as `shouldHold`, so a reconcile running alongside this cannot
+        // take back the role it is about to hand out.
+        void this.ensureGuildReconciled( newState.guild ?? oldState.guild );
+
         const targetRoleId = await this.resolveRoleId( newState.guild, newState.channelId ),
             previousRoleId = await this.resolveRoleId( oldState.guild, oldState.channelId );
 
@@ -56,6 +71,44 @@ export class VoiceRoleManager extends InitializeBase {
         if ( targetRoleId ) {
             await this.addRole( member, targetRoleId );
         }
+    }
+
+    /**
+     * Function ensureGuildReconciled() :: Reconciles a guild once, the first time this process sees
+     * voice activity in it.
+     *
+     * This used to run for every guild the bot was in, serially, before the bot finished starting.
+     * That is a database read per guild whether or not the guild has a voice role configured, and
+     * it is work proportional to how many servers the bot was ever added to rather than to how many
+     * are being used - the cost that makes a restart take longer the more successful the bot gets.
+     *
+     * Deferring it loses nothing that matters: the role it reclaims is one held by somebody who is
+     * *not* in a voice channel, and the only way that becomes visible to anyone is through voice
+     * activity in that guild - which is exactly what triggers this.
+     */
+    public async ensureGuildReconciled( guild: Guild ): Promise<void> {
+        const inFlight = this.reconciledGuilds.get( guild.id );
+
+        if ( inFlight ) {
+            return inFlight;
+        }
+
+        // Stored before it is awaited so that a burst of joins in one guild starts one reconcile
+        // rather than one per event, and dropped again on failure so a later event can retry -
+        // a guild left un-reconciled goes on handing out a role nobody should hold.
+        const work = this.reconcileGuild( guild ).catch( ( error ) => {
+            this.reconciledGuilds.delete( guild.id );
+
+            this.logger.error(
+                this.ensureGuildReconciled,
+                `Guild id: '${ guild.id }' - Failed to reconcile voice roles`,
+                error
+            );
+        } );
+
+        this.reconciledGuilds.set( guild.id, work );
+
+        return work;
     }
 
     /**

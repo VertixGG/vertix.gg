@@ -236,7 +236,14 @@ const DynamicChannelLfmAdapter = new DynamicExecutionAdapterBuilder<DefaultInter
                 mutations: [ { type: "set", path: [ "lfmChannelId" ] } ]
             } )
             .addTransition( "SelectDestination", { from: "Default", to: "SelectChannel" } )
-            .addTransition( "ChannelSelected", { from: "SelectChannel", to: "Posted" } )
+            .addTransition( "ChannelSelected", {
+                from: "SelectChannel",
+                to: "Posted",
+                // The board that was picked, which is what the closing screen names. Declared the
+                // same way the one-destination path above declares it: both arrive at the same
+                // state, and it has to be able to say where the post went either way round.
+                mutations: [ { type: "set", path: [ "lfmChannelId" ] } ]
+            } )
             .addTransition( "CoolingDown", { from: "Default", to: "Cooldown" } )
             .addTransition( "NotAvailable", { from: [ "Default", "SelectChannel" ], to: "Unavailable" } )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelVoiceInteraction>(

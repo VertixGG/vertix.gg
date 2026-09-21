@@ -2199,7 +2199,23 @@
                         "navigation": {
                             "targetState": "VertixBot/UI-V2/DynamicChannelLfmFlow/States/Posted",
                             "executionStep": "VertixBot/UI-V2/DynamicChannelLfmPosted"
-                        }
+                        },
+                        "mutations": [
+                            {
+                                "type": "set",
+                                "path": [
+                                    "lfmChannelId"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "mutations": [
+                    {
+                        "type": "set",
+                        "path": [
+                            "lfmChannelId"
+                        ]
                     }
                 ]
             },

@@ -61,7 +61,13 @@ export function App() {
                         }>
                             <Route path="/" element={ <HomePage /> } />
                             <Route path="/interface-editor" element={ <InterfaceEditorPage /> } />
+                            { /* One generator is a page of its own, and editing it is another.
+                                 Held in the address rather than in state so opening a generator and
+                                 opening its settings are both steps the back button can undo, and
+                                 so either can be linked to. */ }
                             <Route path="/generators" element={ <GeneratorsPage /> } />
+                            <Route path="/generators/:masterChannelId" element={ <GeneratorsPage /> } />
+                            <Route path="/generators/:masterChannelId/edit" element={ <GeneratorsPage /> } />
                             <Route path="/server-options" element={ <ServerConfigPage /> } />
 
                             { /* The page was called Management until it was named after what it

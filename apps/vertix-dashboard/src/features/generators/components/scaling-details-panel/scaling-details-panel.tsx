@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 
+import { useNavigate, useMatch } from "react-router-dom";
+
 import { withCommands } from "@zenflux/react-commander/with-commands";
 import { useCommandState, useComponent, useCommand } from "@zenflux/react-commander/hooks";
 
@@ -60,16 +62,25 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
     isRefreshing,
     lastRefreshTime
 } ) => {
-    const [ state ] = useCommandState<ScalingDetailsPanelState, Pick<ScalingDetailsPanelState, "isEditing" | "showDeleteConfirm" | "tick">>(
+    const [ state ] = useCommandState<ScalingDetailsPanelState, Pick<ScalingDetailsPanelState, "showDeleteConfirm" | "tick">>(
         "Dashboard/Generators/ScalingDetailsPanel",
         ( state ) => ( {
-            isEditing: state.isEditing,
             showDeleteConfirm: state.showDeleteConfirm,
             tick: state.tick
         } )
     );
 
     const panelCommands = useComponent( "Dashboard/Generators/ScalingDetailsPanel" );
+
+    /*
+     * Editing is a page rather than a flag: `/generators/:id/edit`.
+     *
+     * Held in the address, opening the settings is a step the back button can undo and a link
+     * somebody can be sent, and there is one answer to whether the form is open rather than a
+     * flag beside the route that has to be kept in step with it.
+     */
+    const navigate = useNavigate();
+    const isEditing = Boolean( useMatch( "/generators/:masterChannelId/edit" ) );
 
     // Page-level commands via useCommand
     const refreshSelected = useCommand( "Dashboard/Generators/RefreshSelected" );
@@ -92,7 +103,7 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
     // opened with, and refreshing underneath it would swap them out mid-edit. The panel is what
     // knows whether one is open.
     useEffect( () => {
-        if ( state.isEditing ) {
+        if ( isEditing ) {
             return;
         }
 
@@ -101,7 +112,7 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
         }, 60000 );
 
         return () => clearInterval( intervalId );
-    }, [ state.isEditing ] );
+    }, [ isEditing ] );
 
     const handleRefresh = () => {
         refreshSelected.run( {} );
@@ -120,13 +131,11 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
     };
 
     const handleStopEditing = () => {
-        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/StopEditing", {} );
+        navigate( `/generators/${ master.id }` );
     };
 
     const handleStartEditing = () => {
-        panelCommands.run( "Dashboard/Generators/ScalingDetailsPanel/StartEditing", {
-            settings: master.settings
-        } );
+        navigate( `/generators/${ master.id }/edit` );
     };
 
     const handleShowDeleteConfirm = () => {
@@ -188,7 +197,7 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
                                 <Settings className="w-4 h-4 text-accent-muted" />
                                 Configuration
                             </h3>
-                            { !state.isEditing && (
+                            { !isEditing && (
                                 <DiscordButton
                                     variant="primary"
                                     size="sm"
@@ -201,7 +210,7 @@ const ScalingDetailsPanelComponent: DCommandFunctionComponent<ScalingDetailsPane
                         </header>
 
                         <div className="p-4">
-                            { state.isEditing ? (
+                            { isEditing ? (
                                 <ScalingConfigForm
                                     masterChannelId={ master.id }
                                     settings={ settings }

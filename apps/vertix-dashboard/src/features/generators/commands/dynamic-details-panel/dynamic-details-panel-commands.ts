@@ -1,15 +1,11 @@
 import { CommandBase } from "@zenflux/react-commander/command-base";
 
-import type { DynamicSettings } from "@vertix.gg/dashboard/src/features/generators/types";
-
 export interface DynamicDetailsPanelState {
-    isEditing: boolean;
     showDeleteConfirm: boolean;
     tick: number;
 }
 
 export const DYNAMIC_DETAILS_PANEL_INITIAL_STATE: DynamicDetailsPanelState = {
-    isEditing: false,
     showDeleteConfirm: false,
     tick: 0
 };
@@ -21,26 +17,6 @@ export class TickCommand extends CommandBase<DynamicDetailsPanelState> {
 
     public apply() {
         return this.setState( { tick: this.state.tick + 1 } );
-    }
-}
-
-export class StartEditingCommand extends CommandBase<DynamicDetailsPanelState, { settings: DynamicSettings | null }> {
-    public static getName() {
-        return "Dashboard/Generators/DynamicDetailsPanel/StartEditing";
-    }
-
-    public apply() {
-        return this.setState( { isEditing: true } );
-    }
-}
-
-export class StopEditingCommand extends CommandBase<DynamicDetailsPanelState> {
-    public static getName() {
-        return "Dashboard/Generators/DynamicDetailsPanel/StopEditing";
-    }
-
-    public apply() {
-        return this.setState( { isEditing: false } );
     }
 }
 
@@ -66,8 +42,6 @@ export class HideDeleteConfirmCommand extends CommandBase<DynamicDetailsPanelSta
 
 export const DYNAMIC_DETAILS_PANEL_COMMANDS = [
     TickCommand,
-    StartEditingCommand,
-    StopEditingCommand,
     ShowDeleteConfirmCommand,
     HideDeleteConfirmCommand
 ] as const;

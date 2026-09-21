@@ -7,7 +7,7 @@ import { Radio, RefreshCw, Trash2, Settings, Hash, AlertTriangle, Pencil } from 
 
 import { DiscordButton } from "@vertix.gg/discord-ui/src";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useMatch } from "react-router-dom";
 
 import {
     dynamicChannelLfmTimingsResolve
@@ -235,16 +235,25 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
     isRefreshing,
     lastRefreshTime
 } ) => {
-    const [ state ] = useCommandState<DynamicDetailsPanelState, Pick<DynamicDetailsPanelState, "isEditing" | "showDeleteConfirm" | "tick">>(
+    const [ state ] = useCommandState<DynamicDetailsPanelState, Pick<DynamicDetailsPanelState, "showDeleteConfirm" | "tick">>(
         "Dashboard/Generators/DynamicDetailsPanel",
         ( state ) => ( {
-            isEditing: state.isEditing,
             showDeleteConfirm: state.showDeleteConfirm,
             tick: state.tick
         } )
     );
 
     const panelCommands = useComponent( "Dashboard/Generators/DynamicDetailsPanel" );
+
+    /*
+     * Editing is a page rather than a flag: `/generators/:id/edit`.
+     *
+     * Held in the address, opening the settings is a step the back button can undo and a link
+     * somebody can be sent, and there is one answer to whether the form is open rather than a
+     * flag beside the route that has to be kept in step with it.
+     */
+    const navigate = useNavigate();
+    const isEditing = Boolean( useMatch( "/generators/:masterChannelId/edit" ) );
 
     // Page-level commands via useCommand
     const refreshSelected = useCommand( "Dashboard/Generators/RefreshSelected" );
@@ -265,7 +274,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
     // opened with, and refreshing underneath it would swap them out mid-edit. The panel is what
     // knows whether one is open.
     useEffect( () => {
-        if ( state.isEditing ) {
+        if ( isEditing ) {
             return;
         }
 
@@ -274,7 +283,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
         }, 60000 );
 
         return () => clearInterval( intervalId );
-    }, [ state.isEditing ] );
+    }, [ isEditing ] );
 
     const handleRefresh = () => {
         refreshSelected.run( {} );
@@ -285,13 +294,11 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
     };
 
     const handleStopEditing = () => {
-        panelCommands.run( "Dashboard/Generators/DynamicDetailsPanel/StopEditing", {} );
+        navigate( `/generators/${ master.id }` );
     };
 
     const handleStartEditing = () => {
-        panelCommands.run( "Dashboard/Generators/DynamicDetailsPanel/StartEditing", {
-            settings: master.settings
-        } );
+        navigate( `/generators/${ master.id }/edit` );
     };
 
     const handleShowDeleteConfirm = () => {
@@ -367,7 +374,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                 <Settings className="w-4 h-4 text-accent-muted" />
                                 Configuration
                             </h3>
-                            { !state.isEditing && settings && (
+                            { !isEditing && settings && (
                                 <DiscordButton
                                     variant="primary"
                                     size="sm"
@@ -386,7 +393,7 @@ const DynamicDetailsPanelComponent: DCommandFunctionComponent<DynamicDetailsPane
                                     rather than what it might have been, because a form filled with a guess saves
                                     the guess.
                                 </p>
-                            ) : state.isEditing ? (
+                            ) : isEditing ? (
                                 <DynamicConfigForm
                                     masterChannelId={ master.id }
                                     masterChannelVersion={ master.version }

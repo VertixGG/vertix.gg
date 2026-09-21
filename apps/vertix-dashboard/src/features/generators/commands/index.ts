@@ -68,8 +68,6 @@ export {
     SCALING_DETAILS_PANEL_INITIAL_STATE,
     SCALING_DETAILS_PANEL_COMMANDS,
     TickCommand as ScalingDetailsPanelTickCommand,
-    StartEditingCommand as ScalingDetailsPanelStartEditingCommand,
-    StopEditingCommand as ScalingDetailsPanelStopEditingCommand,
     ShowDeleteConfirmCommand as ScalingDetailsPanelShowDeleteConfirmCommand,
     HideDeleteConfirmCommand as ScalingDetailsPanelHideDeleteConfirmCommand
 } from "./scaling-details-panel/scaling-details-panel-commands";
@@ -92,8 +90,6 @@ export {
     DYNAMIC_DETAILS_PANEL_INITIAL_STATE,
     DYNAMIC_DETAILS_PANEL_COMMANDS,
     TickCommand as DynamicDetailsPanelTickCommand,
-    StartEditingCommand as DynamicDetailsPanelStartEditingCommand,
-    StopEditingCommand as DynamicDetailsPanelStopEditingCommand,
     ShowDeleteConfirmCommand as DynamicDetailsPanelShowDeleteConfirmCommand,
     HideDeleteConfirmCommand as DynamicDetailsPanelHideDeleteConfirmCommand
 } from "./dynamic-details-panel/dynamic-details-panel-commands";

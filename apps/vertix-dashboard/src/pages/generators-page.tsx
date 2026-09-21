@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 import { withCommands } from "@zenflux/react-commander/with-commands";
@@ -85,6 +85,9 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
 
     const createMenuRef = useRef<HTMLDivElement>( null );
 
+    const navigate = useNavigate();
+    const { masterChannelId: routeMasterChannelId } = useParams();
+
     const loadGuildGenerators = useCommand( "Dashboard/Generators/LoadGuildGenerators" );
     const selectMasterChannel = useCommand( "Dashboard/Generators/SelectMasterChannel" );
     const clearError = useCommand( "Dashboard/Generators/ClearError" );
@@ -111,8 +114,50 @@ const GeneratorsContentComponent: DCommandFunctionComponent<GeneratorsContentPro
         return () => document.removeEventListener( "mousedown", handlePointerDown );
     }, [ showCreateDropdown ] );
 
-    const handleSelectChannel = ( id: string, type: MasterChannelType ) => {
-        selectMasterChannel.run( { masterChannelId: id, type } );
+    /*
+     * The address says which generator is open, and this brings the page to it.
+     *
+     * Which kind it is comes from the list rather than from the link, so an address only has to
+     * carry the id - the two kinds are told apart by which list holds it, and a link that named
+     * the kind as well could name it wrongly.
+     */
+    useEffect( () => {
+        const details = state.generatorsDetails;
+
+        if ( ! details ) {
+            return;
+        }
+
+        if ( ! routeMasterChannelId ) {
+            if ( state.selectedMasterChannelId ) {
+                selectMasterChannel.run( { masterChannelId: null, type: null } );
+            }
+
+            return;
+        }
+
+        if ( routeMasterChannelId === state.selectedMasterChannelId ) {
+            return;
+        }
+
+        const type: MasterChannelType | null =
+            details.dynamicMasterChannels.some( ( master ) => master.id === routeMasterChannelId ) ? "dynamic"
+                : details.scalingMasterChannels.some( ( master ) => master.id === routeMasterChannelId ) ? "scaling"
+                    : null;
+
+        // An address naming a generator this guild does not have is answered with the list, rather
+        // than with a page that is permanently empty and says nothing about why.
+        if ( ! type ) {
+            navigate( "/generators", { replace: true } );
+
+            return;
+        }
+
+        selectMasterChannel.run( { masterChannelId: routeMasterChannelId, type } );
+    }, [ routeMasterChannelId, state.generatorsDetails, state.selectedMasterChannelId ] );
+
+    const handleSelectChannel = ( id: string, _type: MasterChannelType ) => {
+        navigate( `/generators/${ id }` );
     };
 
     const handleShowCreateModal = ( type: CreateModalType ) => {

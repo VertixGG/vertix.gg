@@ -3375,7 +3375,41 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 break;
 
             case this.editUserAccess:
-                if ( !meta.state && DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS === meta.permissions ) {
+                // `state` is what the caller asked for: true grants, false blocks. Only the blocking
+                // half was ever described here, so every grant fell past it into the `else` and was
+                // logged as "Unknown error when trying to edit user access" - including the ones that
+                // worked. The v3 permissions menu grants through this path, so that was every grant
+                // the admin log has ever reported.
+                if ( meta.state && DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS === meta.permissions ) {
+                    // Granting user access.
+                    const tryingPrefix = `☝️ \`${ initiatorDisplayName }\` trying grant user access on: \`${ meta.member.displayName }\``;
+
+                    switch ( action as EditStatus ) {
+                        case "error":
+                            message = `${ tryingPrefix } - Failed due unknown error`;
+                            break;
+
+                        case "action-on-bot-user":
+                            message = `${ tryingPrefix } - Nothing done, doing that on **VoiceChannels** are not allowed`;
+                            break;
+
+                        case "action-on-staff-user":
+                            message = `${ tryingPrefix } - Nothing done, the user holds a **staff role**`;
+                            break;
+
+                        case "self-edit":
+                            message = `${ tryingPrefix } - Nothing done, cannot do that on his **self**`;
+                            break;
+
+                        case "already-have":
+                            message = `${ tryingPrefix } - Nothing done, **already** granted`;
+                            break;
+
+                        case "success":
+                            message = `☝️ \`${ initiatorDisplayName }\` has **granted** access for: \`${ meta.member.displayName }\``;
+                            break;
+                    }
+                } else if ( !meta.state && DEFAULT_DYNAMIC_CHANNEL_GRANTED_PERMISSIONS === meta.permissions ) {
                     // Blocking user access.
                     const tryingPrefix = `🫵 \`${ initiatorDisplayName }\` trying block user access on: \`${ meta.member.displayName }\``;
 

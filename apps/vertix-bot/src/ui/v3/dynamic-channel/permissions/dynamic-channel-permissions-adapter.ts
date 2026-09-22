@@ -367,21 +367,42 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             bitrate: bitrateToKilobits( channel.bitrate )
         };
 
+        // `argsFromManager` carries what the transition that reached this step was given - the display
+        // name of whoever was just granted, denied, blocked. It is only there when a transition has
+        // just run, and this is reached at other times too: every handler below calls
+        // `editReplyWithStep( …, "default" )` to refresh the user list *before* firing its own
+        // transition, which rebuilds the reply while the machine is still parked on the step the
+        // previous action left it on. Reading the name unconditionally threw a TypeError there -
+        // press deny after a grant and the step was still `…PermissionsGranted` with nothing to read
+        // - and the throw left the interaction unanswered, so discord showed its own red error in
+        // place of the menu.
+        //
+        // Absent, the name is simply not set, and the embed falls back to what it renders without one.
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {
             case "VertixBot/UI-V3/DynamicChannelPermissionsGranted":
-                args.userGrantedDisplayName = argsFromManager.userGrantedDisplayName;
+                if ( argsFromManager?.userGrantedDisplayName ) {
+                    args.userGrantedDisplayName = argsFromManager.userGrantedDisplayName;
+                }
                 break;
             case "VertixBot/UI-V3/DynamicChannelPermissionsDenied":
-                args.userDeniedDisplayName = argsFromManager.userDeniedDisplayName;
+                if ( argsFromManager?.userDeniedDisplayName ) {
+                    args.userDeniedDisplayName = argsFromManager.userDeniedDisplayName;
+                }
                 break;
             case "VertixBot/UI-V3/DynamicChannelPermissionsBlocked":
-                args.userBlockedDisplayName = argsFromManager.userBlockedDisplayName;
+                if ( argsFromManager?.userBlockedDisplayName ) {
+                    args.userBlockedDisplayName = argsFromManager.userBlockedDisplayName;
+                }
                 break;
             case "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked":
-                args.userUnBlockedDisplayName = argsFromManager.userUnBlockedDisplayName;
+                if ( argsFromManager?.userUnBlockedDisplayName ) {
+                    args.userUnBlockedDisplayName = argsFromManager.userUnBlockedDisplayName;
+                }
                 break;
             case "VertixBot/UI-V3/DynamicChannelPermissionsKick":
-                args.userKickedDisplayName = argsFromManager.userKickedDisplayName;
+                if ( argsFromManager?.userKickedDisplayName ) {
+                    args.userKickedDisplayName = argsFromManager.userKickedDisplayName;
+                }
                 break;
         }
 

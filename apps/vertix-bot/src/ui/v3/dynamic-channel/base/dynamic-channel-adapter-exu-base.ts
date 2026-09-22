@@ -145,7 +145,15 @@ export abstract class DynamicChannelAdapterExuBase<
         }
     }
 
-    protected readonly shouldDeletePreviousReply = () => {
-        return true;
-    };
+    /**
+     * `shouldDeletePreviousReply` is deliberately not defined here.
+     *
+     * It used to be, as a property returning true unconditionally - and a class property is assigned
+     * per instance, so it shadowed the method `ExecutionAdapterBuilder` generates. The builder's
+     * `shouldDeletePreviousReply( handler )` was therefore unreachable for every adapter in this
+     * tree, and every ephemeral screen was treated as a reply to be replaced whether or not anything
+     * said so. Defining it again, in any form, takes the decision back off the state that should be
+     * making it: a state marks itself a notice with `deletePreviousReply`, and that is what
+     * `UIAdapterBase.ephemeral()` reads to choose between the notice slot and the screen slot.
+     */
 }

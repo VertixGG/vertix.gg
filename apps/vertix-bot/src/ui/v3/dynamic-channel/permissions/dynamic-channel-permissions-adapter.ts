@@ -195,12 +195,29 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                     // Refresh menu to show updated user list
                     await context.editReplyWithStep( voiceInteraction, "default" );
 
-                    if ( result === "success" ) {
-                        await context.triggerTransition( "GrantSuccess", voiceInteraction, {
-                            userGrantedDisplayName: member.displayName
-                        } );
-                    } else {
-                        await context.triggerTransition( "Error", voiceInteraction );
+                    // A refusal is not an error. `editUserAccess` says exactly why it did nothing -
+                    // the member was the owner, the bot, a staff member, or already had access - and
+                    // every one of those used to arrive here as "Something went wrong", which is the
+                    // one thing that was not true. Only a genuine failure transitions to `Error`.
+                    switch ( result ) {
+                        case "success":
+                            await context.triggerTransition( "GrantSuccess", voiceInteraction, {
+                                userGrantedDisplayName: member.displayName
+                            } );
+                            break;
+                        case "action-on-staff-user":
+                            await context.triggerTransition( "StaffMember", voiceInteraction, {
+                                staffMemberDisplayName: member.displayName
+                            } );
+                            break;
+                        case "already-have":
+                        case "self-edit":
+                        case "action-on-bot-user":
+                            await context.triggerTransition( "NothingChanged", voiceInteraction );
+                            break;
+                        default:
+                            await context.triggerTransition( "Error", voiceInteraction );
+                            break;
                     }
                 }
             )
@@ -235,6 +252,9 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                             } );
                             break;
                         case "not-in-the-list":
+                        case "self-deny":
+                        case "user-blocked":
+                        case "action-on-bot-user":
                             await context.triggerTransition( "NothingChanged", voiceInteraction );
                             break;
                         default:
@@ -281,6 +301,8 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                             } );
                             break;
                         case "already-have":
+                        case "self-edit":
+                        case "action-on-bot-user":
                             await context.triggerTransition( "NothingChanged", voiceInteraction );
                             break;
                         default:
@@ -321,6 +343,9 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                             } );
                             break;
                         case "not-in-the-list":
+                        case "self-deny":
+                        case "user-blocked":
+                        case "action-on-bot-user":
                             await context.triggerTransition( "NothingChanged", voiceInteraction );
                             break;
                         default:
@@ -349,16 +374,25 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                     // Refresh menu to show updated user list
                     await context.editReplyWithStep( voiceInteraction, "default" );
 
-                    if ( result === "success" ) {
-                        await context.triggerTransition( "KickSuccess", voiceInteraction, {
-                            userKickedDisplayName: member.displayName
-                        } );
-                    } else if ( result === "action-on-staff-user" ) {
-                        await context.triggerTransition( "StaffMember", voiceInteraction, {
-                            staffMemberDisplayName: member.displayName
-                        } );
-                    } else {
-                        await context.triggerTransition( "Error", voiceInteraction );
+                    switch ( result ) {
+                        case "success":
+                            await context.triggerTransition( "KickSuccess", voiceInteraction, {
+                                userKickedDisplayName: member.displayName
+                            } );
+                            break;
+                        case "action-on-staff-user":
+                            await context.triggerTransition( "StaffMember", voiceInteraction, {
+                                staffMemberDisplayName: member.displayName
+                            } );
+                            break;
+                        case "not-in-the-list":
+                        case "self-action":
+                        case "action-on-bot-user":
+                            await context.triggerTransition( "NothingChanged", voiceInteraction );
+                            break;
+                        default:
+                            await context.triggerTransition( "Error", voiceInteraction );
+                            break;
                     }
                 }
             );

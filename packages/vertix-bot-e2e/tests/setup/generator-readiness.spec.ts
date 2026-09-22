@@ -1,7 +1,42 @@
 import { expect, test } from "@vertix.gg/bot-e2e/src/fixtures/e2e-fixtures";
 
 import { BotCatalog } from "@vertix.gg/bot-e2e/src/catalog/bot-catalog";
+import { E2E_INTERVALS, E2E_TIMEOUTS } from "@vertix.gg/bot-e2e/src/config/e2e-constants";
 import { normalizeDiscordText } from "@vertix.gg/bot-e2e/src/discord/discord-text";
+
+import type { DiscordApp } from "@vertix.gg/bot-e2e/src/discord/discord-app";
+
+/**
+ * Where the member ends up, which is never where they joined.
+ *
+ * Joining a generator connects them to the generator; the bot then makes a room and moves them into
+ * it, so the answer is the first channel that is neither nothing nor the generator itself.
+ *
+ * Asked of the member rather than of the guild's channel list. The list answers "a channel that was
+ * not there before", which is a different question and sometimes a different channel: when two
+ * appear close together it names whichever discord lists first, and this failed asserting the member
+ * sat in a room created a moment after the one they were actually in.
+ */
+async function waitForRoomOfTheirOwn( app: DiscordApp, generatorId: string ): Promise<string> {
+    const deadline = Date.now() + E2E_TIMEOUTS.VOICE_CONNECT_MS;
+
+    let seen: string | null = null;
+
+    while ( Date.now() < deadline ) {
+        seen = await app.voice.connectedChannelId();
+
+        if ( seen && seen !== generatorId ) {
+            return seen;
+        }
+
+        await new Promise( ( resolve ) => setTimeout( resolve, E2E_INTERVALS.POLL_MS ) );
+    }
+
+    throw new Error(
+        `The member was still in ${ seen ?? "no channel" } rather than a room of their own, ` +
+        `${ E2E_TIMEOUTS.VOICE_CONNECT_MS }ms after joining generator ${ generatorId }.`
+    );
+}
 
 /**
  * A generator has to work the moment it exists.
@@ -31,11 +66,14 @@ test.describe( "generator readiness", () => {
 
         await dynamicChannels.joinGenerator( generator.id );
 
-        const created = await guild.waitForNewVoiceChannel( before );
+        const connectedId = await waitForRoomOfTheirOwn( app, generator.id );
 
-        expect( created.id ).not.toBe( generator.id );
+        expect(
+            before,
+            "the member was moved into a channel that was already there rather than one made for them"
+        ).not.toContain( connectedId );
 
-        expect( await app.voice.connectedChannelId() ).toBe( created.id );
+        const created = await guild.channel( connectedId );
 
         await dynamicChannels.close( {
             channelId: created.id,

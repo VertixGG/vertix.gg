@@ -83,9 +83,19 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
                 "OpenPermissions",
                 async( _context, interaction ) => {
                     const uiService = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" );
-                    const adapter = uiService.get( "VertixBot/UI-V3/DynamicChannelPermissionsAdapter" );
+                    const adapter = uiService.get<"execution">( "VertixBot/UI-V3/DynamicChannelPermissionsAdapter" );
+
+                    // Where v2 lands when it opens the same screen, reached directly.
+                    //
+                    // v2 calls `runInitial( interaction )` here, but that dispatches on the pressed
+                    // button's custom id, and it only resolves there because v2's permissions
+                    // adapter owns its own `DynamicChannelPermissionsAccessButton` - `run()` finds
+                    // the entity and its callback is a single `ephemeralWithStep`. In v3 that button
+                    // belongs to this adapter, so `runInitial` throws
+                    // `Entity ... does not exist in adapter`. The step it would have drawn is what
+                    // matters, and naming it is the same route with none of the indirection.
                     if ( adapter ) {
-                        await adapter.ephemeral( interaction );
+                        await adapter.ephemeralWithStep( interaction, "default", {} );
                     }
                 }
             )

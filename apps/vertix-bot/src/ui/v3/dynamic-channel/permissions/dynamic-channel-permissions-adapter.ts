@@ -159,6 +159,23 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 }
             } )
             // Handler bindings (combines element-to-transition binding with handler)
+            //
+            // Two kinds of outcome, drawn two different ways - the split the v2 permissions adapter
+            // has always made, and the reason it has never stacked a second copy of this menu.
+            //
+            // A success `editReplyWithStep`s: the member list just changed, and what draws it is the
+            // screen the owner is already looking at, so it is edited rather than sent again. A
+            // refusal or an error `ephemeralWithStep`s: nothing changed, the screen still says what
+            // is true, and the notice explaining why is its own message.
+            //
+            // v3 rendered every outcome with `triggerTransition()` into an `ephemeral` state, so a
+            // success arrived as a new copy of the whole screen. Making them all `ephemeralWithStep`
+            // did not help for the same reason - it is the editing that keeps the screen to one
+            // message, not which function posts it. The step names are spelled out because that is
+            // what they are here: the thing being drawn.
+            //
+            // The bound transition names are left in place: `bindSelectMenu` still uses them to wire
+            // the element, and the states they point at are what `defineTransactions` above declares.
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
                 "VertixBot/UI-V3/DynamicChannelPermissionsGrantMenu",
                 "GrantSuccess",
@@ -168,8 +185,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                     const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
 
                     if ( !member ) {
-                        await context.editReplyWithStep( voiceInteraction, "default" );
-                        await context.triggerTransition( "Error", voiceInteraction );
+                        await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                         return;
                     }
 
@@ -182,31 +198,28 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         true
                     );
 
-                    // Refresh menu to show updated user list
-                    await context.editReplyWithStep( voiceInteraction, "default" );
-
                     // A refusal is not an error. `editUserAccess` says exactly why it did nothing -
                     // the member was the owner, the bot, a staff member, or already had access - and
                     // every one of those used to arrive here as "Something went wrong", which is the
                     // one thing that was not true. Only a genuine failure transitions to `Error`.
                     switch ( result ) {
                         case "success":
-                            await context.triggerTransition( "GrantSuccess", voiceInteraction, {
+                            await context.editReplyWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsGranted", {
                                 userGrantedDisplayName: member.displayName
                             } );
                             break;
                         case "action-on-staff-user":
-                            await context.triggerTransition( "StaffMember", voiceInteraction, {
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateStaffMember", {
                                 staffMemberDisplayName: member.displayName
                             } );
                             break;
                         case "already-have":
                         case "self-edit":
                         case "action-on-bot-user":
-                            await context.triggerTransition( "NothingChanged", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged", {} );
                             break;
                         default:
-                            await context.triggerTransition( "Error", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                             break;
                     }
                 }
@@ -220,8 +233,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                     const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
 
                     if ( !member ) {
-                        await context.editReplyWithStep( voiceInteraction, "default" );
-                        await context.triggerTransition( "Error", voiceInteraction );
+                        await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                         return;
                     }
 
@@ -232,12 +244,9 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         member
                     );
 
-                    // Refresh menu to show updated user list
-                    await context.editReplyWithStep( voiceInteraction, "default" );
-
                     switch ( result ) {
                         case "success":
-                            await context.triggerTransition( "DenySuccess", voiceInteraction, {
+                            await context.editReplyWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsDenied", {
                                 userDeniedDisplayName: member.displayName
                             } );
                             break;
@@ -245,10 +254,10 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         case "self-deny":
                         case "user-blocked":
                         case "action-on-bot-user":
-                            await context.triggerTransition( "NothingChanged", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged", {} );
                             break;
                         default:
-                            await context.triggerTransition( "Error", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                             break;
                     }
                 }
@@ -262,8 +271,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                     const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
 
                     if ( !member ) {
-                        await context.editReplyWithStep( voiceInteraction, "default" );
-                        await context.triggerTransition( "Error", voiceInteraction );
+                        await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                         return;
                     }
 
@@ -276,27 +284,24 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         false
                     );
 
-                    // Refresh menu to show updated user list
-                    await context.editReplyWithStep( voiceInteraction, "default" );
-
                     switch ( result ) {
                         case "success":
-                            await context.triggerTransition( "BlockSuccess", voiceInteraction, {
+                            await context.editReplyWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsBlocked", {
                                 userBlockedDisplayName: member.displayName
                             } );
                             break;
                         case "action-on-staff-user":
-                            await context.triggerTransition( "StaffMember", voiceInteraction, {
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateStaffMember", {
                                 staffMemberDisplayName: member.displayName
                             } );
                             break;
                         case "already-have":
                         case "self-edit":
                         case "action-on-bot-user":
-                            await context.triggerTransition( "NothingChanged", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged", {} );
                             break;
                         default:
-                            await context.triggerTransition( "Error", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                             break;
                     }
                 }
@@ -310,8 +315,7 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                     const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
 
                     if ( !member ) {
-                        await context.editReplyWithStep( voiceInteraction, "default" );
-                        await context.triggerTransition( "Error", voiceInteraction );
+                        await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                         return;
                     }
 
@@ -323,12 +327,9 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         true
                     );
 
-                    // Refresh menu to show updated user list
-                    await context.editReplyWithStep( voiceInteraction, "default" );
-
                     switch ( result ) {
                         case "success":
-                            await context.triggerTransition( "UnblockSuccess", voiceInteraction, {
+                            await context.editReplyWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked", {
                                 userUnBlockedDisplayName: member.displayName
                             } );
                             break;
@@ -336,10 +337,10 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                         case "self-deny":
                         case "user-blocked":
                         case "action-on-bot-user":
-                            await context.triggerTransition( "NothingChanged", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged", {} );
                             break;
                         default:
-                            await context.triggerTransition( "Error", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                             break;
                     }
                 }
@@ -353,35 +354,31 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                     const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
 
                     if ( !member ) {
-                        await context.editReplyWithStep( voiceInteraction, "default" );
-                        await context.triggerTransition( "Error", voiceInteraction );
+                        await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                         return;
                     }
 
                     const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
                     const result = await dynamicChannelService.kickUser( voiceInteraction, voiceInteraction.channel, member );
 
-                    // Refresh menu to show updated user list
-                    await context.editReplyWithStep( voiceInteraction, "default" );
-
                     switch ( result ) {
                         case "success":
-                            await context.triggerTransition( "KickSuccess", voiceInteraction, {
+                            await context.editReplyWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsKick", {
                                 userKickedDisplayName: member.displayName
                             } );
                             break;
                         case "action-on-staff-user":
-                            await context.triggerTransition( "StaffMember", voiceInteraction, {
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateStaffMember", {
                                 staffMemberDisplayName: member.displayName
                             } );
                             break;
                         case "not-in-the-list":
                         case "self-action":
                         case "action-on-bot-user":
-                            await context.triggerTransition( "NothingChanged", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged", {} );
                             break;
                         default:
-                            await context.triggerTransition( "Error", voiceInteraction );
+                            await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
                             break;
                     }
                 }
@@ -402,16 +399,14 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
         };
 
         // `argsFromManager` carries what the transition that reached this step was given - the display
-        // name of whoever was just granted, denied, blocked. It is only there when a transition has
-        // just run, and this is reached at other times too: every handler below calls
-        // `editReplyWithStep( …, "default" )` to refresh the user list *before* firing its own
-        // transition, which rebuilds the reply while the machine is still parked on the step the
-        // previous action left it on. Reading the name unconditionally threw a TypeError there -
-        // press deny after a grant and the step was still `…PermissionsGranted` with nothing to read
-        // - and the throw left the interaction unanswered, so discord showed its own red error in
-        // place of the menu.
+        // name of whoever was just granted, denied, blocked. Only a transition that names one puts
+        // it there, and a reply can be rebuilt without one: a refusal transitions with no args at
+        // all, and anything redrawing a step the machine is merely sitting on has nothing to hand
+        // over either.
         //
-        // Absent, the name is simply not set, and the embed falls back to what it renders without one.
+        // Read unconditionally it threw a TypeError, which left the interaction unanswered - so
+        // discord showed its own red error where the screen should have been. Absent, the name is
+        // simply not set and the embed falls back to what it renders without one.
         switch ( context.getCurrentExecutionStep( interaction )?.name ) {
             case "VertixBot/UI-V3/DynamicChannelPermissionsGranted":
                 if ( argsFromManager?.userGrantedDisplayName ) {

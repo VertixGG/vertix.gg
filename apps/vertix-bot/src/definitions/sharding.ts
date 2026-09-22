@@ -113,9 +113,14 @@ export function ownsGuild( guildId: string ): boolean {
 /**
  * Function ownsSingletonWork() :: Whether this process is the one that does the once-per-bot work.
  *
- * Some things belong to the bot rather than to any shard - posting the server count to top.gg, the
- * cleanup worker, and the AI chat client, which is a second gateway connection that would otherwise
- * be opened once per shard process.
+ * Some things belong to the bot rather than to any shard - posting the server count to top.gg, and
+ * the AI chat client, which is a second gateway connection that would otherwise be opened once per
+ * shard process.
+ *
+ * The cleanup worker is deliberately not one of them, though it reads like it should be. It runs in
+ * every process and each sweeps its own guilds, which is what lets the read be bounded by the guilds
+ * that process holds; gated to shard 0 it would be back to one process asking about every guild in
+ * the database over rest, which is the shape it had before it was sharded at all.
  *
  * Shard 0 is the convention. It has no special meaning to discord; it is simply the one every
  * deployment has, so "the process that owns it" names exactly one process without needing anywhere

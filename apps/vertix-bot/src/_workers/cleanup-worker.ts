@@ -2,6 +2,8 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { ChannelType, Client, GatewayIntentBits } from "discord.js";
 
+import { ownsGuild } from "@vertix.gg/bot/src/definitions/sharding";
+
 import type { DiscordAPIError } from "discord.js";
 
 import type { default as loginType } from "@vertix.gg/base/src/discord/login";
@@ -233,6 +235,147 @@ class CleanupWorker extends InitializeBase {
         );
     }
 
+    /**
+     * Function removeChannelsOfLeftGuilds() :: Rows for guilds the bot was removed from while it was
+     * not running.
+     *
+     * `guildDelete` handles a removal that happens while the bot is up - `GuildManager.onLeave()`
+     * deletes the guild's rows there, and does it knowing it happened. No event is waiting when the
+     * process comes back, so a removal during a deploy or an outage leaves its rows behind with
+     * nothing to collect them. Sweeping the channel tables used to cover this by accident, because
+     * it read every row and asked discord about each guild; bounding that read to the guilds this
+     * process holds is exactly what stopped it seeing the guilds it does not.
+     *
+     * Absence from the cache is the cheap half of the question and not the answer. A guild in an
+     * outage, a shard still filling, a gateway that dropped one - all look identical to a guild the
+     * bot was kicked from, and the deletion cascades to `ChannelData`, which is a server's settings.
+     * So the cache only nominates; discord decides, and anything other than "that guild does not
+     * exist" leaves the row alone for next time.
+     */
+    /**
+     * Which recorded-as-joined guilds this process should be holding and is not.
+     *
+     * Both halves matter and for different reasons. `ownsGuild()` is what keeps a shard to its own
+     * rows: every other shard's guilds are missing from this cache too, and without the arithmetic
+     * they would all read as candidates - one shard would go on to delete the rows of every guild
+     * the others are serving. The cache check is what makes it a question at all.
+     *
+     * Nominating is all this does. The caller asks discord before deleting anything.
+     */
+    private selectLeftGuildCandidates<T extends { guildId: string }>( client: Client, rows: T[] ): T[] {
+        return rows.filter( ( row ) =>
+            ownsGuild( row.guildId ) && ! client.guilds.cache.has( row.guildId )
+        );
+    }
+
+    private async removeChannelsOfLeftGuilds( client: Client ) {
+        const prisma = PrismaBotClient.$.getClient();
+
+        // A scan, narrowed to one column. It is the read this sweep cannot bound the way the channel
+        // sweep is bounded: "guilds this process should hold" is arithmetic on the id - `ownsGuild()`
+        // - and the database cannot be asked to compute it. Answering that in a query wants the shard
+        // written onto the row, which is a schema decision tied to the shard count and does not
+        // belong in a fix for this.
+        const rows = await prisma.guild.findMany( {
+            where: {
+                isInGuild: true,
+                ... this.getGuildExclusionFilter()
+            },
+            select: {
+                guildId: true,
+                name: true
+            }
+        } );
+
+        const candidates = this.selectLeftGuildCandidates( client, rows );
+
+        if ( ! candidates.length ) {
+            this.logger.info(
+                this.removeChannelsOfLeftGuilds,
+                `Every guild this process is recorded as being in is present, of ${ rows.length } checked.`
+            );
+
+            return;
+        }
+
+        this.logger.info(
+            this.removeChannelsOfLeftGuilds,
+            `${ candidates.length } guild(s) of ${ rows.length } are recorded as joined but not held here - asking discord.`
+        );
+
+        let deletedCount = 0,
+            skippedCount = 0,
+            presentCount = 0,
+            currentIndex = 0,
+            startTime = Date.now();
+
+        while ( currentIndex < candidates.length ) {
+            const chunkEndIndex = Math.min( currentIndex + CHUNK_SIZE, candidates.length );
+            const chunk = candidates.slice( currentIndex, chunkEndIndex );
+
+            await Promise.all( chunk.map( async( row ) => {
+                try {
+                    const guild = await this.lookup(
+                        () => client.guilds.fetch( row.guildId ),
+                        DISCORD_ERROR_UNKNOWN_GUILD
+                    );
+
+                    if ( "unreachable" === guild.state ) {
+                        ++skippedCount;
+
+                        return;
+                    }
+
+                    // Discord says the bot is in it, so the cache was simply missing it. Nothing to
+                    // delete, and worth counting: a process reporting these is one whose cache does
+                    // not match what it is actually in, which is a different problem from a stale row.
+                    if ( "found" === guild.state ) {
+                        ++presentCount;
+
+                        return;
+                    }
+
+                    // The same three deletions `GuildManager.onLeave()` does, replayed late.
+                    await prisma.category.deleteMany( { where: { guildId: row.guildId } } );
+                    await prisma.channel.deleteMany( { where: { guildId: row.guildId } } );
+                    await prisma.guild.update( {
+                        where: { guildId: row.guildId },
+                        data: { isInGuild: false }
+                    } );
+
+                    ++deletedCount;
+
+                    this.logger.info(
+                        this.removeChannelsOfLeftGuilds,
+                        `Guild '${ row.name }' (${ row.guildId }) is gone - its rows are deleted.`
+                    );
+                } catch( error ) {
+                    ++skippedCount;
+
+                    this.logger.error( this.removeChannelsOfLeftGuilds, "", error );
+                }
+            } ) );
+
+            currentIndex += CHUNK_SIZE;
+            const elapsedTime = Date.now() - startTime;
+
+            if ( elapsedTime < CHUNK_TIME_LIMIT && currentIndex < candidates.length ) {
+                const delay = Math.max( CHUNK_DELAY - elapsedTime, 0 );
+                await new Promise( ( resolve ) => setTimeout( resolve, delay ) );
+            }
+
+            startTime = Date.now();
+        }
+
+        this.logger.info(
+            this.removeChannelsOfLeftGuilds,
+            `Left-guild cleanup done: ${ deletedCount } cleared` +
+            ( presentCount ? `, ${ presentCount } discord says are still joined` : "" ) +
+            ( skippedCount ? `, ${ skippedCount } left alone because discord could not be asked` : "" ) +
+            "."
+        );
+    }
+
     private async removeEmptyCategories( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
@@ -350,6 +493,11 @@ class CleanupWorker extends InitializeBase {
          * reason this one is worth being careful about, and the reason it goes last.
          */
         await this.removeNonExistentChannelsByType( client, PrismaBot.E_INTERNAL_CHANNEL_TYPES.DEFAULT_CHANNEL );
+
+        // Last, and about the guilds the sweeps above cannot see: each of those is bounded to the
+        // guilds this process holds, so a guild the bot was removed from while it was down is in
+        // none of them.
+        await this.removeChannelsOfLeftGuilds( client );
     }
 
     private async handleGuilds( client: Client ) {

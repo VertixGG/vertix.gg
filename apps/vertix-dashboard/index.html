@@ -3,7 +3,11 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Voice Channels - Dashboard</title>
+        <title>VoiceChannels Dashboard - manage your Discord voice channels</title>
+        <meta
+            name="description"
+            content="Manage VoiceChannels, a Discord bot that creates temporary voice channels on demand. Set up generators and choose a plan. Billing by Paddle."
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" />
@@ -16,10 +20,83 @@
                 width: 100%;
                 height: 100%;
             }
+
+            /*
+             * The markup below is what anything that does not run javascript sees.
+             *
+             * This is a client-rendered app, so `#root` was empty until react mounted - which
+             * reads, to a crawler or a reviewer's scanner, as a site that is offline or under
+             * construction. Paddle refused to verify this domain twice on exactly that.
+             *
+             * React replaces the children of `#root` when it renders, so this is on screen for
+             * the moment before the bundle runs and then gone. It is styled inline because the
+             * stylesheet is part of that same bundle.
+             */
+            .no-js-fallback {
+                max-width: 34rem;
+                margin: 0 auto;
+                padding: 3rem 1.5rem;
+                font-family: Inter, system-ui, sans-serif;
+                color: #1f2430;
+                line-height: 1.6;
+            }
+
+            .no-js-fallback h1 {
+                font-family: "Space Grotesk", Inter, system-ui, sans-serif;
+                font-size: 1.5rem;
+                margin: 0 0 1rem;
+            }
+
+            .no-js-fallback ul {
+                padding-left: 1.2rem;
+            }
+
+            .no-js-fallback a {
+                color: #2563eb;
+            }
         </style>
     </head>
     <body>
-        <div id="root"></div>
+        <div id="root">
+            <div class="no-js-fallback">
+                <h1>VoiceChannels Dashboard</h1>
+
+                <p>
+                    <strong>VoiceChannels</strong> is a Discord bot that creates temporary voice
+                    channels on demand. A member joins a generator channel and gets their own room,
+                    which they rename, lock or hand over from a panel in Discord, and which
+                    disappears once it empties.
+                </p>
+
+                <p>
+                    This dashboard is where a server owner sets those generators up, and where a
+                    plan is bought. The bot is free to use; a plan only raises how many generators
+                    one server may run at once.
+                </p>
+
+                <ul>
+                    <li>Free &mdash; 2 generators</li>
+                    <li>Plus &mdash; $2 / month, 4 generators</li>
+                    <li>Pro &mdash; $4 / month, 9 generators</li>
+                    <li>Ultimate &mdash; $10 / month, unlimited generators</li>
+                </ul>
+
+                <p>
+                    Every feature is in every plan, including the free one. Billing is handled by
+                    Paddle, our merchant of record.
+                </p>
+
+                <p>
+                    <a href="https://voicechannels.online">About VoiceChannels</a> &middot;
+                    <a href="https://voicechannels.online/pricing">Pricing</a> &middot;
+                    <a href="https://voicechannels.online/terms-of-service">Terms of service</a> &middot;
+                    <a href="https://voicechannels.online/privacy-policy">Privacy policy</a> &middot;
+                    <a href="https://voicechannels.online/refund-policy">Refund policy</a>
+                </p>
+
+                <p>Sign in with Discord to continue. This page needs JavaScript enabled.</p>
+            </div>
+        </div>
         <script type="module" src="/src/main.tsx"></script>
     </body>
 </html>

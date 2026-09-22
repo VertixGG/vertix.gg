@@ -693,18 +693,10 @@ export abstract class UIAdapterBase<
         return this.run( interaction as MessageComponentInteraction );
     }
 
-    /**
-     * Replacing is the default, and `deletePreviousInteraction` is how a caller declines it.
-     *
-     * It is not read from `shouldDeletePreviousReply` any more. That hook is shaped as an opt *in* -
-     * the method `ExecutionAdapterBuilder` generates answers false unless an adapter sets a handler,
-     * and none do - so consulting it here meant nothing ever replaced anything. A message replaces
-     * whatever holds its own slot; an adapter that wants to stack says so by passing false.
-     */
     public async ephemeral(
         interaction: TInteraction,
         sendArgs?: UIArgs,
-        deletePreviousInteraction = true
+        deletePreviousInteraction = this.shouldDeletePreviousReply?.() || false
     ) {
         const args = this.preserveSystemArgs(
                 await this.getArgsInternal( interaction, sendArgs ),
@@ -714,31 +706,11 @@ export abstract class UIAdapterBase<
 
         await this.build( args, "reply", interaction );
 
-        /**
-         * Which of the two ephemeral slots this message occupies.
-         *
-         * A screen is the sub-menu a button opens - the permissions list, the region picker. A
-         * notice is the embed that reports what an action did. They replace their own kind and leave
-         * the other alone: opening a different sub-menu replaces the sub-menu, a second refusal
-         * replaces the first refusal, and neither disturbs the other.
-         *
-         * This used to be keyed by `interaction.message.id` - the message the pressed component sits
-         * on - which is not a property of the message being sent but of whatever happened to open
-         * it. The button that opens a screen lives on the control panel; the menu inside that screen
-         * lives on the screen. So the first notice after opening a screen was keyed to the screen,
-         * found nothing to replace, and posted. Refuse the same thing twice and you had two
-         * identical notices; five times, five.
-         */
-        const message = this.getMessage( "reply", interaction, sendArgs );
-
-        // Read off the message rather than declared by the state: a screen carries controls, a
-        // notice is an embed on its own. That is the same difference the owner sees, it is true for
-        // every adapter without any of them having to say so, and a state that grows or loses its
-        // controls moves slot with no second edit to remember.
-        const slot = message.components?.length ? "screen" : "notice";
-
-        const shouldDeletePreviousInteraction = deletePreviousInteraction && ! interaction.isCommand(),
-            interactionInternalId = interaction.user.id + UI_CUSTOM_ID_SEPARATOR + slot;
+        const message = this.getMessage( "reply", interaction, sendArgs ),
+            shouldDeletePreviousInteraction =
+                deletePreviousInteraction && !interaction.isCommand() && interaction.message?.id,
+            messageId = ( shouldDeletePreviousInteraction && interaction.message?.id ) || 0,
+            interactionInternalId = interaction.user.id + UI_CUSTOM_ID_SEPARATOR + messageId;
 
         if ( shouldDeletePreviousInteraction && this.$$.ephemeralInteractions[ interactionInternalId ] ) {
             // TODO: If interaction not used for awhile, it will be expired.

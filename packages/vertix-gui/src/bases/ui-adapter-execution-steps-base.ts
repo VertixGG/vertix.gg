@@ -198,10 +198,7 @@ export abstract class UIAdapterExecutionStepsBase<
         interaction: TInteraction,
         stepName: string,
         sendArgs?: UIArgs,
-        // Transitions pass `deletePreviousReply` from the state, which is undefined unless a state
-        // sets it - so this default is what almost every notice actually gets. Replacing is the
-        // behaviour wanted; a state stacks only by saying `deletePreviousReply: false`.
-        shouldDeletePreviousInteraction = true
+        shouldDeletePreviousInteraction = this.shouldDeletePreviousReply?.() || false
     ) {
         this.setStep( stepName, interaction );
 

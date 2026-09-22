@@ -48,7 +48,11 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             // As `ephemeral` they posted a second copy instead, so granting and then removing access
             // left two menus on screen - the older one still listing a user who had just been
             // removed. The three states after them carry no elements group, are notices rather than
-            // the screen, and stay ephemeral.
+            // the screen, and stay ephemeral - with `deletePreviousReply`, so a second refusal
+            // replaces the first rather than adding to it. `UIAdapterBase.ephemeral()` keeps the
+            // interaction that opened each one in `ephemeralInteractions` for exactly this, and
+            // nothing in the repo had ever asked it to: refusing the same action twice left two
+            // identical notices stacked up, and five times left five.
             .addState( "Granted", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsGranted",
                 navigationType: "editReply",
@@ -87,16 +91,19 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
             .addState( "Error", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateError",
                 navigationType: "ephemeral",
+                deletePreviousReply: true,
                 embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
             } )
             .addState( "NothingChanged", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateNothingChanged",
                 navigationType: "ephemeral",
+                deletePreviousReply: true,
                 embedsGroup: "VertixBot/UI-General/NothingChangedEmbedGroup"
             } )
             .addState( "StaffMember", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsStateStaffMember",
                 navigationType: "ephemeral",
+                deletePreviousReply: true,
                 previewDefaultVars: { staffMemberDisplayName: "User" },
                 embedsGroup: "VertixBot/UI-General/StaffMemberEmbedGroup"
             } )

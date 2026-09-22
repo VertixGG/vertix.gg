@@ -694,15 +694,17 @@ export abstract class UIAdapterBase<
     }
 
     /**
-     * `deletePreviousInteraction` no longer decides whether the previous reply goes: a message
-     * always replaces the one occupying its own slot, and the slot is read off the message. It is
-     * kept because callers pass it, and because `shouldDeletePreviousReply` is still the hook an
-     * adapter would use to opt out of replacing at all.
+     * Replacing is the default, and `deletePreviousInteraction` is how a caller declines it.
+     *
+     * It is not read from `shouldDeletePreviousReply` any more. That hook is shaped as an opt *in* -
+     * the method `ExecutionAdapterBuilder` generates answers false unless an adapter sets a handler,
+     * and none do - so consulting it here meant nothing ever replaced anything. A message replaces
+     * whatever holds its own slot; an adapter that wants to stack says so by passing false.
      */
     public async ephemeral(
         interaction: TInteraction,
         sendArgs?: UIArgs,
-        deletePreviousInteraction = this.shouldDeletePreviousReply?.() ?? true
+        deletePreviousInteraction = true
     ) {
         const args = this.preserveSystemArgs(
                 await this.getArgsInternal( interaction, sendArgs ),

@@ -39,37 +39,47 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessEmbedGroup"
             } )
+            // These five are the screen, not a notice about it: each carries the same
+            // `DynamicChannelPermissionsAccessElementsGroup` as `Default` and differs only in its
+            // embed, so reaching one means redrawing the menu the owner is already looking at. They
+            // edit that reply, the way every handler below already opens with
+            // `editReplyWithStep( …, "default" )`.
+            //
+            // As `ephemeral` they posted a second copy instead, so granting and then removing access
+            // left two menus on screen - the older one still listing a user who had just been
+            // removed. The three states after them carry no elements group, are notices rather than
+            // the screen, and stay ephemeral.
             .addState( "Granted", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsGranted",
-                navigationType: "ephemeral",
+                navigationType: "editReply",
                 previewDefaultVars: { userGrantedDisplayName: "User" },
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsGrantedEmbedGroup"
             } )
             .addState( "Denied", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsDenied",
-                navigationType: "ephemeral",
+                navigationType: "editReply",
                 previewDefaultVars: { userDeniedDisplayName: "User" },
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsDeniedEmbedGroup"
             } )
             .addState( "Blocked", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsBlocked",
-                navigationType: "ephemeral",
+                navigationType: "editReply",
                 previewDefaultVars: { userBlockedDisplayName: "User" },
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsBlockedEmbedGroup"
             } )
             .addState( "Unblocked", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsUnBlocked",
-                navigationType: "ephemeral",
+                navigationType: "editReply",
                 previewDefaultVars: { userUnBlockedDisplayName: "User" },
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsUnblockedEmbedGroup"
             } )
             .addState( "Kicked", {
                 executionStep: "VertixBot/UI-V3/DynamicChannelPermissionsKick",
-                navigationType: "ephemeral",
+                navigationType: "editReply",
                 previewDefaultVars: { userKickedDisplayName: "User" },
                 elementsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsAccessElementsGroup",
                 embedsGroup: "VertixBot/UI-V3/DynamicChannelPermissionsKickEmbedGroup"

@@ -712,6 +712,23 @@ export abstract class UIAdapterBase<
             messageId = ( shouldDeletePreviousInteraction && interaction.message?.id ) || 0,
             interactionInternalId = interaction.user.id + UI_CUSTOM_ID_SEPARATOR + messageId;
 
+        // TEMPORARY - remove once the stacking notice is understood.
+        //
+        // `deletePreviousReply` is set on a state, reaches here through `resolveTransition` and
+        // `ephemeralWithStep`, and still deletes nothing without logging a failure. This says which
+        // of the three things it depends on is not what it looks like: the flag arriving, the guards
+        // passing, or the key matching one already stored.
+        this.$$.staticLogger.info(
+            caller,
+            `ephemeral probe - flag: ${ deletePreviousInteraction }` +
+            `, shouldDelete: ${ !! shouldDeletePreviousInteraction }` +
+            `, isCommand: ${ interaction.isCommand() }` +
+            `, messageId: ${ messageId }` +
+            `, key: '${ interactionInternalId }'` +
+            `, stored: [${ Object.keys( this.$$.ephemeralInteractions ).join( ", " ) }]` +
+            `, hit: ${ !! this.$$.ephemeralInteractions[ interactionInternalId ] }`
+        );
+
         if ( shouldDeletePreviousInteraction && this.$$.ephemeralInteractions[ interactionInternalId ] ) {
             // TODO: If interaction not used for awhile, it will be expired.
             const previousInteraction = this.$$.ephemeralInteractions[ interactionInternalId ].interaction;

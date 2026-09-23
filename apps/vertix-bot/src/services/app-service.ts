@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 import * as fs from "fs";
 
 import * as path from "path";
@@ -12,9 +14,15 @@ import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
+import { CommandsRegistrationModel } from "@vertix.gg/data/src/models/commands-registration-model";
+
 import { zFindRootPackageJsonPath } from "@zenflux/utils/workspace";
 
+import { ownsSingletonWork } from "@vertix.gg/bot/src/definitions/sharding";
+
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
+
+import type { ICommand } from "@vertix.gg/bot/src/interfaces/command";
 
 import type { Client } from "discord.js";
 
@@ -27,6 +35,14 @@ interface PackageJson {
 const packageJsonPath = path.resolve( path.dirname( zFindRootPackageJsonPath() ), "apps/vertix-bot/package.json" );
 const packageJsonString = fs.readFileSync( packageJsonPath, { encoding: "utf8" } );
 const packageJson: PackageJson = JSON.parse( packageJsonString );
+
+/**
+ * What the slash command set is hashed with.
+ *
+ * Only ever compared with an earlier hash of its own, so it is chosen for being cheap rather than
+ * hard to forge. Changing it sends the set once, since no stored hash matches any more.
+ */
+const COMMANDS_HASH_ALGORITHM = "md5";
 
 export class AppService extends ServiceBase {
     private client!: Client<true>;
@@ -85,7 +101,7 @@ export class AppService extends ServiceBase {
 
         const { Commands } = await import( "@vertix.gg/bot/src/commands" );
 
-        await client.application.commands.set( Commands );
+        await this.registerCommands( client, Commands );
 
         await this.ensureBackwardCompatibility();
 
@@ -94,7 +110,7 @@ export class AppService extends ServiceBase {
 
         this.logger.log(
             this.onReady,
-            `Ready handle is set, bot: '${ username }', id: '${ id }' is online, commands is set.`
+            `Ready handle is set, bot: '${ username }', id: '${ id }' is online.`
         );
 
         this.pingInterval();
@@ -125,6 +141,69 @@ export class AppService extends ServiceBase {
         }
 
         await dynamicChannelService.refreshControlPanels( client );
+    }
+
+    /**
+     * Function registerCommands() :: Tells discord what the slash commands are - only when that
+     * changed.
+     *
+     * Every restart used to send the whole set, from every shard, and the bot did not count as ready
+     * until discord answered. The set is global and rarely changes, and discord rate limits the
+     * route: with deploys minutes apart one of those waits ran to thirty-seven seconds, all of it
+     * spent re-sending what discord already had.
+     *
+     * A hash of the set is kept per application, and the set is sent only when it no longer matches.
+     * Everything a command is defined by - its name, description, permissions, where it works, its
+     * subcommands - is in the hash, so changing any of it sends the set once.
+     *
+     * One process sends it. The set belongs to the application rather than to a shard, and two
+     * processes starting together would both see the same change and both send it.
+     */
+    private async registerCommands( client: Client<true>, commands: ICommand[] ) {
+        if ( ! ownsSingletonWork() ) {
+            return;
+        }
+
+        const applicationId = client.application.id,
+            hash = this.getCommandsHash( commands );
+
+        // A registration that cannot be read counts as one that never happened: the price is sending
+        // a set discord may already have, which is what every restart used to do.
+        const registeredHash = await CommandsRegistrationModel.$.getRegisteredHash( applicationId )
+            .catch( ( error ) => {
+                this.logger.error( this.registerCommands, "", error );
+
+                return null;
+            } );
+
+        if ( hash === registeredHash ) {
+            this.logger.log( this.registerCommands, "Commands are unchanged since they were last registered" );
+
+            return;
+        }
+
+        await client.application.commands.set( commands );
+
+        // Not fatal when it fails: the next start sends the set once more, and nothing else happens.
+        await CommandsRegistrationModel.$.setRegisteredHash( applicationId, hash )
+            .catch( ( error ) => this.logger.error( this.registerCommands, "", error ) );
+
+        this.logger.log( this.registerCommands, `Commands are registered, ${ commands.length } in all` );
+    }
+
+    /**
+     * Function getCommandsHash() :: The command set, reduced to something that can be stored and
+     * compared.
+     *
+     * `run` is a function and drops out of the JSON on its own. Permissions are bigints, which JSON
+     * refuses outright, so they are written out as strings.
+     */
+    private getCommandsHash( commands: ICommand[] ) {
+        const serialized = JSON.stringify( commands, ( _key, value ) =>
+            "bigint" === typeof value ? value.toString() : value
+        );
+
+        return crypto.createHash( COMMANDS_HASH_ALGORITHM ).update( serialized ).digest( "hex" );
     }
 
     private async ensureBackwardCompatibility() {

@@ -12,12 +12,27 @@ bash key-gen.bash
 # back to root
 cd $CURRENT_DIR
 
-bun run vertix:api:jest - --ci --detectOpenHandles --runInBand
-bun run vertix:base:jest - --ci --detectOpenHandles --runInBand
-bun run vertix:bot:jest - --ci --detectOpenHandles --runInBand
-bun run vertix:data:jest - --ci --detectOpenHandles --runInBand
-bun run vertix:definitions:jest - --ci --detectOpenHandles --runInBand
-bun run vertix:gui:jest - --ci --detectOpenHandles --runInBand
-bun run vertix:utils:jest - --ci --detectOpenHandles --runInBand
+# A bash script exits with the status of its last command, so without this the
+# run was decided by `vertix:utils:jest` alone and every suite above it could
+# fail into a green build. Collected rather than `set -e` so one broken package
+# does not hide the six behind it.
+failed=""
+
+run_suite() {
+    bun run "$1" - --ci --detectOpenHandles --runInBand || failed="$failed $1"
+}
+
+run_suite vertix:api:jest
+run_suite vertix:base:jest
+run_suite vertix:bot:jest
+run_suite vertix:data:jest
+run_suite vertix:definitions:jest
+run_suite vertix:gui:jest
+run_suite vertix:utils:jest
+
+if [ -n "$failed" ]; then
+    echo "Failed:$failed"
+    exit 1
+fi
 
 # TODO: ci can use bun runner for all packages

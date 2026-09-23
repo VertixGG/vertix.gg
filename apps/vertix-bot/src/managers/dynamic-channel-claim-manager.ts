@@ -1006,8 +1006,17 @@ export class DynamicChannelClaimManager extends InitializeBase {
             case "active": // TODO: Update only when needed.
                 // TODO: It will not works without empty args.... remove '{}' from `editReply` method.
 
-                // TODO: Remove catch.
-                await this.adapters.claimVoteAdapter().editMessage( message, {} );
+                // The room can go while the vote is still running in it: the last member leaves, the
+                // channel is deleted, and the next tick asks discord to edit a message in a channel
+                // it no longer has - `10003 Unknown Channel`. Reported rather than thrown, because
+                // a vote nobody is left to win is not a failure worth interrupting anything for.
+                await this.adapters.claimVoteAdapter().editMessage( message, {} ).catch( ( error: unknown ) =>
+                    this.logger.error(
+                        this.voteTimer,
+                        `Guild id: '${ channel.guildId }', channel id: '${ channel.id }' - Could not redraw the vote`,
+                        error
+                    )
+                );
         }
     }
 

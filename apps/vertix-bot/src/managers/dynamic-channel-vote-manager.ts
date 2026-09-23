@@ -743,7 +743,29 @@ export class DynamicChannelVoteManager<
         const channelId = channel.id as string,
             state = this.getState( channelId );
 
-        await callback( channel, state );
+        // Caught because this runs on an interval and nobody is holding its promise: `arm()` starts
+        // it with `setInterval` and discards what it returns, so a rejection here is not handled by
+        // a caller - it reaches the process as an unhandled rejection and ends it. A vote left
+        // drawing itself in a room that has since been deleted answers 404 every second, and that
+        // is how one claim taken to the end of its channel took the whole bot down with it.
+        //
+        // The tick is the wrong place to decide what a failure means, so it only records it: the
+        // vote goes on to its own end below, where it stops for the reason it was always going to.
+        try {
+            await callback( channel, state );
+        } catch( error ) {
+            this.logger.error(
+                this.timer,
+                `Guild id: '${ channel.guildId }', channel id: '${ channelId }' - The vote could not be redrawn`,
+                error
+            );
+        }
+
+        // The vote can be cleared while a tick is in flight - the room emptying does it - and what
+        // follows reads the event as though it is still there.
+        if ( ! this.events[ channelId ] ) {
+            return;
+        }
 
         // Written down only as it turns over, rather than on every tick: it says whether the vote
         // is still drawing its opening screen, which it stops being once and never becomes again.

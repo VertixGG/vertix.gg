@@ -132,6 +132,15 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.7,
     },
     {
+        path: "/posts/disable-auto-status",
+        sourcePath: "src/vertix/posts/disable-auto-status.tsx",
+        title: "How to Disable the Automatic Channel Status | VoiceChannels",
+        description:
+            "Stop VoiceChannels writing the status line under your temporary voice channels "
+            + "(AutoStatus), per master channel, from /setup or the dashboard.",
+        priority: 0.7,
+    },
+    {
         path: "/pricing",
         sourcePath: "src/vertix/pages/pricing.tsx",
         title: "Plans and Pricing | VoiceChannels",
@@ -198,6 +207,22 @@ export const ROUTE_META: readonly RouteMeta[] = [
 
 const META_BY_PATH = new Map( ROUTE_META.map( ( meta ) => [ meta.path, meta ] ) );
 
+/**
+ * Function normalizeRoutePath() :: The path a route is filed under, whatever form it arrived in.
+ *
+ * The table is keyed without a trailing slash, and the router matches either form - so
+ * `/posts/comparison/` drew the right page while this lookup missed, and the page went out titled
+ * "Page Not Found" with a canonical pointing at nothing. The content was never wrong; only
+ * everything a crawler reads about it was.
+ */
+function normalizeRoutePath( pathname: string ): string {
+    if ( "/" === pathname ) {
+        return pathname;
+    }
+
+    return pathname.replace( /\/+$/, "" ) || "/";
+}
+
 export function getRouteMeta( pathname: string ): RouteMeta | undefined {
-    return META_BY_PATH.get( pathname );
+    return META_BY_PATH.get( normalizeRoutePath( pathname ) );
 }

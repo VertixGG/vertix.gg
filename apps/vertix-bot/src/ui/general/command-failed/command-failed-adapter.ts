@@ -59,6 +59,12 @@ const CommandFailedAdapter = new AdapterBuilderBase<
     IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/CommandFailedAdapter", UIAdapterBase )
     .setComponent( CommandFailedComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-General/CommandsFlow",
+            description: "A command was run and something went wrong carrying it out."
+        }
+    ] )
     // The embed says one fixed thing and reads nothing, but the base makes this mandatory - left
     // out, the reply throws rather than rendering an argument-less embed.
     .getReplyArgs( async() => ( {} ) )

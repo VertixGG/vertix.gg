@@ -57,6 +57,12 @@ const NotInAServerAdapter = new AdapterBuilderBase<
     IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/NotInAServerAdapter", UIAdapterBase )
     .setComponent( NotInAServerComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-General/CommandsFlow",
+            description: "You ran a command in a direct message rather than in a server."
+        }
+    ] )
     // The embed says one fixed thing and reads nothing, but the base makes this mandatory - left
     // out, the reply throws rather than rendering an argument-less embed.
     .getReplyArgs( async() => ( {} ) )

@@ -18,6 +18,16 @@ const NoActiveDynamicChannelAdapter = new AdapterBuilderBase<
         IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/NoActiveDynamicChannelAdapter", UIAdapterBase )
     .setComponent( NoActiveDynamicChannelComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-V3/DynamicChannelFlow",
+            description: "You used a channel control while not standing in a dynamic channel."
+        },
+        {
+            source: "VertixBot/UI-V2/DynamicChannelFlow",
+            description: "You used a channel control while not standing in a dynamic channel."
+        }
+    ] )
     .getReplyArgs( async( _context, _interaction, argsFromManager ) => ( {
         masterChannelId: argsFromManager?.masterChannelId
     } ) )

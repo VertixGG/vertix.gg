@@ -18,6 +18,12 @@ const ChannelCreateFailedAdapter = new AdapterBuilderBase<
         IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/ChannelCreateFailedAdapter", UIAdapterBase )
     .setComponent( ChannelCreateFailedComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-General/Module",
+            description: "You joined a generator and the bot could not create your channel."
+        }
+    ] )
     .getReplyArgs( async( _context, _interaction, argsFromManager ) => ( {
         masterChannelId: argsFromManager?.masterChannelId,
         isCategoryFull: argsFromManager?.isCategoryFull,

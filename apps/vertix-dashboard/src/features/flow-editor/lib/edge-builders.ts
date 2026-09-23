@@ -104,6 +104,34 @@ export function createHubToFlowEdge(
     };
 }
 
+/**
+ * Function createNoticeEdge() :: What a member was doing when a notice was put in front of them.
+ *
+ * Not a press and not a move, so it is drawn unlike either: a notice is what the bot says when it
+ * refuses, and the line carries the refusal rather than the control that caused it. Dashed and
+ * unanimated, because nothing travels along it - there is no screen at the far end to arrive at.
+ */
+export function createNoticeEdge(
+    sourceId: string,
+    noticeId: string,
+    description: string
+): Edge {
+    return {
+        id: `edge-notice-${ sourceId }-${ noticeId }`,
+        source: sourceId,
+        target: noticeId,
+        zIndex: Z_INDEX.EDGE_OVERLAY,
+        label: description,
+        style: { stroke: EDGE_COLORS.COMPONENT_TO_MODAL, ...EDGE_STYLES.DASHED },
+        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.COMPONENT_TO_MODAL, ...MARKER_SIZES.SMALL },
+        labelStyle: { fill: EDGE_COLORS.COMPONENT_TO_MODAL, fontSize: 10, fontWeight: 600 },
+        labelBgStyle: { fill: "#18181b" },
+        labelBgPadding: [ 4, 2 ] as [ number, number ],
+        labelBgBorderRadius: 3,
+        data: { weight: 1 }
+    };
+}
+
 export const FLOW_EXIT_HANDLE_ID = "exit";
 
 export function createComponentToFlowExitEdge(

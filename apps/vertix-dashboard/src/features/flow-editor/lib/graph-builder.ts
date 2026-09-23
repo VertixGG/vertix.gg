@@ -8,6 +8,7 @@ import {
     createComponentToModalEdge,
     createComponentToFlowEdge,
     createHubToFlowEdge,
+    createNoticeEdge,
     createComponentToFlowExitEdge,
     createComponentToComponentEdge,
     createComponentToStateFallbackEdge,
@@ -1874,15 +1875,56 @@ class FlowGraphBuilder {
 
             const compPreview = PreviewResolver.resolve( component, undefined, undefined, true );
 
+            const noticeId = `comp-orphan-${ component.name }`;
+
             this.allNodes.push( createComponentNode(
-                `comp-orphan-${ component.name }`,
+                noticeId,
                 compPreview,
                 [],
                 [],
                 [],
                 component.name.split( "/" ).pop() ?? component.name
             ) );
+
+            this.buildNoticeEdges( component, noticeId );
         } );
+    }
+
+    /**
+     * The line from what a member was doing to the notice they got for it.
+     *
+     * A notice is sent by a gate calling its adapter, so there is no binding, no transition and no
+     * flow to read a route off - which is why twelve screens that ship, and that anybody using the
+     * bot has seen, sat on the canvas attached to nothing. The screen now declares what was being
+     * done when it appears, and that is what this draws.
+     *
+     * Where none of the sources is a flow this canvas draws, the line comes from the module. Three
+     * of the notices are refusals for pressing a control on somebody else's channel, and those name
+     * the dynamic channel routers, which another module owns - so on this module's canvas there is
+     * nothing to draw them from even though the screen itself belongs here. The module is what owns
+     * it, and the line still carries the sentence saying what was being done, which is the part a
+     * reader came for.
+     */
+    private buildNoticeEdges( component: UIExportedComponent, noticeId: string ): void {
+        const sources = component.shownWhen ?? [];
+
+        const drawn = sources.filter( ( notice ) => {
+            const sourceId = notice.source === this.data.module
+                ? this.allNodes[ 0 ].id
+                : this.flowIdMap.get( notice.source );
+
+            if ( ! sourceId ) {
+                return false;
+            }
+
+            this.addEdge( createNoticeEdge( sourceId, noticeId, notice.description ) );
+
+            return true;
+        } );
+
+        if ( sources.length && ! drawn.length ) {
+            this.addEdge( createNoticeEdge( this.allNodes[ 0 ].id, noticeId, sources[ 0 ].description ) );
+        }
     }
 
     private buildFlowComponents(): void {

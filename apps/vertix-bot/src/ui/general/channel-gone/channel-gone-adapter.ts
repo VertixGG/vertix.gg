@@ -58,6 +58,16 @@ const ChannelGoneAdapter = new AdapterBuilderBase<
     IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/ChannelGoneAdapter", UIAdapterBase )
     .setComponent( ChannelGoneComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-V3/DynamicChannelFlow",
+            description: "The channel this screen was opened about was removed while it was still on screen."
+        },
+        {
+            source: "VertixBot/UI-V2/DynamicChannelFlow",
+            description: "The channel this screen was opened about was removed while it was still on screen."
+        }
+    ] )
     // The embed says one fixed thing and reads nothing, but the base makes this mandatory - left
     // out, the reply throws rather than rendering an argument-less embed.
     .getReplyArgs( async() => ( {} ) )

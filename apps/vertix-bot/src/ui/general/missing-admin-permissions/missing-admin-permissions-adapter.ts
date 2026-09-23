@@ -57,6 +57,12 @@ const MissingAdminPermissionsAdapter = new AdapterBuilderBase<
     IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/MissingAdminPermissionsAdapter", UIAdapterBase )
     .setComponent( MissingAdminPermissionsComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-General/CommandsFlow",
+            description: "You ran a command that only a server admin may run."
+        }
+    ] )
     // The embed says one fixed thing and reads nothing, but the base makes this mandatory - left
     // out, the reply throws rather than rendering an argument-less embed.
     .getReplyArgs( async() => ( {} ) )

@@ -18,6 +18,16 @@ const NotYourChannelAdapter = new AdapterBuilderBase<
         IAdapterContext<UIDefaultButtonChannelVoiceInteraction, UIArgs>
 >( "VertixBot/UI-General/NotYourChannelAdapter", UIAdapterBase )
     .setComponent( NotYourChannelComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-V3/DynamicChannelFlow",
+            description: "You pressed a control on a channel that somebody else owns."
+        },
+        {
+            source: "VertixBot/UI-V2/DynamicChannelFlow",
+            description: "You pressed a control on a channel that somebody else owns."
+        }
+    ] )
     .getReplyArgs( async( _context, _interaction, argsFromManager ) => ( {
         masterChannelId: argsFromManager?.masterChannelId
     } ) )

@@ -54,6 +54,12 @@ const NotClaimableAdapter = new AdapterBuilderBase<
     IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/NotClaimableAdapter", UIAdapterBase )
     .setComponent( NotClaimableComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-General/CommandsFlow",
+            description: "You asked to claim a channel and nothing in the server is waiting for an owner."
+        }
+    ] )
     // The embed says one fixed thing and reads nothing, but the base makes this mandatory - left
     // out, the reply throws rather than rendering an argument-less embed.
     .getReplyArgs( async() => ( {} ) )

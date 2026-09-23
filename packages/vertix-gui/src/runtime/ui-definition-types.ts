@@ -163,6 +163,13 @@ export interface ModalDefinition {
     inputs: ModalInputDefinition[];
 }
 
+export interface NoticeSourceDefinition {
+    /** The flow whose use can end at this screen. */
+    source: string;
+    /** What went wrong, in one sentence a member would recognise. */
+    description: string;
+}
+
 export interface ComponentDefinition {
     name: string;
     type: string;
@@ -196,6 +203,14 @@ export interface ComponentDefinition {
      * be the second copy.
      */
     routesDrawnElsewhere?: boolean;
+    /**
+     * What a member was doing when this screen was put in front of them.
+     *
+     * Carried for screens nothing navigates to - the notices a gate sends by calling their adapter
+     * directly. They have no binding, no transition and no flow, so without this the export says
+     * only that they exist, and a page drawing from it has nowhere to attach them.
+     */
+    shownWhen?: NoticeSourceDefinition[];
     hooks: HookReference[];
     options?: JsonObject;
 }

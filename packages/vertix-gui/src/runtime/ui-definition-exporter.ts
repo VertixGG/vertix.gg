@@ -417,6 +417,25 @@ export class UIDefinitionExporter extends UIBase {
                          * no bindings on either, so anything drawing from the export drew both of
                          * them routing to the same fifteen flows.
                          */
+                        /*
+                         * A notice's reason for existing, carried onto the screen itself.
+                         *
+                         * Put on the component rather than the adapter because a component is what
+                         * anything reading this export is given - the API answers a module with its
+                         * flows and its components, and no adapters at all - so an adapter-side
+                         * field would arrive nowhere.
+                         */
+                        if ( adapterMetadata?.shownWhen?.length ) {
+                            const noticeScreen = components.get( definition.component );
+
+                            if ( noticeScreen ) {
+                                noticeScreen.shownWhen = adapterMetadata.shownWhen.map( ( source ) => ( {
+                                    source: source.source,
+                                    description: source.description
+                                } ) );
+                            }
+                        }
+
                         if ( adapterMetadata?.transactions?.getHidden() ) {
                             const duplicatedScreen = components.get( definition.component );
 

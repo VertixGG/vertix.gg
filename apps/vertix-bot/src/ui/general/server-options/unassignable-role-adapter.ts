@@ -18,6 +18,12 @@ const UnassignableRoleAdapter = new AdapterBuilderBase<
         IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/UnassignableRoleAdapter", UIAdapterBase )
     .setComponent( UnassignableRoleComponent )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-General/SetupFlow",
+            description: "You picked a role during setup that the bot is not allowed to hand out."
+        }
+    ] )
     .getReplyArgs( async( _context, _interaction, argsFromManager ) => ( {
         roleId: argsFromManager?.roleId,
         reason: argsFromManager?.reason

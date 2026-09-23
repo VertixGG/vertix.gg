@@ -37,6 +37,24 @@ export interface ComponentBuilderMetadata {
     defaultMarkdownsGroup: string | null;
 }
 
+/**
+ * What a member was doing when a screen was put in front of them, declared by the screen itself.
+ *
+ * A notice - "that channel is not yours", "run this in a server" - is sent by a gate calling the
+ * adapter directly, and nothing in that call reaches the export: no binding, no transition, no
+ * flow. The screens ship, they carry real embeds, and everything reading the export sees them as
+ * belonging to nothing, which is why a third of the components are drawn unattached.
+ *
+ * The gate is the wrong place to say this, because there is one gate for many commands and it
+ * would have to be said once per command. The screen is the thing that knows why it exists.
+ */
+export interface UINoticeSource {
+    /** The flow whose use can end here, spelled in full. */
+    source: string;
+    /** What went wrong, in one sentence a member would recognise. */
+    description: string;
+}
+
 export interface AdapterBuilderMetadata {
     name: string;
     component?: UIComponentTypeConstructor;
@@ -59,6 +77,7 @@ export interface AdapterBuilderMetadata {
     contextFactory?: unknown;
     rawBuilder?: unknown;
     wizard?: WizardAdapterMetadata;
+    shownWhen?: UINoticeSource[];
     transactions?: TransactionBuilder;
 }
 

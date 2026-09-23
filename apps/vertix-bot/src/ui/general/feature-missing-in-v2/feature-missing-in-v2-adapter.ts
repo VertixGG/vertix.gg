@@ -57,6 +57,12 @@ const FeatureMissingInV2Adapter = new AdapterBuilderBase<
     IAdapterContext<UIDefaultButtonChannelTextInteraction, UIArgs>
 >( "VertixBot/UI-General/FeatureMissingInV2Adapter", UIAdapterBase )
     .setComponent( FeatureMissingInV2Component )
+    .setShownWhen( [
+        {
+            source: "VertixBot/UI-General/CommandsFlow",
+            description: "You ran a command for something this server's older interface does not have."
+        }
+    ] )
     // The embed says one fixed thing and reads nothing, but the base makes this mandatory - left
     // out, the reply throws rather than rendering an argument-less embed.
     .getReplyArgs( async() => ( {} ) )

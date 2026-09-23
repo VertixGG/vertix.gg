@@ -55,7 +55,7 @@ import type {
     BindingFlowTriggerConfig
 } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { ElementHandlerBinding } from "@vertix.gg/gui/src/builders/transaction-builder";
-import type { AdapterBuilderMetadata } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
+import type { AdapterBuilderMetadata, UINoticeSource } from "@vertix.gg/gui/src/runtime/ui-builder-metadata";
 import type { TAdapterStaticContract, TAdapterRegisterOptions as TRegisterOptionsContract } from "@vertix.gg/gui/src/definitions/ui-adapter-declaration";
 import type { UIDataService } from "@vertix.gg/gui/src/ui-data-service";
 import type { UICustomIdStrategyBase } from "@vertix.gg/gui/src/bases/ui-custom-id-strategy-base";
@@ -127,6 +127,7 @@ export class AdapterBuilderBase<
 
     protected static dedicatedLogger = new Logger( this.getName() );
     protected disableMiddlewareFlag: boolean | undefined;
+    protected shownWhenSources: UINoticeSource[] | undefined;
 
     public static getName(): string {
         return "VertixGUI/Builders/AdapterBuilderBase";
@@ -168,6 +169,22 @@ export class AdapterBuilderBase<
 
     public setChannelTypes( channelTypes: ChannelType[] ): this {
         this.channelTypes = channelTypes;
+        return this;
+    }
+
+    /**
+     * Function setShownWhen() :: What a member was doing when this screen was put in front of them.
+     *
+     * For a screen nothing navigates to - a notice a gate sends by calling this adapter directly,
+     * with no binding, no transition and no flow behind it. Such a screen reaches the export
+     * attached to nothing, and anything drawing from the export can only leave it floating.
+     *
+     * Declared here rather than at the gate because one gate refuses many commands: said there it
+     * would have to be said once per command, and each copy could drift. The screen is the one
+     * thing that knows why it exists.
+     */
+    public setShownWhen( sources: UINoticeSource[] ): this {
+        this.shownWhenSources = sources;
         return this;
     }
 
@@ -640,6 +657,7 @@ export class AdapterBuilderBase<
             beforeFinishHandler: builder.beforeFinishHandler,
             entityMapHandler: builder.entityMapHandler,
             contextFactory: builder.contextFactory,
+            shownWhen: builder.shownWhenSources,
             rawBuilder: builder
         };
 

@@ -1346,7 +1346,17 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-V3/DynamicChannelFlow",
+                "description": "You pressed a control on a channel that somebody else owns."
+            },
+            {
+                "source": "VertixBot/UI-V2/DynamicChannelFlow",
+                "description": "You pressed a control on a channel that somebody else owns."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/NoActiveDynamicChannelComponent",
@@ -1406,7 +1416,17 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-V3/DynamicChannelFlow",
+                "description": "You used a channel control while not standing in a dynamic channel."
+            },
+            {
+                "source": "VertixBot/UI-V2/DynamicChannelFlow",
+                "description": "You used a channel control while not standing in a dynamic channel."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/ClaimInChannelOnlyComponent",
@@ -1445,7 +1465,13 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-General/CommandsFlow",
+                "description": "You ran the claim command outside the channel it is about."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/ChannelCreateFailedComponent",
@@ -1515,7 +1541,13 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-General/Module",
+                "description": "You joined a generator and the bot could not create your channel."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/UnassignableRoleComponent",
@@ -1569,7 +1601,13 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-General/SetupFlow",
+                "description": "You picked a role during setup that the bot is not allowed to hand out."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/FeatureMissingInV2Component",
@@ -1609,7 +1647,13 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-General/CommandsFlow",
+                "description": "You ran a command for something this server's older interface does not have."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/MissingAdminPermissionsComponent",
@@ -1649,7 +1693,13 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-General/CommandsFlow",
+                "description": "You ran a command that only a server admin may run."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/NotClaimableComponent",
@@ -1689,7 +1739,13 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-General/CommandsFlow",
+                "description": "You asked to claim a channel and nothing in the server is waiting for an owner."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/NotInAServerComponent",
@@ -1729,7 +1785,13 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-General/CommandsFlow",
+                "description": "You ran a command in a direct message rather than in a server."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/ChannelGoneComponent",
@@ -1769,7 +1831,17 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-V3/DynamicChannelFlow",
+                "description": "The channel this screen was opened about was removed while it was still on screen."
+            },
+            {
+                "source": "VertixBot/UI-V2/DynamicChannelFlow",
+                "description": "The channel this screen was opened about was removed while it was still on screen."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-General/ClaimOpenComponent",
@@ -1849,7 +1921,13 @@
                 "withDefinition": 1,
                 "missingDefinition": 0
             }
-        }
+        },
+        "shownWhen": [
+            {
+                "source": "VertixBot/UI-General/CommandsFlow",
+                "description": "A command was run and something went wrong carrying it out."
+            }
+        ]
     },
     {
         "name": "VertixBot/UI-V2/ClaimResultComponent",

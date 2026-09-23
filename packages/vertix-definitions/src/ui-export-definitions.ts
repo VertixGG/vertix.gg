@@ -86,6 +86,11 @@ export interface UIExportModalDefinition {
     inputs: UIExportModalInputDefinition[];
 }
 
+export interface UIExportNoticeSource {
+    source: string;
+    description: string;
+}
+
 export interface UIExportedComponent {
     name: string;
     type: string;
@@ -102,6 +107,8 @@ export interface UIExportedComponent {
     renderAsContainer?: boolean;
     /** The moves out of this screen are drawn from another screen that makes the same ones. */
     routesDrawnElsewhere?: boolean;
+    /** What a member was doing when this screen was put in front of them, for screens nothing navigates to. */
+    shownWhen?: UIExportNoticeSource[];
     hooks: string[];
     options?: {
         embedAudit: {

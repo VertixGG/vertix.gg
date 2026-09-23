@@ -162,6 +162,131 @@ describe( "VertixBase/Modules/ErrorAlertService", () => {
         } );
     } );
 
+    describe( "what it says", () => {
+        const fieldNamed = ( embed: ISentEmbed, name: string ) =>
+            embed.fields.find( ( field ) => field.name === name )?.value;
+
+        it( "should not print the heading again as the first line under it", async() => {
+            // Act.
+            await raise( "", new Error( "Missing Permissions" ) );
+
+            // Assert.
+            const embed = sentEmbeds()[ 0 ];
+
+            expect( embed.title ).toBe( "Error: Missing Permissions" );
+            expect( embed.description ).not.toContain( "Error: Missing Permissions" );
+        } );
+
+        it( "should keep an error's own text when the line was given a message of its own", async() => {
+            // Act.
+            await raise( "Could not build the room", new Error( "Missing Permissions" ) );
+
+            // Assert.
+            expect( sentEmbeds()[ 0 ].description ).toContain( "Error: Missing Permissions" );
+        } );
+
+        it( "should cut a frame back to its place in the repo", async() => {
+            // Arrange.
+            const error = new Error( "Missing Permissions" );
+
+            error.stack = [
+                "Error: Missing Permissions",
+                "    at onLeave (/Users/someone/dev/vertix.gg/packages/vertix-bot/src/services/channel-service.ts:88:12)"
+            ].join( "\n" );
+
+            // Act.
+            await raise( "", error );
+
+            // Assert.
+            const description = sentEmbeds()[ 0 ].description ?? "";
+
+            expect( description ).toContain( "packages/vertix-bot/src/services/channel-service.ts:88:12" );
+            expect( description ).not.toContain( "/Users/someone" );
+        } );
+
+        it( "should drop the frames that are node's own", async() => {
+            // Arrange.
+            const error = new Error( "Missing Permissions" );
+
+            error.stack = [
+                "Error: Missing Permissions",
+                "    at onLeave (/repo/apps/vertix-bot/src/services/channel-service.ts:88:12)",
+                "    at run (/repo/node_modules/discord.js/src/client.js:1:1)",
+                "    at process (node:internal/process/task_queues:95:5)"
+            ].join( "\n" );
+
+            // Act.
+            await raise( "", error );
+
+            // Assert.
+            const description = sentEmbeds()[ 0 ].description ?? "";
+
+            expect( description ).toContain( "channel-service.ts:88:12" );
+            expect( description ).not.toContain( "node_modules" );
+            expect( description ).not.toContain( "task_queues" );
+        } );
+    } );
+
+    describe( "what happened just before", () => {
+        const fieldNamed = ( embed: ISentEmbed, name: string ) =>
+            embed.fields.find( ( field ) => field.name === name )?.value;
+
+        it( "should carry the lines logged before the error, whatever their level", async() => {
+            // Arrange.
+            logger.info( raise, "Member joined the generator" );
+            logger.log( raise, "Building the room" );
+            logger.warn( raise, "Category is nearly full" );
+
+            // Act.
+            await raise( "Could not build the room" );
+
+            // Assert.
+            const before = fieldNamed( sentEmbeds()[ 0 ], "Just before" ) ?? "";
+
+            expect( before ).toContain( "[INFO]" );
+            expect( before ).toContain( "Member joined the generator" );
+            expect( before ).toContain( "Building the room" );
+            expect( before ).toContain( "Category is nearly full" );
+        } );
+
+        it( "should not open with a copy of the error it is reporting", async() => {
+            // Arrange.
+            logger.info( raise, "Member joined the generator" );
+
+            // Act.
+            await raise( "Could not build the room" );
+
+            // Assert.
+            const before = fieldNamed( sentEmbeds()[ 0 ], "Just before" ) ?? "";
+
+            expect( before ).not.toContain( "Could not build the room" );
+        } );
+
+        it( "should report only the most recent few", async() => {
+            // Arrange.
+            for ( let i = 0; i < 20; i++ ) {
+                logger.info( raise, `line ${ i }` );
+            }
+
+            // Act.
+            await raise( "Could not build the room" );
+
+            // Assert.
+            const before = fieldNamed( sentEmbeds()[ 0 ], "Just before" ) ?? "";
+
+            expect( before ).toContain( "line 19" );
+            expect( before ).not.toContain( "line 11" );
+        } );
+
+        it( "should leave the field off when there is nothing to say", async() => {
+            // Act.
+            await raise( "Could not build the room" );
+
+            // Assert.
+            expect( fieldNamed( sentEmbeds()[ 0 ], "Just before" ) ).toBeUndefined();
+        } );
+    } );
+
     describe( "dedupe", () => {
         it( "should report the same failure once inside the window", async() => {
             // Act.

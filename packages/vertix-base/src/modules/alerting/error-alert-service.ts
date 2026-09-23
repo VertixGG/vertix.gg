@@ -21,6 +21,14 @@ const WEBHOOK_TIMEOUT_MS = 5000;
 
 const ANSI_ESCAPE_PATTERN = new RegExp( String.fromCharCode( 27 ) + "\\[[0-9;]*m", "g" );
 
+const STACK_FRAME_LIMIT = 6;
+
+const CONTEXT_LINES_KEPT = 24;
+const CONTEXT_LINES_REPORTED = 8;
+const CONTEXT_LINE_LIMIT = 140;
+
+const ABSOLUTE_PREFIX_PATTERN = /\/\S*\/(?=(?:apps|packages|scripts)\/)/g;
+
 /**
  * What a log line carries beside its message.
  *
@@ -56,6 +64,7 @@ interface IDedupeEntry {
 }
 
 interface IAlert {
+    preceding: string[];
     source: string;
     messagePrefix: string;
     message: string;
@@ -86,10 +95,38 @@ function describeFailure( params: TAlertParam[] ): string {
     return error ? `${ error.name }: ${ error.message }` : "";
 }
 
-function describeParams( params: TAlertParam[] ): string {
+/**
+ * The frames of a stack, as short as they can be and still be followed.
+ *
+ * A raw stack is mostly the absolute path of the machine it ran on, repeated on every line - in a
+ * discord embed that wraps over three lines per frame and buries the two or three that say
+ * anything. Paths are cut back to their place in the repo, frames inside `node_modules` and node
+ * itself are dropped, and only the first few are kept: the ones below are the runtime calling in,
+ * which is the same for every failure.
+ */
+function formatStack( stack: string ): string {
+    const [ , ... frames ] = stack.split( "\n" );
+
+    return frames
+        .filter( ( frame ) => ! frame.includes( "node_modules" ) && ! frame.includes( "(node:" ) )
+        .slice( 0, STACK_FRAME_LIMIT )
+        .map( ( frame ) => frame.trim().replace( ABSOLUTE_PREFIX_PATTERN, "" ) )
+        .join( "\n" );
+}
+
+/**
+ * What the line carried, under its heading.
+ *
+ * An error whose text is already the heading contributes only its frames - printed again it is the
+ * same sentence twice, once as the title and once as the first line of the block under it.
+ */
+function describeParams( params: TAlertParam[], heading: string ): string {
     const described = params.map( ( param ) => {
         if ( param instanceof Error ) {
-            return param.stack || `${ param.name }: ${ param.message }`;
+            const summary = `${ param.name }: ${ param.message }`;
+            const frames = formatStack( param.stack ?? "" );
+
+            return summary === heading ? frames : [ summary, frames ].filter( Boolean ).join( "\n" );
         }
 
         if ( "object" === typeof param && null !== param ) {
@@ -103,7 +140,7 @@ function describeParams( params: TAlertParam[] ): string {
         return String( param );
     } );
 
-    return stripAnsi( described.join( "\n" ) ).trim();
+    return stripAnsi( described.filter( Boolean ).join( "\n" ) ).trim();
 }
 
 /**
@@ -127,6 +164,8 @@ export class ErrorAlertService extends ServiceBase {
     private sentInRateWindow = 0;
 
     private droppedByRateLimit = 0;
+
+    private readonly recent: string[] = [];
 
     public static getName(): string {
         return "VertixBase/Modules/ErrorAlertService";
@@ -197,13 +236,23 @@ export class ErrorAlertService extends ServiceBase {
     }
 
     private onLoggerOutput( ... [ level, , , source, messagePrefix, message, params ]: TLogOutputArgs ): void {
-        if ( "ERROR" !== level ) {
-            return;
-        }
-
         const plainSource = stripAnsi( source );
 
         if ( plainSource.includes( "VertixBase/Modules/ErrorAlertService" ) ) {
+            return;
+        }
+
+        /*
+         * Every level is remembered and only `ERROR` is reported, so this runs before the filter
+         * below - the point of keeping them is that the lines leading up to an error are the ones
+         * that were not themselves errors. Read before the current line is added, so an alert does
+         * not open with a copy of its own heading.
+         */
+        const preceding = this.recent.slice( - CONTEXT_LINES_REPORTED );
+
+        this.remember( level, plainSource, messagePrefix, message );
+
+        if ( "ERROR" !== level ) {
             return;
         }
 
@@ -226,6 +275,7 @@ export class ErrorAlertService extends ServiceBase {
         this.droppedByRateLimit = 0;
 
         this.track( this.send( {
+            preceding,
             source: plainSource,
             messagePrefix,
             message,
@@ -233,6 +283,21 @@ export class ErrorAlertService extends ServiceBase {
             suppressedRepeats,
             droppedByRateLimit
         } ) );
+    }
+
+    /**
+     * Holds the last few lines this process logged, at any level.
+     *
+     * An error on its own says what broke and not what the process was doing - which is usually the
+     * question. Every line passes through here already, so the few before an error are in hand
+     * without asking anything to keep a second copy.
+     */
+    private remember( level: TLogLevelName, source: string, messagePrefix: string, message: string ): void {
+        this.recent.push( truncate( `[${ level }] ${ source }${ messagePrefix }: ${ message }`, CONTEXT_LINE_LIMIT ) );
+
+        if ( this.recent.length > CONTEXT_LINES_KEPT ) {
+            this.recent.splice( 0, this.recent.length - CONTEXT_LINES_KEPT );
+        }
     }
 
     /**
@@ -318,11 +383,11 @@ export class ErrorAlertService extends ServiceBase {
     }
 
     private buildPayload( alert: IAlert ) {
-        const details = describeParams( alert.params );
-
         const heading = ( alert.messagePrefix + alert.message )
             || describeFailure( alert.params )
             || alert.source;
+
+        const details = describeParams( alert.params, heading );
 
         const heldBack: string[] = [];
 
@@ -342,10 +407,21 @@ export class ErrorAlertService extends ServiceBase {
                     ? "```\n" + truncate( details, DISCORD_EMBED_DESCRIPTION_LIMIT - CODE_FENCE_OVERHEAD ) + "\n```"
                     : undefined,
                 color: DISCORD_EMBED_ERROR_COLOR,
-                fields: [ {
-                    name: "Source",
-                    value: truncate( alert.source, DISCORD_EMBED_FIELD_VALUE_LIMIT )
-                } ],
+                fields: [
+                    {
+                        name: "Source",
+                        value: truncate( alert.source, DISCORD_EMBED_FIELD_VALUE_LIMIT )
+                    },
+                    ... alert.preceding.length
+                        ? [ {
+                            name: "Just before",
+                            value: truncate(
+                                "```\n" + alert.preceding.join( "\n" ) + "\n```",
+                                DISCORD_EMBED_FIELD_VALUE_LIMIT
+                            )
+                        } ]
+                        : []
+                ],
                 footer: heldBack.length ? { text: heldBack.join( " · " ) } : undefined,
                 timestamp: new Date().toISOString()
             } ]

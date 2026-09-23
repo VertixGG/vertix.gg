@@ -18,7 +18,6 @@ import { NotInAServerAdapter } from "@vertix.gg/bot/src/ui/general/not-in-a-serv
 import { ChannelGoneAdapter } from "@vertix.gg/bot/src/ui/general/channel-gone/channel-gone-adapter";
 import { MissingAdminPermissionsAdapter } from "@vertix.gg/bot/src/ui/general/missing-admin-permissions/missing-admin-permissions-adapter";
 import { NotClaimableAdapter } from "@vertix.gg/bot/src/ui/general/not-claimable/not-claimable-adapter";
-import { ClaimOpenAdapter } from "@vertix.gg/bot/src/ui/general/claim-open/claim-open-adapter";
 import { CommandFailedAdapter } from "@vertix.gg/bot/src/ui/general/command-failed/command-failed-adapter";
 import { CommandsFlow } from "@vertix.gg/bot/src/ui/general/flows/commands-flow";
 import { GuildFlow } from "@vertix.gg/bot/src/ui/general/flows/guild-flow";
@@ -49,7 +48,6 @@ export class UIModuleGeneral extends UIModuleBase {
             NotClaimableAdapter,
             NotInAServerAdapter,
             ChannelGoneAdapter,
-            ClaimOpenAdapter,
             CommandFailedAdapter
         ];
     }

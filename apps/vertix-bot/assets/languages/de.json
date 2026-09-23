@@ -1593,13 +1593,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/ClaimOpenEmbed",
-      "content": {
-        "title": "😈  Dieser Kanal kann beansprucht werden",
-        "description": "Der Besitzer hat den Kanal verlassen, also kann er beansprucht werden.\n\nDrücke **Beanspruchen** bei den Schaltflächen dieses Kanals, um zu beginnen."
-      }
-    },
-    {
       "name": "VertixBot/UI-General/CommandFailedEmbed",
       "content": {
         "title": "⚠  Das hat nicht geklappt",

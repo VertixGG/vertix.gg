@@ -1597,13 +1597,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/ClaimOpenEmbed",
-      "content": {
-        "title": "😈  This channel can be claimed",
-        "description": "Its owner has left, so the channel is up for claiming.\n\nPress **Claim** on this channel's buttons to start."
-      }
-    },
-    {
       "name": "VertixBot/UI-General/CommandFailedEmbed",
       "content": {
         "title": "⚠  That did not work",

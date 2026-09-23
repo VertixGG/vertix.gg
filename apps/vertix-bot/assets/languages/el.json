@@ -1593,13 +1593,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/ClaimOpenEmbed",
-      "content": {
-        "title": "😈  Αυτό το κανάλι μπορεί να διεκδικηθεί",
-        "description": "Ο κάτοχός του έφυγε, οπότε το κανάλι είναι διαθέσιμο για διεκδίκηση.\n\nΠάτησε **Διεκδίκηση** στα κουμπιά αυτού του καναλιού για να ξεκινήσεις."
-      }
-    },
-    {
       "name": "VertixBot/UI-General/CommandFailedEmbed",
       "content": {
         "title": "⚠  Αυτό δεν λειτούργησε",

@@ -6,6 +6,8 @@ import {
 
 import { ClaimCommandComponent } from "@vertix.gg/bot/src/ui/v3/claim/command/claim-command-component";
 
+import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
+
 import { findClaimableChannel } from "@vertix.gg/bot/src/ui/v3/claim/command/claim-command-channels";
 
 import type {
@@ -14,7 +16,7 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
-import type { VoiceChannel } from "discord.js";
+import type { Message, VoiceChannel } from "discord.js";
 
 type DefaultInteraction =
     | UIDefaultStringSelectMenuChannelTextInteraction
@@ -33,16 +35,14 @@ type DefaultInteraction =
  * The channel is the fallback, because the two can come apart: the manager marks a channel
  * claimable, and the prompt is sent separately.
  */
-async function claimMessageUrlOf( channel: VoiceChannel, version: "v2" | "v3" ): Promise<string> {
+async function claimMessageOf( channel: VoiceChannel, version: "v2" | "v3" ): Promise<Message<true> | undefined> {
     const started = await ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
         .get( "v2" === version
             ? "VertixBot/UI-V2/ClaimStartAdapter"
             : "VertixBot/UI-V3/ClaimStartAdapter" )
         ?.getStartedMessages( channel );
 
-    const message = Object.values( started ?? {} )[ 0 ];
-
-    return message?.url ?? channel.url;
+    return Object.values( started ?? {} )[ 0 ] as Message<true> | undefined;
 }
 
 /**
@@ -102,9 +102,30 @@ const ClaimCommandAdapter = new CommandExecutionAdapterBuilder<DefaultInteractio
 
                     const { channel, version } = claimable;
 
+                    const message = await claimMessageOf( channel, version );
+
+                    /*
+                     * Picking a room opens the claim on it, rather than pointing at where to open it.
+                     *
+                     * This handed back a link and left the member to go and press the button itself -
+                     * which is the whole of what the command did, and why running it and then pressing
+                     * Claim by hand was the only way through. Opening it here is the same work the
+                     * button does, from a room the member is not standing in.
+                     *
+                     * A vote already running is left alone and pointed at: it is already open, and the
+                     * link is then exactly what somebody wants.
+                     */
+                    if ( message ) {
+                        await DynamicChannelClaimManager
+                            .get( "v2" === version
+                                ? "VertixBot/UI-V2/DynamicChannelClaimManager"
+                                : "VertixBot/UI-V3/DynamicChannelClaimManager" )
+                            .startClaimFor( channel, interaction.member, message );
+                    }
+
                     await context.triggerTransition( "PointAt", interaction, {
                         claimedChannelName: channel.name,
-                        claimMessageUrl: await claimMessageUrlOf( channel, version )
+                        claimMessageUrl: message?.url ?? channel.url
                     } );
                 }
             );

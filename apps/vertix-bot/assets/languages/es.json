@@ -1593,13 +1593,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/ClaimOpenEmbed",
-      "content": {
-        "title": "😈  Este canal se puede reclamar",
-        "description": "Su propietario se ha ido, así que el canal está disponible para reclamar.\n\nPulsa **Reclamar** en los botones de este canal para empezar."
-      }
-    },
-    {
       "name": "VertixBot/UI-General/CommandFailedEmbed",
       "content": {
         "title": "⚠  Eso no ha funcionado",

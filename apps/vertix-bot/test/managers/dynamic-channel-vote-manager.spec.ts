@@ -5,7 +5,7 @@ import { ChannelType, MessageComponentInteraction, SnowflakeUtil, VoiceChannel }
 import { ClientMock } from "@vertix.gg/test-utils/src/__mock__/discord/client-mock";
 import { GuildMock } from "@vertix.gg/test-utils/src/__mock__/discord/guild-mock";
 
-import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
+import { DynamicChannelVoteManager, VoteManagerResult } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
 import type { IDynamicChannelVoteStoredState } from "@vertix.gg/data/src/interfaces/dynamic-channel-vote";
 
@@ -146,6 +146,39 @@ describe( "VertixBot/Managers/ChannelVote", () => {
                 // Assert.
                 expect( manager.getEvents()[ channel.id ].state ).toEqual( "active" );
                 expect( mockCallback ).toHaveBeenCalledTimes( 1 );
+            } );
+        } );
+
+        describe( "addCandidateFor()", () => {
+            /*
+             * A command names the room rather than standing in it.
+             *
+             * `addCandidate()` reads both the room and the member off the press, which holds for a
+             * button on the claim message and not for `/voice claim` - so the pair is handed over
+             * instead. Without it the command could only ever point at the message and let somebody
+             * press it themselves.
+             */
+            it( "enters a candidate from a channel and a user id", () => {
+                manager.start( channel, () => Promise.resolve() );
+
+                const result = manager.addCandidateFor( channel, channel.id, VOTER_ID );
+
+                expect( result ).toEqual( VoteManagerResult.Success );
+                expect( Object.keys( manager.getResults( channel.id ) ) ).toEqual( [ VOTER_ID ] );
+            } );
+
+            it( "refuses the same candidate twice", () => {
+                manager.start( channel, () => Promise.resolve() );
+
+                manager.addCandidateFor( channel, channel.id, VOTER_ID );
+
+                expect( manager.addCandidateFor( channel, channel.id, VOTER_ID ) )
+                    .toEqual( VoteManagerResult.Already );
+            } );
+
+            it( "refuses a channel with no vote running", () => {
+                expect( manager.addCandidateFor( channel, channel.id, VOTER_ID ) )
+                    .toEqual( VoteManagerResult.NotRunning );
             } );
         } );
 

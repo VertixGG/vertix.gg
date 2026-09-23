@@ -1844,46 +1844,6 @@
         ]
     },
     {
-        "name": "VertixBot/UI-General/ClaimOpenComponent",
-        "type": "component",
-        "instanceType": "Static",
-        "modules": [
-            "VertixBot/UI-General/Module"
-        ],
-        "elementsGroups": [],
-        "embedsGroups": [
-            {
-                "name": "VertixBot/UI-General/ClaimOpenComponent/EmbedsGroup",
-                "items": [
-                    {
-                        "embed": "VertixBot/UI-General/ClaimOpenEmbed",
-                        "definition": {
-                            "instanceType": "Static",
-                            "title": "😈  This channel can be claimed",
-                            "description": "Its owner has left, so the channel is up for claiming.\n\nPress **Claim** on this channel's buttons to start.",
-                            "thumbnail": "https://voicechannels.online/vc-naked.png",
-                            "color": 3369963
-                        }
-                    }
-                ]
-            }
-        ],
-        "modals": [],
-        "modalDefinitions": [],
-        "defaultElementsGroup": null,
-        "defaultEmbedsGroup": null,
-        "defaultMarkdownsGroup": null,
-        "renderAsContainer": false,
-        "hooks": [],
-        "options": {
-            "embedAudit": {
-                "total": 1,
-                "withDefinition": 1,
-                "missingDefinition": 0
-            }
-        }
-    },
-    {
         "name": "VertixBot/UI-General/CommandFailedComponent",
         "type": "component",
         "instanceType": "Static",

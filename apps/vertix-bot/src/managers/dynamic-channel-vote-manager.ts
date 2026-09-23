@@ -63,7 +63,7 @@ interface IVoterData {
     };
 }
 
-enum VoteManagerResult {
+export enum VoteManagerResult {
     Fail = 0,
     Success = "success",
     Already = "already",
@@ -318,7 +318,61 @@ export class DynamicChannelVoteManager<
     }
 
     public addCandidate( interaction: TInteraction ): VoteManagerResult {
-        return this.addInternal( interaction, { isCandidate: true } );
+        return this.addCandidateFor( interaction.channel as TChannel, interaction.channelId, interaction.user.id );
+    }
+
+    /**
+     * Function addCandidateFor() :: Enters somebody as a candidate in a channel they are not in.
+     *
+     * Everything else here reads the channel and the member off the interaction, which is true of
+     * a button: it sits on the claim message, in the room being claimed. A command does not - it is
+     * typed wherever the member happens to be, and names the room - so the two have to be handed
+     * over rather than taken from the press.
+     */
+    public addCandidateFor( channel: TChannel, channelId: string, userId: string ): VoteManagerResult {
+        this.debugger.dumpDown( this.addCandidateFor, { channelId, userId } );
+
+        if ( "active" !== this.events[ channelId ]?.state ) {
+            this.logger.error(
+                this.addCandidateFor,
+                `Channel id: '${ channelId }', user id: '${ userId }' - Channel not running`
+            );
+
+            return VoteManagerResult.NotRunning;
+        }
+
+        if ( ! this.voteMembers[ channelId ] ) {
+            this.voteMembers[ channelId ] = { channel, votes: {} };
+        }
+
+        const voteChannel = this.voteMembers[ channelId ];
+
+        if ( ! voteChannel.votes[ userId ] ) {
+            voteChannel.votes[ userId ] = {};
+        }
+
+        this.logger.info(
+            this.addCandidateFor,
+            `Channel id: '${ channelId }' - User id: '${ userId }'`
+        );
+
+        if ( voteChannel.votes[ userId ][ userId ] ) {
+            return VoteManagerResult.Already;
+        }
+
+        if ( ! this.events[ channelId ].isInitialCandidate ) {
+            this.addTime( channelId );
+        }
+
+        this.events[ channelId ].isInitialCandidate = false;
+
+        voteChannel.votes[ userId ][ userId ] = {
+            candidateOnly: true
+        };
+
+        this.notifyChanged( channelId );
+
+        return VoteManagerResult.Success;
     }
 
     public removeVote( interaction: TInteraction ): VoteManagerResult {

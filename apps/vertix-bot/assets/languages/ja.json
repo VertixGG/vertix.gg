@@ -1593,13 +1593,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/ClaimOpenEmbed",
-      "content": {
-        "title": "😈  このチャンネルは取得できます",
-        "description": "所有者が退出したため、このチャンネルは取得可能です。\n\nこのチャンネルのボタンから **取得** を押して始めてください。"
-      }
-    },
-    {
       "name": "VertixBot/UI-General/CommandFailedEmbed",
       "content": {
         "title": "⚠  うまくいきませんでした",

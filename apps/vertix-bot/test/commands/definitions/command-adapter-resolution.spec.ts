@@ -61,7 +61,6 @@ describe( "VertixBot/Commands/AdapterResolution", () => {
             "VertixBot/UI-General/FeatureMissingInV2Adapter",
             "VertixBot/UI-General/MissingAdminPermissionsAdapter",
             "VertixBot/UI-General/NotClaimableAdapter",
-            "VertixBot/UI-General/ClaimOpenAdapter",
             "VertixBot/UI-General/CommandFailedAdapter"
         ];
 

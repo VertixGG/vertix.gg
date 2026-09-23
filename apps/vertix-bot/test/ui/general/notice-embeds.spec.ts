@@ -2,7 +2,6 @@ import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-
 
 import { instantiateEmbed } from "@vertix.gg/bot/test/__test_utils__/instantiate-embed";
 
-import { ClaimOpenAdapter } from "@vertix.gg/bot/src/ui/general/claim-open/claim-open-adapter";
 import { FeatureMissingInV2Adapter } from "@vertix.gg/bot/src/ui/general/feature-missing-in-v2/feature-missing-in-v2-adapter";
 import { MissingAdminPermissionsAdapter } from "@vertix.gg/bot/src/ui/general/missing-admin-permissions/missing-admin-permissions-adapter";
 import { NotClaimableAdapter } from "@vertix.gg/bot/src/ui/general/not-claimable/not-claimable-adapter";
@@ -12,8 +11,7 @@ import { VERTIX_BRAND_THUMBNAIL_URL, VERTIX_DEFAULT_COLOR_BRAND } from "@vertix.
 const NOTICES = [
     FeatureMissingInV2Adapter,
     MissingAdminPermissionsAdapter,
-    NotClaimableAdapter,
-    ClaimOpenAdapter
+    NotClaimableAdapter
 ];
 
 /** A built adapter hands its component back untyped - this is all the spec asks of it. */

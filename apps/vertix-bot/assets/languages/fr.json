@@ -1593,13 +1593,6 @@
       }
     },
     {
-      "name": "VertixBot/UI-General/ClaimOpenEmbed",
-      "content": {
-        "title": "😈  Ce salon peut être réclamé",
-        "description": "Son propriétaire est parti, le salon est donc disponible.\n\nAppuie sur **Réclamer** dans les boutons de ce salon pour commencer."
-      }
-    },
-    {
       "name": "VertixBot/UI-General/CommandFailedEmbed",
       "content": {
         "title": "⚠  Ça n'a pas fonctionné",

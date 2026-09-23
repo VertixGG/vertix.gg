@@ -374,22 +374,6 @@
         ]
     },
     {
-        "name": "VertixBot/UI-General/ClaimOpenAdapter",
-        "adapterKind": "base",
-        "component": "VertixBot/UI-General/ClaimOpenComponent",
-        "module": "VertixBot/UI-General/Module",
-        "instanceType": "Static",
-        "permissions": "0",
-        "executionSteps": [],
-        "bindings": [],
-        "hooks": [
-            {
-                "hook": "getReplyArgs",
-                "handler": "VertixBot/UI-General/ClaimOpenAdapter/Hooks/GetReplyArgs"
-            }
-        ]
-    },
-    {
         "name": "VertixBot/UI-General/CommandFailedAdapter",
         "adapterKind": "base",
         "component": "VertixBot/UI-General/CommandFailedComponent",

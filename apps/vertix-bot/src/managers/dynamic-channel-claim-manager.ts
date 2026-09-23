@@ -795,6 +795,67 @@ export class DynamicChannelClaimManager extends InitializeBase {
     }
 
     /**
+     * Function startClaimFor() :: Opens a claim on a room the member is not standing in.
+     *
+     * The same work `handleVoteRequestIdleState()` does, from arguments rather than from a press.
+     * Everything down that path reads the room and the member off the interaction, which holds for
+     * a button - it sits on the claim message, in the room being claimed - and does not hold for a
+     * command, which is typed wherever the member happens to be and names the room. So `/voice
+     * claim` could only ever hand back a link to the message and let somebody press it themselves.
+     *
+     * The message is passed in because the vote is drawn by editing it, and the command has no
+     * message of its own to draw on.
+     */
+    public async startClaimFor(
+        channel: VoiceChannel,
+        member: GuildMember,
+        message: Message<true>
+    ): Promise<boolean> {
+        const channelDB = await ChannelModel.$.getByChannelId( channel.id );
+
+        if ( ! channelDB ) {
+            this.logger.error(
+                this.startClaimFor,
+                `Guild id: '${ channel.guildId }', channel id: '${ channel.id }', user id: '${ member.id }' - Channel is not found in database`
+            );
+
+            return false;
+        }
+
+        // The owner coming back is a reclaim rather than a claim, and that is the button's to
+        // answer - it has a screen to put the answer on. Here it would be a claim against oneself.
+        if ( await this.dynamicChannelService.isChannelOwner( member.id, channel.id ) ) {
+            return false;
+        }
+
+        this.logger.admin(
+            this.startClaimFor,
+            `😈  Claim opened by command by: "${ member.displayName }" - "${ channel.name }" (${ channel.guild.name }) (${ channel.guild.memberCount })`
+        );
+
+        this.removeChannelOwnerTracking( channelDB.userOwnerId, channel.id );
+
+        const timings = await GuildDataManager.$.getTimings( channel.guildId );
+
+        DynamicChannelVoteManager.$.start(
+            channel,
+            ( votedChannel, state ) => this.voteTimer( votedChannel, state, message ),
+            {
+                initiatorId: member.id,
+                messageId: message.id,
+                timings,
+                onChanged: this.onVoteChanged
+            }
+        );
+
+        this.dynamicChannelService.editPrimaryMessageDebounce( channel, 100 );
+
+        DynamicChannelVoteManager.$.addCandidateFor( channel, channel.id, member.id );
+
+        return true;
+    }
+
+    /**
      * Function handleVoteIdleState() :: Handles vote request/start the vote session.
      */
     private async handleVoteRequestIdleState(

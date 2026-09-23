@@ -1,6 +1,6 @@
-import { jest } from "@jest/globals";
-
 import { performance } from "node:perf_hooks";
+
+import { jest } from "@jest/globals";
 
 import { InteractionTrace, INTERACTION_TRACE_SLOW_MS } from "@vertix.gg/base/src/modules/trace/interaction-trace";
 

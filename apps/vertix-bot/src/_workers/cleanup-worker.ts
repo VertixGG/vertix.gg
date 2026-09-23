@@ -268,6 +268,88 @@ class CleanupWorker extends InitializeBase {
         );
     }
 
+    /**
+     * Records that this process is in the guilds it is in.
+     *
+     * `isInGuild` has one writer that can turn it back on - `GuildManager.onJoin()`, off the
+     * `guildCreate` event - and discord.js does not raise that event for the guilds that arrive
+     * during startup, only for one joined after `ready`. So a bot removed from a server and added
+     * back while it was down keeps the `false` its leave wrote, indefinitely: it is in the server,
+     * and everything reading that column says it is not. `Vertix Perm Test` sat like that, and the
+     * dashboard's server picker drew it as a server the bot had never been added to.
+     *
+     * The opposite of `removeChannelsOfLeftGuilds()`, and cheaper to be sure about: that one deletes
+     * a server's settings, so the cache only nominates and discord decides. This one writes that a
+     * guild in this process's own cache is a guild this process is in, which the cache is the
+     * authority on.
+     *
+     * Bounded to that cache, so it can only correct rows for guilds this process holds - another
+     * shard's guilds are absent from it for the ordinary reason that they are not its guilds.
+     */
+    private async markOwnedGuildsAsJoined( client: Client ) {
+        const ownedGuildIds = this.getOwnedGuildIds( client );
+
+        if ( ! ownedGuildIds.length ) {
+            return;
+        }
+
+        const { rejoined, created } = await this.reconcileGuildRows(
+            PrismaBotClient.$.getClient(),
+            // Every id came out of this cache a line ago, so every one of them resolves.
+            ownedGuildIds.map( ( guildId ) => ( { guildId, name: client.guilds.cache.get( guildId )!.name } ) )
+        );
+
+        if ( ! rejoined && ! created ) {
+            this.logger.info(
+                this.markOwnedGuildsAsJoined,
+                `Every one of ${ ownedGuildIds.length } guild(s) held here is recorded as joined.`
+            );
+
+            return;
+        }
+
+        this.logger.info(
+            this.markOwnedGuildsAsJoined,
+            `Of ${ ownedGuildIds.length } guild(s) held here, ${ rejoined } were recorded as left and ` +
+            `${ created } had no row - all are now recorded as joined.`
+        );
+    }
+
+    /**
+     * Writes that these guilds are joined, for the ones the table disagrees about or has never heard
+     * of. Separate from its caller so it can be given a database and a list rather than a client.
+     */
+    private async reconcileGuildRows(
+        prisma: ReturnType<( typeof PrismaBotClient.$ )[ "getClient" ]>,
+        ownedGuilds: { guildId: string; name: string }[]
+    ): Promise<{ rejoined: number; created: number }> {
+        const ownedGuildIds = ownedGuilds.map( ( guild ) => guild.guildId );
+
+        const rejoined = await prisma.guild.updateMany( {
+            where: { guildId: { in: ownedGuildIds }, isInGuild: false },
+            data: { isInGuild: true }
+        } );
+
+        const known = new Set(
+            ( await prisma.guild.findMany( {
+                where: { guildId: { in: ownedGuildIds } },
+                select: { guildId: true }
+            } ) ).map( ( row ) => row.guildId )
+        );
+
+        // No row at all is the same miss one step earlier - the join that would have created it
+        // happened while this process was not listening.
+        const missing = ownedGuilds.filter( ( guild ) => ! known.has( guild.guildId ) );
+
+        if ( missing.length ) {
+            await prisma.guild.createMany( {
+                data: missing.map( ( guild ) => ( { ... guild, isInGuild: true } ) )
+            } );
+        }
+
+        return { rejoined: rejoined.count, created: missing.length };
+    }
+
     private async removeChannelsOfLeftGuilds( client: Client ) {
         const prisma = PrismaBotClient.$.getClient();
 
@@ -580,6 +662,7 @@ class CleanupWorker extends InitializeBase {
         }
 
         if ( existingClient ) {
+            await this.markOwnedGuildsAsJoined( existingClient );
             await this.removeNonExistentChannels( existingClient );
         } else {
             login = ( await import( "@vertix.gg/base/src/discord/login" ) ).default;
@@ -603,6 +686,7 @@ class CleanupWorker extends InitializeBase {
                     client.once( "ready", () => resolve() );
                 } );
 
+                await this.markOwnedGuildsAsJoined( client );
                 await this.removeNonExistentChannels( client );
                 // await this.handleChannels( client );
                 // await this.handleGuilds( client );

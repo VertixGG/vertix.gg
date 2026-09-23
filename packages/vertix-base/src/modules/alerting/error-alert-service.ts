@@ -72,6 +72,20 @@ function truncate( value: string, limit: number ): string {
     return value.length > limit ? value.slice( 0, limit - 1 ) + "…" : value;
 }
 
+/**
+ * A heading for a line that was logged without one.
+ *
+ * Fifty-one call sites read `logger.error( caller, "", error )` - the message is empty and the
+ * error is a parameter - and they are the "something threw" ones, which is most of what is worth
+ * being told about. Discord takes an empty title and draws the embed without a heading at all, so
+ * the error the line was carrying is used instead.
+ */
+function describeFailure( params: TAlertParam[] ): string {
+    const error = params.find( ( param ): param is Error => param instanceof Error );
+
+    return error ? `${ error.name }: ${ error.message }` : "";
+}
+
 function describeParams( params: TAlertParam[] ): string {
     const described = params.map( ( param ) => {
         if ( param instanceof Error ) {
@@ -306,6 +320,10 @@ export class ErrorAlertService extends ServiceBase {
     private buildPayload( alert: IAlert ) {
         const details = describeParams( alert.params );
 
+        const heading = ( alert.messagePrefix + alert.message )
+            || describeFailure( alert.params )
+            || alert.source;
+
         const heldBack: string[] = [];
 
         if ( alert.suppressedRepeats > 0 ) {
@@ -319,7 +337,7 @@ export class ErrorAlertService extends ServiceBase {
         return {
             username: this.getProcessName(),
             embeds: [ {
-                title: truncate( alert.messagePrefix + alert.message, DISCORD_EMBED_TITLE_LIMIT ),
+                title: truncate( heading, DISCORD_EMBED_TITLE_LIMIT ),
                 description: details
                     ? "```\n" + truncate( details, DISCORD_EMBED_DESCRIPTION_LIMIT - CODE_FENCE_OVERHEAD ) + "\n```"
                     : undefined,

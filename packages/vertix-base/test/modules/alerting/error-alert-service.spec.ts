@@ -116,6 +116,35 @@ describe( "VertixBase/Modules/ErrorAlertService", () => {
             expect( fetchMock ).not.toHaveBeenCalled();
         } );
 
+        /**
+         * `logger.error( caller, "", error )` is how fifty-one call sites report something that
+         * threw, and discord draws an embed with an empty title as having no heading at all - a
+         * red box with a stack in it and nothing saying what happened.
+         */
+        it( "should title a line logged without a message by the error it carried", async() => {
+            // Act.
+            await raise( "", new Error( "Missing Permissions" ) );
+
+            // Assert.
+            expect( sentEmbeds()[ 0 ].title ).toBe( "Error: Missing Permissions" );
+        } );
+
+        it( "should fall back to the source when there is no message and no error either", async() => {
+            // Act.
+            await raise( "" );
+
+            // Assert.
+            expect( sentEmbeds()[ 0 ].title ).toBe( "VertixBase/Test/AlertSource::raise" );
+        } );
+
+        it( "should prefer the logged message over the error it carried", async() => {
+            // Act.
+            await raise( "Could not build the room", new Error( "Missing Permissions" ) );
+
+            // Assert.
+            expect( sentEmbeds()[ 0 ].title ).toBe( "Could not build the room" );
+        } );
+
         it( "should carry the source and an error's stack", async() => {
             // Arrange.
             const error = new Error( "Connection reset" );

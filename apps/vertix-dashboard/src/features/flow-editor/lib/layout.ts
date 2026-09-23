@@ -718,18 +718,58 @@ export function getLayoutedElements(
 
         const finalTargetY = Number.isFinite( targetY ) ? targetY : sourceNode.position.y + sourceDimensions.height + opts.rankSep;
 
-        targetIds.forEach( ( targetId, index ) => {
-            const targetNode = compactedNodeById.get( targetId );
-            if ( !targetNode ) {
-                return;
+        /*
+         * The run is worked out in full before any of it is applied, and dropped if it lands on
+         * something.
+         *
+         * Pulling a fan-out into one centred row moves screens dagre had already placed clear of
+         * each other, and nothing here looked at what was in the way - so a row centred on its
+         * source could be laid straight over a neighbouring branch. The templates flow drew two of
+         * its screens two hundred and twenty-seven pixels into each other that way, and because
+         * this runs after the packing, laying out again did it again.
+         *
+         * Dropped rather than nudged: dagre's own placement is collision-free, so the honest
+         * fallback is the one this was trying to improve on.
+         */
+        const planned = targetIds.map( ( targetId, index ) => {
+            const node = compactedNodeById.get( targetId );
+            const left = cursorLeft + targetWidths.slice( 0, index ).reduce( ( total, width ) => total + width + gap, 0 );
+
+            return {
+                id: targetId,
+                left,
+                right: left + targetWidths[ index ],
+                top: finalTargetY,
+                bottom: finalTargetY + ( node ? getNodeDimensions( node, opts ).height : 0 )
+            };
+        } );
+
+        const inRun = new Set( targetIds );
+
+        const collides = nodesWithCompactedFanouts.some( ( other ) => {
+            if ( inRun.has( other.id ) ) {
+                return false;
             }
 
-            targetNode.position = {
-                x: cursorLeft,
-                y: finalTargetY
-            };
+            const dims = getNodeDimensions( other, opts );
+            const left = other.position.x, right = left + dims.width;
+            const top = other.position.y, bottom = top + dims.height;
 
-            cursorLeft += targetWidths[ index ] + gap;
+            return planned.some( ( slot ) =>
+                ! ( slot.right <= left || slot.left >= right || slot.bottom <= top || slot.top >= bottom )
+            );
+        } );
+
+        if ( collides ) {
+            return;
+        }
+
+        planned.forEach( ( slot ) => {
+            const targetNode = compactedNodeById.get( slot.id );
+
+            if ( targetNode ) {
+                targetNode.position = { x: slot.left, y: slot.top };
+            }
         } );
     } );
 

@@ -64,7 +64,7 @@ export function BotPresenceGate( { selectedGuild }: BotPresenceGateProps ) {
                 props={ { guildId: selectedGuild.id } }
             />
 
-            { isBotMissing && <BotMissingModal guildName={ selectedGuild.name } /> }
+            { isBotMissing && <BotMissingModal guildId={ selectedGuild.id } guildName={ selectedGuild.name } /> }
         </>
     );
 }

@@ -1,11 +1,12 @@
 /**
  * The application everything on this site points at.
  *
- * One id, because it appears in two unrelated places - the invite link and the store link - and a
- * site that invites one application while selling plans for another is a mistake nobody would see
- * until somebody paid.
+ * One id, because it appears in two unrelated places here - the invite link and the store link - and
+ * a site that invites one application while selling plans for another is a mistake nobody would see
+ * until somebody paid. It lives in `@vertix.gg/definitions` rather than here now that the dashboard
+ * hands the bot out too, and is re-exported so this stays the one name the site imports.
  */
-export const DISCORD_APP_ID = "1538844311062581339";
+export { DISCORD_APP_ID } from "@vertix.gg/definitions/src/discord-invite-definitions";
 
 /**
  * Where a server buys a plan.

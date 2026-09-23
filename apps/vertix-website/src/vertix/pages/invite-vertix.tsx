@@ -1,38 +1,24 @@
-import { DISCORD_APP_ID } from "@vertix.gg/website/src/vertix/shared/discord-app";
+import {
+    buildBotInviteUrl
+} from "@vertix.gg/definitions/src/discord-invite-definitions";
+
+import type { TDiscordInvitePermissionsType } from "@vertix.gg/definitions/src/discord-invite-definitions";
 
 /**
- * What each button asks Discord for.
+ * What each button asks Discord for lives in `@vertix.gg/definitions`, beside the app id, since the
+ * dashboard offers the same invite from its own "the bot is not in this server" modal and the two
+ * asking for different permissions would only show up as a server missing something.
  *
- * `recommended` is the same set as the bot's own invite button, the bot list listings and the app's
- * default install settings in Discord's developer portal, so however someone arrives they are asked
- * for the same thing. It is everything the bot uses and nothing else - `ViewAuditLog` is the one
- * addition over `minimal`, and it is what lets the bot record who invited it.
- *
- * `minimal` drops that, and is otherwise identical.
- *
- * Neither is Administrator, which this page used to recommend. Administrator satisfies every
- * permission check the bot makes, so a server granting it hides any permission the bot asks for but
- * was never given - which is exactly how a set the bot could not actually run on shipped unnoticed
- * and cost a server. Anyone who wants to grant it can still do so from Discord's own role settings
- * after inviting; it is not something to ask a server owner for by default, and bot list reviewers
- * mark it down.
+ * This page names no server: it has no idea who is reading it. The dashboard does, and passes one.
  */
-const INVITE_PERMISSIONS = {
-    recommended: "286354576",
-    minimal: "286354448"
-} as const;
-
-export const onAddToServerClick = ( type: keyof typeof INVITE_PERMISSIONS ) => {
+export const onAddToServerClick = ( type: TDiscordInvitePermissionsType ) => {
     // @ts-ignore
     window.gtag( "event", "conversion", { "send_to": "AW-993508183" } );
 
     // @ts-ignore
     window.gtag( "event", "add_to_server", { type, "send_to": "G-B87MBQLL99" } );
 
-    window.open(
-        `https://discord.com/oauth2/authorize?client_id=${ DISCORD_APP_ID }` +
-        `&permissions=${ INVITE_PERMISSIONS[ type ] }&scope=bot%20applications.commands`
-    );
+    window.open( buildBotInviteUrl( type ) );
 };
 
 export default function InviteVertix() {

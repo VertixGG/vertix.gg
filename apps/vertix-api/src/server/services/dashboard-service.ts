@@ -74,6 +74,34 @@ export async function getGuildBotPresence( guildId: string ): Promise<GuildBotPr
     return { guildId, isBotInGuild: await discordService.isBotInGuild( guildId ) };
 }
 
+/**
+ * Function selectGuildIdsWithBot() :: Which of these servers our tables say the bot is in.
+ *
+ * For a *list*, where `getGuildBotPresence()` is the wrong shape: it asks Discord once per server,
+ * and somebody who owns thirty would spend thirty REST calls to draw one page of a picker. This is
+ * one query on ids the caller already has.
+ *
+ * It is therefore a hint, and the picker only sorts and labels by it. The row is written when the
+ * bot joins and when it leaves, so it is current in the ordinary case, but a server whose leave
+ * event never landed reads as still having the bot. The screen that locks the dashboard still asks
+ * Discord, so a stale row costs a wrong label and nothing else - which is why the picker must keep
+ * letting an unlabelled server be opened rather than sending it straight to an invite.
+ *
+ * A server with no row at all is one the bot has never been in, and is absent from the answer.
+ */
+export async function selectGuildIdsWithBot( guildIds: string[] ): Promise<Set<string>> {
+    if ( ! guildIds.length ) {
+        return new Set();
+    }
+
+    const rows = await client.guild.findMany( {
+        where: { guildId: { in: guildIds }, isInGuild: true },
+        select: { guildId: true }
+    } );
+
+    return new Set( rows.map( ( row ) => row.guildId ) );
+}
+
 export async function getGlobalStats(): Promise<GlobalStats> {
     const [ totalGuilds, activeGuilds, totalChannels, channelsByType, totalUsers ] = await Promise.all( [
         client.guild.count(),

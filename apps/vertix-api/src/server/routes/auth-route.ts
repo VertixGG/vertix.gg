@@ -10,6 +10,7 @@ import {
     refreshAccessToken,
     deleteUserToken
 } from "@vertix.gg/api/src/server/services/auth-service";
+import { selectGuildIdsWithBot } from "@vertix.gg/api/src/server/services/dashboard-service";
 import { handleError } from "@vertix.gg/api/src/server/utils/error-handler";
 
 import { cacheOwnedGuilds, resolveGuildOwnership } from "@vertix.gg/api/src/server/middleware/guild-access";
@@ -136,17 +137,23 @@ async function handleGetGuilds( request: FastifyRequest, reply: FastifyReply ) {
         // afterwards does not ask discord a second time and meet its rate limit.
         cacheOwnedGuilds( request, guilds );
 
-        const ownedGuilds = guilds
-            .filter( ( guild: DiscordGuild ) => guild.owner )
-            .map( ( guild: DiscordGuild ) => ( {
-                id: guild.id,
-                name: guild.name,
-                icon: guild.icon
-                    ? `https://cdn.discordapp.com/icons/${ guild.id }/${ guild.icon }.png`
-                    : null,
-                owner: guild.owner,
-                permissions: guild.permissions
-            } ) );
+        const owned = guilds.filter( ( guild: DiscordGuild ) => guild.owner );
+
+        // Said here rather than left for the picker to ask server by server: the answer is one
+        // query, and without it every row draws the same whether the bot is in it or not - which is
+        // how somebody picks a server with nothing in it and meets a locked dashboard instead.
+        const guildIdsWithBot = await selectGuildIdsWithBot( owned.map( ( guild: DiscordGuild ) => guild.id ) );
+
+        const ownedGuilds = owned.map( ( guild: DiscordGuild ) => ( {
+            id: guild.id,
+            name: guild.name,
+            icon: guild.icon
+                ? `https://cdn.discordapp.com/icons/${ guild.id }/${ guild.icon }.png`
+                : null,
+            owner: guild.owner,
+            permissions: guild.permissions,
+            hasBot: guildIdsWithBot.has( guild.id )
+        } ) );
 
         return { guilds: ownedGuilds };
     } catch( error ) {

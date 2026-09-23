@@ -13,6 +13,10 @@ export default function SetupFeatures() {
                             <ul className="list-none pl-0">
                                 <li className="mb-2">🌐 <strong>Language Select</strong> - Speak your language.</li>
                                 <li className="mb-2">🚫 <strong>Bad-Words Filter</strong> - Keep your channel names clean.</li>
+                                <li className="mb-2">🛡️ <strong>Verified Roles</strong> - Decide who the channels are for.</li>
+                                <li className="mb-2">👮 <strong>Staff Roles</strong> - Who may act on a channel they don't own.</li>
+                                <li className="mb-2">🎧 <strong>Voice Role</strong> - Handed out while a member sits in voice.</li>
+                                <li className="mb-2">⏱️ <strong>Claim Timings</strong> - How long an abandoned channel waits, and how long the vote runs.</li>
                             </ul>
                         </div>
                     </div>
@@ -21,8 +25,10 @@ export default function SetupFeatures() {
                             <h3 className="text-h5 mb-4 text-vc-magenta"><strong>Master Channel Level</strong></h3>
                             <ul className="list-none pl-0">
                                 <li className="mb-2">🏷️ <strong>Naming Templates</strong> - Automate how channels look.</li>
-                                <li className="mb-2">🎚️ <strong>Interface Control</strong> - Customize button visibility.</li>
-                                <li className="mb-2">🛡️ <strong>Verified Roles</strong> - Define who can manage their space.</li>
+                                <li className="mb-2">🎚️ <strong>Interface Control</strong> - Pick the buttons, their order and where the rows break.</li>
+                                <li className="mb-2">🆕 <strong>Channel Defaults</strong> - What a new channel starts as, and the limit it starts with.</li>
+                                <li className="mb-2">📣 <strong>LFM Channel</strong> - Where a Looking For Members post goes.</li>
+                                <li className="mb-2">🛡️ <strong>Roles Of Its Own</strong> - Verified, staff and voice roles, overriding the server's.</li>
                                 <li className="mb-2">📝 <strong>Detailed Logs</strong> - Keep track of server activity.</li>
                             </ul>
                         </div>

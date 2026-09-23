@@ -40,9 +40,6 @@ export async function passesCommandTier(
             // No channel of the caller's own is assumed - only that the bot can act at all.
             return await dynamicChannelBotPermissionsRequirements( interaction );
 
-        case COMMAND_TIERS.IN_CHANNEL:
-            return await passesInChannelTier( interaction, channel );
-
         case COMMAND_TIERS.ADMIN:
             return await passesAdminTier( interaction );
     }
@@ -70,25 +67,3 @@ async function passesAdminTier( interaction: UIAdapterReplyContext ): Promise<bo
     return false;
 }
 
-/**
- * Function passesInChannelTier() :: Whether the caller is standing somewhere the command can mean.
- *
- * Claiming is the tier's only member, and the thing it cannot do is happen at a distance: the
- * button is left pressable on a control panel so that what a member gets back is a sentence rather
- * than a button greyed out for reasons it cannot state, and a command typed in a text channel is
- * the same press from the same nowhere. So it gets the same sentence, from the same adapter.
- */
-async function passesInChannelTier(
-    interaction: UIAdapterReplyContext,
-    channel: VoiceChannel | null
-): Promise<boolean> {
-    if ( ! channel ) {
-        await ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
-            .get( "VertixBot/UI-General/ClaimInChannelOnlyAdapter" )
-            ?.ephemeral( interaction, {} );
-
-        return false;
-    }
-
-    return await dynamicChannelBotPermissionsRequirements( interaction );
-}

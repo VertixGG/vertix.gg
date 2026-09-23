@@ -20,8 +20,12 @@ const ClaimInChannelOnlyAdapter = new AdapterBuilderBase<
     .setComponent( ClaimInChannelOnlyComponent )
     .setShownWhen( [
         {
-            source: "VertixBot/UI-General/CommandsFlow",
-            description: "You ran the claim command outside the channel it is about."
+            source: "VertixBot/UI-V3/DynamicChannelFlow",
+            description: "You pressed Claim on the master channel's panel, which is not any one channel."
+        },
+        {
+            source: "VertixBot/UI-V2/DynamicChannelFlow",
+            description: "You pressed Claim on the master channel's panel, which is not any one channel."
         }
     ] )
     // The embed says one fixed thing and reads nothing, but the base makes this mandatory - left

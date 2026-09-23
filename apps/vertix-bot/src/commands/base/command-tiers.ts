@@ -14,9 +14,6 @@ export const COMMAND_TIERS = {
     /** Anyone in the server. The command's own handler decides what it will do for them. */
     ANY: "any",
 
-    /** Anyone, but only from inside a dynamic channel - there is no channel a command typed elsewhere could mean. */
-    IN_CHANNEL: "in-channel",
-
     /** Server administrators. Discord enforces this one itself, from the command's declared permissions. */
     ADMIN: "admin"
 } as const;

@@ -460,6 +460,21 @@ export abstract class UIAdapterBase<
     }
 
     /**
+     * Function render() :: What `send()` would post to this channel, without posting it.
+     *
+     * For a caller that has to know what a message would say before deciding whether saying it is
+     * worth a request - a control panel whose drawing has not changed since it was last drawn, say.
+     * The args and the build are the ones `send()` uses, so what comes back is what it would send.
+     */
+    public async render( channel: TChannel, sendArgs?: UIArgs ): Promise<UIMessageOptions> {
+        const args = await this.getArgsInternal( channel, sendArgs );
+
+        await this.build( args, "send", channel );
+
+        return this.getMessage( "send", channel, sendArgs );
+    }
+
+    /**
      * Re-renders an existing message with this adapter, exactly as `send()` would have rendered a
      * new one. Unlike `editMessage()` it does not run the execution-step machinery, so it works for
      * a message that another adapter originally posted - which is what a panel navigated by

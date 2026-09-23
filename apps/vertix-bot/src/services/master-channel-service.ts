@@ -1135,6 +1135,8 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             dynamicChannelControlChannelId: newControlChannelId,
             // No panel exists yet - the one below creates it, and establishes this.
             dynamicChannelControlMessageId: null,
+            // Nothing has been drawn yet, so the first refresh draws.
+            dynamicChannelControlMessageHash: null,
             // Since `LogsChannelId` not defined in the creation process but later via configuration.
             dynamicChannelLogsChannelId: settings.dynamicChannelLogsChannelId,
             dynamicChannelMentionable: newMentionable,

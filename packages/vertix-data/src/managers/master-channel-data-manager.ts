@@ -792,23 +792,32 @@ export class MasterChannelDataManager extends InitializeBase {
     }
 
     /**
-     * Function setChannelControlMessageId() :: Remembers which message the control panel is.
+     * Function setChannelControlMessage() :: Remembers which message the control panel is, and what
+     * it was drawn with.
      *
-     * Written whenever the panel is established - by a fresh send, or by the search that used to
-     * happen on every restart - so the search runs at most once per generator instead of once per
-     * generator per restart.
+     * Written whenever the panel is drawn - by a fresh send, by the search that used to happen on
+     * every restart, or by an edit because the drawing changed - so the search runs at most once per
+     * generator, and an unchanged panel is not redrawn at all.
+     *
+     * One write for both, because they describe the same moment: a hash kept against a message it
+     * was not drawn on would leave that message stale and call it current.
      *
      * Not admin-logged: this is bookkeeping about a message the admin already knows about, not a
      * setting anybody chose.
      */
-    public async setChannelControlMessageId( masterChannelDB: ChannelExtended, messageId: string | null ) {
+    public async setChannelControlMessage(
+        masterChannelDB: ChannelExtended,
+        messageId: string | null,
+        hash: string | null
+    ) {
         this.logger.log(
-            this.setChannelControlMessageId,
-            `Master channel id: '${ masterChannelDB.id }' - Setting control panel message: '${ messageId }'`
+            this.setChannelControlMessage,
+            `Master channel id: '${ masterChannelDB.id }' - Setting control panel message: '${ messageId }', hash: '${ hash }'`
         );
 
         return this.getModel( masterChannelDB ).setSettings( masterChannelDB.id, {
-            dynamicChannelControlMessageId: messageId
+            dynamicChannelControlMessageId: messageId,
+            dynamicChannelControlMessageHash: hash
         } );
     }
 }

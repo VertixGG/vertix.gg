@@ -54,6 +54,10 @@ export class MasterChannelConfig extends ConfigBase<MasterChannelConfigInterface
             // and every restart would go back to searching for the message.
             dynamicChannelControlMessageId: null,
 
+            // Whitelisted for the same reason as the id above. Absent, the hash would never be
+            // stored, and every restart would go on redrawing panels that had not changed.
+            dynamicChannelControlMessageHash: null,
+
             dynamicChannelLfmChannelIds: [],
 
             dynamicChannelLfmPingRoleIds: [],

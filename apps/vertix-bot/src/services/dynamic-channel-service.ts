@@ -1,3 +1,5 @@
+import crypto from "node:crypto";
+
 import { getNaming } from "@vertix.gg/data/src/config/naming";
 import "@vertix.gg/prisma/bot-client";
 
@@ -115,7 +117,7 @@ import type {
 } from "@vertix.gg/bot/src/definitions/dynamic-channel";
 
 import type { UIAdapterVersioningService } from "@vertix.gg/gui/src/ui-adapter-versioning-service";
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIArgs, UIMessageOptions } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type { UIAdapterReplyContext } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 
 import type {
@@ -183,6 +185,15 @@ const LOGS_CHANNEL_UNUSABLE_ERRORS: number[] = [
  * in thousands of guilds does not write one unreadable line per process per restart.
  */
 const GUILD_ID_LOG_LIMIT = 25;
+
+/**
+ * What a control panel's drawing is hashed with.
+ *
+ * A hash here is only ever compared with an earlier one of its own, never with anything an outsider
+ * supplies, so it is chosen for being cheap rather than hard to forge. Changing it redraws every
+ * panel once, since no stored hash matches any more.
+ */
+const CONTROL_PANEL_HASH_ALGORITHM = "md5";
 
 export class DynamicChannelService extends ServiceWithDependenciesBase<{
     appService: AppService;
@@ -3801,7 +3812,14 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
      * default set - which is why editing that set has to redraw it, and editing a role's set has
      * no effect on it at all.
      *
-     * Returns whether a panel was actually there to refresh.
+     * A panel that would be drawn exactly as it was last drawn is left alone. Every restart used to
+     * fetch and edit every panel, a pair of discord requests per generator whether or not anything
+     * on it had changed; the drawing is now worked out in memory first, and only a panel with
+     * something new to show pays for them. The price is that a panel somebody deleted by hand is
+     * not put back until something about it changes.
+     *
+     * Returns whether the panel was drawn - false when there was nowhere to draw it, and when what
+     * it would show is what it already shows.
      */
     public async refreshControlPanel(
         guild: Guild,
@@ -3860,13 +3878,27 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             channelId: ""
         };
 
+        // Drawn in memory the way a fresh send would draw it, which asks discord nothing. Everything
+        // that reaches the panel - its buttons, its text, its language, its customization - reaches
+        // this drawing too, so any of them changing is a hash that no longer matches.
+        const panelHash = this.getControlPanelHash(
+            controlChannel.id,
+            await panelAdapter.render( controlChannel, panelArgs )
+        );
+
+        const storedMessageId = settings.dynamicChannelControlMessageId;
+
+        // Only with an id to go with it: a hash says what the panel shows, the id says which message
+        // is showing it, and without that there is nothing to leave alone.
+        if ( storedMessageId && panelHash === settings.dynamicChannelControlMessageHash ) {
+            return false;
+        }
+
         const client = this.services.appService.getClient();
 
         // One fetch by id, rather than a hundred messages to find something that never moves. That
         // search was a REST call per generator on every restart, against a global budget of about
         // fifty a second - the last part of startup still proportional to how many generators exist.
-        const storedMessageId = settings.dynamicChannelControlMessageId;
-
         let panelMessage = storedMessageId
             ? await controlChannel.messages.fetch( storedMessageId ).catch( () => null )
             : null;
@@ -3889,15 +3921,33 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             panelMessage = await panelAdapter.send( controlChannel, panelArgs ) ?? null;
         }
 
-        // Written back only when it differs from what is already stored, so a restart that found the
-        // panel exactly where it expected does not also write a row for every generator.
-        if ( panelMessage && panelMessage.id !== storedMessageId ) {
+        // Always written once something was drawn: getting this far means the id or the drawing
+        // differs from what is stored, and an unchanged panel already returned above without a
+        // write - so a restart still does not write a row for every generator.
+        if ( panelMessage ) {
             await MasterChannelDataManager.$
-                .setChannelControlMessageId( masterChannelDB, panelMessage.id )
+                .setChannelControlMessage( masterChannelDB, panelMessage.id, panelHash )
                 .catch( ( error ) => this.logger.error( this.refreshControlPanel, "", error ) );
         }
 
         return true;
+    }
+
+    /**
+     * Function getControlPanelHash() :: A panel's drawing, reduced to something that can be stored
+     * and compared.
+     *
+     * The channel is part of it, so a panel only counts as unchanged where it was drawn. A generator
+     * given a new control channel draws the same thing there, and a drawing alone would match -
+     * leaving the stored id pointing into the old channel, and the refresh never looking at the new
+     * one.
+     */
+    private getControlPanelHash( controlChannelId: string, drawing: UIMessageOptions ) {
+        return crypto
+            .createHash( CONTROL_PANEL_HASH_ALGORITHM )
+            .update( controlChannelId )
+            .update( JSON.stringify( drawing ) )
+            .digest( "hex" );
     }
 
     /**

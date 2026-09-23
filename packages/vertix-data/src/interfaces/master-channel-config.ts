@@ -40,6 +40,17 @@ export interface MasterChannelSettingsInterface {
      * removed.
      */
     dynamicChannelControlMessageId: string | null;
+    /**
+     * What the panel was last drawn with, hashed together with the channel it was drawn in.
+     *
+     * Startup redrew every panel on every restart - a fetch and an edit per generator - whether or
+     * not anything on it had changed. A panel whose drawing still hashes to this is left alone, so a
+     * restart costs discord nothing for it, and anything that changes the drawing - its buttons, its
+     * text, its language, its customization, the channel it lives in - changes the hash and redraws.
+     *
+     * Written together with the id above, and only after the panel was actually drawn.
+     */
+    dynamicChannelControlMessageHash: string | null;
     dynamicChannelLfmChannelIds?: string[];
     /**
      * The roles an lfm post is allowed to mention, chosen by an admin.

@@ -204,8 +204,14 @@ export class TopGGManager extends CacheBase<Date> {
     }
 
     public handshake() {
+        /**
+         * A `warn`, not an `error`. No token is a decision rather than a failure - the listing this
+         * posts to was taken down, so the manager is meant to be off - and error lines are reported
+         * to the alert channel, which every restart would then fill with two copies of this, one
+         * per shard. An alert channel carrying something expected is one nobody reads.
+         */
         if ( !process.env.TOP_GG_TOKEN ) {
-            this.logger.error( this.handshake, "TOP_GG_TOKEN is not defined, the manager will be disabled" );
+            this.logger.warn( this.handshake, "TOP_GG_TOKEN is not defined, the manager will be disabled" );
             return;
         }
 
@@ -219,9 +225,6 @@ export class TopGGManager extends CacheBase<Date> {
 
             setInterval( this.timer.bind( this ), this.timerInterval );
         }
-
-        this.api = new Api( process.env.TOP_GG_TOKEN as string );
-        this.client = this.appService.getClient();
 
         this.logger.info( this.handshake, "TopGG manager is trying to handshake with top.gg API..." );
 

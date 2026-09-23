@@ -18,11 +18,21 @@ export interface GuildStats {
     lastActiveAt: string | null;
 }
 
+export interface MasterChannelCategory {
+    id: string;
+    name: string;
+}
+
 export interface MasterChannelInfo {
     channelId: string;
     categoryId: string | null;
     createdAt: string;
     dynamicChannelsCount: number;
+    /**
+     * The category the generator sits in now, with its name. Null when the bot could not say, and
+     * absent from an API deployed before the field existed - `categoryId` is what is left in both.
+     */
+    category?: MasterChannelCategory | null;
 }
 
 export interface GuildDetails {

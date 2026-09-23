@@ -41,11 +41,22 @@ export interface GuildDetails {
     maxActiveDynamicChannels: number | null;
 }
 
+export interface MasterChannelCategory {
+    id: string;
+    name: string;
+}
+
 export interface MasterChannelInfo {
     channelId: string;
     categoryId: string | null;
     createdAt: Date;
     dynamicChannelsCount: number;
+    /**
+     * The category the generator sits in now, with its name, as the bot sees it. Null when the bot
+     * could not say or the generator sits in none - `categoryId` is then all there is, and it is the
+     * category the generator was created in.
+     */
+    category: MasterChannelCategory | null;
 }
 
 export interface GuildBotPresence {
@@ -161,22 +172,22 @@ export async function getGuildStats( guildId: string ): Promise<GuildStats | nul
 }
 
 /**
- * Function getMaxActiveDynamicChannels() :: How many channels one generator may have open, asked of the bot.
+ * Function getLiveCategory() :: The category a generator sits in right now, with its name.
  *
- * Asked rather than read out of the guild config here, so the number a generator is measured
- * against is the one the bot refuses the next member at - see `ManagementService.getConfigLimits()`.
+ * Asked of the bot rather than read from the stored row, which keeps the category the generator was
+ * created in: an admin who has since dragged it elsewhere would see the new category's name beside
+ * the old one's id. The bot answers out of its channel cache.
  *
- * Returns null when the bot cannot be asked, so a caller reports "unknown" instead of guessing.
+ * Returns null when the bot could not say, and the panel falls back to the stored id.
  */
-async function getMaxActiveDynamicChannels( guildId: string ): Promise<number | null> {
-    const managementService = ServiceLocator.$.get<ManagementService>( "VertixAPI/Services/Management", { silent: true } );
+async function getLiveCategory(
+    managementService: ManagementService,
+    guildId: string,
+    masterChannelId: string
+): Promise<MasterChannelCategory | null> {
+    const info = await managementService.requestDynamicChannelInfo( guildId, masterChannelId, [] );
 
-    if ( !managementService ) {
-        logger.warn( getMaxActiveDynamicChannels, `Management service not registered - no channel limit for guild ${ guildId }` );
-        return null;
-    }
-
-    return ( await managementService.getConfigLimits( guildId ) )?.maxActiveDynamicChannels ?? null;
+    return info?.category ? { id: info.category.id, name: info.category.name } : null;
 }
 
 export async function getGuildDetails( guildId: string ): Promise<GuildDetails | null> {
@@ -186,7 +197,15 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
         return null;
     }
 
-    const [ masterChannels, maxActiveDynamicChannels ] = await Promise.all( [
+    // What only the bot holds - the limit it refuses at, and each generator's category as it stands -
+    // is asked through this. Before it is registered both read as unknown rather than failing the page.
+    const managementService = ServiceLocator.$.get<ManagementService>( "VertixAPI/Services/Management", { silent: true } );
+
+    if ( !managementService ) {
+        logger.warn( getGuildDetails, `Management service not registered - no limit or categories for guild ${ guildId }` );
+    }
+
+    const [ masterChannels, limits ] = await Promise.all( [
         client.channel.findMany( {
             where: {
                 guildId,
@@ -198,26 +217,30 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
                 createdAt: true
             }
         } ),
-        getMaxActiveDynamicChannels( guildId )
+        managementService?.getConfigLimits( guildId ) ?? null
     ] );
 
     const masterChannelInfos: MasterChannelInfo[] = await Promise.all(
         masterChannels.map( async( mc ) => {
-            // Counted the way the bot counts before refusing the next one - off the rows it made,
-            // not off the category, which also holds the generator itself and whatever else an
-            // admin put there.
-            const dynamicChannelsCount = await client.channel.count( {
-                where: {
-                    ownerChannelId: mc.channelId,
-                    internalType: "DYNAMIC_CHANNEL"
-                }
-            } );
+            const [ dynamicChannelsCount, category ] = await Promise.all( [
+                // Counted the way the bot counts before refusing the next one - off the rows it
+                // made, not off the category, which also holds the generator itself and whatever
+                // else an admin put there.
+                client.channel.count( {
+                    where: {
+                        ownerChannelId: mc.channelId,
+                        internalType: "DYNAMIC_CHANNEL"
+                    }
+                } ),
+                managementService ? getLiveCategory( managementService, guildId, mc.channelId ) : null
+            ] );
 
             return {
                 channelId: mc.channelId,
                 categoryId: mc.categoryId,
                 createdAt: mc.createdAt,
-                dynamicChannelsCount
+                dynamicChannelsCount,
+                category
             };
         } )
     );
@@ -225,6 +248,8 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
     return {
         guild: guildStats,
         masterChannels: masterChannelInfos,
-        maxActiveDynamicChannels
+        // Asked rather than read out of the guild config here, so the number a generator is
+        // measured against is the one the bot refuses the next member at.
+        maxActiveDynamicChannels: limits?.maxActiveDynamicChannels ?? null
     };
 }

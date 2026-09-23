@@ -86,6 +86,20 @@ function describeGeneratorLimit( limit: number | null ): string {
 }
 
 /**
+ * Function describeCategory() :: The generator's category by name, with its id beside it.
+ *
+ * The id stays because a name is not unique - a server can have two categories called "Voice" - and
+ * it is what an admin searches Discord for. Without a name, the stored id is all there is to show.
+ */
+function describeCategory( master: MasterChannelInfo ): string {
+    if ( master.category ) {
+        return `Category ${ master.category.name } (${ master.category.id })`;
+    }
+
+    return master.categoryId ? `Category ${ master.categoryId }` : "No category";
+}
+
+/**
  * The generators of the guild, each with the channels standing under it right now.
  *
  * Ordered by how busy they are, since the question a reader brings here is which generator the
@@ -145,7 +159,7 @@ export function GeneratorsPanel( { masterChannels, maxActiveDynamicChannels }: G
 
                         <div className="flex flex-wrap gap-x-4 text-xs text-text-muted">
                             <span>Created { created ?? "at an unknown date" }</span>
-                            <span>{ master.categoryId ? `Category ${ master.categoryId }` : "No category" }</span>
+                            <span>{ describeCategory( master ) }</span>
                             <span>{ limitDescription }</span>
                         </div>
                     </div>

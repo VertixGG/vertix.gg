@@ -91,6 +91,9 @@ const DISCORD_TEXT_CHANNEL_TYPES = [ 0, 5 ];
 /** The bot answers this out of what it already holds, so a round trip is the whole of it. */
 const CONFIG_LIMITS_REQUEST_TIMEOUT_MS = 5000;
 
+/** Read out of the bot's channel cache, so the same holds: a round trip is the whole of it. */
+const DYNAMIC_CHANNEL_INFO_REQUEST_TIMEOUT_MS = 5000;
+
 /**
  * What counts as a master channel for the purpose of the limit.
  *
@@ -861,6 +864,46 @@ export class ManagementService extends ServiceWithDependenciesBase<{
         };
     }
 
+    /**
+     * Function requestDynamicChannelInfo() :: A generator, its category and these channels, as the bot sees them.
+     *
+     * Asked of the bot because it is in the guild and already holds all three, member counts
+     * included - which a rest call cannot give. Its category is the one the generator sits in now,
+     * where the stored row keeps the one it was created in.
+     *
+     * Null when the bot could not be asked, which each caller answers its own way: the generator's
+     * page falls back to rest, the home panel names a category by its id alone.
+     */
+    public async requestDynamicChannelInfo(
+        guildId: string,
+        masterChannelId: string,
+        dynamicChannelIds: string[]
+    ): Promise<GetDynamicChannelInfoResponse | null> {
+        if ( ! this.services.ipcService.isReady() ) {
+            return null;
+        }
+
+        try {
+            const request: GetDynamicChannelInfoRequest = {
+                action: IPC_REQUEST_ACTIONS.GET_DYNAMIC_CHANNEL_INFO,
+                guildId,
+                masterChannelId,
+                dynamicChannelIds
+            };
+
+            return await this.services.ipcService.request<GetDynamicChannelInfoRequest, GetDynamicChannelInfoResponse>(
+                IPC_CHANNELS.MANAGEMENT_REQUEST,
+                IPC_CHANNELS.MANAGEMENT_RESPONSE,
+                request,
+                DYNAMIC_CHANNEL_INFO_REQUEST_TIMEOUT_MS
+            );
+        } catch( error ) {
+            this.logger.warn( this.requestDynamicChannelInfo, "Failed to fetch channel info via IPC", error );
+
+            return null;
+        }
+    }
+
     public async getDynamicMasterDetails( guildId: string, masterChannelId: string ): Promise<DynamicMasterDetails | null> {
         const master = await getClient().channel.findFirst( {
             where: {
@@ -895,48 +938,17 @@ export class ManagementService extends ServiceWithDependenciesBase<{
 
         // Fetch Discord channel info via IPC from the bot (which has real-time member counts)
         const dynamicChannelIds = dynamicChannels.map( ( ch ) => ch.channelId );
-        let discordInfo: GetDynamicChannelInfoResponse = {
-            masterChannel: null,
-            category: null,
-            dynamicChannels: []
-        };
 
-        if ( this.services.ipcService.isReady() ) {
-            try {
-                const request: GetDynamicChannelInfoRequest = {
-                    action: IPC_REQUEST_ACTIONS.GET_DYNAMIC_CHANNEL_INFO,
-                    guildId,
-                    masterChannelId: master.channelId,
-                    dynamicChannelIds
-                };
+        let discordInfo = await this.requestDynamicChannelInfo( guildId, master.channelId, dynamicChannelIds );
 
-                discordInfo = await this.services.ipcService.request<GetDynamicChannelInfoRequest, GetDynamicChannelInfoResponse>(
-                    IPC_CHANNELS.MANAGEMENT_REQUEST,
-                    IPC_CHANNELS.MANAGEMENT_RESPONSE,
-                    request,
-                    5000
-                );
-            } catch( error ) {
-                this.logger.warn( this.getDynamicMasterDetails, "Failed to fetch channel info via IPC, falling back to REST API", error );
-                // Fallback to REST API (won't have member counts)
-                const restInfo = await this.services.discordService.fetchScalingChannelInfo(
-                    guildId,
-                    master.channelId,
-                    dynamicChannelIds
-                );
-                // Convert REST response format to dynamic response format
-                discordInfo = {
-                    masterChannel: restInfo.masterChannel,
-                    category: restInfo.category,
-                    dynamicChannels: restInfo.scalingChannels
-                };
-            }
-        } else {
+        if ( ! discordInfo ) {
+            // Fallback to REST API (won't have member counts)
             const restInfo = await this.services.discordService.fetchScalingChannelInfo(
                 guildId,
                 master.channelId,
                 dynamicChannelIds
             );
+            // Convert REST response format to dynamic response format
             discordInfo = {
                 masterChannel: restInfo.masterChannel,
                 category: restInfo.category,

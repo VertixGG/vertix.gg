@@ -43,6 +43,8 @@ function createButtonPress() {
         isUserSelectMenu: () => false,
         isChannelSelectMenu: () => false,
 
+        // A press nothing has answered yet is answered by the screen itself, in one `update()`.
+        update: jest.fn<( message: unknown ) => Promise<unknown>>().mockResolvedValue( undefined ),
         deferUpdate: jest.fn<() => Promise<unknown>>().mockResolvedValue( undefined ),
         editReply: jest.fn<( message: unknown ) => Promise<unknown>>().mockResolvedValue( undefined )
     };
@@ -88,9 +90,9 @@ describe( "VertixBot/UI-General/ChannelGone", () => {
         await notice.editReply( interaction as never, {} );
 
         // Assert - it answered, which is what the press needed most.
-        expect( interaction.editReply ).toHaveBeenCalledTimes( 1 );
+        expect( interaction.update ).toHaveBeenCalledTimes( 1 );
 
-        const message = interaction.editReply.mock.calls[ 0 ][ 0 ] as {
+        const message = interaction.update.mock.calls[ 0 ][ 0 ] as {
             embeds: unknown[];
             components: unknown[];
         };

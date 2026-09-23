@@ -109,8 +109,9 @@ const Component = class extends UIComponentBase {
 
 /**
  * A button press on a guild message, as much of one as the path from `run()` through
- * `editReply()` reads. `editReply` is recorded rather than sent, so the test can confirm the
- * press actually reached the end.
+ * `editReply()` reads. The screen going out is recorded rather than sent - by `update()` for a
+ * press nothing has answered yet, by `editReply()` for one already answered - so the test can
+ * confirm the press actually reached the end.
  */
 function createPress() {
     const edits: object[] = [];
@@ -127,6 +128,10 @@ function createPress() {
         isMessageComponent: () => true,
         isUserSelectMenu: () => false,
         isChannelSelectMenu: () => false,
+        update: async( message: object ) => {
+            press.replied = true;
+            edits.push( message );
+        },
         deferUpdate: async() => {
             press.deferred = true;
         },

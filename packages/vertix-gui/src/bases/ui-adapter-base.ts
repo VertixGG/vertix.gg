@@ -554,8 +554,9 @@ export abstract class UIAdapterBase<
         const message = this.getMessage( "edit", interaction, newArgs );
 
         // A container's components are the container itself rather than rows of menus, and it can
-        // carry no embeds - so the rewrite below has nothing to walk and nothing to send. Deferring
-        // and editing redraws the same screen either way, which is what that branch is for.
+        // carry no embeds - so the rewrite below has nothing to walk and nothing to send. The
+        // ordinary answer further down redraws the same screen either way, which is what that
+        // branch is for.
         if ( ! this.shouldRenderAsContainer() && ( interaction.isUserSelectMenu() || interaction.isChannelSelectMenu() ) ) {
             const disabledComponents = JSON.parse( JSON.stringify( message.components ) );
 
@@ -583,22 +584,34 @@ export abstract class UIAdapterBase<
                 .catch( ( e ) => {
                     this.$$.staticLogger.error( this.editReply, "", e );
                 } );
-        } else {
+        } else if ( !interaction.isCommand() && !interaction.deferred && !interaction.replied ) {
             // `replied` covers an interaction already answered with an update - a screen that greyed
             // its own controls before starting work. Deferring one of those throws "already
             // acknowledged", and the throw used to end the edit here, leaving the screen locked.
-            if ( !interaction.isCommand() && !interaction.deferred && !interaction.replied ) {
-                // TODO: Use dedicated method.
-                if (
-                    false ===
-                    ( await interaction.deferUpdate().catch( ( e ) => {
-                        this.$$.staticLogger.error( this.editReply, "", e );
 
-                        return false;
-                    } ) )
-                ) {
-                    return;
-                }
+            // Nothing has answered this interaction yet. Where it sits on a message, the new screen
+            // is the answer: `update()` acknowledges it and edits that message in one request.
+            // Deferring and then editing was two, back to back - and the defer bought no time, since
+            // it only went out once the screen was already built. Each is a round trip of three to
+            // four hundred milliseconds, paid on every press that redraws a screen.
+            if ( interaction.isMessageComponent() || ( interaction.isModalSubmit() && interaction.isFromMessage() ) ) {
+                return await interaction.update( message ).catch( ( e ) => {
+                    this.$$.staticLogger.error( this.editReply, "", e );
+                } );
+            }
+
+            // A modal that did not come from a message has no message to update, and keeps the
+            // defer it always had.
+            // TODO: Use dedicated method.
+            if (
+                false ===
+                ( await interaction.deferUpdate().catch( ( e ) => {
+                    this.$$.staticLogger.error( this.editReply, "", e );
+
+                    return false;
+                } ) )
+            ) {
+                return;
             }
         }
 

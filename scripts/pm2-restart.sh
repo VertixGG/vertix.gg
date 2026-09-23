@@ -16,10 +16,16 @@
 #   bot     - last; it has no port of its own.
 # The dashboard is restored at the end so a teardown does not leave the UI down.
 #
-# The watchdog is outside that order at both ends: torn down first and started
-# last. It reports a pm2 app going down, and every app below is about to go down
-# on purpose - left running it would alert on the whole teardown. Started last,
-# the first thing it sees is a stack that is already up.
+# The watchdog is outside that order entirely: it is left running across the
+# whole teardown, which is the one app that has to be, because it is what
+# reports the deploy. It holds a deliberate stop back rather than alerting on
+# it, and names what went down together once they are up again - so a finished
+# deploy posts "5 apps redeployed" instead of nothing, and a deploy that half
+# fails says which app never came back.
+#
+# That means sparing it in three places below - the named teardown list, the
+# blanket delete, and the pkill - and starting it at the end only if it is not
+# already up.
 #
 # The teardown is ordered too, in reverse. `pm2 delete all` signals every app at
 # once, which takes the logger down alongside the apps still writing to it.
@@ -66,6 +72,29 @@ start_app() {
     echo "pm2-restart: started $1"
 }
 
+# pm2's pid for one app, or empty. Asked for rather than matched by pattern, because the logger and
+# the watchdog are both `bun src/index.ts` and only one of them is meant to survive the teardown.
+app_pid() {
+    pm2 jlist 2>/dev/null | node -e '
+        const chunks = [];
+
+        process.stdin.on( "data", ( chunk ) => chunks.push( chunk ) );
+        process.stdin.on( "end", () => {
+            let apps = [];
+
+            try {
+                apps = JSON.parse( chunks.join( "" ) || "[]" );
+            } catch ( error ) {
+                apps = [];
+            }
+
+            const app = apps.find( ( entry ) => entry.name === process.argv[ 1 ] );
+
+            process.stdout.write( app && app.pid ? String( app.pid ) : "" );
+        } );
+    ' "$1" 2>/dev/null || true
+}
+
 echo "pm2-restart: tearing down"
 
 # Which bot apps pm2 currently has, whatever shard count started them.
@@ -103,18 +132,54 @@ running_bot_apps() {
 #
 # `vertix-bot` is named on its own as well as discovered, so the plain unsharded case never depends
 # on that json parse; deleting an app that is not there is already a no-op here.
-for app in vertix-watchdog pm2-dashboard $( running_bot_apps ) vertix-bot vertix-api vertix-redis vertix-logger; do
+for app in pm2-dashboard $( running_bot_apps ) vertix-bot vertix-api vertix-redis vertix-logger; do
     pm2 delete "$app" --silent 2>/dev/null || true
 done
 
 # Anything this script does not name - added since, or left by a dead daemon.
-pm2 delete all --silent 2>/dev/null || true
+# `pm2 delete all` cannot spare one app, so the list is asked for and filtered.
+pm2 jlist 2>/dev/null | node -e '
+    const chunks = [];
+
+    process.stdin.on( "data", ( chunk ) => chunks.push( chunk ) );
+    process.stdin.on( "end", () => {
+        let apps = [];
+
+        try {
+            apps = JSON.parse( chunks.join( "" ) || "[]" );
+        } catch ( error ) {
+            apps = [];
+        }
+
+        process.stdout.write(
+            apps.map( ( app ) => app.name )
+                .filter( ( name ) => name !== "vertix-watchdog" )
+                .join( "\n" )
+        );
+    } );
+' 2>/dev/null | while read -r stray || [ -n "$stray" ]; do
+    # `|| [ -n ... ]` because the list has no trailing newline, and a plain `read` drops the last
+    # name it is handed - which would leave exactly one stray app alive, at random.
+    if [ -n "$stray" ]; then
+        pm2 delete "$stray" --silent 2>/dev/null || true
+    fi
+done
 
 # Stragglers: a daemon that died mid-flight leaves its apps reparented to init,
 # and those still hold the ports the restart is about to need.
 pkill -f "bun src/index-bun.ts" 2>/dev/null || true
 pkill -f "bun --bun --hot src/index-bun.ts" 2>/dev/null || true
-pkill -f "bun src/index.ts" 2>/dev/null || true
+
+# Not a pkill: this pattern is the logger's command line and the watchdog's alike, and the watchdog
+# is staying up. Its pid is spared by number, which is the only thing that tells the two apart.
+WATCHDOG_PID="$( app_pid vertix-watchdog )"
+
+for stray in $( pgrep -f "bun src/index.ts" 2>/dev/null || true ); do
+    if [ "$stray" != "$WATCHDOG_PID" ]; then
+        kill "$stray" 2>/dev/null || true
+    fi
+done
+
 pkill -f "pm2-dashboard --host" 2>/dev/null || true
 sleep 2
 
@@ -139,7 +204,13 @@ done
 
 start_app pm2-dashboard
 
-start_app vertix-watchdog
+# Normally already up - it is deliberately not torn down. Started here only when it was missing to
+# begin with, which is what a dead daemon leaves behind.
+if [ -z "$( app_pid vertix-watchdog )" ]; then
+    start_app vertix-watchdog
+else
+    echo "pm2-restart: vertix-watchdog kept up across the deploy"
+fi
 
 pm2 save --silent
 pm2 status

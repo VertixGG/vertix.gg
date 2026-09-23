@@ -337,12 +337,14 @@ export class ProcessWatchdog extends InitializeBase {
 
             /*
              * Still on its way up - the ordered restart waits for each app's port before starting the
-             * next, so the last of them can be a minute behind the first. Only a settled `stopped`,
-             * a vanished app, or running out of rounds is called stopped.
+             * next, so the last of them can be a minute behind the first.
+             *
+             * An app pm2 does not have at all counts as on its way up rather than gone, because the
+             * deploy everybody runs deletes every app and starts it again: absent is what the middle
+             * of a redeploy looks like, and reading it as gone reported a healthy deploy as an
+             * outage. It is only called stopped once the rounds run out.
              */
-            const isSettled = undefined === status
-                || PM2_STATUS.STOPPED === status
-                || PM2_STATUS.ERRORED === status;
+            const isSettled = PM2_STATUS.STOPPED === status || PM2_STATUS.ERRORED === status;
 
             if ( ! isSettled && rounds + 1 < WATCHDOG_DEFAULTS.DELIBERATE_SETTLE_ROUNDS ) {
                 this.settling.set( name, rounds + 1 );

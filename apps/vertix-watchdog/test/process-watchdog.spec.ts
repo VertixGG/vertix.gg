@@ -269,12 +269,28 @@ describe( "VertixWatchdog/ProcessWatchdog", () => {
             expect( reporter.kinds() ).toEqual( [ "stopped" ] );
         } );
 
-        it( "should call an app that pm2 no longer has stopped", async() => {
+        it( "should wait out an app pm2 does not have yet, which is what a redeploy looks like", async() => {
             watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
 
             supervisor.listed = [];
 
             await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.alerts ).toHaveLength( 0 );
+
+            supervisor.listed = [ { name: "vertix-api", status: "online" } ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.kinds() ).toEqual( [ "redeployed" ] );
+        } );
+
+        it( "should call an app that never comes back stopped", async() => {
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
+
+            supervisor.listed = [];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS * 4 );
 
             expect( reporter.kinds() ).toEqual( [ "stopped" ] );
         } );

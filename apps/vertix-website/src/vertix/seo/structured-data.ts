@@ -26,6 +26,61 @@ const OFFER_CURRENCY = "USD";
 
 const TITLE_SUFFIX_SEPARATORS = [ " | ", " — " ] as const;
 
+const HOW_TO_SETUP_PATH = "/posts/how-to-setup";
+
+/*
+ * The setup guide, said the way schema.org says a procedure.
+ *
+ * Every string below is the page's own wording, copied rather than rewritten: a rich result is only
+ * eligible while the markup and the page agree, and the check is on the text, not the intent. So a
+ * step renamed on the page has to be renamed here in the same commit, or the markup quietly stops
+ * qualifying - it does not fail, it just stops being used.
+ */
+const HOW_TO_STEPS = [
+    {
+        name: "Set default channel's name template",
+        text: "Join the Master Channel ( ➕ New Channel ) to generate a temporary voice channel, and set the "
+            + "name template the generated channels are created with.",
+    },
+    {
+        name: "Set temporary dynamic channel's button interface",
+        text: "Choose which buttons the channel owner is given - rename, user limit, access, privacy, "
+            + "region and the rest of the interface.",
+    },
+    {
+        name: "Set verified roles",
+        text: "Choose which roles a generated channel is visible to. For most servers @everyone is enough.",
+    },
+] as const;
+
+const FAQ_ENTRIES = [
+    {
+        question: "What is a Master Channel?",
+        answer: "A voice channel that generate dynamic temporary voice channels, his name will be "
+            + "( ➕ New Channel )",
+    },
+    {
+        question: "How i generate new temporary dynamic channel?",
+        answer: "Simply just join the Master Channel ( ➕ New Channel ) and you will be automatically moved "
+            + "to new temporary voice channel",
+    },
+    {
+        question: "What is Default Channel's Name Template?",
+        answer: "Its the name that will be used to create the temporary voice channels, that are created by "
+            + "joining this Master Channel.",
+    },
+    {
+        question: "What is {user}?",
+        answer: "Its name Placeholder that will be used to create the temporary voice channels, that are "
+            + "created by joining this Master Channel.",
+    },
+    {
+        question: "Do I need to set Verified Roles?",
+        answer: "For most Discord servers, the @everyone role is sufficient. However, there are use cases "
+            + "where you may need additional roles.",
+    },
+] as const;
+
 export const SITE_PROFILES = {
     SUPPORT_SERVER: "https://discord.gg/dEwKeQefUU",
     TOP_GG: "https://top.gg/bot/1538844311062581339",
@@ -111,6 +166,51 @@ export function buildBreadcrumbNode( pathname: string ): JsonLdNode | null {
     };
 }
 
+export function buildHowToNode( pathname: string ): JsonLdNode | null {
+    const meta = getRouteMeta( pathname );
+
+    if ( ! meta || HOW_TO_SETUP_PATH !== meta.path ) {
+        return null;
+    }
+
+    return {
+        "@context": SCHEMA_CONTEXT,
+        "@type": "HowTo",
+        name: toBreadcrumbName( meta.title ),
+        description: meta.description,
+        image: SITE_ORIGIN + SITE_OG_IMAGE.PATH,
+        totalTime: "PT5M",
+        step: HOW_TO_STEPS.map( ( step, index ) => ( {
+            "@type": "HowToStep",
+            position: index + 1,
+            name: step.name,
+            text: step.text,
+            url: SITE_ORIGIN + meta.path + "#step-" + ( index + 1 ),
+        } ) ),
+    };
+}
+
+export function buildFaqNode( pathname: string ): JsonLdNode | null {
+    const meta = getRouteMeta( pathname );
+
+    if ( ! meta || HOW_TO_SETUP_PATH !== meta.path ) {
+        return null;
+    }
+
+    return {
+        "@context": SCHEMA_CONTEXT,
+        "@type": "FAQPage",
+        mainEntity: FAQ_ENTRIES.map( ( entry ) => ( {
+            "@type": "Question",
+            name: entry.question,
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: entry.answer,
+            },
+        } ) ),
+    };
+}
+
 export function getStructuredData( pathname: string ): JsonLdNode[] {
     const meta = getRouteMeta( pathname );
 
@@ -122,7 +222,11 @@ export function getStructuredData( pathname: string ): JsonLdNode[] {
         return [ buildSoftwareApplicationNode(), buildOrganizationNode() ];
     }
 
-    const breadcrumb = buildBreadcrumbNode( pathname );
+    const nodes = [
+        buildBreadcrumbNode( pathname ),
+        buildHowToNode( pathname ),
+        buildFaqNode( pathname ),
+    ];
 
-    return breadcrumb ? [ breadcrumb ] : [];
+    return nodes.filter( ( node ): node is JsonLdNode => null !== node );
 }

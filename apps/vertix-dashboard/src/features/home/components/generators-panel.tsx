@@ -71,14 +71,18 @@ function readGeneratorLimit( maxActiveDynamicChannels?: number | null ): number 
 }
 
 /**
- * Function describeGeneratorFill() :: The generator in words - what it has open of what it may.
+ * Function describeGeneratorLimit() :: The limit in words, and that it is held per generator.
+ *
+ * Said as a limit on each generator rather than as a share, because the count beside the name
+ * already says how many are open - what the reader cannot see anywhere else is that the ceiling
+ * belongs to the generator, not to its category or to the server.
  */
-function describeGeneratorFill( master: MasterChannelInfo, limit: number | null ): string {
+function describeGeneratorLimit( limit: number | null ): string {
     if ( null === limit ) {
         return "Channel limit unavailable";
     }
 
-    return `${ master.dynamicChannelsCount } of ${ limit } channels open`;
+    return `Limit: ${ limit } dynamic channels per generator`;
 }
 
 /**
@@ -103,6 +107,7 @@ export function GeneratorsPanel( { masterChannels, maxActiveDynamicChannels }: G
     const ordered = [ ...masterChannels ].sort( ( a, b ) => b.dynamicChannelsCount - a.dynamicChannelsCount );
 
     const limit = readGeneratorLimit( maxActiveDynamicChannels );
+    const limitDescription = describeGeneratorLimit( limit );
 
     return (
         <div className="bg-surface border border-border rounded-lg divide-y divide-border-muted">
@@ -141,7 +146,7 @@ export function GeneratorsPanel( { masterChannels, maxActiveDynamicChannels }: G
                         <div className="flex flex-wrap gap-x-4 text-xs text-text-muted">
                             <span>Created { created ?? "at an unknown date" }</span>
                             <span>{ master.categoryId ? `Category ${ master.categoryId }` : "No category" }</span>
-                            <span>{ describeGeneratorFill( master, limit ) }</span>
+                            <span>{ limitDescription }</span>
                         </div>
                     </div>
                 );

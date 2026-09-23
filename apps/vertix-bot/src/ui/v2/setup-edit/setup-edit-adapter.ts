@@ -391,10 +391,13 @@ async function onButtonsSelected(
 
     // The control panel carries the default set, so editing that set has to redraw it. A role's set
     // never reaches it, which is why this only runs in the default scope.
+    //
+    // Not awaited: redrawing the panel is two discord requests, and the pick is not answered until
+    // the screen below is edited. The screen says what was saved; the panel follows it on its own.
     if ( ! roleId && interaction.guild ) {
         const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
-        await dynamicChannelService
+        void dynamicChannelService
             .refreshControlPanel( interaction.guild, masterChannelDB )
             .catch( ( error ) => GlobalLogger.$.error( onButtonsSelected, error ) );
     }

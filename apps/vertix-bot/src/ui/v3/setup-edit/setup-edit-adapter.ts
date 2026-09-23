@@ -1136,10 +1136,17 @@ async function onButtonsSelected(
 
     // The set reaches the channels already open as well as the control panel, and neither re-reads
     // it on its own. A role's set never reaches the panel, so only the default scope redraws that.
+    //
+    // Not awaited. Each of those redraws is a discord request - the panel, then every channel the
+    // generator has open, one after another - and the pick is not answered until the screen below
+    // is edited. Awaited, the answer waited on all of them, about half a second each, and discord
+    // gives up on an answer after three seconds: a generator with a few channels open could show
+    // "this interaction failed" over a set that had in fact been saved. What the screen says is the
+    // save; the redraws follow it on their own.
     if ( interaction.guild ) {
         const dynamicChannelService = ServiceLocator.$.get<DynamicChannelService>( "VertixBot/Services/DynamicChannel" );
 
-        await dynamicChannelService
+        void dynamicChannelService
             .refreshGeneratorButtons( interaction.guild, masterChannelDB, ! roleId )
             .catch( ( error ) => GlobalLogger.$.error( onButtonsSelected, error ) );
     }

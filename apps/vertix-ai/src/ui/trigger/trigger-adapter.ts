@@ -1,4 +1,4 @@
-import { ChannelType } from "discord.js";
+import { ChannelType, MessageFlags } from "discord.js";
 
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
@@ -116,7 +116,7 @@ async function onEventsSelected(
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
     if ( !canManageAISettings( interaction ) ) {
-        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, ephemeral: true } );
+        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, flags: MessageFlags.Ephemeral } );
 
         return;
     }
@@ -133,7 +133,7 @@ async function onChannelsSelected(
     interaction: UIDefaultStringSelectMenuChannelTextInteraction
 ) {
     if ( !canManageAISettings( interaction ) ) {
-        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, ephemeral: true } );
+        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, flags: MessageFlags.Ephemeral } );
 
         return;
     }

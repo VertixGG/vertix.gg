@@ -1,5 +1,7 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
+import { MessageFlags } from "discord.js";
+
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
 import { FeedbackComponent } from "@vertix.gg/bot/src/ui/general/feedback/feedback-component";
@@ -11,6 +13,7 @@ import type DirectMessageService from "@vertix.gg/bot/src/services/direct-messag
 import type { UIDefaultModalChannelTextInteraction } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
 import type { IExecutionAdapterContext } from "@vertix.gg/gui/src/builders/builders-definitions";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+
 import type { ModalSubmitInteraction, BaseGuildTextChannel } from "discord.js";
 
 type FeedbackArgs = UIArgs;
@@ -40,7 +43,7 @@ const FeedbackAdapter = new AdminExecutionAdapterBuilder<
                     await interaction.reply( {
                         content:
                             "Thank you for your report. We appreciate your feedback and are committed to resolving the issue as quickly as possible.\nFor updates and further information, please visit our community server.\n",
-                        ephemeral: true
+                        flags: MessageFlags.Ephemeral
                     } );
                 }
             )
@@ -54,7 +57,7 @@ const FeedbackAdapter = new AdminExecutionAdapterBuilder<
                     await interaction.reply( {
                         content:
                             "Thank you for your suggestion! We greatly appreciate your input and value your ideas.\nYour feedback helps us improve and enhance our services.\nWe will carefully consider your suggestion and take it into account for future updates.\nThank you for being a valuable member of our community!",
-                        ephemeral: true
+                        flags: MessageFlags.Ephemeral
                     } );
                 }
             )

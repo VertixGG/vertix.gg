@@ -1,4 +1,4 @@
-import { Events, MessageComponentInteraction, ModalSubmitInteraction } from "discord.js";
+import { Events, MessageComponentInteraction, MessageFlags, ModalSubmitInteraction } from "discord.js";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
@@ -31,7 +31,7 @@ export function registerInteractionHandler( client: Client ): void {
 
             await interaction.reply( {
                 content: response ?? "That button is no longer active.",
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             } );
 
             return;
@@ -76,7 +76,7 @@ async function handleSlashCommand( client: Client, interaction: CommandInteracti
     const slashCommand = Commands.find( ( command ) => command.name === interaction.commandName );
 
     if ( !slashCommand ) {
-        await interaction.reply( { content: "Unknown command.", ephemeral: true } );
+        await interaction.reply( { content: "Unknown command.", flags: MessageFlags.Ephemeral } );
 
         return;
     }

@@ -2,7 +2,7 @@ import process from "process";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, MessageFlags } from "discord.js";
 
 import { CacheBase } from "@vertix.gg/base/src/bases/cache-base";
 
@@ -104,7 +104,7 @@ export class TopGGManager extends CacheBase<Date> {
         return await interaction
             .reply( {
                 embeds: [ TopGGManager.$.getVoteEmbed() ],
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             } )
             .catch( ( e ) => {
                 this.logger.error( this.sendVoteEmbed, "", e );

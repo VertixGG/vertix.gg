@@ -1,4 +1,4 @@
-import { AttachmentBuilder, ChannelType } from "discord.js";
+import { AttachmentBuilder, ChannelType, MessageFlags } from "discord.js";
 
 import { AdapterBuilderBase } from "@vertix.gg/gui/src/builders/adapter-builder-base";
 import { UIAdapterBase } from "@vertix.gg/gui/src/bases/ui-adapter-base";
@@ -99,7 +99,7 @@ async function buildArgs( guildId: string ): Promise<PromptArgs> {
 
 async function onDownloadClicked( _context: PromptContext, interaction: UIDefaultButtonChannelTextInteraction ) {
     if ( !canManageAISettings( interaction ) ) {
-        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, ephemeral: true } );
+        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, flags: MessageFlags.Ephemeral } );
 
         return;
     }
@@ -113,13 +113,13 @@ async function onDownloadClicked( _context: PromptContext, interaction: UIDefaul
     await interaction.reply( {
         content: "Here is the current prompt. Edit it, then press **Upload** and send the file back.",
         files: [ attachment ],
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
     } );
 }
 
 async function onUploadClicked( _context: PromptContext, interaction: UIDefaultButtonChannelTextInteraction ) {
     if ( !canManageAISettings( interaction ) ) {
-        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, ephemeral: true } );
+        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, flags: MessageFlags.Ephemeral } );
 
         return;
     }
@@ -130,13 +130,13 @@ async function onUploadClicked( _context: PromptContext, interaction: UIDefaultB
         content:
             `Send your edited file in this channel within **${ Math.round( windowMs / 60000 ) } minutes**.\n` +
             "Only the next file you post here will be used.",
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
     } );
 }
 
 async function onResetClicked( context: PromptContext, interaction: UIDefaultButtonChannelTextInteraction ) {
     if ( !canManageAISettings( interaction ) ) {
-        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, ephemeral: true } );
+        await interaction.reply( { content: MANAGE_AI_SETTINGS_DENIED_MESSAGE, flags: MessageFlags.Ephemeral } );
 
         return;
     }

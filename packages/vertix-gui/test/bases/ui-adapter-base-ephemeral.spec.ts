@@ -1,3 +1,5 @@
+import { MessageFlags } from "discord.js";
+
 import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 import { UIMockGeneratorUtil } from "@vertix.gg/test-utils/src/ui-mock-generator-util/ui-mock-generator-util";
 
@@ -55,7 +57,7 @@ function createPress( state: { deferred?: boolean; replied?: boolean } = {} ) {
     return { interaction: interaction as unknown as UIAdapterReplyContext, calls };
 }
 
-async function buildAdapter() {
+async function buildAdapter( message: object = { content: "screen" } ) {
     await TestWithServiceLocatorMock.withUIServiceMock();
 
     const Component = UIMockGeneratorUtil.createComponent()
@@ -93,7 +95,7 @@ async function buildAdapter() {
         }
 
         protected getMessage() {
-            return { content: "screen" } as never;
+            return message as never;
         }
     }
 
@@ -135,6 +137,44 @@ describe( "VertixGUI/UIAdapterBase/ephemeral", () => {
         // Assert - the screen went out, and it did not go out as a second reply.
         expect( calls.followUp ).toHaveLength( 1 );
         expect( calls.reply ).toHaveLength( 0 );
-        expect( calls.followUp[ 0 ] ).toMatchObject( { ephemeral: true } );
+        expect( calls.followUp[ 0 ] ).toMatchObject( { flags: [ MessageFlags.Ephemeral ] } );
+    } );
+
+    /**
+     * `ephemeral: true` was how this asked for a private screen, and discord.js is dropping it in
+     * favour of the flag. The two cannot both be given, and a container screen already arrives
+     * carrying `IsComponentsV2` - so setting the flag rather than merging it sends the container
+     * as an ordinary message, which discord refuses, since a container has no `content` and no
+     * `embeds` to fall back on. These two say the flag is asked for, and that the one already
+     * there survives being asked.
+     */
+    it( "should ask for the screen by flag rather than by the option discord.js is dropping", async() => {
+        // Arrange.
+        const adapter = await buildAdapter(),
+            { interaction, calls } = createPress();
+
+        // Act.
+        await adapter.ephemeral( interaction as never );
+
+        // Assert.
+        expect( calls.reply[ 0 ] ).toMatchObject( { flags: [ MessageFlags.Ephemeral ] } );
+        expect( calls.reply[ 0 ] ).not.toHaveProperty( "ephemeral" );
+    } );
+
+    it( "should keep a container's own flag when it adds the ephemeral one", async() => {
+        // Arrange.
+        const adapter = await buildAdapter( {
+                components: [],
+                flags: MessageFlags.IsComponentsV2
+            } ),
+            { interaction, calls } = createPress();
+
+        // Act.
+        await adapter.ephemeral( interaction as never );
+
+        // Assert.
+        expect( calls.reply[ 0 ] ).toMatchObject( {
+            flags: [ MessageFlags.Ephemeral, MessageFlags.IsComponentsV2 ]
+        } );
     } );
 } );

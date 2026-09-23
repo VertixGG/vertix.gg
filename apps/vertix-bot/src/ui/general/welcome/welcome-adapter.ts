@@ -1,6 +1,6 @@
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
-import { ChannelType, PermissionFlagsBits, PermissionsBitField } from "discord.js";
+import { ChannelType, MessageFlags, PermissionFlagsBits, PermissionsBitField } from "discord.js";
 
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
@@ -21,7 +21,7 @@ async function replyEphemeral(
     interaction: WelcomeInteraction | UIDefaultStringSelectMenuChannelTextInteraction,
     payload: InteractionReplyOptions
 ) {
-    const message = { ...payload, ephemeral: true };
+    const message: InteractionReplyOptions = { ...payload, flags: MessageFlags.Ephemeral };
 
     if ( interaction.replied || interaction.deferred ) {
         await interaction.followUp( message );

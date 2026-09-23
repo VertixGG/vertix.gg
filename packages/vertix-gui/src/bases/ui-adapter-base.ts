@@ -18,7 +18,8 @@ import {
     ButtonBuilder,
     ComponentType,
     GuildChannel,
-    Message
+    Message,
+    MessageFlags
 } from "discord.js";
 
 import picocolors from "picocolors";
@@ -738,12 +739,23 @@ export abstract class UIAdapterBase<
          */
         const isAlreadyAnswered = interaction.deferred || interaction.replied;
 
+        /**
+         * Merged rather than set, because a container screen arrives carrying `IsComponentsV2` and
+         * the flag cannot be taken back off a message once sent - overwriting it here would send
+         * the container as an ordinary message, which discord refuses since it has no `content`
+         * and no `embeds`. Given as a list so the two are combined by discord.js rather than by
+         * arithmetic this file would have to cast the result of.
+         */
+        const flags: ( MessageFlags.Ephemeral | MessageFlags.IsComponentsV2 )[] = message.flags
+            ? [ MessageFlags.Ephemeral, message.flags ]
+            : [ MessageFlags.Ephemeral ];
+
         return ( isAlreadyAnswered
-            ? interaction.followUp( { ...message, ephemeral: true } )
+            ? interaction.followUp( { ...message, flags } )
             : interaction
                 .reply( {
                     ...message,
-                    ephemeral: true,
+                    flags,
                     withResponse: true
                 } )
                 .then( ( result ) => result?.resource?.message )

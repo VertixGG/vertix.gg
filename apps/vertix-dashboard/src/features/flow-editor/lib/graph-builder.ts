@@ -1550,6 +1550,28 @@ class FlowGraphBuilder {
     }
 
     /**
+     * Whether a flow is somebody else's and nothing on this canvas arrives at it.
+     *
+     * Reachability is there to prune what the API brings in on top of the module: asked for one
+     * module it also sends the flows that module hands off to, and those are worth drawing only
+     * where something leads to them. Applied to the module's own flows as well, it threw out four
+     * of the thirty the V3 module declares - the setup editor and the new-generator wizard among
+     * them - because the only thing that opens either is a flow in the General module, which is not
+     * in this payload to be followed. They were listed in the sidebar and drawn nowhere, and the
+     * module selector went on promising twenty-eight.
+     *
+     * A module's canvas draws that module's flows. Whether anything else on screen happens to reach
+     * them is a question about the other modules, not about whether these exist.
+     */
+    private isUnreachedForeignFlow( flowName: string ): boolean {
+        if ( ! isForeignTo( flowName, this.data.module ) ) {
+            return false;
+        }
+
+        return this.reachableFlows.size > 0 && ! this.reachableFlows.has( flowName );
+    }
+
+    /**
      * The module's line to a flow something else already reaches, taken away.
      *
      * A flow is arrived at by a router, or by a button on some other flow's screen. Either way
@@ -1658,7 +1680,7 @@ class FlowGraphBuilder {
         const moduleNodeId = this.allNodes[ 0 ].id;
 
         this.data.flows.forEach( flow => {
-            if ( this.reachableFlows.size > 0 && !this.reachableFlows.has( flow.name ) ) {
+            if ( this.isUnreachedForeignFlow( flow.name ) ) {
                 return;
             }
 
@@ -1865,7 +1887,7 @@ class FlowGraphBuilder {
 
     private buildFlowComponents(): void {
         this.data.flows.forEach( flow => {
-            if ( this.reachableFlows.size > 0 && !this.reachableFlows.has( flow.name ) ) {
+            if ( this.isUnreachedForeignFlow( flow.name ) ) {
                 return;
             }
 

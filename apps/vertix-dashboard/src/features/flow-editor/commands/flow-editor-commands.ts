@@ -209,6 +209,29 @@ export class SelectEntityCommand extends CommandBase<FlowEditorState, { entityTy
             matchedNode = graphNodes.find( ( node ) =>
                 node.data?.type === "component" && node.id.includes( entityName )
             );
+
+            /*
+             * A wizard step is drawn as the wizard, on the state that runs it.
+             *
+             * The six setup steps have no node of their own and should not - each is one state of
+             * the wizard, which names the step as its execution step and takes its controls and its
+             * wording from it. Looked for by name among the node ids, they were found nowhere and
+             * the click did nothing, which is the state they were in when the sidebar listed them.
+             */
+            if ( ! matchedNode ) {
+                const stateKeys = new Set(
+                    [ ...this.state.moduleFlowsData.flows, ...this.state.moduleFlowsData.systemFlows ]
+                        .flatMap( ( flow ) => flow.states ?? [] )
+                        .filter( ( state ) => entityName === state.options?.[ "executionStep" ] )
+                        .map( ( state ) => state.key )
+                );
+
+                matchedNode = graphNodes.find( ( node ) =>
+                    node.data?.type === "component"
+                    && "string" === typeof node.data?.state
+                    && stateKeys.has( node.data.state )
+                );
+            }
         } else if ( entityType === "modal" ) {
             const modalShortName = entityName.split( "/" ).pop()?.replace( /Modal$/, "" ) ?? "";
             matchedNode = graphNodes.find( ( node ) => {

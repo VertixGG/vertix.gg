@@ -44,6 +44,21 @@ export const NOT_FOUND_META = {
 
 export const ROUTE_META: readonly RouteMeta[] = [
     {
+        /**
+         * Where a plan is paid for. Listed so it is prerendered - this site is served as static
+         * files with no fallback, so a path not built here is a 404 rather than the app.
+         *
+         * Out of the sitemap deliberately. It is not a landing page: without the signed token the
+         * dashboard sends it to, there is nothing here to see, and an indexed checkout is a
+         * search result that can only disappoint.
+         */
+        path: "/checkout",
+        sourcePath: "src/vertix/pages/checkout.tsx",
+        title: "Checkout | VoiceChannels",
+        description: "Complete your VoiceChannels plan purchase. Payments are handled by Paddle.",
+        noSitemap: true,
+    },
+    {
         path: "/",
         sourcePath: "src/vertix/pages/home.tsx",
         title: DEFAULT_META.title,

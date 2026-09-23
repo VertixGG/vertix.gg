@@ -389,6 +389,13 @@ export default defineConfig( ( { mode } ) => {
         define: {
             "import.meta.env.VITE_DASHBOARD_URL": JSON.stringify( dashboardUrl ),
             "import.meta.env.API_PUBLIC_URL": JSON.stringify( apiBaseUrl ),
+
+            // This site is the one paddle approved a checkout to be launched from, so paddle.js
+            // runs here rather than on the dashboard. Only the public token and the environment:
+            // the price a checkout opens arrives with the intent, so no price id is baked in and a
+            // price changing does not need this rebuilt.
+            "import.meta.env.PADDLE_CLIENT_TOKEN": JSON.stringify( env.PADDLE_CLIENT_TOKEN || "" ),
+            "import.meta.env.PADDLE_ENVIRONMENT": JSON.stringify( env.PADDLE_ENVIRONMENT || "sandbox" ),
         },
         resolve: {
             alias: {

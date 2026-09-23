@@ -41,3 +41,29 @@ export async function fetchSubscription( guildId: string ): Promise<ISubscriptio
 
     return body.subscription;
 }
+
+/**
+ * Function startCheckout() :: Where to send somebody to pay for this server.
+ *
+ * The checkout itself opens on the marketing site, because that is the domain paddle approved to
+ * launch one from - this dashboard's subdomain was refused. The api signs a short-lived token
+ * saying which server the signed-in owner picked, and the address it answers with carries that
+ * token rather than the guild: the site is not trusted to name a server, and a typed url buys
+ * nothing.
+ */
+export async function startCheckout( guildId: string, slug: string ): Promise<string> {
+    const response = await fetch( `${ API_CONFIG.BASE_URL }/checkout-intent/${ guildId }`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify( { slug } )
+    } );
+
+    if ( ! response.ok ) {
+        throw new Error( `Failed to start the checkout: ${ response.status }` );
+    }
+
+    const body = await response.json() as { checkoutUrl: string };
+
+    return body.checkoutUrl;
+}

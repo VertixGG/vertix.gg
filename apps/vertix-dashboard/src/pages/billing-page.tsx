@@ -12,13 +12,11 @@ import {
     formatMasterChannelAllowance
 } from "@vertix.gg/definitions/src/billing-definitions";
 
-import { fetchSubscription } from "@vertix.gg/dashboard/src/features/billing/api";
+import { fetchSubscription, startCheckout } from "@vertix.gg/dashboard/src/features/billing/api";
 
 import {
     getPurchasableTiers,
-    isCheckoutAvailable,
-    onCheckoutCompleted,
-    openPlanCheckout
+    isCheckoutAvailable
 } from "@vertix.gg/dashboard/src/lib/paddle";
 
 import type { ISubscription } from "@vertix.gg/dashboard/src/features/billing/api";
@@ -39,9 +37,6 @@ const FREE_TIER = {
 
 /** The one carrying the badge. Pro, because it is the middle of three and the one worth pointing at. */
 const POPULAR_SLUG = "pro";
-
-/** How long to wait after a checkout before asking what changed. */
-const AFTER_CHECKOUT_REFRESH_MS = 2500;
 
 function formatDate( iso: string ): string {
     return new Date( iso ).toLocaleDateString( undefined, { year: "numeric", month: "long", day: "numeric" } );
@@ -260,24 +255,15 @@ export function BillingPage() {
         setOpening( slug );
 
         try {
-            await openPlanCheckout( { priceId: tier.priceId, guildId } );
+            // Leaves this page rather than opening an overlay on it: paddle approved the marketing
+            // site to launch a checkout from and refused this subdomain, so that is where the
+            // overlay can legally open. The person comes back here once they have paid.
+            window.location.assign( await startCheckout( guildId, tier.slug ) );
         } catch {
             setError( "Could not open the checkout. Please try again in a moment." );
-        } finally {
             setOpening( null );
         }
     }, [ guildId ] );
-
-    // Paying does not change this page by itself - the allowance is written by a webhook, which
-    // arrives a moment later. Asking again after a pause is what stops somebody who has just paid
-    // from still being told they are on the free plan.
-    useEffect( () => {
-        onCheckoutCompleted( () => {
-            window.setTimeout( () => void load(), AFTER_CHECKOUT_REFRESH_MS );
-        } );
-
-        return () => onCheckoutCompleted( null );
-    }, [ load ] );
 
     const currentSlug = subscription?.isEntitling ? subscription.planSlug : null;
 

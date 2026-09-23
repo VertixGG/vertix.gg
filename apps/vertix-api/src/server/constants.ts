@@ -8,7 +8,9 @@ export const API_ROUTES = {
     BUTTON_EMOJIS: "/tools/button-emojis.json",
     BUTTON_CATALOGUE: "/tools/buttons.json",
     PADDLE_WEBHOOK: "/webhooks/paddle",
-    SUBSCRIPTION: "/subscription/:guildId"
+    SUBSCRIPTION: "/subscription/:guildId",
+    CHECKOUT_INTENT_CREATE: "/checkout-intent/:guildId",
+    CHECKOUT_INTENT_READ: "/checkout-intent"
 } as const;
 
 export const API_PREFIX = "/api";

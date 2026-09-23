@@ -612,6 +612,18 @@ async function registerMCPService() {
     GlobalLogger.$.info( registerMCPService, "MCP service (Logger Client) is registered" );
 }
 
+async function registerErrorAlertService() {
+    GlobalLogger.$.info( registerErrorAlertService, "Registering error alert service ..." );
+
+    const { ErrorAlertService } = await import( "@vertix.gg/base/src/modules/alerting/error-alert-service" );
+
+    ServiceLocator.$.register( ErrorAlertService );
+
+    await ServiceLocator.$.waitFor( "VertixBase/Modules/ErrorAlertService" );
+
+    GlobalLogger.$.info( registerErrorAlertService, "Error alert service is registered" );
+}
+
 /**
  * Exports all available language files to the language directory
  * @param languageCodes Optional array of language codes to export. If not provided, exports all languages.
@@ -890,6 +902,7 @@ export async function entryPoint( options: {
 
     await registerLoggerServerService();
     await registerMCPService();
+    await registerErrorAlertService();
 
     const envOutput = config( {
         path: envPath,

@@ -27,6 +27,14 @@ async function registerServices() {
     await ServiceLocator.$.waitFor( MCPService.getName(), { timeout: 5000 } );
     logger.info( registerServices, "MCP service (Logger Client) ready" );
 
+    const { ErrorAlertService } = await import( "@vertix.gg/base/src/modules/alerting/error-alert-service" );
+
+    ServiceLocator.$.unregister( "VertixBase/Modules/ErrorAlertService" );
+    ServiceLocator.$.register( ErrorAlertService );
+
+    await ServiceLocator.$.waitFor( "VertixBase/Modules/ErrorAlertService", { timeout: 5000 } );
+    logger.info( registerServices, "Error alert service ready" );
+
     // Register and wait for IPC service (needs Redis connection)
     const { IPCService } = await import( "@vertix.gg/base/src/modules/ipc" );
 

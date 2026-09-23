@@ -1,0 +1,338 @@
+import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
+
+import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
+
+import type { TLogLevelName } from "@vertix.gg/base/src/modules/logger";
+
+const DEFAULT_DEDUPE_WINDOW_MS = 300000;
+const DEFAULT_MAX_ALERTS_PER_MINUTE = 5;
+
+const RATE_LIMIT_WINDOW_MS = 60000;
+const MAX_TRACKED_KEYS = 512;
+
+const DISCORD_EMBED_TITLE_LIMIT = 256;
+const DISCORD_EMBED_DESCRIPTION_LIMIT = 4096;
+const DISCORD_EMBED_FIELD_VALUE_LIMIT = 1024;
+const DISCORD_EMBED_ERROR_COLOR = 0xED4245;
+
+const CODE_FENCE_OVERHEAD = 8;
+
+const WEBHOOK_TIMEOUT_MS = 5000;
+
+const ANSI_ESCAPE_PATTERN = new RegExp( String.fromCharCode( 27 ) + "\\[[0-9;]*m", "g" );
+
+/**
+ * What a log line carries beside its message.
+ *
+ * Narrower than the `any[]` the logger emits, which it can be because the event bus hands a
+ * listener its arguments untyped - so this states what is read here rather than what was sent.
+ * Nothing below does more than test for `Error` and stringify, both of which hold for any value.
+ */
+type TAlertParam = Error | string | number | boolean | null | undefined | object;
+
+type TLogOutputArgs = [
+    level: TLogLevelName,
+    prefix: string,
+    timeDiff: string,
+    source: string,
+    messagePrefix: string,
+    message: string,
+    params: TAlertParam[]
+];
+
+/**
+ * Each service's bus subscription, held here rather than on the instance.
+ *
+ * `ServiceBase` calls `initialize()` from its constructor, and a subclass's field initializers run
+ * after `super()` returns - so anything `initialize()` assigns to a field of its own is overwritten
+ * a moment later by that field's declaration. A subscription lost that way cannot be removed again,
+ * and the listeners accumulate silently. Module scope is not subject to that ordering.
+ */
+const subscriptions = new WeakMap<ErrorAlertService, ( ... args: TLogOutputArgs ) => void>();
+
+interface IDedupeEntry {
+    lastSentAt: number;
+    suppressed: number;
+}
+
+interface IAlert {
+    source: string;
+    messagePrefix: string;
+    message: string;
+    params: TAlertParam[];
+    suppressedRepeats: number;
+    droppedByRateLimit: number;
+}
+
+function stripAnsi( value: string ): string {
+    return value.replace( ANSI_ESCAPE_PATTERN, "" );
+}
+
+function truncate( value: string, limit: number ): string {
+    return value.length > limit ? value.slice( 0, limit - 1 ) + "…" : value;
+}
+
+function describeParams( params: TAlertParam[] ): string {
+    const described = params.map( ( param ) => {
+        if ( param instanceof Error ) {
+            return param.stack || `${ param.name }: ${ param.message }`;
+        }
+
+        if ( "object" === typeof param && null !== param ) {
+            try {
+                return JSON.stringify( param );
+            } catch {
+                return String( param );
+            }
+        }
+
+        return String( param );
+    } );
+
+    return stripAnsi( described.join( "\n" ) ).trim();
+}
+
+/**
+ * Reports error lines to a discord webhook, so a failure does not wait for somebody to read a log.
+ *
+ * Subscribes to the same event the logger client uses, keeps the `ERROR` lines, and drops anything
+ * it has already reported recently or anything over the per-minute cap - a failure that repeats a
+ * thousand times is one alert, and the counts it held back ride along on the next one rather than
+ * being lost.
+ *
+ * Its own failures go to `console.error`. Reporting them through the logger would re-enter here and
+ * a webhook outage would become a loop.
+ */
+export class ErrorAlertService extends ServiceBase {
+    private readonly dedupe = new Map<string, IDedupeEntry>();
+
+    private readonly inFlight = new Set<Promise<void>>();
+
+    private rateWindowStartedAt = 0;
+
+    private sentInRateWindow = 0;
+
+    private droppedByRateLimit = 0;
+
+    public static getName(): string {
+        return "VertixBase/Modules/ErrorAlertService";
+    }
+
+    protected async initialize(): Promise<void> {
+        if ( "true" === process.env.LOGGER_DISABLED ) {
+            return;
+        }
+
+        const subscription = this.onLoggerOutput.bind( this );
+
+        subscriptions.set( this, subscription );
+
+        EventBus.$.on( "VertixBase/Modules/Logger", "outputEvent", subscription );
+    }
+
+    public async stop(): Promise<void> {
+        const subscription = subscriptions.get( this );
+
+        if ( ! subscription ) {
+            return;
+        }
+
+        EventBus.$.off( "VertixBase/Modules/Logger", "outputEvent", subscription );
+
+        subscriptions.delete( this );
+
+        await this.flush();
+    }
+
+    /**
+     * Waits for everything an already-logged error may still turn into.
+     *
+     * The event bus hooks `outputEvent` with an `async` wrapper that awaits before it emits, so a
+     * line is still only a pending microtask when `logger.error()` returns - waiting on the
+     * in-flight set alone finds it empty and answers immediately. Yielding a turn first is what
+     * makes this mean anything on the fatal path, where the next statement ends the process.
+     */
+    public async flush(): Promise<void> {
+        await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+        while ( this.inFlight.size ) {
+            await Promise.allSettled( Array.from( this.inFlight ) );
+        }
+    }
+
+    private getWebhookUrl(): string {
+        return process.env.DISCORD_ERROR_WEBHOOK_URL || "";
+    }
+
+    private getProcessName(): string {
+        return process.env.LOGGER_PROCESS_NAME || process.env.npm_package_name || "unknown";
+    }
+
+    private getDedupeWindowMs(): number {
+        return this.readPositiveInt( process.env.ERROR_ALERT_DEDUPE_WINDOW_MS, DEFAULT_DEDUPE_WINDOW_MS );
+    }
+
+    private getMaxAlertsPerMinute(): number {
+        return this.readPositiveInt( process.env.ERROR_ALERT_MAX_PER_MINUTE, DEFAULT_MAX_ALERTS_PER_MINUTE );
+    }
+
+    private readPositiveInt( value: string | undefined, fallback: number ): number {
+        const parsed = parseInt( value || "", 10 );
+
+        return Number.isFinite( parsed ) && parsed > 0 ? parsed : fallback;
+    }
+
+    private onLoggerOutput( ... [ level, , , source, messagePrefix, message, params ]: TLogOutputArgs ): void {
+        if ( "ERROR" !== level ) {
+            return;
+        }
+
+        const plainSource = stripAnsi( source );
+
+        if ( plainSource.includes( "VertixBase/Modules/ErrorAlertService" ) ) {
+            return;
+        }
+
+        if ( ! this.getWebhookUrl() ) {
+            return;
+        }
+
+        const suppressedRepeats = this.takeDedupeSlot( `${ plainSource }::${ message }` );
+
+        if ( null === suppressedRepeats ) {
+            return;
+        }
+
+        if ( ! this.takeRateLimitSlot() ) {
+            return;
+        }
+
+        const droppedByRateLimit = this.droppedByRateLimit;
+
+        this.droppedByRateLimit = 0;
+
+        this.track( this.send( {
+            source: plainSource,
+            messagePrefix,
+            message,
+            params: params ?? [],
+            suppressedRepeats,
+            droppedByRateLimit
+        } ) );
+    }
+
+    /**
+     * Answers how many repeats were held back since this key was last reported, or `null` when this
+     * one is itself a repeat and should not be reported at all.
+     */
+    private takeDedupeSlot( key: string ): number | null {
+        const now = Date.now();
+        const windowMs = this.getDedupeWindowMs();
+        const seen = this.dedupe.get( key );
+
+        if ( seen && now - seen.lastSentAt < windowMs ) {
+            seen.suppressed++;
+
+            return null;
+        }
+
+        this.dedupe.set( key, { lastSentAt: now, suppressed: 0 } );
+
+        this.prune( now, windowMs );
+
+        return seen?.suppressed ?? 0;
+    }
+
+    private takeRateLimitSlot(): boolean {
+        const now = Date.now();
+
+        if ( now - this.rateWindowStartedAt >= RATE_LIMIT_WINDOW_MS ) {
+            this.rateWindowStartedAt = now;
+            this.sentInRateWindow = 0;
+        }
+
+        if ( this.sentInRateWindow >= this.getMaxAlertsPerMinute() ) {
+            this.droppedByRateLimit++;
+
+            return false;
+        }
+
+        this.sentInRateWindow++;
+
+        return true;
+    }
+
+    private prune( now: number, windowMs: number ): void {
+        if ( this.dedupe.size <= MAX_TRACKED_KEYS ) {
+            return;
+        }
+
+        for ( const [ key, entry ] of this.dedupe ) {
+            if ( now - entry.lastSentAt >= windowMs ) {
+                this.dedupe.delete( key );
+            }
+        }
+    }
+
+    private track( promise: Promise<void> ): void {
+        this.inFlight.add( promise );
+
+        void promise.finally( () => this.inFlight.delete( promise ) );
+    }
+
+    private async send( alert: IAlert ): Promise<void> {
+        const webhookUrl = this.getWebhookUrl();
+
+        if ( ! webhookUrl ) {
+            return;
+        }
+
+        try {
+            const response = await fetch( webhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify( this.buildPayload( alert ) ),
+                signal: AbortSignal.timeout( WEBHOOK_TIMEOUT_MS )
+            } );
+
+            if ( ! response.ok ) {
+                console.error( `VertixBase/Modules/ErrorAlertService: webhook answered ${ response.status } ${ response.statusText }` );
+            }
+        } catch( error ) {
+            console.error( "VertixBase/Modules/ErrorAlertService: failed to deliver an alert", error );
+        }
+    }
+
+    private buildPayload( alert: IAlert ) {
+        const details = describeParams( alert.params );
+
+        const heldBack: string[] = [];
+
+        if ( alert.suppressedRepeats > 0 ) {
+            heldBack.push( `${ alert.suppressedRepeats } repeat(s) suppressed` );
+        }
+
+        if ( alert.droppedByRateLimit > 0 ) {
+            heldBack.push( `${ alert.droppedByRateLimit } other alert(s) dropped by the rate limit` );
+        }
+
+        return {
+            username: this.getProcessName(),
+            embeds: [ {
+                title: truncate( alert.messagePrefix + alert.message, DISCORD_EMBED_TITLE_LIMIT ),
+                description: details
+                    ? "```\n" + truncate( details, DISCORD_EMBED_DESCRIPTION_LIMIT - CODE_FENCE_OVERHEAD ) + "\n```"
+                    : undefined,
+                color: DISCORD_EMBED_ERROR_COLOR,
+                fields: [ {
+                    name: "Source",
+                    value: truncate( alert.source, DISCORD_EMBED_FIELD_VALUE_LIMIT )
+                } ],
+                footer: heldBack.length ? { text: heldBack.join( " · " ) } : undefined,
+                timestamp: new Date().toISOString()
+            } ]
+        };
+    }
+}
+
+export default ErrorAlertService;

@@ -6,12 +6,16 @@ import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
-const DEFAULT_LOG_PREFIX = pc.white( "⚪  - [LOG]" ),
-    DEFAULT_INFO_PREFIX = pc.blue( "🔵 - [INFO]" ),
-    DEFAULT_DEBUG_PREFIX = pc.gray( "🟤 - [DEBUG]" ),
-    DEFAULT_WARN_PREFIX = pc.yellow( "🟡 - [WARN]" ),
-    DEFAULT_ERROR_PREFIX = pc.red( "🔴 - [ERROR]" ),
-    DEFAULT_ADMIN_PREFIX = pc.bold( "🟣 - [ADMIN]" );
+export type TLogLevelName = "LOG" | "INFO" | "DEBUG" | "WARN" | "ERROR" | "ADMIN";
+
+const LEVEL_PREFIXES: Record<TLogLevelName, string> = {
+    LOG: pc.white( "⚪  - [LOG]" ),
+    INFO: pc.blue( "🔵 - [INFO]" ),
+    DEBUG: pc.gray( "🟤 - [DEBUG]" ),
+    WARN: pc.yellow( "🟡 - [WARN]" ),
+    ERROR: pc.red( "🔴 - [ERROR]" ),
+    ADMIN: pc.bold( "🟣 - [ADMIN]" )
+};
 
 const DEFAULT_LOG_LEVEL = "5";
 
@@ -160,27 +164,27 @@ export class Logger extends ObjectBase {
      * and the gui report two hundred and forty errors between them, all of them `unknown`.
      */
     public log( caller: ICaller, message: string, ...params: any[] ): void {
-        this.output( DEFAULT_LOG_PREFIX, caller, message, ...params );
+        this.output( "LOG", caller, message, ...params );
     }
 
     public info( caller: ICaller, message: string, ...params: any[] ): void {
-        this.output( DEFAULT_INFO_PREFIX, caller, message, ...params );
+        this.output( "INFO", caller, message, ...params );
     }
 
     public debug( caller: ICaller, message: string, ...params: any[] ): void {
-        this.output( DEFAULT_DEBUG_PREFIX, caller, message, ...params );
+        this.output( "DEBUG", caller, message, ...params );
     }
 
     public warn( caller: ICaller, message: string, ...params: any[] ): void {
-        this.output( DEFAULT_WARN_PREFIX, caller, message, ...params );
+        this.output( "WARN", caller, message, ...params );
     }
 
     public error( caller: ICaller, message: string, ...params: any[] ): void {
-        this.output( DEFAULT_ERROR_PREFIX, caller, message, ...params );
+        this.output( "ERROR", caller, message, ...params );
     }
 
     public admin( caller: ICaller, message: string, ...params: any[] ): void {
-        this.output( DEFAULT_ADMIN_PREFIX, caller, message, ...params );
+        this.output( "ADMIN", caller, message, ...params );
     }
 
     public beep() {
@@ -269,7 +273,9 @@ export class Logger extends ObjectBase {
         return previousSource;
     }
 
-    private output( prefix: string, caller: ICaller, message: string, ...params: any[] ): void {
+    private output( level: TLogLevelName, caller: ICaller, message: string, ...params: any[] ): void {
+        const prefix = LEVEL_PREFIXES[ level ];
+
         const source = this.getPreviousSource() + pc.white( this.ownerName + "::" + this.getCallerName( caller ) );
 
         let messagePrefix = "";
@@ -281,7 +287,7 @@ export class Logger extends ObjectBase {
         const timestamp = this.getTime();
         const timeDiff = ( new Date().getTime() - Logger.lastLogTime ).toString().padStart( 4, "0" );
 
-        this.outputEvent( prefix, timeDiff, source, messagePrefix, message, params );
+        this.outputEvent( level, prefix, timeDiff, source, messagePrefix, message, params );
 
         const output = `${ prefix }[${ timestamp }][+${ timeDiff }ms][${ source }]${ messagePrefix }: ${ message }`;
 
@@ -291,6 +297,6 @@ export class Logger extends ObjectBase {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public outputEvent( prefix: string, timeDiff: string, source: string, messagePrefix: string, message: string, params: any[] ): void {
+    public outputEvent( level: TLogLevelName, prefix: string, timeDiff: string, source: string, messagePrefix: string, message: string, params: any[] ): void {
     }
 }

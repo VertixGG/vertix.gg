@@ -2,6 +2,8 @@ import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
+import type { TLogLevelName } from "@vertix.gg/base/src/modules/logger";
+
 const LOGGER_SERVER_HTTP_PORT = process.env.LOGGER_SERVER_HTTP_PORT ? parseInt( process.env.LOGGER_SERVER_HTTP_PORT, 10 ) : 3090;
 const LOGGER_SERVER_HOST = process.env.LOGGER_SERVER_HOST || "localhost";
 
@@ -115,7 +117,7 @@ export class MCPService extends ServiceBase {
      * since neither its message nor its stack is enumerable - so every error ever handed to
      * `logger.error()` as a parameter reached the server carrying nothing at all.
      */
-    private async onLoggerOutput( prefix: string, timeDiff: string, source: string, messagePrefix: string, message: string, params: any[] ): Promise<void> {
+    private async onLoggerOutput( level: TLogLevelName, prefix: string, timeDiff: string, source: string, messagePrefix: string, message: string, params: any[] ): Promise<void> {
         // Skip sending if server is known to be unavailable (health check will retry)
         if ( !MCPService.isServerAvailable ) {
             return;
@@ -135,6 +137,7 @@ export class MCPService extends ServiceBase {
         const logEntry = {
             timestamp: new Date().getTime(),
             process: processName,
+            level,
             prefix,
             timeDiff,
             source,

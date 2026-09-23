@@ -52,7 +52,7 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
         it( "should post a crash embed to the webhook", async() => {
             await new CrashAlertReporter().report( {
                 kind: "down",
-                app: "vertix-api",
+                apps: [ "vertix-api" ],
                 detail: "pm2 is restarting it.",
                 status: "stopped",
                 exitCode: 1,
@@ -77,7 +77,7 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
             const reporter = new CrashAlertReporter();
 
             for ( const kind of [ "gave-up", "revived", "recovered" ] as const ) {
-                await reporter.report( { kind, app: "vertix-bot-1", detail: "" } );
+                await reporter.report( { kind, apps: [ "vertix-bot-1" ], detail: "" } );
             }
 
             const titles = fetchMock.mock.calls.map(
@@ -94,7 +94,7 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
         it( "should stay silent when no webhook is configured", async() => {
             delete process.env.DISCORD_ERROR_WEBHOOK_URL;
 
-            await new CrashAlertReporter().report( { kind: "down", app: "vertix-api", detail: "" } );
+            await new CrashAlertReporter().report( { kind: "down", apps: [ "vertix-api" ], detail: "" } );
 
             expect( fetchMock ).not.toHaveBeenCalled();
         } );
@@ -102,7 +102,7 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
         it( "should prefer the watchdog's own webhook over the shared error one", async() => {
             process.env.WATCHDOG_WEBHOOK_URL = "https://discord.test/api/webhooks/vertix/own";
 
-            await new CrashAlertReporter().report( { kind: "down", app: "vertix-api", detail: "" } );
+            await new CrashAlertReporter().report( { kind: "down", apps: [ "vertix-api" ], detail: "" } );
 
             expect( fetchMock.mock.calls[ 0 ][ 0 ] ).toBe( "https://discord.test/api/webhooks/vertix/own" );
         } );
@@ -112,8 +112,8 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
 
             const reporter = new CrashAlertReporter();
 
-            await reporter.report( { kind: "gave-up", app: "vertix-api", detail: "" } );
-            await reporter.report( { kind: "recovered", app: "vertix-api", detail: "" } );
+            await reporter.report( { kind: "gave-up", apps: [ "vertix-api" ], detail: "" } );
+            await reporter.report( { kind: "recovered", apps: [ "vertix-api" ], detail: "" } );
 
             const payloads = fetchMock.mock.calls.map(
                 ( [ , init ] ) => JSON.parse( ( init as { body: string } ).body ) as IPostedPayload
@@ -129,7 +129,7 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
         it( "should note suppressed repeats in the footer", async() => {
             await new CrashAlertReporter().report( {
                 kind: "down",
-                app: "vertix-api",
+                apps: [ "vertix-api" ],
                 detail: "",
                 suppressedRepeats: 7
             } );
@@ -141,7 +141,7 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
             fetchMock.mockResolvedValue( { ok: false, status: 429, statusText: "Too Many Requests" } );
 
             await expect(
-                new CrashAlertReporter().report( { kind: "down", app: "vertix-api", detail: "" } )
+                new CrashAlertReporter().report( { kind: "down", apps: [ "vertix-api" ], detail: "" } )
             ).resolves.toBeUndefined();
 
             expect( consoleError ).toHaveBeenCalled();
@@ -151,7 +151,7 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
             fetchMock.mockRejectedValue( new Error( "The operation timed out." ) );
 
             await expect(
-                new CrashAlertReporter().report( { kind: "down", app: "vertix-api", detail: "" } )
+                new CrashAlertReporter().report( { kind: "down", apps: [ "vertix-api" ], detail: "" } )
             ).resolves.toBeUndefined();
 
             expect( consoleError ).toHaveBeenCalled();
@@ -168,7 +168,7 @@ describe( "VertixWatchdog/CrashAlertReporter", () => {
 
             const reporter = new CrashAlertReporter();
 
-            void reporter.report( { kind: "down", app: "vertix-api", detail: "" } );
+            void reporter.report( { kind: "down", apps: [ "vertix-api" ], detail: "" } );
 
             let flushed = false;
 

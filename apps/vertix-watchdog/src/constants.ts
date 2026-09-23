@@ -10,6 +10,9 @@ export const WATCHDOG_DEFAULTS = {
     RECOVERY_UPTIME_MS: 60000,
     STABLE_UPTIME_MS: 900000,
 
+    DELIBERATE_SETTLE_MS: 90000,
+    DELIBERATE_SETTLE_ROUNDS: 3,
+
     WEBHOOK_TIMEOUT_MS: 5000
 } as const;
 
@@ -18,6 +21,8 @@ export const WATCHDOG_EMBED = {
     COLOR_GAVE_UP: 0x992D22,
     COLOR_REVIVED: 0xFEE75C,
     COLOR_RECOVERED: 0x57F287,
+    COLOR_REDEPLOYED: 0x5865F2,
+    COLOR_STOPPED: 0x99AAB5,
 
     TITLE_LIMIT: 256,
     FIELD_VALUE_LIMIT: 1024
@@ -31,5 +36,6 @@ export const PM2_EVENT = {
 export const PM2_STATUS = {
     ONLINE: "online",
     ERRORED: "errored",
-    STOPPING: "stopping"
+    STOPPING: "stopping",
+    STOPPED: "stopped"
 } as const;

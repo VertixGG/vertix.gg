@@ -10,6 +10,7 @@ import type {
 } from "@vertix.gg/watchdog/src/watchdog-definitions";
 
 const REVIVE_INITIAL_DELAY_MS = 30000;
+const SETTLE_MS = 90000;
 
 class FakeReporter implements IAlertReporter {
     public readonly alerts: ICrashAlert[] = [];
@@ -82,7 +83,7 @@ describe( "VertixWatchdog/ProcessWatchdog", () => {
             expect( reporter.alerts ).toHaveLength( 1 );
             expect( reporter.alerts[ 0 ] ).toMatchObject( {
                 kind: "down",
-                app: "vertix-api",
+                apps: [ "vertix-api" ],
                 exitCode: 1,
                 restarts: 3
             } );
@@ -108,13 +109,24 @@ describe( "VertixWatchdog/ProcessWatchdog", () => {
             expect( reporter.alerts[ 1 ].suppressedRepeats ).toBe( 2 );
         } );
 
-        it( "should say nothing will be started back when the stop was asked for", () => {
+        it( "should hold a deliberate stop back rather than calling it a crash", () => {
             watchdog.handleEvent( {
                 event: "exit",
                 process: { name: "vertix-api", status: "stopping" }
             } );
 
-            expect( reporter.alerts[ 0 ].detail ).toContain( "nothing will be started back" );
+            expect( reporter.alerts ).toHaveLength( 0 );
+        } );
+
+        it( "should ignore the second exit a deliberate stop emits", async() => {
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopped" } } );
+
+            supervisor.listed = [ { name: "vertix-api", status: "online" } ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.kinds() ).toEqual( [ "redeployed" ] );
         } );
 
         it( "should report and revive when pm2 gives up", async() => {
@@ -176,6 +188,105 @@ describe( "VertixWatchdog/ProcessWatchdog", () => {
             watchdog.handleEvent( { event: "exit", process: {} } );
 
             expect( reporter.alerts ).toHaveLength( 0 );
+        } );
+    } );
+
+    describe( "a deliberate stop", () => {
+        it( "should collapse a whole deploy into one notice", async() => {
+            for ( const name of [ "vertix-api", "vertix-bot-0", "vertix-bot-1" ] ) {
+                watchdog.handleEvent( { event: "exit", process: { name, status: "stopping" } } );
+            }
+
+            supervisor.listed = [
+                { name: "vertix-api", status: "online" },
+                { name: "vertix-bot-0", status: "online" },
+                { name: "vertix-bot-1", status: "online" }
+            ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.alerts ).toHaveLength( 1 );
+            expect( reporter.alerts[ 0 ] ).toMatchObject( {
+                kind: "redeployed",
+                apps: [ "vertix-api", "vertix-bot-0", "vertix-bot-1" ]
+            } );
+        } );
+
+        it( "should say stopped when it does not come back", async() => {
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
+
+            supervisor.listed = [ { name: "vertix-api", status: "stopped" } ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.alerts ).toHaveLength( 1 );
+            expect( reporter.alerts[ 0 ] ).toMatchObject( {
+                kind: "stopped",
+                apps: [ "vertix-api" ]
+            } );
+        } );
+
+        it( "should split a deploy where only some came back", async() => {
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-bot-0", status: "stopping" } } );
+
+            supervisor.listed = [
+                { name: "vertix-api", status: "online" },
+                { name: "vertix-bot-0", status: "stopped" }
+            ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.alerts.map( ( alert ) => [ alert.kind, alert.apps ] ) ).toEqual( [
+                [ "redeployed", [ "vertix-api" ] ],
+                [ "stopped", [ "vertix-bot-0" ] ]
+            ] );
+        } );
+
+        it( "should wait for an app that is still on its way up", async() => {
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
+
+            supervisor.listed = [ { name: "vertix-api", status: "launching" } ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.alerts ).toHaveLength( 0 );
+
+            supervisor.listed = [ { name: "vertix-api", status: "online" } ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.kinds() ).toEqual( [ "redeployed" ] );
+        } );
+
+        it( "should give up waiting rather than hold an app forever", async() => {
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
+
+            supervisor.listed = [ { name: "vertix-api", status: "launching" } ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS * 4 );
+
+            expect( reporter.kinds() ).toEqual( [ "stopped" ] );
+        } );
+
+        it( "should call an app that pm2 no longer has stopped", async() => {
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
+
+            supervisor.listed = [];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS );
+
+            expect( reporter.kinds() ).toEqual( [ "stopped" ] );
+        } );
+
+        it( "should not ask for a revive - a stop is not pm2 giving up", async() => {
+            watchdog.handleEvent( { event: "exit", process: { name: "vertix-api", status: "stopping" } } );
+
+            supervisor.listed = [ { name: "vertix-api", status: "stopped" } ];
+
+            await jest.advanceTimersByTimeAsync( SETTLE_MS + REVIVE_INITIAL_DELAY_MS );
+
+            expect( supervisor.restarted ).toEqual( [] );
         } );
     } );
 

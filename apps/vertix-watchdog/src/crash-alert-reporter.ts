@@ -4,18 +4,30 @@ import { WATCHDOG_DEFAULTS, WATCHDOG_EMBED } from "@vertix.gg/watchdog/src/const
 
 import type { IAlertReporter, ICrashAlert, TCrashAlertKind } from "@vertix.gg/watchdog/src/watchdog-definitions";
 
-const HEADLINES: Record<TCrashAlertKind, ( app: string ) => string> = {
-    "down": ( app ) => `${ app } went down`,
-    "gave-up": ( app ) => `pm2 gave up on ${ app }`,
-    "revived": ( app ) => `${ app } restarted by the watchdog`,
-    "recovered": ( app ) => `${ app } is back`
+/**
+ * `apps` holds more than one only for the kinds that collapse a whole deploy into a single notice,
+ * so the rest read the first and ignore the shape.
+ */
+const HEADLINES: Record<TCrashAlertKind, ( apps: string[] ) => string> = {
+    "down": ( apps ) => `${ apps[ 0 ] } went down`,
+    "gave-up": ( apps ) => `pm2 gave up on ${ apps[ 0 ] }`,
+    "revived": ( apps ) => `${ apps[ 0 ] } restarted by the watchdog`,
+    "recovered": ( apps ) => `${ apps[ 0 ] } is back`,
+    "redeployed": ( apps ) => apps.length > 1
+        ? `${ apps.length } apps redeployed`
+        : `${ apps[ 0 ] } redeployed`,
+    "stopped": ( apps ) => apps.length > 1
+        ? `${ apps.length } apps stopped`
+        : `${ apps[ 0 ] } stopped`
 };
 
 const COLORS: Record<TCrashAlertKind, number> = {
     "down": WATCHDOG_EMBED.COLOR_DOWN,
     "gave-up": WATCHDOG_EMBED.COLOR_GAVE_UP,
     "revived": WATCHDOG_EMBED.COLOR_REVIVED,
-    "recovered": WATCHDOG_EMBED.COLOR_RECOVERED
+    "recovered": WATCHDOG_EMBED.COLOR_RECOVERED,
+    "redeployed": WATCHDOG_EMBED.COLOR_REDEPLOYED,
+    "stopped": WATCHDOG_EMBED.COLOR_STOPPED
 };
 
 /**
@@ -98,6 +110,9 @@ export class CrashAlertReporter extends InitializeBase implements IAlertReporter
         const mention = MENTIONED_KINDS.has( alert.kind ) ? this.getMention() : "";
 
         const fields = [
+            ... alert.apps.length > 1
+                ? [ { name: "Apps", value: truncate( alert.apps.join( ", " ), WATCHDOG_EMBED.FIELD_VALUE_LIMIT ) } ]
+                : [],
             ... alert.status ? [ { name: "Status", value: alert.status, inline: true } ] : [],
             ... undefined !== alert.exitCode ? [ { name: "Exit code", value: String( alert.exitCode ), inline: true } ] : [],
             ... undefined !== alert.restarts ? [ { name: "Restarts", value: String( alert.restarts ), inline: true } ] : []
@@ -112,7 +127,7 @@ export class CrashAlertReporter extends InitializeBase implements IAlertReporter
             content: mention || undefined,
             allowed_mentions: mention ? { parse: [ "users", "roles" ] } : { parse: [] },
             embeds: [ {
-                title: truncate( HEADLINES[ alert.kind ]( alert.app ), WATCHDOG_EMBED.TITLE_LIMIT ),
+                title: truncate( HEADLINES[ alert.kind ]( alert.apps ), WATCHDOG_EMBED.TITLE_LIMIT ),
                 description: truncate( alert.detail, WATCHDOG_EMBED.FIELD_VALUE_LIMIT ),
                 color: COLORS[ alert.kind ],
                 fields,

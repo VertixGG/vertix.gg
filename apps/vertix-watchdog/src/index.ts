@@ -26,7 +26,7 @@ async function reportOwnFailure( heading: string, error: Error ): Promise<void> 
 
     await reporter.report( {
         kind: "gave-up",
-        app: "vertix-watchdog",
+        apps: [ "vertix-watchdog" ],
         detail: `${ heading }: ${ error.name }: ${ error.message }`
     } );
 

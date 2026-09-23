@@ -45,6 +45,17 @@ export class ProcessWatchdog extends InitializeBase {
 
     private readonly watched = new Map<string, IWatchedApp>();
 
+    /**
+     * Apps pm2 was asked to stop, and how many settle rounds each has waited.
+     *
+     * Held rather than reported, because at the moment of the `exit` a deliberate stop and the first
+     * half of a redeploy are the same event - the difference is whether the app comes back, which is
+     * only knowable later.
+     */
+    private readonly settling = new Map<string, number>();
+
+    private settleTimer?: ReturnType<typeof setTimeout>;
+
     private reconcileTimer?: ReturnType<typeof setInterval>;
 
     public constructor( args: IProcessWatchdogArgs ) {
@@ -74,6 +85,12 @@ export class ProcessWatchdog extends InitializeBase {
             clearInterval( this.reconcileTimer );
 
             this.reconcileTimer = undefined;
+        }
+
+        if ( this.settleTimer ) {
+            clearTimeout( this.settleTimer );
+
+            this.settleTimer = undefined;
         }
 
         for ( const app of this.watched.values() ) {
@@ -172,6 +189,13 @@ export class ProcessWatchdog extends InitializeBase {
         );
     }
 
+    private getSettleMs(): number {
+        return this.readPositiveInt(
+            process.env.WATCHDOG_DELIBERATE_SETTLE_MS,
+            WATCHDOG_DEFAULTS.DELIBERATE_SETTLE_MS
+        );
+    }
+
     private getDedupeWindowMs(): number {
         return this.readPositiveInt(
             process.env.WATCHDOG_DEDUPE_WINDOW_MS,
@@ -220,14 +244,25 @@ export class ProcessWatchdog extends InitializeBase {
     }
 
     private onExit( name: string, description?: IPm2ProcessDescription ): void {
+        /*
+         * A deliberate stop emits `exit` twice - once while the status is still `stopping`, and
+         * again from the stop itself once it is `stopped`. The second is indistinguishable from a
+         * crash, so an app already waiting to settle ignores anything further.
+         */
+        if ( this.settling.has( name ) ) {
+            return;
+        }
+
+        if ( PM2_STATUS.STOPPING === description?.status ) {
+            this.deferSettle( name );
+
+            return;
+        }
+
         const app = this.entry( name );
 
-        /*
-         * A deliberate `pm2 stop` emits `exit` twice - once while the status is still `stopping` and
-         * again once it is `stopped` - and a crash loop emits one per restart. Both are the same
-         * event to anyone reading the channel, so the window collapses them and the next alert
-         * carries the count.
-         */
+        // A crash loop emits one of these per restart, and they are one event to anyone reading the
+        // channel, so the window collapses them and the next alert carries the count.
         if ( Date.now() - app.reportedDownAt < this.getDedupeWindowMs() ) {
             app.suppressedRepeats++;
 
@@ -241,10 +276,8 @@ export class ProcessWatchdog extends InitializeBase {
 
         void this.reporter.report( {
             kind: "down",
-            app: name,
-            detail: PM2_STATUS.STOPPING === description?.status
-                ? "Stopped. pm2 was asked for this, so nothing will be started back."
-                : "pm2 is restarting it.",
+            apps: [ name ],
+            detail: "pm2 is restarting it.",
             status: description?.status,
             exitCode: description?.exit_code,
             restarts: description?.restart_time,
@@ -252,10 +285,105 @@ export class ProcessWatchdog extends InitializeBase {
         } );
     }
 
+    /**
+     * Holds a deliberate stop back until it is clear what it was.
+     *
+     * One timer for all of them, started by the first and joined by whatever follows: a deploy takes
+     * every app down within a few seconds of each other, so batching by time is what turns six
+     * notices into one. Reported late on purpose - none of this is an incident, and a notice that is
+     * right ninety seconds on beats six that are wrong immediately.
+     */
+    private deferSettle( name: string ): void {
+        this.settling.set( name, 0 );
+
+        if ( this.settleTimer ) {
+            return;
+        }
+
+        this.settleTimer = setTimeout( () => {
+            this.settleTimer = undefined;
+
+            void this.settle();
+        }, this.getSettleMs() );
+    }
+
+    private async settle(): Promise<void> {
+        let apps: IPm2ProcessDescription[];
+
+        try {
+            apps = await this.supervisor.list();
+        } catch( error ) {
+            this.logger.error( this.settle, "Could not list pm2 apps", error );
+
+            this.settling.clear();
+
+            return;
+        }
+
+        const statuses = new Map( apps.map( ( app ) => [ app.name ?? "", app.status ] ) );
+
+        const redeployed: string[] = [];
+        const stopped: string[] = [];
+
+        for ( const [ name, rounds ] of Array.from( this.settling ) ) {
+            const status = statuses.get( name );
+
+            if ( PM2_STATUS.ONLINE === status ) {
+                redeployed.push( name );
+                this.settling.delete( name );
+
+                continue;
+            }
+
+            /*
+             * Still on its way up - the ordered restart waits for each app's port before starting the
+             * next, so the last of them can be a minute behind the first. Only a settled `stopped`,
+             * a vanished app, or running out of rounds is called stopped.
+             */
+            const isSettled = undefined === status
+                || PM2_STATUS.STOPPED === status
+                || PM2_STATUS.ERRORED === status;
+
+            if ( ! isSettled && rounds + 1 < WATCHDOG_DEFAULTS.DELIBERATE_SETTLE_ROUNDS ) {
+                this.settling.set( name, rounds + 1 );
+
+                continue;
+            }
+
+            stopped.push( name );
+            this.settling.delete( name );
+        }
+
+        if ( redeployed.length ) {
+            void this.reporter.report( {
+                kind: "redeployed",
+                apps: redeployed,
+                detail: "Stopped and came back, so this was a restart rather than an outage."
+            } );
+        }
+
+        if ( stopped.length ) {
+            void this.reporter.report( {
+                kind: "stopped",
+                apps: stopped,
+                detail: "pm2 was asked to stop these and they have not come back. Nothing will be started back.",
+                status: PM2_STATUS.STOPPED
+            } );
+        }
+
+        if ( this.settling.size ) {
+            this.settleTimer = setTimeout( () => {
+                this.settleTimer = undefined;
+
+                void this.settle();
+            }, this.getSettleMs() );
+        }
+    }
+
     private onGaveUp( name: string, description?: IPm2ProcessDescription ): void {
         void this.reporter.report( {
             kind: "gave-up",
-            app: name,
+            apps: [ name ],
             detail: "Too many unstable restarts - pm2 marked it errored and stopped trying. The watchdog will start it back.",
             status: PM2_STATUS.ERRORED,
             exitCode: description?.exit_code,
@@ -286,7 +414,7 @@ export class ProcessWatchdog extends InitializeBase {
 
         void this.reporter.report( {
             kind: "recovered",
-            app: name,
+            apps: [ name ],
             detail: "Running again, and has stayed up.",
             status: PM2_STATUS.ONLINE
         } );
@@ -330,7 +458,7 @@ export class ProcessWatchdog extends InitializeBase {
 
         void this.reporter.report( {
             kind: "revived",
-            app: name,
+            apps: [ name ],
             detail: `Started back after waiting ${ Math.round( waitedMs / 1000 ) }s.`
         } );
     }

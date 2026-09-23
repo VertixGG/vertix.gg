@@ -35,11 +35,24 @@ export interface IProcessSupervisor {
     restart( name: string ): Promise<void>;
 }
 
-export type TCrashAlertKind = "down" | "gave-up" | "revived" | "recovered";
+export type TCrashAlertKind =
+    | "down"
+    | "gave-up"
+    | "revived"
+    | "recovered"
+    | "redeployed"
+    | "stopped";
 
 export interface ICrashAlert {
     kind: TCrashAlertKind;
-    app: string;
+
+    /**
+     * Who the notice is about - more than one only when several went together, which is what a
+     * deploy looks like. A list rather than a string because the alternative was one embed per app
+     * and a deploy of six filling the channel with six identical red notices.
+     */
+    apps: string[];
+
     detail: string;
     status?: string;
     exitCode?: number;

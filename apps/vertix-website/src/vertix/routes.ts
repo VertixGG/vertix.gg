@@ -74,6 +74,10 @@ const routes = [
         path: "/posts/channel-name-placeholders",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/channel-name-placeholders" ) ),
     },
+    {
+        path: "/posts/disable-auto-status",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/disable-auto-status" ) ),
+    },
     // ---
     {
         path: "/welcome",

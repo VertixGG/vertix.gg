@@ -207,6 +207,7 @@ export default function Header() {
                                     { title: "Enable Logs", href: "/posts/how-to-setup-logs-channel" },
                                     { title: "Enable Features", href: "/posts/enable-features" },
                                     { title: "Name Placeholders", href: "/posts/channel-name-placeholders" },
+                                    { title: "Disable AutoStatus", href: "/posts/disable-auto-status" },
                                 ] }/>
 
                                 <NavbarItem title="Plans" href="/pricing"/>

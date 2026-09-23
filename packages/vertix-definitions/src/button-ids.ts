@@ -174,6 +174,14 @@ export function buttonsPerRow( version: string | null | undefined ): number {
 }
 
 /**
+ * The most buttons one set can hold, in either version.
+ *
+ * A version whose catalogue is smaller offers only what it has, so this bites only once one grows
+ * past it.
+ */
+export const MAX_BUTTONS_PER_SET = 15;
+
+/**
  * Function isV2ButtonEntry() :: Whether one stored entry names this v2 button.
  *
  * A v2 set can hold either vocabulary - its own screen inside discord writes numbers, and a

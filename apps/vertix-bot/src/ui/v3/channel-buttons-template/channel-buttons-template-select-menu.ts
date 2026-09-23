@@ -1,3 +1,5 @@
+import { MAX_BUTTONS_PER_SET } from "@vertix.gg/definitions/src/button-ids";
+
 import { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
@@ -30,7 +32,7 @@ export class ChannelButtonsTemplateSelectMenu extends UIElementStringSelectMenu 
     }
 
     protected async getMaxValues() {
-        return allItems.length;
+        return Math.min( allItems.length, MAX_BUTTONS_PER_SET );
     }
 
     protected async getSelectOptions() {

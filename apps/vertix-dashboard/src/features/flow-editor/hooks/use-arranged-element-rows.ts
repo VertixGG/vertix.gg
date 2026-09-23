@@ -4,6 +4,7 @@ import { BUTTON_ROW_LIMITS, joinTemplate, splitTemplate, toRows } from "@vertix.
 import {
     DYNAMIC_CHANNEL_COMPONENT,
     DYNAMIC_CHANNEL_PANEL_COMPONENT,
+    MAX_BUTTONS_PER_SET,
     isV2Version,
     toV2ButtonIds,
     toV3ButtonIds
@@ -421,6 +422,13 @@ export function useArrangedElementRows(
         // Dropped out of the rows: the generator stops carrying it.
         if ( OMITTED_ROW === targetRow ) {
             setDraft( withoutEmpty( next ) );
+            return;
+        }
+
+        // Only a button coming in from outside the rows grows the set, and the buttons menu inside
+        // discord stops a pick at the same count.
+        if ( ! from && MAX_BUTTONS_PER_SET <= rows.flat().length ) {
+            setError( `A set can hold at most ${ MAX_BUTTONS_PER_SET } buttons` );
             return;
         }
 

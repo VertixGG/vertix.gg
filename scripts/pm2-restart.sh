@@ -138,6 +138,11 @@ done
 
 # Anything this script does not name - added since, or left by a dead daemon.
 # `pm2 delete all` cannot spare one app, so the list is asked for and filtered.
+#
+# Two things are spared. The watchdog, because it is what reports the deploy. And pm2's own modules,
+# which `pm2 delete all` never touched and this enumeration otherwise would: `pm2 jlist` returns
+# them alongside the apps, so the first version of this deleted `pm2-logrotate` on every deploy and
+# left the box rotating nothing. A module is the one with `pmx_module` set.
 pm2 jlist 2>/dev/null | node -e '
     const chunks = [];
 
@@ -152,8 +157,9 @@ pm2 jlist 2>/dev/null | node -e '
         }
 
         process.stdout.write(
-            apps.map( ( app ) => app.name )
-                .filter( ( name ) => name !== "vertix-watchdog" )
+            apps.filter( ( app ) => ! ( app.pm2_env && app.pm2_env.pmx_module ) )
+                .map( ( app ) => app.name )
+                .filter( ( name ) => name && name !== "vertix-watchdog" )
                 .join( "\n" )
         );
     } );

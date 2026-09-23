@@ -12,9 +12,15 @@ const KNOCK_REQUEST_TIMEOUT_MS = 5 * 60 * 1000,
  * Class `DynamicChannelKnockManager` - The requests to join a channel that are still waiting on an
  * owner.
  *
- * Held in memory rather than stored: a request is only meaningful while the channel it names is
- * open, and a dynamic channel does not outlive a restart either. The cost of losing them is that
- * someone knocks a second time.
+ * Held in memory rather than stored, though not because the channel is short-lived: dynamic
+ * channels are read back from the database on boot and outlive any restart. Nor is the request
+ * itself lost - it is sent into the channel as an ordinary message, so its `Allow` and `Deny` still
+ * work afterwards.
+ *
+ * What a restart costs is the bookkeeping around it. The dedupe goes, so the same person can post a
+ * second prompt beside the first; the five minutes that would have retired an unanswered one go
+ * with it; and the cooldown stops counting, so somebody just refused can ask again at once. Each of
+ * those costs a repeat. None of them costs an answer.
  */
 export class DynamicChannelKnockManager extends InitializeBase {
     private static instance: DynamicChannelKnockManager;

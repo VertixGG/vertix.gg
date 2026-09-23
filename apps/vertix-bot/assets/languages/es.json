@@ -1579,6 +1579,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChoiceExpiredEmbed",
+      "content": {
+        "title": "⌛ Esa elección ha caducado",
+        "description": "No se cambió nada.\n\nEmpieza de nuevo para elegir otra vez."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
         "title": "😈  Reclamar funciona dentro del canal",

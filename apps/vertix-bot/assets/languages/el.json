@@ -1579,6 +1579,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChoiceExpiredEmbed",
+      "content": {
+        "title": "⌛ Αυτή η επιλογή έληξε",
+        "description": "Δεν άλλαξε τίποτα.\n\nΞεκίνα από την αρχή για να επιλέξεις ξανά."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
         "title": "😈  Η διεκδίκηση γίνεται μέσα στο κανάλι",

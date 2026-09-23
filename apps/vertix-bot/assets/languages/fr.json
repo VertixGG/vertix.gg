@@ -1579,6 +1579,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChoiceExpiredEmbed",
+      "content": {
+        "title": "⌛ Ce choix a expiré",
+        "description": "Rien n'a été modifié.\n\nRecommence pour choisir à nouveau."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
         "title": "😈  Réclamer se fait dans le salon",

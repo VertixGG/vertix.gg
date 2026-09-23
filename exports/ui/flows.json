@@ -4074,6 +4074,7 @@
                     "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/Transitions/Confirm",
                     "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/Transitions/DisabledByClaim",
                     "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/Transitions/Error",
+                    "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/Transitions/ChoiceExpired",
                     "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/Transitions/Cancel"
                 ],
                 "hooks": [],
@@ -4118,6 +4119,17 @@
                     "executionStep": "VertixBot/UI-V2/DynamicChannelTransferError",
                     "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
                     "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/ChoiceExpired",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelTransferChoiceExpired",
+                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
                     "navigationType": "ephemeral"
                 }
             },
@@ -4209,6 +4221,11 @@
                 "to": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/Error"
             },
             {
+                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/Transitions/ChoiceExpired",
+                "from": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/UserSelected",
+                "to": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/ChoiceExpired"
+            },
+            {
                 "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/Transitions/Cancel",
                 "from": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/UserSelected",
                 "to": "VertixBot/UI-V2/DynamicChannelTransferOwnerFlow/States/Cancelled",
@@ -4278,6 +4295,7 @@
                     "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/Transitions/Confirm",
                     "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/Transitions/DisabledByClaim",
                     "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/Transitions/Error",
+                    "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/Transitions/ChoiceExpired",
                     "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/Transitions/Cancel"
                 ],
                 "hooks": [],
@@ -4322,6 +4340,17 @@
                     "executionStep": "VertixBot/UI-V2/DynamicChannelTransferError",
                     "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
                     "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/States/ChoiceExpired",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V2/DynamicChannelTransferChoiceExpired",
+                    "component": "VertixBot/UI-V2/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
                     "navigationType": "ephemeral"
                 }
             },
@@ -4399,6 +4428,11 @@
                 "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/Transitions/Error",
                 "from": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/States/UserSelected",
                 "to": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/States/Error"
+            },
+            {
+                "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/Transitions/ChoiceExpired",
+                "from": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/States/UserSelected",
+                "to": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/States/ChoiceExpired"
             },
             {
                 "name": "VertixBot/UI-V2/DynamicChannelTransferOwnerCommandFlow/Transitions/Cancel",
@@ -10906,6 +10940,7 @@
                     "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Confirm",
                     "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/DisabledByClaim",
                     "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Error",
+                    "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/ChoiceExpired",
                     "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel"
                 ],
                 "hooks": [],
@@ -10950,6 +10985,17 @@
                     "executionStep": "VertixBot/UI-V3/DynamicChannelTransferError",
                     "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
                     "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/ChoiceExpired",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/DynamicChannelTransferChoiceExpired",
+                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
                     "navigationType": "ephemeral"
                 }
             },
@@ -11040,6 +11086,11 @@
                 "to": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Error"
             },
             {
+                "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/ChoiceExpired",
+                "from": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/UserSelected",
+                "to": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/ChoiceExpired"
+            },
+            {
                 "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/Transitions/Cancel",
                 "from": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/UserSelected",
                 "to": "VertixBot/UI-V3/DynamicChannelTransferOwnerFlow/States/Cancelled",
@@ -11110,6 +11161,7 @@
                     "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/Transitions/Confirm",
                     "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/Transitions/DisabledByClaim",
                     "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/Transitions/Error",
+                    "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/Transitions/ChoiceExpired",
                     "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/Transitions/Cancel"
                 ],
                 "hooks": [],
@@ -11154,6 +11206,17 @@
                     "executionStep": "VertixBot/UI-V3/DynamicChannelTransferError",
                     "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
                     "previewEmbedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                    "navigationType": "ephemeral"
+                }
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/States/ChoiceExpired",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "VertixBot/UI-V3/DynamicChannelTransferChoiceExpired",
+                    "component": "VertixBot/UI-V3/DynamicChannelTransferOwnerComponent",
+                    "previewEmbedsGroup": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
                     "navigationType": "ephemeral"
                 }
             },
@@ -11231,6 +11294,11 @@
                 "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/Transitions/Error",
                 "from": "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/States/UserSelected",
                 "to": "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/States/Error"
+            },
+            {
+                "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/Transitions/ChoiceExpired",
+                "from": "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/States/UserSelected",
+                "to": "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/States/ChoiceExpired"
             },
             {
                 "name": "VertixBot/UI-V3/DynamicChannelTransferOwnerCommandFlow/Transitions/Cancel",

@@ -5382,6 +5382,20 @@
                         }
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/ChoiceExpiredEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "⌛ That choice expired",
+                            "description": "Nothing was changed.\n\nStart over to pick again.",
+                            "color": 16705372
+                        }
+                    }
+                ]
             }
         ],
         "modals": [],
@@ -5393,8 +5407,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 5,
-                "withDefinition": 5,
+                "total": 6,
+                "withDefinition": 6,
                 "missingDefinition": 0
             }
         }
@@ -11860,6 +11874,20 @@
                         }
                     }
                 ]
+            },
+            {
+                "name": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
+                "items": [
+                    {
+                        "embed": "VertixBot/UI-General/ChoiceExpiredEmbed",
+                        "definition": {
+                            "instanceType": "Dynamic",
+                            "title": "⌛ That choice expired",
+                            "description": "Nothing was changed.\n\nStart over to pick again.",
+                            "color": 16705372
+                        }
+                    }
+                ]
             }
         ],
         "modals": [],
@@ -11871,8 +11899,8 @@
         "hooks": [],
         "options": {
             "embedAudit": {
-                "total": 5,
-                "withDefinition": 5,
+                "total": 6,
+                "withDefinition": 6,
                 "missingDefinition": 0
             }
         }

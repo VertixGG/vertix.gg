@@ -1583,6 +1583,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChoiceExpiredEmbed",
+      "content": {
+        "title": "⌛ That choice expired",
+        "description": "Nothing was changed.\n\nStart over to pick again."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
         "title": "😈  Claim works inside the channel",

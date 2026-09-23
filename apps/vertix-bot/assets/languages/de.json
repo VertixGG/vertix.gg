@@ -1579,6 +1579,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChoiceExpiredEmbed",
+      "content": {
+        "title": "⌛ Diese Auswahl ist abgelaufen",
+        "description": "Es wurde nichts geändert.\n\nBeginne von vorne, um erneut auszuwählen."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
         "title": "😈  Beanspruchen geht nur im Kanal selbst",

@@ -1579,6 +1579,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChoiceExpiredEmbed",
+      "content": {
+        "title": "⌛ その選択は期限切れです",
+        "description": "何も変更されていません。\n\nもう一度選ぶには、最初からやり直してください。"
+      }
+    },
+    {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
         "title": "😈  取得はチャンネル内で行います",

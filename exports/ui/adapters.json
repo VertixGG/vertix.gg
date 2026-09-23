@@ -1335,6 +1335,13 @@
                 "hooks": []
             },
             {
+                "key": "VertixBot/UI-V2/DynamicChannelTransferChoiceExpired",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
                 "key": "default",
                 "elementsGroup": "VertixBot/UI-V2/DynamicChannelTransferOwnerUserMenuGroup",
                 "embedsGroup": null,
@@ -1394,6 +1401,13 @@
                 "key": "VertixBot/UI-V2/DynamicChannelTransferError",
                 "elementsGroup": null,
                 "embedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V2/DynamicChannelTransferChoiceExpired",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             }
@@ -2970,6 +2984,13 @@
                 "hooks": []
             },
             {
+                "key": "VertixBot/UI-V3/DynamicChannelTransferChoiceExpired",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
                 "key": "default",
                 "elementsGroup": null,
                 "embedsGroup": null,
@@ -3033,6 +3054,13 @@
                 "key": "VertixBot/UI-V3/DynamicChannelTransferError",
                 "elementsGroup": null,
                 "embedsGroup": "VertixBot/UI-General/SomethingWentWrongEmbedGroup",
+                "markdownGroup": null,
+                "hooks": []
+            },
+            {
+                "key": "VertixBot/UI-V3/DynamicChannelTransferChoiceExpired",
+                "elementsGroup": null,
+                "embedsGroup": "VertixBot/UI-General/ChoiceExpiredEmbedGroup",
                 "markdownGroup": null,
                 "hooks": []
             }

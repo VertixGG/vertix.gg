@@ -1579,6 +1579,13 @@
       }
     },
     {
+      "name": "VertixBot/UI-General/ChoiceExpiredEmbed",
+      "content": {
+        "title": "⌛ Этот выбор истёк",
+        "description": "Ничего не изменилось.\n\nНачните заново, чтобы выбрать снова."
+      }
+    },
+    {
       "name": "VertixBot/UI-General/ClaimInChannelOnlyEmbed",
       "content": {
         "title": "😈  Забрать канал можно только внутри него",

@@ -6,6 +6,8 @@ import { UIElementsGroupBase } from "@vertix.gg/gui/src/bases/ui-elements-group-
 
 import { YesNoElementsGroup } from "@vertix.gg/bot/src/ui/general/decision/yes-no-elements-group";
 
+import { ChoiceExpiredEmbed } from "@vertix.gg/bot/src/ui/general/misc/choice-expired-embed";
+
 import { DisabledWhileClaimEmbed } from "@vertix.gg/bot/src/ui/general/misc/disabled-while-claim-embed";
 
 import { SomethingWentWrongEmbed } from "@vertix.gg/bot/src/ui/general/misc/something-went-wrong-embed";
@@ -37,7 +39,8 @@ export class DynamicChannelTransferOwnerComponent extends UIComponentBase {
             UIEmbedsGroupBase.createSingleGroup( DynamicChannelTransferOwnerTransferredEmbed ),
 
             UIEmbedsGroupBase.createSingleGroup( DisabledWhileClaimEmbed ),
-            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed )
+            UIEmbedsGroupBase.createSingleGroup( SomethingWentWrongEmbed ),
+            UIEmbedsGroupBase.createSingleGroup( ChoiceExpiredEmbed )
         ];
     }
 

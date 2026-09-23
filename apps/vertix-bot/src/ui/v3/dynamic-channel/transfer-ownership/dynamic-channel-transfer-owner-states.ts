@@ -66,6 +66,11 @@ export function defineTransferOwnerStates( tx: TransferTransactions ) {
             navigationType: "ephemeral",
             embedsGroup: "VertixBot/UI-General/SomethingWentWrongEmbedGroup"
         } )
+        .addState( "ChoiceExpired", {
+            executionStep: "VertixBot/UI-V3/DynamicChannelTransferChoiceExpired",
+            navigationType: "ephemeral",
+            embedsGroup: "VertixBot/UI-General/ChoiceExpiredEmbedGroup"
+        } )
         .addState( "Cancelled", {
             executionStep: "VertixBot/UI-V3/DynamicChannelTransferError",
             navigationType: "silent"
@@ -78,6 +83,7 @@ export function defineTransferOwnerStates( tx: TransferTransactions ) {
         .addTransition( "Confirm", { from: "UserSelected", to: "Success" } )
         .addTransition( "DisabledByClaim", { from: "UserSelected", to: "DisabledByClaim" } )
         .addTransition( "Error", { from: [ "SelectUser", "UserSelected" ], to: "Error" } )
+        .addTransition( "ChoiceExpired", { from: "UserSelected", to: "ChoiceExpired" } )
         .addTransition( "Cancel", {
             from: "UserSelected",
             to: "Cancelled",
@@ -122,8 +128,11 @@ export function defineTransferOwnerStates( tx: TransferTransactions ) {
 
                 const selectedUserId = takeTransferChoice( interaction.channel.id, interaction.user.id );
 
+                // The screen asking this stays on display across a restart, so `Yes` still
+                // arrives - at a process that never stored what was picked. Nothing was attempted,
+                // and the generic failure this replaces said otherwise.
                 if ( ! selectedUserId ) {
-                    await context.triggerTransition( "Error", interaction );
+                    await context.triggerTransition( "ChoiceExpired", interaction );
                     return;
                 }
 

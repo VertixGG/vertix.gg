@@ -15,7 +15,7 @@
         "cross-fetch": "^3.1.6",
         "discord.js": "^14.27.0",
         "http": "^0.0.1-security",
-        "ioredis": "^5.4.1",
+        "ioredis": "^6.0.0",
         "picocolors": "^1.0.0",
         "prisma": "latest",
         "tough-cookie": "^6.0.0"

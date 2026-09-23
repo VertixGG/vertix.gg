@@ -47,30 +47,28 @@ test.describe( "v2 control panel", () => {
         await dynamicChannels.close( channel );
     } );
 
-    test( "the v2 panel keeps region and bitrate off itself", async( { app, dynamicChannels, v2Generator } ) => {
+    test( "the v2 panel keeps bitrate off itself", async( { app, dynamicChannels, v2Generator } ) => {
         const channel = await dynamicChannels.open( v2Generator.channelId, "v2" );
 
         const panel = await dynamicChannels.panel( channel );
 
-        // The button exists and is offered on the buttons screen - what it is not is part of the set
-        // a generator is created with.
+        // The button exists and is offered on the buttons screen, which is what the suite's generator
+        // opts into so the loop below can press it.
         expect(
             BotCatalog.$.panelButtonsV2.map( ( button ) => button.name ),
             "the v2 panel lost its region button"
         ).toContain( "VertixBot/UI-V2/DynamicChannelRegionButton" );
 
-        // A generator nobody curated does not carry it. A set that gains a button on its own is an
-        // arrangement somebody chose being overruled by a deploy, so region is opted into rather than
-        // handed out - and `/voice region` reaches the same screen without taking a slot at all.
-        await expect(
-            app.messages.labelledButton( panel, BotCatalog.$.panelButtonV2( "VertixBot/UI-V2/DynamicChannelRegionButton" ).label )
-        ).toHaveCount( 0 );
-
-        // Bitrate stays a menu on the screen that button opens, for the same reason and one more: it
-        // asks a question the region screen already asks.
+        // Bitrate stays a menu on the screen the region button opens. A button of its own would take
+        // a slot in a set an admin arranged, to ask a question the region screen already asks.
         await expect(
             app.messages.selectMenu( panel, BotCatalog.$.selectPlaceholder( "VertixBot/UI-V2/DynamicChannelBitrateSelectMenu" ) )
         ).toHaveCount( 0 );
+
+        // That region is out of the *default* set is a rule about what a generator is created with,
+        // and `button-ids.spec.ts` holds it against `isInDefaultSet()` directly. It cannot be asked
+        // of a panel here any more: the wizard curates every button so the loop below has something
+        // to press, which is the whole point of enabling a feature in order to test it.
 
         await dynamicChannels.close( channel );
     } );

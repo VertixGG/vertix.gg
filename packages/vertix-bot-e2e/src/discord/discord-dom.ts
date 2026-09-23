@@ -87,6 +87,11 @@ export const DISCORD_DOM = {
 
     SELECT_MENU_OPTION: "[role=\"option\"], [class*=\"selectMenuOption\"]",
 
+    // The ones a multi select is offering but does not already hold. Discord marks every option with
+    // `aria-selected`, which is how a menu that arrives with a set already chosen can be told apart
+    // from an empty one - and the only way to add to it without toggling off what is there.
+    SELECT_MENU_OPTION_UNCHOSEN: "[role=\"option\"][aria-selected=\"false\"]",
+
     CHANNEL_NAME: "[class*=\"name__\"]",
 
     // Discord's own popups - promotions, announcements, "what's new". They are drawn over everything

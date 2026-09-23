@@ -662,6 +662,41 @@ export class DiscordMessages {
     }
 
     /**
+     * Turns on everything a multi select is offering that it does not already hold.
+     *
+     * Asked of the menu rather than told: which options are missing is the generator's business and
+     * changes as buttons are added, so naming them here would be a list to keep in step with the one
+     * the bot draws. `aria-selected` says which are already on, and clicking one of those would turn
+     * it off - so only the others are pressed, and each press is re-resolved because the list redraws
+     * under it as the selection changes.
+     *
+     * For the wizard's button step, where the set it is left holding is the set the generator is
+     * created with.
+     */
+    public async chooseEveryOption( menu: Locator ): Promise<number> {
+        await menu.click();
+
+        const unchosen = () => this.page.locator( DISCORD_DOM.SELECT_MENU_OPTION_UNCHOSEN ).first();
+
+        await this.page
+            .locator( DISCORD_DOM.SELECT_MENU_OPTION )
+            .first()
+            .waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } );
+
+        let chosen = 0;
+
+        while ( await unchosen().count() ) {
+            await this.clickOption( unchosen );
+
+            chosen++;
+        }
+
+        await this.page.keyboard.press( "Escape" );
+
+        return chosen;
+    }
+
+    /**
      * What a menu offers, without choosing any of it.
      */
     public async optionLabelsOf( message: Locator, placeholder: string ): Promise<string[]> {

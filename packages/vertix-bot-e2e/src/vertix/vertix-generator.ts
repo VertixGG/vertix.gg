@@ -62,6 +62,10 @@ export class VertixGenerator {
             BotCatalog.$.embedTitle( "VertixBot/UI-V3/SetupNewStep2Embed" )
         );
 
+        // As v2 above: the shared generator carries every button, so the panel specs press them
+        // rather than skipping the ones an ordinary generator is not created with.
+        await this.app.messages.chooseEveryOption( this.app.messages.selectMenuAt( stepTwo, 0 ) );
+
         const stepThree = await this.screen.advance(
             stepTwo,
             BotCatalog.$.buttonLabel( "VertixBot/UI-General/WizardNextButton" ),
@@ -90,6 +94,11 @@ export class VertixGenerator {
             BotCatalog.$.buttonLabel( "VertixBot/UI-General/WizardNextButton" ),
             BotCatalog.$.embedTitle( "VertixBot/UI-V2/SetupStep2Embed" )
         );
+
+        // Every button this version has, not the default set. A button the generator does not carry
+        // is one the panel specs can only skip, and `pressing X answers with something` is the whole
+        // of what they do - so the generator the suite shares carries the lot.
+        await this.app.messages.chooseEveryOption( this.app.messages.selectMenuAt( stepTwo, 0 ) );
 
         const stepThree = await this.screen.advance(
             stepTwo,

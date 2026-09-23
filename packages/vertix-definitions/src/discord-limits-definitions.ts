@@ -1,6 +1,6 @@
 /**
- * The limits Discord itself enforces, kept here so the bot that hits them and the dashboard that
- * reports on them read the same number.
+ * The limits Discord itself enforces, kept here so the code that runs into one and the message that
+ * explains it to a member read the same number.
  */
 
 /**

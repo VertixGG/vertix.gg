@@ -126,6 +126,12 @@ export interface GetConfigLimitsResponse {
      * rather than meeting it.
      */
     maxMasterChannels: number | null;
+
+    /**
+     * How many channels one generator may have open at once - the number the bot refuses the next
+     * one at, so a screen measuring a generator against it is measuring what members run into.
+     */
+    maxActiveDynamicChannels: number;
 }
 
 export interface IPCDiscordChannelInfo {

@@ -11,6 +11,7 @@ import { IPC_CHANNELS, IPC_REQUEST_ACTIONS } from "@vertix.gg/definitions/src/ip
 import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
 
 import { ConfigManager } from "@vertix.gg/data/src/managers/config-manager";
+import { GuildDataManager } from "@vertix.gg/data/src/managers/guild-data-manager";
 
 import { VERSION_UI_V2, VERSION_UI_V3 } from "@vertix.gg/definitions/src/version";
 
@@ -266,16 +267,25 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
      * tier somebody pays for are reconciled - so the dashboard refuses at the same number discord
      * does. Read straight out of the config here instead, this answered one number for every guild,
      * and an allowance belonging to a server applied in discord and not in the dashboard.
+     *
+     * The channels a generator may have open are read from the same settings row the refusal in
+     * `findChannelCreateRefusal()` reads, for the same reason: the number the dashboard measures a
+     * generator against has to be the one that turns the next member away.
      */
     private async getConfigLimits( guildId: string ): Promise<GetConfigLimitsResponse> {
         const maxMasterChannels = await ServiceLocator.$.get<EntitlementService>(
             "VertixBot/Services/Entitlement"
         ).getMaxMasterChannels( guildId );
 
-        // `JSON.stringify( Infinity )` is `null`, so an unlimited allowance is sent as null on
-        // purpose rather than by accident. The reader already treats null as nothing to hold
-        // anybody to, which is what unlimited means there.
-        return { maxMasterChannels: isUnlimitedAllowance( maxMasterChannels ) ? null : maxMasterChannels };
+        const { maxActiveDynamicChannels } = await GuildDataManager.$.getAllSettings( guildId );
+
+        return {
+            // `JSON.stringify( Infinity )` is `null`, so an unlimited allowance is sent as null on
+            // purpose rather than by accident. The reader already treats null as nothing to hold
+            // anybody to, which is what unlimited means there.
+            maxMasterChannels: isUnlimitedAllowance( maxMasterChannels ) ? null : maxMasterChannels,
+            maxActiveDynamicChannels
+        };
     }
 
     /**

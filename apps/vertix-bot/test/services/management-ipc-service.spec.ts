@@ -9,22 +9,27 @@ import {
 
 const GUILD_ID = "820000000000000001";
 
+/** The default in the guild config. */
+const DEFAULT_ROOMS_LIMIT = 20;
+
 interface IConfigLimits {
     maxMasterChannels: number | null;
+    maxActiveDynamicChannels: number;
 }
 
 /**
- * Stands up the one answer, and records which guild was asked about.
+ * Stands up the two answers, and records which guild each was asked about.
  *
- * The method reads nothing off the service - only the locator and one helper - so it is called
- * against the prototype with an empty `this` rather than standing a service up.
+ * The method reads nothing off the service - only the locator, the guild settings and one helper -
+ * so it is called against the prototype with an empty `this` rather than standing a service up.
  */
-async function makeConfigLimits( allowance: number ) {
+async function makeConfigLimits( allowance: number, roomsLimit = DEFAULT_ROOMS_LIMIT ) {
     await TestWithServiceLocatorMock.withUIServiceMock();
 
-    const asked: string[] = [];
+    const asked = { allowance: [] as string[], settings: [] as string[] };
 
     const { ServiceLocator } = await import( "@vertix.gg/base/src/modules/service/service-locator" );
+    const { GuildDataManager } = await import( "@vertix.gg/data/src/managers/guild-data-manager" );
     const { ManagementIPCService } = await import( "@vertix.gg/bot/src/services/management-ipc-service" );
 
     const asInstance = <T>( fake: object ): T => fake as T;
@@ -32,11 +37,19 @@ async function makeConfigLimits( allowance: number ) {
     jest.spyOn( ServiceLocator, "$", "get" ).mockReturnValue( asInstance( {
         get: () => ( {
             getMaxMasterChannels: async( guildId: string ) => {
-                asked.push( guildId );
+                asked.allowance.push( guildId );
 
                 return allowance;
             }
         } )
+    } ) );
+
+    jest.spyOn( GuildDataManager, "$", "get" ).mockReturnValue( asInstance( {
+        getAllSettings: async( guildId: string ) => {
+            asked.settings.push( guildId );
+
+            return { maxActiveDynamicChannels: roomsLimit };
+        }
     } ) );
 
     const proto = ManagementIPCService.prototype as unknown as {
@@ -47,7 +60,7 @@ async function makeConfigLimits( allowance: number ) {
 }
 
 /**
- * The allowance the dashboard refuses at.
+ * The limits the dashboard refuses at, and measures against.
  *
  * Worth its own cover because it is the seam where the two halves have drifted apart before: this
  * once answered one number for every guild, so a server with an allowance of its own got it in
@@ -64,7 +77,10 @@ describe( "VertixBot/Services/ManagementIPC/config limits", () => {
         const { read } = await makeConfigLimits( 9 );
 
         // Assert.
-        await expect( read() ).resolves.toEqual( { maxMasterChannels: 9 } );
+        await expect( read() ).resolves.toEqual( {
+            maxMasterChannels: 9,
+            maxActiveDynamicChannels: DEFAULT_ROOMS_LIMIT
+        } );
     } );
 
     it( "should ask about the guild it was given", async() => {
@@ -75,7 +91,7 @@ describe( "VertixBot/Services/ManagementIPC/config limits", () => {
         await read();
 
         // Assert.
-        expect( asked ).toEqual( [ GUILD_ID ] );
+        expect( asked ).toEqual( { allowance: [ GUILD_ID ], settings: [ GUILD_ID ] } );
     } );
 
     it( "should send an unlimited allowance as null", async() => {
@@ -84,7 +100,7 @@ describe( "VertixBot/Services/ManagementIPC/config limits", () => {
         const { read } = await makeConfigLimits( BILLING_UNLIMITED_MASTER_CHANNELS );
 
         // Assert.
-        await expect( read() ).resolves.toEqual( { maxMasterChannels: null } );
+        await expect( read() ).resolves.toMatchObject( { maxMasterChannels: null } );
     } );
 
     it( "should not turn a merely large allowance into unlimited", async() => {
@@ -92,7 +108,7 @@ describe( "VertixBot/Services/ManagementIPC/config limits", () => {
         const { read } = await makeConfigLimits( 500 );
 
         // Assert.
-        await expect( read() ).resolves.toEqual( { maxMasterChannels: 500 } );
+        await expect( read() ).resolves.toMatchObject( { maxMasterChannels: 500 } );
     } );
 
     it( "should carry the free allowance through unchanged", async() => {
@@ -100,8 +116,18 @@ describe( "VertixBot/Services/ManagementIPC/config limits", () => {
         const { read } = await makeConfigLimits( BILLING_FREE_MAX_MASTER_CHANNELS );
 
         // Assert.
-        await expect( read() ).resolves.toEqual( {
+        await expect( read() ).resolves.toMatchObject( {
             maxMasterChannels: BILLING_FREE_MAX_MASTER_CHANNELS
         } );
+    } );
+
+    it( "should answer the channels a generator may have open from this guild's settings", async() => {
+        // Act - a guild granted more than the default, so the answer cannot be the config's own
+        // number by coincidence. It is what the refusal counts against, and the dashboard's bar
+        // measures a generator by it.
+        const { read } = await makeConfigLimits( BILLING_FREE_MAX_MASTER_CHANNELS, 35 );
+
+        // Assert.
+        await expect( read() ).resolves.toMatchObject( { maxActiveDynamicChannels: 35 } );
     } );
 } );

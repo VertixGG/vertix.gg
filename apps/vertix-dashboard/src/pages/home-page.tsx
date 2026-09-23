@@ -266,7 +266,12 @@ const GuildDetailsDisplayComponent: DCommandFunctionComponent<GuildDetailsDispla
         );
     }
 
-    return <GeneratorsPanel masterChannels={ state.guildDetails.masterChannels } />;
+    return (
+        <GeneratorsPanel
+            masterChannels={ state.guildDetails.masterChannels }
+            maxActiveDynamicChannels={ state.guildDetails.maxActiveDynamicChannels }
+        />
+    );
 };
 
 const GuildDetailsDisplay = withCommands<GuildDetailsDisplayProps, GuildDetailsDisplayState>(

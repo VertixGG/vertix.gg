@@ -588,17 +588,17 @@ export class ManagementService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function getMaxMasterChannels() :: How many generators a guild may have, asked of the bot.
+     * Function getConfigLimits() :: The limits that apply to a guild, asked of the bot.
      *
      * Asked rather than read again, and asked about this guild rather than in general. A guild may
      * have been granted an allowance of its own, and the bot is the process that holds both that
-     * row and the configured default it falls back to, and that refuses the next generator by
-     * whichever applies. Resolving it here would be a second copy of the key the row is filed
-     * under, of the default, and of which of them wins - free to drift from the one being applied.
+     * row and the configured default it falls back to, and that refuses by whichever applies.
+     * Resolving it here would be a second copy of the key the row is filed under, of the default,
+     * and of which of them wins - free to drift from the one being applied.
      *
      * Null when it could not be asked, which the screens report as unknown rather than as none.
      */
-    private async getMaxMasterChannels( guildId: string ): Promise<number | null> {
+    public async getConfigLimits( guildId: string ): Promise<GetConfigLimitsResponse | null> {
         if ( ! this.services.ipcService.isReady() ) {
             return null;
         }
@@ -609,19 +609,24 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 guildId
             };
 
-            const limits = await this.services.ipcService.request<GetConfigLimitsRequest, GetConfigLimitsResponse>(
+            return await this.services.ipcService.request<GetConfigLimitsRequest, GetConfigLimitsResponse>(
                 IPC_CHANNELS.MANAGEMENT_REQUEST,
                 IPC_CHANNELS.MANAGEMENT_RESPONSE,
                 request,
                 CONFIG_LIMITS_REQUEST_TIMEOUT_MS
             );
-
-            return limits.maxMasterChannels;
         } catch( error ) {
-            this.logger.warn( this.getMaxMasterChannels, "Failed to read the configured generator limit", error );
+            this.logger.warn( this.getConfigLimits, "Failed to read the configured limits", error );
 
             return null;
         }
+    }
+
+    /**
+     * Function getMaxMasterChannels() :: How many generators a guild may have, asked of the bot.
+     */
+    private async getMaxMasterChannels( guildId: string ): Promise<number | null> {
+        return ( await this.getConfigLimits( guildId ) )?.maxMasterChannels ?? null;
     }
 
     /**

@@ -4,6 +4,7 @@ import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 
 import type { DiscordService } from "@vertix.gg/api/src/server/services/discord-service";
+import type { ManagementService } from "@vertix.gg/api/src/server/services/management-service";
 
 const client = PrismaBotClient.$.getClient();
 
@@ -32,6 +33,12 @@ export interface GuildStats {
 export interface GuildDetails {
     guild: GuildStats;
     masterChannels: MasterChannelInfo[];
+    /**
+     * How many channels each generator may have open at once, which its `dynamicChannelsCount` is
+     * measured against. One number for the guild rather than one per generator, because that is
+     * what the bot holds. Null when the bot could not be asked.
+     */
+    maxActiveDynamicChannels: number | null;
 }
 
 export interface MasterChannelInfo {
@@ -39,11 +46,6 @@ export interface MasterChannelInfo {
     categoryId: string | null;
     createdAt: Date;
     dynamicChannelsCount: number;
-    /**
-     * Every channel sitting in this master channel's category, against which Discord measures its
-     * per-category limit. Null when the master has no category, or when Discord could not be asked.
-     */
-    categoryChannelsCount: number | null;
 }
 
 export interface GuildBotPresence {
@@ -131,39 +133,22 @@ export async function getGuildStats( guildId: string ): Promise<GuildStats | nul
 }
 
 /**
- * Function getCategoryOccupancy() :: How many channels each of the guild's categories holds right now.
+ * Function getMaxActiveDynamicChannels() :: How many channels one generator may have open, asked of the bot.
  *
- * Asked of Discord rather than of our own tables, because the per-category limit counts every
- * channel in the category - the ones a human made by hand included - and those never reach us.
+ * Asked rather than read out of the guild config here, so the number a generator is measured
+ * against is the one the bot refuses the next member at - see `ManagementService.getConfigLimits()`.
  *
- * Returns null when Discord cannot be asked, so a caller reports "unknown" instead of "empty".
+ * Returns null when the bot cannot be asked, so a caller reports "unknown" instead of guessing.
  */
-async function getCategoryOccupancy( guildId: string ): Promise<Map<string, number> | null> {
-    const discordService = ServiceLocator.$.get<DiscordService>( "VertixAPI/Services/Discord", { silent: true } );
+async function getMaxActiveDynamicChannels( guildId: string ): Promise<number | null> {
+    const managementService = ServiceLocator.$.get<ManagementService>( "VertixAPI/Services/Management", { silent: true } );
 
-    if ( !discordService ) {
-        logger.warn( getCategoryOccupancy, `Discord service not registered - no occupancy for guild ${ guildId }` );
+    if ( !managementService ) {
+        logger.warn( getMaxActiveDynamicChannels, `Management service not registered - no channel limit for guild ${ guildId }` );
         return null;
     }
 
-    const channels = await discordService.fetchGuildChannels( guildId );
-
-    if ( !channels.length ) {
-        logger.warn( getCategoryOccupancy, `No channels came back for guild ${ guildId } - occupancy unknown` );
-        return null;
-    }
-
-    const occupancy = new Map<string, number>();
-
-    for ( const channel of channels ) {
-        if ( !channel.parent_id ) {
-            continue;
-        }
-
-        occupancy.set( channel.parent_id, ( occupancy.get( channel.parent_id ) ?? 0 ) + 1 );
-    }
-
-    return occupancy;
+    return ( await managementService.getConfigLimits( guildId ) )?.maxActiveDynamicChannels ?? null;
 }
 
 export async function getGuildDetails( guildId: string ): Promise<GuildDetails | null> {
@@ -173,25 +158,26 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
         return null;
     }
 
-    const masterChannels = await client.channel.findMany( {
-        where: {
-            guildId,
-            internalType: "MASTER_CREATE_CHANNEL"
-        },
-        select: {
-            channelId: true,
-            categoryId: true,
-            createdAt: true
-        }
-    } );
-
-    // Only worth a round trip to Discord when there is a category whose fill we would report.
-    const categoryOccupancy = masterChannels.some( ( mc ) => mc.categoryId )
-        ? await getCategoryOccupancy( guildId )
-        : null;
+    const [ masterChannels, maxActiveDynamicChannels ] = await Promise.all( [
+        client.channel.findMany( {
+            where: {
+                guildId,
+                internalType: "MASTER_CREATE_CHANNEL"
+            },
+            select: {
+                channelId: true,
+                categoryId: true,
+                createdAt: true
+            }
+        } ),
+        getMaxActiveDynamicChannels( guildId )
+    ] );
 
     const masterChannelInfos: MasterChannelInfo[] = await Promise.all(
         masterChannels.map( async( mc ) => {
+            // Counted the way the bot counts before refusing the next one - off the rows it made,
+            // not off the category, which also holds the generator itself and whatever else an
+            // admin put there.
             const dynamicChannelsCount = await client.channel.count( {
                 where: {
                     ownerChannelId: mc.channelId,
@@ -203,16 +189,14 @@ export async function getGuildDetails( guildId: string ): Promise<GuildDetails |
                 channelId: mc.channelId,
                 categoryId: mc.categoryId,
                 createdAt: mc.createdAt,
-                dynamicChannelsCount,
-                categoryChannelsCount: mc.categoryId && categoryOccupancy
-                    ? categoryOccupancy.get( mc.categoryId ) ?? 0
-                    : null
+                dynamicChannelsCount
             };
         } )
     );
 
     return {
         guild: guildStats,
-        masterChannels: masterChannelInfos
+        masterChannels: masterChannelInfos,
+        maxActiveDynamicChannels
     };
 }

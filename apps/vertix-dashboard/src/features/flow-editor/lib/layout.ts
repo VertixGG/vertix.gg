@@ -540,6 +540,9 @@ export function getLayoutedElements(
      * grid, so the module sat out on the left of the first row and the command router sat somewhere
      * among the flows it routes into.
      *
+     * There is a card per module, so a canvas of all of them holds back all of their cards and
+     * `placeBand` sets them out in a row at the head.
+     *
      * Neither is a sibling of the flows. The module is what they all hang off and a router is the
      * way in to them, so both are held back here and put at the head once the flows are placed.
      *
@@ -554,12 +557,12 @@ export function getLayoutedElements(
         return "flowNode" === node?.type && true === ( node.data as { isSystemFlow?: boolean } | undefined )?.isSystemFlow;
     };
 
-    const moduleComponent = componentBounds.find( ( bounds ) =>
+    const moduleComponents = componentBounds.filter( ( bounds ) =>
         bounds.ids.every( ( id ) => "moduleNode" === nodeTypeById.get( id ) ) );
 
     const routerComponents = componentBounds.filter( ( bounds ) => bounds.ids.every( isRouterNode ) );
 
-    const heldBack = new Set( [ moduleComponent, ...routerComponents ].filter( Boolean ) );
+    const heldBack = new Set( [ ...moduleComponents, ...routerComponents ] );
 
     const packedBounds = componentBounds.filter( ( bounds ) => ! heldBack.has( bounds ) );
 
@@ -834,7 +837,7 @@ export function getLayoutedElements(
     };
 
     const routerIds = routerComponents.flatMap( ( bounds ) => bounds.ids ),
-        moduleIds = moduleComponent?.ids ?? [];
+        moduleIds = moduleComponents.flatMap( ( bounds ) => bounds.ids );
 
     // Routers first, then the module above them - each measured against what is already placed.
     placeBand( routerIds, new Set( [ ...routerIds, ...moduleIds ] ) );

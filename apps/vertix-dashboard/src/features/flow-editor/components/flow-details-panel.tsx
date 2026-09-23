@@ -3,9 +3,12 @@ import { useState } from "react";
 import zCore from "@zenflux/core";
 import { useCommand, useCommandState } from "@zenflux/react-commander/hooks";
 
+import { ALL_MODULES } from "@vertix.gg/definitions/src/ui-export-definitions";
+
 import { useEditMode } from "@vertix.gg/dashboard/src/hooks/use-edit-mode";
 
 import type { Node } from "@xyflow/react";
+
 import type { ModuleFlowsResponse } from "@vertix.gg/dashboard/src/lib/api-client";
 import type { UIExportedFlow, UIExportedComponent, UIExportEmbedDefinition } from "@vertix.gg/definitions/src/ui-export-definitions";
 import type { FlowEditorState } from "@vertix.gg/dashboard/src/features/flow-editor/commands/flow-editor-commands";
@@ -519,7 +522,10 @@ function EditModeDetailsView( props: { node: Node; moduleFlowsData: ModuleFlowsR
 
 function ModuleOverview( props: { moduleFlowsData: ModuleFlowsResponse } ) {
     const { moduleFlowsData } = props;
-    const moduleName = moduleFlowsData.module.split( "/" ).pop() ?? moduleFlowsData.module;
+    const isAllModules = ALL_MODULES === moduleFlowsData.module,
+        moduleName = isAllModules ? "All modules" : moduleFlowsData.module.split( "/" ).pop() ?? moduleFlowsData.module,
+        // The sentinel is a way of asking, not a path. Printed raw it reads as a module called `*`.
+        fullPath = isAllModules ? "Every module the bot declares" : moduleFlowsData.module;
 
     return (
         <div className="p-4 space-y-4">
@@ -530,7 +536,7 @@ function ModuleOverview( props: { moduleFlowsData: ModuleFlowsResponse } ) {
 
             <div>
                 <label className="text-xs text-zinc-400 uppercase font-medium">Full Path</label>
-                <p className="text-zinc-300 text-xs mt-1 break-all">{ moduleFlowsData.module }</p>
+                <p className="text-zinc-300 text-xs mt-1 break-all">{ fullPath }</p>
             </div>
 
             <div>

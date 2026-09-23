@@ -283,6 +283,14 @@ export class UIRuntimeLoader extends InitializeBase {
         return this.exportData?.components.filter( c => c.modules.includes( moduleName ) ) ?? [];
     }
 
+    public getAllFlows(): UIExportedFlow[] {
+        return [ ...this.exportData?.flows ?? [] ];
+    }
+
+    public getAllComponents(): UIExportedComponent[] {
+        return [ ...this.exportData?.components ?? [] ];
+    }
+
     public getComponent( componentName: string ): UIExportedComponent | undefined {
         return this.exportData?.components.find( c => c.name === componentName );
     }

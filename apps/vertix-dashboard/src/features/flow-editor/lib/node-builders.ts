@@ -19,9 +19,18 @@ export interface StateTransitionTrigger {
     handlePosition: "left" | "right" | "bottom" | "top";
 }
 
+/**
+ * Function createModuleNode() :: The card naming a module the canvas is drawing.
+ *
+ * Named after the segment before the trailing `Module` - `UI-V3` - which is what the module
+ * selector calls it, and what tells one apart from the next. The trailing segment is `Module` for
+ * every one of them, so a canvas carrying all three drew three cards reading `Module` under a
+ * single id, and two of the three were dropped as repeats of the first.
+ */
 export function createModuleNode( moduleName: string, fullName: string ): Node {
-    const shortName = moduleName.split( "/" ).pop() ?? moduleName;
-    const moduleNodeId = `module-${ shortName }`;
+    const parts = moduleName.split( "/" ),
+        shortName = 2 <= parts.length ? parts[ parts.length - 2 ] : moduleName,
+        moduleNodeId = `module-${ moduleName }`;
 
     return {
         id: moduleNodeId,

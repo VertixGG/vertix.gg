@@ -1,4 +1,18 @@
 
+/**
+ * Every module at once, in place of the one a canvas is about.
+ *
+ * Asked for a module, the api answers with that module's flows plus whatever they hand off to. What
+ * it cannot do is follow a reference the other way: a flow opened from another module - the v3
+ * setup editor, which only the general module's setup flow opens - arrives with nothing on the
+ * canvas to draw the arrival from. Asked for this instead, the api answers with all of them and
+ * the line is drawn.
+ *
+ * A sentinel rather than an empty name, because empty already means no module chosen yet and the
+ * two would be read as the same thing.
+ */
+export const ALL_MODULES = "*";
+
 export interface UIExportEmbedDefinition {
     instanceType?: string;
     title?: string;

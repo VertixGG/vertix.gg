@@ -1,3 +1,5 @@
+import { ALL_MODULES } from "@vertix.gg/definitions/src/ui-export-definitions";
+
 import { uiExportLoader } from "@vertix.gg/api/src/bootstrap";
 
 import { extractComponentPreview } from "@vertix.gg/api/src/server/services/component-service";
@@ -46,8 +48,16 @@ function getSingleFlowData( flowName: string ): FlowResponse {
 }
 
 function getModuleFlowsData( moduleName: string ): ModuleFlowsResponse {
-    const allFlows = uiExportLoader.getFlowsForModule( moduleName );
-    const moduleComponents = uiExportLoader.getComponentsForModule( moduleName );
+    /*
+     * Everything, when the reader asked for everything.
+     *
+     * The collecting below stays as it is rather than being skipped: with every flow already here,
+     * a referenced name is always one of them and nothing is pulled in twice.
+     */
+    const isAllModules = ALL_MODULES === moduleName;
+
+    const allFlows = isAllModules ? uiExportLoader.getAllFlows() : uiExportLoader.getFlowsForModule( moduleName );
+    const moduleComponents = isAllModules ? uiExportLoader.getAllComponents() : uiExportLoader.getComponentsForModule( moduleName );
 
     const flows = allFlows.filter( f => f.flowKind !== "system" );
     const systemFlows = allFlows.filter( f => f.flowKind === "system" );

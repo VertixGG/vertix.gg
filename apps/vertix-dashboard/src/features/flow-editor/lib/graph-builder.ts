@@ -1,5 +1,7 @@
 import zCore from "@zenflux/core";
 
+import { ALL_MODULES } from "@vertix.gg/definitions/src/ui-export-definitions";
+
 import { createModuleNode, createFlowNode, createComponentNode, createModalNode } from "@vertix.gg/dashboard/src/features/flow-editor/lib/node-builders";
 import { isForeignTo } from "@vertix.gg/dashboard/src/features/flow-editor/lib/module-scope";
 import {
@@ -1505,6 +1507,7 @@ class FlowGraphBuilder {
     private readonly flowIdMap = new Map<string, string>();
     private readonly systemFlowCompIds = new Map<string, string>();
     private readonly reachableFlows = new Set<string>();
+    private readonly moduleNodeIds = new Map<string, string>();
 
     public constructor( data: ModuleFlowsResponse, options?: FlowGraphOptions ) {
         this.data = data;
@@ -1525,7 +1528,7 @@ class FlowGraphBuilder {
 
     public build(): { nodes: Node[]; edges: Edge[] } {
         this.computeReachableFlows();
-        this.buildModuleNode();
+        this.buildModuleNodes();
         this.buildSystemFlowNodes();
         this.buildFlowNodes();
         this.buildSystemFlowComponents();
@@ -1576,9 +1579,25 @@ class FlowGraphBuilder {
         this.allEdges.push( edge );
     }
 
-    private buildModuleNode(): void {
-        const moduleNode = createModuleNode( this.data.module, this.data.module );
-        this.allNodes.push( moduleNode );
+    /**
+     * The card naming a module, one apiece for the modules the canvas draws.
+     *
+     * One when a module was picked, and one for each of them when all were. The card is the only
+     * thing on a canvas of three modules saying which flow belongs to which, and the layout puts
+     * them in a row at the head - so they are built before anything else, and kept by name because
+     * a notice with nothing to hang off hangs off its own module's.
+     */
+    private buildModuleNodes(): void {
+        const moduleNames = ALL_MODULES === this.data.module
+            ? [ ...new Set( [ ...this.data.flows, ...this.data.systemFlows ].map( ( flow ) => flow.module ) ) ].sort()
+            : [ this.data.module ];
+
+        moduleNames.forEach( ( moduleName ) => {
+            const moduleNode = createModuleNode( moduleName, moduleName );
+
+            this.moduleNodeIds.set( moduleName, moduleNode.id );
+            this.allNodes.push( moduleNode );
+        } );
     }
 
     private buildSystemFlowNodes(): void {
@@ -1815,9 +1834,7 @@ class FlowGraphBuilder {
         const sources = component.shownWhen ?? [];
 
         const drawn = sources.filter( ( notice ) => {
-            const sourceId = notice.source === this.data.module
-                ? this.allNodes[ 0 ].id
-                : this.flowIdMap.get( notice.source );
+            const sourceId = this.moduleNodeIds.get( notice.source ) ?? this.flowIdMap.get( notice.source );
 
             if ( ! sourceId ) {
                 return false;
@@ -1829,7 +1846,12 @@ class FlowGraphBuilder {
         } );
 
         if ( sources.length && ! drawn.length ) {
-            this.addEdge( createNoticeEdge( this.allNodes[ 0 ].id, noticeId, sources[ 0 ].description ) );
+            // The screen's own module, which on a canvas of several is not the same as the first one.
+            const fallbackId = component.modules
+                .map( ( moduleName ) => this.moduleNodeIds.get( moduleName ) )
+                .find( Boolean ) ?? this.allNodes[ 0 ].id;
+
+            this.addEdge( createNoticeEdge( fallbackId, noticeId, sources[ 0 ].description ) );
         }
     }
 

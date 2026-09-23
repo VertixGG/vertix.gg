@@ -481,6 +481,17 @@ export class DiscordMessages {
      * should have offered, and those read better than anything this could say.
      */
     private async openMenu( message: Locator, placeholder: string ): Promise<void> {
+        return this.openMenuLocator( async() => await this.resolveSelectMenu( message, placeholder ) );
+    }
+
+    /**
+     * The opening itself, for a menu that is already in hand rather than named by its placeholder.
+     *
+     * Taken as a function rather than a locator so the menu is re-resolved on every attempt: the
+     * screen under it is redrawn between presses, and a handle from before that is a handle to
+     * nothing.
+     */
+    private async openMenuLocator( menu: () => Promise<Locator> ): Promise<void> {
         const option = this.page.locator( DISCORD_DOM.SELECT_MENU_OPTION ).first();
 
         for ( let attempt = 1; attempt <= MENU_OPEN_ATTEMPTS; attempt++ ) {
@@ -491,7 +502,7 @@ export class DiscordMessages {
                 return;
             }
 
-            await ( await this.resolveSelectMenu( message, placeholder ) ).click();
+            await ( await menu() ).click();
 
             const listed = await option
                 .waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } )
@@ -674,14 +685,13 @@ export class DiscordMessages {
      * created with.
      */
     public async chooseEveryOption( menu: Locator ): Promise<number> {
-        await menu.click();
+        // Through the opener, not a bare press. This pressed once and waited fifteen seconds, which
+        // is the thing `openMenu()` exists to stop doing - a menu that did not open on the first
+        // press took four generator-creating specs down with it, because this runs inside the wizard
+        // every one of them walks.
+        await this.openMenuLocator( async() => menu );
 
         const unchosen = () => this.page.locator( DISCORD_DOM.SELECT_MENU_OPTION_UNCHOSEN ).first();
-
-        await this.page
-            .locator( DISCORD_DOM.SELECT_MENU_OPTION )
-            .first()
-            .waitFor( { state: "visible", timeout: E2E_TIMEOUTS.MODAL_OPEN_MS } );
 
         let chosen = 0;
 

@@ -9,6 +9,7 @@ import { createDebugger } from "@vertix.gg/base/src/modules/debugger";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+import { InteractionTrace } from "@vertix.gg/base/src/modules/trace/interaction-trace";
 
 import {
     ActionRowBuilder,
@@ -412,7 +413,7 @@ export abstract class UIAdapterBase<
             await this.onBeforeBuild?.( args, from, context );
         }
 
-        const schema = await this.getComponent().build( args );
+        const schema = await InteractionTrace.$.span( "gui-build", this.getName(), () => this.getComponent().build( args ) );
 
         if ( "unknown" !== from ) {
             await this.onAfterBuild?.( args, from, context );
@@ -1330,15 +1331,27 @@ export abstract class UIAdapterBase<
 
         switch ( contextId ) {
             case "start":
-                args = await this.getStartArgs( context as TChannel, argsFromManager );
+                args = await InteractionTrace.$.span(
+                    "gui-args",
+                    `${ this.getName() }.getStartArgs`,
+                    async() => this.getStartArgs( context as TChannel, argsFromManager )
+                );
                 break;
 
             case "reply":
-                args = fillGapsFrom( await this.getReplyArgs( context as TInteraction, argsFromManager ), argsFromManager );
+                args = fillGapsFrom( await InteractionTrace.$.span(
+                    "gui-args",
+                    `${ this.getName() }.getReplyArgs`,
+                    async() => this.getReplyArgs( context as TInteraction, argsFromManager )
+                ), argsFromManager );
                 break;
 
             case "edit-message":
-                const conditionalArgs = await this.getEditMessageArgs?.( context as Message<true>, argsFromManager );
+                const conditionalArgs = await InteractionTrace.$.span(
+                    "gui-args",
+                    `${ this.getName() }.getEditMessageArgs`,
+                    async() => this.getEditMessageArgs?.( context as Message<true>, argsFromManager )
+                );
 
                 if ( conditionalArgs ) {
                     args = conditionalArgs;

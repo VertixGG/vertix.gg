@@ -2,6 +2,7 @@ import { Events, MessageComponentInteraction, ModalSubmitInteraction } from "dis
 
 import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+import { InteractionTrace } from "@vertix.gg/base/src/modules/trace/interaction-trace";
 
 import { Commands } from "@vertix.gg/bot/src/commands";
 
@@ -15,55 +16,82 @@ import type { Client, CommandInteraction, Interaction } from "discord.js";
 
 export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async( interaction: Interaction ) => {
-        if ( interaction.guildId ) {
-            void GuildModel.$.updateLastActive( interaction.guildId ).then( ( updated ) => {
-                if ( !updated ) {
-                    void guildLeaveBecauseNotInDatabase( interaction.guildId! );
-                }
-            } );
-        }
+        // Everything the press waits on - queries, discord requests, the screen being drawn - is
+        // timed inside this, and a slow one is logged with the breakdown. See `InteractionTrace`.
+        await InteractionTrace.$.run(
+            getInteractionTraceName( interaction ),
+            interaction.id,
+            Date.now() - interaction.createdTimestamp,
+            () => handleInteraction( client, interaction )
+        );
+    } );
+}
 
-        if ( interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction ) {
-            const customId = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent(
-                interaction.customId
-            );
+/**
+ * What a press is filed under in the trace: the plain id of the component that was used, which
+ * names both the adapter and the button, or the command.
+ */
+function getInteractionTraceName( interaction: Interaction ) {
+    if ( interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction ) {
+        return ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent( interaction.customId );
+    }
 
-            const adapter = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).get( customId, true );
+    if ( interaction.isCommand() || interaction.isContextMenuCommand() ) {
+        return `/${ interaction.commandName }`;
+    }
 
-            GlobalLogger.$.log(
-                interactionHandler,
-                `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ customId }' was used by '${ interaction.user.username }'`
-            );
+    return interaction.constructor.name;
+}
 
-            if ( adapter ) {
-                // An adapter throwing here surfaces as an 'error' event on the client, which takes
-                // the whole bot down with it.
-                await adapter.run( interaction ).catch( ( error: unknown ) => {
-                    // Spelled into the message rather than left as a parameter alone: the shipped
-                    // line carries only the message, so an error kept beside it is one nobody
-                    // reading the logs can see.
-                    const reason = error instanceof Error
-                        ? `${ error.name }: ${ error.message }\n${ error.stack ?? "" }`
-                        : String( error );
-
-                    GlobalLogger.$.error(
-                        interactionHandler,
-                        `Adapter '${ customId }' failed to handle interaction '${ interaction.id }' - ${ reason }`,
-                        error
-                    );
-                } );
-
-                return;
+async function handleInteraction( client: Client, interaction: Interaction ) {
+    if ( interaction.guildId ) {
+        void GuildModel.$.updateLastActive( interaction.guildId ).then( ( updated ) => {
+            if ( !updated ) {
+                void guildLeaveBecauseNotInDatabase( interaction.guildId! );
             }
-        }
+        } );
+    }
 
-        if ( interaction.isCommand() || interaction.isContextMenuCommand() ) {
-            await handleSlashCommand( client, interaction as CommandInteraction<"cached"> );
+    if ( interaction instanceof MessageComponentInteraction || interaction instanceof ModalSubmitInteraction ) {
+        const customId = ServiceLocator.$.get<UIHashService>( "VertixGUI/UIHashService" ).getIdSilent(
+            interaction.customId
+        );
+
+        const adapter = ServiceLocator.$.get<UIService>( "VertixGUI/UIService" ).get( customId, true );
+
+        GlobalLogger.$.log(
+            handleInteraction,
+            `Interaction id: '${ interaction.id }' - ${ interaction.constructor.name } id: '${ customId }' was used by '${ interaction.user.username }'`
+        );
+
+        if ( adapter ) {
+            // An adapter throwing here surfaces as an 'error' event on the client, which takes
+            // the whole bot down with it.
+            await adapter.run( interaction ).catch( ( error: unknown ) => {
+                // Spelled into the message rather than left as a parameter alone: the shipped
+                // line carries only the message, so an error kept beside it is one nobody
+                // reading the logs can see.
+                const reason = error instanceof Error
+                    ? `${ error.name }: ${ error.message }\n${ error.stack ?? "" }`
+                    : String( error );
+
+                GlobalLogger.$.error(
+                    handleInteraction,
+                    `Adapter '${ customId }' failed to handle interaction '${ interaction.id }' - ${ reason }`,
+                    error
+                );
+            } );
+
             return;
         }
+    }
 
-        GlobalLogger.$.debug( interactionHandler, "", interaction );
-    } );
+    if ( interaction.isCommand() || interaction.isContextMenuCommand() ) {
+        await handleSlashCommand( client, interaction as CommandInteraction<"cached"> );
+        return;
+    }
+
+    GlobalLogger.$.debug( handleInteraction, "", interaction );
 }
 
 const handleSlashCommand = async( client: Client, interaction: CommandInteraction<"cached"> ): Promise<void> => {

@@ -7,6 +7,7 @@ import { ObjectBase } from "@vertix.gg/base/src/bases/object-base";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 import { Debugger } from "@vertix.gg/base/src/modules/debugger";
+import { InteractionTrace } from "@vertix.gg/base/src/modules/trace/interaction-trace";
 
 import type * as PrismaTypes from "@vertix.gg/prisma/._bot-client-internal";
 import type * as PrismaLibrary from "@vertix.gg/prisma/._bot-client-library";
@@ -91,15 +92,26 @@ export class PrismaBotClient extends ObjectBase {
 
         const PrismaClient = require( "@vertix.gg/prisma/._bot-client-internal" ).PrismaClient;
 
-        this.client = new PrismaClient( options );
+        const client: PrismaTypes.PrismaClient = new PrismaClient( options );
 
         if ( "true" === process.env.DEBUG_PRISMA ) {
             // @ts-ignore
-            this.client.$on( "warn", this.onWarn.bind( this ) ); // @ts-ignore
-            this.client.$on( "info", this.onInfo.bind( this ) ); // @ts-ignore
-            this.client.$on( "error", this.onError.bind( this ) ); // @ts-ignore
-            this.client.$on( "query", this.onQuery.bind( this ) );
+            client.$on( "warn", this.onWarn.bind( this ) ); // @ts-ignore
+            client.$on( "info", this.onInfo.bind( this ) ); // @ts-ignore
+            client.$on( "error", this.onError.bind( this ) ); // @ts-ignore
+            client.$on( "query", this.onQuery.bind( this ) );
         }
+
+        // Every query is timed and filed under the interaction that made it, which is how a slow
+        // press says which reads it was waiting on. `$on` belongs to the base client only, so the
+        // listeners above are attached before extending.
+        this.client = client.$extends( {
+            query: {
+                $allOperations( { model, operation, args, query } ) {
+                    return InteractionTrace.$.span( "db", `${ model ?? "$raw" }.${ operation }`, () => query( args ) );
+                }
+            }
+        } ) as unknown as PrismaTypes.PrismaClient;
     }
 
     public async connect() {

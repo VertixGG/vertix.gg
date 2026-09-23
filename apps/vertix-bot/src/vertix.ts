@@ -9,6 +9,7 @@ import login from "@vertix.gg/base/src/discord/login";
 import { isDebugEnabled, isDebugTypeEnabled } from "@vertix.gg/utils/src/environment";
 
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+import { InteractionTrace } from "@vertix.gg/base/src/modules/trace/interaction-trace";
 
 import { UI_PEER_IDENTITIES } from "@vertix.gg/definitions/src/ui-ipc-definitions";
 
@@ -39,7 +40,7 @@ import type { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import type { ClientEvents } from "discord.js";
 
-import type { RestEvents } from "@discordjs/rest";
+import type { InternalRequest, RateLimitData, RestEvents } from "@discordjs/rest";
 
 function debugDiscordApiEvents( logger: Logger, client: Client<boolean> ) {
     if ( isDebugTypeEnabled( "DISCORD" ) ) {
@@ -160,6 +161,49 @@ function debugDiscordApiRestEvents( logger: Logger, client: Client<boolean> ) {
     }
 }
 
+/**
+ * Times every request the bot makes to discord, and every rate limit it sits out, against the
+ * interaction that made it - see `InteractionTrace`.
+ *
+ * `request()` is the one method every REST call goes through, and it resolves only once the
+ * response is in, so the time it takes includes any queueing behind a rate limit. The REST manager
+ * emits no event that carries a duration, which is why it is wrapped rather than listened to - the
+ * same way `guilds.fetch` is wrapped for DEBUG_GUILD_FETCH below.
+ */
+function traceDiscordRest( client: Client<boolean> ) {
+    if ( ! InteractionTrace.$.isEnabled() ) {
+        return;
+    }
+
+    const rest = client.rest,
+        originalRequest = rest.request.bind( rest );
+
+    rest.request = ( options: InternalRequest ) => {
+        const route = InteractionTrace.normalizeRoute( options.fullRoute ),
+            label = `${ options.method.toUpperCase() } ${ route }`;
+
+        return InteractionTrace.$.span( "discord", label, async() => {
+            const result = await originalRequest( options );
+
+            // The first response to an interaction callback is what stops discord from showing
+            // "this interaction failed".
+            if ( route.endsWith( "/callback" ) ) {
+                InteractionTrace.$.markAcknowledged();
+            }
+
+            return result;
+        } );
+    };
+
+    rest.on( "rateLimited", ( data: RateLimitData ) => {
+        InteractionTrace.$.record(
+            "discord-rate-limit",
+            `${ data.method.toUpperCase() } ${ InteractionTrace.normalizeRoute( data.route ) } ( ${ data.scope }${ data.global ? ", global" : "" } )`,
+            data.retryAfter
+        );
+    } );
+}
+
 export default async function Main( { enableListeners }: {
     enableListeners?: boolean;
 } ) {
@@ -221,6 +265,10 @@ export default async function Main( { enableListeners }: {
     debugDiscordApiEvents( logger, client );
 
     debugDiscordApiRestEvents( logger, client );
+
+    traceDiscordRest( client );
+
+    InteractionTrace.$.start();
 
     async function onLogin() {
         assert( client.user );

@@ -5581,7 +5581,7 @@
             },
             {
                 "from": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ResetChannel",
-                "to": "VertixBot/UI-V2/DynamicChannelPremiumResetFlow/States/Default"
+                "to": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelFlow/States/Default"
             },
             {
                 "from": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ClaimChannel",
@@ -5755,10 +5755,10 @@
                 "integrationType": "GENERIC"
             },
             {
-                "flowName": "VertixBot/UI-V2/DynamicChannelPremiumResetFlow",
+                "flowName": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelFlow",
                 "description": "Handoff from DynamicChannel: ResetChannel",
                 "sourceState": "VertixBot/UI-V2/DynamicChannelFlow/States/Default",
-                "targetState": "VertixBot/UI-V2/DynamicChannelPremiumResetFlow/States/Default",
+                "targetState": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelFlow/States/Default",
                 "transition": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ResetChannel",
                 "requiredData": [],
                 "integrationType": "GENERIC"
@@ -5821,7 +5821,7 @@
             {
                 "triggeringElementId": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelButton",
                 "transitionName": "VertixBot/UI-V2/DynamicChannelFlow/Transitions/ResetChannel",
-                "targetFlowName": "VertixBot/UI-V2/DynamicChannelPremiumResetFlow"
+                "targetFlowName": "VertixBot/UI-V2/DynamicChannelPremiumResetChannelFlow"
             },
             {
                 "triggeringElementId": "VertixBot/UI-V2/DynamicChannelPremiumClaimChannelButton",

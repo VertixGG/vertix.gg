@@ -1,0 +1,35 @@
+export const WATCHDOG_DEFAULTS = {
+    DEDUPE_WINDOW_MS: 60000,
+
+    RECONCILE_INTERVAL_MS: 60000,
+
+    REVIVE_INITIAL_DELAY_MS: 30000,
+    REVIVE_MAX_DELAY_MS: 900000,
+    REVIVE_BACKOFF_FACTOR: 2,
+
+    RECOVERY_UPTIME_MS: 60000,
+    STABLE_UPTIME_MS: 900000,
+
+    WEBHOOK_TIMEOUT_MS: 5000
+} as const;
+
+export const WATCHDOG_EMBED = {
+    COLOR_DOWN: 0xED4245,
+    COLOR_GAVE_UP: 0x992D22,
+    COLOR_REVIVED: 0xFEE75C,
+    COLOR_RECOVERED: 0x57F287,
+
+    TITLE_LIMIT: 256,
+    FIELD_VALUE_LIMIT: 1024
+} as const;
+
+export const PM2_EVENT = {
+    EXIT: "exit",
+    RESTART_OVERLIMIT: "restart overlimit"
+} as const;
+
+export const PM2_STATUS = {
+    ONLINE: "online",
+    ERRORED: "errored",
+    STOPPING: "stopping"
+} as const;

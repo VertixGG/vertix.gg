@@ -29,6 +29,7 @@ run_suite vertix:data:jest
 run_suite vertix:definitions:jest
 run_suite vertix:gui:jest
 run_suite vertix:utils:jest
+run_suite vertix:watchdog:jest
 
 if [ -n "$failed" ]; then
     echo "Failed:$failed"

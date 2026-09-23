@@ -17,6 +17,7 @@ type TProcessFailure = "unhandledRejection" | "uncaughtException";
 
 describe( "VertixBase/Modules/ProcessFailureReporter", () => {
     let logger: Logger;
+    let exit: jest.Mock<( code: number ) => void>;
     let installed: Record<TProcessFailure, number>;
 
     const listenersOf = ( event: TProcessFailure ) => process.listeners( event );
@@ -31,12 +32,27 @@ describe( "VertixBase/Modules/ProcessFailureReporter", () => {
 
     function bootTheApi() {}
 
+    /*
+     * `ServiceLocatorMock.reset()` assigns `instance` on the subclass, which shadows rather than
+     * clears the static the real `ServiceLocator` holds - so a service registered by one test is
+     * still registered in the next, and `register()` throws. Unregistering by name first is what
+     * lets more than one test in this file have an alert service.
+     */
+    function registerAlertService(): ErrorAlertService {
+        ServiceLocator.$.unregister( "VertixBase/Modules/ErrorAlertService" );
+        ServiceLocator.$.register( ErrorAlertService );
+
+        return ServiceLocator.$.get<ErrorAlertService>( "VertixBase/Modules/ErrorAlertService" );
+    }
+
     beforeEach( () => {
         ServiceLocatorMock.reset();
 
         jest.spyOn( console, "error" ).mockImplementation( () => undefined );
 
         logger = new Logger( "VertixBase/Test/FailureReporter" );
+
+        exit = jest.fn();
 
         jest.spyOn( logger, "error" ).mockImplementation( () => undefined );
 
@@ -59,7 +75,7 @@ describe( "VertixBase/Modules/ProcessFailureReporter", () => {
     describe( "reportProcessFailures", () => {
         it( "should report an unhandled rejection through the logger", () => {
             // Arrange.
-            reportProcessFailures( logger, bootTheApi );
+            reportProcessFailures( logger, bootTheApi, { exit } );
 
             const error = new Error( "Connection reset" );
 
@@ -73,7 +89,7 @@ describe( "VertixBase/Modules/ProcessFailureReporter", () => {
 
         it( "should report an uncaught exception through the logger", () => {
             // Arrange.
-            reportProcessFailures( logger, bootTheApi );
+            reportProcessFailures( logger, bootTheApi, { exit } );
 
             const error = new Error( "Cannot read properties of undefined" );
 
@@ -87,7 +103,7 @@ describe( "VertixBase/Modules/ProcessFailureReporter", () => {
 
         it( "should turn a rejection that is not an error into one", () => {
             // Arrange.
-            reportProcessFailures( logger, bootTheApi );
+            reportProcessFailures( logger, bootTheApi, { exit } );
 
             // Act.
             fire( "unhandledRejection", "just a string" );
@@ -101,13 +117,81 @@ describe( "VertixBase/Modules/ProcessFailureReporter", () => {
 
         it( "should still write to the console, for the times the logger cannot answer", () => {
             // Arrange.
-            reportProcessFailures( logger, bootTheApi );
+            reportProcessFailures( logger, bootTheApi, { exit } );
 
             // Act.
             fire( "uncaughtException", new Error( "Connection reset" ) );
 
             // Assert.
             expect( console.error ).toHaveBeenCalled();
+        } );
+
+        it( "should end the process after an uncaught exception", async() => {
+            // Arrange.
+            reportProcessFailures( logger, bootTheApi, { exit } );
+
+            // Act.
+            fire( "uncaughtException", new Error( "Cannot read properties of undefined" ) );
+
+            await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+            // Assert.
+            expect( exit ).toHaveBeenCalledWith( 1 );
+        } );
+
+        it( "should end the process after an unhandled rejection", async() => {
+            // Arrange.
+            reportProcessFailures( logger, bootTheApi, { exit } );
+
+            // Act.
+            fire( "unhandledRejection", new Error( "Connection reset" ) );
+
+            await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+            // Assert.
+            expect( exit ).toHaveBeenCalledWith( 1 );
+        } );
+
+        it( "should let the alert land before it exits", async() => {
+            // Arrange.
+            const service = registerAlertService();
+
+            const order: string[] = [];
+
+            jest.spyOn( service, "flush" ).mockImplementation( async() => {
+                order.push( "flush" );
+            } );
+
+            exit.mockImplementation( () => {
+                order.push( "exit" );
+            } );
+
+            reportProcessFailures( logger, bootTheApi, { exit } );
+
+            // Act.
+            fire( "uncaughtException", new Error( "Cannot read properties of undefined" ) );
+
+            await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+            // Assert.
+            expect( order ).toEqual( [ "flush", "exit" ] );
+        } );
+
+        it( "should exit even when the flush itself fails", async() => {
+            // Arrange.
+            const service = registerAlertService();
+
+            jest.spyOn( service, "flush" ).mockRejectedValue( new Error( "webhook is unreachable" ) );
+
+            reportProcessFailures( logger, bootTheApi, { exit } );
+
+            // Act.
+            fire( "uncaughtException", new Error( "Cannot read properties of undefined" ) );
+
+            await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+            // Assert.
+            expect( exit ).toHaveBeenCalledWith( 1 );
         } );
     } );
 
@@ -119,9 +203,7 @@ describe( "VertixBase/Modules/ProcessFailureReporter", () => {
 
         it( "should flush the alert service when there is one", async() => {
             // Arrange.
-            ServiceLocator.$.register( ErrorAlertService );
-
-            const service = ServiceLocator.$.get<ErrorAlertService>( "VertixBase/Modules/ErrorAlertService" );
+            const service = registerAlertService();
 
             const flush = jest.spyOn( service, "flush" ).mockResolvedValue( undefined );
 

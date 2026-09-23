@@ -16,6 +16,11 @@
 #   bot     - last; it has no port of its own.
 # The dashboard is restored at the end so a teardown does not leave the UI down.
 #
+# The watchdog is outside that order at both ends: torn down first and started
+# last. It reports a pm2 app going down, and every app below is about to go down
+# on purpose - left running it would alert on the whole teardown. Started last,
+# the first thing it sees is a stack that is already up.
+#
 # The teardown is ordered too, in reverse. `pm2 delete all` signals every app at
 # once, which takes the logger down alongside the apps still writing to it.
 
@@ -98,7 +103,7 @@ running_bot_apps() {
 #
 # `vertix-bot` is named on its own as well as discovered, so the plain unsharded case never depends
 # on that json parse; deleting an app that is not there is already a no-op here.
-for app in pm2-dashboard $( running_bot_apps ) vertix-bot vertix-api vertix-redis vertix-logger; do
+for app in vertix-watchdog pm2-dashboard $( running_bot_apps ) vertix-bot vertix-api vertix-redis vertix-logger; do
     pm2 delete "$app" --silent 2>/dev/null || true
 done
 
@@ -133,6 +138,8 @@ for bot_app in $BOT_APPS; do
 done
 
 start_app pm2-dashboard
+
+start_app vertix-watchdog
 
 pm2 save --silent
 pm2 status

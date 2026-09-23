@@ -1,0 +1,21 @@
+{
+    "name": "@vertix.gg/watchdog",
+    "version": "0.0.0",
+    "license": "MIT",
+    "author": "Leonid Vinikov <leonidvinikov@gmail.com>",
+    "main": "src/index.ts",
+    "type": "module",
+    "scripts": {
+        "vertix-watchdog:jest": "LOGGER_DISABLED=true @z-jest --selectedProjects watchdog",
+        "vertix-watchdog:typecheck": "bunx --bun tsc --noEmit",
+        "vertix-watchdog:bun:start:dev": "bunx dotenv-cli -e ../../.env -- bun run src/index.ts"
+    },
+    "dependencies": {
+        "@vertix.gg/base": "workspace:*",
+        "pm2": "^6.0.14"
+    },
+    "devDependencies": {
+        "@jest/types": "^30.5.1",
+        "@zenflux/tsconfig-to-swc": "0.1.21"
+    }
+}

@@ -157,6 +157,30 @@ module.exports = {
             interpreter: "bash",
         },
         ... botApps(),
+        /**
+         * Last of the real apps, and the only one that watches the others.
+         *
+         * pm2 already restarts what crashes, so this is not here for that. It is here for the two
+         * things pm2 does silently: it tells nobody, and after `max_restarts` unstable restarts it
+         * marks an app `errored` and stops trying - which is the state an app is in when it has
+         * been down all night. The watchdog reports both to discord and starts back what pm2 has
+         * given up on.
+         *
+         * It has to outlive what it watches, so it is deliberately not part of the ordered restart
+         * that tears the stack down: scripts/pm2-restart.sh deletes it first, before the apps whose
+         * deliberate stops would otherwise read as crashes, and starts it last.
+         */
+        {
+            ... shared,
+            name: "vertix-watchdog",
+            cwd: path.join( ROOT, "apps", "vertix-watchdog" ),
+            script: PM2_EXEC,
+            // No `--wait-redis`: it talks to the pm2 daemon and nothing else, and the one time it
+            // is most needed is the one where redis is what failed.
+            args: "bun src/index.ts",
+            env: { LOGGER_PROCESS_NAME: "vertix-watchdog" },
+            interpreter: "bash",
+        },
         {
             ... shared,
             name: "pm2-dashboard",

@@ -1,0 +1,45 @@
+{
+    "compilerOptions": {
+        "incremental": true,
+        "rootDir": "./",
+        "outDir": "dist",
+        "baseUrl": "./",
+
+        "typeRoots": [
+            "../../node_modules/@types"
+        ],
+
+        "types": [
+            "bun",
+            "node"
+        ],
+
+        "target": "ESNext",
+
+        "lib": [
+            "ESNext",
+            "ES2022"
+        ],
+
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": false
+    },
+
+    "include": [
+        "src/**/*.ts"
+    ],
+
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

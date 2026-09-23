@@ -1,0 +1,25 @@
+{
+	"extends": "../tsconfig.json",
+	"include": [
+		"**/*.ts",
+	],
+    "exclude": [
+        "../dist"
+    ],
+    "compilerOptions": {
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"baseUrl": ".",
+        "target": "esnext",
+        "module": "esnext",
+        "typeRoots": [
+            "../../../node_modules/@types",
+            "../../../node_modules",
+            "../node_modules"
+        ],
+        "types": [
+            "node",
+            "jest"
+        ]
+    }
+}

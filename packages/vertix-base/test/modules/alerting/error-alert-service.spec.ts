@@ -2,6 +2,8 @@ import { jest } from "@jest/globals";
 
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
+import { withAlertContext } from "@vertix.gg/base/src/modules/alerting/alert-context";
+
 import { ErrorAlertService } from "@vertix.gg/base/src/modules/alerting/error-alert-service";
 
 const WEBHOOK_URL = "https://discord.test/api/webhooks/vertix/error-alerts";
@@ -224,6 +226,62 @@ describe( "VertixBase/Modules/ErrorAlertService", () => {
             expect( description ).toContain( "channel-service.ts:88:12" );
             expect( description ).not.toContain( "node_modules" );
             expect( description ).not.toContain( "task_queues" );
+        } );
+    } );
+
+    describe( "where it happened", () => {
+        const fieldNamed = ( embed: ISentEmbed, name: string ) =>
+            embed.fields.find( ( field ) => field.name === name )?.value;
+
+        it( "should say which guild, channel and user the failure came from", async() => {
+            // Act.
+            await withAlertContext( {
+                guildId: "1110248409761316944",
+                guildName: "Vertix Testing",
+                channelId: "1110248409761316948",
+                channelName: "Join to create",
+                userId: "967842504024383508",
+                userName: "leo"
+            }, () => raise( "Could not build the room" ) );
+
+            // Assert.
+            const where = fieldNamed( sentEmbeds()[ 0 ], "Where" ) ?? "";
+
+            expect( where ).toContain( "Vertix Testing (1110248409761316944)" );
+            expect( where ).toContain( "Join to create (1110248409761316948)" );
+            expect( where ).toContain( "leo (967842504024383508)" );
+        } );
+
+        it( "should follow the failure down through the awaits below it", async() => {
+            // Arrange - the failure is raised three awaits deep, which is where one actually is.
+            const deep = async() => {
+                await Promise.resolve();
+                await Promise.resolve();
+
+                await raise( "Could not build the room" );
+            };
+
+            // Act.
+            await withAlertContext( { guildId: "1110248409761316944", guildName: "Vertix Testing" }, deep );
+
+            // Assert.
+            expect( fieldNamed( sentEmbeds()[ 0 ], "Where" ) ).toContain( "Vertix Testing" );
+        } );
+
+        it( "should still print an id that arrived without a name", async() => {
+            // Act.
+            await withAlertContext( { guildId: "1110248409761316944" }, () => raise( "Could not build the room" ) );
+
+            // Assert.
+            expect( fieldNamed( sentEmbeds()[ 0 ], "Where" ) ).toContain( "1110248409761316944" );
+        } );
+
+        it( "should leave the field off for a failure with no interaction behind it", async() => {
+            // Act - a background job, outside any context.
+            await raise( "Cleanup worker failed" );
+
+            // Assert.
+            expect( fieldNamed( sentEmbeds()[ 0 ], "Where" ) ).toBeUndefined();
         } );
     } );
 

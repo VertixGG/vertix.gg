@@ -2,6 +2,11 @@ import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
 
+import {
+    currentAlertContext,
+    describeAlertContext
+} from "@vertix.gg/base/src/modules/alerting/alert-context";
+
 import type { TLogLevelName } from "@vertix.gg/base/src/modules/logger";
 
 const DEFAULT_DEDUPE_WINDOW_MS = 300000;
@@ -64,6 +69,7 @@ interface IDedupeEntry {
 }
 
 interface IAlert {
+    where: string;
     preceding: string[];
     source: string;
     messagePrefix: string;
@@ -250,6 +256,14 @@ export class ErrorAlertService extends ServiceBase {
          */
         const preceding = this.recent.slice( - CONTEXT_LINES_REPORTED );
 
+        /*
+         * Read here, with everything else the alert is made of, so `send()` is answerable only for
+         * what it was handed. `send()` is called from inside this context and would read the same
+         * thing today - but it is the one part that could later be retried or queued, and ambient
+         * state read at that point would be whatever happened to be current then.
+         */
+        const where = describeAlertContext( currentAlertContext() );
+
         this.remember( level, plainSource, messagePrefix, message );
 
         if ( "ERROR" !== level ) {
@@ -275,6 +289,7 @@ export class ErrorAlertService extends ServiceBase {
         this.droppedByRateLimit = 0;
 
         this.track( this.send( {
+            where,
             preceding,
             source: plainSource,
             messagePrefix,
@@ -408,6 +423,12 @@ export class ErrorAlertService extends ServiceBase {
                     : undefined,
                 color: DISCORD_EMBED_ERROR_COLOR,
                 fields: [
+                    ... alert.where
+                        ? [ {
+                            name: "Where",
+                            value: truncate( "```\n" + alert.where + "\n```", DISCORD_EMBED_FIELD_VALUE_LIMIT )
+                        } ]
+                        : [],
                     {
                         name: "Source",
                         value: truncate( alert.source, DISCORD_EMBED_FIELD_VALUE_LIMIT )

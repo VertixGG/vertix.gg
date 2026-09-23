@@ -2,6 +2,7 @@ import { Events } from "discord.js";
 
 import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+import { withAlertContext } from "@vertix.gg/base/src/modules/alerting/alert-context";
 
 import { guildLeaveBecauseNotInDatabase } from "@vertix.gg/bot/src/utils/guild";
 
@@ -20,7 +21,22 @@ export function channelHandler( client: Client ) {
         } );
     };
 
+    // Where a room is actually built, and so where most of what goes wrong goes wrong. Wrapped so
+    // an error raised below says which server and channel it came from. See `alert-context`.
     async function VoiceStateUpdate( oldState: VoiceState, newState: VoiceState ) {
+        const state = newState.channelId ? newState : oldState;
+
+        await withAlertContext( {
+            guildId: state.guild.id,
+            guildName: state.guild.name,
+            channelId: state.channelId ?? undefined,
+            channelName: state.channel?.name,
+            userId: state.member?.id,
+            userName: state.member?.user.username
+        }, () => handleVoiceStateUpdate( oldState, newState ) );
+    }
+
+    async function handleVoiceStateUpdate( oldState: VoiceState, newState: VoiceState ) {
         if ( newState.guild.id ) {
             updateLastActive( newState.guild.id );
         }

@@ -3,6 +3,7 @@ import { Events, MessageComponentInteraction, ModalSubmitInteraction } from "dis
 import { GuildModel } from "@vertix.gg/data/src/models/guild-model";
 import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
 import { InteractionTrace } from "@vertix.gg/base/src/modules/trace/interaction-trace";
+import { withAlertContext } from "@vertix.gg/base/src/modules/alerting/alert-context";
 
 import { Commands } from "@vertix.gg/bot/src/commands";
 
@@ -18,12 +19,23 @@ export function interactionHandler( client: Client ) {
     client.on( Events.InteractionCreate, async( interaction: Interaction ) => {
         // Everything the press waits on - queries, discord requests, the screen being drawn - is
         // timed inside this, and a slow one is logged with the breakdown. See `InteractionTrace`.
-        await InteractionTrace.$.run(
+        // And an error raised anywhere below says which server and channel it came from, without
+        // that having to be threaded through every signature in between. See `alert-context`.
+        await withAlertContext( {
+            guildId: interaction.guild?.id,
+            guildName: interaction.guild?.name,
+            channelId: interaction.channel?.id,
+            channelName: interaction.channel && "name" in interaction.channel
+                ? interaction.channel.name ?? undefined
+                : undefined,
+            userId: interaction.user.id,
+            userName: interaction.user.username
+        }, () => InteractionTrace.$.run(
             getInteractionTraceName( interaction ),
             interaction.id,
             Date.now() - interaction.createdTimestamp,
             () => handleInteraction( client, interaction )
-        );
+        ) );
     } );
 }
 

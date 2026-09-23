@@ -1,5 +1,4 @@
 export const EDGE_COLORS = {
-    MODULE_TO_FLOW: "#f59e0b",
     FLOW_TO_COMPONENT: "#a855f7",
     COMPONENT_TO_MODAL: "#ec4899",
     COMPONENT_TO_FLOW: "#f59e0b",

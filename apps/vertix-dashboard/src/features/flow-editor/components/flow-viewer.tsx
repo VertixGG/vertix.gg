@@ -484,17 +484,14 @@ export function FlowViewer() {
      * Hidden rather than rebuilt: the graph is laid out once, and turning a kind of line off is a
      * change to what is being read rather than to what is there, so nothing moves.
      *
-     * The built edges are what says whether a line was already hidden for a reason of its own - a
-     * module's second telling of an arrival - and that reason still holds whatever the legend says.
-     * So each line is hidden if either has it hidden, read off the built list rather than off what
-     * is on screen, which is already carrying the last answer to this same question.
+     * Run again whenever the built edges change, because a rebuilt canvas arrives with every line
+     * showing and has to be asked this same question over.
      */
     useEffect( () => {
-        const builtHiddenById = new Map( initialEdges.map( ( edge ) => [ edge.id, Boolean( edge.hidden ) ] ) ),
-            hidden = new Set( hiddenEdgeKinds );
+        const hidden = new Set( hiddenEdgeKinds );
 
         setEdges( ( currentEdges ) => currentEdges.map( ( edge ) => {
-            const isHidden = ( builtHiddenById.get( edge.id ) ?? false ) || hidden.has( kindKeyOfEdge( edge ) );
+            const isHidden = hidden.has( kindKeyOfEdge( edge ) );
 
             return isHidden === Boolean( edge.hidden ) ? edge : { ...edge, hidden: isHidden };
         } ) );

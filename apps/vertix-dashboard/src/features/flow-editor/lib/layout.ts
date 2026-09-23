@@ -338,12 +338,11 @@ export function getLayoutedElements(
     /*
      * --- Phase 0b: a line from one flow to another is drawn, but does not rank them together ---
      *
-     * Three kinds of line leave a flow: the module's line to the flows it owns, a button that opens
-     * another flow, and a router's line to where it routes. Every one of them joins two flows that
-     * have nothing else to do with each other, and handed to the ranking they weld the whole module
-     * into a single graph - one component of a hundred and fifty nodes, laid out in ranks forty
-     * screens wide, where a flow's own two screens can end up sixteen thousand pixels apart with
-     * eleven other flows' screens in between.
+     * Two kinds of line leave a flow: a button that opens another flow, and a router's line to
+     * where it routes. Both join two flows that have nothing else to do with each other, and handed
+     * to the ranking they weld the whole module into a single graph - one component of a hundred
+     * and fifty nodes, laid out in ranks forty screens wide, where a flow's own two screens can end
+     * up sixteen thousand pixels apart with eleven other flows' screens in between.
      *
      * Left out of the ranking, each flow ranks alone and its screens sit together, which is what
      * anybody reading one flow is reading. The lines themselves are untouched: this list is only
@@ -355,8 +354,7 @@ export function getLayoutedElements(
     const nodeTypeById = new Map( mainNodes.map( ( node ) => [ node.id, node.type ?? "" ] ) );
 
     const isCrossFlowEdge = ( edge: Edge ): boolean =>
-        edge.id.startsWith( "edge-module-" )
-        || edge.id.startsWith( "edge-btn-flow-" )
+        edge.id.startsWith( "edge-btn-flow-" )
         || ( "flowNode" === nodeTypeById.get( edge.source ) && "flowNode" === nodeTypeById.get( edge.target ) );
 
     const rankingEdges = mainEdges.filter( ( edge ) => ! isCrossFlowEdge( edge ) );
@@ -536,11 +534,11 @@ export function getLayoutedElements(
      * The module and its routers are not among the things being packed.
      *
      * Once a flow's lines to other flows stopped ranking, anything whose every line goes to another
-     * flow was left with no ranked edge at all - the module, which is joined to every flow and to
-     * nothing else, and a router with no screen of its own, whose whole job is to send a press
-     * somewhere else. Each became a component of one and took a cell of the grid, so the module sat
-     * out on the left of the first row and the command router sat somewhere among the flows it
-     * routes into.
+     * flow was left with no ranked edge at all - and the module, which no longer draws a line of its
+     * own, has none from the start. A router with no screen of its own is the same, its whole job
+     * being to send a press somewhere else. Each became a component of one and took a cell of the
+     * grid, so the module sat out on the left of the first row and the command router sat somewhere
+     * among the flows it routes into.
      *
      * Neither is a sibling of the flows. The module is what they all hang off and a router is the
      * way in to them, so both are held back here and put at the head once the flows are placed.

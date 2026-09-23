@@ -1,5 +1,3 @@
-import { Handle, Position } from "@xyflow/react";
-
 import type { Node, NodeProps } from "@xyflow/react";
 
 type ModuleNodeData = Record<string, string> & {
@@ -20,7 +18,6 @@ export function ModuleNode( props: NodeProps<ModuleNodeType> ) {
             <div className="text-[10px] text-indigo-200 uppercase tracking-wider mb-1">Module</div>
             <div className="text-white font-bold text-lg">{ label }</div>
             <div className="text-indigo-200 text-[10px] mt-1 opacity-70">{ fullName }</div>
-            <Handle type="source" position={ Position.Bottom } className="bg-indigo-400! w-3! h-3!" />
         </div>
     );
 }

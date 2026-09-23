@@ -3,7 +3,6 @@ import zCore from "@zenflux/core";
 import { createModuleNode, createFlowNode, createComponentNode, createModalNode } from "@vertix.gg/dashboard/src/features/flow-editor/lib/node-builders";
 import { isForeignTo } from "@vertix.gg/dashboard/src/features/flow-editor/lib/module-scope";
 import {
-    createModuleToFlowEdge,
     createFlowToComponentEdge,
     createComponentToModalEdge,
     createComponentToFlowEdge,
@@ -1506,7 +1505,6 @@ class FlowGraphBuilder {
     private readonly flowIdMap = new Map<string, string>();
     private readonly systemFlowCompIds = new Map<string, string>();
     private readonly reachableFlows = new Set<string>();
-    private readonly routedFlows = new Set<string>();
 
     public constructor( data: ModuleFlowsResponse, options?: FlowGraphOptions ) {
         this.data = data;
@@ -1527,7 +1525,6 @@ class FlowGraphBuilder {
 
     public build(): { nodes: Node[]; edges: Edge[] } {
         this.computeReachableFlows();
-        this.computeRoutedFlows();
         this.buildModuleNode();
         this.buildSystemFlowNodes();
         this.buildFlowNodes();
@@ -1535,7 +1532,6 @@ class FlowGraphBuilder {
         this.buildFlowComponents();
         this.buildOrphanComponents();
         this.buildSystemFlowTransitions();
-        this.markModuleEdgesRoutedElsewhere();
 
         return { nodes: this.allNodes, edges: this.allEdges };
     }
@@ -1572,87 +1568,6 @@ class FlowGraphBuilder {
         return this.reachableFlows.size > 0 && ! this.reachableFlows.has( flowName );
     }
 
-    /**
-     * The module's line to a flow something else already reaches, taken away.
-     *
-     * A flow is arrived at by a router, or by a button on some other flow's screen. Either way
-     * something on the canvas already shows how it is reached, and the module's own line is the
-     * same arrival said twice. What is left is the flows nothing else reaches - which is the only
-     * case where the module is the thing that explains them.
-     *
-     * Read off the edges actually drawn rather than worked out beforehand: a button's route is only
-     * known once the components have been built, and a router that has been put away must not go on
-     * suppressing the line its flows now depend on.
-     */
-    private markModuleEdgesRoutedElsewhere(): void {
-        const reached = new Set<string>();
-
-        this.allEdges.forEach( ( edge ) => {
-            if ( edge.id.startsWith( "edge-btn-flow-" ) ) {
-                reached.add( edge.target );
-            }
-        } );
-
-        this.routedFlows.forEach( ( flowName ) => {
-            const flowId = this.flowIdMap.get( flowName );
-
-            if ( flowId ) {
-                reached.add( flowId );
-            }
-        } );
-
-        /*
-         * A router is the module's own, whoever else reaches it.
-         *
-         * One router routing to another - a command opening the control panel - would otherwise
-         * take away the module's line to it, and a module standing apart from the routers it
-         * declares is not a truer picture, it is a wrong one. The module is where they come from.
-         */
-        const systemFlowIds = new Set(
-            this.data.systemFlows
-                .map( ( flow ) => this.flowIdMap.get( flow.name ) )
-                .filter( ( id ): id is string => Boolean( id ) )
-        );
-
-        this.allEdges.forEach( ( edge ) => {
-            if ( edge.id.startsWith( "edge-module-" ) && reached.has( edge.target ) && ! systemFlowIds.has( edge.target ) ) {
-                edge.hidden = true;
-            }
-        } );
-    }
-
-    /**
-     * The flows the routers reach.
-     *
-     * Counted from the routers actually drawn, so putting one away hands its flows back to the
-     * module rather than leaving them floating with nothing attached.
-     */
-    private computeRoutedFlows(): void {
-        this.data.systemFlows
-            .filter( ( flow ) => this.isSystemFlowDrawn( flow.name ) )
-            .forEach( ( flow ) => {
-                flow.transitions?.forEach( ( transition ) => {
-                    const target = transition.to?.split( "/States/" )[ 0 ];
-
-                    if ( target ) {
-                        this.routedFlows.add( target );
-                    }
-                } );
-
-                flow.handoffPoints?.forEach( ( handoff ) => {
-                    if ( handoff.flowName ) {
-                        this.routedFlows.add( handoff.flowName );
-                    }
-                } );
-
-                flow.edgeSourceMappings?.forEach( ( mapping ) => {
-                    if ( mapping.targetFlowName ) {
-                        this.routedFlows.add( mapping.targetFlowName );
-                    }
-                } );
-            } );
-    }
-
     private addEdge( edge: Edge ): void {
         if ( this.edgeIds.has( edge.id ) ) {
             return;
@@ -1667,19 +1582,14 @@ class FlowGraphBuilder {
     }
 
     private buildSystemFlowNodes(): void {
-        const moduleNodeId = this.allNodes[ 0 ].id;
-
         this.data.systemFlows.filter( ( flow ) => this.isSystemFlowDrawn( flow.name ) ).forEach( flow => {
             const flowNode = createFlowNode( flow, true );
             this.flowIdMap.set( flow.name, flowNode.id );
             this.allNodes.push( flowNode );
-            this.addEdge( createModuleToFlowEdge( moduleNodeId, flowNode.id, flow.name ) );
         } );
     }
 
     private buildFlowNodes(): void {
-        const moduleNodeId = this.allNodes[ 0 ].id;
-
         this.data.flows.forEach( flow => {
             if ( this.isUnreachedForeignFlow( flow.name ) ) {
                 return;
@@ -1692,10 +1602,6 @@ class FlowGraphBuilder {
             const flowNode = createFlowNode( flow, false );
             this.flowIdMap.set( flow.name, flowNode.id );
             this.allNodes.push( flowNode );
-
-            // Drawn for every flow, and taken away again below wherever something else already
-            // shows how the flow is reached.
-            this.addEdge( createModuleToFlowEdge( moduleNodeId, flowNode.id, flow.name ) );
         } );
     }
 

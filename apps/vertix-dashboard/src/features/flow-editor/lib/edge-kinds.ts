@@ -20,11 +20,10 @@ export interface EdgeKind {
  *
  * Colour alone does not identify a line: amber says two different things, and pink is the way into
  * a modal one way round and the way back out the other. Colour and whether the line is broken
- * together do - there are nine appearances across the three modules and nine entries here, one
+ * together do - there are eight appearances across the three modules and eight entries here, one
  * apiece, with nothing drawn that this list cannot name.
  */
 export const EDGE_KINDS: ReadonlyArray<EdgeKind> = [
-    { color: EDGE_COLORS.MODULE_TO_FLOW, label: "A module and the flows it owns" },
     { color: EDGE_COLORS.COMPONENT_TO_FLOW, label: "A button that opens another flow", isBroken: true },
     { color: EDGE_COLORS.FLOW_TO_COMPONENT, label: "The screen a flow opens on" },
     { color: EDGE_COLORS.COMPONENT_TO_MODAL, label: "A button that opens a modal", isBroken: true },

@@ -23,7 +23,14 @@ export function EdgeLegend() {
     const setEdgeKindHidden = useCanvasFiltersStore( ( state ) => state.setEdgeKindHidden );
     const showAllEdgeKinds = useCanvasFiltersStore( ( state ) => state.showAllEdgeKinds );
 
-    const hiddenCount = hiddenEdgeKinds.length;
+    /*
+     * Counted off the rows the legend draws, not off the stored list.
+     *
+     * What is stored is whatever the reader last turned off, and a kind the canvas has stopped
+     * drawing leaves its key behind in there. Counted straight, the header went on saying one was
+     * hidden with no row struck through to say which, and a Show all that cleared nothing visible.
+     */
+    const hiddenCount = EDGE_KINDS.filter( ( kind ) => hiddenEdgeKinds.includes( kindKeyOf( kind ) ) ).length;
 
     return (
         <div className="absolute bottom-4 left-14 bg-zinc-800/95 border border-zinc-700 rounded

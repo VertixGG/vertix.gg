@@ -4,16 +4,6 @@ import { EDGE_COLORS, EDGE_STYLES, MARKER_SIZES, Z_INDEX } from "@vertix.gg/dash
 
 import type { Edge } from "@xyflow/react";
 
-export function createModuleToFlowEdge( moduleNodeId: string, flowId: string, flowName: string ): Edge {
-    return {
-        id: `edge-module-${ flowName }`,
-        source: moduleNodeId,
-        target: flowId,
-        style: { stroke: EDGE_COLORS.MODULE_TO_FLOW, ...EDGE_STYLES.DEFAULT },
-        markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLORS.MODULE_TO_FLOW, ...MARKER_SIZES.MEDIUM }
-    };
-}
-
 export function createFlowToComponentEdge( flowId: string, compId: string, flowName: string ): Edge {
     return {
         /*

@@ -21,7 +21,7 @@ jobs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Check JS files diff
         id: js_diff_files
         uses: technote-space/get-diff-action@v6
@@ -35,11 +35,11 @@ jobs:
     needs: [ 'file-diff' ]
     name: Test
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         id: deps-cache
         continue-on-error: true
         with:

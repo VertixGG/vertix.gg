@@ -12,9 +12,9 @@
         "vertix-api:ts-node:start:dev": "tsx --tsconfig tsconfig.json --trace-exit --trace-uncaught --enable-source-maps src/index.ts"
     },
     "dependencies": {
-        "@fastify/cookie": "^11.0.2",
-        "@fastify/cors": "^11.0.0",
-        "@fastify/session": "^11.1.1",
+        "@fastify/cookie": "^11.1.2",
+        "@fastify/cors": "^11.3.0",
+        "@fastify/session": "^11.1.3",
         "@fastify/type-provider-typebox": "^5.1.0",
         "@resvg/resvg-js": "^2.6.2",
         "@sinclair/typebox": "^0.34.30",
@@ -27,7 +27,7 @@
         "@vertix.gg/utils": "workspace:*",
         "@zenflux/utils": "latest",
         "dotenv": "^16.0.3",
-        "fastify": "^5.2.1",
+        "fastify": "^5.12.5",
         "picocolors": "^1.0.1"
     },
     "devDependencies": {

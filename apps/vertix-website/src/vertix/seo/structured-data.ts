@@ -81,10 +81,29 @@ const FAQ_ENTRIES = [
     },
 ] as const;
 
+/*
+ * Every place the bot is described that is not this site, which is how Google ties those pages and
+ * this one into the same thing. top.gg answers 404 until the listing is approved, and is kept so that
+ * it counts from the day it is.
+ */
 export const SITE_PROFILES = {
     SUPPORT_SERVER: "https://discord.gg/dEwKeQefUU",
+    DISCORD_APP_DIRECTORY: "https://discord.com/discovery/applications/1538844311062581339",
     TOP_GG: "https://top.gg/bot/1538844311062581339",
+    DISCORD_BOT_LIST: "https://discordbotlist.com/bots/voicechannels",
+    DISCORD_BOTS_NET: "https://discordbots.net/bot/4003-voicechannels",
+    GITHUB: "https://github.com/VertixGG/vertix.gg",
 } as const;
+
+/*
+ * What the site is called, as opposed to what its address is.
+ *
+ * Without a WebSite node Google names a result after its hostname - "voicechannels.online" - and
+ * reads "voicechannels" typed as one word as the generic "voice channels", so a search for the name
+ * does not come back to the site. The domain is listed as an alternate the way Google's own example
+ * lists one.
+ */
+const SITE_ALTERNATE_NAMES = [ "Voice Channels", "voicechannels.online" ] as const;
 
 const FEATURE_LIST = [
     "Join to Create temporary voice channels",
@@ -108,6 +127,16 @@ function toBreadcrumbName( title: string ): string {
     return title;
 }
 
+export function buildWebSiteNode(): JsonLdNode {
+    return {
+        "@context": SCHEMA_CONTEXT,
+        "@type": "WebSite",
+        name: SITE_NAME,
+        alternateName: [ ...SITE_ALTERNATE_NAMES ],
+        url: SITE_ORIGIN + HOME_PATH,
+    };
+}
+
 export function buildSoftwareApplicationNode(): JsonLdNode {
     return {
         "@context": SCHEMA_CONTEXT,
@@ -124,7 +153,7 @@ export function buildSoftwareApplicationNode(): JsonLdNode {
             price: OFFER_PRICE,
             priceCurrency: OFFER_CURRENCY,
         },
-        sameAs: [ SITE_PROFILES.SUPPORT_SERVER, SITE_PROFILES.TOP_GG ],
+        sameAs: [ ...Object.values( SITE_PROFILES ) ],
     };
 }
 
@@ -135,7 +164,7 @@ export function buildOrganizationNode(): JsonLdNode {
         name: SITE_NAME,
         url: SITE_ORIGIN + HOME_PATH,
         logo: SITE_ORIGIN + BRAND_LOGO_PATH,
-        sameAs: [ SITE_PROFILES.SUPPORT_SERVER, SITE_PROFILES.TOP_GG ],
+        sameAs: [ ...Object.values( SITE_PROFILES ) ],
     };
 }
 
@@ -219,7 +248,7 @@ export function getStructuredData( pathname: string ): JsonLdNode[] {
     }
 
     if ( HOME_PATH === meta.path ) {
-        return [ buildSoftwareApplicationNode(), buildOrganizationNode() ];
+        return [ buildWebSiteNode(), buildSoftwareApplicationNode(), buildOrganizationNode() ];
     }
 
     const nodes = [

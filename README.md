@@ -398,7 +398,7 @@ Run `/setup` → `📈 Create Scaling Channel` and you're done. [Learn more →]
 
 ## Dashboard 🎨
 
-Manage your VoiceChannels setup from a web-based dashboard at **[dashboard.vertix.gg](https://dashboard.vertix.gg)** — no commands needed.
+Manage your VoiceChannels setup from a web-based dashboard at **[dashboard.voicechannels.online](https://dashboard.voicechannels.online)** — no commands needed.
 
 ### Visual Editor
 - Flow-based editor for customizing bot UI components
@@ -462,9 +462,9 @@ vertix.gg/
 ├── apps/
 │   ├── vertix-api/         REST API
 │   ├── vertix-bot/         Discord bot
-│   ├── vertix-dashboard/   Web dashboard (dashboard.vertix.gg)
+│   ├── vertix-dashboard/   Web dashboard (dashboard.voicechannels.online)
 │   ├── vertix-mcp/         MCP server
-│   ├── vertix-website/     Marketing site (vertix.gg)
+│   ├── vertix-website/     Marketing site (voicechannels.online)
 │   └── redis/              Redis dev container
 ├── packages/
 │   ├── vertix-base/        Models, managers, encryption, event bus
@@ -509,10 +509,10 @@ See it in action without installing anything:
 
 | | |
 | --- | --- |
-| 🎬 **Live demos & docs** | [vertix.gg/welcome](https://voicechannels.online/welcome) — every dynamic-channel feature rendered as a real interactive Discord component using `@vertix.gg/discord-ui` |
-| 🧰 **Auto-scaling walkthrough** | [vertix.gg/features/auto-scaling](https://voicechannels.online/features/auto-scaling) — wizard, configuration, and scaling logic explained step-by-step |
-| 🎛️ **The dashboard** | [dashboard.vertix.gg](https://dashboard.vertix.gg) — sign in with Discord and edit master channel UIs with the visual flow editor |
-| 📜 **Changelog** | [vertix.gg/changelog](https://voicechannels.online/changelog) — what shipped recently and what's next |
+| 🎬 **Live demos & docs** | [voicechannels.online/welcome](https://voicechannels.online/welcome) — every dynamic-channel feature rendered as a real interactive Discord component using `@vertix.gg/discord-ui` |
+| 🧰 **Auto-scaling walkthrough** | [voicechannels.online/features/auto-scaling](https://voicechannels.online/features/auto-scaling) — wizard, configuration, and scaling logic explained step-by-step |
+| 🎛️ **The dashboard** | [dashboard.voicechannels.online](https://dashboard.voicechannels.online) — sign in with Discord and edit master channel UIs with the visual flow editor |
+| 📜 **Changelog** | [voicechannels.online/changelog](https://voicechannels.online/changelog) — what shipped recently and what's next |
 
 ---
 

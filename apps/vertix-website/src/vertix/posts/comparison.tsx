@@ -259,7 +259,7 @@ const HONEST = [
 export default function Comparison() {
     return (
         <div>
-            <h1 className="text-h3">Discord temporary voice channel bots, compared</h1>
+            <h1 className="text-h3 md:text-h2">Discord temporary voice channel bots, compared</h1>
 
             <p className="text-vc-ice-dim mt-4 mb-10">
                 The three bots whose whole product is temporary voice channels, against this
@@ -339,7 +339,7 @@ export default function Comparison() {
                 dashboard rather than from its marketing, and none are left unanswered.
             </p>
 
-            <div className="overflow-x-auto xl:overflow-x-visible mb-4">
+            <div className="overflow-x-auto @min-[64rem]:overflow-x-visible mb-4">
                 <table className="w-full text-sm table-fixed" style={ { minWidth: "64rem" } }>
                     <colgroup>
                         <col style={ { width: "36%" } } />
@@ -407,7 +407,7 @@ export default function Comparison() {
                 no such section, which is not the same as the bot lacking the feature.
             </p>
 
-            <div className="overflow-x-auto xl:overflow-x-visible mb-4">
+            <div className="overflow-x-auto @min-[64rem]:overflow-x-visible mb-4">
                 <table className="w-full text-sm table-fixed" style={ { minWidth: "64rem" } }>
                     <colgroup>
                         <col style={ { width: "36%" } } />

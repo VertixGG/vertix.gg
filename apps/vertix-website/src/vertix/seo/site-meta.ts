@@ -66,6 +66,15 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 1.0,
     },
     {
+        path: "/features",
+        sourcePath: "src/vertix/pages/features/features-overview.tsx",
+        title: "Temporary Voice Channel Features | VoiceChannels",
+        description:
+            "Every control a VoiceChannels channel gives its owner, in the v3 and v2 interfaces, "
+            + "and the auto-scaling pools that open and close channels as people arrive.",
+        priority: 0.9,
+    },
+    {
         path: "/features/dynamic-channel-v2",
         sourcePath: "src/vertix/pages/features/dynamic-channel-v2.tsx",
         title: "Dynamic Channel V2 — Buttons Interface | VoiceChannels",

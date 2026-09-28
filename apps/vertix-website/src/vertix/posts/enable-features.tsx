@@ -68,7 +68,7 @@ const BADWORDS_MESSAGE = "`badword*`";
 export default function EnableFeatures() {
     return (
         <div>
-            <h1 className="text-h3">How to enable dynamic voice channel features</h1>
+            <h1 className="text-h3 md:text-h2">How to enable dynamic voice channel features</h1>
             <br />
 
             <ol className="text-h5">

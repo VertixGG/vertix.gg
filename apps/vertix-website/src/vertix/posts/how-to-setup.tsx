@@ -12,7 +12,7 @@ export default function HowToSetup() {
     return (
         <>
             <div>
-                <h1 className="text-h3">How to set up temporary voice channels in Discord</h1>
+                <h1 className="text-h3 md:text-h2">How to set up temporary voice channels in Discord</h1>
                 <br/>
 
                 <ul className="text-h5">

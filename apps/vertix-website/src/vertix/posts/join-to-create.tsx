@@ -7,7 +7,7 @@ import JoinToCreateWalkthrough from "@vertix.gg/website/src/vertix/posts/join-to
 export default function JoinToCreate() {
     return (
         <div>
-            <h1 className="text-h3">Join to Create voice channels in Discord</h1>
+            <h1 className="text-h3 md:text-h2">Join to Create voice channels in Discord</h1>
 
             <p className="text-vc-ice-dim mt-4">
                 One channel hands out the rest. Somebody joins it, gets a room of their own, and

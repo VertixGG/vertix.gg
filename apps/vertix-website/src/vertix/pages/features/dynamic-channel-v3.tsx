@@ -1,12 +1,16 @@
+import React from "react";
+
 import { useSearchParams } from "react-router-dom";
 
 import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
-import SearchableSelect from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
+import {
+    DYNAMIC_CHANNEL_FEATURE_PARAM,
+    DYNAMIC_CHANNEL_V3_FEATURES,
+    DYNAMIC_CHANNEL_V3_FEATURES_PATH
+} from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
-import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
-
-import { DYNAMIC_CHANNEL_V3_EMOJI_NAMES } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
+import { getRouteMeta } from "@vertix.gg/website/src/vertix/seo/site-meta";
 
 import ButtonsInterface from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/buttons-interface";
 import RenameChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/rename-channel";
@@ -25,43 +29,7 @@ import KnockChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-c
 import ClaimChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/claim-channel";
 import Lfm from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/lfm";
 
-import type { SearchableSelectOption } from "@vertix.gg/website/src/vertix/components/ui/searchable-select";
-
-/**
- * The features, each carrying the artwork its button really has in Discord.
- *
- * Built per render rather than once at module load: the emoji manifest arrives from the api after
- * first paint, and the icons resolve on the repaint it triggers.
- */
-function getFeatureOptions(): SearchableSelectOption[] {
-    const icon = ( name: string, alt: string, fallback: string ) => (
-        <DynamicChannelV3Emoji name={ name } alt={ alt } fallback={ fallback } className="inline-flex items-center" />
-    );
-
-    const { rename, limit, clearChat, permissions, privacy, region, editPrimaryMessage, templates, resetChannel, transferChannel, claimChannel, status, inviteChannel, knockChannel, lfm } = DYNAMIC_CHANNEL_V3_EMOJI_NAMES;
-
-    return [
-        { label: "📋 All Features", value: "all" },
-        { label: "🎚️ Buttons Interface", value: "buttons-interface" },
-        { label: "Rename Channel", value: "rename-channel", icon: icon( rename, "Rename", "✏️" ) },
-        { label: "User Limit", value: "user-limit", icon: icon( limit, "User Limit", "✋" ) },
-        { label: "Clear Chat", value: "clear-chat", icon: icon( clearChat, "Clear Chat", "🧹" ) },
-        { label: "Permissions", value: "permissions", icon: icon( permissions, "Permissions", "👥" ) },
-        { label: "Invite", value: "invite-channel", icon: icon( inviteChannel, "Invite", "📨" ) },
-        { label: "Knock", value: "knock-channel", icon: icon( knockChannel, "Knock", "🚪" ) },
-        { label: "Privacy State", value: "privacy-state", icon: icon( privacy, "Privacy", "🚫" ) },
-        { label: "Region & Bitrate", value: "region", icon: icon( region, "Region", "🌍" ) },
-        { label: "Edit Primary Message", value: "edit-primary-message", icon: icon( editPrimaryMessage, "Edit Primary Message", "📝" ) },
-        { label: "Channel Templates", value: "templates", icon: icon( templates, "Templates", "📂" ) },
-        { label: "Channel Status", value: "status", icon: icon( status, "Status", "📢" ) },
-        { label: "Reset Channel", value: "reset-channel", icon: icon( resetChannel, "Reset", "🔃" ) },
-        { label: "Transfer Channel", value: "transfer-channel", icon: icon( transferChannel, "Transfer", "🔀" ) },
-        { label: "Looking for Members", value: "lfm", icon: icon( lfm, "LFM", "🔎" ) },
-        { label: "Claim Channel", value: "claim-channel", icon: icon( claimChannel, "Claim", "😈" ) },
-    ];
-}
-
-const FEATURE_COMPONENTS: Record<string, JSX.Element> = {
+const FEATURE_COMPONENTS: Readonly<Record<string, JSX.Element>> = {
     "buttons-interface": <ButtonsInterface />,
     "rename-channel": <RenameChannel />,
     "user-limit": <UserLimit />,
@@ -81,84 +49,29 @@ const FEATURE_COMPONENTS: Record<string, JSX.Element> = {
 };
 
 export default function DynamicChannelV3Page() {
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ searchParams ] = useSearchParams(),
+        selectedFeature = FEATURE_COMPONENTS[ searchParams.get( DYNAMIC_CHANNEL_FEATURE_PARAM ) ?? "" ];
 
-    const selectedFeature = searchParams.get( "feature" ) ?? "all";
-
-    const handleFeatureSelect = ( value: string ) => {
-        if ( value === "all" ) {
-            setSearchParams( {} );
-        } else {
-            setSearchParams( { feature: value } );
-        }
-    };
-
-    const renderFeatureContent = () => {
-        if ( selectedFeature === "all" || !FEATURE_COMPONENTS[ selectedFeature ] ) {
-            return (
-                <>
-                    <ButtonsInterface />
-                    <hr />
-
-                    <RenameChannel />
-                    <hr />
-
-                    <UserLimit />
-                    <hr />
-
-                    <ClearChat />
-                    <hr />
-
-                    <Permissions />
-                    <hr />
-
-                    <Privacy />
-                    <hr />
-
-                    <Region />
-                    <hr />
-
-                    <PrimaryMessageEdit />
-                    <hr />
-
-                    <Templates />
-                    <hr />
-
-                    <Status />
-                    <hr />
-
-                    <ResetChannel />
-                    <hr />
-
-                    <TransferChannel />
-                    <hr />
-
-                    <Lfm />
-                    <hr />
-
-                    <ClaimChannel />
-                </>
-            );
-        }
-
-        return FEATURE_COMPONENTS[ selectedFeature ];
-    };
+    if ( selectedFeature ) {
+        return selectedFeature;
+    }
 
     return (
-        <div className="vc-container vc-page-panel">
-            <h1 className="text-center">Dynamic Channels v3 - Features</h1>
+        <div>
+            <h1 className="text-h3 md:text-h2">Dynamic Channels v3</h1>
+
+            <p className="text-lg text-vc-ice-dim">
+                { getRouteMeta( DYNAMIC_CHANNEL_V3_FEATURES_PATH )?.description }
+            </p>
+
             <hr/>
 
-            <SearchableSelect
-                options={ getFeatureOptions() }
-                value={ selectedFeature }
-                onSelect={ handleFeatureSelect }
-                placeholder="Select Feature"
-                defaultValue="all"
-            />
-
-            { renderFeatureContent() }
+            { DYNAMIC_CHANNEL_V3_FEATURES.map( ( feature, index ) =>
+                <React.Fragment key={ feature.value }>
+                    { index > 0 && <hr/> }
+                    { FEATURE_COMPONENTS[ feature.value ] }
+                </React.Fragment>
+            ) }
         </div>
     );
 }
-

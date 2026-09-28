@@ -28,7 +28,7 @@ const CONFIG_VARIABLES_ENABLED = {
 export default function HowToSetupLogsChannel() {
     return (
         <div>
-            <h1 className="text-h3">How to enable a Discord voice channel logs channel</h1>
+            <h1 className="text-h3 md:text-h2">How to enable a Discord voice channel logs channel</h1>
             <br />
             <p className="text-h5">Since <b>Version</b> <code>0.0.5</code> we added <b>Logs Channel</b> is available for each <b>Master Channel</b>.</p>
             <p className="text-h5">The logs disabled by <code>default</code> and can be enabled using <code>/setup</code> command:</p>

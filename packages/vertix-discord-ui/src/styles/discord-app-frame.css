@@ -6,7 +6,9 @@
  * off - which channel is this, and what did it just do to the list?
  */
 .discord-app-frame {
+    container: discord-app-frame / inline-size;
     display: flex;
+    flex-wrap: wrap;
     align-items: stretch;
     background-color: var(--discord-background-gradient-chat);
     border: 2px solid #21272e;
@@ -33,7 +35,7 @@
  * push the mention and ephemeral bars off the edge they are supposed to sit on.
  */
 .discord-app-frame-main {
-    flex: 1 1 auto;
+    flex: 1 1 0%;
     min-width: 0;
     padding: 0;
     overflow-x: auto;
@@ -45,11 +47,7 @@
  * rather than on the pane around it. In here the interface is sharing width with a channel list.
  */
 .discord-app-frame-main .discord-chat-container {
-    /*
-     * Drawn at the size it gets standing alone. There is room for it beside a 300px sidebar on any
-     * ordinary screen, and stepping it down below is what keeps it from overflowing on the ones
-     * where there is not.
-     */
+    /* Drawn at the size it gets standing alone, wherever the frame has the room for it. */
     --discord-ui-scale: 1.25;
 
     margin: 0;
@@ -72,29 +70,50 @@
     border-radius: 0;
 }
 
-@media (max-width: 1280px) {
+/*
+ * Stepped by the width the frame has, not by the width of the screen. The frame is set into columns
+ * of every width - a page with a sidebar of its own hands it far less than the viewport suggests, and
+ * a screen-sized breakpoint there drew the panel wider than its pane and cut the embed off.
+ *
+ * The widest thing a demonstration puts in the pane is the primary message, 612px at 1:1, beside the
+ * 300px channel list. Each step is where 300 + 612 x scale stops fitting; below 1:1 the two stack and
+ * the message pane gets the whole width rather than being squeezed into a scrolling strip.
+ */
+@container discord-app-frame (max-width: 1064px) {
     .discord-app-frame-main .discord-chat-container {
         --discord-ui-scale: 1.1;
     }
 }
 
-@media (max-width: 1080px) {
+@container discord-app-frame (max-width: 973px) {
     .discord-app-frame-main .discord-chat-container {
         --discord-ui-scale: 1;
     }
 }
 
-/*
- * Below this the sidebar is taking width the interface beside it needs more, so the two stack and
- * the message pane gets the whole of it rather than being squeezed into a scrolling strip.
- */
-@media (max-width: 1024px) {
-    .discord-app-frame {
-        flex-direction: column;
-    }
-
-    .discord-app-frame-sidebar {
-        flex: 1 1 auto;
+@container discord-app-frame (max-width: 911px) {
+    .discord-app-frame-sidebar,
+    .discord-app-frame-main {
+        flex: 1 1 100%;
         max-width: 100%;
+    }
+}
+
+/* Stacked, the message has the whole width - and below 612px it steps down to keep fitting it. */
+@container discord-app-frame (max-width: 611px) {
+    .discord-app-frame-main .discord-chat-container {
+        --discord-ui-scale: 0.9;
+    }
+}
+
+@container discord-app-frame (max-width: 550px) {
+    .discord-app-frame-main .discord-chat-container {
+        --discord-ui-scale: 0.8;
+    }
+}
+
+@container discord-app-frame (max-width: 489px) {
+    .discord-app-frame-main .discord-chat-container {
+        --discord-ui-scale: 0.7;
     }
 }

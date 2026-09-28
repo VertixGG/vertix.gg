@@ -1,4 +1,6 @@
-import { DOCS_SECTIONS } from "@vertix.gg/website/src/vertix/docs/docs-navigation";
+import RouterLink from "@vertix.gg/website/src/vertix/ui/router-link";
+
+import { GUIDES_NAVIGATION } from "@vertix.gg/website/src/vertix/docs/guides-navigation";
 
 import { getRouteMeta } from "@vertix.gg/website/src/vertix/seo/site-meta";
 
@@ -9,27 +11,27 @@ const DOCS_CARD =
 export default function Docs() {
     return (
         <div>
-            <h1 className="text-h3">Documentation</h1>
+            <h1 className="text-h3 md:text-h2">Documentation</h1>
 
             <p className="text-lg text-vc-ice-dim">
                 Setting up VoiceChannels on your server, and everything you can change once it runs.
             </p>
 
-            { DOCS_SECTIONS.map( ( section ) =>
-                <section key={ section.title } className="mt-10">
-                    <h2 className="text-h5">{ section.title }</h2>
+            { GUIDES_NAVIGATION.sections.map( ( section, index ) =>
+                <section key={ section.title ?? index } className="mt-10">
+                    { section.title && <h2 className="text-h5">{ section.title }</h2> }
 
                     <ul className="mb-0 grid list-none gap-4 pl-0 sm:grid-cols-2">
                         { section.pages.map( ( page ) =>
                             <li key={ page.href }>
-                                <a className={ DOCS_CARD } href={ page.href }>
+                                <RouterLink className={ DOCS_CARD } to={ page.href }>
                                     <span className="font-body text-lg font-semibold text-vc-starlight">
                                         { page.title }
                                     </span>
                                     <span className="font-body text-fine text-vc-ice-dim">
                                         { getRouteMeta( page.href )?.description }
                                     </span>
-                                </a>
+                                </RouterLink>
                             </li>
                         ) }
                     </ul>

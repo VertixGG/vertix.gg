@@ -35,6 +35,44 @@
     }
 }
 
+/*
+ * In a column that says how wide it is, that width decides rather than the screen's. A column with a
+ * sidebar beside it is far narrower than the viewport suggests, and a screen-sized step there drew the
+ * interface wider than the page and pushed it off the edge.
+ *
+ * The widest interface drawn on its own is 648px at 1:1 with a 15px margin, sitting in a list whose
+ * 48px indent the zoom does not scale - so each step is where 48 + 663 x scale stops fitting.
+ */
+@container vc-content (max-width: 876px) {
+    .discord-chat-container {
+        --discord-ui-scale: 1.1;
+    }
+}
+
+@container vc-content (max-width: 776px) {
+    .discord-chat-container {
+        --discord-ui-scale: 1;
+    }
+}
+
+@container vc-content (max-width: 710px) {
+    .discord-chat-container {
+        --discord-ui-scale: 0.9;
+    }
+}
+
+@container vc-content (max-width: 644px) {
+    .discord-chat-container {
+        --discord-ui-scale: 0.8;
+    }
+}
+
+@container vc-content (max-width: 577px) {
+    .discord-chat-container {
+        --discord-ui-scale: 0.7;
+    }
+}
+
 
 @supports (zoom: 1) {
     .discord-chat-container {

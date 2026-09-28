@@ -24,6 +24,10 @@ const routes = [
     },
     // ---
     {
+        path: "/features",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/features-overview" ) ),
+    },
+    {
         path: "/features/dynamic-channel-v2",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2" ) ),
     },

@@ -1,41 +1,32 @@
+import React from "react";
+
 import { useSearchParams } from "react-router-dom";
 
-import ButtonsInterface from "./dynamic-channel-v2-features/buttons-interface";
-import RenameChannel from "./dynamic-channel-v2-features/rename-channel";
-import UserLimit from "./dynamic-channel-v2-features/user-limit";
-import ClearChat from "./dynamic-channel-v2-features/clear-chat";
-import ToggleChannelState from "./dynamic-channel-v2-features/toggle-channel-state";
-import ToggleChannelVisibilityState from "./dynamic-channel-v2-features/toggle-channel-visibility-state";
-import Access from "./dynamic-channel-v2-features/access";
-import Region from "./dynamic-channel-v2-features/region";
-import Status from "./dynamic-channel-v2-features/status";
-import ResetChannel from "./dynamic-channel-v2-features/reset-channel";
-import TransferChannel from "./dynamic-channel-v2-features/transfer-channel";
-import ClaimChannel from "./dynamic-channel-v2-features/claim-channel";
-import Lfm from "./dynamic-channel-v2-features/lfm";
+import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
-import SearchableSelect from "../../components/ui/searchable-select";
+import {
+    DYNAMIC_CHANNEL_FEATURE_PARAM,
+    DYNAMIC_CHANNEL_V2_FEATURES,
+    DYNAMIC_CHANNEL_V2_FEATURES_PATH
+} from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
-import "../../components/discord/discord-chat-container.css";
+import { getRouteMeta } from "@vertix.gg/website/src/vertix/seo/site-meta";
 
-const FEATURE_OPTIONS = [
-    { label: "📋 All Features", value: "all" },
-    { label: "🎚️ Buttons Interface", value: "buttons-interface" },
-    { label: "✏️ Rename Channel", value: "rename-channel" },
-    { label: "✋ User Limit", value: "user-limit" },
-    { label: "🧹 Clear Chat", value: "clear-chat" },
-    { label: "🚫 Toggle Channel State (Public/Private)", value: "toggle-channel-state" },
-    { label: "🙈 Toggle Visibility State (Shown/Hidden)", value: "toggle-visibility-state" },
-    { label: "👥 Access Management", value: "access" },
-    { label: "🌍 Region & Bitrate", value: "region" },
-    { label: "📣 Channel Status", value: "status" },
-    { label: "🔃 Reset Channel", value: "reset-channel" },
-    { label: "🔀 Transfer Channel", value: "transfer-channel" },
-    { label: "🔎 Looking for Members", value: "lfm" },
-    { label: "😈 Claim Channel", value: "claim-channel" },
-];
+import ButtonsInterface from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/buttons-interface";
+import RenameChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/rename-channel";
+import UserLimit from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/user-limit";
+import ClearChat from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/clear-chat";
+import ToggleChannelState from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/toggle-channel-state";
+import ToggleChannelVisibilityState from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/toggle-channel-visibility-state";
+import Access from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/access";
+import Region from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/region";
+import Status from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/status";
+import ResetChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/reset-channel";
+import TransferChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/transfer-channel";
+import ClaimChannel from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/claim-channel";
+import Lfm from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v2-features/lfm";
 
-const FEATURE_COMPONENTS: Record<string, React.ReactNode> = {
+const FEATURE_COMPONENTS: Readonly<Record<string, JSX.Element>> = {
     "buttons-interface": <ButtonsInterface />,
     "rename-channel": <RenameChannel />,
     "user-limit": <UserLimit />,
@@ -52,80 +43,29 @@ const FEATURE_COMPONENTS: Record<string, React.ReactNode> = {
 };
 
 export default function DynamicChannelV2Page() {
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ searchParams ] = useSearchParams(),
+        selectedFeature = FEATURE_COMPONENTS[ searchParams.get( DYNAMIC_CHANNEL_FEATURE_PARAM ) ?? "" ];
 
-    const selectedFeature = searchParams.get( "feature" ) ?? "all";
-
-    const handleFeatureSelect = ( value: string ) => {
-        if ( value === "all" ) {
-            setSearchParams( {} );
-        } else {
-            setSearchParams( { feature: value } );
-        }
-    };
-
-    const renderFeatureContent = () => {
-        if ( selectedFeature === "all" || !FEATURE_COMPONENTS[ selectedFeature ] ) {
-            return (
-                <>
-                    <ButtonsInterface />
-                    <hr />
-
-                    <RenameChannel />
-                    <hr />
-
-                    <UserLimit />
-                    <hr />
-
-                    <ClearChat />
-                    <hr />
-
-                    <ToggleChannelState />
-                    <hr />
-
-                    <ToggleChannelVisibilityState />
-                    <hr />
-
-                    <Access />
-                    <hr />
-
-                    <Region />
-                    <hr />
-
-                    <Status />
-                    <hr />
-
-                    <ResetChannel />
-                    <hr />
-
-                    <TransferChannel />
-                    <hr />
-
-                    <Lfm />
-                    <hr />
-
-                    <ClaimChannel />
-                </>
-            );
-        }
-
-        return FEATURE_COMPONENTS[ selectedFeature ];
-    };
+    if ( selectedFeature ) {
+        return selectedFeature;
+    }
 
     return (
-        <div className="vc-container vc-page-panel">
-            <h1 className="text-center">Dynamic Channels v2 - Features</h1>
+        <div>
+            <h1 className="text-h3 md:text-h2">Dynamic Channels v2</h1>
+
+            <p className="text-lg text-vc-ice-dim">
+                { getRouteMeta( DYNAMIC_CHANNEL_V2_FEATURES_PATH )?.description }
+            </p>
+
             <hr/>
 
-            <SearchableSelect
-                options={ FEATURE_OPTIONS }
-                value={ selectedFeature }
-                onSelect={ handleFeatureSelect }
-                placeholder="Select Feature"
-                defaultValue="all"
-            />
-
-            { renderFeatureContent() }
+            { DYNAMIC_CHANNEL_V2_FEATURES.map( ( feature, index ) =>
+                <React.Fragment key={ feature.value }>
+                    { index > 0 && <hr/> }
+                    { FEATURE_COMPONENTS[ feature.value ] }
+                </React.Fragment>
+            ) }
         </div>
     );
 }

@@ -70,7 +70,7 @@ const AUTO_STATUS = "Counter-Strike · 3/5";
 export default function DisableAutoStatus() {
     return (
         <div>
-            <h1 className="text-h3">How to disable the automatic channel status (AutoStatus)</h1>
+            <h1 className="text-h3 md:text-h2">How to disable the automatic channel status (AutoStatus)</h1>
             <br />
 
             <p className="text-h5">

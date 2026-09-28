@@ -4,54 +4,17 @@ import { useLocation } from "react-router-dom";
 
 import VCBrandHeader from "@vertix.gg/assets/brand/vc-naked-header.webp";
 
-import { isDocsPath } from "@vertix.gg/website/src/vertix/docs/docs-navigation";
+import { isInDocsNavigation } from "@vertix.gg/website/src/vertix/docs/docs-navigation";
+import { GUIDES_NAVIGATION } from "@vertix.gg/website/src/vertix/docs/guides-navigation";
+import { FEATURES_NAVIGATION } from "@vertix.gg/website/src/vertix/docs/features-navigation";
 
 const NAV_LINK_BASE =
     "relative block px-4 py-2 font-body text-lg text-vc-ice transition-colors " +
     "hover:text-vc-cyan focus:text-vc-cyan";
 
-const DROPDOWN_CLOSE_DELAY_MS = 200;
+const isFeaturesPath = ( pathname: string ) => isInDocsNavigation( FEATURES_NAVIGATION, pathname );
 
-const HOVER_CAPABLE_MEDIA_QUERY = "(hover: hover)";
-
-const useHoverCapability = () => {
-    const [ isHoverCapable, setHoverCapable ] = React.useState(
-        () => window.matchMedia( HOVER_CAPABLE_MEDIA_QUERY ).matches
-    );
-
-    React.useEffect( () => {
-        const mediaQuery = window.matchMedia( HOVER_CAPABLE_MEDIA_QUERY ),
-            onCapabilityChange = ( event: MediaQueryListEvent ) => setHoverCapable( event.matches );
-
-        mediaQuery.addEventListener( "change", onCapabilityChange );
-
-        return () => mediaQuery.removeEventListener( "change", onCapabilityChange );
-    }, [] );
-
-    return isHoverCapable;
-};
-
-type OpenDropdownState = string | null;
-
-const NavbarDropdownGroupContext = React.createContext<{
-    openDropdown: OpenDropdownState,
-    setOpenDropdown: React.Dispatch<React.SetStateAction<OpenDropdownState>>
-}>( {
-    openDropdown: null,
-    setOpenDropdown: () => undefined,
-} );
-
-const NavbarDropdownGroup: React.FC<{ children: React.ReactNode }> = ( { children } ) => {
-    const [ openDropdown, setOpenDropdown ] = React.useState<OpenDropdownState>( null );
-
-    const group = React.useMemo( () => ( { openDropdown, setOpenDropdown } ), [ openDropdown ] );
-
-    return (
-        <NavbarDropdownGroupContext.Provider value={ group }>
-            { children }
-        </NavbarDropdownGroupContext.Provider>
-    );
-};
+const isGuidesPath = ( pathname: string ) => isInDocsNavigation( GUIDES_NAVIGATION, pathname );
 
 const NavbarItem: React.FC<{
     title: string,
@@ -70,73 +33,6 @@ const NavbarItem: React.FC<{
                 aria-current={ isActive ? "page" : undefined }
                 href={ href }
             >{ title }</a>
-        </li>
-    );
-};
-
-const NavbarDropdown: React.FC<{
-    title: string,
-    items: { title?: string, href?: string, divider?: boolean }[]
-}> = (
-    { title, items } ) => {
-    const { openDropdown, setOpenDropdown } = React.useContext( NavbarDropdownGroupContext ),
-        isHoverCapable = useHoverCapability(),
-        closeTimeout = React.useRef<ReturnType<typeof setTimeout> | undefined>( undefined );
-
-    const location = useLocation(),
-        isDropdownOpen = openDropdown === title;
-
-    const openNow = () => {
-            clearTimeout( closeTimeout.current );
-            setOpenDropdown( title );
-        },
-        scheduleClose = () => {
-            clearTimeout( closeTimeout.current );
-            closeTimeout.current = setTimeout(
-                () => setOpenDropdown( ( current ) => current === title ? null : current ),
-                DROPDOWN_CLOSE_DELAY_MS
-            );
-        },
-        toggleDropdown = () => setOpenDropdown( ( current ) => current === title ? null : title );
-
-    React.useEffect( () => () => clearTimeout( closeTimeout.current ), [] );
-
-    return (
-        <li className="relative"
-            onMouseEnter={ isHoverCapable ? openNow : undefined }
-            onMouseLeave={ isHoverCapable ? scheduleClose : undefined }
-        >
-            <span className={ `${ NAV_LINK_BASE } cursor-pointer` }
-                role="button"
-                aria-haspopup="true"
-                aria-expanded={ isDropdownOpen }
-                onClick={ isHoverCapable ? undefined : toggleDropdown }
-            >
-                { title }
-                <span className="pl-1 text-[10px] text-vc-ice-dim">▼</span>
-            </span>
-
-            <ul className={ `${ isDropdownOpen ? "block" : "hidden" } list-none overflow-hidden rounded-2xl pl-0
-                border border-vc-hairline bg-vc-space-lighter/95 shadow-[0_18px_44px_rgb(6_7_10/0.6)]
-                backdrop-blur-lg nav:absolute nav:left-0 nav:top-full nav:z-50 nav:min-w-56` }
-            >
-                {
-                    items.map( ( item, number ) =>
-                        <li key={ number }>
-                            <a
-                                className={ `block px-4 py-2 font-body text-base transition-colors
-                                    hover:bg-vc-surface hover:text-vc-starlight ${
-        location.pathname === item.href
-            ? "text-vc-cyan"
-            : "text-vc-ice" }` }
-                                href={ item.href }
-                            >
-                                { item.title }
-                            </a>
-                        </li>
-                    )
-                }
-            </ul>
         </li>
     );
 };
@@ -197,24 +93,18 @@ export default function Header() {
                             nav:items-center nav:justify-between nav:rounded-none nav:border-0
                             nav:bg-transparent nav:p-0 nav:shadow-none nav:backdrop-blur-none` }
                     >
-                        <NavbarDropdownGroup>
-                            <ul className="flex list-none flex-col gap-1 pl-0
-                                nav:flex-row nav:items-center nav:gap-2">
-                                <NavbarItem title="Home" href="/"/>
+                        <ul className="flex list-none flex-col gap-1 pl-0
+                            nav:flex-row nav:items-center nav:gap-2">
+                            <NavbarItem title="Home" href="/"/>
 
-                                <NavbarDropdown title="Features" items={ [
-                                    { title: "Dynamic Channels v2", href: "/features/dynamic-channel-v2" },
-                                    { title: "Dynamic Channels v3", href: "/features/dynamic-channel-v3" },
-                                    { title: "Auto-Scaling Channels", href: "/features/auto-scaling" },
-                                ] }/>
+                            <NavbarItem title="Features" href="/features" isActivePath={ isFeaturesPath }/>
 
-                                <NavbarItem title="Docs" href="/docs" isActivePath={ isDocsPath }/>
+                            <NavbarItem title="Docs" href="/docs" isActivePath={ isGuidesPath }/>
 
-                                <NavbarItem title="Plans" href="/pricing"/>
+                            <NavbarItem title="Plans" href="/pricing"/>
 
-                                <NavbarItem title="Change log" href="/changelog"/>
-                            </ul>
-                        </NavbarDropdownGroup>
+                            <NavbarItem title="Change log" href="/changelog"/>
+                        </ul>
 
                         <div className="mt-4 flex flex-col gap-3 nav:mt-0 nav:flex-row nav:gap-4">
                             <a id="add-to-server" href="/invite-vertix"

@@ -3,20 +3,20 @@ import { DiscordChannelWizard, DiscordChannelDisplay, DiscordUIComponentMessage,
 import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
-import { AUTO_SCALING_CONFIG, autoScalingWizardSteps, reindexWizardSteps } from "../../shared/auto-scaling-data";
+import { AUTO_SCALING_CONFIG, autoScalingWizardSteps, reindexWizardSteps } from "@vertix.gg/website/src/vertix/shared/auto-scaling-data";
 
-import "../../components/discord/discord-chat-container.css";
+import "@vertix.gg/website/src/vertix/components/discord/discord-chat-container.css";
 
 import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
 
 export default function AutoScalingPage() {
     return (
-        <div className="vc-container vc-page-panel">
-            <h1 className="text-center mb-6">Auto-Scaling Channels</h1>
+        <div>
+            <h1 className="text-h3 md:text-h2">Auto-Scaling Channels</h1>
 
             { /* Overview */ }
             <section className="mb-12">
-                <p className="text-h5 text-vc-ice-dim text-center">
+                <p className="text-lg text-vc-ice-dim">
                     Automated voice channel management that dynamically creates and manages
                     channels based on user demand. Never run out of voice channel capacity again.
                 </p>
@@ -24,7 +24,7 @@ export default function AutoScalingPage() {
 
             { /* Channel Types */ }
             <section className="mb-12">
-                <h2 className="text-h3 mb-4">Channel Types</h2>
+                <h2 className="text-h4 mb-4">Channel Types</h2>
                 <div className="grid grid-cols-12 gap-4 mb-6">
                     <div className="col-span-12 md:col-span-6">
                         <div className="p-4 bg-vc-space rounded border border-vc-hairline-bright h-full">
@@ -69,7 +69,7 @@ export default function AutoScalingPage() {
 
             { /* How It Works */ }
             <section className="mb-12">
-                <h2 className="text-h3 mb-4">How It Works</h2>
+                <h2 className="text-h4 mb-4">How It Works</h2>
                 <DiscordChannelWizard
                     steps={ autoScalingWizardSteps }
                     autoPlay={ true }
@@ -84,7 +84,7 @@ export default function AutoScalingPage() {
 
             { /* Setup */ }
             <section className="mb-12">
-                <h2 className="text-h3 mb-4">Setup</h2>
+                <h2 className="text-h4 mb-4">Setup</h2>
                 <p className="text-vc-ice-dim mb-6">
                     Create auto-scaling channels using the <code>/setup</code> command.
                 </p>
@@ -149,7 +149,7 @@ export default function AutoScalingPage() {
 
             { /* Scaling Trigger */ }
             <section className="mb-12">
-                <h2 className="text-h3 mb-4">Scaling Trigger</h2>
+                <h2 className="text-h4 mb-4">Scaling Trigger</h2>
                 <p className="text-vc-ice-dim">
                     New channels are created when <strong>either</strong> condition is met:
                 </p>
@@ -164,7 +164,7 @@ export default function AutoScalingPage() {
 
             { /* Configuration */ }
             <section className="mb-12">
-                <h2 className="text-h3 mb-4">Configuration</h2>
+                <h2 className="text-h4 mb-4">Configuration</h2>
                 <div className="overflow-x-auto">
                     <table className="vc-table">
                         <thead>
@@ -209,7 +209,7 @@ export default function AutoScalingPage() {
 
             { /* Maintenance */ }
             <section className="mb-12">
-                <h2 className="text-h3 mb-4">Maintenance</h2>
+                <h2 className="text-h4 mb-4">Maintenance</h2>
                 <div className="grid grid-cols-12 gap-6">
                     <div className="col-span-12 lg:col-span-6">
                         <h3 className="text-h5">Auto Reindex</h3>

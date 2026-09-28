@@ -90,7 +90,7 @@ const WHERE_ROWS = [
 export default function ChannelNamePlaceholders() {
     return (
         <div>
-            <h1 className="text-h3">Discord voice channel name placeholders</h1>
+            <h1 className="text-h3 md:text-h2">Discord voice channel name placeholders</h1>
             <br />
 
             <p className="text-h5">

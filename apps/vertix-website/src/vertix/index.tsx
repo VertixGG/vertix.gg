@@ -14,7 +14,9 @@ import DocsLayout from "@vertix.gg/website/src/vertix/docs/docs-layout";
 
 import localRoutes from "@vertix.gg/website/src/vertix/routes";
 
-import { isDocsPath } from "@vertix.gg/website/src/vertix/docs/docs-navigation";
+import { isInDocsNavigation } from "@vertix.gg/website/src/vertix/docs/docs-navigation";
+import { GUIDES_NAVIGATION } from "@vertix.gg/website/src/vertix/docs/guides-navigation";
+import { FEATURES_NAVIGATION } from "@vertix.gg/website/src/vertix/docs/features-navigation";
 
 import { useDocumentMeta } from "@vertix.gg/website/src/vertix/seo/use-document-meta";
 import { useStructuredData } from "@vertix.gg/website/src/vertix/seo/use-structured-data";
@@ -26,6 +28,8 @@ const loadedPromise = windowLoadedPromise(),
 
 const FOOTER_LINK = "px-2 text-vc-ice-dim transition-colors hover:text-vc-cyan";
 
+const DOCS_NAVIGATIONS = [ GUIDES_NAVIGATION, FEATURES_NAVIGATION ];
+
 const RoutesComponent = () => {
     loadedSuspensePromise.read();
 
@@ -35,9 +39,10 @@ const RoutesComponent = () => {
     return (
         <RoutesComponentTyped>
             { localRoutes.map( ( route ) => {
-                const element = isDocsPath( route.path )
-                    ? <DocsLayout><route.component/></DocsLayout>
-                    : <route.component/>;
+                const navigation = DOCS_NAVIGATIONS.find( ( candidate ) => isInDocsNavigation( candidate, route.path ) ),
+                    element = navigation
+                        ? <DocsLayout navigation={ navigation }><route.component/></DocsLayout>
+                        : <route.component/>;
 
                 return <RouteComponentTyped key={ route.path } path={ route.path } element={ element }/>;
             } ) }

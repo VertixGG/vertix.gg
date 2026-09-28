@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 export const DYNAMIC_CHANNEL_V2_FEATURES_PATH = "/features/dynamic-channel-v2",
     DYNAMIC_CHANNEL_V3_FEATURES_PATH = "/features/dynamic-channel-v3";
 
+export const DYNAMIC_CHANNEL_FEATURE_PARAM = "feature";
+
 /**
  * The emoji names the buttons carry, for looking the artwork up in the manifest.
  */
@@ -23,6 +25,58 @@ export const DYNAMIC_CHANNEL_V3_EMOJI_NAMES = {
     knockChannel: "KnockChannel",
     lfm: "LfmChannel",
 };
+
+export interface DynamicChannelFeature {
+    value: string;
+    title: string;
+    emoji: string;
+    customEmoji?: string;
+}
+
+/**
+ * The features a features page explains, in the order it explains them.
+ *
+ * `emoji` is the unicode the button carries - for v3 only the stand-in, since its real artwork is
+ * `customEmoji` and arrives from the manifest after first paint.
+ */
+export const DYNAMIC_CHANNEL_V3_FEATURES: readonly DynamicChannelFeature[] = [
+    { value: "buttons-interface", title: "Buttons Interface", emoji: "🎚️" },
+    { value: "rename-channel", title: "Rename Channel", emoji: "✏️", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.rename },
+    { value: "user-limit", title: "User Limit", emoji: "✋", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.limit },
+    { value: "clear-chat", title: "Clear Chat", emoji: "🧹", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.clearChat },
+    { value: "permissions", title: "Permissions", emoji: "👥", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.permissions },
+    { value: "invite-channel", title: "Invite", emoji: "📨", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.inviteChannel },
+    { value: "knock-channel", title: "Knock", emoji: "🚪", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.knockChannel },
+    { value: "privacy-state", title: "Privacy State", emoji: "🚫", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.privacy },
+    { value: "region", title: "Region & Bitrate", emoji: "🌍", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.region },
+    { value: "edit-primary-message", title: "Edit Primary Message", emoji: "📝", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.editPrimaryMessage },
+    { value: "templates", title: "Channel Templates", emoji: "📂", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.templates },
+    { value: "status", title: "Channel Status", emoji: "📢", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.status },
+    { value: "reset-channel", title: "Reset Channel", emoji: "🔃", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.resetChannel },
+    { value: "transfer-channel", title: "Transfer Channel", emoji: "🔀", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.transferChannel },
+    { value: "lfm", title: "Looking for Members", emoji: "🔎", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.lfm },
+    { value: "claim-channel", title: "Claim Channel", emoji: "😈", customEmoji: DYNAMIC_CHANNEL_V3_EMOJI_NAMES.claimChannel },
+];
+
+export const DYNAMIC_CHANNEL_V2_FEATURES: readonly DynamicChannelFeature[] = [
+    { value: "buttons-interface", title: "Buttons Interface", emoji: "🎚️" },
+    { value: "rename-channel", title: "Rename Channel", emoji: "✏️" },
+    { value: "user-limit", title: "User Limit", emoji: "✋" },
+    { value: "clear-chat", title: "Clear Chat", emoji: "🧹" },
+    { value: "toggle-channel-state", title: "Toggle Channel State", emoji: "🚫" },
+    { value: "toggle-visibility-state", title: "Toggle Visibility State", emoji: "🙈" },
+    { value: "access", title: "Access Management", emoji: "👥" },
+    { value: "region", title: "Region & Bitrate", emoji: "🌍" },
+    { value: "status", title: "Channel Status", emoji: "📣" },
+    { value: "reset-channel", title: "Reset Channel", emoji: "🔃" },
+    { value: "transfer-channel", title: "Transfer Channel", emoji: "🔀" },
+    { value: "lfm", title: "Looking for Members", emoji: "🔎" },
+    { value: "claim-channel", title: "Claim Channel", emoji: "😈" },
+];
+
+export function toDynamicChannelFeatureHref( featuresPath: string, feature: string ): string {
+    return `${ featuresPath }?${ new URLSearchParams( { [ DYNAMIC_CHANNEL_FEATURE_PARAM ]: feature } ) }`;
+}
 
 /**
  * The feature each button of the v2 primary message stands for, by element name.
@@ -89,7 +143,7 @@ export const DYNAMIC_CHANNEL_V3_FEATURE_BY_ELEMENT: Readonly<Record<string, stri
  *
  * Hand the result to a rendered interface as `onElementClick` and its buttons answer the question
  * they raise - "what does this one do?". Lands on the features page with the section selected,
- * which is the same url the page's own dropdown produces, so the link stays shareable. A button
+ * which is the same url the features sidebar links to, so the link stays shareable. A button
  * with no feature behind it stays inert.
  */
 function useOpenDynamicChannelFeature(
@@ -105,7 +159,7 @@ function useOpenDynamicChannelFeature(
             return;
         }
 
-        navigate( `${ featuresPath }?feature=${ feature }` );
+        navigate( toDynamicChannelFeatureHref( featuresPath, feature ) );
 
         window.scrollTo( { top: 0, behavior: "smooth" } );
     };

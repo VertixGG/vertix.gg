@@ -92,6 +92,10 @@ export function formatMasterChannelAllowance( maxMasterChannels: number ): strin
  * paddle's own number back - a price is set in its dashboard and the webhook carries only the id -
  * so a tier repriced there has to be repriced here too, or the site quotes one figure while the
  * checkout charges another.
+ *
+ * Two places quote it by hand because they cannot read this: the `/pricing` description in the
+ * website's `site-meta.ts`, which the build's sitemap step imports as plain data, and the no-script
+ * fallback in the dashboard's `index.html`. A reprice touches both.
  */
 export const BILLING_TIER_DEFINITIONS = [
     {

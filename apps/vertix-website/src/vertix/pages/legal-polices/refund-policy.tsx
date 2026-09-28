@@ -34,7 +34,7 @@ bank, not by us.
 
 ## 3. Cancelling
 
-You can cancel at any time from the Plans page in the dashboard. Cancelling stops the next
+You can cancel at any time from the Subscription page in the dashboard. Cancelling stops the next
 payment; it does not end the plan immediately.
 
 A cancelled plan keeps working until the end of the period already paid for. We do not refund the

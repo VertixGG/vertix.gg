@@ -1,5 +1,33 @@
 import { Fragment } from "react";
 
+import {
+    BILLING_FREE_MAX_MASTER_CHANNELS,
+    BILLING_TIER_DEFINITIONS,
+    isUnlimitedAllowance
+} from "@vertix.gg/definitions/src/billing-definitions";
+
+/**
+ * Our own prices, read off the tier table rather than typed into this post.
+ *
+ * Typed here, they drifted - this post once charged "$1 a month for each generator" while the table
+ * said otherwise - so every figure below that is ours comes from the table the bot enforces. One
+ * entry per paid tier, joined where a line quotes them, so the lines stay true whatever it holds.
+ */
+const OUR_TIERS = BILLING_TIER_DEFINITIONS.map( ( tier ) => ( {
+    price: `$${ tier.monthlyPriceUsd }`,
+    allowance: isUnlimitedAllowance( tier.maxMasterChannels )
+        ? "unlimited"
+        : `${ tier.maxMasterChannels } in total`,
+    generators: isUnlimitedAllowance( tier.maxMasterChannels )
+        ? "as many generators as a server wants"
+        : `${ tier.maxMasterChannels } generators`
+} ) );
+
+/** What money buys here, as a clause: `$4 a month for as many generators as a server wants`. */
+const OUR_PRICE_CLAUSE = OUR_TIERS
+    .map( ( tier ) => `${ tier.price } a month for ${ tier.generators }` )
+    .join( ", or " );
+
 interface Contender {
     name: string;
     accent: string;
@@ -16,7 +44,7 @@ const CONTENDERS: Contender[] = [
         accent: "var(--color-vc-mint)",
         servers: "—",
         rating: "—",
-        price: "$4",
+        price: OUR_TIERS.map( ( tier ) => tier.price ).join( " / " ),
         priceNote: "per month, 1 server - and a free tier with every feature",
         isUs: true,
     },
@@ -54,8 +82,8 @@ const GATING = [
         name: "VoiceChannels",
         isUs: true,
         body: "Every control works on every server, free. The only thing money buys is "
-            + "quantity - $4 a month for as many generators as a server wants, past the free "
-            + "two - and no command has ever asked anybody to vote for it.",
+            + `quantity - ${ OUR_PRICE_CLAUSE }, beyond the ${ BILLING_FREE_MAX_MASTER_CHANNELS } `
+            + "free ones - and no command has ever asked anybody to vote for it.",
     },
     {
         name: "VoiceMaster",
@@ -205,8 +233,13 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
     {
         group: "What it costs",
         rows: [
-            { capability: "Generators on the free tier", cells: [ "2", "1", "Capped, not published", "2" ] },
-            { capability: "What it costs to add more", cells: [ "$4 a month, unlimited", "\u00A33.99 a month", "EUR 4 a month", "$3.99 a month" ] },
+            { capability: "Generators on the free tier", cells: [ String( BILLING_FREE_MAX_MASTER_CHANNELS ), "1", "Capped, not published", "2" ] },
+            { capability: "What it costs to add more", cells: [
+                OUR_TIERS.map( ( tier ) => `${ tier.price } a month, ${ tier.allowance }` ).join( "; " ),
+                "\u00A33.99 a month",
+                "EUR 4 a month",
+                "$3.99 a month"
+            ] },
             { capability: "Every feature on the free tier", cells: [ "Yes", null, null, null ] },
             { capability: "No vote-gated commands", cells: [ "Yes", null, null, null ] },
         ],
@@ -303,7 +336,7 @@ export default function Comparison() {
             <p className="text-vc-ice-dim mb-6">
                 The useful question is not how much, but what for. Three of them charge to
                 unlock features; here the features are all free and the charge is for volume -
-                $4 a month for as many generators as a server wants, and nothing else.
+                { " " }{ OUR_PRICE_CLAUSE }, and nothing else.
             </p>
 
             <div className="grid gap-4 md:grid-cols-2 mb-12">

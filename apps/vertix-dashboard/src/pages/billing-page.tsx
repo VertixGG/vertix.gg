@@ -35,14 +35,6 @@ const FREE_TIER = {
     maxMasterChannels: BILLING_FREE_MAX_MASTER_CHANNELS
 };
 
-/**
- * The one carrying the badge - Pro, the plan there is to buy.
- *
- * Named rather than taken from the tier table by position, so a tier added to it later cannot move
- * the badge by where it happens to sit.
- */
-const POPULAR_SLUG = "pro";
-
 function formatDate( iso: string ): string {
     return new Date( iso ).toLocaleDateString( undefined, { year: "numeric", month: "long", day: "numeric" } );
 }
@@ -144,12 +136,17 @@ interface IPlanCardProps {
     monthlyPriceUsd: number;
     maxMasterChannels: number;
     isCurrent: boolean;
-    isPopular: boolean;
     action: React.ReactNode;
 }
 
+/**
+ * One plan, as a card.
+ *
+ * The only badge is `Current`. Pro wore `Most popular` when it was the middle of three paid plans;
+ * beside the free card that claims most servers pay, when most never leave free.
+ */
 function PlanCard( props: IPlanCardProps ) {
-    const { name, monthlyPriceUsd, maxMasterChannels, isCurrent, isPopular, action } = props;
+    const { name, monthlyPriceUsd, maxMasterChannels, isCurrent, action } = props;
 
     return (
         <div className={ `relative flex flex-col p-5 rounded-xl border transition-colors ${
@@ -157,13 +154,6 @@ function PlanCard( props: IPlanCardProps ) {
                 ? "border-border-accent bg-surface-elevated"
                 : "border-border bg-surface hover:border-border-accent"
         }` }>
-            { isPopular && ! isCurrent && (
-                <span className="absolute -top-2.5 left-5 px-2 py-0.5 rounded-full bg-accent text-white
-                    text-[11px] font-semibold tracking-wide">
-                    Most popular
-                </span>
-            ) }
-
             { isCurrent && (
                 <span className="absolute -top-2.5 left-5 px-2 py-0.5 rounded-full bg-accent-muted
                     text-accent text-[11px] font-semibold tracking-wide">
@@ -349,7 +339,6 @@ export function BillingPage() {
                             monthlyPriceUsd={ FREE_TIER.monthlyPriceUsd }
                             maxMasterChannels={ FREE_TIER.maxMasterChannels }
                             isCurrent={ null === currentSlug }
-                            isPopular={ false }
                             action={
                                 <div className="w-full px-4 py-2 rounded-lg text-sm font-medium text-center
                                     text-text-muted border border-border">
@@ -369,7 +358,6 @@ export function BillingPage() {
                                     monthlyPriceUsd={ tier.monthlyPriceUsd }
                                     maxMasterChannels={ tier.maxMasterChannels }
                                     isCurrent={ isCurrent }
-                                    isPopular={ POPULAR_SLUG === tier.slug }
                                     action={
                                         <button
                                             type="button"

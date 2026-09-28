@@ -36,8 +36,9 @@ interface IPlan {
 /**
  * Function describeAllowance() :: What a tier adds to the free ones, in words.
  *
- * A tier's number is a total, and a total is the honest thing to enforce against - but "seven more
- * than I have now" is the question being asked, so the total is the heading and this goes under it.
+ * A tier's number is a total, and a total is the honest thing to enforce against - but "how many
+ * more than I have now" is the question being asked, so the total is the heading and this goes
+ * under it. Pro has no ceiling, so it takes the first branch; the second is for a finite tier.
  */
 function describeAllowance( maxMasterChannels: number ): string {
     if ( isUnlimitedAllowance( maxMasterChannels ) ) {
@@ -51,7 +52,11 @@ function describeAllowance( maxMasterChannels: number ): string {
  * The plan this page points at - Pro, the one there is to buy.
  *
  * Named by its slug rather than picked out of the tier table by position, so a tier added to the
- * table later cannot move the badge onto whichever entry happens to land in that slot.
+ * table later cannot move the emphasis onto whichever entry happens to land in that slot.
+ *
+ * Pointed at by its rim and its button, with no badge. The badge said "Most servers", which was the
+ * middle of three paid plans once; beside the free card it claims most servers pay, and most never
+ * leave free.
  */
 const FEATURED_TIER_SLUG = "pro";
 
@@ -130,13 +135,6 @@ function PlanCard( { plan }: { plan: IPlan } ) {
     return (
         <div className={ `vc-panel relative flex h-full flex-col p-6 ${ plan.isFeatured ? "vc-panel-rim" : "" }` }
             style={ plan.isFeatured ? { borderColor: "var(--color-vc-cyan)" } : undefined }>
-
-            { plan.isFeatured && (
-                <div className="absolute -top-3 left-6 rounded-full px-3 py-0.5 text-fine"
-                    style={ { background: "var(--color-vc-cyan)", color: "var(--color-vc-void)" } }>
-                    Most servers
-                </div>
-            ) }
 
             <h2 className="text-h5 mb-1" style={ { color: plan.isFree ? "var(--color-vc-mint)" : "var(--color-vc-starlight)" } }>
                 { plan.name }

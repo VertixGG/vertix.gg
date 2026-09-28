@@ -772,9 +772,15 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
             code: MasterChannelCreateResultCode.Error
         };
 
-        if ( await this.isReachedMasterLimit( args.guildId ) ) {
+        // The entitlement, not the grant. The setup screen asks the entitlement before it opens the
+        // wizard, and this used to ask the grant when the wizard finished - so a server paying for
+        // more than it was granted was let in by one and refused by the other, at the last step.
+        const maxMasterChannels = await ServiceLocator.$.get<EntitlementService>( "VertixBot/Services/Entitlement" )
+            .getMaxMasterChannels( args.guildId );
+
+        if ( await this.isReachedMasterLimit( args.guildId, maxMasterChannels ) ) {
             result.code = MasterChannelCreateResultCode.LimitReached;
-            result.maxMasterChannels = ( await GuildDataManager.$.getAllSettings( args.guildId ) ).maxMasterChannels;
+            result.maxMasterChannels = maxMasterChannels;
 
             return result;
         }
@@ -842,13 +848,14 @@ export class MasterChannelService extends ServiceWithDependenciesBase<{
      * the scaling button - which has always been held to this same check - refuse on a number it
      * never contributed to: a guild could be stopped by two generators while carrying five pools,
      * and five pools counted as nothing at all.
+     *
+     * The limit is the caller's to give, and it is `EntitlementService.getMaxMasterChannels()`. It
+     * used to fall back to the guild's grant when none was given, which is the allowance only of a
+     * server paying for nothing - so the one caller that gave none refused a paying server at its
+     * free two.
      */
-    public async isReachedMasterLimit( guildId: string, definedLimit?: number ) {
-        const limit =
-                "number" === typeof definedLimit
-                    ? definedLimit
-                    : ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels,
-            hasReachedLimit = ( await ChannelModel.$.getMastersCount( guildId ) ) >= limit;
+    public async isReachedMasterLimit( guildId: string, limit: number ) {
+        const hasReachedLimit = ( await ChannelModel.$.getMastersCount( guildId ) ) >= limit;
 
         if ( hasReachedLimit ) {
             this.debugger.log(

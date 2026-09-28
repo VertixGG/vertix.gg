@@ -183,6 +183,13 @@ money is real.
 paid for; the coverage is oldest-first. A grant is given for a reason and paying should not be able
 to take it away.
 
+Creating a generator asks the same question. `createMasterChannel()` used to ask the grant, while
+the setup screen in front of it asked the entitlement - so a server paying for Pro was shown the
+wizard and refused at its last step, and the dashboard's create, which does not wait for the bot's
+answer, reported that refusal as a success. `isReachedMasterLimit()` now takes the limit from its
+caller rather than falling back to the grant. Three tests pin it; putting the grant back fails the
+one where a Pro server creates past the free two.
+
 **`M-07` — noticing a cancellation without waiting for an event. Done.** The period already paid for
 decides it *before* the status does, so a cancelled subscription runs out on its own and no event
 has to arrive to end it. The status is the fallback for a row with no period, and it errs generous:
@@ -270,7 +277,7 @@ vulnerability — which fails four.
 
 - **Deleting anything.** No generator, room or setting is removed for non-payment.
 - **Per-user subscriptions.** Choosing guild subscriptions rules them out permanently, for this app.
-- **Proration, refunds, dunning.** Discord's, not ours.
+- **Proration, refunds, dunning.** Paddle's, not ours.
 - **The dashboard's own paywall.** Editing a generator you already have is not gated.
 
 ## Still open
@@ -297,8 +304,11 @@ leaves the old price id in the bundle.
 
 Also open:
 
-- **Prices are quoted in two places and charged in one.** Nothing reads Paddle's number back, so a
-  tier repriced there has to be repriced in `billing-definitions.ts` too.
+- **Prices are charged in one place and quoted from another.** Nothing reads Paddle's number back,
+  so a tier repriced there has to be repriced in `billing-definitions.ts` too. The pricing page, the
+  comparison post and the dashboard read that table; two places cannot and quote it by hand - the
+  `/pricing` description in the website's `site-meta.ts`, which the sitemap step imports as plain
+  data, and the dashboard's no-script `index.html`.
 - A stale sandbox subscription row will need clearing at the cutover: it names a sandbox price that
   matches nothing live, so it would quietly stop granting anything. A sandbox row naming Plus or
   Ultimate already grants nothing, even in the sandbox.

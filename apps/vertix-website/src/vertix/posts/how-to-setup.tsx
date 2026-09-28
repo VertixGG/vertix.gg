@@ -11,8 +11,8 @@ import HowToSetupStep3 from "@vertix.gg/website/src/vertix/posts/steps/how-to-se
 export default function HowToSetup() {
     return (
         <>
-            <div className="vc-container vc-page-panel">
-                <h1 className="text-h4">How to set up temporary voice channels in Discord</h1>
+            <div>
+                <h1 className="text-h3">How to set up temporary voice channels in Discord</h1>
                 <br/>
 
                 <ul className="text-h5">

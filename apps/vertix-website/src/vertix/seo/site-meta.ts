@@ -93,6 +93,15 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.9,
     },
     {
+        path: "/docs",
+        sourcePath: "src/vertix/pages/docs.tsx",
+        title: "Documentation | VoiceChannels",
+        description:
+            "VoiceChannels guides: setting up Join to Create, turning channel features on and off, "
+            + "logs, channel name placeholders and the automatic channel status.",
+        priority: 0.8,
+    },
+    {
         path: "/posts/join-to-create",
         sourcePath: "src/vertix/posts/join-to-create.tsx",
         title: "Join to Create Voice Channels in Discord | VoiceChannels",
@@ -230,7 +239,7 @@ const META_BY_PATH = new Map( ROUTE_META.map( ( meta ) => [ meta.path, meta ] ) 
  * "Page Not Found" with a canonical pointing at nothing. The content was never wrong; only
  * everything a crawler reads about it was.
  */
-function normalizeRoutePath( pathname: string ): string {
+export function normalizeRoutePath( pathname: string ): string {
     if ( "/" === pathname ) {
         return pathname;
     }

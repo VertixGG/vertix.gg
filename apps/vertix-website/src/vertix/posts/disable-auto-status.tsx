@@ -69,8 +69,8 @@ const AUTO_STATUS = "Counter-Strike · 3/5";
 
 export default function DisableAutoStatus() {
     return (
-        <div className="vc-container vc-page-panel">
-            <h1 className="text-h5">How to disable the automatic channel status (AutoStatus)</h1>
+        <div>
+            <h1 className="text-h3">How to disable the automatic channel status (AutoStatus)</h1>
             <br />
 
             <p className="text-h5">

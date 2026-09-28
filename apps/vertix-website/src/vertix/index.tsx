@@ -10,7 +10,11 @@ import Header from "@vertix.gg/website/src/vertix/header/header";
 import ShinyStars from "@vertix.gg/website/src/vertix/components/ui/shiny-stars";
 import DashboardAnnouncement from "@vertix.gg/website/src/vertix/components/ui/dashboard-announcement";
 
+import DocsLayout from "@vertix.gg/website/src/vertix/docs/docs-layout";
+
 import localRoutes from "@vertix.gg/website/src/vertix/routes";
+
+import { isDocsPath } from "@vertix.gg/website/src/vertix/docs/docs-navigation";
 
 import { useDocumentMeta } from "@vertix.gg/website/src/vertix/seo/use-document-meta";
 import { useStructuredData } from "@vertix.gg/website/src/vertix/seo/use-structured-data";
@@ -31,7 +35,11 @@ const RoutesComponent = () => {
     return (
         <RoutesComponentTyped>
             { localRoutes.map( ( route ) => {
-                return <RouteComponentTyped key={ route.path } path={ route.path } element={ <route.component/> }/>;
+                const element = isDocsPath( route.path )
+                    ? <DocsLayout><route.component/></DocsLayout>
+                    : <route.component/>;
+
+                return <RouteComponentTyped key={ route.path } path={ route.path } element={ element }/>;
             } ) }
         </RoutesComponentTyped>
     );

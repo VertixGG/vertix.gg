@@ -51,6 +51,10 @@ const routes = [
     },
     // ---
     {
+        path: "/docs",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/pages/docs" ) ),
+    },
+    {
         path: "/posts/enable-features",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix//posts/enable-features" ) ),
     },

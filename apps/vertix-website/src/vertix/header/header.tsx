@@ -4,6 +4,8 @@ import { useLocation } from "react-router-dom";
 
 import VCBrandHeader from "@vertix.gg/assets/brand/vc-naked-header.webp";
 
+import { isDocsPath } from "@vertix.gg/website/src/vertix/docs/docs-navigation";
+
 const NAV_LINK_BASE =
     "relative block px-4 py-2 font-body text-lg text-vc-ice transition-colors " +
     "hover:text-vc-cyan focus:text-vc-cyan";
@@ -51,9 +53,13 @@ const NavbarDropdownGroup: React.FC<{ children: React.ReactNode }> = ( { childre
     );
 };
 
-const NavbarItem: React.FC<{ title: string, href: string }> = ( { title, href } ) => {
+const NavbarItem: React.FC<{
+    title: string,
+    href: string,
+    isActivePath?: ( pathname: string ) => boolean
+}> = ( { title, href, isActivePath = ( pathname ) => pathname === href } ) => {
     const location = useLocation(),
-        isActive = location.pathname === href;
+        isActive = isActivePath( location.pathname );
 
     return (
         <li>
@@ -202,13 +208,7 @@ export default function Header() {
                                     { title: "Auto-Scaling Channels", href: "/features/auto-scaling" },
                                 ] }/>
 
-                                <NavbarDropdown title="How to" items={ [
-                                    { title: "Setup", href: "/posts/how-to-setup" },
-                                    { title: "Enable Logs", href: "/posts/how-to-setup-logs-channel" },
-                                    { title: "Enable Features", href: "/posts/enable-features" },
-                                    { title: "Name Placeholders", href: "/posts/channel-name-placeholders" },
-                                    { title: "Disable AutoStatus", href: "/posts/disable-auto-status" },
-                                ] }/>
+                                <NavbarItem title="Docs" href="/docs" isActivePath={ isDocsPath }/>
 
                                 <NavbarItem title="Plans" href="/pricing"/>
 

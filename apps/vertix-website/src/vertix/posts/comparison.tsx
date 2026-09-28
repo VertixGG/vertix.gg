@@ -258,8 +258,8 @@ const HONEST = [
 
 export default function Comparison() {
     return (
-        <div className="vc-container vc-page-panel">
-            <h1 className="text-h4">Discord temporary voice channel bots, compared</h1>
+        <div>
+            <h1 className="text-h3">Discord temporary voice channel bots, compared</h1>
 
             <p className="text-vc-ice-dim mt-4 mb-10">
                 The three bots whose whole product is temporary voice channels, against this

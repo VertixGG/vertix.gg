@@ -2,7 +2,7 @@
 
 .discord-channel-display {
     width: 300px;
-    max-width: 300px;
+    max-width: 100%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;

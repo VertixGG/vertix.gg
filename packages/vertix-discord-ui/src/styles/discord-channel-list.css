@@ -17,7 +17,7 @@
     font-family: var(--discord-font-primary);
     color: var(--discord-text-default);
     width: 300px;
-    max-width: 300px;
+    max-width: 100%;
     box-sizing: border-box;
 }
 

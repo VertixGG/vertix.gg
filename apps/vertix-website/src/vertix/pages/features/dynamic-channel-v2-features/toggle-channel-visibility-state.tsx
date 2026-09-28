@@ -8,7 +8,7 @@ export default function ToggleChannelVisibilityState() {
                 <span className="text-h2 mr-4">🙈 / 🐵</span>
                 <h2 className="text-h3 mb-0">- Toggle Channel Visibility State</h2>
             </div>
-            <div className="grid grid-cols-12 gap-12">
+            <div className="grid grid-cols-12 gap-y-12">
                 <div className="col-span-12">
                     <div className="mb-6">
                         <div className="text-h5 text-vc-ice-dim">

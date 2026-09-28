@@ -9,7 +9,7 @@
     background-color: var(--discord-background-surface-high);
     font-family: var(--discord-font-primary);
     border-radius: 12px;
-    min-width: 280px;
+    min-width: min(280px, 100%);
     max-width: 480px;
     padding: 8px 0 16px;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);

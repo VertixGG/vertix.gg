@@ -27,11 +27,18 @@
     }
 }
 
+/*
+ * On a phone even 0.7 is wider than the page, and fitting it would take a zoom nobody could read - so
+ * the interface keeps its size and scrolls sideways inside its own frame rather than widening the page.
+ * The frame is as wide as the column there, so its side margins would only push it past the edge.
+ */
 @media (max-width: 770px) {
     .discord-chat-container {
         --discord-ui-scale: 0.7;
         border: 0;
         border-radius: 0;
+        margin-inline: 0;
+        overflow-x: auto;
     }
 }
 

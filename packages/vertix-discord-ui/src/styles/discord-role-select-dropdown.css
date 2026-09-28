@@ -6,7 +6,7 @@
     border-radius: 8px;
     overflow: hidden;
     font-family: var(--discord-font-primary);
-    min-width: 280px;
+    min-width: min(280px, 100%);
     max-width: 400px;
     padding: 4px 0;
 }

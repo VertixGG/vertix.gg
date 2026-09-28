@@ -122,7 +122,7 @@ export default function HowToSetup() {
                                 <img src="https://simgbb.com/avatar/PGKBv5T3fZLJ.png" width="30"
                                     className="rounded-2xl mr-2"
                                     alt="..."/>
-                                <strong className="mr-auto">leonidvinikov@gmail.com</strong>
+                                <strong className="mr-auto min-w-0 wrap-anywhere">leonidvinikov@gmail.com</strong>
                                 <small className="flex justify-end"><span className="hidden sm:block">Updated at&nbsp;</span>21/06/2023</small>
                             </div>
                             <div className="px-3 py-3 text-vc-ice">

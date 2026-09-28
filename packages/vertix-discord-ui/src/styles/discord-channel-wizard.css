@@ -5,7 +5,7 @@
     padding: 12px;
     border: 1px solid #3f4147;
     width: 300px;
-    max-width: 300px;
+    max-width: 100%;
     box-sizing: border-box;
 }
 

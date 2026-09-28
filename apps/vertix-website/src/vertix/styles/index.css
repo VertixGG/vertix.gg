@@ -195,6 +195,7 @@
         color: var(--color-vc-azure);
     }
 
+    /* An identifier is one long word, and on a phone it is wider than the line it sits in. */
     code {
         padding: 0 6px;
         border: 1px solid var(--color-vc-hairline-bright);
@@ -202,6 +203,7 @@
         background: var(--color-vc-surface);
         color: var(--color-vc-cyan-soft);
         font-family: monospace;
+        overflow-wrap: break-word;
     }
 
     /* The brand sweep, used as a divider. */

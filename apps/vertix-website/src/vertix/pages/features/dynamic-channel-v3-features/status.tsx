@@ -120,7 +120,7 @@ export default function Status() {
                     Reset
                 </button>
             </div>
-            <div className="grid grid-cols-12 gap-12">
+            <div className="grid grid-cols-12 gap-y-12">
                 <div className="col-span-12">
                     <div className="mb-4">
                         <div className="text-h5 text-vc-ice-dim">

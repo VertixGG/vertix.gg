@@ -153,9 +153,9 @@ export default function AutoScalingPage() {
                 <p className="text-vc-ice-dim">
                     New channels are created when <strong>either</strong> condition is met:
                 </p>
-                <div className="rounded-xl border border-vc-hairline-bright bg-vc-space/70 p-4">
+                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-vc-hairline-bright bg-vc-space/70 p-4">
                     <code>availableChannelsCount &lt;= minAvailableChannels</code>
-                    <span className="mx-2">OR</span>
+                    <span>OR</span>
                     <code>totalAvailableSlots &lt;= 1</code>
                 </div>
             </section>

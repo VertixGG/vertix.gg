@@ -12,7 +12,7 @@ export default function ButtonsInterface() {
                 <span className="text-h2 mr-4">🎚</span>
                 <h2 className="text-h3 mb-0">Buttons Interface</h2>
             </div>
-            <div className="grid grid-cols-12 gap-12 items-center">
+            <div className="grid grid-cols-12 gap-y-12 items-center">
                 <div className="col-span-12">
                     <div className="mb-6">
                         <div className="discord-chat-container vc-frame-box m-0" style={ { minHeight: "300px" } }>

@@ -116,7 +116,8 @@ const QUESTIONS = [
     },
     {
         question: "Does a plan cover all my servers?",
-        answer: "One server. Discord sells these per server, so a second server needs its own."
+        answer: "One server. The generators belong to the server the plan was bought for, so a "
+            + "second server needs its own."
     },
     {
         question: "We were given an allowance already.",
@@ -181,7 +182,8 @@ export default function Pricing() {
             </div>
 
             <p className="text-fine text-vc-ice-dim text-center mb-14">
-                Prices are in US dollars and charged by Discord. A plan covers one server.
+                Prices are in US dollars, and the payment is taken by Paddle, our reseller. A plan
+                covers one server.
             </p>
 
             <div className="vc-panel p-6 mb-14">

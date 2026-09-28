@@ -48,12 +48,12 @@ function describeAllowance( maxMasterChannels: number ): string {
 }
 
 /**
- * The middle plan is the featured one.
+ * The plan this page points at - Pro, the one there is to buy.
  *
- * Not the dearest. A page that points at its most expensive plan is selling; one that points at the
- * plan most servers actually want is helping, and the second is the one people come back to.
+ * Named by its slug rather than picked out of the tier table by position, so a tier added to the
+ * table later cannot move the badge onto whichever entry happens to land in that slot.
  */
-const FEATURED_TIER_NAME = BILLING_TIER_DEFINITIONS[ 1 ].name;
+const FEATURED_TIER_SLUG = "pro";
 
 const PLANS: IPlan[] = [
     {
@@ -73,7 +73,7 @@ const PLANS: IPlan[] = [
             : `${ formatMasterChannelAllowance( tier.maxMasterChannels ) } generators`,
         note: describeAllowance( tier.maxMasterChannels ),
         href: planCheckoutUrl( tier.slug ),
-        isFeatured: FEATURED_TIER_NAME === tier.name,
+        isFeatured: FEATURED_TIER_SLUG === tier.slug,
         isFree: false
     } ) )
 ];
@@ -82,8 +82,8 @@ const PLANS: IPlan[] = [
  * What every plan carries, which is the point worth making.
  *
  * Nothing in the bot is behind a plan - not a button, not a command, not a language. A plan buys
- * generators and nothing else, so this is printed once rather than ticked down four columns that
- * would say the same thing in every one of them.
+ * generators and nothing else, so this is printed once rather than ticked down both columns, which
+ * would say the same thing in each of them.
  */
 const IN_EVERY_PLAN = [
     "Every control a channel owner has - rename, limit, privacy, access, region, bitrate and the rest",
@@ -177,7 +177,7 @@ export default function Pricing() {
                 </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+            <div className="grid gap-4 sm:grid-cols-2 max-w-3xl mx-auto mb-6">
                 { PLANS.map( ( plan ) => <PlanCard key={ plan.name } plan={ plan }/> ) }
             </div>
 

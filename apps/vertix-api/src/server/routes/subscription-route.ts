@@ -64,9 +64,9 @@ async function handleGetSubscription(
                 planSlug: tier?.slug ?? null,
 
                 /**
-                 * Already the words a screen prints - `Unlimited` or a number - because the top
-                 * tier's allowance is `Infinity`, and `JSON.stringify` turns that into `null`
-                 * silently. Converted here deliberately rather than discovered on the other side.
+                 * Already the words a screen prints - `Unlimited` or a number - because Pro's
+                 * allowance is `Infinity`, and `JSON.stringify` turns that into `null` silently.
+                 * Converted here deliberately rather than discovered on the other side.
                  */
                 allowance: tier ? formatMasterChannelAllowance( tier.maxMasterChannels ) : null,
 

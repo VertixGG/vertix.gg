@@ -11,9 +11,7 @@ import type { IBillingTier } from "@vertix.gg/definitions/src/billing-definition
  */
 export function getPurchasableTiers(): IBillingTier[] {
     return readBillingTiers( {
-        PADDLE_PRICE_PLUS: import.meta.env.PADDLE_PRICE_PLUS,
-        PADDLE_PRICE_PRO: import.meta.env.PADDLE_PRICE_PRO,
-        PADDLE_PRICE_ULTIMATE: import.meta.env.PADDLE_PRICE_ULTIMATE
+        PADDLE_PRICE_PRO: import.meta.env.PADDLE_PRICE_PRO
     } );
 }
 

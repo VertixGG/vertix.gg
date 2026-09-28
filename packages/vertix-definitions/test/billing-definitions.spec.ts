@@ -12,12 +12,14 @@ import type { IBillingTier } from "@vertix.gg/definitions/src/billing-definition
 
 const FREE = 2;
 
-// Doubles rather than the real ladder: what is being checked is the arithmetic, and a test that
-// restated today's prices would fail the next time they were changed for no reason worth knowing.
+// Doubles rather than the real table: what is being checked is the arithmetic, and it takes finite
+// steps to check it at all - the table on sale is one tier with no ceiling, which would pass every
+// `Math.max` below without exercising any of them. What that table itself sells is covered further
+// down, under "the plan on sale".
 const TIERS: IBillingTier[] = [
-    { name: "Plus", slug: "plus", priceId: "pri_plus", maxMasterChannels: 5, monthlyPriceUsd: 2 },
-    { name: "Pro", slug: "pro", priceId: "pri_pro", maxMasterChannels: 15, monthlyPriceUsd: 4 },
-    { name: "Ultimate", slug: "ultimate", priceId: "pri_unlimited", maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS, monthlyPriceUsd: 10 }
+    { name: "Small", slug: "small", priceId: "pri_small", maxMasterChannels: 5, monthlyPriceUsd: 2 },
+    { name: "Large", slug: "large", priceId: "pri_large", maxMasterChannels: 15, monthlyPriceUsd: 4 },
+    { name: "Unlimited", slug: "unlimited", priceId: "pri_unlimited", maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS, monthlyPriceUsd: 10 }
 ];
 
 describe( "VertixDefinitions/Billing", () => {
@@ -34,7 +36,7 @@ describe( "VertixDefinitions/Billing", () => {
             // Act.
             const allowed = resolveMaxMasterChannels( {
                 granted: FREE,
-                paidPriceIds: [ "pri_plus" ],
+                paidPriceIds: [ "pri_small" ],
                 tiers: TIERS
             } );
 
@@ -47,7 +49,7 @@ describe( "VertixDefinitions/Billing", () => {
             // the two overlap for as long as the customer already paid for.
             const allowed = resolveMaxMasterChannels( {
                 granted: FREE,
-                paidPriceIds: [ "pri_plus", "pri_pro" ],
+                paidPriceIds: [ "pri_small", "pri_large" ],
                 tiers: TIERS
             } );
 
@@ -56,10 +58,10 @@ describe( "VertixDefinitions/Billing", () => {
         } );
 
         it( "should never take away what was granted by hand", () => {
-            // Act - a server given forty generators for a reason, now paying for Plus.
+            // Act - a server given forty generators for a reason, now paying for the small tier.
             const allowed = resolveMaxMasterChannels( {
                 granted: 40,
-                paidPriceIds: [ "pri_plus" ],
+                paidPriceIds: [ "pri_small" ],
                 tiers: TIERS
             } );
 
@@ -83,7 +85,7 @@ describe( "VertixDefinitions/Billing", () => {
             // Act.
             const allowed = resolveMaxMasterChannels( {
                 granted: FREE,
-                paidPriceIds: [ "pri_plus" ],
+                paidPriceIds: [ "pri_small" ],
                 tiers: []
             } );
 
@@ -119,8 +121,16 @@ describe( "VertixDefinitions/Billing", () => {
     } );
 
     describe( "readBillingTiers()", () => {
-        it( "should read the ids the environment supplies", () => {
+        it( "should read Pro's id from the environment", () => {
             // Act.
+            const tiers = readBillingTiers( { PADDLE_PRICE_PRO: "5678" } );
+
+            // Assert.
+            expect( tiers.map( ( tier ) => [ tier.slug, tier.priceId ] ) ).toEqual( [ [ "pro", "5678" ] ] );
+        } );
+
+        it( "should sell nothing but Pro, whatever else the environment still carries", () => {
+            // Act - an env file written before Plus and Ultimate were retired still has their keys.
             const tiers = readBillingTiers( {
                 PADDLE_PRICE_PLUS: "1234",
                 PADDLE_PRICE_PRO: "5678",
@@ -128,37 +138,62 @@ describe( "VertixDefinitions/Billing", () => {
             } );
 
             // Assert.
-            expect( tiers.map( ( tier ) => [ tier.name, tier.priceId ] ) )
-                .toEqual( [ [ "Plus", "1234" ], [ "Pro", "5678" ], [ "Ultimate", "9012" ] ] );
-        } );
-
-        it( "should drop a tier this deployment has no id for", () => {
-            // Act.
-            const tiers = readBillingTiers( { PADDLE_PRICE_PLUS: "1234" } );
-
-            // Assert - carried with an empty id it would match a subscription naming no price at all.
-            expect( tiers.map( ( tier ) => tier.name ) ).toEqual( [ "Plus" ] );
+            expect( tiers.map( ( tier ) => tier.slug ) ).toEqual( [ "pro" ] );
         } );
 
         it( "should drop a tier whose id is whitespace", () => {
             // Act - an env file with the key present and nothing after it.
-            const tiers = readBillingTiers( { PADDLE_PRICE_PLUS: "   ", PADDLE_PRICE_PRO: "5678" } );
+            const tiers = readBillingTiers( { PADDLE_PRICE_PRO: "   " } );
 
             // Assert.
-            expect( tiers.map( ( tier ) => tier.name ) ).toEqual( [ "Pro" ] );
+            expect( tiers ).toEqual( [] );
         } );
 
         it( "should carry the price, which is what the site quotes", () => {
             // Act.
-            const tiers = readBillingTiers( { PADDLE_PRICE_PLUS: "1234" } );
+            const tiers = readBillingTiers( { PADDLE_PRICE_PRO: "5678" } );
 
             // Assert.
             expect( tiers[ 0 ].monthlyPriceUsd ).toBeGreaterThan( 0 );
         } );
 
-        it( "should sell nothing when the environment says nothing", () => {
-            // Assert.
+        it( "should sell nothing when the environment has no id for Pro", () => {
+            // Assert - carried with an empty id it would match a subscription naming no price at all.
             expect( readBillingTiers( {} ) ).toEqual( [] );
+        } );
+    } );
+
+    describe( "the plan on sale", () => {
+        // The real table, read the way the bot reads it - these are the answers a paying server gets.
+        const ENVIRONMENT = { PADDLE_PRICE_PRO: "pri_pro" };
+
+        it( "should give a server paying for Pro no ceiling at all", () => {
+            // Act.
+            const allowed = resolveMaxMasterChannels( {
+                granted: FREE,
+                paidPriceIds: [ "pri_pro" ],
+                tiers: readBillingTiers( ENVIRONMENT )
+            } );
+
+            // Assert.
+            expect( isUnlimitedAllowance( allowed ) ).toBe( true );
+        } );
+
+        it( "should leave a server on a retired price with what it was granted", () => {
+            // Act - a row naming Plus's price, in a deployment whose env still sets the retired
+            // keys. Retired is not a tier; it is a price this build does not sell.
+            const allowed = resolveMaxMasterChannels( {
+                granted: FREE,
+                paidPriceIds: [ "pri_retired_plus" ],
+                tiers: readBillingTiers( {
+                    ... ENVIRONMENT,
+                    PADDLE_PRICE_PLUS: "pri_retired_plus",
+                    PADDLE_PRICE_ULTIMATE: "pri_retired_ultimate"
+                } )
+            } );
+
+            // Assert.
+            expect( allowed ).toBe( FREE );
         } );
     } );
 

@@ -65,7 +65,7 @@ async function makeConfigLimits( allowance: number, roomsLimit = DEFAULT_ROOMS_L
  * Worth its own cover because it is the seam where the two halves have drifted apart before: this
  * once answered one number for every guild, so a server with an allowance of its own got it in
  * discord and not in the dashboard. Now that a tier can be paid for, the same drift would mean
- * somebody pays for nine generators and is refused at two by the screen they paid on.
+ * somebody pays for unlimited generators and is refused at two by the screen they paid on.
  */
 describe( "VertixBot/Services/ManagementIPC/config limits", () => {
     afterEach( () => {

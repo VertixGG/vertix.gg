@@ -3,12 +3,12 @@ import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 /**
  * What a server is paying for, as the api tells it.
  *
- * `allowance` arrives already spelled - `9`, or `Unlimited` - because the top tier's allowance is
- * `Infinity` and that does not survive json. Nothing here converts it back into a number.
+ * `allowance` arrives already spelled - `Unlimited` rather than a number - because Pro's allowance
+ * is `Infinity` and that does not survive json. Nothing here converts it back into a number.
  *
  * `planName` and `allowance` are null when the subscription names a price this deployment does not
- * know. That is not a fault: it is what a price belonging to the other paddle account, or added
- * after this build, correctly amounts to - and the screen still has a status to show.
+ * know. That is not a fault: it is what a price belonging to the other paddle account, added after
+ * this build, or retired from sale, correctly amounts to - and the screen still has a status to show.
  */
 export interface ISubscription {
     planName: string | null;

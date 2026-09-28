@@ -15,7 +15,7 @@ import { LegalLinks } from "@vertix.gg/dashboard/src/components/legal-links";
  * What is sold, spelled out for the only page here that does not need an account.
  *
  * Drawn from the shared tier table so it cannot quote a price the checkout does not charge, with
- * the free tier in front of the paid ones because most servers never leave it.
+ * the free tier in front of the paid one because most servers never leave it.
  */
 const PLAN_SUMMARY = [
     {

@@ -1,5 +1,7 @@
 import { jest } from "@jest/globals";
 
+import { isUnlimitedAllowance } from "@vertix.gg/definitions/src/billing-definitions";
+
 import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
 const GUILD_ID = "820000000000000001";
@@ -11,13 +13,15 @@ const GUILD_ID = "820000000000000001";
  * carried with an empty id - so a suite that did not set these would be testing a deployment that
  * can sell nothing, and every subscription in it would be worth the free allowance.
  */
-process.env.PADDLE_PRICE_PLUS = "pri_plus";
 process.env.PADDLE_PRICE_PRO = "pri_pro";
-process.env.PADDLE_PRICE_ULTIMATE = "pri_unlimited";
 
-/** What the tiers above are worth, so a test can say `PRO_ALLOWANCE` rather than `9`. */
-const PLUS_ALLOWANCE = 4,
-    PRO_ALLOWANCE = 9;
+/**
+ * The keys of the two retired tiers, as an env file written before they were retired still sets
+ * them. Set here so the suite answers for that environment rather than a tidier one - the bot must
+ * sell nothing on them however long they linger.
+ */
+process.env.PADDLE_PRICE_PLUS = "pri_retired_plus";
+process.env.PADDLE_PRICE_ULTIMATE = "pri_retired_ultimate";
 
 const NOW = new Date( "2026-09-21T12:00:00.000Z" );
 
@@ -107,7 +111,7 @@ describe( "VertixBot/Services/Entitlement", () => {
             await expect( service.getMaxMasterChannels( GUILD_ID ) ).resolves.toBe( 2 );
         } );
 
-        it( "should raise a server to the tier it pays for", async() => {
+        it( "should lift the ceiling for a server paying for Pro", async() => {
             // Act.
             const { service } = await makeService( {
                 granted: 2,
@@ -115,14 +119,26 @@ describe( "VertixBot/Services/Entitlement", () => {
             } );
 
             // Assert.
-            await expect( service.getMaxMasterChannels( GUILD_ID ) ).resolves.toBe( PRO_ALLOWANCE );
+            expect( isUnlimitedAllowance( await service.getMaxMasterChannels( GUILD_ID ) ) ).toBe( true );
         } );
 
-        it( "should keep a grant that is worth more than the tier paid for", async() => {
-            // Act - a grant is given for a reason, and paying should not be able to take it away.
+        it( "should be worth nothing for a retired price, with its key still in the environment", async() => {
+            // Act - a row naming Plus, which is no longer sold. It is a price this build does not
+            // know, not a tier, so it buys nothing.
+            const { service } = await makeService( {
+                granted: 2,
+                subscription: { priceId: "pri_retired_plus", status: "active", currentPeriodEnd: daysFromNow( 10 ) }
+            } );
+
+            // Assert.
+            await expect( service.getMaxMasterChannels( GUILD_ID ) ).resolves.toBe( 2 );
+        } );
+
+        it( "should keep a grant for a server on a retired price", async() => {
+            // Act - a grant is given for a reason, and nothing about a subscription can take it away.
             const { service } = await makeService( {
                 granted: 20,
-                subscription: { priceId: "pri_plus", status: "active", currentPeriodEnd: daysFromNow( 10 ) }
+                subscription: { priceId: "pri_retired_ultimate", status: "active", currentPeriodEnd: daysFromNow( 10 ) }
             } );
 
             // Assert.
@@ -148,7 +164,7 @@ describe( "VertixBot/Services/Entitlement", () => {
             } );
 
             // Assert.
-            await expect( service.getMaxMasterChannels( GUILD_ID ) ).resolves.toBe( PRO_ALLOWANCE );
+            expect( isUnlimitedAllowance( await service.getMaxMasterChannels( GUILD_ID ) ) ).toBe( true );
         } );
 
         it( "should be worth nothing for a price this deployment does not know", async() => {
@@ -187,11 +203,11 @@ describe( "VertixBot/Services/Entitlement", () => {
             expect( covered ).toEqual( new Set( [ "oldest", "middle" ] ) );
         } );
 
-        it( "should cover everything on a tier with no ceiling", async() => {
+        it( "should cover everything on Pro, which has no ceiling", async() => {
             // Act.
             const { service } = await makeService( {
                 granted: 2,
-                subscription: { priceId: "pri_unlimited", status: "active", currentPeriodEnd: daysFromNow( 10 ) },
+                subscription: { priceId: "pri_pro", status: "active", currentPeriodEnd: daysFromNow( 10 ) },
                 masterIds: Array.from( { length: 50 }, ( _unused, index ) => `master-${ index }` )
             } );
 
@@ -208,16 +224,17 @@ describe( "VertixBot/Services/Entitlement", () => {
             const onFree = await service.getCoveredMasterChannelIds( GUILD_ID );
 
             world.subscription = {
-                priceId: "pri_plus",
+                priceId: "pri_pro",
                 status: "active",
                 currentPeriodEnd: daysFromNow( 10 )
             };
 
-            const onPlus = await service.getCoveredMasterChannelIds( GUILD_ID );
+            const onPro = await service.getCoveredMasterChannelIds( GUILD_ID );
 
-            // Assert - the ones already covered stay covered; paying only reaches further.
+            // Assert - the ones already covered stay covered, and paying reaches every one of the
+            // rest: null is "all of them".
             expect( onFree ).toEqual( new Set( [ "a", "b" ] ) );
-            expect( onPlus ).toEqual( new Set( masterIds.slice( 0, PLUS_ALLOWANCE ) ) );
+            expect( onPro ).toBeNull();
         } );
     } );
 
@@ -261,14 +278,14 @@ describe( "VertixBot/Services/Entitlement", () => {
             const { service, world } = await makeService( {
                 granted: 2,
                 masterIds,
-                subscription: { priceId: "pri_plus", status: "active", currentPeriodEnd: daysFromNow( 10 ) }
+                subscription: { priceId: "pri_pro", status: "active", currentPeriodEnd: daysFromNow( 10 ) }
             } );
 
-            // `d` is the fourth: inside Plus, outside the free allowance.
+            // `d` is the fourth: covered on Pro, outside the free allowance.
             const whilePaying = await service.isMasterChannelCovered( GUILD_ID, "d" );
 
             world.subscription = {
-                priceId: "pri_plus",
+                priceId: "pri_pro",
                 status: "canceled",
                 currentPeriodEnd: daysFromNow( -1 )
             };

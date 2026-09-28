@@ -86,20 +86,26 @@ provider.
 
 ## The tiers
 
-Numbers to settle; everything below reads them from one place, so changing them is changing one
-table.
+One paid plan. Everything below reads it from one place, so changing it is changing one table.
 
-| tier | generators | on top of free | price | price id |
-|---|---|---|---|---|
-| Free | 2 | — | — | none |
-| Plus | 4 | +2 | $2 / month | `PADDLE_PRICE_PLUS` |
-| Pro | 9 | +7 | $4 / month | `PADDLE_PRICE_PRO` |
-| Ultimate | unlimited | — | $10 / month | `PADDLE_PRICE_ULTIMATE` |
+| tier | generators | price | price id |
+|---|---|---|---|
+| Free | 2 | — | none |
+| Pro | unlimited | $4 / month | `PADDLE_PRICE_PRO` |
+
+Monthly only. There is no yearly price, and that is a decision rather than an omission.
 
 Free stays at 2, which is what `maxMasterChannels` already defaults to, so a server that never pays
-sees exactly what it sees today — and every tier is a total rather than an addition, because a total
-is what there is to enforce against. The site quotes the addition, because "seven more than I have"
-is the question somebody comparing plans is actually asking.
+sees exactly what it sees today — and a tier is a total rather than an addition, because a total is
+what there is to enforce against.
+
+**There were three** — Plus (4 generators, $2), Pro (9, $4) and Ultimate (unlimited, $10). They were
+folded into one, at Ultimate's allowance and Pro's price, before live billing launched, so no real
+payer held Plus or Ultimate. `PADDLE_PRICE_PLUS` and `PADDLE_PRICE_ULTIMATE` are no longer read: a
+subscription naming either price is one this deployment does not know, and resolves to no tier —
+the grant, and "Unrecognised plan" on the dashboard — exactly as any unknown price already did.
+`PADDLE_PRICE_PRO` kept its key and its price, and `?plan=pro` links kept their slug, so nothing
+already pointing at Pro moved.
 
 **Unlimited is `Infinity`**, so `Math.max` and `<` mean what they say and no arithmetic has to know
 it is special. It does not survive JSON, which matters at exactly one place - the IPC answer the
@@ -215,21 +221,22 @@ ownership, answering the plan, the renewal or cancellation date, the allowance a
 way a screen prints it, and Paddle's management links. The dashboard draws it as **Subscription** in
 the sidebar; arriving with `?plan=…` opens that checkout unless the server already holds it.
 
-The allowance crosses the wire as words rather than a number because the top tier is `Infinity`,
+The allowance crosses the wire as words rather than a number because Pro is `Infinity`,
 `JSON.stringify` turns that into `null`, and a number meaning unlimited is indistinguishable from
 one meaning nothing was found.
 
 ### Tests
 
-**`M-12` — the allowance resolution. Done.** Tier plus manual grant, an unknown price id, nothing
-configured to sell, and the entitling rule: a cancelled subscription lasting out its period and
-stopping after, a stale `active` still honoured.
+**`M-12` — the allowance resolution. Done.** Tier plus manual grant, an unknown price id, a retired
+one whose key is still in the environment, Pro with no ceiling, nothing configured to sell, and the
+entitling rule: a cancelled subscription lasting out its period and stopping after, a stale
+`active` still honoured.
 
 **`M-18` — the signature check. Done.** A body and a secret in, a verdict out: a good signature, a
 tampered body, a timestamp six seconds old, a header that is not the right shape, and a body that
 was parsed and re-serialised on the way in — the mistake a JSON body parser makes for you.
 
-**`M-23` — the allowance reaches the right generators. Done.** Fifteen tests over
+**`M-23` — the allowance reaches the right generators. Done.** Sixteen tests over
 `EntitlementService`, which had no coverage at all while the money path had plenty. The ordering is
 the part worth pinning: the oldest keep working and the extras stop, nobody chooses and nothing is
 stored, so an allowance that reaches the wrong generators is worse than one that reaches none.
@@ -278,22 +285,25 @@ vulnerability — which fails four.
 | Domain approval for `voicechannels.online` **and** `dashboard.voicechannels.online` | Paddle's review; both submitted, pending |
 | The default payment link | blocked on the approval above, and required before any checkout works |
 | A live API key — `subscription.read` + customer portal session (write) | **theirs**, pasted straight into `.env` |
-| Swapping the seven `PADDLE_*` vars, rebuilding the dashboard, restarting the API | mine |
+| Swapping the five `PADDLE_*` vars, rebuilding the dashboard, restarting the API | mine |
 
 The live catalogue, the notification destination and the client-side token already exist.
 Subdomains are not approved by default — the checkout runs on `dashboard.`, so the apex alone is not
 enough.
 
-**The dashboard's prices are baked in at build time**, through vite `define`, so a swap of the
+**The dashboard's price id is baked in at build time**, through vite `define`, so a swap of the
 environment is not complete until the dashboard is rebuilt and redeployed. A config-only change
-leaves the old price ids in the bundle.
+leaves the old price id in the bundle.
 
 Also open:
 
 - **Prices are quoted in two places and charged in one.** Nothing reads Paddle's number back, so a
   tier repriced there has to be repriced in `billing-definitions.ts` too.
 - A stale sandbox subscription row will need clearing at the cutover: it names a sandbox price that
-  matches nothing live, so it would quietly stop granting anything.
+  matches nothing live, so it would quietly stop granting anything. A sandbox row naming Plus or
+  Ultimate already grants nothing, even in the sandbox.
+- Archiving Plus and Ultimate's prices in both Paddle catalogues. Nothing here sells them any more,
+  and a subscription naming one resolves to no tier.
 - Whether the free tier stays at 2 once there is something to sell.
 - Resuming a scheduled cancellation. Buying the same plan again would create a *second* subscription
   and charge for it immediately; resuming is `scheduled_change: null` and needs `subscription.write`.
@@ -312,7 +322,8 @@ What is left, in order:
 1. Paddle verification and payouts.
 2. Domain approval, then the default payment link.
 3. The live API key, into `.env`.
-4. Swap the environment, rebuild and redeploy the dashboard, restart the API, clear the stale row.
+4. Swap the environment (dropping `PADDLE_PRICE_PLUS` and `PADDLE_PRICE_ULTIMATE`, which nothing
+   reads any more), rebuild and redeploy the dashboard, restart the API, clear the stale row.
 5. A real purchase on live, then a real cancellation.
 **Already done and not repeated here:** the room cap (`M-01` to `M-04`), the enforcement and both
 refusals (`M-08` to `M-11`), and the plans page. None of them were affected by the change of

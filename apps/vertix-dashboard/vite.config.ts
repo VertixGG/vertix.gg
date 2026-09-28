@@ -81,9 +81,7 @@ export default defineConfig( ( { mode } ) => {
             // api key, which is, never comes near this bundle.
             "import.meta.env.PADDLE_CLIENT_TOKEN": JSON.stringify( env.PADDLE_CLIENT_TOKEN || "" ),
             "import.meta.env.PADDLE_ENVIRONMENT": JSON.stringify( env.PADDLE_ENVIRONMENT || "sandbox" ),
-            "import.meta.env.PADDLE_PRICE_PLUS": JSON.stringify( env.PADDLE_PRICE_PLUS || "" ),
             "import.meta.env.PADDLE_PRICE_PRO": JSON.stringify( env.PADDLE_PRICE_PRO || "" ),
-            "import.meta.env.PADDLE_PRICE_ULTIMATE": JSON.stringify( env.PADDLE_PRICE_ULTIMATE || "" ),
             "VITE_API_PORT": JSON.stringify( apiPort ),
             "VITE_API_HOST": JSON.stringify( apiHost ),
             "__ZENFLUX_DEBUG__": JSON.stringify( true ),

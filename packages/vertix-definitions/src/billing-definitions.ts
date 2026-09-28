@@ -5,9 +5,9 @@
  * tax and pays us. That is what makes selling from here possible at all: discord's own subscriptions
  * are sold from the US, the EU and the UK only.
  *
- * An allowance is bought a tier at a time rather than a generator at a time, which was discord's
- * constraint rather than paddle's - it is kept because the ladder a per-generator price would need
- * is a worse thing to put in front of somebody than three plans.
+ * An allowance is bought as a plan rather than a generator at a time, which was discord's constraint
+ * rather than paddle's - it is kept because the ladder a per-generator price would need is a worse
+ * thing to put in front of somebody than one plan with no ceiling.
  *
  * The ids themselves are not here. A price id belongs to one paddle account and the sandbox is a
  * different account from the live one, so the id is environment and the shape is code.
@@ -72,12 +72,21 @@ export function formatMasterChannelAllowance( maxMasterChannels: number ): strin
 /**
  * The tiers, in the order they are offered.
  *
- * Deliberately short. A ladder priced a generator at a time would need a SKU per step and a store
- * page listing all of them; these are three steps, and the top one has no ceiling so there is
- * nothing above it to sell.
+ * One. There were three - Plus, Pro and Ultimate, at four, nine and unlimited generators - and a
+ * ladder like that asks somebody to guess how many generators they will need before they have run
+ * any. Pro asks nothing: it has no ceiling, so there is nothing above it to sell and nothing to
+ * outgrow. It is billed monthly, and that is the only interval there is.
+ *
+ * Still a list, so a second tier would be another entry rather than a new shape. Nothing picks a
+ * tier out of it by position - a screen that means Pro says `"pro"`.
  *
  * The numbers are **totals, not extras** - a tier says how many generators a server may have
- * altogether, free ones included. Two on top of the free two is four, which is what `Plus` is.
+ * altogether, free ones included.
+ *
+ * Plus and Ultimate are retired rather than kept for anybody: live billing had not launched when
+ * they went, so no real payer holds either. A subscription still naming one of their price ids is
+ * a price this deployment does not know, and is worth what any such price is - see
+ * `resolveMaxMasterChannels()`.
  *
  * The price is quoted from here and charged by paddle, which are two different places. Nothing reads
  * paddle's own number back - a price is set in its dashboard and the webhook carries only the id -
@@ -85,14 +94,12 @@ export function formatMasterChannelAllowance( maxMasterChannels: number ): strin
  * checkout charges another.
  */
 export const BILLING_TIER_DEFINITIONS = [
-    { name: "Plus", slug: "plus", environmentKey: "PADDLE_PRICE_PLUS", maxMasterChannels: 4, monthlyPriceUsd: 2 },
-    { name: "Pro", slug: "pro", environmentKey: "PADDLE_PRICE_PRO", maxMasterChannels: 9, monthlyPriceUsd: 4 },
     {
-        name: "Ultimate",
-        slug: "ultimate",
-        environmentKey: "PADDLE_PRICE_ULTIMATE",
+        name: "Pro",
+        slug: "pro",
+        environmentKey: "PADDLE_PRICE_PRO",
         maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS,
-        monthlyPriceUsd: 10
+        monthlyPriceUsd: 4
     }
 ] as const;
 
@@ -162,8 +169,8 @@ export function shouldApplySubscriptionEvent( options: {
  * raised again by hand.
  *
  * A subscription on a price this deployment does not know is worth nothing here. That is not a
- * failure: it is what a price added after this build, or belonging to the other paddle account,
- * correctly amounts to.
+ * failure: it is what a price added after this build, belonging to the other paddle account, or
+ * retired from sale, correctly amounts to.
  */
 export function resolveMaxMasterChannels( options: {
     granted: number;

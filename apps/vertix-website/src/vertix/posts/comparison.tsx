@@ -16,7 +16,7 @@ const CONTENDERS: Contender[] = [
         accent: "var(--color-vc-mint)",
         servers: "—",
         rating: "—",
-        price: "$2",
+        price: "$4",
         priceNote: "per month, 1 server - and a free tier with every feature",
         isUs: true,
     },
@@ -54,8 +54,8 @@ const GATING = [
         name: "VoiceChannels",
         isUs: true,
         body: "Every control works on every server, free. The only thing money buys is "
-            + "quantity - $1 a month for each generator past the first two - and no command "
-            + "has ever asked anybody to vote for it.",
+            + "quantity - $4 a month for as many generators as a server wants, past the free "
+            + "two - and no command has ever asked anybody to vote for it.",
     },
     {
         name: "VoiceMaster",
@@ -206,7 +206,7 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
         group: "What it costs",
         rows: [
             { capability: "Generators on the free tier", cells: [ "2", "1", "Capped, not published", "2" ] },
-            { capability: "What it costs to add more", cells: [ "$2, $4 or $10 a month", "\u00A33.99 a month", "EUR 4 a month", "$3.99 a month" ] },
+            { capability: "What it costs to add more", cells: [ "$4 a month, unlimited", "\u00A33.99 a month", "EUR 4 a month", "$3.99 a month" ] },
             { capability: "Every feature on the free tier", cells: [ "Yes", null, null, null ] },
             { capability: "No vote-gated commands", cells: [ "Yes", null, null, null ] },
         ],
@@ -303,7 +303,7 @@ export default function Comparison() {
             <p className="text-vc-ice-dim mb-6">
                 The useful question is not how much, but what for. Three of them charge to
                 unlock features; here the features are all free and the charge is for volume -
-                $1 a month for each generator past the first two, and nothing else.
+                $4 a month for as many generators as a server wants, and nothing else.
             </p>
 
             <div className="grid gap-4 md:grid-cols-2 mb-12">

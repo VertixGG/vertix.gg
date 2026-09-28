@@ -23,10 +23,10 @@ import type { ISubscription } from "@vertix.gg/dashboard/src/features/billing/ap
 import type { AuthState } from "@vertix.gg/dashboard/src/features/auth/commands/auth-commands";
 
 /**
- * The tier everybody starts on, drawn beside the ones that cost money.
+ * The tier everybody starts on, drawn beside the one that costs money.
  *
- * Shown so that a server paying for nothing still has a card that is *theirs* rather than three
- * offers and no sense of where they currently stand.
+ * Shown so that a server paying for nothing still has a card that is *theirs* rather than one offer
+ * and no sense of where it currently stands.
  */
 const FREE_TIER = {
     name: "Free",
@@ -35,7 +35,12 @@ const FREE_TIER = {
     maxMasterChannels: BILLING_FREE_MAX_MASTER_CHANNELS
 };
 
-/** The one carrying the badge. Pro, because it is the middle of three and the one worth pointing at. */
+/**
+ * The one carrying the badge - Pro, the plan there is to buy.
+ *
+ * Named rather than taken from the tier table by position, so a tier added to it later cannot move
+ * the badge by where it happens to sit.
+ */
 const POPULAR_SLUG = "pro";
 
 function formatDate( iso: string ): string {
@@ -338,7 +343,7 @@ export function BillingPage() {
                         </div>
                     ) }
 
-                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    <div className="grid gap-4 sm:grid-cols-2 max-w-3xl">
                         <PlanCard
                             name={ FREE_TIER.name }
                             monthlyPriceUsd={ FREE_TIER.monthlyPriceUsd }

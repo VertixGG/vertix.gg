@@ -33,13 +33,60 @@ export const DISCORD_INVITE_PERMISSIONS = {
 export type TDiscordInvitePermissionsType = keyof typeof DISCORD_INVITE_PERMISSIONS;
 
 /**
+ * The places an install can be counted from - the link somebody pressed to add the bot.
+ *
+ * Stored on `GuildInstall` as they are written here, so each one is a storage contract: renaming one
+ * splits its history in two. Written out at each link rather than collected under short keys, so a
+ * search for one finds every place that sends it.
+ */
+export const INSTALL_SOURCES = [
+    "site-home",
+    "site-header",
+    "site-pricing",
+    "site-docs",
+    "site-post",
+    "site-invite",
+    "dashboard-bot-missing",
+    "github-readme"
+] as const;
+
+export type TInstallSource = typeof INSTALL_SOURCES[ number ];
+
+/**
+ * Function isInstallSource() :: Whether a string is one of the sources, as sent back to the api.
+ *
+ * What comes back is whatever the link carried, and a link can be written by anybody - only a name on
+ * the list is stored.
+ */
+export function isInstallSource( value: unknown ): value is TInstallSource {
+    return "string" === typeof value && ( INSTALL_SOURCES as readonly string[] ).includes( value );
+}
+
+export interface IBotInviteOptions {
+    /**
+     * For the callers that already know which server is being talked about - the dashboard asks about
+     * one server at a time. Named, Discord preselects it and `disable_guild_select` stops the dialog
+     * offering the others; it still refuses anyone without Manage Server there.
+     */
+    guildId?: string;
+
+    /**
+     * Count the install by where it came from. Only when `callbackUrl` is set: that is the api's install
+     * callback, which discord must have on the application's list of redirects - with none, the link is
+     * the plain one it always was, and nothing is counted.
+     */
+    attribution?: {
+        callbackUrl: string;
+        source: TInstallSource;
+    };
+}
+
+/**
  * Function buildBotInviteUrl() :: Where somebody is sent to put the bot in a server.
  *
- * `guildId` is for the callers that already know which server is being talked about - the dashboard
- * asks about one server at a time, and sending somebody to a picker they have already picked from
- * is how an invite ends up in the wrong place. Named, Discord preselects that server and
- * `disable_guild_select` stops the dialog offering the others; it still refuses anyone without
- * Manage Server there, which is the same check the dashboard made before letting them in.
+ * With attribution the link asks discord for a code and a redirect back to the api, carrying the source
+ * as `state` - discord hands both back once the bot is added, the api exchanges the code for the
+ * server it went into, and the install is written down against the link that brought it.
  *
  * The scope stays spelled with `%20` rather than built through `URLSearchParams`, which writes a
  * space as `+`. Both are read the same way by anything that follows the spec, and this is the form
@@ -47,14 +94,19 @@ export type TDiscordInvitePermissionsType = keyof typeof DISCORD_INVITE_PERMISSI
  */
 export function buildBotInviteUrl(
     permissions: TDiscordInvitePermissionsType = "recommended",
-    guildId?: string
+    options: IBotInviteOptions = {}
 ): string {
-    const url = `https://discord.com/oauth2/authorize?client_id=${ DISCORD_APP_ID }` +
+    let url = `https://discord.com/oauth2/authorize?client_id=${ DISCORD_APP_ID }` +
         `&permissions=${ DISCORD_INVITE_PERMISSIONS[ permissions ] }&scope=bot%20applications.commands`;
 
-    if ( ! guildId ) {
-        return url;
+    if ( options.guildId ) {
+        url += `&guild_id=${ encodeURIComponent( options.guildId ) }&disable_guild_select=true`;
     }
 
-    return `${ url }&guild_id=${ encodeURIComponent( guildId ) }&disable_guild_select=true`;
+    if ( options.attribution?.callbackUrl ) {
+        url += `&response_type=code&redirect_uri=${ encodeURIComponent( options.attribution.callbackUrl ) }` +
+            `&state=${ encodeURIComponent( options.attribution.source ) }`;
+    }
+
+    return url;
 }

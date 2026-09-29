@@ -82,6 +82,9 @@ export default defineConfig( ( { mode } ) => {
             "import.meta.env.PADDLE_CLIENT_TOKEN": JSON.stringify( env.PADDLE_CLIENT_TOKEN || "" ),
             "import.meta.env.PADDLE_ENVIRONMENT": JSON.stringify( env.PADDLE_ENVIRONMENT || "sandbox" ),
             "import.meta.env.PADDLE_PRICE_PRO": JSON.stringify( env.PADDLE_PRICE_PRO || "" ),
+
+            // The api's install callback - empty keeps the invite the plain one and counts nothing.
+            "import.meta.env.INSTALL_CALLBACK_URL": JSON.stringify( env.INSTALL_CALLBACK_URL || "" ),
             "VITE_API_PORT": JSON.stringify( apiPort ),
             "VITE_API_HOST": JSON.stringify( apiHost ),
             "__ZENFLUX_DEBUG__": JSON.stringify( true ),

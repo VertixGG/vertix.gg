@@ -73,11 +73,66 @@ model Guild {
   // ---
   lastActiveAt      DateTime?   @default(now())
   // ---
+  /// When the bot last joined - `createdAt` is the first time it ever did, and a server that removes
+  /// the bot and adds it again is a new install worth counting from its own start.
+  joinedAt          DateTime?
+  /// When the bot last left, or null while it is in.
+  leftAt            DateTime?
+  /// The first generator of either kind, ever. Kept through leaving and coming back: it answers
+  /// "did this server ever set the bot up", not "is it set up now" - the channel rows answer that.
+  setupAt           DateTime?
+  /// The first room a member made from a generator, ever.
+  firstRoomAt       DateTime?
+  // ---
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   updatedAtInternal DateTime?
 
   @@index([lastActiveAt])
+}
+
+/// Where an install came from - the link somebody pressed to add the bot.
+///
+/// Written by the api when discord hands the installer back to us, which only happens for links that
+/// ask it to; an install from anywhere else has no row, and is reported as unattributed. Kept apart
+/// from `Guild` because it arrives from a different process, in no set order against the bot's own
+/// join, and a server can be installed more than once.
+///
+/// Only written once the code discord sent back has been exchanged for the server it went into, so
+/// every row is a real install - the callback is public, and a guild id in a query string is not.
+model GuildInstall {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId     String
+  /// A literal from `TInstallSource`.
+  source      String
+  /// The permissions granted, as discord's redirect reports them - a server can untick some.
+  permissions String?
+
+  // ---
+  createdAt DateTime @default(now())
+
+  @@index([guildId])
+  @@index([createdAt])
+}
+
+/// How many rooms a server's members made on one day - UTC.
+///
+/// A count, not a record of anybody: no member, no channel, only how much the bot was used there,
+/// which is the one thing that says whether an install turned into a server that runs on it.
+model GuildActivityDay {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId      String
+  /// Midnight UTC of the day counted.
+  day          DateTime
+  roomsCreated Int      @default(0)
+
+  // ---
+  updatedAt DateTime @updatedAt
+
+  @@unique([guildId, day])
+  @@index([day])
 }
 
 model GuildData {

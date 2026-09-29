@@ -34,7 +34,7 @@ export default function Welcome() {
 
                             <div className="flex flex-wrap justify-center gap-3 md:justify-start">
                                 <a
-                                    href="/invite-vertix"
+                                    href="/invite-vertix?src=site-docs"
                                     className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect"
                                     target="_blank"
                                     rel="noopener noreferrer"

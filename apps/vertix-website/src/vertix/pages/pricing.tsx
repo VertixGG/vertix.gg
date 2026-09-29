@@ -94,7 +94,7 @@ const PLANS: IPlan[] = [
         allowance: `${ BILLING_FREE_MAX_MASTER_CHANNELS } generators`,
         note: "the starting point",
         extras: [],
-        href: "/invite-vertix",
+        href: "/invite-vertix?src=site-pricing",
         isFeatured: false,
         isFree: true
     },

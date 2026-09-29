@@ -43,7 +43,13 @@ export function BotMissingModal( { guildId, guildName }: BotMissingModalProps ) 
     // Discord's dialog is a page of its own, so the invite opens in a tab and this one stays where
     // it was - the dashboard is mid-session and throwing that away to come back to it is worse.
     const handleAddToServer = () => {
-        window.open( buildBotInviteUrl( "recommended", guildId ), "_blank", "noopener,noreferrer" );
+        window.open( buildBotInviteUrl( "recommended", {
+            guildId,
+            attribution: {
+                callbackUrl: ( import.meta.env.INSTALL_CALLBACK_URL as string | undefined )?.trim() ?? "",
+                source: "dashboard-bot-missing"
+            }
+        } ), "_blank", "noopener,noreferrer" );
 
         setHasOpenedInvite( true );
     };

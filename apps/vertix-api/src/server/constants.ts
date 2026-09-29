@@ -10,7 +10,8 @@ export const API_ROUTES = {
     PADDLE_WEBHOOK: "/webhooks/paddle",
     SUBSCRIPTION: "/subscription/:guildId",
     CHECKOUT_INTENT_CREATE: "/checkout-intent/:guildId",
-    CHECKOUT_INTENT_READ: "/checkout-intent"
+    CHECKOUT_INTENT_READ: "/checkout-intent",
+    INSTALL_CALLBACK: "/install/callback"
 } as const;
 
 export const API_PREFIX = "/api";

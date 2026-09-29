@@ -299,6 +299,11 @@ class CleanupWorker extends InitializeBase {
             ownedGuildIds.map( ( guildId ) => ( { guildId, name: client.guilds.cache.get( guildId )!.name } ) )
         );
 
+        await this.recordJoinTimes(
+            PrismaBotClient.$.getClient(),
+            ownedGuildIds.map( ( guildId ) => ( { guildId, joinedAt: client.guilds.cache.get( guildId )!.joinedAt } ) )
+        );
+
         if ( ! rejoined && ! created ) {
             this.logger.info(
                 this.markOwnedGuildsAsJoined,
@@ -348,6 +353,44 @@ class CleanupWorker extends InitializeBase {
         }
 
         return { rejoined: rejoined.count, created: missing.length };
+    }
+
+    /**
+     * Writes when the bot joined each guild it holds, where the row does not already say so.
+     *
+     * A join only reaches `GuildModel` through `guildCreate`, which discord.js does not raise for the
+     * guilds that arrive at startup - so a server that added the bot while it was down, and every server
+     * from before this was recorded at all, would have no join time to measure an install from. The
+     * cache has discord's own, and this copies it over. A stored time older than the cache's is a join
+     * that happened since, while nobody was listening.
+     *
+     * One write per guild that needs one, which after the first run is almost never any.
+     */
+    private async recordJoinTimes(
+        prisma: ReturnType<( typeof PrismaBotClient.$ )[ "getClient" ]>,
+        ownedGuilds: { guildId: string; joinedAt: Date }[]
+    ): Promise<number> {
+        const stored = new Map(
+            ( await prisma.guild.findMany( {
+                where: { guildId: { in: ownedGuilds.map( ( guild ) => guild.guildId ) } },
+                select: { guildId: true, joinedAt: true }
+            } ) ).map( ( row ) => [ row.guildId, row.joinedAt ] )
+        );
+
+        const behind = ownedGuilds.filter( ( guild ) => {
+            const joinedAt = stored.get( guild.guildId );
+
+            return stored.has( guild.guildId ) && ( ! joinedAt || joinedAt.getTime() < guild.joinedAt.getTime() );
+        } );
+
+        for ( const guild of behind ) {
+            await prisma.guild.update( {
+                where: { guildId: guild.guildId },
+                data: { joinedAt: guild.joinedAt, leftAt: null }
+            } );
+        }
+
+        return behind.length;
     }
 
     private async removeChannelsOfLeftGuilds( client: Client ) {
@@ -422,7 +465,7 @@ class CleanupWorker extends InitializeBase {
                     await prisma.channel.deleteMany( { where: { guildId: row.guildId } } );
                     await prisma.guild.update( {
                         where: { guildId: row.guildId },
-                        data: { isInGuild: false }
+                        data: { isInGuild: false, leftAt: new Date() }
                     } );
 
                     ++deletedCount;

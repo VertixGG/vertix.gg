@@ -61,7 +61,7 @@ export default function JoinToCreate() {
                 <p className="text-vc-ice-dim mb-6">
                     Two generators free, and set up with one command.
                 </p>
-                <a href="/invite-vertix"
+                <a href="/invite-vertix?src=site-post"
                     className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
                     Add to Discord
                 </a>

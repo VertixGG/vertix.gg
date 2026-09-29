@@ -1,8 +1,24 @@
 import {
-    buildBotInviteUrl
+    buildBotInviteUrl,
+    isInstallSource
 } from "@vertix.gg/definitions/src/discord-invite-definitions";
 
-import type { TDiscordInvitePermissionsType } from "@vertix.gg/definitions/src/discord-invite-definitions";
+import type {
+    TDiscordInvitePermissionsType,
+    TInstallSource
+} from "@vertix.gg/definitions/src/discord-invite-definitions";
+
+/**
+ * Function readInstallSource() :: Which link brought somebody to this page.
+ *
+ * The links around the site say it with `?src=`; arriving any other way - typed, bookmarked, a
+ * listing that links here bare - is this page's own.
+ */
+function readInstallSource(): TInstallSource {
+    const source = new URLSearchParams( window.location.search ).get( "src" );
+
+    return isInstallSource( source ) ? source : "site-invite";
+}
 
 /**
  * What each button asks Discord for lives in `@vertix.gg/definitions`, beside the app id, since the
@@ -18,7 +34,12 @@ export const onAddToServerClick = ( type: TDiscordInvitePermissionsType ) => {
     // @ts-ignore
     window.gtag( "event", "add_to_server", { type, "send_to": "G-B87MBQLL99" } );
 
-    window.open( buildBotInviteUrl( type ) );
+    window.open( buildBotInviteUrl( type, {
+        attribution: {
+            callbackUrl: ( import.meta.env.INSTALL_CALLBACK_URL as string | undefined )?.trim() ?? "",
+            source: readInstallSource()
+        }
+    } ) );
 };
 
 export default function InviteVertix() {

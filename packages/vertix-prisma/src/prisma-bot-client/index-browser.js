@@ -142,9 +142,29 @@ exports.Prisma.GuildScalarFieldEnum = {
   name: 'name',
   isInGuild: 'isInGuild',
   lastActiveAt: 'lastActiveAt',
+  joinedAt: 'joinedAt',
+  leftAt: 'leftAt',
+  setupAt: 'setupAt',
+  firstRoomAt: 'firstRoomAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   updatedAtInternal: 'updatedAtInternal'
+};
+
+exports.Prisma.GuildInstallScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  source: 'source',
+  permissions: 'permissions',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.GuildActivityDayScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  day: 'day',
+  roomsCreated: 'roomsCreated',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.GuildDataScalarFieldEnum = {
@@ -331,6 +351,8 @@ exports.Prisma.ModelName = {
   Config: 'Config',
   Category: 'Category',
   Guild: 'Guild',
+  GuildInstall: 'GuildInstall',
+  GuildActivityDay: 'GuildActivityDay',
   GuildData: 'GuildData',
   GuildCustomization: 'GuildCustomization',
   Channel: 'Channel',

@@ -246,7 +246,7 @@ export default function Home() {
                         </p>
 
                         <div className="flex flex-wrap gap-3">
-                            <a id="add-to-server" href="/invite-vertix"
+                            <a id="add-to-server" href="/invite-vertix?src=site-home"
                                 className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
                                 Add to Discord
                             </a>
@@ -396,7 +396,7 @@ export default function Home() {
                     </div>
 
                     <div className="mx-auto grid w-full max-w-[640px] grid-cols-1 gap-3 sm:grid-cols-2">
-                        <a href="/invite-vertix"
+                        <a href="/invite-vertix?src=site-home"
                             className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect w-full">
                             Add to Discord
                         </a>

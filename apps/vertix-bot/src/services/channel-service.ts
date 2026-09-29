@@ -65,7 +65,7 @@ export class ChannelService extends ServiceWithDependenciesBase<{
 
         this.debugger = new Debugger( this, "", isDebugEnabled( "SERVICE", ChannelService.getName() ) );
 
-        EventBus.$.register( this, [ this.onJoin, this.onLeave, this.onChannelGuildVoiceDelete ] );
+        EventBus.$.register( this, [ this.onJoin, this.onLeave, this.onChannelGuildVoiceDelete, this.onChannelCreated ] );
     }
 
     // Remove this auto-generated return type.
@@ -299,8 +299,19 @@ export class ChannelService extends ServiceWithDependenciesBase<{
             data.ownerChannelId = ownerChannelId;
         }
 
+        await this.onChannelCreated( guild.id, internalType );
+
         return { channel, db: ChannelModel.$.create( data ) };
     }
+
+    /**
+     * Function onChannelCreated() :: A channel of ours now exists in discord - an event, for whoever counts.
+     *
+     * Empty on purpose: the event bus emits after the method runs, and what listens is what records
+     * a server's first generator and the rooms its members make. Every channel the bot creates comes
+     * through `create()`, which is why this is the one place to hear it.
+     */
+    public async onChannelCreated( _guildId: string, _internalType: PrismaBot.E_INTERNAL_CHANNEL_TYPES ) {}
 
     public async update( args: IChannelUpdateArgs ) {
         const { channel, userOwnerId } = args;

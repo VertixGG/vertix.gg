@@ -43,7 +43,8 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         const data = {
             guildId: guild.id,
             name: guild.name,
-            isInGuild: true
+            isInGuild: true,
+            joinedAt: guild.joinedAt
         };
 
         this.debugger.dumpDown( this.create, data );
@@ -51,15 +52,26 @@ export class GuildModel extends ModelDataBase<typeof client.guild, typeof client
         return this.prisma.guild.create( { data } );
     }
 
+    /**
+     * Function update() :: Record that the bot is in a guild, or has left it.
+     *
+     * Joining writes when, from discord's own join time, and clears the last leave; leaving writes when.
+     * Together they are what an install is measured from - `createdAt` is only the first one ever.
+     */
     public async update( guild: Guild, isInGuild: boolean ) {
         let result;
+
+        const presence = isInGuild
+            ? { joinedAt: guild.joinedAt, leftAt: null }
+            : { leftAt: new Date() };
 
         try {
             result = await this.prisma.guild.update( {
                 where: { guildId: guild.id },
                 data: {
                     isInGuild,
-                    lastActiveAt: new Date()
+                    lastActiveAt: new Date(),
+                    ... presence
                 }
             } );
         } catch( e: unknown ) {

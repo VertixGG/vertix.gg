@@ -107,7 +107,7 @@ export default function Header() {
                         </ul>
 
                         <div className="mt-4 flex flex-col gap-3 nav:mt-0 nav:flex-row nav:gap-4">
-                            <a id="add-to-server" href="/invite-vertix"
+                            <a id="add-to-server" href="/invite-vertix?src=site-header"
                                 className="vc-btn vc-btn-primary vc-btn-effect w-full nav:w-auto">
                                 Invite
                             </a>

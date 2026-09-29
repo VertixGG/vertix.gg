@@ -31,6 +31,8 @@ export interface TokenResponse {
     expires_in: number;
     refresh_token: string;
     scope: string;
+    /** Present when the code came from adding the bot: the server it was added to. */
+    guild?: { id: string };
 }
 
 export interface AuthUser {
@@ -41,7 +43,13 @@ export interface AuthUser {
     email?: string;
 }
 
-export async function exchangeCodeForToken( code: string ): Promise<TokenResponse> {
+/**
+ * Function exchangeCodeForToken() :: Trade an authorization code for what it grants.
+ *
+ * `redirectUri` has to be the one the code was issued for - the dashboard's sign-in by default, and
+ * the install callback for a code that came back from adding the bot.
+ */
+export async function exchangeCodeForToken( code: string, redirectUri: string = discordConfig.getRedirectUri() ): Promise<TokenResponse> {
     const response = await fetch( `${ DISCORD_API_BASE }/oauth2/token`, {
         method: "POST",
         headers: {
@@ -52,7 +60,7 @@ export async function exchangeCodeForToken( code: string ): Promise<TokenRespons
             client_secret: discordConfig.getClientSecret(),
             grant_type: "authorization_code",
             code,
-            redirect_uri: discordConfig.getRedirectUri()
+            redirect_uri: redirectUri
         } )
     } );
 

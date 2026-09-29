@@ -22,7 +22,7 @@ powered by an **open-source framework** for declaring Discord UIs as state machi
 
 <br/>
 
-**[🚀 Invite Vlk](https://voicechannels.online/invite-vertix)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://voicechannels.online/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.voicechannels.online)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://voicechannels.online/changelog)**
+**[🚀 Invite Vlk](https://voicechannels.online/invite-vertix?src=github-readme)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://voicechannels.online/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.voicechannels.online)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://voicechannels.online/changelog)**
 
 </div>
 

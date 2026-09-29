@@ -396,6 +396,10 @@ export default defineConfig( ( { mode } ) => {
             // price changing does not need this rebuilt.
             "import.meta.env.PADDLE_CLIENT_TOKEN": JSON.stringify( env.PADDLE_CLIENT_TOKEN || "" ),
             "import.meta.env.PADDLE_ENVIRONMENT": JSON.stringify( env.PADDLE_ENVIRONMENT || "sandbox" ),
+
+            // The api's install callback. Empty - the default - the invite links are the plain ones and
+            // no install is counted; set, it must also be on the application's redirects in discord.
+            "import.meta.env.INSTALL_CALLBACK_URL": JSON.stringify( env.INSTALL_CALLBACK_URL || "" ),
         },
         resolve: {
             alias: {

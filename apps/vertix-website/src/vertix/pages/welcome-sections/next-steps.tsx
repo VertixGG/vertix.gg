@@ -8,7 +8,7 @@ export default function NextSteps() {
 
             <div className="mx-auto grid w-full max-w-[640px] grid-cols-1 gap-3 sm:grid-cols-2">
                 <a
-                    href="/invite-vertix"
+                    href="/invite-vertix?src=site-docs"
                     className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect w-full"
                     target="_blank"
                     rel="noopener noreferrer"

@@ -511,7 +511,7 @@ export default function Comparison() {
                     Nothing stops you setting up a generator here while another bot keeps doing what
                     it does, and removing whichever you like less.
                 </p>
-                <a href="/invite-vertix"
+                <a href="/invite-vertix?src=site-post"
                     className="vc-btn vc-btn-primary vc-btn-lg vc-btn-effect">
                     Add to Discord
                 </a>

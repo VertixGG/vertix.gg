@@ -2,6 +2,7 @@ import Fastify from "fastify";
 
 import healthRoutePlugin from "@vertix.gg/api/src/server/routes/health-route";
 import paddleWebhookRoutePlugin from "@vertix.gg/api/src/server/routes/paddle-webhook-route";
+import installRoutePlugin from "@vertix.gg/api/src/server/routes/install-route";
 import subscriptionRoutePlugin from "@vertix.gg/api/src/server/routes/subscription-route";
 import {
     checkoutIntentCreateRoutePlugin,
@@ -83,6 +84,10 @@ export async function createApp(): Promise<FastifyInstance> {
 
     // Outside `requireAuth`: paddle has no session and authenticates by signing what it sends.
     await fastify.register( paddleWebhookRoutePlugin, { prefix: API_PREFIX } );
+
+    // Outside `requireAuth` too: whoever just added the bot has no session, and the code discord sent
+    // back with them is what the install is confirmed by.
+    await fastify.register( installRoutePlugin, { prefix: API_PREFIX } );
 
     await fastify.register( buttonSheetRoutePlugin, { prefix: API_PREFIX } );
 

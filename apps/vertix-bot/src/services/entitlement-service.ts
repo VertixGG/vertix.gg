@@ -7,6 +7,7 @@ import { SubscriptionModel } from "@vertix.gg/data/src/models/subscription-model
 import {
     isSubscriptionEntitling,
     readBillingTiers,
+    resolveCanBrand,
     resolveMaxMasterChannels
 } from "@vertix.gg/definitions/src/billing-definitions";
 
@@ -49,22 +50,29 @@ export class EntitlementService extends ServiceBase {
     public async getMaxMasterChannels( guildId: string ): Promise<number> {
         const granted = ( await GuildDataManager.$.getAllSettings( guildId ) ).maxMasterChannels;
 
-        const subscription = await SubscriptionModel.$.get( guildId );
-
-        // A lapsed subscription buys nothing, and the row is kept rather than cleared - it is the
-        // record of what was bought, and only the question of whether it still counts is one the
-        // clock answers. Nothing has to come and delete it when a month runs out.
-        const paidPriceIds = subscription && isSubscriptionEntitling( subscription )
-            ? [ subscription.priceId ]
-            : [];
-
         const allowed = resolveMaxMasterChannels( {
             granted,
-            paidPriceIds,
+            paidPriceIds: await this.getPaidPriceIds( guildId ),
             tiers: readBillingTiers( process.env )
         } );
 
         this.debugger.log( this.getMaxMasterChannels, `Guild id: '${ guildId }' - Allowed '${ allowed }'` );
+
+        return allowed;
+    }
+
+    /**
+     * Function canBrand() :: Whether this guild may give the bot its own profile there.
+     *
+     * Paying for a plan that includes it, and nothing else - a grant raises generators only.
+     */
+    public async canBrand( guildId: string ): Promise<boolean> {
+        const allowed = resolveCanBrand( {
+            paidPriceIds: await this.getPaidPriceIds( guildId ),
+            tiers: readBillingTiers( process.env )
+        } );
+
+        this.debugger.log( this.canBrand, `Guild id: '${ guildId }' - Can brand '${ allowed }'` );
 
         return allowed;
     }
@@ -103,6 +111,20 @@ export class EntitlementService extends ServiceBase {
         }
 
         return new Set( ordered.slice( 0, allowed ) );
+    }
+
+    /**
+     * Function getPaidPriceIds() :: The prices this guild is paying for right now.
+     */
+    private async getPaidPriceIds( guildId: string ): Promise<string[]> {
+        const subscription = await SubscriptionModel.$.get( guildId );
+
+        // A lapsed subscription buys nothing, and the row is kept rather than cleared - it is the
+        // record of what was bought, and only the question of whether it still counts is one the
+        // clock answers. Nothing has to come and delete it when a month runs out.
+        return subscription && isSubscriptionEntitling( subscription )
+            ? [ subscription.priceId ]
+            : [];
     }
 }
 

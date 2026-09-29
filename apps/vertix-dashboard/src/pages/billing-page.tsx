@@ -32,25 +32,41 @@ const FREE_TIER = {
     name: "Free",
     slug: null,
     monthlyPriceUsd: 0,
-    maxMasterChannels: BILLING_FREE_MAX_MASTER_CHANNELS
+    maxMasterChannels: BILLING_FREE_MAX_MASTER_CHANNELS,
+    includesBranding: false
 };
+
+/**
+ * The tier that includes the bot's own profile, found by what it includes rather than by its name.
+ */
+const BRANDING_TIER = BILLING_TIER_DEFINITIONS.find( ( tier ) => tier.includesBranding );
 
 function formatDate( iso: string ): string {
     return new Date( iso ).toLocaleDateString( undefined, { year: "numeric", month: "long", day: "numeric" } );
 }
 
+interface ITierFeature {
+    label: string;
+    /** Whether the line is one the plans differ on - drawn brighter, since it is what is being bought. */
+    isOwn: boolean;
+}
+
 /**
  * What a tier gets you, in the order somebody reads it.
  *
- * The generator count is the only line that differs between plans, which is the point - everything
- * else is in every plan, and saying so on each card is what stops somebody hunting for the catch.
+ * The lines a plan is bought for come first and stand out: the generator count, and the bot's own
+ * profile where the tier includes it. Everything after them is on every plan, and saying so on each
+ * card is what stops somebody hunting for the catch.
  */
-function tierFeatures( maxMasterChannels: number ): string[] {
+function tierFeatures( tier: { maxMasterChannels: number; includesBranding: boolean } ): ITierFeature[] {
     return [
-        `${ formatMasterChannelAllowance( maxMasterChannels ) } generators`,
-        "Join-to-create setups and auto-scaling pools",
-        "Every feature, on every plan",
-        "Cancel any time"
+        { label: `${ formatMasterChannelAllowance( tier.maxMasterChannels ) } generators`, isOwn: true },
+        ... tier.includesBranding
+            ? [ { label: "Your own bot name, avatar, banner and bio in this server", isOwn: true } ]
+            : [],
+        { label: "Join-to-create setups and auto-scaling pools", isOwn: false },
+        { label: "Every voice-channel control", isOwn: false },
+        { label: "Cancel any time", isOwn: false }
     ];
 }
 
@@ -84,7 +100,8 @@ function CurrentPlan( props: { subscription: ISubscription } ) {
                     { isCancelling && subscription.scheduledToCancelAt ? (
                         <p className="text-sm text-warning mb-0">
                             Cancelled &mdash; runs until { formatDate( subscription.scheduledToCancelAt ) }, then
-                            back to { formatMasterChannelAllowance( BILLING_FREE_MAX_MASTER_CHANNELS ) } generators.
+                            back to { formatMasterChannelAllowance( BILLING_FREE_MAX_MASTER_CHANNELS ) } generators
+                            and the bot's normal profile.
                         </p>
                     ) : subscription.currentPeriodEnd ? (
                         <p className="text-sm text-text-muted mb-0">
@@ -135,6 +152,7 @@ interface IPlanCardProps {
     name: string;
     monthlyPriceUsd: number;
     maxMasterChannels: number;
+    includesBranding: boolean;
     isCurrent: boolean;
     action: React.ReactNode;
 }
@@ -146,7 +164,7 @@ interface IPlanCardProps {
  * beside the free card that claims most servers pay, when most never leave free.
  */
 function PlanCard( props: IPlanCardProps ) {
-    const { name, monthlyPriceUsd, maxMasterChannels, isCurrent, action } = props;
+    const { name, monthlyPriceUsd, maxMasterChannels, includesBranding, isCurrent, action } = props;
 
     return (
         <div className={ `relative flex flex-col p-5 rounded-xl border transition-colors ${
@@ -169,13 +187,13 @@ function PlanCard( props: IPlanCardProps ) {
             </div>
 
             <ul className="flex flex-col gap-2 mb-6">
-                { tierFeatures( maxMasterChannels ).map( ( feature, index ) => (
-                    <li key={ feature } className="flex items-start gap-2 text-sm">
+                { tierFeatures( { maxMasterChannels, includesBranding } ).map( ( feature ) => (
+                    <li key={ feature.label } className="flex items-start gap-2 text-sm">
                         <Check className={ `w-4 h-4 shrink-0 mt-0.5 ${
-                            0 === index ? "text-accent" : "text-text-muted"
+                            feature.isOwn ? "text-accent" : "text-text-muted"
                         }` } />
-                        <span className={ 0 === index ? "text-text-primary font-medium" : "text-text-muted" }>
-                            { feature }
+                        <span className={ feature.isOwn ? "text-text-primary font-medium" : "text-text-muted" }>
+                            { feature.label }
                         </span>
                     </li>
                 ) ) }
@@ -300,8 +318,10 @@ export function BillingPage() {
             <div className="px-6 py-4 border-b border-border">
                 <h1 className="text-2xl font-bold text-text-primary mb-1">Subscription</h1>
                 <p className="text-sm text-text-muted mb-0">
-                    A plan sets how many generators <strong>{ guild.name }</strong> may run at once.
-                    Every feature is in every plan.
+                    A plan sets how many generators <strong>{ guild.name }</strong> may run at once
+                    { BRANDING_TIER
+                        ? `, and ${ BRANDING_TIER.name } also lets you give the bot its own name, avatar, banner and bio there`
+                        : "" }. Every voice-channel control is free on every plan.
                 </p>
             </div>
 
@@ -338,6 +358,7 @@ export function BillingPage() {
                             name={ FREE_TIER.name }
                             monthlyPriceUsd={ FREE_TIER.monthlyPriceUsd }
                             maxMasterChannels={ FREE_TIER.maxMasterChannels }
+                            includesBranding={ FREE_TIER.includesBranding }
                             isCurrent={ null === currentSlug }
                             action={
                                 <div className="w-full px-4 py-2 rounded-lg text-sm font-medium text-center
@@ -357,6 +378,7 @@ export function BillingPage() {
                                     name={ tier.name }
                                     monthlyPriceUsd={ tier.monthlyPriceUsd }
                                     maxMasterChannels={ tier.maxMasterChannels }
+                                    includesBranding={ tier.includesBranding }
                                     isCurrent={ isCurrent }
                                     action={
                                         <button
@@ -381,7 +403,9 @@ export function BillingPage() {
                         <Check className="w-4 h-4 shrink-0 mt-0.5" />
                         <span>
                             Nothing is ever deleted. Going over a plan pauses the newest generators; the ones
-                            set up first keep working, and paying starts the rest again.
+                            set up first keep working, and paying starts the rest again. The bot's own profile
+                            here comes off when a plan that includes it ends, stays saved, and goes back on
+                            when you pay again.
                         </span>
                     </p>
                 </div>

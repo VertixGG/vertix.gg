@@ -2,6 +2,8 @@ import zCore from "@zenflux/core";
 
 import { QueryClient } from "@zenflux/react-commander/query/client";
 
+import { QueryRequestError } from "@vertix.gg/dashboard/src/lib/query-request-error";
+
 import type { QueryCache } from "@zenflux/react-commander/query/cache";
 
 const logger = zCore.modules.createLogger( "query-client" );
@@ -72,31 +74,42 @@ export class AuthenticatedQueryClient extends QueryClient {
                 return null;
             }
 
-            const reason = await this.readFailureReason( response );
+            const { reason, reasons } = await this.readFailure( response );
 
             logger.error( this.handleResponse, `${ method } ${ path } answered ${ response.status } - ${ reason }` );
 
-            throw new Error( reason );
+            throw new QueryRequestError( reason, response.status, reasons );
         }
 
         return handler( response );
     }
 
     /**
-     * Function readFailureReason() :: The clearest sentence the server gave for refusing.
+     * Function readFailure() :: The clearest sentence the server gave for refusing, and its reasons.
      *
      * `message` first, since that is the half that names the particular thing that was wrong, and
      * `error` behind it as the summary it was filed under. A failure that answers with neither -
      * or with something that is not json at all, which is what a proxy standing in front of the
      * API returns - leaves the status to speak for itself.
+     *
+     * `reasons` is what a route that validates answers with, one sentence per field it refused.
      */
-    private async readFailureReason( response: Response ): Promise<string> {
+    private async readFailure( response: Response ): Promise<{ reason: string; reasons: string[] }> {
+        let reason = `The server answered ${ response.status }`,
+            reasons: string[] = [];
+
         try {
-            const body = await response.json() as { error?: string; message?: string };
+            const body: { error?: string; message?: string; reasons?: string[] } = await response.json();
+
+            if ( Array.isArray( body?.reasons ) ) {
+                reasons = body.reasons.filter( ( entry ) => "string" === typeof entry );
+            }
 
             for ( const candidate of [ body?.message, body?.error ] ) {
                 if ( "string" === typeof candidate && candidate.length ) {
-                    return candidate;
+                    reason = candidate;
+
+                    break;
                 }
             }
         } catch {
@@ -104,6 +117,6 @@ export class AuthenticatedQueryClient extends QueryClient {
             // over the failure that was already being reported.
         }
 
-        return `The server answered ${ response.status }`;
+        return { reason, reasons };
     }
 }

@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useCommandState, useCommand } from "@zenflux/react-commander/hooks";
 
-import { Home, Boxes, CreditCard, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronUp } from "lucide-react";
+import { Home, Boxes, CreditCard, Palette, Radio, Settings, SlidersHorizontal, LogOut, User, ChevronUp } from "lucide-react";
 
 import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
@@ -41,6 +41,13 @@ const navItems: NavItem[] = [
         label: "Server Options",
         path: "/server-options",
         icon: <SlidersHorizontal className="w-5 h-5" />,
+        hideForDefault: true
+    },
+    {
+        // A profile is worn in a real server, and the customization guild is not one.
+        label: "Branding",
+        path: "/branding",
+        icon: <Palette className="w-5 h-5" />,
         hideForDefault: true
     },
     {

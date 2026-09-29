@@ -323,6 +323,7 @@ export async function registerServices() {
         import( "@vertix.gg/bot/src/services/direct-message-service" ),
 
         import( "@vertix.gg/bot/src/services/entitlement-service" ),
+        import( "@vertix.gg/bot/src/services/guild-branding-service" ),
         import( "@vertix.gg/bot/src/services/channel-service" ),
         import( "@vertix.gg/bot/src/services/channel-cleanup-service" ),
         import( "@vertix.gg/bot/src/services/dynamic-channel-service" ),

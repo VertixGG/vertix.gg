@@ -1,10 +1,18 @@
 import process from "process";
 
+import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-locator";
+
 import { verifyPaddleSignature } from "@vertix.gg/utils/src/paddle-signature";
 
 import { SubscriptionModel } from "@vertix.gg/data/src/models/subscription-model";
 
+import { IPC_CHANNELS } from "@vertix.gg/definitions/src/ipc-definitions";
+
+import { DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
+
 import { API_ROUTES } from "@vertix.gg/api/src/server/constants";
+
+import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
 
 import type { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastify";
 
@@ -56,6 +64,29 @@ function toDate( value: string | null ): Date | null {
     const date = new Date( value );
 
     return Number.isNaN( date.getTime() ) ? null : date;
+}
+
+/**
+ * Function requestBrandingReconcile() :: Have the bot look at a server's profile now.
+ *
+ * A server that just paid gets its profile back without waiting for the next sweep, and one that just
+ * lost its plan loses it as promptly. Best effort and never awaited by the reply: the row is what
+ * decides it, the sweep catches up on anything this misses, and paddle must not be told a recorded
+ * payment failed because redis was down.
+ */
+function requestBrandingReconcile( request: FastifyRequest, guildId: string ): void {
+    const ipcService = ServiceLocator.$.get<IPCService>( "VertixBase/Modules/IPCService", { silent: true } );
+
+    if ( ! ipcService?.isReady() ) {
+        return;
+    }
+
+    ipcService.publish( IPC_CHANNELS.MANAGEMENT, {
+        action: DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.RECONCILE_GUILD_BRANDING,
+        data: { guildId }
+    } ).catch( ( error ) => {
+        request.log.warn( error, `Could not ask the bot to reconcile the profile of guild '${ guildId }'` );
+    } );
 }
 
 /**
@@ -222,6 +253,8 @@ const paddleWebhookRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInst
             `status '${ subscription.status }' until '${ subscription.currentPeriodEnd }'` +
             ( subscription.scheduledToCancelAt ? ` cancelling at '${ subscription.scheduledToCancelAt }'` : "" )
         );
+
+        requestBrandingReconcile( request, subscription.guildId );
 
         return reply.send( { ok: true } );
     } );

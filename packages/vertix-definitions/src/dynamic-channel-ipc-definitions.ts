@@ -19,7 +19,8 @@ export const DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS = {
     UPDATE_DYNAMIC_SETTINGS: "update_dynamic_settings",
     DELETE_DYNAMIC_SETUP: "delete_dynamic_setup",
     UPDATE_GUILD_SETTINGS: "update_guild_settings",
-    REFRESH_CUSTOMIZATION: "refresh_customization"
+    REFRESH_CUSTOMIZATION: "refresh_customization",
+    RECONCILE_GUILD_BRANDING: "reconcile_guild_branding"
 } as const;
 
 export interface CreateDynamicSetupPayload {
@@ -84,6 +85,16 @@ export interface RefreshCustomizationPayload {
     guildId: string;
 }
 
+/**
+ * Look at one server's bot profile now rather than at the next sweep.
+ *
+ * Sent after the paddle webhook writes a subscription, so a server that just paid gets its profile
+ * back without waiting, and one that just lost its plan loses it as promptly.
+ */
+export interface ReconcileGuildBrandingPayload {
+    guildId: string;
+}
+
 export interface GetDynamicChannelInfoRequest {
     action: typeof IPC_REQUEST_ACTIONS.GET_DYNAMIC_CHANNEL_INFO;
     guildId: string;
@@ -107,4 +118,5 @@ export type DynamicChannelIPCManagementPayload =
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_DYNAMIC_SETTINGS; data: UpdateDynamicSettingsPayload }
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.DELETE_DYNAMIC_SETUP; data: DeleteDynamicSetupPayload }
     | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.UPDATE_GUILD_SETTINGS; data: UpdateGuildSettingsPayload }
-    | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION; data: RefreshCustomizationPayload };
+    | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION; data: RefreshCustomizationPayload }
+    | { action: typeof DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.RECONCILE_GUILD_BRANDING; data: ReconcileGuildBrandingPayload };

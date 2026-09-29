@@ -86,6 +86,23 @@ async function registerServices() {
     await ServiceLocator.$.waitFor( ManagementRoute.getName(), { timeout: 5000 } );
     logger.info( registerServices, "Management route ready" );
 
+    // Register the server profile service and its route (the service depends on IPC - already ready)
+    const { GuildBrandingService } = await import( "@vertix.gg/api/src/server/services/guild-branding-service" );
+
+    ServiceLocator.$.unregister( "VertixAPI/Services/GuildBranding" );
+    ServiceLocator.$.register( GuildBrandingService );
+
+    await ServiceLocator.$.waitFor( "VertixAPI/Services/GuildBranding", { timeout: 5000 } );
+    logger.info( registerServices, "Guild branding service ready" );
+
+    const { BrandingRoute } = await import( "@vertix.gg/api/src/server/routes/branding-route" );
+
+    ServiceLocator.$.unregister( "VertixAPI/Routes/Branding" );
+    ServiceLocator.$.register( BrandingRoute );
+
+    await ServiceLocator.$.waitFor( "VertixAPI/Routes/Branding", { timeout: 5000 } );
+    logger.info( registerServices, "Branding route ready" );
+
     logger.info( registerServices, "All services registered and initialized" );
 }
 

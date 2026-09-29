@@ -5,6 +5,7 @@ import {
     isUnlimitedAllowance,
     shouldApplySubscriptionEvent,
     readBillingTiers,
+    resolveCanBrand,
     resolveMaxMasterChannels
 } from "@vertix.gg/definitions/src/billing-definitions";
 
@@ -17,9 +18,9 @@ const FREE = 2;
 // `Math.max` below without exercising any of them. What that table itself sells is covered further
 // down, under "the plan on sale".
 const TIERS: IBillingTier[] = [
-    { name: "Small", slug: "small", priceId: "pri_small", maxMasterChannels: 5, monthlyPriceUsd: 2 },
-    { name: "Large", slug: "large", priceId: "pri_large", maxMasterChannels: 15, monthlyPriceUsd: 4 },
-    { name: "Unlimited", slug: "unlimited", priceId: "pri_unlimited", maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS, monthlyPriceUsd: 10 }
+    { name: "Small", slug: "small", priceId: "pri_small", maxMasterChannels: 5, monthlyPriceUsd: 2, includesBranding: false },
+    { name: "Large", slug: "large", priceId: "pri_large", maxMasterChannels: 15, monthlyPriceUsd: 4, includesBranding: true },
+    { name: "Unlimited", slug: "unlimited", priceId: "pri_unlimited", maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS, monthlyPriceUsd: 10, includesBranding: true }
 ];
 
 describe( "VertixDefinitions/Billing", () => {
@@ -194,6 +195,34 @@ describe( "VertixDefinitions/Billing", () => {
 
             // Assert.
             expect( allowed ).toBe( FREE );
+        } );
+
+        it( "should let a server paying for Pro give the bot its own profile", () => {
+            // Act & Assert.
+            expect( resolveCanBrand( { paidPriceIds: [ "pri_pro" ], tiers: readBillingTiers( ENVIRONMENT ) } ) )
+                .toBe( true );
+        } );
+
+        it( "should not let a server paying for nothing, or on a retired price, brand the bot", () => {
+            // Arrange.
+            const tiers = readBillingTiers( { ... ENVIRONMENT, PADDLE_PRICE_PLUS: "pri_retired_plus" } );
+
+            // Act & Assert.
+            expect( resolveCanBrand( { paidPriceIds: [], tiers } ) ).toBe( false );
+            expect( resolveCanBrand( { paidPriceIds: [ "pri_retired_plus" ], tiers } ) ).toBe( false );
+        } );
+    } );
+
+    describe( "resolveCanBrand()", () => {
+        it( "should answer by the tier paid for, not by what paying raised the allowance to", () => {
+            // Act & Assert - "Small" raises generators and does not include a profile.
+            expect( resolveCanBrand( { paidPriceIds: [ "pri_small" ], tiers: TIERS } ) ).toBe( false );
+            expect( resolveCanBrand( { paidPriceIds: [ "pri_large" ], tiers: TIERS } ) ).toBe( true );
+        } );
+
+        it( "should not be answered by a price this deployment does not sell", () => {
+            // Act & Assert.
+            expect( resolveCanBrand( { paidPriceIds: [ "pri_unknown" ], tiers: TIERS } ) ).toBe( false );
         } );
     } );
 

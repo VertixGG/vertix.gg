@@ -33,7 +33,9 @@ import type {
     IPCManagementRequestPayload,
     GetGuildOptionsResponse,
     GetConfigLimitsResponse,
-    GetGeneratorDefaultsResponse
+    GetGeneratorDefaultsResponse,
+    GetGuildBrandingStatusResponse,
+    ApplyGuildBrandingResponse
 } from "@vertix.gg/definitions/src/ipc-definitions";
 
 import type {
@@ -51,6 +53,7 @@ import type {
 import type { AppService } from "@vertix.gg/bot/src/services/app-service";
 import type { ScalingChannelService } from "@vertix.gg/bot/src/services/scaling-channel-service";
 import type { DynamicChannelService } from "@vertix.gg/bot/src/services/dynamic-channel-service";
+import type { GuildBrandingService } from "@vertix.gg/bot/src/services/guild-branding-service";
 
 /**
  * Central IPC handler service that routes management messages to the appropriate service.
@@ -64,6 +67,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
     appService: AppService;
     scalingChannelService: ScalingChannelService;
     dynamicChannelService: DynamicChannelService;
+    guildBrandingService: GuildBrandingService;
 }> {
     private readonly debugger: Debugger;
 
@@ -82,7 +86,8 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
             ipcService: "VertixBase/Modules/IPCService",
             appService: "VertixBot/Services/App",
             scalingChannelService: "VertixBot/Services/ScalingChannel",
-            dynamicChannelService: "VertixBot/Services/DynamicChannel"
+            dynamicChannelService: "VertixBot/Services/DynamicChannel",
+            guildBrandingService: "VertixBot/Services/GuildBranding"
         };
     }
 
@@ -113,6 +118,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 IPCManagementRequestPayload,
                 GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
                 | GetConfigLimitsResponse | GetGeneratorDefaultsResponse
+                | GetGuildBrandingStatusResponse | ApplyGuildBrandingResponse
             >(
                 IPC_CHANNELS.MANAGEMENT_REQUEST,
                 IPC_CHANNELS.MANAGEMENT_RESPONSE,
@@ -187,6 +193,11 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 // Customization-related actions -> DynamicChannelService
                 case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.REFRESH_CUSTOMIZATION:
                     await this.services.dynamicChannelService.handleRefreshCustomization( payload.data );
+                    break;
+
+                // Branding -> GuildBrandingService
+                case DYNAMIC_CHANNEL_IPC_MANAGEMENT_ACTIONS.RECONCILE_GUILD_BRANDING:
+                    await this.services.guildBrandingService.reconcileGuild( payload.data.guildId );
                     break;
 
                 default:
@@ -307,7 +318,8 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         request: IPCRequest<IPCManagementRequestPayload>
     ): Promise<
         GetScalingChannelInfoResponse | GetDynamicChannelInfoResponse | GetGuildOptionsResponse
-        | GetConfigLimitsResponse | GetGeneratorDefaultsResponse | typeof IPC_NO_RESPONSE
+        | GetConfigLimitsResponse | GetGeneratorDefaultsResponse
+        | GetGuildBrandingStatusResponse | ApplyGuildBrandingResponse | typeof IPC_NO_RESPONSE
     > {
         const { payload } = request;
 
@@ -351,6 +363,12 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
 
             case IPC_REQUEST_ACTIONS.GET_GENERATOR_DEFAULTS:
                 return this.getGeneratorDefaults( payload.version );
+
+            case IPC_REQUEST_ACTIONS.GET_GUILD_BRANDING_STATUS:
+                return this.services.guildBrandingService.getStatus( payload.guildId );
+
+            case IPC_REQUEST_ACTIONS.APPLY_GUILD_BRANDING:
+                return this.services.guildBrandingService.apply( payload.guildId );
 
             default:
                 throw new Error( `Unknown request action: ${ ( payload as IPCManagementRequestPayload ).action }` );

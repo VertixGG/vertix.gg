@@ -48,6 +48,10 @@ ${ BILLING_FREE_MAX_MASTER_CHANNELS } generators. The generators that were set u
 working, and any beyond the free allowance stop making new rooms until you subscribe again, at
 which point they start again on their own. Rooms that already exist are left alone.
 
+If you gave the bot its own profile in the server - a name, avatar, banner or bio - it comes off,
+and the bot goes back to how it looked there before. The profile itself stays saved, and goes back
+on by itself if the server subscribes again. Nothing else changes.
+
 ## 5. Failed, duplicated or unrecognised charges
 
 If you have been charged twice, charged after cancelling, or charged for something you do not

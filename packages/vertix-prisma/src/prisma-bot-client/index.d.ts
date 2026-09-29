@@ -110,6 +110,26 @@ export type AICaptchaChallenge = $Result.DefaultSelection<Prisma.$AICaptchaChall
  * name is a thing somebody renames in the paddle dashboard.
  */
 export type Subscription = $Result.DefaultSelection<Prisma.$SubscriptionPayload>
+/**
+ * Model GuildBranding
+ * The bot profile a server chose for itself - name, avatar, banner and bio, shown in that server only.
+ * 
+ * What was asked for, not what is showing: whether it is on the bot right now is `GuildBrandingState`,
+ * kept per application, because two bots read this database (see "Running Instances" in AGENTS.md)
+ * and each applies a profile to its own member.
+ * 
+ * A null field is the bot's own. Removing a profile saves one with every field null, so the bot takes
+ * its own name and face back through the same path that set them.
+ */
+export type GuildBranding = $Result.DefaultSelection<Prisma.$GuildBrandingPayload>
+/**
+ * Model GuildBrandingState
+ * What one bot has put on its own member in a server, from `GuildBranding`.
+ * 
+ * One row per server per application, because the database is shared by two bots and each only ever
+ * touches its own - a bot never undoes, or counts as done, what the other one applied.
+ */
+export type GuildBrandingState = $Result.DefaultSelection<Prisma.$GuildBrandingStatePayload>
 
 /**
  * Enums
@@ -360,6 +380,26 @@ export class PrismaClient<
     * ```
     */
   get subscription(): Prisma.SubscriptionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildBranding`: Exposes CRUD operations for the **GuildBranding** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildBrandings
+    * const guildBrandings = await prisma.guildBranding.findMany()
+    * ```
+    */
+  get guildBranding(): Prisma.GuildBrandingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildBrandingState`: Exposes CRUD operations for the **GuildBrandingState** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildBrandingStates
+    * const guildBrandingStates = await prisma.guildBrandingState.findMany()
+    * ```
+    */
+  get guildBrandingState(): Prisma.GuildBrandingStateDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -813,7 +853,9 @@ export namespace Prisma {
     UserChannelData: 'UserChannelData',
     AIChannelPrompt: 'AIChannelPrompt',
     AICaptchaChallenge: 'AICaptchaChallenge',
-    Subscription: 'Subscription'
+    Subscription: 'Subscription',
+    GuildBranding: 'GuildBranding',
+    GuildBrandingState: 'GuildBrandingState'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -832,7 +874,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "config" | "category" | "guild" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt" | "aICaptchaChallenge" | "subscription"
+      modelProps: "config" | "category" | "guild" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt" | "aICaptchaChallenge" | "subscription" | "guildBranding" | "guildBrandingState"
       txIsolationLevel: never
     }
     model: {
@@ -1798,6 +1840,154 @@ export namespace Prisma {
           }
         }
       }
+      GuildBranding: {
+        payload: Prisma.$GuildBrandingPayload<ExtArgs>
+        fields: Prisma.GuildBrandingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildBrandingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildBrandingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload>
+          }
+          findFirst: {
+            args: Prisma.GuildBrandingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildBrandingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload>
+          }
+          findMany: {
+            args: Prisma.GuildBrandingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload>[]
+          }
+          create: {
+            args: Prisma.GuildBrandingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload>
+          }
+          createMany: {
+            args: Prisma.GuildBrandingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildBrandingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload>
+          }
+          update: {
+            args: Prisma.GuildBrandingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildBrandingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildBrandingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildBrandingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingPayload>
+          }
+          aggregate: {
+            args: Prisma.GuildBrandingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildBranding>
+          }
+          groupBy: {
+            args: Prisma.GuildBrandingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildBrandingGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildBrandingFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildBrandingAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildBrandingCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildBrandingCountAggregateOutputType> | number
+          }
+        }
+      }
+      GuildBrandingState: {
+        payload: Prisma.$GuildBrandingStatePayload<ExtArgs>
+        fields: Prisma.GuildBrandingStateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildBrandingStateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildBrandingStateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload>
+          }
+          findFirst: {
+            args: Prisma.GuildBrandingStateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildBrandingStateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload>
+          }
+          findMany: {
+            args: Prisma.GuildBrandingStateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload>[]
+          }
+          create: {
+            args: Prisma.GuildBrandingStateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload>
+          }
+          createMany: {
+            args: Prisma.GuildBrandingStateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildBrandingStateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload>
+          }
+          update: {
+            args: Prisma.GuildBrandingStateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildBrandingStateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildBrandingStateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildBrandingStateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildBrandingStatePayload>
+          }
+          aggregate: {
+            args: Prisma.GuildBrandingStateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildBrandingState>
+          }
+          groupBy: {
+            args: Prisma.GuildBrandingStateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildBrandingStateGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildBrandingStateFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildBrandingStateAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildBrandingStateCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildBrandingStateCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1890,6 +2080,8 @@ export namespace Prisma {
     aIChannelPrompt?: AIChannelPromptOmit
     aICaptchaChallenge?: AICaptchaChallengeOmit
     subscription?: SubscriptionOmit
+    guildBranding?: GuildBrandingOmit
+    guildBrandingState?: GuildBrandingStateOmit
   }
 
   /* Types for Logging */
@@ -15368,6 +15560,2111 @@ export namespace Prisma {
 
 
   /**
+   * Model GuildBranding
+   */
+
+  export type AggregateGuildBranding = {
+    _count: GuildBrandingCountAggregateOutputType | null
+    _avg: GuildBrandingAvgAggregateOutputType | null
+    _sum: GuildBrandingSumAggregateOutputType | null
+    _min: GuildBrandingMinAggregateOutputType | null
+    _max: GuildBrandingMaxAggregateOutputType | null
+  }
+
+  export type GuildBrandingAvgAggregateOutputType = {
+    revision: number | null
+  }
+
+  export type GuildBrandingSumAggregateOutputType = {
+    revision: number | null
+  }
+
+  export type GuildBrandingMinAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    nick: string | null
+    bio: string | null
+    avatar: string | null
+    banner: string | null
+    revision: number | null
+    updatedByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildBrandingMaxAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    nick: string | null
+    bio: string | null
+    avatar: string | null
+    banner: string | null
+    revision: number | null
+    updatedByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildBrandingCountAggregateOutputType = {
+    id: number
+    guildId: number
+    nick: number
+    bio: number
+    avatar: number
+    banner: number
+    revision: number
+    updatedByUserId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GuildBrandingAvgAggregateInputType = {
+    revision?: true
+  }
+
+  export type GuildBrandingSumAggregateInputType = {
+    revision?: true
+  }
+
+  export type GuildBrandingMinAggregateInputType = {
+    id?: true
+    guildId?: true
+    nick?: true
+    bio?: true
+    avatar?: true
+    banner?: true
+    revision?: true
+    updatedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildBrandingMaxAggregateInputType = {
+    id?: true
+    guildId?: true
+    nick?: true
+    bio?: true
+    avatar?: true
+    banner?: true
+    revision?: true
+    updatedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildBrandingCountAggregateInputType = {
+    id?: true
+    guildId?: true
+    nick?: true
+    bio?: true
+    avatar?: true
+    banner?: true
+    revision?: true
+    updatedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GuildBrandingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildBranding to aggregate.
+     */
+    where?: GuildBrandingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildBrandings to fetch.
+     */
+    orderBy?: GuildBrandingOrderByWithRelationInput | GuildBrandingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildBrandingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildBrandings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildBrandings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildBrandings
+    **/
+    _count?: true | GuildBrandingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GuildBrandingAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GuildBrandingSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildBrandingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildBrandingMaxAggregateInputType
+  }
+
+  export type GetGuildBrandingAggregateType<T extends GuildBrandingAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildBranding]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildBranding[P]>
+      : GetScalarType<T[P], AggregateGuildBranding[P]>
+  }
+
+
+
+
+  export type GuildBrandingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildBrandingWhereInput
+    orderBy?: GuildBrandingOrderByWithAggregationInput | GuildBrandingOrderByWithAggregationInput[]
+    by: GuildBrandingScalarFieldEnum[] | GuildBrandingScalarFieldEnum
+    having?: GuildBrandingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildBrandingCountAggregateInputType | true
+    _avg?: GuildBrandingAvgAggregateInputType
+    _sum?: GuildBrandingSumAggregateInputType
+    _min?: GuildBrandingMinAggregateInputType
+    _max?: GuildBrandingMaxAggregateInputType
+  }
+
+  export type GuildBrandingGroupByOutputType = {
+    id: string
+    guildId: string
+    nick: string | null
+    bio: string | null
+    avatar: string | null
+    banner: string | null
+    revision: number
+    updatedByUserId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: GuildBrandingCountAggregateOutputType | null
+    _avg: GuildBrandingAvgAggregateOutputType | null
+    _sum: GuildBrandingSumAggregateOutputType | null
+    _min: GuildBrandingMinAggregateOutputType | null
+    _max: GuildBrandingMaxAggregateOutputType | null
+  }
+
+  type GetGuildBrandingGroupByPayload<T extends GuildBrandingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildBrandingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildBrandingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildBrandingGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildBrandingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildBrandingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    guildId?: boolean
+    nick?: boolean
+    bio?: boolean
+    avatar?: boolean
+    banner?: boolean
+    revision?: boolean
+    updatedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["guildBranding"]>
+
+
+
+  export type GuildBrandingSelectScalar = {
+    id?: boolean
+    guildId?: boolean
+    nick?: boolean
+    bio?: boolean
+    avatar?: boolean
+    banner?: boolean
+    revision?: boolean
+    updatedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GuildBrandingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "nick" | "bio" | "avatar" | "banner" | "revision" | "updatedByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["guildBranding"]>
+
+  export type $GuildBrandingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildBranding"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      guildId: string
+      nick: string | null
+      bio: string | null
+      /**
+       * `data:image/…;base64,` - checked on the way in and again before it is handed to discord.
+       */
+      avatar: string | null
+      banner: string | null
+      /**
+       * Raised on every save, so a bot can tell the profile it applied from one saved since.
+       */
+      revision: number
+      /**
+       * The discord user who last saved it.
+       */
+      updatedByUserId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["guildBranding"]>
+    composites: {}
+  }
+
+  type GuildBrandingGetPayload<S extends boolean | null | undefined | GuildBrandingDefaultArgs> = $Result.GetResult<Prisma.$GuildBrandingPayload, S>
+
+  type GuildBrandingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildBrandingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildBrandingCountAggregateInputType | true
+    }
+
+  export interface GuildBrandingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildBranding'], meta: { name: 'GuildBranding' } }
+    /**
+     * Find zero or one GuildBranding that matches the filter.
+     * @param {GuildBrandingFindUniqueArgs} args - Arguments to find a GuildBranding
+     * @example
+     * // Get one GuildBranding
+     * const guildBranding = await prisma.guildBranding.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildBrandingFindUniqueArgs>(args: SelectSubset<T, GuildBrandingFindUniqueArgs<ExtArgs>>): Prisma__GuildBrandingClient<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildBranding that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildBrandingFindUniqueOrThrowArgs} args - Arguments to find a GuildBranding
+     * @example
+     * // Get one GuildBranding
+     * const guildBranding = await prisma.guildBranding.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildBrandingFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildBrandingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildBrandingClient<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildBranding that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingFindFirstArgs} args - Arguments to find a GuildBranding
+     * @example
+     * // Get one GuildBranding
+     * const guildBranding = await prisma.guildBranding.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildBrandingFindFirstArgs>(args?: SelectSubset<T, GuildBrandingFindFirstArgs<ExtArgs>>): Prisma__GuildBrandingClient<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildBranding that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingFindFirstOrThrowArgs} args - Arguments to find a GuildBranding
+     * @example
+     * // Get one GuildBranding
+     * const guildBranding = await prisma.guildBranding.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildBrandingFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildBrandingFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildBrandingClient<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildBrandings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildBrandings
+     * const guildBrandings = await prisma.guildBranding.findMany()
+     * 
+     * // Get first 10 GuildBrandings
+     * const guildBrandings = await prisma.guildBranding.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildBrandingWithIdOnly = await prisma.guildBranding.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildBrandingFindManyArgs>(args?: SelectSubset<T, GuildBrandingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildBranding.
+     * @param {GuildBrandingCreateArgs} args - Arguments to create a GuildBranding.
+     * @example
+     * // Create one GuildBranding
+     * const GuildBranding = await prisma.guildBranding.create({
+     *   data: {
+     *     // ... data to create a GuildBranding
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildBrandingCreateArgs>(args: SelectSubset<T, GuildBrandingCreateArgs<ExtArgs>>): Prisma__GuildBrandingClient<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildBrandings.
+     * @param {GuildBrandingCreateManyArgs} args - Arguments to create many GuildBrandings.
+     * @example
+     * // Create many GuildBrandings
+     * const guildBranding = await prisma.guildBranding.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildBrandingCreateManyArgs>(args?: SelectSubset<T, GuildBrandingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildBranding.
+     * @param {GuildBrandingDeleteArgs} args - Arguments to delete one GuildBranding.
+     * @example
+     * // Delete one GuildBranding
+     * const GuildBranding = await prisma.guildBranding.delete({
+     *   where: {
+     *     // ... filter to delete one GuildBranding
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildBrandingDeleteArgs>(args: SelectSubset<T, GuildBrandingDeleteArgs<ExtArgs>>): Prisma__GuildBrandingClient<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildBranding.
+     * @param {GuildBrandingUpdateArgs} args - Arguments to update one GuildBranding.
+     * @example
+     * // Update one GuildBranding
+     * const guildBranding = await prisma.guildBranding.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildBrandingUpdateArgs>(args: SelectSubset<T, GuildBrandingUpdateArgs<ExtArgs>>): Prisma__GuildBrandingClient<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildBrandings.
+     * @param {GuildBrandingDeleteManyArgs} args - Arguments to filter GuildBrandings to delete.
+     * @example
+     * // Delete a few GuildBrandings
+     * const { count } = await prisma.guildBranding.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildBrandingDeleteManyArgs>(args?: SelectSubset<T, GuildBrandingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildBrandings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildBrandings
+     * const guildBranding = await prisma.guildBranding.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildBrandingUpdateManyArgs>(args: SelectSubset<T, GuildBrandingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildBranding.
+     * @param {GuildBrandingUpsertArgs} args - Arguments to update or create a GuildBranding.
+     * @example
+     * // Update or create a GuildBranding
+     * const guildBranding = await prisma.guildBranding.upsert({
+     *   create: {
+     *     // ... data to create a GuildBranding
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildBranding we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildBrandingUpsertArgs>(args: SelectSubset<T, GuildBrandingUpsertArgs<ExtArgs>>): Prisma__GuildBrandingClient<$Result.GetResult<Prisma.$GuildBrandingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildBrandings that matches the filter.
+     * @param {GuildBrandingFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildBranding = await prisma.guildBranding.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildBrandingFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildBranding.
+     * @param {GuildBrandingAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildBranding = await prisma.guildBranding.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildBrandingAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildBrandings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingCountArgs} args - Arguments to filter GuildBrandings to count.
+     * @example
+     * // Count the number of GuildBrandings
+     * const count = await prisma.guildBranding.count({
+     *   where: {
+     *     // ... the filter for the GuildBrandings we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildBrandingCountArgs>(
+      args?: Subset<T, GuildBrandingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildBrandingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildBranding.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildBrandingAggregateArgs>(args: Subset<T, GuildBrandingAggregateArgs>): Prisma.PrismaPromise<GetGuildBrandingAggregateType<T>>
+
+    /**
+     * Group by GuildBranding.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildBrandingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildBrandingGroupByArgs['orderBy'] }
+        : { orderBy?: GuildBrandingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildBrandingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildBrandingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildBranding model
+   */
+  readonly fields: GuildBrandingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildBranding.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildBrandingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildBranding model
+   */
+  interface GuildBrandingFieldRefs {
+    readonly id: FieldRef<"GuildBranding", 'String'>
+    readonly guildId: FieldRef<"GuildBranding", 'String'>
+    readonly nick: FieldRef<"GuildBranding", 'String'>
+    readonly bio: FieldRef<"GuildBranding", 'String'>
+    readonly avatar: FieldRef<"GuildBranding", 'String'>
+    readonly banner: FieldRef<"GuildBranding", 'String'>
+    readonly revision: FieldRef<"GuildBranding", 'Int'>
+    readonly updatedByUserId: FieldRef<"GuildBranding", 'String'>
+    readonly createdAt: FieldRef<"GuildBranding", 'DateTime'>
+    readonly updatedAt: FieldRef<"GuildBranding", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildBranding findUnique
+   */
+  export type GuildBrandingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBranding to fetch.
+     */
+    where: GuildBrandingWhereUniqueInput
+  }
+
+  /**
+   * GuildBranding findUniqueOrThrow
+   */
+  export type GuildBrandingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBranding to fetch.
+     */
+    where: GuildBrandingWhereUniqueInput
+  }
+
+  /**
+   * GuildBranding findFirst
+   */
+  export type GuildBrandingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBranding to fetch.
+     */
+    where?: GuildBrandingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildBrandings to fetch.
+     */
+    orderBy?: GuildBrandingOrderByWithRelationInput | GuildBrandingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildBrandings.
+     */
+    cursor?: GuildBrandingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildBrandings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildBrandings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildBrandings.
+     */
+    distinct?: GuildBrandingScalarFieldEnum | GuildBrandingScalarFieldEnum[]
+  }
+
+  /**
+   * GuildBranding findFirstOrThrow
+   */
+  export type GuildBrandingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBranding to fetch.
+     */
+    where?: GuildBrandingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildBrandings to fetch.
+     */
+    orderBy?: GuildBrandingOrderByWithRelationInput | GuildBrandingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildBrandings.
+     */
+    cursor?: GuildBrandingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildBrandings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildBrandings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildBrandings.
+     */
+    distinct?: GuildBrandingScalarFieldEnum | GuildBrandingScalarFieldEnum[]
+  }
+
+  /**
+   * GuildBranding findMany
+   */
+  export type GuildBrandingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBrandings to fetch.
+     */
+    where?: GuildBrandingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildBrandings to fetch.
+     */
+    orderBy?: GuildBrandingOrderByWithRelationInput | GuildBrandingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildBrandings.
+     */
+    cursor?: GuildBrandingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildBrandings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildBrandings.
+     */
+    skip?: number
+    distinct?: GuildBrandingScalarFieldEnum | GuildBrandingScalarFieldEnum[]
+  }
+
+  /**
+   * GuildBranding create
+   */
+  export type GuildBrandingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildBranding.
+     */
+    data: XOR<GuildBrandingCreateInput, GuildBrandingUncheckedCreateInput>
+  }
+
+  /**
+   * GuildBranding createMany
+   */
+  export type GuildBrandingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildBrandings.
+     */
+    data: GuildBrandingCreateManyInput | GuildBrandingCreateManyInput[]
+  }
+
+  /**
+   * GuildBranding update
+   */
+  export type GuildBrandingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildBranding.
+     */
+    data: XOR<GuildBrandingUpdateInput, GuildBrandingUncheckedUpdateInput>
+    /**
+     * Choose, which GuildBranding to update.
+     */
+    where: GuildBrandingWhereUniqueInput
+  }
+
+  /**
+   * GuildBranding updateMany
+   */
+  export type GuildBrandingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildBrandings.
+     */
+    data: XOR<GuildBrandingUpdateManyMutationInput, GuildBrandingUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildBrandings to update
+     */
+    where?: GuildBrandingWhereInput
+    /**
+     * Limit how many GuildBrandings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildBranding upsert
+   */
+  export type GuildBrandingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildBranding to update in case it exists.
+     */
+    where: GuildBrandingWhereUniqueInput
+    /**
+     * In case the GuildBranding found by the `where` argument doesn't exist, create a new GuildBranding with this data.
+     */
+    create: XOR<GuildBrandingCreateInput, GuildBrandingUncheckedCreateInput>
+    /**
+     * In case the GuildBranding was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildBrandingUpdateInput, GuildBrandingUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildBranding delete
+   */
+  export type GuildBrandingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+    /**
+     * Filter which GuildBranding to delete.
+     */
+    where: GuildBrandingWhereUniqueInput
+  }
+
+  /**
+   * GuildBranding deleteMany
+   */
+  export type GuildBrandingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildBrandings to delete
+     */
+    where?: GuildBrandingWhereInput
+    /**
+     * Limit how many GuildBrandings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildBranding findRaw
+   */
+  export type GuildBrandingFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildBranding aggregateRaw
+   */
+  export type GuildBrandingAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildBranding without action
+   */
+  export type GuildBrandingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBranding
+     */
+    select?: GuildBrandingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBranding
+     */
+    omit?: GuildBrandingOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GuildBrandingState
+   */
+
+  export type AggregateGuildBrandingState = {
+    _count: GuildBrandingStateCountAggregateOutputType | null
+    _avg: GuildBrandingStateAvgAggregateOutputType | null
+    _sum: GuildBrandingStateSumAggregateOutputType | null
+    _min: GuildBrandingStateMinAggregateOutputType | null
+    _max: GuildBrandingStateMaxAggregateOutputType | null
+  }
+
+  export type GuildBrandingStateAvgAggregateOutputType = {
+    appliedRevision: number | null
+    refusedRevision: number | null
+  }
+
+  export type GuildBrandingStateSumAggregateOutputType = {
+    appliedRevision: number | null
+    refusedRevision: number | null
+  }
+
+  export type GuildBrandingStateMinAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    applicationId: string | null
+    appliedRevision: number | null
+    appliedAt: Date | null
+    appliedNick: boolean | null
+    previousNick: string | null
+    nickPending: boolean | null
+    lastError: string | null
+    lastAttemptAt: Date | null
+    refusedRevision: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildBrandingStateMaxAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    applicationId: string | null
+    appliedRevision: number | null
+    appliedAt: Date | null
+    appliedNick: boolean | null
+    previousNick: string | null
+    nickPending: boolean | null
+    lastError: string | null
+    lastAttemptAt: Date | null
+    refusedRevision: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildBrandingStateCountAggregateOutputType = {
+    id: number
+    guildId: number
+    applicationId: number
+    appliedRevision: number
+    appliedAt: number
+    appliedNick: number
+    previousNick: number
+    nickPending: number
+    lastError: number
+    lastAttemptAt: number
+    refusedRevision: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GuildBrandingStateAvgAggregateInputType = {
+    appliedRevision?: true
+    refusedRevision?: true
+  }
+
+  export type GuildBrandingStateSumAggregateInputType = {
+    appliedRevision?: true
+    refusedRevision?: true
+  }
+
+  export type GuildBrandingStateMinAggregateInputType = {
+    id?: true
+    guildId?: true
+    applicationId?: true
+    appliedRevision?: true
+    appliedAt?: true
+    appliedNick?: true
+    previousNick?: true
+    nickPending?: true
+    lastError?: true
+    lastAttemptAt?: true
+    refusedRevision?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildBrandingStateMaxAggregateInputType = {
+    id?: true
+    guildId?: true
+    applicationId?: true
+    appliedRevision?: true
+    appliedAt?: true
+    appliedNick?: true
+    previousNick?: true
+    nickPending?: true
+    lastError?: true
+    lastAttemptAt?: true
+    refusedRevision?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildBrandingStateCountAggregateInputType = {
+    id?: true
+    guildId?: true
+    applicationId?: true
+    appliedRevision?: true
+    appliedAt?: true
+    appliedNick?: true
+    previousNick?: true
+    nickPending?: true
+    lastError?: true
+    lastAttemptAt?: true
+    refusedRevision?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GuildBrandingStateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildBrandingState to aggregate.
+     */
+    where?: GuildBrandingStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildBrandingStates to fetch.
+     */
+    orderBy?: GuildBrandingStateOrderByWithRelationInput | GuildBrandingStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildBrandingStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildBrandingStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildBrandingStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildBrandingStates
+    **/
+    _count?: true | GuildBrandingStateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GuildBrandingStateAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GuildBrandingStateSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildBrandingStateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildBrandingStateMaxAggregateInputType
+  }
+
+  export type GetGuildBrandingStateAggregateType<T extends GuildBrandingStateAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildBrandingState]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildBrandingState[P]>
+      : GetScalarType<T[P], AggregateGuildBrandingState[P]>
+  }
+
+
+
+
+  export type GuildBrandingStateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildBrandingStateWhereInput
+    orderBy?: GuildBrandingStateOrderByWithAggregationInput | GuildBrandingStateOrderByWithAggregationInput[]
+    by: GuildBrandingStateScalarFieldEnum[] | GuildBrandingStateScalarFieldEnum
+    having?: GuildBrandingStateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildBrandingStateCountAggregateInputType | true
+    _avg?: GuildBrandingStateAvgAggregateInputType
+    _sum?: GuildBrandingStateSumAggregateInputType
+    _min?: GuildBrandingStateMinAggregateInputType
+    _max?: GuildBrandingStateMaxAggregateInputType
+  }
+
+  export type GuildBrandingStateGroupByOutputType = {
+    id: string
+    guildId: string
+    applicationId: string
+    appliedRevision: number | null
+    appliedAt: Date | null
+    appliedNick: boolean
+    previousNick: string | null
+    nickPending: boolean
+    lastError: string | null
+    lastAttemptAt: Date | null
+    refusedRevision: number | null
+    createdAt: Date
+    updatedAt: Date
+    _count: GuildBrandingStateCountAggregateOutputType | null
+    _avg: GuildBrandingStateAvgAggregateOutputType | null
+    _sum: GuildBrandingStateSumAggregateOutputType | null
+    _min: GuildBrandingStateMinAggregateOutputType | null
+    _max: GuildBrandingStateMaxAggregateOutputType | null
+  }
+
+  type GetGuildBrandingStateGroupByPayload<T extends GuildBrandingStateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildBrandingStateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildBrandingStateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildBrandingStateGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildBrandingStateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildBrandingStateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    guildId?: boolean
+    applicationId?: boolean
+    appliedRevision?: boolean
+    appliedAt?: boolean
+    appliedNick?: boolean
+    previousNick?: boolean
+    nickPending?: boolean
+    lastError?: boolean
+    lastAttemptAt?: boolean
+    refusedRevision?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["guildBrandingState"]>
+
+
+
+  export type GuildBrandingStateSelectScalar = {
+    id?: boolean
+    guildId?: boolean
+    applicationId?: boolean
+    appliedRevision?: boolean
+    appliedAt?: boolean
+    appliedNick?: boolean
+    previousNick?: boolean
+    nickPending?: boolean
+    lastError?: boolean
+    lastAttemptAt?: boolean
+    refusedRevision?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GuildBrandingStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "applicationId" | "appliedRevision" | "appliedAt" | "appliedNick" | "previousNick" | "nickPending" | "lastError" | "lastAttemptAt" | "refusedRevision" | "createdAt" | "updatedAt", ExtArgs["result"]["guildBrandingState"]>
+
+  export type $GuildBrandingStatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildBrandingState"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      guildId: string
+      applicationId: string
+      /**
+       * The `GuildBranding.revision` on the bot now, or null when nothing of it is.
+       */
+      appliedRevision: number | null
+      appliedAt: Date | null
+      /**
+       * Whether the name on the bot is one this set, so taking the profile away knows to give it back.
+       */
+      appliedNick: boolean
+      /**
+       * The nickname the bot had before a profile named it - restored when the profile stops naming it.
+       */
+      previousNick: string | null
+      /**
+       * The name - the profile's, or the one it replaced - still has to be set, and is waiting for the
+       * Change Nickname permission. The rest of the profile is applied.
+       */
+      nickPending: boolean
+      lastError: string | null
+      lastAttemptAt: Date | null
+      /**
+       * A revision discord refused as invalid. A sweep does not push it again - only a new save does -
+       * so a refused profile is not retried every few minutes against the server's cooldown.
+       */
+      refusedRevision: number | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["guildBrandingState"]>
+    composites: {}
+  }
+
+  type GuildBrandingStateGetPayload<S extends boolean | null | undefined | GuildBrandingStateDefaultArgs> = $Result.GetResult<Prisma.$GuildBrandingStatePayload, S>
+
+  type GuildBrandingStateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildBrandingStateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildBrandingStateCountAggregateInputType | true
+    }
+
+  export interface GuildBrandingStateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildBrandingState'], meta: { name: 'GuildBrandingState' } }
+    /**
+     * Find zero or one GuildBrandingState that matches the filter.
+     * @param {GuildBrandingStateFindUniqueArgs} args - Arguments to find a GuildBrandingState
+     * @example
+     * // Get one GuildBrandingState
+     * const guildBrandingState = await prisma.guildBrandingState.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildBrandingStateFindUniqueArgs>(args: SelectSubset<T, GuildBrandingStateFindUniqueArgs<ExtArgs>>): Prisma__GuildBrandingStateClient<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildBrandingState that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildBrandingStateFindUniqueOrThrowArgs} args - Arguments to find a GuildBrandingState
+     * @example
+     * // Get one GuildBrandingState
+     * const guildBrandingState = await prisma.guildBrandingState.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildBrandingStateFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildBrandingStateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildBrandingStateClient<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildBrandingState that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingStateFindFirstArgs} args - Arguments to find a GuildBrandingState
+     * @example
+     * // Get one GuildBrandingState
+     * const guildBrandingState = await prisma.guildBrandingState.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildBrandingStateFindFirstArgs>(args?: SelectSubset<T, GuildBrandingStateFindFirstArgs<ExtArgs>>): Prisma__GuildBrandingStateClient<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildBrandingState that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingStateFindFirstOrThrowArgs} args - Arguments to find a GuildBrandingState
+     * @example
+     * // Get one GuildBrandingState
+     * const guildBrandingState = await prisma.guildBrandingState.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildBrandingStateFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildBrandingStateFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildBrandingStateClient<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildBrandingStates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingStateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildBrandingStates
+     * const guildBrandingStates = await prisma.guildBrandingState.findMany()
+     * 
+     * // Get first 10 GuildBrandingStates
+     * const guildBrandingStates = await prisma.guildBrandingState.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildBrandingStateWithIdOnly = await prisma.guildBrandingState.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildBrandingStateFindManyArgs>(args?: SelectSubset<T, GuildBrandingStateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildBrandingState.
+     * @param {GuildBrandingStateCreateArgs} args - Arguments to create a GuildBrandingState.
+     * @example
+     * // Create one GuildBrandingState
+     * const GuildBrandingState = await prisma.guildBrandingState.create({
+     *   data: {
+     *     // ... data to create a GuildBrandingState
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildBrandingStateCreateArgs>(args: SelectSubset<T, GuildBrandingStateCreateArgs<ExtArgs>>): Prisma__GuildBrandingStateClient<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildBrandingStates.
+     * @param {GuildBrandingStateCreateManyArgs} args - Arguments to create many GuildBrandingStates.
+     * @example
+     * // Create many GuildBrandingStates
+     * const guildBrandingState = await prisma.guildBrandingState.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildBrandingStateCreateManyArgs>(args?: SelectSubset<T, GuildBrandingStateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildBrandingState.
+     * @param {GuildBrandingStateDeleteArgs} args - Arguments to delete one GuildBrandingState.
+     * @example
+     * // Delete one GuildBrandingState
+     * const GuildBrandingState = await prisma.guildBrandingState.delete({
+     *   where: {
+     *     // ... filter to delete one GuildBrandingState
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildBrandingStateDeleteArgs>(args: SelectSubset<T, GuildBrandingStateDeleteArgs<ExtArgs>>): Prisma__GuildBrandingStateClient<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildBrandingState.
+     * @param {GuildBrandingStateUpdateArgs} args - Arguments to update one GuildBrandingState.
+     * @example
+     * // Update one GuildBrandingState
+     * const guildBrandingState = await prisma.guildBrandingState.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildBrandingStateUpdateArgs>(args: SelectSubset<T, GuildBrandingStateUpdateArgs<ExtArgs>>): Prisma__GuildBrandingStateClient<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildBrandingStates.
+     * @param {GuildBrandingStateDeleteManyArgs} args - Arguments to filter GuildBrandingStates to delete.
+     * @example
+     * // Delete a few GuildBrandingStates
+     * const { count } = await prisma.guildBrandingState.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildBrandingStateDeleteManyArgs>(args?: SelectSubset<T, GuildBrandingStateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildBrandingStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingStateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildBrandingStates
+     * const guildBrandingState = await prisma.guildBrandingState.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildBrandingStateUpdateManyArgs>(args: SelectSubset<T, GuildBrandingStateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildBrandingState.
+     * @param {GuildBrandingStateUpsertArgs} args - Arguments to update or create a GuildBrandingState.
+     * @example
+     * // Update or create a GuildBrandingState
+     * const guildBrandingState = await prisma.guildBrandingState.upsert({
+     *   create: {
+     *     // ... data to create a GuildBrandingState
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildBrandingState we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildBrandingStateUpsertArgs>(args: SelectSubset<T, GuildBrandingStateUpsertArgs<ExtArgs>>): Prisma__GuildBrandingStateClient<$Result.GetResult<Prisma.$GuildBrandingStatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildBrandingStates that matches the filter.
+     * @param {GuildBrandingStateFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildBrandingState = await prisma.guildBrandingState.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildBrandingStateFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildBrandingState.
+     * @param {GuildBrandingStateAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildBrandingState = await prisma.guildBrandingState.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildBrandingStateAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildBrandingStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingStateCountArgs} args - Arguments to filter GuildBrandingStates to count.
+     * @example
+     * // Count the number of GuildBrandingStates
+     * const count = await prisma.guildBrandingState.count({
+     *   where: {
+     *     // ... the filter for the GuildBrandingStates we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildBrandingStateCountArgs>(
+      args?: Subset<T, GuildBrandingStateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildBrandingStateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildBrandingState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingStateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildBrandingStateAggregateArgs>(args: Subset<T, GuildBrandingStateAggregateArgs>): Prisma.PrismaPromise<GetGuildBrandingStateAggregateType<T>>
+
+    /**
+     * Group by GuildBrandingState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildBrandingStateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildBrandingStateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildBrandingStateGroupByArgs['orderBy'] }
+        : { orderBy?: GuildBrandingStateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildBrandingStateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildBrandingStateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildBrandingState model
+   */
+  readonly fields: GuildBrandingStateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildBrandingState.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildBrandingStateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildBrandingState model
+   */
+  interface GuildBrandingStateFieldRefs {
+    readonly id: FieldRef<"GuildBrandingState", 'String'>
+    readonly guildId: FieldRef<"GuildBrandingState", 'String'>
+    readonly applicationId: FieldRef<"GuildBrandingState", 'String'>
+    readonly appliedRevision: FieldRef<"GuildBrandingState", 'Int'>
+    readonly appliedAt: FieldRef<"GuildBrandingState", 'DateTime'>
+    readonly appliedNick: FieldRef<"GuildBrandingState", 'Boolean'>
+    readonly previousNick: FieldRef<"GuildBrandingState", 'String'>
+    readonly nickPending: FieldRef<"GuildBrandingState", 'Boolean'>
+    readonly lastError: FieldRef<"GuildBrandingState", 'String'>
+    readonly lastAttemptAt: FieldRef<"GuildBrandingState", 'DateTime'>
+    readonly refusedRevision: FieldRef<"GuildBrandingState", 'Int'>
+    readonly createdAt: FieldRef<"GuildBrandingState", 'DateTime'>
+    readonly updatedAt: FieldRef<"GuildBrandingState", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildBrandingState findUnique
+   */
+  export type GuildBrandingStateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBrandingState to fetch.
+     */
+    where: GuildBrandingStateWhereUniqueInput
+  }
+
+  /**
+   * GuildBrandingState findUniqueOrThrow
+   */
+  export type GuildBrandingStateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBrandingState to fetch.
+     */
+    where: GuildBrandingStateWhereUniqueInput
+  }
+
+  /**
+   * GuildBrandingState findFirst
+   */
+  export type GuildBrandingStateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBrandingState to fetch.
+     */
+    where?: GuildBrandingStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildBrandingStates to fetch.
+     */
+    orderBy?: GuildBrandingStateOrderByWithRelationInput | GuildBrandingStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildBrandingStates.
+     */
+    cursor?: GuildBrandingStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildBrandingStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildBrandingStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildBrandingStates.
+     */
+    distinct?: GuildBrandingStateScalarFieldEnum | GuildBrandingStateScalarFieldEnum[]
+  }
+
+  /**
+   * GuildBrandingState findFirstOrThrow
+   */
+  export type GuildBrandingStateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBrandingState to fetch.
+     */
+    where?: GuildBrandingStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildBrandingStates to fetch.
+     */
+    orderBy?: GuildBrandingStateOrderByWithRelationInput | GuildBrandingStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildBrandingStates.
+     */
+    cursor?: GuildBrandingStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildBrandingStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildBrandingStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildBrandingStates.
+     */
+    distinct?: GuildBrandingStateScalarFieldEnum | GuildBrandingStateScalarFieldEnum[]
+  }
+
+  /**
+   * GuildBrandingState findMany
+   */
+  export type GuildBrandingStateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildBrandingStates to fetch.
+     */
+    where?: GuildBrandingStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildBrandingStates to fetch.
+     */
+    orderBy?: GuildBrandingStateOrderByWithRelationInput | GuildBrandingStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildBrandingStates.
+     */
+    cursor?: GuildBrandingStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildBrandingStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildBrandingStates.
+     */
+    skip?: number
+    distinct?: GuildBrandingStateScalarFieldEnum | GuildBrandingStateScalarFieldEnum[]
+  }
+
+  /**
+   * GuildBrandingState create
+   */
+  export type GuildBrandingStateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildBrandingState.
+     */
+    data: XOR<GuildBrandingStateCreateInput, GuildBrandingStateUncheckedCreateInput>
+  }
+
+  /**
+   * GuildBrandingState createMany
+   */
+  export type GuildBrandingStateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildBrandingStates.
+     */
+    data: GuildBrandingStateCreateManyInput | GuildBrandingStateCreateManyInput[]
+  }
+
+  /**
+   * GuildBrandingState update
+   */
+  export type GuildBrandingStateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildBrandingState.
+     */
+    data: XOR<GuildBrandingStateUpdateInput, GuildBrandingStateUncheckedUpdateInput>
+    /**
+     * Choose, which GuildBrandingState to update.
+     */
+    where: GuildBrandingStateWhereUniqueInput
+  }
+
+  /**
+   * GuildBrandingState updateMany
+   */
+  export type GuildBrandingStateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildBrandingStates.
+     */
+    data: XOR<GuildBrandingStateUpdateManyMutationInput, GuildBrandingStateUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildBrandingStates to update
+     */
+    where?: GuildBrandingStateWhereInput
+    /**
+     * Limit how many GuildBrandingStates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildBrandingState upsert
+   */
+  export type GuildBrandingStateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildBrandingState to update in case it exists.
+     */
+    where: GuildBrandingStateWhereUniqueInput
+    /**
+     * In case the GuildBrandingState found by the `where` argument doesn't exist, create a new GuildBrandingState with this data.
+     */
+    create: XOR<GuildBrandingStateCreateInput, GuildBrandingStateUncheckedCreateInput>
+    /**
+     * In case the GuildBrandingState was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildBrandingStateUpdateInput, GuildBrandingStateUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildBrandingState delete
+   */
+  export type GuildBrandingStateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+    /**
+     * Filter which GuildBrandingState to delete.
+     */
+    where: GuildBrandingStateWhereUniqueInput
+  }
+
+  /**
+   * GuildBrandingState deleteMany
+   */
+  export type GuildBrandingStateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildBrandingStates to delete
+     */
+    where?: GuildBrandingStateWhereInput
+    /**
+     * Limit how many GuildBrandingStates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildBrandingState findRaw
+   */
+  export type GuildBrandingStateFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildBrandingState aggregateRaw
+   */
+  export type GuildBrandingStateAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildBrandingState without action
+   */
+  export type GuildBrandingStateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildBrandingState
+     */
+    select?: GuildBrandingStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildBrandingState
+     */
+    omit?: GuildBrandingStateOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -15567,6 +17864,41 @@ export namespace Prisma {
   };
 
   export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+  export const GuildBrandingScalarFieldEnum: {
+    id: 'id',
+    guildId: 'guildId',
+    nick: 'nick',
+    bio: 'bio',
+    avatar: 'avatar',
+    banner: 'banner',
+    revision: 'revision',
+    updatedByUserId: 'updatedByUserId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GuildBrandingScalarFieldEnum = (typeof GuildBrandingScalarFieldEnum)[keyof typeof GuildBrandingScalarFieldEnum]
+
+
+  export const GuildBrandingStateScalarFieldEnum: {
+    id: 'id',
+    guildId: 'guildId',
+    applicationId: 'applicationId',
+    appliedRevision: 'appliedRevision',
+    appliedAt: 'appliedAt',
+    appliedNick: 'appliedNick',
+    previousNick: 'previousNick',
+    nickPending: 'nickPending',
+    lastError: 'lastError',
+    lastAttemptAt: 'lastAttemptAt',
+    refusedRevision: 'refusedRevision',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GuildBrandingStateScalarFieldEnum = (typeof GuildBrandingStateScalarFieldEnum)[keyof typeof GuildBrandingStateScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -16685,6 +19017,180 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   }
 
+  export type GuildBrandingWhereInput = {
+    AND?: GuildBrandingWhereInput | GuildBrandingWhereInput[]
+    OR?: GuildBrandingWhereInput[]
+    NOT?: GuildBrandingWhereInput | GuildBrandingWhereInput[]
+    id?: StringFilter<"GuildBranding"> | string
+    guildId?: StringFilter<"GuildBranding"> | string
+    nick?: StringNullableFilter<"GuildBranding"> | string | null
+    bio?: StringNullableFilter<"GuildBranding"> | string | null
+    avatar?: StringNullableFilter<"GuildBranding"> | string | null
+    banner?: StringNullableFilter<"GuildBranding"> | string | null
+    revision?: IntFilter<"GuildBranding"> | number
+    updatedByUserId?: StringNullableFilter<"GuildBranding"> | string | null
+    createdAt?: DateTimeFilter<"GuildBranding"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildBranding"> | Date | string
+  }
+
+  export type GuildBrandingOrderByWithRelationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    nick?: SortOrder
+    bio?: SortOrder
+    avatar?: SortOrder
+    banner?: SortOrder
+    revision?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildBrandingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    guildId?: string
+    AND?: GuildBrandingWhereInput | GuildBrandingWhereInput[]
+    OR?: GuildBrandingWhereInput[]
+    NOT?: GuildBrandingWhereInput | GuildBrandingWhereInput[]
+    nick?: StringNullableFilter<"GuildBranding"> | string | null
+    bio?: StringNullableFilter<"GuildBranding"> | string | null
+    avatar?: StringNullableFilter<"GuildBranding"> | string | null
+    banner?: StringNullableFilter<"GuildBranding"> | string | null
+    revision?: IntFilter<"GuildBranding"> | number
+    updatedByUserId?: StringNullableFilter<"GuildBranding"> | string | null
+    createdAt?: DateTimeFilter<"GuildBranding"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildBranding"> | Date | string
+  }, "id" | "guildId">
+
+  export type GuildBrandingOrderByWithAggregationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    nick?: SortOrder
+    bio?: SortOrder
+    avatar?: SortOrder
+    banner?: SortOrder
+    revision?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GuildBrandingCountOrderByAggregateInput
+    _avg?: GuildBrandingAvgOrderByAggregateInput
+    _max?: GuildBrandingMaxOrderByAggregateInput
+    _min?: GuildBrandingMinOrderByAggregateInput
+    _sum?: GuildBrandingSumOrderByAggregateInput
+  }
+
+  export type GuildBrandingScalarWhereWithAggregatesInput = {
+    AND?: GuildBrandingScalarWhereWithAggregatesInput | GuildBrandingScalarWhereWithAggregatesInput[]
+    OR?: GuildBrandingScalarWhereWithAggregatesInput[]
+    NOT?: GuildBrandingScalarWhereWithAggregatesInput | GuildBrandingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildBranding"> | string
+    guildId?: StringWithAggregatesFilter<"GuildBranding"> | string
+    nick?: StringNullableWithAggregatesFilter<"GuildBranding"> | string | null
+    bio?: StringNullableWithAggregatesFilter<"GuildBranding"> | string | null
+    avatar?: StringNullableWithAggregatesFilter<"GuildBranding"> | string | null
+    banner?: StringNullableWithAggregatesFilter<"GuildBranding"> | string | null
+    revision?: IntWithAggregatesFilter<"GuildBranding"> | number
+    updatedByUserId?: StringNullableWithAggregatesFilter<"GuildBranding"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"GuildBranding"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GuildBranding"> | Date | string
+  }
+
+  export type GuildBrandingStateWhereInput = {
+    AND?: GuildBrandingStateWhereInput | GuildBrandingStateWhereInput[]
+    OR?: GuildBrandingStateWhereInput[]
+    NOT?: GuildBrandingStateWhereInput | GuildBrandingStateWhereInput[]
+    id?: StringFilter<"GuildBrandingState"> | string
+    guildId?: StringFilter<"GuildBrandingState"> | string
+    applicationId?: StringFilter<"GuildBrandingState"> | string
+    appliedRevision?: IntNullableFilter<"GuildBrandingState"> | number | null
+    appliedAt?: DateTimeNullableFilter<"GuildBrandingState"> | Date | string | null
+    appliedNick?: BoolFilter<"GuildBrandingState"> | boolean
+    previousNick?: StringNullableFilter<"GuildBrandingState"> | string | null
+    nickPending?: BoolFilter<"GuildBrandingState"> | boolean
+    lastError?: StringNullableFilter<"GuildBrandingState"> | string | null
+    lastAttemptAt?: DateTimeNullableFilter<"GuildBrandingState"> | Date | string | null
+    refusedRevision?: IntNullableFilter<"GuildBrandingState"> | number | null
+    createdAt?: DateTimeFilter<"GuildBrandingState"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildBrandingState"> | Date | string
+  }
+
+  export type GuildBrandingStateOrderByWithRelationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    appliedRevision?: SortOrder
+    appliedAt?: SortOrder
+    appliedNick?: SortOrder
+    previousNick?: SortOrder
+    nickPending?: SortOrder
+    lastError?: SortOrder
+    lastAttemptAt?: SortOrder
+    refusedRevision?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildBrandingStateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    guildId_applicationId?: GuildBrandingStateGuildIdApplicationIdCompoundUniqueInput
+    AND?: GuildBrandingStateWhereInput | GuildBrandingStateWhereInput[]
+    OR?: GuildBrandingStateWhereInput[]
+    NOT?: GuildBrandingStateWhereInput | GuildBrandingStateWhereInput[]
+    guildId?: StringFilter<"GuildBrandingState"> | string
+    applicationId?: StringFilter<"GuildBrandingState"> | string
+    appliedRevision?: IntNullableFilter<"GuildBrandingState"> | number | null
+    appliedAt?: DateTimeNullableFilter<"GuildBrandingState"> | Date | string | null
+    appliedNick?: BoolFilter<"GuildBrandingState"> | boolean
+    previousNick?: StringNullableFilter<"GuildBrandingState"> | string | null
+    nickPending?: BoolFilter<"GuildBrandingState"> | boolean
+    lastError?: StringNullableFilter<"GuildBrandingState"> | string | null
+    lastAttemptAt?: DateTimeNullableFilter<"GuildBrandingState"> | Date | string | null
+    refusedRevision?: IntNullableFilter<"GuildBrandingState"> | number | null
+    createdAt?: DateTimeFilter<"GuildBrandingState"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildBrandingState"> | Date | string
+  }, "id" | "guildId_applicationId">
+
+  export type GuildBrandingStateOrderByWithAggregationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    appliedRevision?: SortOrder
+    appliedAt?: SortOrder
+    appliedNick?: SortOrder
+    previousNick?: SortOrder
+    nickPending?: SortOrder
+    lastError?: SortOrder
+    lastAttemptAt?: SortOrder
+    refusedRevision?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GuildBrandingStateCountOrderByAggregateInput
+    _avg?: GuildBrandingStateAvgOrderByAggregateInput
+    _max?: GuildBrandingStateMaxOrderByAggregateInput
+    _min?: GuildBrandingStateMinOrderByAggregateInput
+    _sum?: GuildBrandingStateSumOrderByAggregateInput
+  }
+
+  export type GuildBrandingStateScalarWhereWithAggregatesInput = {
+    AND?: GuildBrandingStateScalarWhereWithAggregatesInput | GuildBrandingStateScalarWhereWithAggregatesInput[]
+    OR?: GuildBrandingStateScalarWhereWithAggregatesInput[]
+    NOT?: GuildBrandingStateScalarWhereWithAggregatesInput | GuildBrandingStateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildBrandingState"> | string
+    guildId?: StringWithAggregatesFilter<"GuildBrandingState"> | string
+    applicationId?: StringWithAggregatesFilter<"GuildBrandingState"> | string
+    appliedRevision?: IntNullableWithAggregatesFilter<"GuildBrandingState"> | number | null
+    appliedAt?: DateTimeNullableWithAggregatesFilter<"GuildBrandingState"> | Date | string | null
+    appliedNick?: BoolWithAggregatesFilter<"GuildBrandingState"> | boolean
+    previousNick?: StringNullableWithAggregatesFilter<"GuildBrandingState"> | string | null
+    nickPending?: BoolWithAggregatesFilter<"GuildBrandingState"> | boolean
+    lastError?: StringNullableWithAggregatesFilter<"GuildBrandingState"> | string | null
+    lastAttemptAt?: DateTimeNullableWithAggregatesFilter<"GuildBrandingState"> | Date | string | null
+    refusedRevision?: IntNullableWithAggregatesFilter<"GuildBrandingState"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"GuildBrandingState"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GuildBrandingState"> | Date | string
+  }
+
   export type ConfigCreateInput = {
     id?: string
     key: string
@@ -17761,6 +20267,201 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type GuildBrandingCreateInput = {
+    id?: string
+    guildId: string
+    nick?: string | null
+    bio?: string | null
+    avatar?: string | null
+    banner?: string | null
+    revision?: number
+    updatedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildBrandingUncheckedCreateInput = {
+    id?: string
+    guildId: string
+    nick?: string | null
+    bio?: string | null
+    avatar?: string | null
+    banner?: string | null
+    revision?: number
+    updatedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildBrandingUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    nick?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    revision?: IntFieldUpdateOperationsInput | number
+    updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildBrandingUncheckedUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    nick?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    revision?: IntFieldUpdateOperationsInput | number
+    updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildBrandingCreateManyInput = {
+    id?: string
+    guildId: string
+    nick?: string | null
+    bio?: string | null
+    avatar?: string | null
+    banner?: string | null
+    revision?: number
+    updatedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildBrandingUpdateManyMutationInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    nick?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    revision?: IntFieldUpdateOperationsInput | number
+    updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildBrandingUncheckedUpdateManyInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    nick?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    banner?: NullableStringFieldUpdateOperationsInput | string | null
+    revision?: IntFieldUpdateOperationsInput | number
+    updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildBrandingStateCreateInput = {
+    id?: string
+    guildId: string
+    applicationId: string
+    appliedRevision?: number | null
+    appliedAt?: Date | string | null
+    appliedNick?: boolean
+    previousNick?: string | null
+    nickPending?: boolean
+    lastError?: string | null
+    lastAttemptAt?: Date | string | null
+    refusedRevision?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildBrandingStateUncheckedCreateInput = {
+    id?: string
+    guildId: string
+    applicationId: string
+    appliedRevision?: number | null
+    appliedAt?: Date | string | null
+    appliedNick?: boolean
+    previousNick?: string | null
+    nickPending?: boolean
+    lastError?: string | null
+    lastAttemptAt?: Date | string | null
+    refusedRevision?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildBrandingStateUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    appliedRevision?: NullableIntFieldUpdateOperationsInput | number | null
+    appliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    appliedNick?: BoolFieldUpdateOperationsInput | boolean
+    previousNick?: NullableStringFieldUpdateOperationsInput | string | null
+    nickPending?: BoolFieldUpdateOperationsInput | boolean
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refusedRevision?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildBrandingStateUncheckedUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    appliedRevision?: NullableIntFieldUpdateOperationsInput | number | null
+    appliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    appliedNick?: BoolFieldUpdateOperationsInput | boolean
+    previousNick?: NullableStringFieldUpdateOperationsInput | string | null
+    nickPending?: BoolFieldUpdateOperationsInput | boolean
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refusedRevision?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildBrandingStateCreateManyInput = {
+    id?: string
+    guildId: string
+    applicationId: string
+    appliedRevision?: number | null
+    appliedAt?: Date | string | null
+    appliedNick?: boolean
+    previousNick?: string | null
+    nickPending?: boolean
+    lastError?: string | null
+    lastAttemptAt?: Date | string | null
+    refusedRevision?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildBrandingStateUpdateManyMutationInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    appliedRevision?: NullableIntFieldUpdateOperationsInput | number | null
+    appliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    appliedNick?: BoolFieldUpdateOperationsInput | boolean
+    previousNick?: NullableStringFieldUpdateOperationsInput | string | null
+    nickPending?: BoolFieldUpdateOperationsInput | boolean
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refusedRevision?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildBrandingStateUncheckedUpdateManyInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    appliedRevision?: NullableIntFieldUpdateOperationsInput | number | null
+    appliedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    appliedNick?: BoolFieldUpdateOperationsInput | boolean
+    previousNick?: NullableStringFieldUpdateOperationsInput | string | null
+    nickPending?: BoolFieldUpdateOperationsInput | boolean
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refusedRevision?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -18561,6 +21262,145 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type GuildBrandingCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    nick?: SortOrder
+    bio?: SortOrder
+    avatar?: SortOrder
+    banner?: SortOrder
+    revision?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildBrandingAvgOrderByAggregateInput = {
+    revision?: SortOrder
+  }
+
+  export type GuildBrandingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    nick?: SortOrder
+    bio?: SortOrder
+    avatar?: SortOrder
+    banner?: SortOrder
+    revision?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildBrandingMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    nick?: SortOrder
+    bio?: SortOrder
+    avatar?: SortOrder
+    banner?: SortOrder
+    revision?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildBrandingSumOrderByAggregateInput = {
+    revision?: SortOrder
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
+  }
+
+  export type GuildBrandingStateGuildIdApplicationIdCompoundUniqueInput = {
+    guildId: string
+    applicationId: string
+  }
+
+  export type GuildBrandingStateCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    appliedRevision?: SortOrder
+    appliedAt?: SortOrder
+    appliedNick?: SortOrder
+    previousNick?: SortOrder
+    nickPending?: SortOrder
+    lastError?: SortOrder
+    lastAttemptAt?: SortOrder
+    refusedRevision?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildBrandingStateAvgOrderByAggregateInput = {
+    appliedRevision?: SortOrder
+    refusedRevision?: SortOrder
+  }
+
+  export type GuildBrandingStateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    appliedRevision?: SortOrder
+    appliedAt?: SortOrder
+    appliedNick?: SortOrder
+    previousNick?: SortOrder
+    nickPending?: SortOrder
+    lastError?: SortOrder
+    lastAttemptAt?: SortOrder
+    refusedRevision?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildBrandingStateMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    appliedRevision?: SortOrder
+    appliedAt?: SortOrder
+    appliedNick?: SortOrder
+    previousNick?: SortOrder
+    nickPending?: SortOrder
+    lastError?: SortOrder
+    lastAttemptAt?: SortOrder
+    refusedRevision?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildBrandingStateSumOrderByAggregateInput = {
+    appliedRevision?: SortOrder
+    refusedRevision?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
   export type ConfigCreatevaluesInput = {
     set: string[]
   }
@@ -18924,6 +21764,15 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChannelDataInput, UserUpdateWithoutChannelDataInput>, UserUncheckedUpdateWithoutChannelDataInput>
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+    unset?: boolean
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -19147,6 +21996,35 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel>
     _max?: NestedEnumE_INTERNAL_CHANNEL_TYPESFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
   }
 
   export type GuildDataCreateWithoutGuildInput = {

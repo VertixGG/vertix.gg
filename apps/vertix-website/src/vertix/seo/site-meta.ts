@@ -178,8 +178,8 @@ export const ROUTE_META: readonly RouteMeta[] = [
         sourcePath: "src/vertix/pages/pricing.tsx",
         title: "Plans and Pricing | VoiceChannels",
         description:
-            "Every feature is free. A plan buys how many generators a server may run at once - "
-            + "two free, or unlimited on Pro for $4 a month.",
+            "Every voice-channel control is free, with two generators. Pro adds unlimited generators "
+            + "and your own bot profile in your server, for $4 a month.",
         priority: 0.8,
     },
     {

@@ -14,6 +14,7 @@ import { GuildDetailsQuery } from "@vertix.gg/dashboard/src/features/home/query/
 import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generators/query/guild-generators-query";
 import { ServerConfigQuery } from "@vertix.gg/dashboard/src/features/server-config/query/server-config-query";
 import { BotPresenceQuery } from "@vertix.gg/dashboard/src/features/bot-presence/query/bot-presence-query";
+import { BrandingQuery } from "@vertix.gg/dashboard/src/features/branding/query/branding-query";
 
 import { AuthProvider, ProtectedRoute, LoginPage, ServerSelectionPage } from "@vertix.gg/dashboard/src/features/auth";
 
@@ -23,6 +24,7 @@ import { InterfaceEditorPage } from "@vertix.gg/dashboard/src/pages/interface-ed
 import { GeneratorsPage } from "@vertix.gg/dashboard/src/pages/generators-page";
 import { ServerConfigPage } from "@vertix.gg/dashboard/src/pages/server-config-page";
 import { BillingPage } from "@vertix.gg/dashboard/src/pages/billing-page";
+import { BrandingPage } from "@vertix.gg/dashboard/src/pages/branding-page";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
@@ -40,6 +42,7 @@ client.registerModule( GuildDetailsQuery );
 client.registerModule( GuildGeneratorsQuery );
 client.registerModule( ServerConfigQuery );
 client.registerModule( BotPresenceQuery );
+client.registerModule( BrandingQuery );
 
 export function App() {
     return (
@@ -70,6 +73,7 @@ export function App() {
                             <Route path="/generators/:masterChannelId" element={ <GeneratorsPage /> } />
                             <Route path="/generators/:masterChannelId/edit" element={ <GeneratorsPage /> } />
                             <Route path="/server-options" element={ <ServerConfigPage /> } />
+                            <Route path="/branding" element={ <BrandingPage /> } />
                             <Route path="/billing" element={ <BillingPage /> } />
 
                             { /* The page was called Management until it was named after what it

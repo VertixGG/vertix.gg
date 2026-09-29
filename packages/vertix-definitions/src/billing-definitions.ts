@@ -32,6 +32,15 @@ export interface IBillingTier {
 
     /** What it costs a month, in whole dollars, for the pages that say so. */
     monthlyPriceUsd: number;
+
+    /**
+     * Whether a server holding it may give the bot its own profile there - name, avatar, banner and
+     * bio, in that server only. See `guild-branding-definitions.ts`.
+     *
+     * On the tier rather than implied by paying at all, so a tier that did not include it would be
+     * one field rather than a special case somewhere else.
+     */
+    includesBranding: boolean;
 }
 
 /**
@@ -103,7 +112,8 @@ export const BILLING_TIER_DEFINITIONS = [
         slug: "pro",
         environmentKey: "PADDLE_PRICE_PRO",
         maxMasterChannels: BILLING_UNLIMITED_MASTER_CHANNELS,
-        monthlyPriceUsd: 4
+        monthlyPriceUsd: 4,
+        includesBranding: true
     }
 ] as const;
 
@@ -191,6 +201,24 @@ export function resolveMaxMasterChannels( options: {
 }
 
 /**
+ * Function resolveCanBrand() :: Whether a guild may give the bot its own profile.
+ *
+ * Only by paying. A grant raises the number of generators a server may have and nothing else - it is
+ * something given for a reason, and the reason was never "and change what the bot looks like". So
+ * this reads the prices being paid for and not the grant, which is also why it is not a question
+ * `resolveMaxMasterChannels()` can answer: a granted server and a paying one can have the same
+ * number.
+ */
+export function resolveCanBrand( options: {
+    paidPriceIds: readonly string[];
+    tiers: readonly IBillingTier[];
+} ): boolean {
+    const { paidPriceIds, tiers } = options;
+
+    return tiers.some( ( tier ) => tier.includesBranding && paidPriceIds.includes( tier.priceId ) );
+}
+
+/**
  * Function readBillingTiers() :: The tiers this deployment can actually sell.
  *
  * A tier whose id is not in the environment is dropped rather than carried with an empty id: an
@@ -203,7 +231,8 @@ export function readBillingTiers( environment: Record<string, string | undefined
             slug: tier.slug,
             priceId: environment[ tier.environmentKey ]?.trim() ?? "",
             maxMasterChannels: tier.maxMasterChannels,
-            monthlyPriceUsd: tier.monthlyPriceUsd
+            monthlyPriceUsd: tier.monthlyPriceUsd,
+            includesBranding: tier.includesBranding
         } ) )
         .filter( ( tier ) => tier.priceId.length > 0 );
 }

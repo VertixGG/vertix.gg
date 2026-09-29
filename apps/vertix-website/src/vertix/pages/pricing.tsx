@@ -26,6 +26,8 @@ interface IPlan {
     allowance: string;
     /** The line under the allowance, which is what somebody comparing plans is actually reading. */
     note: string;
+    /** What else the plan buys besides generators, a line each. */
+    extras: string[];
     /** Where its button goes - the dashboard's billing page, already on this plan. */
     href: string;
     /** The one plan a page like this should point at, and only one. */
@@ -49,6 +51,29 @@ function describeAllowance( maxMasterChannels: number ): string {
 }
 
 /**
+ * The one thing a plan buys besides generators, worded for a plan card.
+ *
+ * Called branding here because that is what the dashboard page it is set on is called.
+ */
+const BRANDING_EXTRA = "branding - the bot's own name, avatar, banner and bio in your server";
+
+/**
+ * Function describeUpgrade() :: What a paid tier adds to free, as the sentence the intro ends on.
+ */
+function describeUpgrade( tier: { name: string; maxMasterChannels: number; includesBranding: boolean } ): string {
+    const generators = isUnlimitedAllowance( tier.maxMasterChannels )
+        ? "as many generators as a server wants"
+        : `${ tier.maxMasterChannels } generators`;
+
+    if ( ! tier.includesBranding ) {
+        return `${ tier.name } adds ${ generators }.`;
+    }
+
+    return `${ tier.name } adds two things: ${ generators }, and branding - the bot's own name, avatar, `
+        + "banner and bio in your server.";
+}
+
+/**
  * The plan this page points at - Pro, the one there is to buy.
  *
  * Named by its slug rather than picked out of the tier table by position, so a tier added to the
@@ -60,12 +85,15 @@ function describeAllowance( maxMasterChannels: number ): string {
  */
 const FEATURED_TIER_SLUG = "pro";
 
+const FEATURED_TIER = BILLING_TIER_DEFINITIONS.find( ( tier ) => FEATURED_TIER_SLUG === tier.slug );
+
 const PLANS: IPlan[] = [
     {
         name: "Free",
         price: "$0",
         allowance: `${ BILLING_FREE_MAX_MASTER_CHANNELS } generators`,
         note: "the starting point",
+        extras: [],
         href: "/invite-vertix",
         isFeatured: false,
         isFree: true
@@ -77,6 +105,7 @@ const PLANS: IPlan[] = [
             ? formatMasterChannelAllowance( tier.maxMasterChannels )
             : `${ formatMasterChannelAllowance( tier.maxMasterChannels ) } generators`,
         note: describeAllowance( tier.maxMasterChannels ),
+        extras: tier.includesBranding ? [ BRANDING_EXTRA ] : [],
         href: planCheckoutUrl( tier.slug ),
         isFeatured: FEATURED_TIER_SLUG === tier.slug,
         isFree: false
@@ -84,11 +113,12 @@ const PLANS: IPlan[] = [
 ];
 
 /**
- * What every plan carries, which is the point worth making.
+ * What every plan carries, free included, which is the point worth making.
  *
- * Nothing in the bot is behind a plan - not a button, not a command, not a language. A plan buys
- * generators and nothing else, so this is printed once rather than ticked down both columns, which
- * would say the same thing in each of them.
+ * No control a channel's owner or a server's admin uses is behind a plan - not a button, not a
+ * command, not a language. A plan buys generators, and the bot's own profile in the server, and
+ * nothing on this list - so it is printed once rather than ticked down both columns, which would say
+ * the same thing in each of them.
  */
 const IN_EVERY_PLAN = [
     "Every control a channel owner has - rename, limit, privacy, access, region, bitrate and the rest",
@@ -117,12 +147,18 @@ const QUESTIONS = [
         question: "And if I cancel?",
         answer: "The plan runs to the end of the period you already paid for, not to the moment you "
             + "cancel. After that the allowance drops back and the extra generators pause - still "
-            + "there, still configured, waiting."
+            + "there, still configured, waiting. The bot goes back to its normal profile in your "
+            + "server, and the one you gave it is kept for when you come back."
     },
     {
         question: "Does a plan cover all my servers?",
         answer: "One server. The generators belong to the server the plan was bought for, so a "
             + "second server needs its own."
+    },
+    {
+        question: "Does branding change the bot in other servers?",
+        answer: "No. It changes how the bot looks in your server only. Every other server keeps the "
+            + "normal VoiceChannels bot, and so does its profile everywhere else."
     },
     {
         question: "We were given an allowance already.",
@@ -148,8 +184,14 @@ function PlanCard( { plan }: { plan: IPlan } ) {
             <div className="text-h5 text-vc-ice">{ plan.allowance }</div>
             <div className="text-fine text-vc-ice-dim mb-1">{ plan.note }</div>
 
-            <div className="text-fine text-vc-ice-dim mb-6">
-                join-to-create setups and auto-scaling pools together
+            <div className="mb-6">
+                <div className="text-fine text-vc-ice-dim">
+                    join-to-create setups and auto-scaling pools together
+                </div>
+
+                { plan.extras.map( ( extra ) => (
+                    <div key={ extra } className="text-fine text-vc-ice mt-1">+ { extra }</div>
+                ) ) }
             </div>
 
             <a className={ `vc-btn vc-btn-effect mt-auto w-full ${ plan.isFeatured ? "vc-btn-primary" : "" }` }
@@ -169,9 +211,8 @@ export default function Pricing() {
                 <h1 className="text-h3 mb-3">Plans</h1>
 
                 <p className="text-vc-ice-dim mx-auto max-w-2xl">
-                    A plan buys one thing: how many generators a server may run at once. Every
-                    feature is in every plan, including the free one - nothing here is a paywall
-                    around a button.
+                    Every voice-channel control is free, on every plan - nothing a channel owner
+                    presses sits behind a paywall. { FEATURED_TIER ? describeUpgrade( FEATURED_TIER ) : null }
                 </p>
             </div>
 

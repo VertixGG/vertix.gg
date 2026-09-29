@@ -88,12 +88,19 @@ provider.
 
 One paid plan. Everything below reads it from one place, so changing it is changing one table.
 
-| tier | generators | price | price id |
-|---|---|---|---|
-| Free | 2 | — | none |
-| Pro | unlimited | $4 / month | `PADDLE_PRICE_PRO` |
+| tier | generators | bot profile in the server | price | price id |
+|---|---|---|---|---|
+| Free | 2 | the bot's own | — | none |
+| Pro | unlimited | its own name, avatar, banner and bio | $4 / month | `PADDLE_PRICE_PRO` |
 
 Monthly only. There is no yearly price, and that is a decision rather than an omission.
+
+**The bot profile is per server.** Discord's `Modify Current Member` scopes it to the one guild, so a
+Pro server changes how the bot looks there and nowhere else. It is decided by
+`resolveCanBrand()` from the prices paid — a grant raises generators and nothing else — and applied,
+swept and taken off again by `GuildBrandingService`. AGENTS.md, "Server Branding (Pro)", has the
+parts that bite: two tables because two bots share the database, and the image check before
+`editMe()` that is a security boundary rather than a nicety.
 
 Free stays at 2, which is what `maxMasterChannels` already defaults to, so a server that never pays
 sees exactly what it sees today — and a tier is a total rather than an addition, because a total is
@@ -278,7 +285,8 @@ vulnerability — which fails four.
 - **Deleting anything.** No generator, room or setting is removed for non-payment.
 - **Per-user subscriptions.** Choosing guild subscriptions rules them out permanently, for this app.
 - **Proration, refunds, dunning.** Paddle's, not ours.
-- **The dashboard's own paywall.** Editing a generator you already have is not gated.
+- **The dashboard's own paywall.** Editing a generator you already have is not gated, and neither is
+  the interface editor. The bot profile is the one thing on the dashboard that needs Pro.
 
 ## Still open
 

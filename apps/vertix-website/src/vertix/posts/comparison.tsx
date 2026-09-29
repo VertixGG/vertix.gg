@@ -20,12 +20,20 @@ const OUR_TIERS = BILLING_TIER_DEFINITIONS.map( ( tier ) => ( {
         : `${ tier.maxMasterChannels } in total`,
     generators: isUnlimitedAllowance( tier.maxMasterChannels )
         ? "as many generators as a server wants"
-        : `${ tier.maxMasterChannels } generators`
+        : `${ tier.maxMasterChannels } generators`,
+    /** What the tier buys besides generators, as the end of a clause - empty for one that buys only them. */
+    extras: tier.includesBranding
+        ? " and the bot's own name, avatar, banner and bio in that server"
+        : ""
 } ) );
 
-/** What money buys here, as a clause: `$4 a month for as many generators as a server wants`. */
+/**
+ * What money buys here, as a clause:
+ * `$4 a month for as many generators as a server wants and the bot's own name, avatar, banner and
+ * bio in that server`.
+ */
 const OUR_PRICE_CLAUSE = OUR_TIERS
-    .map( ( tier ) => `${ tier.price } a month for ${ tier.generators }` )
+    .map( ( tier ) => `${ tier.price } a month for ${ tier.generators }${ tier.extras }` )
     .join( ", or " );
 
 interface Contender {
@@ -45,7 +53,7 @@ const CONTENDERS: Contender[] = [
         servers: "—",
         rating: "—",
         price: OUR_TIERS.map( ( tier ) => tier.price ).join( " / " ),
-        priceNote: "per month, 1 server - and a free tier with every feature",
+        priceNote: "per month, 1 server - and a free tier with every channel control",
         isUs: true,
     },
     {
@@ -81,9 +89,9 @@ const GATING = [
     {
         name: "VoiceChannels",
         isUs: true,
-        body: "Every control works on every server, free. The only thing money buys is "
-            + `quantity - ${ OUR_PRICE_CLAUSE }, beyond the ${ BILLING_FREE_MAX_MASTER_CHANNELS } `
-            + "free ones - and no command has ever asked anybody to vote for it.",
+        body: `Every control works on every server, free, with ${ BILLING_FREE_MAX_MASTER_CHANNELS } `
+            + `generators. It charges ${ OUR_PRICE_CLAUSE }. No command has ever asked anybody to `
+            + "vote for it.",
     },
     {
         name: "VoiceMaster",
@@ -240,7 +248,7 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
                 "EUR 4 a month",
                 "$3.99 a month"
             ] },
-            { capability: "Every feature on the free tier", cells: [ "Yes", null, null, null ] },
+            { capability: "Every feature on the free tier", cells: [ "All but branding", null, null, null ] },
             { capability: "No vote-gated commands", cells: [ "Yes", null, null, null ] },
         ],
     },
@@ -335,8 +343,8 @@ export default function Comparison() {
 
             <p className="text-vc-ice-dim mb-6">
                 The useful question is not how much, but what for. Three of them charge to
-                unlock features; here the features are all free and the charge is for volume -
-                { " " }{ OUR_PRICE_CLAUSE }, and nothing else.
+                unlock what a room&rsquo;s owner can do; here every one of those controls is free,
+                and the charge is for volume and branding:{ " " }{ OUR_PRICE_CLAUSE }.
             </p>
 
             <div className="grid gap-4 md:grid-cols-2 mb-12">

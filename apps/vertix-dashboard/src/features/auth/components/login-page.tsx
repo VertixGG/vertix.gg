@@ -21,12 +21,14 @@ const PLAN_SUMMARY = [
     {
         name: "Free",
         price: "$0",
-        allowance: formatMasterChannelAllowance( BILLING_FREE_MAX_MASTER_CHANNELS )
+        allowance: formatMasterChannelAllowance( BILLING_FREE_MAX_MASTER_CHANNELS ),
+        includesBranding: false
     },
     ... BILLING_TIER_DEFINITIONS.map( ( tier ) => ( {
         name: tier.name,
         price: `$${ tier.monthlyPriceUsd } / month`,
-        allowance: formatMasterChannelAllowance( tier.maxMasterChannels )
+        allowance: formatMasterChannelAllowance( tier.maxMasterChannels ),
+        includesBranding: tier.includesBranding
     } ) )
 ];
 
@@ -84,15 +86,19 @@ export function LoginPage() {
                             { PLAN_SUMMARY.map( ( plan ) => (
                                 <li key={ plan.name } className="flex justify-between gap-4">
                                     <span className="text-text-primary">{ plan.name }</span>
-                                    <span>{ plan.price } &middot; { plan.allowance } generators</span>
+                                    <span className="text-right">
+                                        { plan.price } &middot; { plan.allowance } generators
+                                        { plan.includesBranding ? <> &middot; own bot profile</> : null }
+                                    </span>
                                 </li>
                             ) ) }
                         </ul>
 
                         <p className="mb-0">
-                            Every feature is in every plan, including the free one; a plan only
-                            raises how many generators a server may run at once. Billing is handled
-                            by Paddle, our merchant of record.{ " " }
+                            Every voice-channel control is in every plan, including the free one. A
+                            paid plan raises how many generators a server may run at once, and lets
+                            that server give the bot its own name, avatar, banner and bio. Billing is
+                            handled by Paddle, our merchant of record.{ " " }
                             <a href="https://voicechannels.online"
                                 target="_blank"
                                 rel="noreferrer"

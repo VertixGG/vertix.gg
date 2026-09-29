@@ -345,3 +345,67 @@ model Subscription {
 
   @@index([status])
 }
+
+/// The bot profile a server chose for itself - name, avatar, banner and bio, shown in that server only.
+///
+/// What was asked for, not what is showing: whether it is on the bot right now is `GuildBrandingState`,
+/// kept per application, because two bots read this database (see "Running Instances" in AGENTS.md)
+/// and each applies a profile to its own member.
+///
+/// A null field is the bot's own. Removing a profile saves one with every field null, so the bot takes
+/// its own name and face back through the same path that set them.
+model GuildBranding {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId          String   @unique
+  // ---
+  nick             String?
+  bio              String?
+  /// `data:image/…;base64,` - checked on the way in and again before it is handed to discord.
+  avatar           String?
+  banner           String?
+  // ---
+  /// Raised on every save, so a bot can tell the profile it applied from one saved since.
+  revision         Int      @default(0)
+  /// The discord user who last saved it.
+  updatedByUserId  String?
+
+  // ---
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+/// What one bot has put on its own member in a server, from `GuildBranding`.
+///
+/// One row per server per application, because the database is shared by two bots and each only ever
+/// touches its own - a bot never undoes, or counts as done, what the other one applied.
+model GuildBrandingState {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId          String
+  applicationId    String
+  // ---
+  /// The `GuildBranding.revision` on the bot now, or null when nothing of it is.
+  appliedRevision  Int?
+  appliedAt        DateTime?
+  /// Whether the name on the bot is one this set, so taking the profile away knows to give it back.
+  appliedNick      Boolean   @default(false)
+  /// The nickname the bot had before a profile named it - restored when the profile stops naming it.
+  previousNick     String?
+  /// The name - the profile's, or the one it replaced - still has to be set, and is waiting for the
+  /// Change Nickname permission. The rest of the profile is applied.
+  nickPending      Boolean   @default(false)
+  // ---
+  lastError        String?
+  lastAttemptAt    DateTime?
+  /// A revision discord refused as invalid. A sweep does not push it again - only a new save does -
+  /// so a refused profile is not retried every few minutes against the server's cooldown.
+  refusedRevision  Int?
+
+  // ---
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([guildId, applicationId])
+  @@index([applicationId])
+}

@@ -273,6 +273,35 @@ exports.Prisma.SubscriptionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.GuildBrandingScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  nick: 'nick',
+  bio: 'bio',
+  avatar: 'avatar',
+  banner: 'banner',
+  revision: 'revision',
+  updatedByUserId: 'updatedByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.GuildBrandingStateScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  applicationId: 'applicationId',
+  appliedRevision: 'appliedRevision',
+  appliedAt: 'appliedAt',
+  appliedNick: 'appliedNick',
+  previousNick: 'previousNick',
+  nickPending: 'nickPending',
+  lastError: 'lastError',
+  lastAttemptAt: 'lastAttemptAt',
+  refusedRevision: 'refusedRevision',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -311,7 +340,9 @@ exports.Prisma.ModelName = {
   UserChannelData: 'UserChannelData',
   AIChannelPrompt: 'AIChannelPrompt',
   AICaptchaChallenge: 'AICaptchaChallenge',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  GuildBranding: 'GuildBranding',
+  GuildBrandingState: 'GuildBrandingState'
 };
 
 /**

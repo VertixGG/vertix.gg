@@ -296,4 +296,49 @@ describe( "VertixBot/Services/Entitlement", () => {
             expect( await service.isMasterChannelCovered( GUILD_ID, "a" ) ).toBe( true );
         } );
     } );
+
+    describe( "canBrand()", () => {
+        it( "should let a server paying for Pro give the bot its own profile", async() => {
+            // Act.
+            const { service } = await makeService( {
+                subscription: { priceId: "pri_pro", status: "active", currentPeriodEnd: daysFromNow( 10 ) }
+            } );
+
+            // Assert.
+            await expect( service.canBrand( GUILD_ID ) ).resolves.toBe( true );
+        } );
+
+        it( "should not let a server that was only granted generators brand the bot", async() => {
+            // Act - a grant bigger than anything, and nothing paid for.
+            const { service } = await makeService( { granted: 50 } );
+
+            // Assert.
+            await expect( service.canBrand( GUILD_ID ) ).resolves.toBe( false );
+        } );
+
+        it( "should stop once the month a cancelled subscription paid for is up", async() => {
+            // Act.
+            const { service, world } = await makeService( {
+                subscription: { priceId: "pri_pro", status: "canceled", currentPeriodEnd: daysFromNow( 10 ) }
+            } );
+
+            const whilePaidUp = await service.canBrand( GUILD_ID );
+
+            world.subscription = { priceId: "pri_pro", status: "canceled", currentPeriodEnd: daysFromNow( -1 ) };
+
+            // Assert.
+            expect( whilePaidUp ).toBe( true );
+            await expect( service.canBrand( GUILD_ID ) ).resolves.toBe( false );
+        } );
+
+        it( "should not be bought by a retired price", async() => {
+            // Act.
+            const { service } = await makeService( {
+                subscription: { priceId: "pri_retired_ultimate", status: "active", currentPeriodEnd: daysFromNow( 10 ) }
+            } );
+
+            // Assert.
+            await expect( service.canBrand( GUILD_ID ) ).resolves.toBe( false );
+        } );
+    } );
 } );

@@ -131,3 +131,102 @@ describe( "VertixBot/Services/ManagementIPC/config limits", () => {
         await expect( read() ).resolves.toMatchObject( { maxActiveDynamicChannels: 35 } );
     } );
 } );
+
+/**
+ * Stands up the router over a branding service that records what it was asked.
+ */
+async function makeBrandingRouter() {
+    await TestWithServiceLocatorMock.withUIServiceMock();
+
+    const asked: string[] = [];
+
+    const { ManagementIPCService } = await import( "@vertix.gg/bot/src/services/management-ipc-service" );
+
+    const service = Object.create( ManagementIPCService.prototype ) as InstanceType<typeof ManagementIPCService>;
+
+    Object.assign( service, {
+        logger: { log: () => undefined, warn: () => undefined, error: () => undefined },
+        services: {
+            guildBrandingService: {
+                getStatus: async( guildId: string ) => {
+                    asked.push( `status:${ guildId }` );
+
+                    return { canBrand: true };
+                },
+                apply: async( guildId: string ) => {
+                    asked.push( `apply:${ guildId }` );
+
+                    return { outcome: "applied" };
+                },
+                reconcileGuild: async( guildId: string ) => {
+                    asked.push( `reconcile:${ guildId }` );
+                }
+            }
+        }
+    } );
+
+    // Private, and reached the way a test reaches one - the transport is what calls these.
+    const request = ( action: string ) => service[ "handleIPCRequest" ]( {
+        id: "request-1",
+        payload: { action, guildId: GUILD_ID }
+    } as Parameters<typeof service[ "handleIPCRequest" ]>[ 0 ] );
+
+    const message = ( action: string ) => service[ "handleIPCMessage" ]( {
+        payload: { action, data: { guildId: GUILD_ID } }
+    } as Parameters<typeof service[ "handleIPCMessage" ]>[ 0 ] );
+
+    return { asked, request, message };
+}
+
+/**
+ * The dashboard's questions about a server's bot profile reach the branding service - on the shard
+ * that holds the server, and on no other.
+ */
+describe( "VertixBot/Services/ManagementIPC/branding", () => {
+    afterEach( () => {
+        jest.restoreAllMocks();
+
+        delete process.env.SHARD_COUNT;
+        delete process.env.SHARD_IDS;
+    } );
+
+    it( "should route the status and the apply to the branding service", async() => {
+        // Arrange.
+        const { asked, request } = await makeBrandingRouter();
+
+        // Act.
+        await request( "get_guild_branding_status" );
+        await request( "apply_guild_branding" );
+
+        // Assert.
+        expect( asked ).toEqual( [ `status:${ GUILD_ID }`, `apply:${ GUILD_ID }` ] );
+    } );
+
+    it( "should decline an apply for a guild another shard holds", async() => {
+        // Arrange - the guild is on shard 1, and this process runs shard 0.
+        process.env.SHARD_COUNT = "2";
+        process.env.SHARD_IDS = "0";
+
+        const { IPC_NO_RESPONSE } = await import( "@vertix.gg/base/src/modules/ipc/ipc-service" );
+
+        const { asked, request } = await makeBrandingRouter();
+
+        // Act.
+        const answer = await request( "apply_guild_branding" );
+
+        // Assert - only the shard holding the guild answers, so exactly one bot pushes the profile.
+        expect( answer ).toBe( IPC_NO_RESPONSE );
+        expect( asked ).toEqual( [] );
+    } );
+
+    it( "should hand the webhook's reconcile to the branding service", async() => {
+        // Arrange.
+        const { asked, message } = await makeBrandingRouter();
+
+        // Act.
+        await message( "reconcile_guild_branding" );
+
+        // Assert.
+        expect( asked ).toEqual( [ `reconcile:${ GUILD_ID }` ] );
+    } );
+} );

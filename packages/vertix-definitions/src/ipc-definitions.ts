@@ -1,5 +1,6 @@
 import type { GetScalingChannelInfoRequest } from "@vertix.gg/definitions/src/scaling-channel-ipc-definitions";
 import type { GetDynamicChannelInfoRequest } from "@vertix.gg/definitions/src/dynamic-channel-ipc-definitions";
+import type { TGuildBrandingApplyOutcome } from "@vertix.gg/definitions/src/guild-branding-definitions";
 
 export const IPC_CHANNELS = {
     MANAGEMENT: "vertix:management",
@@ -12,7 +13,9 @@ export const IPC_REQUEST_ACTIONS = {
     GET_DYNAMIC_CHANNEL_INFO: "get_dynamic_channel_info",
     GET_GUILD_OPTIONS: "get_guild_options",
     GET_CONFIG_LIMITS: "get_config_limits",
-    GET_GENERATOR_DEFAULTS: "get_generator_defaults"
+    GET_GENERATOR_DEFAULTS: "get_generator_defaults",
+    GET_GUILD_BRANDING_STATUS: "get_guild_branding_status",
+    APPLY_GUILD_BRANDING: "apply_guild_branding"
 } as const;
 
 /**
@@ -134,6 +137,74 @@ export interface GetConfigLimitsResponse {
     maxActiveDynamicChannels: number;
 }
 
+/**
+ * Where a server's bot profile stands, asked of the bot.
+ *
+ * Asked rather than worked out by the api, for the same reason the allowance is: whether a server
+ * may brand is the entitlement service's answer, and only the process in the server can say whether
+ * the bot is there and what it is allowed to change.
+ */
+export interface GetGuildBrandingStatusRequest {
+    action: typeof IPC_REQUEST_ACTIONS.GET_GUILD_BRANDING_STATUS;
+    guildId: string;
+}
+
+export interface GetGuildBrandingStatusResponse {
+    /** Whether the server pays for a plan that includes it. */
+    canBrand: boolean;
+
+    /** Whether the bot is in the server at all - nothing can be applied where it is not. */
+    isBotInGuild: boolean;
+
+    /**
+     * Whether the bot may change its own nickname there.
+     *
+     * Not part of the invite, so it is whatever the server's roles give it. Without it the name is
+     * the one thing that cannot be applied; the avatar, banner and bio need no permission.
+     */
+    canChangeNickname: boolean;
+
+    /**
+     * Whether a name is still waiting to be set - the profile's, or the one it replaced - because the
+     * bot could not change its nickname when the rest was applied. Set once it may.
+     */
+    nickPending: boolean;
+
+    /** The saved profile revision this bot last applied, or null if it has not applied one. */
+    appliedRevision: number | null;
+
+    /** When it last applied one, as an iso string. */
+    appliedAt: string | null;
+
+    /** What discord said the last time it refused, or null. */
+    lastError: string | null;
+}
+
+/**
+ * Put a server's saved profile on the bot now.
+ *
+ * The profile is not in the request - the bot reads it from the database. An image can be the better
+ * part of a megabyte, and it has no business crossing redis or being signed twice to get somewhere
+ * it can be read from directly.
+ */
+export interface ApplyGuildBrandingRequest {
+    action: typeof IPC_REQUEST_ACTIONS.APPLY_GUILD_BRANDING;
+    guildId: string;
+}
+
+export interface ApplyGuildBrandingResponse {
+    outcome: TGuildBrandingApplyOutcome;
+
+    /** For a cooldown: how long until the next save can be applied. */
+    retryAfterMs?: number;
+
+    /** True when the name was left out because the bot may not change its nickname there. */
+    skippedNick?: boolean;
+
+    /** Discord's own words, for a refusal. */
+    message?: string;
+}
+
 export interface IPCDiscordChannelInfo {
     id: string;
     name: string;
@@ -153,4 +224,6 @@ export type IPCManagementRequestPayload =
     | GetDynamicChannelInfoRequest
     | GetGuildOptionsRequest
     | GetConfigLimitsRequest
-    | GetGeneratorDefaultsRequest;
+    | GetGeneratorDefaultsRequest
+    | GetGuildBrandingStatusRequest
+    | ApplyGuildBrandingRequest;

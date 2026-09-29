@@ -13,7 +13,7 @@ import type { TDiscordInvitePermissionsType } from "@vertix.gg/definitions/src/d
  */
 export const onAddToServerClick = ( type: TDiscordInvitePermissionsType ) => {
     // @ts-ignore
-    window.gtag( "event", "conversion", { "send_to": "AW-18481089261" } );
+    window.gtag( "event", "conversion", { "send_to": "AW-18481089261/2vjUCJ7WyYkdEO2VvOxE" } );
 
     // @ts-ignore
     window.gtag( "event", "add_to_server", { type, "send_to": "G-B87MBQLL99" } );

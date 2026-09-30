@@ -19,7 +19,7 @@ export interface EventsState {
     channels: GuildDiscordChannel[] | null;
     /** The voice and stage channels an event can be held in, or null when Discord could not be asked. */
     voiceChannels: GuildDiscordVoiceChannel[] | null;
-    /** The roles Events can ping - every one but @everyone - or null when Discord could not be asked. */
+    /** The roles Events can ping - all but @everyone and the managed ones - or null when Discord could not be asked. */
     roles: GuildDiscordRole[] | null;
     isLoading: boolean;
     /** The load answered nothing - told apart from still waiting for it. */

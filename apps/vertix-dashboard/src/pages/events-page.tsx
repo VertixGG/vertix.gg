@@ -111,13 +111,14 @@ const EventsContentComponent: DCommandFunctionComponent<EventsContentProps, Even
                         <Loader2 className="w-8 h-8 text-text-muted animate-spin" />
                     </div>
                 ) : (
-                    <div className="max-w-6xl space-y-6">
-                        <div className="grid gap-6 items-start lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
+                    <div className="max-w-7xl space-y-6">
+                        { /* Side by side only from `xl`, where the column beside the settings is wide enough
+                             for a Discord message; narrower, the explanation comes first, across the page. */ }
+                        <div className="grid gap-6 items-start xl:grid-cols-[minmax(0,1fr)_600px]">
                             <EventsSettings />
 
-                            { /* First on a narrow screen - what Events is, before the settings for it. Beside them
-                                 it stays in view, and scrolls on its own when taller than the window. */ }
-                            <aside className="order-first lg:order-none lg:sticky lg:top-0 lg:max-h-[calc(100vh-11rem)] lg:overflow-y-auto">
+                            { /* Beside the settings it stays in view, and scrolls on its own when taller than the window. */ }
+                            <aside className="order-first xl:order-none xl:sticky xl:top-0 xl:max-h-[calc(100vh-11rem)] xl:overflow-y-auto">
                                 <EventsExplainer />
                             </aside>
                         </div>

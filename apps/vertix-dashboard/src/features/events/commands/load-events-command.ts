@@ -65,8 +65,11 @@ export class LoadEventsCommand extends CommandBase<EventsState, { guildId: strin
                     ? options.textChannels.filter( ( channel ) => ! channel.isAnnouncement )
                     : null,
                 voiceChannels: Array.isArray( options?.voiceChannels ) ? options.voiceChannels : null,
-                // `@everyone` carries the server's own id, and is not a role a ping can name.
-                roles: Array.isArray( options?.roles ) ? options.roles.filter( ( role ) => role.id !== args.guildId ) : null,
+                // `@everyone` carries the server's own id and is not a role a ping can name, and a role
+                // Discord or an app manages - the bot's own, say - is nobody's to be pinged for an event.
+                roles: Array.isArray( options?.roles )
+                    ? options.roles.filter( ( role ) => role.id !== args.guildId && ! role.managed )
+                    : null,
                 runs: page?.runs ?? [],
                 nextCursor: page?.nextCursor ?? null,
                 isLoading: false

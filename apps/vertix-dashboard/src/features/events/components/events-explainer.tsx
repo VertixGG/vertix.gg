@@ -43,6 +43,10 @@ export function EventsExplainer() {
 
     const [ previewState, setPreviewState ] = useState<TEventsPreviewState>( EVENTS_PREVIEW_STATES.CHECK_IN );
 
+    // The step pressed, apart from the preview it shows: two steps show the same board, and only the
+    // one pressed should light up. A tab shows the first step with its preview, or none at all.
+    const [ shownStepIndex, setShownStepIndex ] = useState<number | null>( 0 );
+
     if ( ! settings ) {
         return null;
     }
@@ -54,6 +58,18 @@ export function EventsExplainer() {
             subRole: findName( roles, settings.subRoleId )
         },
         steps = buildEventsExampleSteps( settings, names );
+
+    const showStep = ( index: number ) => {
+        setPreviewState( steps[ index ].preview );
+        setShownStepIndex( index );
+    };
+
+    const showTab = ( state: TEventsPreviewState ) => {
+        const firstStepIndex = steps.findIndex( ( step ) => step.preview === state );
+
+        setPreviewState( state );
+        setShownStepIndex( -1 === firstStepIndex ? null : firstStepIndex );
+    };
 
     return (
         <div className="space-y-5 min-w-0">
@@ -67,7 +83,7 @@ export function EventsExplainer() {
 
                 <ol className="list-none pl-0 mb-4 space-y-1">
                     { steps.map( ( step, index ) => {
-                        const isShown = step.preview === previewState;
+                        const isShown = index === shownStepIndex;
 
                         return (
                             <li key={ step.title } className="relative">
@@ -77,7 +93,7 @@ export function EventsExplainer() {
 
                                 <button
                                     type="button"
-                                    onClick={ () => setPreviewState( step.preview ) }
+                                    onClick={ () => showStep( index ) }
                                     className={ `w-full text-left flex gap-3 rounded-md px-1 py-1.5 transition-colors
                                         ${ isShown ? "bg-surface-elevated" : "hover:bg-surface-hover" }` }
                                 >
@@ -129,7 +145,7 @@ export function EventsExplainer() {
                                 type="button"
                                 role="tab"
                                 aria-selected={ isShown }
-                                onClick={ () => setPreviewState( tab.state ) }
+                                onClick={ () => showTab( tab.state ) }
                                 className={ `px-2.5 py-1 rounded-md text-xs transition-colors ${ look }` }
                             >
                                 { tab.label }

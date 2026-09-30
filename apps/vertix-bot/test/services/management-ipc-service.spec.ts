@@ -244,18 +244,18 @@ async function makeEventsRouter() {
         logger: { log: () => undefined, warn: () => undefined, error: () => undefined },
         services: {
             guildEventsService: {
-                getStatus: ( guildId: string, channelId: string | null ) => {
-                    asked.push( `${ guildId }:${ channelId }` );
+                getStatus: ( guildId: string, channelIds: string[], roleIds: string[] ) => {
+                    asked.push( `${ guildId }:${ channelIds.join( "," ) }:${ roleIds.join( "," ) }` );
 
-                    return { applicationId: "900000000000000001", isBotInGuild: true, missingPermissions: [] };
+                    return { applicationId: "900000000000000001", isBotInGuild: true, channels: {}, roles: {} };
                 }
             }
         }
     } );
 
-    const request = ( channelId: string | null ) => service[ "handleIPCRequest" ]( {
+    const request = ( channelIds: string[], roleIds: string[] = [] ) => service[ "handleIPCRequest" ]( {
         id: "request-1",
-        payload: { action: "get_guild_events_status", guildId: GUILD_ID, channelId }
+        payload: { action: "get_guild_events_status", guildId: GUILD_ID, channelIds, roleIds }
     } as Parameters<typeof service[ "handleIPCRequest" ]>[ 0 ] );
 
     return { asked, request };
@@ -273,16 +273,16 @@ describe( "VertixBot/Services/ManagementIPC/events", () => {
         delete process.env.SHARD_IDS;
     } );
 
-    it( "should ask the Events service about the channel being picked", async() => {
+    it( "should ask the Events service about the channels and roles being picked", async() => {
         // Arrange.
         const { asked, request } = await makeEventsRouter();
 
         // Act.
-        const answer = await request( "850000000000000001" );
+        const answer = await request( [ "850000000000000001", "850000000000000002" ], [ "400000000000000001" ] );
 
         // Assert.
         expect( answer ).toMatchObject( { applicationId: "900000000000000001", isBotInGuild: true } );
-        expect( asked ).toEqual( [ `${ GUILD_ID }:850000000000000001` ] );
+        expect( asked ).toEqual( [ `${ GUILD_ID }:850000000000000001,850000000000000002:400000000000000001` ] );
     } );
 
     it( "should leave a guild another shard holds to that shard", async() => {
@@ -295,7 +295,7 @@ describe( "VertixBot/Services/ManagementIPC/events", () => {
         const { asked, request } = await makeEventsRouter();
 
         // Act.
-        const answer = await request( null );
+        const answer = await request( [] );
 
         // Assert.
         expect( answer ).toBe( IPC_NO_RESPONSE );

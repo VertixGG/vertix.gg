@@ -1,12 +1,55 @@
 import path from "path";
 
+import fs from "node:fs/promises";
+import { createReadStream } from "node:fs";
+
 import { createRequire } from "module";
 
 import { defineConfig, loadEnv } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 
+import type { Plugin } from "vite";
+
 const require = createRequire( import.meta.url );
+
+/** Where `@vertix.gg/discord-ui` reads the bot's screens from - its own fixed address. */
+const UI_COMPONENTS_URL_PATH = "/exports/ui/components.json";
+
+/**
+ * Serves the bot's exported screens at the address the Discord previews read them from, and puts
+ * them beside the build.
+ *
+ * Only the one file the previews read: the Events page draws the board the bot posts, from the same
+ * export the website draws its guides from. Built into `dist/` so the deploy's rsync carries it - a
+ * dashboard deployed from a commit shows that commit's screens.
+ */
+function uiComponentsPlugin(): Plugin {
+    const sourcePath = path.resolve( __dirname, "../../exports/ui/components.json" );
+
+    let outDir = "";
+
+    return {
+        name: "vertix:dashboard-ui-components",
+        configResolved( config ) {
+            outDir = path.resolve( config.root, config.build.outDir );
+        },
+        configureServer( server ) {
+            server.middlewares.use( UI_COMPONENTS_URL_PATH, ( _request, response ) => {
+                response.setHeader( "Content-Type", "application/json; charset=utf-8" );
+                response.setHeader( "Cache-Control", "no-cache" );
+
+                createReadStream( sourcePath ).pipe( response );
+            } );
+        },
+        async closeBundle() {
+            const targetPath = path.join( outDir, UI_COMPONENTS_URL_PATH );
+
+            await fs.mkdir( path.dirname( targetPath ), { recursive: true } );
+            await fs.copyFile( sourcePath, targetPath );
+        }
+    };
+}
 
 export default defineConfig( ( { mode } ) => {
     const rootEnv = loadEnv( mode, path.resolve( __dirname, "../.." ), "" );
@@ -36,7 +79,7 @@ export default defineConfig( ( { mode } ) => {
     };
 
     return {
-        plugins: [ react(), tailwindcss() ],
+        plugins: [ react(), tailwindcss(), uiComponentsPlugin() ],
         resolve: {
             alias: [
                 {

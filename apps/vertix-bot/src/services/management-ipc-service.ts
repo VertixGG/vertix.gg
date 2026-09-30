@@ -25,7 +25,7 @@ import { ownsGuild, ownsSingletonWork } from "@vertix.gg/bot/src/definitions/sha
 
 import type { EntitlementService } from "@vertix.gg/bot/src/services/entitlement-service";
 
-import type { NewsChannel, TextChannel } from "discord.js";
+import type { NewsChannel, StageChannel, TextChannel, VoiceChannel } from "discord.js";
 
 import type { IPCService, IPCMessage, IPCRequest } from "@vertix.gg/base/src/modules/ipc";
 
@@ -223,7 +223,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function getGuildOptions() :: The roles and text channels of a guild the bot is in.
+     * Function getGuildOptions() :: The roles, text channels and voice channels of a guild the bot is in.
      *
      * Read from the cache the client already keeps, so the dashboard's pickers cost nothing and
      * work regardless of which application the api's own token belongs to.
@@ -234,7 +234,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
         if ( !guild ) {
             this.logger.warn( this.getGuildOptions, `Guild not found: ${ guildId }` );
 
-            return { roles: [], textChannels: [] };
+            return { roles: [], textChannels: [], voiceChannels: [] };
         }
 
         return {
@@ -260,7 +260,8 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                         color: role.color,
                         managed: role.managed,
                         assignable,
-                        reason
+                        reason,
+                        mentionable: role.mentionable
                     };
                 } ),
 
@@ -272,6 +273,17 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                     id: channel.id,
                     name: channel.name,
                     isAnnouncement: ChannelType.GuildAnnouncement === channel.type
+                } ) ),
+
+            // Where a scheduled event can be held - what Events can be limited to.
+            voiceChannels: guild.channels.cache
+                .filter( ( channel ): channel is VoiceChannel | StageChannel =>
+                    ChannelType.GuildVoice === channel.type || ChannelType.GuildStageVoice === channel.type )
+                .sort( ( a, b ) => a.position - b.position )
+                .map( ( channel ) => ( {
+                    id: channel.id,
+                    name: channel.name,
+                    isStage: ChannelType.GuildStageVoice === channel.type
                 } ) )
         };
     }
@@ -377,7 +389,7 @@ export class ManagementIPCService extends ServiceWithDependenciesBase<{
                 return this.services.guildBrandingService.apply( payload.guildId );
 
             case IPC_REQUEST_ACTIONS.GET_GUILD_EVENTS_STATUS:
-                return this.services.guildEventsService.getStatus( payload.guildId, payload.channelId );
+                return this.services.guildEventsService.getStatus( payload.guildId, payload.channelIds, payload.roleIds );
 
             default:
                 throw new Error( `Unknown request action: ${ ( payload as IPCManagementRequestPayload ).action }` );

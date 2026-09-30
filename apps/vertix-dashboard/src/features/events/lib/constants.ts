@@ -15,7 +15,10 @@ export const EVENTS_ERROR_MESSAGES: Record<string, string> = {
     [ GUILD_EVENTS_ERRORS.POST_CHANNEL_FORBIDDEN ]:
         "The bot cannot post in that channel. It needs View Channel, Send Messages and Embed Links there.",
     [ GUILD_EVENTS_ERRORS.EVENT_CHANNEL_FORBIDDEN ]:
-        "The bot could not see an event's voice channel, so it could not check anybody in. Give it View Channel there."
+        "The bot could not see an event's voice channel, so it could not check anybody in. Give it View Channel there.",
+    [ GUILD_EVENTS_ERRORS.LOG_CHANNEL_MISSING ]: "The channel the attendance is copied to is gone - pick another below.",
+    [ GUILD_EVENTS_ERRORS.LOG_CHANNEL_FORBIDDEN ]:
+        "The bot could not post the attendance copy. It needs View Channel, Send Messages and Embed Links in that channel."
 };
 
 /** What a run's phase is called in the history. */

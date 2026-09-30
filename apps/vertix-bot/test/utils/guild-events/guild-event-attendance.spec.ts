@@ -160,6 +160,35 @@ describe( "VertixBot/Utils/GuildEventAttendance", () => {
             expect( lists.walkIns.lines ).toEqual( [ "<@walk-in> · 0:01" ] );
         } );
 
+        it( "should hold a finished attendance to the least time in voice, and count a short visit as not coming", () => {
+            // Arrange.
+            const attendees: IGuildEventAttendeeState[] = [
+                { ... attendance.createAttendee( "stayed", true ), checkedInAt: NOW, voiceMs: 5 * MINUTE },
+                { ... attendance.createAttendee( "looked-in", true ), checkedInAt: NOW, voiceMs: 4 * MINUTE },
+                { ... attendance.createAttendee( "passed-by" ), checkedInAt: NOW, voiceMs: MINUTE }
+            ];
+
+            // Act.
+            const lists = attendance.buildLists( attendees, [ "stayed", "looked-in" ], NOW, true, 5 * MINUTE );
+
+            // Assert - exactly the least time counts; a walk-in who only passed by is nobody.
+            expect( lists.onTime.lines ).toEqual( [ "<@stayed> · 0:05" ] );
+            expect( lists.noShow.lines ).toEqual( [ "<@looked-in>" ] );
+            expect( lists.walkIns.count ).toBe( 0 );
+        } );
+
+        it( "should not hold a board still going to the least time - nobody's time is final yet", () => {
+            // Arrange.
+            const attendees = [ { ... attendance.createAttendee( "just-came", true ), checkedInAt: NOW, sessionStartedAt: NOW } ];
+
+            // Act.
+            const lists = attendance.buildLists( attendees, [ "just-came" ], NOW, false, 5 * MINUTE );
+
+            // Assert.
+            expect( lists.onTime.lines ).toEqual( [ "<@just-came>" ] );
+            expect( lists.noShow.count ).toBe( 0 );
+        } );
+
         it( "should list whoever is in, and who on the roster is not yet, while check-in is open", () => {
             // Arrange.
             const attendees = [ { ... attendance.createAttendee( "in" ), checkedInAt: NOW, sessionStartedAt: NOW } ];

@@ -39,6 +39,8 @@ export interface IGuildEventBoardLists {
 
 const LINE_SEPARATOR = " · ";
 
+const MS_PER_SECOND = 1000;
+
 /**
  * Who came to a run, when, and for how long - the arithmetic of it, kept apart from anything that
  * reads or writes, so each rule can be pinned down on its own.
@@ -199,12 +201,16 @@ export class GuildEventAttendance extends InitializeBase {
      *
      * `withTimes` is for the attendance a finished run ends as. A board still going leaves the times
      * out: they would change the text every minute, and so the message with it.
+     *
+     * `minVoiceMs` is the least time in voice that counts as having come, and it is only held to once
+     * the run is over: until then nobody's time is final, and somebody who just arrived is there.
      */
     public buildLists(
         attendees: Iterable<IGuildEventAttendeeState>,
         rosterIds: Iterable<string>,
         now: number,
-        withTimes: boolean
+        withTimes: boolean,
+        minVoiceMs = 0
     ): IGuildEventBoardLists {
         const all = [ ... attendees ],
             byId = new Map( all.map( ( attendee ) => [ attendee.userId, attendee ] ) ),
@@ -216,7 +222,9 @@ export class GuildEventAttendance extends InitializeBase {
             kindOf = ( attendee: IGuildEventAttendeeState ) => resolveGuildEventAttendanceKind( {
                 interested: attendee.interested,
                 hasCheckedIn: null !== attendee.checkedInAt,
-                late: attendee.late
+                late: attendee.late,
+                voiceSeconds: Math.floor( this.getVoiceMs( attendee, now ) / MS_PER_SECOND ),
+                minVoiceSeconds: withTimes ? Math.floor( minVoiceMs / MS_PER_SECOND ) : 0
             } ),
             plain = ( userId: string ) => `<@${ userId }>`,
             line = ( attendee: IGuildEventAttendeeState ) => withTimes

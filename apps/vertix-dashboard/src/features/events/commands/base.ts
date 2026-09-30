@@ -1,5 +1,7 @@
 import type {
     GuildDiscordChannel,
+    GuildDiscordRole,
+    GuildDiscordVoiceChannel,
     GuildEventRunDetail,
     GuildEventRunSummary,
     GuildEventsSettings,
@@ -15,6 +17,10 @@ export interface EventsState {
      * channels are left out: the bot does not post boards there.
      */
     channels: GuildDiscordChannel[] | null;
+    /** The voice and stage channels an event can be held in, or null when Discord could not be asked. */
+    voiceChannels: GuildDiscordVoiceChannel[] | null;
+    /** The roles Events can ping - every one but @everyone - or null when Discord could not be asked. */
+    roles: GuildDiscordRole[] | null;
     isLoading: boolean;
     /** The load answered nothing - told apart from still waiting for it. */
     loadFailed: boolean;
@@ -41,6 +47,8 @@ export const EVENTS_INITIAL_STATE: EventsState = {
     guildId: null,
     settings: null,
     channels: null,
+    voiceChannels: null,
+    roles: null,
     isLoading: false,
     loadFailed: false,
     pendingSetting: null,

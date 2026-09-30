@@ -519,6 +519,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/EventsDashboardButton",
+        "content": {
+          "label": "Más opciones"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/EventsChooseButton",
         "content": {
           "label": "Eventos"
@@ -4109,9 +4115,9 @@
             "{stateMoved}": "Movido"
           },
           "stateLine": {
-            "{stateCheckIn}": "Empieza <t:{startsAt}:F> (<t:{startsAt}:R>) en <#{voiceChannelId}>.\n¿Dijiste que venías? Únete al canal de voz para registrarte.",
+            "{stateCheckIn}": "Empieza <t:{startsAt}:F> (<t:{startsAt}:R>) en <#{voiceChannelId}>.\n¿Dijiste que venías? Únete al canal de voz para registrarte: antes de las <t:{lateAt}:t> cuenta como puntual.",
             "{stateRunning}": "Empezó <t:{startsAt}:R> en <#{voiceChannelId}>.\nEl registro está cerrado: quien de la lista llegue ahora, llega tarde.",
-            "{stateEnded}": "Se celebró <t:{startsAt}:F> en <#{voiceChannelId}>.\nLos tiempos son horas:minutos en voz.",
+            "{stateEnded}": "Se celebró <t:{startsAt}:F> en <#{voiceChannelId}>.\nLos tiempos son horas:minutos en voz.{minVoiceLine}",
             "{stateCanceled}": "Cancelado: estaba previsto para <t:{startsAt}:F>.",
             "{stateMoved}": "Movido a <t:{movedToAt}:F>. Antes de esa hora se publicará un nuevo tablero."
           },
@@ -4162,6 +4168,10 @@
           "walkInsMore": {
             "{moreShown}": "\n+{walkInsHidden} más",
             "{moreHidden}": ""
+          },
+          "minVoiceLine": {
+            "{minVoiceShown}": "\nMenos de {minVoiceMinutes} min en voz cuenta como no haber venido.",
+            "{minVoiceHidden}": ""
           }
         },
         "arrayOptions": {
@@ -4213,7 +4223,7 @@
       "name": "VertixBot/UI-General/EventsEmbed",
       "content": {
         "title": "📅  Eventos",
-        "description": "Cuando un evento programado en un canal de voz está por empezar, se publica un tablero de registro. Quien se marcó como **Me interesa** se registra uniéndose al canal de voz; diez minutos después del inicio, se marca a quien no vino, una publicación busca a alguien que ocupe su lugar, y el tablero termina como la lista de asistencia.\n\n**Eventos** {statusLine}\n**Publica en** {channelLine}\n**Publicaciones \"se busca suplente\"** {subPostsLine}{errorLine}\n\nElige el canal y luego actívalo. Un evento en un generador cuenta cada sala que abre.",
+        "description": "Cuando un evento programado en un canal de voz está por empezar, se publica un tablero de registro. Quien se marcó como **Me interesa** se registra uniéndose al canal de voz. Cuando se cierra el registro, se marca a quien no vino, una publicación busca a alguien que ocupe su lugar, y el tablero termina como la lista de asistencia.\n\n**Eventos** {statusLine}\n**Publica en** {channelLine}\n**Publicaciones \"se busca suplente\"** {subPostsLine}\n**Registro** abre {checkInLeadMinutes} min antes del inicio, cierra {lateAfterMinutes} min después{errorLine}\n\nElige el canal y luego actívalo. Los tiempos, las menciones, qué eventos cuentan y adónde se copia la asistencia están en **Más opciones**. Un evento en un generador cuenta cada sala que abre.",
         "options": {
           "statusLine": {
             "{enabledOn}": "🟢 Activado",
@@ -4231,7 +4241,9 @@
             "{errorNone}": "",
             "{errorPostChannelMissing}": "\n\n⚠️ El canal donde publica ya no existe: elige otro.",
             "{errorPostChannelForbidden}": "\n\n⚠️ El bot no puede publicar en ese canal. Necesita Ver canal, Enviar mensajes e Insertar enlaces allí.",
-            "{errorEventChannelForbidden}": "\n\n⚠️ El bot no pudo ver el canal de voz de un evento, así que no pudo registrar a nadie. Dale Ver canal allí."
+            "{errorEventChannelForbidden}": "\n\n⚠️ El bot no pudo ver el canal de voz de un evento, así que no pudo registrar a nadie. Dale Ver canal allí.",
+            "{errorLogChannelMissing}": "\n\n⚠️ El canal donde se copia la asistencia ya no existe: elige otro en Más opciones.",
+            "{errorLogChannelForbidden}": "\n\n⚠️ El bot no puede publicar la copia de la asistencia. Necesita Ver canal, Enviar mensajes e Insertar enlaces en ese canal."
           }
         }
       }

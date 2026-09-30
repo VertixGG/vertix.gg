@@ -83,6 +83,8 @@ export interface GuildDiscordRole {
      */
     assignable?: boolean;
     reason?: TRoleUnassignableReason;
+    /** Whether anybody may mention the role - what a ping of it needs, unless the bot may mention every role. */
+    mentionable?: boolean;
 }
 
 export interface GuildDiscordChannel {
@@ -92,13 +94,22 @@ export interface GuildDiscordChannel {
     isAnnouncement?: boolean;
 }
 
+/** A voice or stage channel - where a scheduled event can be held. */
+export interface GuildDiscordVoiceChannel {
+    id: string;
+    name: string;
+    isStage: boolean;
+}
+
 /**
- * What a generator's settings can point at - fetched from Discord, so the forms offer names
- * rather than asking for ids.
+ * What a server's settings can point at - fetched from Discord, so the forms offer names rather
+ * than asking for ids.
  */
 export interface GuildDiscordOptions {
     roles: GuildDiscordRole[];
     textChannels: GuildDiscordChannel[];
+    /** Absent from an api older than Events' channel limit. */
+    voiceChannels?: GuildDiscordVoiceChannel[];
 }
 
 export interface DynamicMasterChannelInfo {

@@ -2,6 +2,8 @@ import { ServiceLocator } from "@vertix.gg/base/src/modules/service/service-loca
 
 import { GuildEventSettingsModel } from "@vertix.gg/data/src/models/guild-event-settings-model";
 
+import { resolveGuildEventsSettings } from "@vertix.gg/definitions/src/guild-events-definitions";
+
 import { AdminExecutionAdapterBuilder } from "@vertix.gg/gui/src/builders/admin-execution-adapter-builder";
 
 import { EventsComponent } from "@vertix.gg/bot/src/ui/general/events/events-component";
@@ -27,14 +29,16 @@ type EventsInteractions =
  * the menu cannot preselect a channel discord no longer has.
  */
 async function readEventsArgs( guild: Guild ): Promise<UIArgs> {
-    const settings = await GuildEventSettingsModel.$.get( guild.id ),
-        channelId = settings?.channelId && guild.channels.cache.has( settings.channelId ) ? settings.channelId : null;
+    const settings = resolveGuildEventsSettings( await GuildEventSettingsModel.$.get( guild.id ) ),
+        channelId = settings.channelId && guild.channels.cache.has( settings.channelId ) ? settings.channelId : null;
 
     return {
-        eventsEnabled: !! settings?.enabled,
+        eventsEnabled: settings.enabled,
         eventsChannelId: channelId,
-        eventsSubPostsEnabled: settings?.subPostsEnabled ?? true,
-        eventsLastError: settings?.lastError ?? null
+        eventsSubPostsEnabled: settings.subPostsEnabled,
+        eventsCheckInLeadMinutes: settings.checkInLeadMinutes,
+        eventsLateAfterMinutes: settings.lateAfterMinutes,
+        eventsLastError: settings.lastError
     };
 }
 

@@ -28,6 +28,7 @@ export type TGuildEventRunPatch = Partial<Pick<PrismaBot.GuildEventRun,
     | "endedAt"
     | "checkpointAt"
     | "lastError"
+    | "minVoiceSeconds"
 >>;
 
 export type TGuildEventAttendeePatch = Partial<Pick<PrismaBot.GuildEventAttendee,

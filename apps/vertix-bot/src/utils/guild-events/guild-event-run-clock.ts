@@ -2,12 +2,9 @@ import { GuildScheduledEventStatus } from "discord.js";
 
 import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
-import {
-    GUILD_EVENT_RUN_PHASES,
-    GUILD_EVENTS_TIMINGS
-} from "@vertix.gg/definitions/src/guild-events-definitions";
+import { GUILD_EVENT_RUN_PHASES } from "@vertix.gg/definitions/src/guild-events-definitions";
 
-import type { TGuildEventRunPhase } from "@vertix.gg/definitions/src/guild-events-definitions";
+import type { IGuildEventsClockTimings, TGuildEventRunPhase } from "@vertix.gg/definitions/src/guild-events-definitions";
 
 /**
  * What the clock says a run should do next.
@@ -58,6 +55,9 @@ export interface IGuildEventClockRun {
  * start, a cancel, an end - and not the truth: a voice event is only active once a member presses
  * Start, which plenty of servers never do, and one nobody started is canceled by discord hours
  * after its time whether or not anybody came.
+ *
+ * How long each stretch lasts is the server's to set, so every decision is made against the
+ * timings it is handed rather than against constants.
  */
 export class GuildEventRunClock extends InitializeBase {
     private static instance: GuildEventRunClock;
@@ -78,16 +78,21 @@ export class GuildEventRunClock extends InitializeBase {
         super();
     }
 
-    public decide( now: number, event: IGuildEventClockEvent | null, run: IGuildEventClockRun | null ): TGuildEventClockAction {
+    public decide(
+        now: number,
+        event: IGuildEventClockEvent | null,
+        run: IGuildEventClockRun | null,
+        timings: IGuildEventsClockTimings
+    ): TGuildEventClockAction {
         if ( ! run ) {
-            return event && this.shouldOpen( now, event ) ? GUILD_EVENT_CLOCK_ACTIONS.OPEN : GUILD_EVENT_CLOCK_ACTIONS.NONE;
+            return event && this.shouldOpen( now, event, timings ) ? GUILD_EVENT_CLOCK_ACTIONS.OPEN : GUILD_EVENT_CLOCK_ACTIONS.NONE;
         }
 
         if ( GUILD_EVENT_RUN_PHASES.CHECK_IN !== run.phase && GUILD_EVENT_RUN_PHASES.RUNNING !== run.phase ) {
             return GUILD_EVENT_CLOCK_ACTIONS.NONE;
         }
 
-        if ( now >= run.occurrenceStartAt + GUILD_EVENTS_TIMINGS.RUN_MAX_MS ) {
+        if ( now >= run.occurrenceStartAt + timings.runMaxMs ) {
             return GUILD_EVENT_CLOCK_ACTIONS.END;
         }
 
@@ -104,14 +109,14 @@ export class GuildEventRunClock extends InitializeBase {
 
             // Over already, with people in it: freeze now, so the attendance it ends as says who
             // never came, and let the next look end it once the channels are empty.
-            if ( isOver || now >= run.occurrenceStartAt + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS ) {
+            if ( isOver || now >= run.occurrenceStartAt + timings.lateAfterMs ) {
                 return GUILD_EVENT_CLOCK_ACTIONS.FREEZE;
             }
 
             return GUILD_EVENT_CLOCK_ACTIONS.NONE;
         }
 
-        return this.decideWhileRunning( now, event, run, isOver );
+        return this.decideWhileRunning( now, event, run, isOver, timings );
     }
 
     /**
@@ -121,17 +126,17 @@ export class GuildEventRunClock extends InitializeBase {
      * way through, or the bot down across the start - would mark everybody not there that second as
      * never having come.
      */
-    private shouldOpen( now: number, event: IGuildEventClockEvent ) {
+    private shouldOpen( now: number, event: IGuildEventClockEvent, timings: IGuildEventsClockTimings ) {
         if ( GuildScheduledEventStatus.Scheduled !== event.status && GuildScheduledEventStatus.Active !== event.status ) {
             return false;
         }
 
-        if ( now >= event.scheduledStartAt + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS ) {
+        if ( now >= event.scheduledStartAt + timings.lateAfterMs ) {
             return false;
         }
 
         return GuildScheduledEventStatus.Active === event.status ||
-            now >= event.scheduledStartAt - GUILD_EVENTS_TIMINGS.CHECK_IN_LEAD_MS;
+            now >= event.scheduledStartAt - timings.checkInLeadMs;
     }
 
     private decideBeforeStart( event: IGuildEventClockEvent | null, run: IGuildEventClockRun ) {
@@ -153,7 +158,13 @@ export class GuildEventRunClock extends InitializeBase {
      * the event's own channel empties, and an event held at a generator has an empty channel all
      * along - everybody is in the rooms it opened.
      */
-    private decideWhileRunning( now: number, event: IGuildEventClockEvent | null, run: IGuildEventClockRun, isOver: boolean ) {
+    private decideWhileRunning(
+        now: number,
+        event: IGuildEventClockEvent | null,
+        run: IGuildEventClockRun,
+        isOver: boolean,
+        timings: IGuildEventsClockTimings
+    ) {
         if ( null === run.emptySince ) {
             return GUILD_EVENT_CLOCK_ACTIONS.NONE;
         }
@@ -168,7 +179,7 @@ export class GuildEventRunClock extends InitializeBase {
 
         const emptyFrom = Math.max( run.emptySince, run.frozenAt ?? run.emptySince );
 
-        if ( now - emptyFrom >= GUILD_EVENTS_TIMINGS.EMPTY_END_AFTER_MS ) {
+        if ( now - emptyFrom >= timings.endAfterEmptyMs ) {
             return GUILD_EVENT_CLOCK_ACTIONS.END;
         }
 

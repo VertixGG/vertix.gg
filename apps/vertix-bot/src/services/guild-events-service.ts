@@ -25,7 +25,9 @@ import {
     GUILD_EVENT_RUN_PHASES,
     GUILD_EVENTS_ERRORS,
     GUILD_EVENTS_LIMITS,
-    GUILD_EVENTS_TIMINGS
+    GUILD_EVENTS_TIMINGS,
+    resolveGuildEventsSettings,
+    toGuildEventsClockTimings
 } from "@vertix.gg/definitions/src/guild-events-definitions";
 
 import { ownsGuild } from "@vertix.gg/bot/src/definitions/sharding";
@@ -40,10 +42,17 @@ import { GuildEventAttendance } from "@vertix.gg/bot/src/utils/guild-events/guil
 
 import { getMissingEventsChannelPermissions } from "@vertix.gg/bot/src/ui/general/events/events-channel-utils";
 
-import type { Collection, Guild, GuildScheduledEvent, TextChannel, VoiceBasedChannel } from "discord.js";
+import type {
+    Collection,
+    Guild,
+    GuildScheduledEvent,
+    MessageCreateOptions,
+    TextChannel,
+    VoiceBasedChannel
+} from "discord.js";
 
 import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
-import type { TGuildEventsError } from "@vertix.gg/definitions/src/guild-events-definitions";
+import type { IGuildEventsSettingsView, TGuildEventsError } from "@vertix.gg/definitions/src/guild-events-definitions";
 import type { GetGuildEventsStatusResponse } from "@vertix.gg/definitions/src/ipc-definitions";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type UIService from "@vertix.gg/gui/src/ui-service";
@@ -57,6 +66,11 @@ import type { IGuildEventAttendeeState } from "@vertix.gg/bot/src/utils/guild-ev
 import type { IGuildEventClockEvent } from "@vertix.gg/bot/src/utils/guild-events/guild-event-run-clock";
 
 const MS_PER_SECOND = 1000;
+
+const SECONDS_PER_MINUTE = 60;
+
+/** What a post pings, when it pings anybody: the mentions, and permission for exactly those to notify. */
+type TGuildEventsPing = Pick<MessageCreateOptions, "content" | "allowedMentions">;
 
 /**
  * A brace in an event's name would be read by the template engine as the start of a variable of
@@ -177,23 +191,34 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function getStatus() :: What the dashboard has to hear before pointing Events at a channel.
+     * Function getStatus() :: What the dashboard has to hear before pointing Events at a channel or a role.
      *
      * Which bot answered - a save from the dashboard makes it the one that runs Events in the server,
-     * as saving from its `/setup` would - and what it lacks to post in the channel asked about.
+     * as saving from its `/setup` would - what it lacks to post in each channel asked about, and
+     * whether a ping of each role asked about would notify anybody: a role nobody may mention is
+     * pinged in silence, unless the bot may mention every role.
      */
-    public getStatus( guildId: string, channelId: string | null ): GetGuildEventsStatusResponse {
+    public getStatus( guildId: string, channelIds: string[], roleIds: string[] ): GetGuildEventsStatusResponse {
         const client = this.services.appService.getClient(),
             guild = client.guilds.cache.get( guildId );
 
         if ( ! guild ) {
-            return { applicationId: client.user.id, isBotInGuild: false, missingPermissions: null };
+            return { applicationId: client.user.id, isBotInGuild: false, channels: {}, roles: {} };
         }
+
+        const canMentionEveryRole = !! guild.members.me?.permissions.has( PermissionFlagsBits.MentionEveryone );
 
         return {
             applicationId: client.user.id,
             isBotInGuild: true,
-            missingPermissions: channelId ? getMissingEventsChannelPermissions( guild, channelId ) : []
+            channels: Object.fromEntries( channelIds.map( ( channelId ) =>
+                [ channelId, getMissingEventsChannelPermissions( guild, channelId ) ]
+            ) ),
+            roles: Object.fromEntries( roleIds.map( ( roleId ) => {
+                const role = roleId !== guild.id ? guild.roles.cache.get( roleId ) : undefined;
+
+                return [ roleId, role ? { isPingable: role.mentionable || canMentionEveryRole } : null ];
+            } ) )
         };
     }
 
@@ -269,8 +294,9 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
     /**
      * Function restore() :: Pick up the runs this bot left open when it last stopped.
      *
-     * A run in a server the bot is no longer in, or past the longest a run may last, is closed in the
-     * database only - there is nowhere left to post, or nothing worth posting.
+     * A run in a server the bot is no longer in, or past the longest any run may last, is closed in
+     * the database only - there is nowhere left to post, or nothing worth posting. One past its own
+     * server's limit, but not past that, is ended by the first sweep, which posts its attendance.
      */
     private async restore() {
         const client = this.services.appService.getClient(),
@@ -291,7 +317,9 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
                 continue;
             }
 
-            GuildEventsManager.$.add( await this.loadRun( guild, row, now ) );
+            const settings = resolveGuildEventsSettings( await GuildEventSettingsModel.$.get( row.guildId ) );
+
+            GuildEventsManager.$.add( await this.loadRun( guild, row, settings, now ) );
         }
 
         if ( staleRunIds.length ) {
@@ -305,8 +333,8 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
      * A visit still open when the bot went down ends at the run's last checkpoint if the member is
      * gone now - when exactly they left cannot be known - and carries on if they are still there.
      */
-    private async loadRun( guild: Guild, row: PrismaBot.GuildEventRun, now: number ) {
-        const run = this.createRunState( row ),
+    private async loadRun( guild: Guild, row: PrismaBot.GuildEventRun, settings: IGuildEventsSettingsView, now: number ) {
+        const run = this.createRunState( row, settings ),
             checkpointAt = ( row.checkpointAt ?? row.updatedAt ).getTime();
 
         for ( const attendeeRow of await GuildEventRunModel.$.getAttendees( row.id ) ) {
@@ -342,9 +370,18 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
         return run;
     }
 
+    /**
+     * Function sweepGuild() :: Move on every run the server has open, and open the events now due.
+     *
+     * A server that limited Events to some channels gets runs only for events held in those - one
+     * already open when the limit changed runs to its end.
+     */
     private async sweepGuild( guild: Guild, settings: PrismaBot.GuildEventSettings, now: number ) {
+        const view = resolveGuildEventsSettings( settings ),
+            timings = toGuildEventsClockTimings( view );
+
         for ( const run of GuildEventsManager.$.getForGuild( guild.id ) ) {
-            await GuildEventsManager.$.chain( run.runId, () => this.tick( guild, settings, run, now ) ).catch( ( error ) => {
+            await GuildEventsManager.$.chain( run.runId, () => this.tick( guild, view, run, now ) ).catch( ( error ) => {
                 this.logger.error( this.sweepGuild, `Guild id: '${ guild.id }' - Run '${ run.runId }' could not be moved on`, error );
             } );
         }
@@ -356,23 +393,29 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
                 continue;
             }
 
+            if ( view.eventChannelIds.length && ! view.eventChannelIds.includes( event.channelId ?? "" ) ) {
+                continue;
+            }
+
             if ( GuildEventsManager.$.isDone( event.id, clockEvent.scheduledStartAt ) ) {
                 continue;
             }
 
-            if ( GUILD_EVENT_CLOCK_ACTIONS.OPEN !== GuildEventRunClock.$.decide( now, clockEvent, null ) ) {
+            if ( GUILD_EVENT_CLOCK_ACTIONS.OPEN !== GuildEventRunClock.$.decide( now, clockEvent, null, timings ) ) {
                 continue;
             }
 
-            await this.open( guild, settings, event, clockEvent.scheduledStartAt, now );
+            await this.open( guild, settings, view, event, clockEvent.scheduledStartAt, now );
         }
     }
 
     /**
      * Function tick() :: Move one open run on, as the clock says.
      */
-    private async tick( guild: Guild, settings: PrismaBot.GuildEventSettings, run: IGuildEventRunState, now: number ) {
+    private async tick( guild: Guild, view: IGuildEventsSettingsView, run: IGuildEventRunState, now: number ) {
         const event = guild.scheduledEvents.cache.get( run.scheduledEventId ) ?? null;
+
+        run.settings = view;
 
         if ( GuildScheduledEventStatus.Active === event?.status ) {
             run.wasActive = true;
@@ -392,9 +435,9 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
 
         const clockEvent = event ? this.toClockEvent( event ) : null;
 
-        switch ( GuildEventRunClock.$.decide( now, clockEvent, this.toClockRun( run ) ) ) {
+        switch ( GuildEventRunClock.$.decide( now, clockEvent, this.toClockRun( run ), toGuildEventsClockTimings( view ) ) ) {
             case GUILD_EVENT_CLOCK_ACTIONS.FREEZE:
-                await this.freeze( guild, settings, run, now );
+                await this.freeze( guild, run, now );
                 break;
 
             case GUILD_EVENT_CLOCK_ACTIONS.END:
@@ -423,6 +466,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
     private async open(
         guild: Guild,
         settings: PrismaBot.GuildEventSettings,
+        view: IGuildEventsSettingsView,
         event: GuildScheduledEvent,
         occurrenceStartAt: number,
         now: number
@@ -464,7 +508,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
         if ( ! isCreated ) {
             // Opened before a restart this process has not caught up with yet, or finished already.
             if ( GUILD_EVENT_RUN_PHASES.CHECK_IN === row.phase || GUILD_EVENT_RUN_PHASES.RUNNING === row.phase ) {
-                GuildEventsManager.$.add( await this.loadRun( guild, row, now ) );
+                GuildEventsManager.$.add( await this.loadRun( guild, row, view, now ) );
             } else {
                 GuildEventsManager.$.markDone( event.id, occurrenceStartAt );
             }
@@ -472,7 +516,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
             return;
         }
 
-        const run = this.createRunState( row );
+        const run = this.createRunState( row, view );
 
         this.debugger.log( this.open, `Guild id: '${ guild.id }' - Check-in opened for '${ event.name }'` );
 
@@ -488,17 +532,21 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
 
     /**
      * Function freeze() :: Stop following the roster, mark who never came, and ask for subs.
+     *
+     * Only once as many are missing as the server asks subs for at all - a server that minds only a
+     * short team, not one absence, sets that above one.
      */
-    private async freeze( guild: Guild, settings: PrismaBot.GuildEventSettings, run: IGuildEventRunState, now: number ) {
+    private async freeze( guild: Guild, run: IGuildEventRunState, now: number ) {
         await this.writeRoster( run );
 
-        const noShowCount = [ ... run.attendees.values() ].filter( ( attendee ) => attendee.noShow ).length;
+        const noShowCount = [ ... run.attendees.values() ].filter( ( attendee ) => attendee.noShow ).length,
+            { subPostsEnabled, subMinMissing } = run.settings;
 
         this.debugger.log( this.freeze, `Guild id: '${ run.guildId }' - Run '${ run.runId }' froze with ${ noShowCount } missing` );
 
         run.phase = GUILD_EVENT_RUN_PHASES.RUNNING;
         run.frozenAt = now;
-        run.subsNeeded = settings.subPostsEnabled
+        run.subsNeeded = subPostsEnabled && noShowCount >= subMinMissing
             ? GuildEventAttendance.$.countSubsNeeded( noShowCount, this.getFreeSeats( guild, run ) )
             : 0;
 
@@ -516,10 +564,12 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function end() :: Close every visit, turn the board into the attendance, and take the sub post down.
+     * Function end() :: Close every visit, turn the board into the attendance, copy it to the log
+     * channel, and take the sub post down.
      *
      * A run that ends before its roster froze - Events turned off during check-in - still marks who
-     * never came, so its attendance says the same as any other.
+     * never came, so its attendance says the same as any other. The least time in voice that counts
+     * is written on the run, so the history keeps saying what the board said.
      */
     private async end( run: IGuildEventRunState, now: number ) {
         await this.closeVisits( run, now );
@@ -532,12 +582,17 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
 
         run.phase = GUILD_EVENT_RUN_PHASES.ENDED;
 
-        await GuildEventRunModel.$.update( run.runId, { phase: GUILD_EVENT_RUN_PHASES.ENDED, endedAt: new Date( now ) } );
+        await GuildEventRunModel.$.update( run.runId, {
+            phase: GUILD_EVENT_RUN_PHASES.ENDED,
+            endedAt: new Date( now ),
+            minVoiceSeconds: run.settings.minVoiceMinutes * SECONDS_PER_MINUTE
+        } );
 
         const guild = this.getGuild( run.guildId );
 
         if ( guild ) {
             await this.editBoard( guild, run, GUILD_EVENT_BOARD_STATES.ENDED, now, null );
+            await this.postAttendanceCopy( guild, run, now );
             await this.deletePosted( guild, run, run.subPostMessageId );
         }
 
@@ -845,7 +900,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
         }
 
         const args = this.buildBoardArgs( guild, run, this.getBoardState( run ), now, null ),
-            message = await this.getAdapter( "VertixBot/UI-General/EventBoardAdapter" )?.send( channel, args ).catch( () => null );
+            message = await this.post( channel, "VertixBot/UI-General/EventBoardAdapter", args, this.getCheckInPing( guild, run ) );
 
         if ( ! message ) {
             await this.recordRunError( run, GUILD_EVENTS_ERRORS.POST_CHANNEL_FORBIDDEN );
@@ -868,7 +923,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
         }
 
         const args = this.buildSubPostArgs( guild, run ),
-            message = await this.getAdapter( "VertixBot/UI-General/EventNeedSubAdapter" )?.send( channel, args ).catch( () => null );
+            message = await this.post( channel, "VertixBot/UI-General/EventNeedSubAdapter", args, this.getSubPostPing( guild, run ) );
 
         if ( ! message ) {
             await this.recordRunError( run, GUILD_EVENTS_ERRORS.POST_CHANNEL_FORBIDDEN );
@@ -880,6 +935,100 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
         run.subPostHash = this.hash( args );
 
         await GuildEventRunModel.$.update( run.runId, { subPostMessageId: message.id } );
+    }
+
+    /**
+     * Function postAttendanceCopy() :: Post the finished attendance to the server's log channel too.
+     *
+     * A copy rather than the board itself: the board stays where members saw it, and the log is
+     * somewhere of the server's choosing - often one only its staff read. Not posted twice to the one
+     * channel, and a channel it cannot use is recorded for the settings screen rather than retried.
+     */
+    private async postAttendanceCopy( guild: Guild, run: IGuildEventRunState, now: number ) {
+        const { logChannelId } = run.settings;
+
+        if ( ! logChannelId || logChannelId === run.postChannelId ) {
+            return;
+        }
+
+        const channel = this.getPostChannel( guild, logChannelId );
+
+        if ( ! channel ) {
+            await GuildEventSettingsModel.$.markError( run.guildId, GUILD_EVENTS_ERRORS.LOG_CHANNEL_MISSING );
+
+            return;
+        }
+
+        const args = this.buildBoardArgs( guild, run, GUILD_EVENT_BOARD_STATES.ENDED, now, null ),
+            isAllowed = ! PermissionsManager.$.getMissingChannelPermissionsForBot( channel, DEFAULT_EVENTS_CHANNEL_BOT_PERMISSIONS ).length,
+            message = isAllowed ? await this.post( channel, "VertixBot/UI-General/EventBoardAdapter", args, null ) : null;
+
+        if ( ! message ) {
+            await GuildEventSettingsModel.$.markError( run.guildId, GUILD_EVENTS_ERRORS.LOG_CHANNEL_FORBIDDEN );
+        }
+    }
+
+    /**
+     * Function post() :: Post what an adapter draws, with the pings the post carries.
+     *
+     * Drawn and sent here rather than through the adapter's own `send()`, which has no room for a
+     * ping - the boards and posts carry no component that answers, so nothing the adapter would
+     * have kept about the message is ever asked for. Null when discord refused it.
+     */
+    private async post( channel: TextChannel, adapterName: string, args: UIArgs, ping: TGuildEventsPing | null ) {
+        const adapter = this.getAdapter( adapterName );
+
+        if ( ! adapter ) {
+            return null;
+        }
+
+        try {
+            return await channel.send( { ... await adapter.render( channel, args ), ... ping } );
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Function getCheckInPing() :: Who the board pings as check-in opens: the server's role, and -
+     * when it asked for that - everybody on the roster who is not there yet, by name.
+     */
+    private getCheckInPing( guild: Guild, run: IGuildEventRunState ) {
+        const { checkInRoleId, checkInPingInterested } = run.settings,
+            userIds = checkInPingInterested
+                ? [ ... run.rosterIds ]
+                    .filter( ( userId ) => null === ( run.attendees.get( userId )?.checkedInAt ?? null ) )
+                    .slice( 0, GUILD_EVENTS_LIMITS.PING_MEMBERS_MAX )
+                : [];
+
+        return this.toPing( this.getPingableRoleId( guild, checkInRoleId ), userIds );
+    }
+
+    private getSubPostPing( guild: Guild, run: IGuildEventRunState ) {
+        return this.toPing( this.getPingableRoleId( guild, run.settings.subRoleId ), [] );
+    }
+
+    /**
+     * Function getPingableRoleId() :: The role to ping, unless the server no longer has it.
+     */
+    private getPingableRoleId( guild: Guild, roleId: string | null ) {
+        return roleId && roleId !== guild.id && guild.roles.cache.has( roleId ) ? roleId : null;
+    }
+
+    /**
+     * Function toPing() :: The mentions a post opens with, allowed to notify exactly who they name.
+     */
+    private toPing( roleId: string | null, userIds: string[] ): TGuildEventsPing | null {
+        const mentions = [ ... ( roleId ? [ `<@&${ roleId }>` ] : [] ), ... userIds.map( ( userId ) => `<@${ userId }>` ) ];
+
+        if ( ! mentions.length ) {
+            return null;
+        }
+
+        return {
+            content: mentions.join( " " ),
+            allowedMentions: { roles: roleId ? [ roleId ] : [], users: userIds }
+        };
     }
 
     /**
@@ -1009,12 +1158,22 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
         movedToAt: number | null
     ): UIArgs {
         const isOpen = GUILD_EVENT_BOARD_STATES.CHECK_IN === boardState || GUILD_EVENT_BOARD_STATES.RUNNING === boardState,
-            lists = GuildEventAttendance.$.buildLists( run.attendees.values(), run.rosterIds, now, GUILD_EVENT_BOARD_STATES.ENDED === boardState );
+            { lateAfterMs } = toGuildEventsClockTimings( run.settings ),
+            minVoiceSeconds = run.settings.minVoiceMinutes * SECONDS_PER_MINUTE,
+            lists = GuildEventAttendance.$.buildLists(
+                run.attendees.values(),
+                run.rosterIds,
+                now,
+                GUILD_EVENT_BOARD_STATES.ENDED === boardState,
+                minVoiceSeconds * MS_PER_SECOND
+            );
 
         const args: UIArgs = {
             boardState,
             eventName: this.toDisplayName( run.name ),
             startsAt: Math.floor( run.occurrenceStartAt / MS_PER_SECOND ),
+            lateAt: Math.floor( ( run.occurrenceStartAt + lateAfterMs ) / MS_PER_SECOND ),
+            minVoiceMinutes: run.settings.minVoiceMinutes,
             voiceChannelId: run.voiceChannelId,
             joinUrl: isOpen ? this.getJoinChannel( guild, run )?.url ?? null : null,
             isJoinClosed: ! isOpen
@@ -1110,7 +1269,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
         };
     }
 
-    private createRunState( row: PrismaBot.GuildEventRun ): IGuildEventRunState {
+    private createRunState( row: PrismaBot.GuildEventRun, settings: IGuildEventsSettingsView ): IGuildEventRunState {
         return {
             runId: row.id,
             guildId: row.guildId,
@@ -1125,6 +1284,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
             subsNeeded: row.subsNeeded,
             frozenAt: row.frozenAt?.getTime() ?? null,
             lastError: row.lastError,
+            settings,
             rosterIds: new Set(),
             names: new Map(),
             attendees: new Map(),

@@ -1,7 +1,10 @@
 import { CommandBase } from "@zenflux/react-commander/command-base";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
-import { GUILD_EVENTS_DASHBOARD } from "@vertix.gg/definitions/src/guild-events-definitions";
+import {
+    GUILD_EVENTS_DASHBOARD,
+    resolveGuildEventsSettings
+} from "@vertix.gg/definitions/src/guild-events-definitions";
 
 import { EventsQuery } from "@vertix.gg/dashboard/src/features/events/query/events-query";
 
@@ -55,10 +58,15 @@ export class LoadEventsCommand extends CommandBase<EventsState, { guildId: strin
             }
 
             return this.setState( {
-                settings,
+                // Read through the shared rule, so an api older than a setting answers its default
+                // rather than leaving the screen with nothing to draw.
+                settings: resolveGuildEventsSettings( settings ),
                 channels: Array.isArray( options?.textChannels )
                     ? options.textChannels.filter( ( channel ) => ! channel.isAnnouncement )
                     : null,
+                voiceChannels: Array.isArray( options?.voiceChannels ) ? options.voiceChannels : null,
+                // `@everyone` carries the server's own id, and is not a role a ping can name.
+                roles: Array.isArray( options?.roles ) ? options.roles.filter( ( role ) => role.id !== args.guildId ) : null,
                 runs: page?.runs ?? [],
                 nextCursor: page?.nextCursor ?? null,
                 isLoading: false

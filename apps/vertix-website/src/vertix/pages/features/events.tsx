@@ -39,13 +39,13 @@ export default function EventsPage() {
                     <div className="col-span-12 md:col-span-6 lg:col-span-3">
                         <div className={ CARD }>
                             <h3 className="text-h5 text-vc-azure-soft">Check-in board</h3>
-                            <p className="text-vc-ice-dim mb-0 text-sm">Who is here and who is not yet, from 15 minutes before.</p>
+                            <p className="text-vc-ice-dim mb-0 text-sm">Who is here and who is not yet, from 15 minutes before - or when you choose.</p>
                         </div>
                     </div>
                     <div className="col-span-12 md:col-span-6 lg:col-span-3">
                         <div className={ CARD }>
                             <h3 className="text-h5 text-vc-cyan">No-shows</h3>
-                            <p className="text-vc-ice-dim mb-0 text-sm">Marked 10 minutes after the start, and cleared if they come late.</p>
+                            <p className="text-vc-ice-dim mb-0 text-sm">Marked 10 minutes after the start - or when you choose - and cleared if they come late.</p>
                         </div>
                     </div>
                     <div className="col-span-12 md:col-span-6 lg:col-span-3">
@@ -129,7 +129,8 @@ export default function EventsPage() {
                 <p className="text-vc-ice-dim mb-4">
                     Pick the text channel the boards and posts go to. <strong>Turn on</strong> stays greyed out until a
                     channel is picked, and a channel the bot cannot post in is refused with the permissions it is missing.
-                    <strong> Stop sub posts</strong> keeps the board and the attendance but never asks for subs.
+                    <strong> Stop sub posts</strong> keeps the board and the attendance but never asks for subs, and
+                    <strong> More options</strong> opens the rest of the settings on the dashboard.
                 </p>
                 <div className="discord-chat-container m-0 mb-6">
                     <DiscordUIComponentMessage
@@ -178,8 +179,10 @@ export default function EventsPage() {
                 <h2 className="text-h4 mb-4">The Check-in Board</h2>
                 <p className="text-vc-ice-dim mb-4">
                     Fifteen minutes before the start - or at once, if someone starts the event early - the board goes up in
-                    your Events channel. It follows the Interested list until the start, and moves members to{ " " }
-                    <strong>Here</strong> within seconds of them joining. Names on it are never pinged.
+                    your Events channel. It follows the Interested list until the start, moves members to{ " " }
+                    <strong>Here</strong> within seconds of them joining, and tells everyone until when they still count as
+                    on time. Names on the board are never pinged - the post can ping a role, and the members not in voice
+                    yet, if you turn that on.
                 </p>
                 <div className="discord-chat-container m-0">
                     <DiscordUIComponentMessage
@@ -199,7 +202,8 @@ export default function EventsPage() {
                     Ten minutes after the start the roster closes. Everybody on it who has not come is marked, and the bot
                     posts for as many people as are missing - never more than a voice channel with a user limit still has
                     room for. Each arrival counts it down, it says so when every place is taken, and it comes down when the
-                    event ends. Its button opens the voice channel.
+                    event ends. Its button opens the voice channel. It can ping a subs role, and wait until more than one
+                    person is missing.
                 </p>
                 <div className="discord-chat-container m-0">
                     <DiscordUIComponentMessage
@@ -261,12 +265,24 @@ export default function EventsPage() {
             <section className="mb-12">
                 <h2 className="text-h4 mb-4">On the Dashboard</h2>
                 <p className="text-vc-ice-dim mb-4">
-                    The same settings are on the <a href={ `${ DASHBOARD_URL }/events` } target="_blank" rel="noreferrer">dashboard</a>{ " " }
-                    under <strong>Events</strong>. Picking a channel there asks the bot first, so a channel it cannot
-                    post in is refused with the permissions it is missing.
+                    <code>/setup</code> gets Events going - a channel and a switch. Everything else is on the{ " " }
+                    <a href={ `${ DASHBOARD_URL }/events` } target="_blank" rel="noreferrer">dashboard</a> under{ " " }
+                    <strong>Events</strong>, with a walk-through of an evening in your own timing and a preview of every
+                    message the bot posts:
+                </p>
+                <ul className="text-vc-ice-dim mb-4">
+                    <li><strong>Check-in</strong> - when the board goes up (5 minutes to 3 hours ahead) and when check-in closes (at the start, or up to an hour after).</li>
+                    <li><strong>Pings</strong> - a role to ping as check-in opens, the members on the list who are not in voice yet, and a role for the sub post.</li>
+                    <li><strong>Which events</strong> - every voice and stage event, or only the ones held in channels you pick.</li>
+                    <li><strong>Need a sub</strong> - on or off, and how many have to be missing before it goes up.</li>
+                    <li><strong>Attendance</strong> - how long an empty channel waits, the longest an event runs, the least time in voice that counts as coming, and a second channel - a staff log, say - that gets a copy.</li>
+                </ul>
+                <p className="text-vc-ice-dim mb-4">
+                    A channel or a role picked there is checked with the bot first: a channel it cannot post in is refused
+                    with the permissions it is missing, and a role a ping would not reach is refused with how to fix it.
                 </p>
                 <p className="text-vc-ice-dim mb-0">
-                    Next to them is the history: every event from the moment its check-in opened, with how many came,
+                    Below them is the history: every event from the moment its check-in opened, with how many came,
                     were late, did not come or walked in. Open one to see each member by name, with their time in voice.
                 </p>
             </section>
@@ -276,6 +292,9 @@ export default function EventsPage() {
             { /* Timings */ }
             <section className="mb-12">
                 <h2 className="text-h4 mb-4">Timings</h2>
+                <p className="text-vc-ice-dim mb-4">
+                    These are the defaults. Every one of them can be changed on the dashboard, per server.
+                </p>
                 <div className="overflow-x-auto">
                     <table className="vc-table">
                         <thead>
@@ -334,6 +353,14 @@ export default function EventsPage() {
                                 <td>The event&apos;s voice channel</td>
                                 <td>View Channel - to read the roster and see who is in it</td>
                             </tr>
+                            <tr>
+                                <td>The attendance copy&apos;s channel, if you pick one</td>
+                                <td>View Channel, Send Messages, Embed Links</td>
+                            </tr>
+                            <tr>
+                                <td>A role it pings</td>
+                                <td>The role allows anyone to @mention it - or Mention @everyone, @here and All Roles</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -357,12 +384,17 @@ export default function EventsPage() {
                         <strong>The bot could not see an event&apos;s voice channel</strong> - give it View Channel on
                         that channel. It skips such an event rather than saying nobody came.
                     </li>
+                    <li>
+                        <strong>The attendance copy&apos;s channel is gone, or the bot cannot post there</strong> - pick
+                        another on the dashboard, or give the bot View Channel, Send Messages and Embed Links there.
+                    </li>
                 </ul>
                 <p className="text-vc-ice-dim">No board at all? Check that:</p>
                 <ul className="text-vc-ice-dim mb-0">
                     <li>Events is on, with a channel picked.</li>
                     <li>The event&apos;s location is a voice or stage channel - an event somewhere else has nothing to check in to.</li>
-                    <li>It is within 15 minutes of the start. Events turned on more than 10 minutes into an event skips that one.</li>
+                    <li>It is within its check-in time - 15 minutes before the start, unless you changed it. Events turned on after check-in closed skips that one.</li>
+                    <li>If Events is limited to some channels, the event is held in one of them.</li>
                     <li>A board somebody deleted is not posted again.</li>
                 </ul>
             </section>
@@ -372,7 +404,11 @@ export default function EventsPage() {
                 <h2 className="text-h4 mb-4">Questions</h2>
 
                 <h3 className="text-h5">Does it ping anyone?</h3>
-                <p className="text-vc-ice-dim">No. Names on the board and the sub post are shown, never pinged.</p>
+                <p className="text-vc-ice-dim">
+                    Only if you ask it to. On the dashboard, the board can ping a role - and the members on the list who
+                    are not in voice yet - as check-in opens, and the sub post can ping a role. The names listed on the
+                    board and the sub post are only shown, never pinged.
+                </p>
 
                 <h3 className="text-h5">Does it cost anything?</h3>
                 <p className="text-vc-ice-dim">No - Events is free on every server.</p>

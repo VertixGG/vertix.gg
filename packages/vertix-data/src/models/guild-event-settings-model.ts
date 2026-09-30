@@ -2,15 +2,12 @@ import { PrismaBotClient } from "@vertix.gg/prisma/bot-client";
 
 import { ModelBase } from "@vertix.gg/data/src/bases/model-base";
 
-import type { TGuildEventsError } from "@vertix.gg/definitions/src/guild-events-definitions";
+import type { IGuildEventsSettingsPatch, TGuildEventsError } from "@vertix.gg/definitions/src/guild-events-definitions";
 
 import type { PrismaBot } from "@vertix.gg/prisma/bot-client";
 
-export interface IGuildEventSettingsPatch {
-    enabled?: boolean;
-    channelId?: string | null;
-    subPostsEnabled?: boolean;
-}
+/** A change to a server's settings - only what it names is written. */
+export type IGuildEventSettingsPatch = IGuildEventsSettingsPatch;
 
 /**
  * What Events does in each server, and the last thing that stopped it there.

@@ -1,6 +1,8 @@
 import { CommandBase } from "@zenflux/react-commander/command-base";
 import { getQueryModule } from "@zenflux/react-commander/query/provider";
 
+import { resolveGuildEventsSettings } from "@vertix.gg/definitions/src/guild-events-definitions";
+
 import { EventsQuery } from "@vertix.gg/dashboard/src/features/events/query/events-query";
 
 import { QueryRequestError } from "@vertix.gg/dashboard/src/lib/query-request-error";
@@ -13,7 +15,22 @@ import type {
 } from "@vertix.gg/dashboard/src/features/events/types";
 
 /** Every setting a save can carry, in the order a patch is looked through for the one it changes. */
-const EVENTS_SETTINGS: readonly TEventsSetting[] = [ "enabled", "channelId", "subPostsEnabled" ];
+const EVENTS_SETTINGS: readonly TEventsSetting[] = [
+    "enabled",
+    "channelId",
+    "subPostsEnabled",
+    "checkInLeadMinutes",
+    "lateAfterMinutes",
+    "endAfterEmptyMinutes",
+    "maxDurationHours",
+    "eventChannelIds",
+    "checkInRoleId",
+    "checkInPingInterested",
+    "subRoleId",
+    "subMinMissing",
+    "minVoiceMinutes",
+    "logChannelId"
+];
 
 /**
  * Command `Dashboard/Events/Save` :: Changes one setting, as soon as it is changed.
@@ -43,7 +60,7 @@ export class SaveEventsSettingsCommand extends CommandBase<EventsState, GuildEve
                 ... patch
             } );
 
-            return this.setState( { settings, pendingSetting: null } );
+            return this.setState( { settings: resolveGuildEventsSettings( settings ), pendingSetting: null } );
         } catch( error ) {
             return this.setState( {
                 error: error instanceof Error ? error.message : "Failed to save the Events settings",

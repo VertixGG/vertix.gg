@@ -8,10 +8,12 @@ import type {
 
 import type {
     GuildDiscordChannel,
-    GuildDiscordOptions
+    GuildDiscordOptions,
+    GuildDiscordRole,
+    GuildDiscordVoiceChannel
 } from "@vertix.gg/dashboard/src/features/generators/types";
 
-export type { GuildDiscordChannel, GuildDiscordOptions };
+export type { GuildDiscordChannel, GuildDiscordOptions, GuildDiscordRole, GuildDiscordVoiceChannel };
 
 export type GuildEventsSettings = IGuildEventsSettingsView;
 export type GuildEventsSettingsPatch = IGuildEventsSettingsPatch;

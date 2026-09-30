@@ -5,6 +5,7 @@ import { EventsEmbed } from "@vertix.gg/bot/src/ui/general/events/events-embed";
 import { EventsChannelSelectMenu } from "@vertix.gg/bot/src/ui/general/events/events-channel-select-menu";
 import { EventsEnableButton } from "@vertix.gg/bot/src/ui/general/events/events-enable-button";
 import { EventsSubPostsButton } from "@vertix.gg/bot/src/ui/general/events/events-sub-posts-button";
+import { EventsDashboardButton } from "@vertix.gg/bot/src/ui/general/events/events-dashboard-button";
 
 import { DoneButton } from "@vertix.gg/bot/src/ui/general/decision/done-button";
 
@@ -28,7 +29,7 @@ export class EventsComponent extends UIComponentBase {
     public static getElements() {
         return [
             [ EventsChannelSelectMenu ],
-            [ EventsEnableButton, EventsSubPostsButton, DoneButton ]
+            [ EventsEnableButton, EventsSubPostsButton, EventsDashboardButton, DoneButton ]
         ];
     }
 

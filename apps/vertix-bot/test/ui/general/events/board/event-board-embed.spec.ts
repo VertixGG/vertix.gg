@@ -8,12 +8,16 @@ import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 const STARTS_AT = 1791057600;
 
+/** Ten minutes after the start - where a server that set nothing stops counting anybody on time. */
+const LATE_AT = STARTS_AT + 600;
+
 async function draw( args: UIArgs ) {
     const { EventBoardEmbed } = await import( "@vertix.gg/bot/src/ui/general/events/board/event-board-embed" );
 
     const { attributes } = await instantiateEmbed( EventBoardEmbed ).build( {
         eventName: "Raid Night",
         startsAt: STARTS_AT,
+        lateAt: LATE_AT,
         voiceChannelId: "123",
         ... args
     } );
@@ -47,7 +51,7 @@ describe( "VertixBot/UI-General/EventBoardEmbed", () => {
         expect( title ).toBe( "📅  Raid Night · Check-in" );
         expect( description ).toBe(
             `Starts <t:${ STARTS_AT }:F> (<t:${ STARTS_AT }:R>) in <#123>.\n` +
-            "Said you're coming? Join the voice channel to check in." +
+            `Said you're coming? Join the voice channel to check in - by <t:${ LATE_AT }:t> to count as on time.` +
             "\n\n**✅ Here (1)**\n<@1>" +
             "\n\n**⏳ Not here yet (2)**\n<@2>\n<@3>"
         );
@@ -85,6 +89,20 @@ describe( "VertixBot/UI-General/EventBoardEmbed", () => {
         expect( description ).toContain( "**✅ Came (4)**\n<@1> · 1:05\n+3 more" );
     } );
 
+    it( "should say how little time in voice counted as not coming, on an attendance held to one", async() => {
+        // Act.
+        const held = await draw( { boardState: "ended", minVoiceMinutes: 5 } ),
+            notHeld = await draw( { boardState: "ended", minVoiceMinutes: 0 } );
+
+        // Assert.
+        expect( held.description ).toBe(
+            `Held <t:${ STARTS_AT }:F> in <#123>.\n` +
+            "Times are hours:minutes in voice.\n" +
+            "Less than 5 min in voice counts as not coming."
+        );
+        expect( notHeld.description ).toBe( `Held <t:${ STARTS_AT }:F> in <#123>.\nTimes are hours:minutes in voice.` );
+    } );
+
     it( "should say only that a canceled event is off", async() => {
         // Act.
         const { title, description } = await draw( {
@@ -120,6 +138,7 @@ describe( "VertixBot/UI-General/EventBoardEmbed", () => {
             // Act.
             const { title, description } = await draw( {
                 boardState,
+                minVoiceMinutes: 5,
                 checkedIn: [ "<@1>" ],
                 checkedInCount: 1,
                 onTime: [ "<@1>" ],

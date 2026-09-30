@@ -519,6 +519,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/EventsDashboardButton",
+        "content": {
+          "label": "Plus d'options"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/EventsChooseButton",
         "content": {
           "label": "Événements"
@@ -4109,9 +4115,9 @@
             "{stateMoved}": "Déplacé"
           },
           "stateLine": {
-            "{stateCheckIn}": "Commence <t:{startsAt}:F> (<t:{startsAt}:R>) dans <#{voiceChannelId}>.\nTu as dit que tu venais ? Rejoins le salon vocal pour pointer.",
+            "{stateCheckIn}": "Commence <t:{startsAt}:F> (<t:{startsAt}:R>) dans <#{voiceChannelId}>.\nTu as dit que tu venais ? Rejoins le salon vocal pour pointer - avant <t:{lateAt}:t> pour être compté à l'heure.",
             "{stateRunning}": "A commencé <t:{startsAt}:R> dans <#{voiceChannelId}>.\nLe pointage est fermé - qui arrive maintenant de la liste est en retard.",
-            "{stateEnded}": "S'est tenu <t:{startsAt}:F> dans <#{voiceChannelId}>.\nLes durées sont en heures:minutes en vocal.",
+            "{stateEnded}": "S'est tenu <t:{startsAt}:F> dans <#{voiceChannelId}>.\nLes durées sont en heures:minutes en vocal.{minVoiceLine}",
             "{stateCanceled}": "Annulé - il était prévu pour <t:{startsAt}:F>.",
             "{stateMoved}": "Déplacé au <t:{movedToAt}:F>. Un nouveau tableau sera publié avant."
           },
@@ -4162,6 +4168,10 @@
           "walkInsMore": {
             "{moreShown}": "\n+{walkInsHidden} de plus",
             "{moreHidden}": ""
+          },
+          "minVoiceLine": {
+            "{minVoiceShown}": "\nMoins de {minVoiceMinutes} min en vocal compte comme une absence.",
+            "{minVoiceHidden}": ""
           }
         },
         "arrayOptions": {
@@ -4213,7 +4223,7 @@
       "name": "VertixBot/UI-General/EventsEmbed",
       "content": {
         "title": "📅  Événements",
-        "description": "Quand un événement programmé dans un salon vocal est sur le point de commencer, un tableau de pointage est publié. Ceux qui se sont marqués **Intéressé** pointent en rejoignant le salon vocal ; dix minutes après le début, ceux qui ne sont pas venus sont marqués, une publication cherche quelqu'un pour les remplacer, et le tableau devient la liste des présences.\n\n**Événements** {statusLine}\n**Publie dans** {channelLine}\n**Publications « remplaçant recherché »** {subPostsLine}{errorLine}\n\nChoisis le salon, puis active-le. Un événement tenu sur un générateur compte chaque salon qu'il ouvre.",
+        "description": "Quand un événement programmé dans un salon vocal est sur le point de commencer, un tableau de pointage est publié. Ceux qui se sont marqués **Intéressé** pointent en rejoignant le salon vocal. Quand le pointage se ferme, ceux qui ne sont pas venus sont marqués, une publication cherche quelqu'un pour les remplacer, et le tableau devient la liste des présences.\n\n**Événements** {statusLine}\n**Publie dans** {channelLine}\n**Publications « remplaçant recherché »** {subPostsLine}\n**Pointage** ouvert {checkInLeadMinutes} min avant le début, fermé {lateAfterMinutes} min après{errorLine}\n\nChoisis le salon, puis active-le. Les horaires, les mentions, les événements pris en compte et l'endroit où la liste des présences est copiée se règlent dans **Plus d'options**. Un événement tenu sur un générateur compte chaque salon qu'il ouvre.",
         "options": {
           "statusLine": {
             "{enabledOn}": "🟢 Activé",
@@ -4231,7 +4241,9 @@
             "{errorNone}": "",
             "{errorPostChannelMissing}": "\n\n⚠️ Le salon où il publie n'existe plus - choisis-en un autre.",
             "{errorPostChannelForbidden}": "\n\n⚠️ Le bot ne peut pas publier dans ce salon. Il y a besoin de Voir le salon, Envoyer des messages et Intégrer des liens.",
-            "{errorEventChannelForbidden}": "\n\n⚠️ Le bot n'a pas pu voir le salon vocal d'un événement, donc il n'a pu pointer personne. Donne-lui Voir le salon là-bas."
+            "{errorEventChannelForbidden}": "\n\n⚠️ Le bot n'a pas pu voir le salon vocal d'un événement, donc il n'a pu pointer personne. Donne-lui Voir le salon là-bas.",
+            "{errorLogChannelMissing}": "\n\n⚠️ Le salon où la liste des présences est copiée n'existe plus - choisis-en un autre dans Plus d'options.",
+            "{errorLogChannelForbidden}": "\n\n⚠️ Le bot ne peut pas publier la copie des présences. Il a besoin de Voir le salon, Envoyer des messages et Intégrer des liens dans ce salon."
           }
         }
       }

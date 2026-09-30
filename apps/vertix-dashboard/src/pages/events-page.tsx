@@ -15,6 +15,7 @@ import {
 } from "@vertix.gg/dashboard/src/features/events/commands";
 
 import { EventsSettings } from "@vertix.gg/dashboard/src/features/events/components/events-settings";
+import { EventsExplainer } from "@vertix.gg/dashboard/src/features/events/components/events-explainer";
 import { EventsHistory } from "@vertix.gg/dashboard/src/features/events/components/events-history";
 import { EventRunDetails } from "@vertix.gg/dashboard/src/features/events/components/event-run-details";
 
@@ -61,8 +62,8 @@ const EventsContentComponent: DCommandFunctionComponent<EventsContentProps, Even
             <div className="px-6 py-4 border-b border-border">
                 <h1 className="text-2xl font-bold text-text-primary mb-1">Events</h1>
                 <p className="text-sm text-text-muted mb-0">
-                    A check-in board before each scheduled voice event, the members who said they would come and
-                    did not, a post asking for subs, and the attendance. The same settings as /setup → Events in Discord.
+                    Attendance for your server&apos;s scheduled voice events: a check-in board before each one, who came
+                    and who didn&apos;t, a post asking for subs when people are missing, and a record of every event.
                 </p>
             </div>
 
@@ -110,8 +111,17 @@ const EventsContentComponent: DCommandFunctionComponent<EventsContentProps, Even
                         <Loader2 className="w-8 h-8 text-text-muted animate-spin" />
                     </div>
                 ) : (
-                    <div className="max-w-6xl grid gap-6 items-start lg:grid-cols-[minmax(0,400px)_minmax(0,1fr)]">
-                        <EventsSettings />
+                    <div className="max-w-6xl space-y-6">
+                        <div className="grid gap-6 items-start lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
+                            <EventsSettings />
+
+                            { /* First on a narrow screen - what Events is, before the settings for it. Beside them
+                                 it stays in view, and scrolls on its own when taller than the window. */ }
+                            <aside className="order-first lg:order-none lg:sticky lg:top-0 lg:max-h-[calc(100vh-11rem)] lg:overflow-y-auto">
+                                <EventsExplainer />
+                            </aside>
+                        </div>
+
                         <EventsHistory />
                     </div>
                 ) }

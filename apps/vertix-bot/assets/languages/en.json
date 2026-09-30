@@ -519,6 +519,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/EventsDashboardButton",
+        "content": {
+          "label": "More options"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/EventsChooseButton",
         "content": {
           "label": "Events"
@@ -4136,9 +4142,9 @@
             "{stateMoved}": "Moved"
           },
           "stateLine": {
-            "{stateCheckIn}": "Starts <t:{startsAt}:F> (<t:{startsAt}:R>) in <#{voiceChannelId}>.\nSaid you're coming? Join the voice channel to check in.",
+            "{stateCheckIn}": "Starts <t:{startsAt}:F> (<t:{startsAt}:R>) in <#{voiceChannelId}>.\nSaid you're coming? Join the voice channel to check in - by <t:{lateAt}:t> to count as on time.",
             "{stateRunning}": "Started <t:{startsAt}:R> in <#{voiceChannelId}>.\nCheck-in is closed - anybody from the list who comes now is late.",
-            "{stateEnded}": "Held <t:{startsAt}:F> in <#{voiceChannelId}>.\nTimes are hours:minutes in voice.",
+            "{stateEnded}": "Held <t:{startsAt}:F> in <#{voiceChannelId}>.\nTimes are hours:minutes in voice.{minVoiceLine}",
             "{stateCanceled}": "Canceled - it was set for <t:{startsAt}:F>.",
             "{stateMoved}": "Moved to <t:{movedToAt}:F>. A new board goes up before then."
           },
@@ -4189,6 +4195,10 @@
           "walkInsMore": {
             "{moreShown}": "\n+{walkInsHidden} more",
             "{moreHidden}": ""
+          },
+          "minVoiceLine": {
+            "{minVoiceShown}": "\nLess than {minVoiceMinutes} min in voice counts as not coming.",
+            "{minVoiceHidden}": ""
           }
         },
         "arrayOptions": {
@@ -4240,7 +4250,7 @@
       "name": "VertixBot/UI-General/EventsEmbed",
       "content": {
         "title": "📅  Events",
-        "description": "When a scheduled event in a voice channel is about to start, a check-in board goes up. Whoever marked themselves **Interested** checks in by joining the voice channel; ten minutes after the start, whoever has not come is marked, a post asks for somebody to take their place, and the board ends as the attendance.\n\n**Events** {statusLine}\n**Posts in** {channelLine}\n**\"Need a sub\" posts** {subPostsLine}{errorLine}\n\nPick the channel, then turn it on. An event held at a generator counts every room it opens.",
+        "description": "When a scheduled event in a voice channel is about to start, a check-in board goes up. Whoever marked themselves **Interested** checks in by joining the voice channel. When check-in closes, whoever has not come is marked, a post asks for somebody to take their place, and the board ends as the attendance.\n\n**Events** {statusLine}\n**Posts in** {channelLine}\n**\"Need a sub\" posts** {subPostsLine}\n**Check-in** opens {checkInLeadMinutes} min before the start, closes {lateAfterMinutes} min after{errorLine}\n\nPick the channel, then turn it on. The timing, the pings, which events count and where the attendance is copied are under **More options**. An event held at a generator counts every room it opens.",
         "options": {
           "statusLine": {
             "{enabledOn}": "🟢 On",
@@ -4258,7 +4268,9 @@
             "{errorNone}": "",
             "{errorPostChannelMissing}": "\n\n⚠️ The channel it posts in is gone - pick another.",
             "{errorPostChannelForbidden}": "\n\n⚠️ The bot cannot post in that channel. It needs View Channel, Send Messages and Embed Links there.",
-            "{errorEventChannelForbidden}": "\n\n⚠️ The bot could not see an event's voice channel, so it could not check anybody in. Give it View Channel there."
+            "{errorEventChannelForbidden}": "\n\n⚠️ The bot could not see an event's voice channel, so it could not check anybody in. Give it View Channel there.",
+            "{errorLogChannelMissing}": "\n\n⚠️ The channel the attendance is copied to is gone - pick another under More options.",
+            "{errorLogChannelForbidden}": "\n\n⚠️ The bot cannot post the attendance copy. It needs View Channel, Send Messages and Embed Links in that channel."
           }
         }
       }

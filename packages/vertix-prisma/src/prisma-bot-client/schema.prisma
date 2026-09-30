@@ -470,21 +470,44 @@ model GuildBrandingState {
 /// One row per server. `applicationId` is the bot whose setup last saved it: two bots read this
 /// database, and only that one posts, so a server holding both is not sent every board twice.
 model GuildEventSettings {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
   // ---
-  guildId         String    @unique
-  applicationId   String
+  guildId               String    @unique
+  applicationId         String
   // ---
-  enabled         Boolean   @default(false)
+  enabled               Boolean   @default(false)
   /// The text channel the boards, the "need a sub" posts and the attendance go to.
-  channelId       String?
-  subPostsEnabled Boolean   @default(true)
+  channelId             String?
+  subPostsEnabled       Boolean   @default(true)
+  // --- Everything below is null until the server sets it - `GUILD_EVENTS_SETTINGS_DEFAULTS` answers until then.
+  /// Minutes before the start the board goes up and check-in opens.
+  checkInLeadMinutes    Int?
+  /// Minutes after the start somebody still counts as on time; the roster locks then.
+  lateAfterMinutes      Int?
+  /// Minutes the event's channels stay empty, once the roster locked, before the attendance is final.
+  endAfterEmptyMinutes  Int?
+  /// The longest a run stays open, in hours from the start.
+  maxDurationHours      Int?
+  /// Only events held in these voice or stage channels - empty for every one.
+  eventChannelIds       String[]
+  /// The role pinged when check-in opens.
+  checkInRoleId         String?
+  /// Whether the members on the roster are pinged by name when check-in opens.
+  checkInPingInterested Boolean?
+  /// The role the "need a sub" post pings.
+  subRoleId             String?
+  /// The fewest missing it takes for a "need a sub" post to go up.
+  subMinMissing         Int?
+  /// The least time in voice, in minutes over the whole event, that counts as having come.
+  minVoiceMinutes       Int?
+  /// A second text channel each finished attendance is copied to.
+  logChannelId          String?
   // ---
   /// A `GUILD_EVENTS_ERRORS` code - the last thing that stopped Events here, for the settings screen.
-  lastError       String?
-  lastErrorAt     DateTime?
+  lastError             String?
+  lastErrorAt           DateTime?
   /// The discord user who last changed it.
-  updatedByUserId String?
+  updatedByUserId       String?
 
   // ---
   createdAt DateTime @default(now())
@@ -523,6 +546,9 @@ model GuildEventRun {
   checkpointAt      DateTime?
   /// A `GUILD_EVENTS_ERRORS` code, so what failed is not tried again for the rest of the run.
   lastError         String?
+  /// The least time in voice that counted as coming, as the server had it when the run ended - kept
+  /// on the run, so changing the setting later does not rewrite an attendance already given.
+  minVoiceSeconds   Int?
 
   // ---
   createdAt DateTime @default(now())

@@ -58,7 +58,16 @@ function replySaveResult( result: TGuildEventsSaveResult, reply: FastifyReply ) 
 
         case GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN:
             return reply.status( 400 ).send( {
-                error: "The bot cannot post in that channel",
+                error: "log" === result.channel
+                    ? "The bot cannot post the attendance copy in that channel"
+                    : "The bot cannot post in that channel",
+                code: result.code,
+                reasons: result.reasons
+            } );
+
+        case GUILD_EVENTS_SAVE_CODES.ROLE_NOT_PINGABLE:
+            return reply.status( 400 ).send( {
+                error: "A ping of that role would notify nobody",
                 code: result.code,
                 reasons: result.reasons
             } );

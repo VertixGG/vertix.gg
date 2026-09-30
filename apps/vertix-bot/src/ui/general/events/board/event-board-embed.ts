@@ -17,7 +17,9 @@ const vars = {
 
     eventName: uiUtilsWrapAsTemplate( "eventName" ),
     startsAt: uiUtilsWrapAsTemplate( "startsAt" ),
+    lateAt: uiUtilsWrapAsTemplate( "lateAt" ),
     movedToAt: uiUtilsWrapAsTemplate( "movedToAt" ),
+    minVoiceMinutes: uiUtilsWrapAsTemplate( "minVoiceMinutes" ),
     voiceChannelId: uiUtilsWrapAsTemplate( "voiceChannelId" ),
 
     stateTitle: uiUtilsWrapAsTemplate( "stateTitle" ),
@@ -32,6 +34,10 @@ const vars = {
     blockHidden: uiUtilsWrapAsTemplate( "blockHidden" ),
     moreShown: uiUtilsWrapAsTemplate( "moreShown" ),
     moreHidden: uiUtilsWrapAsTemplate( "moreHidden" ),
+
+    minVoiceLine: uiUtilsWrapAsTemplate( "minVoiceLine" ),
+    minVoiceShown: uiUtilsWrapAsTemplate( "minVoiceShown" ),
+    minVoiceHidden: uiUtilsWrapAsTemplate( "minVoiceHidden" ),
 
     checkedIn: uiUtilsWrapAsTemplate( "checkedIn" ),
     checkedInCount: uiUtilsWrapAsTemplate( "checkedInCount" ),
@@ -97,6 +103,10 @@ const STATE_VARS: Record<string, string> = {
  * translations - an args value carrying text would reach them only as its own name. The lists are
  * mentions and `h:mm` alone, which need none. Mentions inside an embed never ping, which is why a
  * board can name the whole roster.
+ *
+ * Check-in says until when a member still counts as on time, since each server sets that itself;
+ * an attendance held to a least time in voice says so, since it is why somebody who looked in is
+ * listed as not having come.
  */
 const EventBoardEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     "VertixBot/UI-General/EventBoardEmbed",
@@ -122,13 +132,13 @@ const EventBoardEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         stateLine: {
             [ vars.stateCheckIn ]:
                 `Starts <t:${ vars.startsAt }:F> (<t:${ vars.startsAt }:R>) in <#${ vars.voiceChannelId }>.\n` +
-                "Said you're coming? Join the voice channel to check in.",
+                `Said you're coming? Join the voice channel to check in - by <t:${ vars.lateAt }:t> to count as on time.`,
             [ vars.stateRunning ]:
                 `Started <t:${ vars.startsAt }:R> in <#${ vars.voiceChannelId }>.\n` +
                 "Check-in is closed - anybody from the list who comes now is late.",
             [ vars.stateEnded ]:
                 `Held <t:${ vars.startsAt }:F> in <#${ vars.voiceChannelId }>.\n` +
-                "Times are hours:minutes in voice.",
+                `Times are hours:minutes in voice.${ vars.minVoiceLine }`,
             [ vars.stateCanceled ]:
                 `Canceled - it was set for <t:${ vars.startsAt }:F>.`,
             [ vars.stateMoved ]:
@@ -181,6 +191,10 @@ const EventBoardEmbed = new EmbedBuilder<UIArgs, typeof vars>(
         walkInsMore: {
             [ vars.moreShown ]: `\n+${ vars.walkInsHidden } more`,
             [ vars.moreHidden ]: ""
+        },
+        minVoiceLine: {
+            [ vars.minVoiceShown ]: `\nLess than ${ vars.minVoiceMinutes } min in voice counts as not coming.`,
+            [ vars.minVoiceHidden ]: ""
         }
     } ) )
     .setArrayOptions( () => {
@@ -200,11 +214,16 @@ const EventBoardEmbed = new EmbedBuilder<UIArgs, typeof vars>(
             shownLists = BOARD_LISTS_BY_STATE[ state ] ?? [],
             stateVar = STATE_VARS[ state ] ?? vars.stateCheckIn;
 
+        const minVoiceMinutes = Number( args.minVoiceMinutes ?? 0 );
+
         const result: Record<string, JsonValue> = {
             eventName: args.eventName,
             startsAt: args.startsAt,
+            lateAt: args.lateAt ?? args.startsAt,
             movedToAt: args.movedToAt ?? args.startsAt,
             voiceChannelId: args.voiceChannelId,
+            minVoiceMinutes,
+            minVoiceLine: minVoiceMinutes > 0 ? vars.minVoiceShown : vars.minVoiceHidden,
             stateTitle: stateVar,
             stateLine: stateVar
         };
@@ -226,6 +245,7 @@ const EventBoardEmbed = new EmbedBuilder<UIArgs, typeof vars>(
     .setDefaultVars( () => ( {
         eventName: "Raid Night",
         startsAt: 1791057600,
+        lateAt: 1791058200,
         voiceChannelId: "123456789"
     } ) )
     .build();

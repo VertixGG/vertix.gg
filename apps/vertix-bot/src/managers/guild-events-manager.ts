@@ -3,7 +3,7 @@ import { InitializeBase } from "@vertix.gg/base/src/bases/initialize-base";
 
 import { isDebugEnabled } from "@vertix.gg/utils/src/environment";
 
-import type { TGuildEventRunPhase } from "@vertix.gg/definitions/src/guild-events-definitions";
+import type { IGuildEventsSettingsView, TGuildEventRunPhase } from "@vertix.gg/definitions/src/guild-events-definitions";
 
 import type { IGuildEventAttendeeState } from "@vertix.gg/bot/src/utils/guild-events/guild-event-attendance";
 
@@ -32,6 +32,13 @@ export interface IGuildEventRunState {
     subsNeeded: number;
     frozenAt: number | null;
     lastError: string | null;
+
+    /**
+     * The server's settings as they were last read - every sweep reads them again, so a change from
+     * the dashboard reaches a run already going within a minute. Kept on the run for the redraws a
+     * voice move causes in between, which have no settings of their own at hand.
+     */
+    settings: IGuildEventsSettingsView;
 
     /** The event's "Interested" list - followed until the roster freezes, and fixed after. */
     rosterIds: Set<string>;

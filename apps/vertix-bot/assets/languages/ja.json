@@ -519,6 +519,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/EventsDashboardButton",
+        "content": {
+          "label": "その他の設定"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/EventsChooseButton",
         "content": {
           "label": "イベント"
@@ -4109,9 +4115,9 @@
             "{stateMoved}": "日時変更"
           },
           "stateLine": {
-            "{stateCheckIn}": "<t:{startsAt}:F>（<t:{startsAt}:R>）に <#{voiceChannelId}> で開始。\n参加予定の方は、ボイスチャンネルに入ってチェックインしてください。",
+            "{stateCheckIn}": "<t:{startsAt}:F>（<t:{startsAt}:R>）に <#{voiceChannelId}> で開始。\n参加予定の方は、ボイスチャンネルに入ってチェックインしてください。<t:{lateAt}:t> までに入れば時間どおりです。",
             "{stateRunning}": "<t:{startsAt}:R> に <#{voiceChannelId}> で開始しました。\nチェックインは締め切りました。リストの人がこれから来た場合は遅刻になります。",
-            "{stateEnded}": "<t:{startsAt}:F> に <#{voiceChannelId}> で開催。\n時間はボイスにいた 時間:分 です。",
+            "{stateEnded}": "<t:{startsAt}:F> に <#{voiceChannelId}> で開催。\n時間はボイスにいた 時間:分 です。{minVoiceLine}",
             "{stateCanceled}": "中止になりました（予定: <t:{startsAt}:F>）。",
             "{stateMoved}": "<t:{movedToAt}:F> に変更されました。それまでに新しいボードが投稿されます。"
           },
@@ -4162,6 +4168,10 @@
           "walkInsMore": {
             "{moreShown}": "\n+{walkInsHidden}人",
             "{moreHidden}": ""
+          },
+          "minVoiceLine": {
+            "{minVoiceShown}": "\nボイスにいた時間が{minVoiceMinutes}分未満の場合は欠席扱いです。",
+            "{minVoiceHidden}": ""
           }
         },
         "arrayOptions": {
@@ -4213,7 +4223,7 @@
       "name": "VertixBot/UI-General/EventsEmbed",
       "content": {
         "title": "📅  イベント",
-        "description": "ボイスチャンネルで予定されたイベントが始まる直前に、チェックインボードが投稿されます。**興味あり** を押した人は、ボイスチャンネルに入るとチェックインになります。開始から10分後、来ていない人がマークされ、代わりを募集する投稿が出て、ボードは出席記録になります。\n\n**イベント** {statusLine}\n**投稿先** {channelLine}\n**代わり募集の投稿** {subPostsLine}{errorLine}\n\nチャンネルを選んでからオンにしてください。ジェネレーターで開催するイベントは、そこから開かれたすべてのルームを数えます。",
+        "description": "ボイスチャンネルで予定されたイベントが始まる直前に、チェックインボードが投稿されます。**興味あり** を押した人は、ボイスチャンネルに入るとチェックインになります。チェックインが締め切られると、来ていない人がマークされ、代わりを募集する投稿が出て、ボードは出席記録になります。\n\n**イベント** {statusLine}\n**投稿先** {channelLine}\n**代わり募集の投稿** {subPostsLine}\n**チェックイン** 開始{checkInLeadMinutes}分前に受付開始、開始{lateAfterMinutes}分後に締め切り{errorLine}\n\nチャンネルを選んでからオンにしてください。時間、メンション、対象のイベント、出席記録のコピー先は **その他の設定** で変更できます。ジェネレーターで開催するイベントは、そこから開かれたすべてのルームを数えます。",
         "options": {
           "statusLine": {
             "{enabledOn}": "🟢 オン",
@@ -4231,7 +4241,9 @@
             "{errorNone}": "",
             "{errorPostChannelMissing}": "\n\n⚠️ 投稿先のチャンネルが削除されています。別のチャンネルを選んでください。",
             "{errorPostChannelForbidden}": "\n\n⚠️ ボットがそのチャンネルに投稿できません。「チャンネルを見る」「メッセージを送信」「埋め込みリンク」の権限が必要です。",
-            "{errorEventChannelForbidden}": "\n\n⚠️ ボットがイベントのボイスチャンネルを見られなかったため、チェックインできませんでした。そこで「チャンネルを見る」権限を付与してください。"
+            "{errorEventChannelForbidden}": "\n\n⚠️ ボットがイベントのボイスチャンネルを見られなかったため、チェックインできませんでした。そこで「チャンネルを見る」権限を付与してください。",
+            "{errorLogChannelMissing}": "\n\n⚠️ 出席記録のコピー先チャンネルが削除されています。「その他の設定」で別のチャンネルを選んでください。",
+            "{errorLogChannelForbidden}": "\n\n⚠️ ボットが出席記録のコピーを投稿できません。そのチャンネルで「チャンネルを見る」「メッセージを送信」「埋め込みリンク」の権限が必要です。"
           }
         }
       }

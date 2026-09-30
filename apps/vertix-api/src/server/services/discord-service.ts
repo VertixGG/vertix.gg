@@ -24,6 +24,8 @@ export interface DiscordAPIRole {
     color: number;
     position: number;
     managed: boolean;
+    /** Whether anybody may mention the role. */
+    mentionable: boolean;
 }
 
 export interface DiscordAPIGuild {

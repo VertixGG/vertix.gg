@@ -409,6 +409,8 @@ interface ChannelCheckListProps {
     selected: string[];
     disabled?: boolean;
     emptyLabel: string;
+    /** What sits before each name - `#` unless the list is of channels a `#` does not name, like voice ones. */
+    renderMarker?: ( channel: GuildDiscordChannel ) => ReactNode;
     onChange: ( value: string[] ) => void;
 }
 
@@ -426,6 +428,7 @@ export function ChannelCheckList( {
     selected,
     disabled,
     emptyLabel,
+    renderMarker,
     onChange
 }: ChannelCheckListProps ) {
     const toggle = ( channelId: string ) => {
@@ -441,7 +444,7 @@ export function ChannelCheckList( {
             { channels.map( ( channel ) => (
                 <SelectRow
                     key={ channel.id }
-                    marker={ <span className="text-text-muted shrink-0">#</span> }
+                    marker={ renderMarker ? renderMarker( channel ) : <span className="text-text-muted shrink-0">#</span> }
                     name={ channel.name }
                     disabled={ disabled }
                 >

@@ -9,8 +9,12 @@ import {
     GUILD_EVENT_ATTENDANCE_KINDS,
     GUILD_EVENT_RUN_PHASES,
     GUILD_EVENTS_DASHBOARD,
+    GUILD_EVENTS_LIMITS,
+    GUILD_EVENTS_NUMBER_SETTINGS,
     GUILD_EVENTS_SAVE_CODES,
-    resolveGuildEventAttendanceKind
+    isGuildEventsSettingChoice,
+    resolveGuildEventAttendanceKind,
+    resolveGuildEventsSettings
 } from "@vertix.gg/definitions/src/guild-events-definitions";
 
 import type { IPCService } from "@vertix.gg/base/src/modules/ipc";
@@ -51,17 +55,32 @@ function isRunPhase( phase: string ): phase is TGuildEventRunPhase {
     return RUN_PHASES.includes( phase );
 }
 
+function isSnowflake( value: unknown ): value is string {
+    return "string" === typeof value && SNOWFLAKE_PATTERN.test( value );
+}
+
+/** The settings that are on or off. */
+const SWITCH_SETTINGS = [ "enabled", "subPostsEnabled", "checkInPingInterested" ] as const;
+
+/** The settings that name a channel, a role, or nothing. */
+const ID_SETTINGS = [ "channelId", "logChannelId", "checkInRoleId", "subRoleId" ] as const;
+
+/** What a refused channel is to Events - the one its boards go to, or the one the attendance is copied to. */
+export type TGuildEventsChannelUse = "posts" | "log";
+
 export type TGuildEventsSaveResult =
     | { code: typeof GUILD_EVENTS_SAVE_CODES.SAVED; view: IGuildEventsSettingsView }
     | { code: typeof GUILD_EVENTS_SAVE_CODES.INVALID; reasons: string[] }
     | { code: typeof GUILD_EVENTS_SAVE_CODES.BOT_NOT_IN_GUILD }
-    | { code: typeof GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN; reasons: string[] }
+    | { code: typeof GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN; channel: TGuildEventsChannelUse; reasons: string[] }
+    | { code: typeof GUILD_EVENTS_SAVE_CODES.ROLE_NOT_PINGABLE; reasons: string[] }
     | { code: typeof GUILD_EVENTS_SAVE_CODES.BOT_UNREACHABLE };
 
 /**
  * Function readGuildEventsSettingsPatch() :: A save's body as a patch, or null when it is not one.
  *
- * The body is whatever was sent, so every field is checked for its type before anything reads it.
+ * The body is whatever was sent, so every field is checked for its type before anything reads it -
+ * and every number against the values the dashboard offers, the only ones the bot is built to run on.
  */
 export function readGuildEventsSettingsPatch( body: unknown ): IGuildEventsSettingsPatch | null {
     if ( "object" !== typeof body || null === body || Array.isArray( body ) ) {
@@ -71,28 +90,56 @@ export function readGuildEventsSettingsPatch( body: unknown ): IGuildEventsSetti
     const fields: Record<string, unknown> = { ... body },
         patch: IGuildEventsSettingsPatch = {};
 
-    if ( undefined !== fields.enabled ) {
-        if ( "boolean" !== typeof fields.enabled ) {
+    for ( const setting of SWITCH_SETTINGS ) {
+        const value = fields[ setting ];
+
+        if ( undefined === value ) {
+            continue;
+        }
+
+        if ( "boolean" !== typeof value ) {
             return null;
         }
 
-        patch.enabled = fields.enabled;
+        patch[ setting ] = value;
     }
 
-    if ( undefined !== fields.subPostsEnabled ) {
-        if ( "boolean" !== typeof fields.subPostsEnabled ) {
+    for ( const setting of ID_SETTINGS ) {
+        const value = fields[ setting ];
+
+        if ( undefined === value ) {
+            continue;
+        }
+
+        if ( null !== value && ! isSnowflake( value ) ) {
             return null;
         }
 
-        patch.subPostsEnabled = fields.subPostsEnabled;
+        patch[ setting ] = value;
     }
 
-    if ( undefined !== fields.channelId ) {
-        if ( null !== fields.channelId && ( "string" !== typeof fields.channelId || ! SNOWFLAKE_PATTERN.test( fields.channelId ) ) ) {
+    for ( const setting of GUILD_EVENTS_NUMBER_SETTINGS ) {
+        const value = fields[ setting ];
+
+        if ( undefined === value ) {
+            continue;
+        }
+
+        if ( ! isGuildEventsSettingChoice( setting, value ) ) {
             return null;
         }
 
-        patch.channelId = fields.channelId;
+        patch[ setting ] = value;
+    }
+
+    if ( undefined !== fields.eventChannelIds ) {
+        const value = fields.eventChannelIds;
+
+        if ( ! Array.isArray( value ) || value.length > GUILD_EVENTS_LIMITS.EVENT_CHANNELS_MAX || ! value.every( isSnowflake ) ) {
+            return null;
+        }
+
+        patch.eventChannelIds = [ ... new Set( value ) ];
     }
 
     return patch;
@@ -119,7 +166,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
     }
 
     public async getSettings( guildId: string ): Promise<IGuildEventsSettingsView> {
-        return this.toSettingsView( await GuildEventSettingsModel.$.get( guildId ) );
+        return resolveGuildEventsSettings( await GuildEventSettingsModel.$.get( guildId ) );
     }
 
     /**
@@ -127,18 +174,32 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
      *
      * The same rules as the screen in discord: clearing the channel turns Events off, it cannot be
      * turned on without one, and a channel is only accepted once the bot says it can post there -
-     * checked when it is picked and again when Events is turned on, since permissions change.
+     * checked when it is picked and again when Events is turned on, since permissions change. The
+     * channel the attendance is copied to is held to the same, and a role only once the bot says a
+     * ping of it would reach anybody.
      */
     public async saveSettings( guildId: string, patch: IGuildEventsSettingsPatch, userId: string ): Promise<TGuildEventsSaveResult> {
-        const current = await GuildEventSettingsModel.$.get( guildId ),
-            channelId = undefined !== patch.channelId ? patch.channelId : current?.channelId ?? null;
+        const current = resolveGuildEventsSettings( await GuildEventSettingsModel.$.get( guildId ) ),
+            next = { ... current, ... patch },
+            isTurningOn = true === patch.enabled;
 
-        if ( true === patch.enabled && null === channelId ) {
-            return { code: GUILD_EVENTS_SAVE_CODES.INVALID, reasons: [ "Pick a channel for Events to post in first." ] };
+        const invalid = this.findInvalid( guildId, patch, next );
+
+        if ( invalid ) {
+            return { code: GUILD_EVENTS_SAVE_CODES.INVALID, reasons: [ invalid ] };
         }
 
-        const isChannelChecked = null !== channelId && ( undefined !== patch.channelId || true === patch.enabled ),
-            status = await this.getStatus( guildId, isChannelChecked ? channelId : null );
+        // Asked about only what is being picked, and - when Events is being turned on - every channel
+        // it will post in, since permissions change after a channel is picked.
+        const postsChannelId = next.channelId && ( undefined !== patch.channelId || isTurningOn ) ? next.channelId : null,
+            logChannelId = next.logChannelId && ( undefined !== patch.logChannelId || isTurningOn ) ? next.logChannelId : null,
+            roleIds = [ patch.checkInRoleId, patch.subRoleId ].filter( ( roleId ): roleId is string => !! roleId );
+
+        const status = await this.getStatus(
+            guildId,
+            [ postsChannelId, logChannelId ].filter( ( channelId ): channelId is string => !! channelId ),
+            [ ... new Set( roleIds ) ]
+        );
 
         if ( ! status ) {
             return { code: GUILD_EVENTS_SAVE_CODES.BOT_UNREACHABLE };
@@ -148,25 +209,47 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
             return { code: GUILD_EVENTS_SAVE_CODES.BOT_NOT_IN_GUILD };
         }
 
-        if ( isChannelChecked && null === status.missingPermissions ) {
-            return { code: GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN, reasons: [ "That is not a text channel the bot can see." ] };
+        for ( const [ channelId, channel ] of [ [ postsChannelId, "posts" ], [ logChannelId, "log" ] ] as const ) {
+            const missingPermissions = channelId ? status.channels[ channelId ] : [];
+
+            if ( ! missingPermissions ) {
+                return { code: GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN, channel, reasons: [ "That is not a text channel the bot can see." ] };
+            }
+
+            if ( missingPermissions.length ) {
+                return {
+                    code: GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN,
+                    channel,
+                    reasons: missingPermissions.map( ( permission ) => permission.replace( PERMISSION_WORD_BOUNDARY, "$1 $2" ) )
+                };
+            }
         }
 
-        if ( isChannelChecked && status.missingPermissions?.length ) {
-            return {
-                code: GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN,
-                reasons: status.missingPermissions.map( ( permission ) => permission.replace( PERMISSION_WORD_BOUNDARY, "$1 $2" ) )
-            };
+        for ( const roleId of roleIds ) {
+            const role = status.roles[ roleId ];
+
+            if ( ! role ) {
+                return { code: GUILD_EVENTS_SAVE_CODES.INVALID, reasons: [ "That role is not in the server any more." ] };
+            }
+
+            if ( ! role.isPingable ) {
+                return {
+                    code: GUILD_EVENTS_SAVE_CODES.ROLE_NOT_PINGABLE,
+                    reasons: [
+                        "Turn on \"Allow anyone to @mention this role\" for it in Server Settings → Roles,",
+                        "or give the bot the Mention @everyone, @here and All Roles permission."
+                    ]
+                };
+            }
         }
 
         const saved = await GuildEventSettingsModel.$.save( guildId, status.applicationId, {
-            ... ( undefined !== patch.subPostsEnabled ? { subPostsEnabled: patch.subPostsEnabled } : {} ),
-            channelId,
+            ... patch,
             // Clearing the channel turns Events off: there would be nowhere for a board to go.
-            enabled: null !== channelId && ( patch.enabled ?? current?.enabled ?? false )
+            enabled: null !== next.channelId && next.enabled
         }, userId );
 
-        return { code: GUILD_EVENTS_SAVE_CODES.SAVED, view: this.toSettingsView( saved ) };
+        return { code: GUILD_EVENTS_SAVE_CODES.SAVED, view: resolveGuildEventsSettings( saved ) };
     }
 
     /**
@@ -216,9 +299,30 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function getStatus() :: The bot's word on a server and a channel, or null if it could not be asked.
+     * Function findInvalid() :: Why a change makes no sense, before anybody is asked about it.
      */
-    private async getStatus( guildId: string, channelId: string | null ): Promise<GetGuildEventsStatusResponse | null> {
+    private findInvalid( guildId: string, patch: IGuildEventsSettingsPatch, next: IGuildEventsSettingsView ) {
+        if ( true === patch.enabled && null === next.channelId ) {
+            return "Pick a channel for Events to post in first.";
+        }
+
+        if ( next.logChannelId && next.logChannelId === next.channelId &&
+            ( undefined !== patch.logChannelId || undefined !== patch.channelId ) ) {
+            return "The attendance copy needs a channel of its own - the boards already end as the attendance there.";
+        }
+
+        // `@everyone` carries the server's own id, and is not a role a ping can name.
+        if ( guildId === patch.checkInRoleId || guildId === patch.subRoleId ) {
+            return "Pick a role - Events does not ping @everyone.";
+        }
+
+        return null;
+    }
+
+    /**
+     * Function getStatus() :: The bot's word on a server, its channels and its roles, or null if it could not be asked.
+     */
+    private async getStatus( guildId: string, channelIds: string[], roleIds: string[] ): Promise<GetGuildEventsStatusResponse | null> {
         if ( ! this.services.ipcService.isReady() ) {
             return null;
         }
@@ -227,7 +331,7 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
             return await this.services.ipcService.request<GetGuildEventsStatusRequest, GetGuildEventsStatusResponse>(
                 IPC_CHANNELS.MANAGEMENT_REQUEST,
                 IPC_CHANNELS.MANAGEMENT_RESPONSE,
-                { action: IPC_REQUEST_ACTIONS.GET_GUILD_EVENTS_STATUS, guildId, channelId },
+                { action: IPC_REQUEST_ACTIONS.GET_GUILD_EVENTS_STATUS, guildId, channelIds, roleIds },
                 GUILD_EVENTS_DASHBOARD.STATUS_REQUEST_TIMEOUT_MS
             );
         } catch( error ) {
@@ -235,15 +339,6 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
 
             return null;
         }
-    }
-
-    private toSettingsView( settings: PrismaBot.GuildEventSettings | null ): IGuildEventsSettingsView {
-        return {
-            enabled: !! settings?.enabled,
-            channelId: settings?.channelId ?? null,
-            subPostsEnabled: settings?.subPostsEnabled ?? true,
-            lastError: settings?.lastError ?? null
-        };
     }
 
     private toSummary( run: PrismaBot.GuildEventRun, attendees: PrismaBot.GuildEventAttendee[], now: number ): IGuildEventRunSummary {
@@ -274,31 +369,36 @@ export class GuildEventsService extends ServiceWithDependenciesBase<{
      *
      * While check-in is still open nobody is on the roster yet - it is written when it freezes - so
      * whoever is there so far is counted as having come. A visit still going is counted up to now.
+     * A finished run is held to the least time in voice it ended with, the way its board was.
      */
     private toAttendeeViews( run: PrismaBot.GuildEventRun, attendees: PrismaBot.GuildEventAttendee[], now: number ): IGuildEventAttendeeView[] {
         const isCheckingIn = GUILD_EVENT_RUN_PHASES.CHECK_IN === run.phase,
+            minVoiceSeconds = GUILD_EVENT_RUN_PHASES.ENDED === run.phase ? run.minVoiceSeconds ?? 0 : 0,
             views: IGuildEventAttendeeView[] = [];
 
         for ( const attendee of attendees ) {
+            const openSeconds = attendee.sessionStartedAt
+                    ? Math.max( 0, Math.floor( ( now - attendee.sessionStartedAt.getTime() ) / MS_PER_SECOND ) )
+                    : 0,
+                voiceSeconds = attendee.voiceSeconds + openSeconds;
+
             const kind: TGuildEventAttendanceKind | null = resolveGuildEventAttendanceKind( {
                 interested: attendee.interested || isCheckingIn,
                 hasCheckedIn: null !== attendee.checkedInAt,
-                late: attendee.late
+                late: attendee.late,
+                voiceSeconds,
+                minVoiceSeconds
             } );
 
             if ( ! kind ) {
                 continue;
             }
 
-            const openSeconds = attendee.sessionStartedAt
-                ? Math.max( 0, Math.floor( ( now - attendee.sessionStartedAt.getTime() ) / MS_PER_SECOND ) )
-                : 0;
-
             views.push( {
                 userId: attendee.userId,
                 displayName: attendee.displayName,
                 kind,
-                voiceSeconds: attendee.voiceSeconds + openSeconds,
+                voiceSeconds,
                 checkedInAt: attendee.checkedInAt?.toISOString() ?? null
             } );
         }

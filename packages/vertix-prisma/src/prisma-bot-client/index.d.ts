@@ -20107,8 +20107,28 @@ export namespace Prisma {
 
   export type AggregateGuildEventSettings = {
     _count: GuildEventSettingsCountAggregateOutputType | null
+    _avg: GuildEventSettingsAvgAggregateOutputType | null
+    _sum: GuildEventSettingsSumAggregateOutputType | null
     _min: GuildEventSettingsMinAggregateOutputType | null
     _max: GuildEventSettingsMaxAggregateOutputType | null
+  }
+
+  export type GuildEventSettingsAvgAggregateOutputType = {
+    checkInLeadMinutes: number | null
+    lateAfterMinutes: number | null
+    endAfterEmptyMinutes: number | null
+    maxDurationHours: number | null
+    subMinMissing: number | null
+    minVoiceMinutes: number | null
+  }
+
+  export type GuildEventSettingsSumAggregateOutputType = {
+    checkInLeadMinutes: number | null
+    lateAfterMinutes: number | null
+    endAfterEmptyMinutes: number | null
+    maxDurationHours: number | null
+    subMinMissing: number | null
+    minVoiceMinutes: number | null
   }
 
   export type GuildEventSettingsMinAggregateOutputType = {
@@ -20118,6 +20138,16 @@ export namespace Prisma {
     enabled: boolean | null
     channelId: string | null
     subPostsEnabled: boolean | null
+    checkInLeadMinutes: number | null
+    lateAfterMinutes: number | null
+    endAfterEmptyMinutes: number | null
+    maxDurationHours: number | null
+    checkInRoleId: string | null
+    checkInPingInterested: boolean | null
+    subRoleId: string | null
+    subMinMissing: number | null
+    minVoiceMinutes: number | null
+    logChannelId: string | null
     lastError: string | null
     lastErrorAt: Date | null
     updatedByUserId: string | null
@@ -20132,6 +20162,16 @@ export namespace Prisma {
     enabled: boolean | null
     channelId: string | null
     subPostsEnabled: boolean | null
+    checkInLeadMinutes: number | null
+    lateAfterMinutes: number | null
+    endAfterEmptyMinutes: number | null
+    maxDurationHours: number | null
+    checkInRoleId: string | null
+    checkInPingInterested: boolean | null
+    subRoleId: string | null
+    subMinMissing: number | null
+    minVoiceMinutes: number | null
+    logChannelId: string | null
     lastError: string | null
     lastErrorAt: Date | null
     updatedByUserId: string | null
@@ -20146,6 +20186,17 @@ export namespace Prisma {
     enabled: number
     channelId: number
     subPostsEnabled: number
+    checkInLeadMinutes: number
+    lateAfterMinutes: number
+    endAfterEmptyMinutes: number
+    maxDurationHours: number
+    eventChannelIds: number
+    checkInRoleId: number
+    checkInPingInterested: number
+    subRoleId: number
+    subMinMissing: number
+    minVoiceMinutes: number
+    logChannelId: number
     lastError: number
     lastErrorAt: number
     updatedByUserId: number
@@ -20155,6 +20206,24 @@ export namespace Prisma {
   }
 
 
+  export type GuildEventSettingsAvgAggregateInputType = {
+    checkInLeadMinutes?: true
+    lateAfterMinutes?: true
+    endAfterEmptyMinutes?: true
+    maxDurationHours?: true
+    subMinMissing?: true
+    minVoiceMinutes?: true
+  }
+
+  export type GuildEventSettingsSumAggregateInputType = {
+    checkInLeadMinutes?: true
+    lateAfterMinutes?: true
+    endAfterEmptyMinutes?: true
+    maxDurationHours?: true
+    subMinMissing?: true
+    minVoiceMinutes?: true
+  }
+
   export type GuildEventSettingsMinAggregateInputType = {
     id?: true
     guildId?: true
@@ -20162,6 +20231,16 @@ export namespace Prisma {
     enabled?: true
     channelId?: true
     subPostsEnabled?: true
+    checkInLeadMinutes?: true
+    lateAfterMinutes?: true
+    endAfterEmptyMinutes?: true
+    maxDurationHours?: true
+    checkInRoleId?: true
+    checkInPingInterested?: true
+    subRoleId?: true
+    subMinMissing?: true
+    minVoiceMinutes?: true
+    logChannelId?: true
     lastError?: true
     lastErrorAt?: true
     updatedByUserId?: true
@@ -20176,6 +20255,16 @@ export namespace Prisma {
     enabled?: true
     channelId?: true
     subPostsEnabled?: true
+    checkInLeadMinutes?: true
+    lateAfterMinutes?: true
+    endAfterEmptyMinutes?: true
+    maxDurationHours?: true
+    checkInRoleId?: true
+    checkInPingInterested?: true
+    subRoleId?: true
+    subMinMissing?: true
+    minVoiceMinutes?: true
+    logChannelId?: true
     lastError?: true
     lastErrorAt?: true
     updatedByUserId?: true
@@ -20190,6 +20279,17 @@ export namespace Prisma {
     enabled?: true
     channelId?: true
     subPostsEnabled?: true
+    checkInLeadMinutes?: true
+    lateAfterMinutes?: true
+    endAfterEmptyMinutes?: true
+    maxDurationHours?: true
+    eventChannelIds?: true
+    checkInRoleId?: true
+    checkInPingInterested?: true
+    subRoleId?: true
+    subMinMissing?: true
+    minVoiceMinutes?: true
+    logChannelId?: true
     lastError?: true
     lastErrorAt?: true
     updatedByUserId?: true
@@ -20236,6 +20336,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: GuildEventSettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GuildEventSettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: GuildEventSettingsMinAggregateInputType
@@ -20266,6 +20378,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: GuildEventSettingsCountAggregateInputType | true
+    _avg?: GuildEventSettingsAvgAggregateInputType
+    _sum?: GuildEventSettingsSumAggregateInputType
     _min?: GuildEventSettingsMinAggregateInputType
     _max?: GuildEventSettingsMaxAggregateInputType
   }
@@ -20277,12 +20391,25 @@ export namespace Prisma {
     enabled: boolean
     channelId: string | null
     subPostsEnabled: boolean
+    checkInLeadMinutes: number | null
+    lateAfterMinutes: number | null
+    endAfterEmptyMinutes: number | null
+    maxDurationHours: number | null
+    eventChannelIds: string[]
+    checkInRoleId: string | null
+    checkInPingInterested: boolean | null
+    subRoleId: string | null
+    subMinMissing: number | null
+    minVoiceMinutes: number | null
+    logChannelId: string | null
     lastError: string | null
     lastErrorAt: Date | null
     updatedByUserId: string | null
     createdAt: Date
     updatedAt: Date
     _count: GuildEventSettingsCountAggregateOutputType | null
+    _avg: GuildEventSettingsAvgAggregateOutputType | null
+    _sum: GuildEventSettingsSumAggregateOutputType | null
     _min: GuildEventSettingsMinAggregateOutputType | null
     _max: GuildEventSettingsMaxAggregateOutputType | null
   }
@@ -20308,6 +20435,17 @@ export namespace Prisma {
     enabled?: boolean
     channelId?: boolean
     subPostsEnabled?: boolean
+    checkInLeadMinutes?: boolean
+    lateAfterMinutes?: boolean
+    endAfterEmptyMinutes?: boolean
+    maxDurationHours?: boolean
+    eventChannelIds?: boolean
+    checkInRoleId?: boolean
+    checkInPingInterested?: boolean
+    subRoleId?: boolean
+    subMinMissing?: boolean
+    minVoiceMinutes?: boolean
+    logChannelId?: boolean
     lastError?: boolean
     lastErrorAt?: boolean
     updatedByUserId?: boolean
@@ -20324,6 +20462,17 @@ export namespace Prisma {
     enabled?: boolean
     channelId?: boolean
     subPostsEnabled?: boolean
+    checkInLeadMinutes?: boolean
+    lateAfterMinutes?: boolean
+    endAfterEmptyMinutes?: boolean
+    maxDurationHours?: boolean
+    eventChannelIds?: boolean
+    checkInRoleId?: boolean
+    checkInPingInterested?: boolean
+    subRoleId?: boolean
+    subMinMissing?: boolean
+    minVoiceMinutes?: boolean
+    logChannelId?: boolean
     lastError?: boolean
     lastErrorAt?: boolean
     updatedByUserId?: boolean
@@ -20331,7 +20480,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GuildEventSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "applicationId" | "enabled" | "channelId" | "subPostsEnabled" | "lastError" | "lastErrorAt" | "updatedByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["guildEventSettings"]>
+  export type GuildEventSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "applicationId" | "enabled" | "channelId" | "subPostsEnabled" | "checkInLeadMinutes" | "lateAfterMinutes" | "endAfterEmptyMinutes" | "maxDurationHours" | "eventChannelIds" | "checkInRoleId" | "checkInPingInterested" | "subRoleId" | "subMinMissing" | "minVoiceMinutes" | "logChannelId" | "lastError" | "lastErrorAt" | "updatedByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["guildEventSettings"]>
 
   export type $GuildEventSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GuildEventSettings"
@@ -20346,6 +20495,50 @@ export namespace Prisma {
        */
       channelId: string | null
       subPostsEnabled: boolean
+      /**
+       * Minutes before the start the board goes up and check-in opens.
+       */
+      checkInLeadMinutes: number | null
+      /**
+       * Minutes after the start somebody still counts as on time; the roster locks then.
+       */
+      lateAfterMinutes: number | null
+      /**
+       * Minutes the event's channels stay empty, once the roster locked, before the attendance is final.
+       */
+      endAfterEmptyMinutes: number | null
+      /**
+       * The longest a run stays open, in hours from the start.
+       */
+      maxDurationHours: number | null
+      /**
+       * Only events held in these voice or stage channels - empty for every one.
+       */
+      eventChannelIds: string[]
+      /**
+       * The role pinged when check-in opens.
+       */
+      checkInRoleId: string | null
+      /**
+       * Whether the members on the roster are pinged by name when check-in opens.
+       */
+      checkInPingInterested: boolean | null
+      /**
+       * The role the "need a sub" post pings.
+       */
+      subRoleId: string | null
+      /**
+       * The fewest missing it takes for a "need a sub" post to go up.
+       */
+      subMinMissing: number | null
+      /**
+       * The least time in voice, in minutes over the whole event, that counts as having come.
+       */
+      minVoiceMinutes: number | null
+      /**
+       * A second text channel each finished attendance is copied to.
+       */
+      logChannelId: string | null
       /**
        * A `GUILD_EVENTS_ERRORS` code - the last thing that stopped Events here, for the settings screen.
        */
@@ -20755,6 +20948,17 @@ export namespace Prisma {
     readonly enabled: FieldRef<"GuildEventSettings", 'Boolean'>
     readonly channelId: FieldRef<"GuildEventSettings", 'String'>
     readonly subPostsEnabled: FieldRef<"GuildEventSettings", 'Boolean'>
+    readonly checkInLeadMinutes: FieldRef<"GuildEventSettings", 'Int'>
+    readonly lateAfterMinutes: FieldRef<"GuildEventSettings", 'Int'>
+    readonly endAfterEmptyMinutes: FieldRef<"GuildEventSettings", 'Int'>
+    readonly maxDurationHours: FieldRef<"GuildEventSettings", 'Int'>
+    readonly eventChannelIds: FieldRef<"GuildEventSettings", 'String[]'>
+    readonly checkInRoleId: FieldRef<"GuildEventSettings", 'String'>
+    readonly checkInPingInterested: FieldRef<"GuildEventSettings", 'Boolean'>
+    readonly subRoleId: FieldRef<"GuildEventSettings", 'String'>
+    readonly subMinMissing: FieldRef<"GuildEventSettings", 'Int'>
+    readonly minVoiceMinutes: FieldRef<"GuildEventSettings", 'Int'>
+    readonly logChannelId: FieldRef<"GuildEventSettings", 'String'>
     readonly lastError: FieldRef<"GuildEventSettings", 'String'>
     readonly lastErrorAt: FieldRef<"GuildEventSettings", 'DateTime'>
     readonly updatedByUserId: FieldRef<"GuildEventSettings", 'String'>
@@ -21122,10 +21326,12 @@ export namespace Prisma {
 
   export type GuildEventRunAvgAggregateOutputType = {
     subsNeeded: number | null
+    minVoiceSeconds: number | null
   }
 
   export type GuildEventRunSumAggregateOutputType = {
     subsNeeded: number | null
+    minVoiceSeconds: number | null
   }
 
   export type GuildEventRunMinAggregateOutputType = {
@@ -21145,6 +21351,7 @@ export namespace Prisma {
     endedAt: Date | null
     checkpointAt: Date | null
     lastError: string | null
+    minVoiceSeconds: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -21166,6 +21373,7 @@ export namespace Prisma {
     endedAt: Date | null
     checkpointAt: Date | null
     lastError: string | null
+    minVoiceSeconds: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -21187,6 +21395,7 @@ export namespace Prisma {
     endedAt: number
     checkpointAt: number
     lastError: number
+    minVoiceSeconds: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -21195,10 +21404,12 @@ export namespace Prisma {
 
   export type GuildEventRunAvgAggregateInputType = {
     subsNeeded?: true
+    minVoiceSeconds?: true
   }
 
   export type GuildEventRunSumAggregateInputType = {
     subsNeeded?: true
+    minVoiceSeconds?: true
   }
 
   export type GuildEventRunMinAggregateInputType = {
@@ -21218,6 +21429,7 @@ export namespace Prisma {
     endedAt?: true
     checkpointAt?: true
     lastError?: true
+    minVoiceSeconds?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -21239,6 +21451,7 @@ export namespace Prisma {
     endedAt?: true
     checkpointAt?: true
     lastError?: true
+    minVoiceSeconds?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -21260,6 +21473,7 @@ export namespace Prisma {
     endedAt?: true
     checkpointAt?: true
     lastError?: true
+    minVoiceSeconds?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -21368,6 +21582,7 @@ export namespace Prisma {
     endedAt: Date | null
     checkpointAt: Date | null
     lastError: string | null
+    minVoiceSeconds: number | null
     createdAt: Date
     updatedAt: Date
     _count: GuildEventRunCountAggregateOutputType | null
@@ -21408,6 +21623,7 @@ export namespace Prisma {
     endedAt?: boolean
     checkpointAt?: boolean
     lastError?: boolean
+    minVoiceSeconds?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["guildEventRun"]>
@@ -21431,11 +21647,12 @@ export namespace Prisma {
     endedAt?: boolean
     checkpointAt?: boolean
     lastError?: boolean
+    minVoiceSeconds?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type GuildEventRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "guildId" | "scheduledEventId" | "occurrenceStartAt" | "name" | "voiceChannelId" | "phase" | "postChannelId" | "boardMessageId" | "subPostMessageId" | "subsNeeded" | "frozenAt" | "endedAt" | "checkpointAt" | "lastError" | "createdAt" | "updatedAt", ExtArgs["result"]["guildEventRun"]>
+  export type GuildEventRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "guildId" | "scheduledEventId" | "occurrenceStartAt" | "name" | "voiceChannelId" | "phase" | "postChannelId" | "boardMessageId" | "subPostMessageId" | "subsNeeded" | "frozenAt" | "endedAt" | "checkpointAt" | "lastError" | "minVoiceSeconds" | "createdAt" | "updatedAt", ExtArgs["result"]["guildEventRun"]>
 
   export type $GuildEventRunPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GuildEventRun"
@@ -21470,6 +21687,11 @@ export namespace Prisma {
        * A `GUILD_EVENTS_ERRORS` code, so what failed is not tried again for the rest of the run.
        */
       lastError: string | null
+      /**
+       * The least time in voice that counted as coming, as the server had it when the run ended - kept
+       * on the run, so changing the setting later does not rewrite an attendance already given.
+       */
+      minVoiceSeconds: number | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["guildEventRun"]>
@@ -21880,6 +22102,7 @@ export namespace Prisma {
     readonly endedAt: FieldRef<"GuildEventRun", 'DateTime'>
     readonly checkpointAt: FieldRef<"GuildEventRun", 'DateTime'>
     readonly lastError: FieldRef<"GuildEventRun", 'String'>
+    readonly minVoiceSeconds: FieldRef<"GuildEventRun", 'Int'>
     readonly createdAt: FieldRef<"GuildEventRun", 'DateTime'>
     readonly updatedAt: FieldRef<"GuildEventRun", 'DateTime'>
   }
@@ -23576,6 +23799,17 @@ export namespace Prisma {
     enabled: 'enabled',
     channelId: 'channelId',
     subPostsEnabled: 'subPostsEnabled',
+    checkInLeadMinutes: 'checkInLeadMinutes',
+    lateAfterMinutes: 'lateAfterMinutes',
+    endAfterEmptyMinutes: 'endAfterEmptyMinutes',
+    maxDurationHours: 'maxDurationHours',
+    eventChannelIds: 'eventChannelIds',
+    checkInRoleId: 'checkInRoleId',
+    checkInPingInterested: 'checkInPingInterested',
+    subRoleId: 'subRoleId',
+    subMinMissing: 'subMinMissing',
+    minVoiceMinutes: 'minVoiceMinutes',
+    logChannelId: 'logChannelId',
     lastError: 'lastError',
     lastErrorAt: 'lastErrorAt',
     updatedByUserId: 'updatedByUserId',
@@ -23603,6 +23837,7 @@ export namespace Prisma {
     endedAt: 'endedAt',
     checkpointAt: 'checkpointAt',
     lastError: 'lastError',
+    minVoiceSeconds: 'minVoiceSeconds',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -25056,6 +25291,17 @@ export namespace Prisma {
     enabled?: BoolFilter<"GuildEventSettings"> | boolean
     channelId?: StringNullableFilter<"GuildEventSettings"> | string | null
     subPostsEnabled?: BoolFilter<"GuildEventSettings"> | boolean
+    checkInLeadMinutes?: IntNullableFilter<"GuildEventSettings"> | number | null
+    lateAfterMinutes?: IntNullableFilter<"GuildEventSettings"> | number | null
+    endAfterEmptyMinutes?: IntNullableFilter<"GuildEventSettings"> | number | null
+    maxDurationHours?: IntNullableFilter<"GuildEventSettings"> | number | null
+    eventChannelIds?: StringNullableListFilter<"GuildEventSettings">
+    checkInRoleId?: StringNullableFilter<"GuildEventSettings"> | string | null
+    checkInPingInterested?: BoolNullableFilter<"GuildEventSettings"> | boolean | null
+    subRoleId?: StringNullableFilter<"GuildEventSettings"> | string | null
+    subMinMissing?: IntNullableFilter<"GuildEventSettings"> | number | null
+    minVoiceMinutes?: IntNullableFilter<"GuildEventSettings"> | number | null
+    logChannelId?: StringNullableFilter<"GuildEventSettings"> | string | null
     lastError?: StringNullableFilter<"GuildEventSettings"> | string | null
     lastErrorAt?: DateTimeNullableFilter<"GuildEventSettings"> | Date | string | null
     updatedByUserId?: StringNullableFilter<"GuildEventSettings"> | string | null
@@ -25070,6 +25316,17 @@ export namespace Prisma {
     enabled?: SortOrder
     channelId?: SortOrder
     subPostsEnabled?: SortOrder
+    checkInLeadMinutes?: SortOrder
+    lateAfterMinutes?: SortOrder
+    endAfterEmptyMinutes?: SortOrder
+    maxDurationHours?: SortOrder
+    eventChannelIds?: SortOrder
+    checkInRoleId?: SortOrder
+    checkInPingInterested?: SortOrder
+    subRoleId?: SortOrder
+    subMinMissing?: SortOrder
+    minVoiceMinutes?: SortOrder
+    logChannelId?: SortOrder
     lastError?: SortOrder
     lastErrorAt?: SortOrder
     updatedByUserId?: SortOrder
@@ -25087,6 +25344,17 @@ export namespace Prisma {
     enabled?: BoolFilter<"GuildEventSettings"> | boolean
     channelId?: StringNullableFilter<"GuildEventSettings"> | string | null
     subPostsEnabled?: BoolFilter<"GuildEventSettings"> | boolean
+    checkInLeadMinutes?: IntNullableFilter<"GuildEventSettings"> | number | null
+    lateAfterMinutes?: IntNullableFilter<"GuildEventSettings"> | number | null
+    endAfterEmptyMinutes?: IntNullableFilter<"GuildEventSettings"> | number | null
+    maxDurationHours?: IntNullableFilter<"GuildEventSettings"> | number | null
+    eventChannelIds?: StringNullableListFilter<"GuildEventSettings">
+    checkInRoleId?: StringNullableFilter<"GuildEventSettings"> | string | null
+    checkInPingInterested?: BoolNullableFilter<"GuildEventSettings"> | boolean | null
+    subRoleId?: StringNullableFilter<"GuildEventSettings"> | string | null
+    subMinMissing?: IntNullableFilter<"GuildEventSettings"> | number | null
+    minVoiceMinutes?: IntNullableFilter<"GuildEventSettings"> | number | null
+    logChannelId?: StringNullableFilter<"GuildEventSettings"> | string | null
     lastError?: StringNullableFilter<"GuildEventSettings"> | string | null
     lastErrorAt?: DateTimeNullableFilter<"GuildEventSettings"> | Date | string | null
     updatedByUserId?: StringNullableFilter<"GuildEventSettings"> | string | null
@@ -25101,14 +25369,27 @@ export namespace Prisma {
     enabled?: SortOrder
     channelId?: SortOrder
     subPostsEnabled?: SortOrder
+    checkInLeadMinutes?: SortOrder
+    lateAfterMinutes?: SortOrder
+    endAfterEmptyMinutes?: SortOrder
+    maxDurationHours?: SortOrder
+    eventChannelIds?: SortOrder
+    checkInRoleId?: SortOrder
+    checkInPingInterested?: SortOrder
+    subRoleId?: SortOrder
+    subMinMissing?: SortOrder
+    minVoiceMinutes?: SortOrder
+    logChannelId?: SortOrder
     lastError?: SortOrder
     lastErrorAt?: SortOrder
     updatedByUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: GuildEventSettingsCountOrderByAggregateInput
+    _avg?: GuildEventSettingsAvgOrderByAggregateInput
     _max?: GuildEventSettingsMaxOrderByAggregateInput
     _min?: GuildEventSettingsMinOrderByAggregateInput
+    _sum?: GuildEventSettingsSumOrderByAggregateInput
   }
 
   export type GuildEventSettingsScalarWhereWithAggregatesInput = {
@@ -25121,6 +25402,17 @@ export namespace Prisma {
     enabled?: BoolWithAggregatesFilter<"GuildEventSettings"> | boolean
     channelId?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
     subPostsEnabled?: BoolWithAggregatesFilter<"GuildEventSettings"> | boolean
+    checkInLeadMinutes?: IntNullableWithAggregatesFilter<"GuildEventSettings"> | number | null
+    lateAfterMinutes?: IntNullableWithAggregatesFilter<"GuildEventSettings"> | number | null
+    endAfterEmptyMinutes?: IntNullableWithAggregatesFilter<"GuildEventSettings"> | number | null
+    maxDurationHours?: IntNullableWithAggregatesFilter<"GuildEventSettings"> | number | null
+    eventChannelIds?: StringNullableListFilter<"GuildEventSettings">
+    checkInRoleId?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
+    checkInPingInterested?: BoolNullableWithAggregatesFilter<"GuildEventSettings"> | boolean | null
+    subRoleId?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
+    subMinMissing?: IntNullableWithAggregatesFilter<"GuildEventSettings"> | number | null
+    minVoiceMinutes?: IntNullableWithAggregatesFilter<"GuildEventSettings"> | number | null
+    logChannelId?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
     lastError?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
     lastErrorAt?: DateTimeNullableWithAggregatesFilter<"GuildEventSettings"> | Date | string | null
     updatedByUserId?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
@@ -25148,6 +25440,7 @@ export namespace Prisma {
     endedAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
     checkpointAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
     lastError?: StringNullableFilter<"GuildEventRun"> | string | null
+    minVoiceSeconds?: IntNullableFilter<"GuildEventRun"> | number | null
     createdAt?: DateTimeFilter<"GuildEventRun"> | Date | string
     updatedAt?: DateTimeFilter<"GuildEventRun"> | Date | string
   }
@@ -25169,6 +25462,7 @@ export namespace Prisma {
     endedAt?: SortOrder
     checkpointAt?: SortOrder
     lastError?: SortOrder
+    minVoiceSeconds?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -25194,6 +25488,7 @@ export namespace Prisma {
     endedAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
     checkpointAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
     lastError?: StringNullableFilter<"GuildEventRun"> | string | null
+    minVoiceSeconds?: IntNullableFilter<"GuildEventRun"> | number | null
     createdAt?: DateTimeFilter<"GuildEventRun"> | Date | string
     updatedAt?: DateTimeFilter<"GuildEventRun"> | Date | string
   }, "id" | "applicationId_scheduledEventId_occurrenceStartAt">
@@ -25215,6 +25510,7 @@ export namespace Prisma {
     endedAt?: SortOrder
     checkpointAt?: SortOrder
     lastError?: SortOrder
+    minVoiceSeconds?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: GuildEventRunCountOrderByAggregateInput
@@ -25244,6 +25540,7 @@ export namespace Prisma {
     endedAt?: DateTimeNullableWithAggregatesFilter<"GuildEventRun"> | Date | string | null
     checkpointAt?: DateTimeNullableWithAggregatesFilter<"GuildEventRun"> | Date | string | null
     lastError?: StringNullableWithAggregatesFilter<"GuildEventRun"> | string | null
+    minVoiceSeconds?: IntNullableWithAggregatesFilter<"GuildEventRun"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"GuildEventRun"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"GuildEventRun"> | Date | string
   }
@@ -26753,6 +27050,17 @@ export namespace Prisma {
     enabled?: boolean
     channelId?: string | null
     subPostsEnabled?: boolean
+    checkInLeadMinutes?: number | null
+    lateAfterMinutes?: number | null
+    endAfterEmptyMinutes?: number | null
+    maxDurationHours?: number | null
+    eventChannelIds?: GuildEventSettingsCreateeventChannelIdsInput | string[]
+    checkInRoleId?: string | null
+    checkInPingInterested?: boolean | null
+    subRoleId?: string | null
+    subMinMissing?: number | null
+    minVoiceMinutes?: number | null
+    logChannelId?: string | null
     lastError?: string | null
     lastErrorAt?: Date | string | null
     updatedByUserId?: string | null
@@ -26767,6 +27075,17 @@ export namespace Prisma {
     enabled?: boolean
     channelId?: string | null
     subPostsEnabled?: boolean
+    checkInLeadMinutes?: number | null
+    lateAfterMinutes?: number | null
+    endAfterEmptyMinutes?: number | null
+    maxDurationHours?: number | null
+    eventChannelIds?: GuildEventSettingsCreateeventChannelIdsInput | string[]
+    checkInRoleId?: string | null
+    checkInPingInterested?: boolean | null
+    subRoleId?: string | null
+    subMinMissing?: number | null
+    minVoiceMinutes?: number | null
+    logChannelId?: string | null
     lastError?: string | null
     lastErrorAt?: Date | string | null
     updatedByUserId?: string | null
@@ -26780,6 +27099,17 @@ export namespace Prisma {
     enabled?: BoolFieldUpdateOperationsInput | boolean
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     subPostsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    checkInLeadMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    lateAfterMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    endAfterEmptyMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    maxDurationHours?: NullableIntFieldUpdateOperationsInput | number | null
+    eventChannelIds?: GuildEventSettingsUpdateeventChannelIdsInput | string[]
+    checkInRoleId?: NullableStringFieldUpdateOperationsInput | string | null
+    checkInPingInterested?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    subRoleId?: NullableStringFieldUpdateOperationsInput | string | null
+    subMinMissing?: NullableIntFieldUpdateOperationsInput | number | null
+    minVoiceMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    logChannelId?: NullableStringFieldUpdateOperationsInput | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
     lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26793,6 +27123,17 @@ export namespace Prisma {
     enabled?: BoolFieldUpdateOperationsInput | boolean
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     subPostsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    checkInLeadMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    lateAfterMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    endAfterEmptyMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    maxDurationHours?: NullableIntFieldUpdateOperationsInput | number | null
+    eventChannelIds?: GuildEventSettingsUpdateeventChannelIdsInput | string[]
+    checkInRoleId?: NullableStringFieldUpdateOperationsInput | string | null
+    checkInPingInterested?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    subRoleId?: NullableStringFieldUpdateOperationsInput | string | null
+    subMinMissing?: NullableIntFieldUpdateOperationsInput | number | null
+    minVoiceMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    logChannelId?: NullableStringFieldUpdateOperationsInput | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
     lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26807,6 +27148,17 @@ export namespace Prisma {
     enabled?: boolean
     channelId?: string | null
     subPostsEnabled?: boolean
+    checkInLeadMinutes?: number | null
+    lateAfterMinutes?: number | null
+    endAfterEmptyMinutes?: number | null
+    maxDurationHours?: number | null
+    eventChannelIds?: GuildEventSettingsCreateeventChannelIdsInput | string[]
+    checkInRoleId?: string | null
+    checkInPingInterested?: boolean | null
+    subRoleId?: string | null
+    subMinMissing?: number | null
+    minVoiceMinutes?: number | null
+    logChannelId?: string | null
     lastError?: string | null
     lastErrorAt?: Date | string | null
     updatedByUserId?: string | null
@@ -26820,6 +27172,17 @@ export namespace Prisma {
     enabled?: BoolFieldUpdateOperationsInput | boolean
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     subPostsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    checkInLeadMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    lateAfterMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    endAfterEmptyMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    maxDurationHours?: NullableIntFieldUpdateOperationsInput | number | null
+    eventChannelIds?: GuildEventSettingsUpdateeventChannelIdsInput | string[]
+    checkInRoleId?: NullableStringFieldUpdateOperationsInput | string | null
+    checkInPingInterested?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    subRoleId?: NullableStringFieldUpdateOperationsInput | string | null
+    subMinMissing?: NullableIntFieldUpdateOperationsInput | number | null
+    minVoiceMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    logChannelId?: NullableStringFieldUpdateOperationsInput | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
     lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26833,6 +27196,17 @@ export namespace Prisma {
     enabled?: BoolFieldUpdateOperationsInput | boolean
     channelId?: NullableStringFieldUpdateOperationsInput | string | null
     subPostsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    checkInLeadMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    lateAfterMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    endAfterEmptyMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    maxDurationHours?: NullableIntFieldUpdateOperationsInput | number | null
+    eventChannelIds?: GuildEventSettingsUpdateeventChannelIdsInput | string[]
+    checkInRoleId?: NullableStringFieldUpdateOperationsInput | string | null
+    checkInPingInterested?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    subRoleId?: NullableStringFieldUpdateOperationsInput | string | null
+    subMinMissing?: NullableIntFieldUpdateOperationsInput | number | null
+    minVoiceMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    logChannelId?: NullableStringFieldUpdateOperationsInput | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
     lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26857,6 +27231,7 @@ export namespace Prisma {
     endedAt?: Date | string | null
     checkpointAt?: Date | string | null
     lastError?: string | null
+    minVoiceSeconds?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -26878,6 +27253,7 @@ export namespace Prisma {
     endedAt?: Date | string | null
     checkpointAt?: Date | string | null
     lastError?: string | null
+    minVoiceSeconds?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -26898,6 +27274,7 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     checkpointAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    minVoiceSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26918,6 +27295,7 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     checkpointAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    minVoiceSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26939,6 +27317,7 @@ export namespace Prisma {
     endedAt?: Date | string | null
     checkpointAt?: Date | string | null
     lastError?: string | null
+    minVoiceSeconds?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -26959,6 +27338,7 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     checkpointAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    minVoiceSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26979,6 +27359,7 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     checkpointAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    minVoiceSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28103,6 +28484,12 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type BoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+    isSet?: boolean
+  }
+
   export type GuildEventSettingsCountOrderByAggregateInput = {
     id?: SortOrder
     guildId?: SortOrder
@@ -28110,11 +28497,31 @@ export namespace Prisma {
     enabled?: SortOrder
     channelId?: SortOrder
     subPostsEnabled?: SortOrder
+    checkInLeadMinutes?: SortOrder
+    lateAfterMinutes?: SortOrder
+    endAfterEmptyMinutes?: SortOrder
+    maxDurationHours?: SortOrder
+    eventChannelIds?: SortOrder
+    checkInRoleId?: SortOrder
+    checkInPingInterested?: SortOrder
+    subRoleId?: SortOrder
+    subMinMissing?: SortOrder
+    minVoiceMinutes?: SortOrder
+    logChannelId?: SortOrder
     lastError?: SortOrder
     lastErrorAt?: SortOrder
     updatedByUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type GuildEventSettingsAvgOrderByAggregateInput = {
+    checkInLeadMinutes?: SortOrder
+    lateAfterMinutes?: SortOrder
+    endAfterEmptyMinutes?: SortOrder
+    maxDurationHours?: SortOrder
+    subMinMissing?: SortOrder
+    minVoiceMinutes?: SortOrder
   }
 
   export type GuildEventSettingsMaxOrderByAggregateInput = {
@@ -28124,6 +28531,16 @@ export namespace Prisma {
     enabled?: SortOrder
     channelId?: SortOrder
     subPostsEnabled?: SortOrder
+    checkInLeadMinutes?: SortOrder
+    lateAfterMinutes?: SortOrder
+    endAfterEmptyMinutes?: SortOrder
+    maxDurationHours?: SortOrder
+    checkInRoleId?: SortOrder
+    checkInPingInterested?: SortOrder
+    subRoleId?: SortOrder
+    subMinMissing?: SortOrder
+    minVoiceMinutes?: SortOrder
+    logChannelId?: SortOrder
     lastError?: SortOrder
     lastErrorAt?: SortOrder
     updatedByUserId?: SortOrder
@@ -28138,11 +28555,39 @@ export namespace Prisma {
     enabled?: SortOrder
     channelId?: SortOrder
     subPostsEnabled?: SortOrder
+    checkInLeadMinutes?: SortOrder
+    lateAfterMinutes?: SortOrder
+    endAfterEmptyMinutes?: SortOrder
+    maxDurationHours?: SortOrder
+    checkInRoleId?: SortOrder
+    checkInPingInterested?: SortOrder
+    subRoleId?: SortOrder
+    subMinMissing?: SortOrder
+    minVoiceMinutes?: SortOrder
+    logChannelId?: SortOrder
     lastError?: SortOrder
     lastErrorAt?: SortOrder
     updatedByUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type GuildEventSettingsSumOrderByAggregateInput = {
+    checkInLeadMinutes?: SortOrder
+    lateAfterMinutes?: SortOrder
+    endAfterEmptyMinutes?: SortOrder
+    maxDurationHours?: SortOrder
+    subMinMissing?: SortOrder
+    minVoiceMinutes?: SortOrder
+  }
+
+  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
+    isSet?: boolean
   }
 
   export type GuildEventRunApplicationIdScheduledEventIdOccurrenceStartAtCompoundUniqueInput = {
@@ -28168,12 +28613,14 @@ export namespace Prisma {
     endedAt?: SortOrder
     checkpointAt?: SortOrder
     lastError?: SortOrder
+    minVoiceSeconds?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type GuildEventRunAvgOrderByAggregateInput = {
     subsNeeded?: SortOrder
+    minVoiceSeconds?: SortOrder
   }
 
   export type GuildEventRunMaxOrderByAggregateInput = {
@@ -28193,6 +28640,7 @@ export namespace Prisma {
     endedAt?: SortOrder
     checkpointAt?: SortOrder
     lastError?: SortOrder
+    minVoiceSeconds?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -28214,12 +28662,14 @@ export namespace Prisma {
     endedAt?: SortOrder
     checkpointAt?: SortOrder
     lastError?: SortOrder
+    minVoiceSeconds?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type GuildEventRunSumOrderByAggregateInput = {
     subsNeeded?: SortOrder
+    minVoiceSeconds?: SortOrder
   }
 
   export type GuildEventAttendeeRunIdUserIdCompoundUniqueInput = {
@@ -28655,6 +29105,20 @@ export namespace Prisma {
     unset?: boolean
   }
 
+  export type GuildEventSettingsCreateeventChannelIdsInput = {
+    set: string[]
+  }
+
+  export type GuildEventSettingsUpdateeventChannelIdsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type NullableBoolFieldUpdateOperationsInput = {
+    set?: boolean | null
+    unset?: boolean
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -28906,6 +29370,21 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
+  }
+
+  export type NestedBoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+    isSet?: boolean
+  }
+
+  export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
     isSet?: boolean
   }
 

@@ -73,6 +73,11 @@ export interface IPCGuildRole {
      */
     assignable?: boolean;
     reason?: TRoleUnassignableReason;
+    /**
+     * Whether the role lets anybody mention it. A setting that pings a role needs it to, unless the
+     * bot may mention every role. Absent is "not known".
+     */
+    mentionable?: boolean;
 }
 
 export interface IPCGuildChannel {
@@ -85,9 +90,18 @@ export interface IPCGuildChannel {
     isAnnouncement: boolean;
 }
 
+/** A channel members talk in - where a scheduled event can be held. */
+export interface IPCGuildVoiceChannel {
+    id: string;
+    name: string;
+    /** A stage channel rather than a plain voice one. */
+    isStage: boolean;
+}
+
 export interface GetGuildOptionsResponse {
     roles: IPCGuildRole[];
     textChannels: IPCGuildChannel[];
+    voiceChannels: IPCGuildVoiceChannel[];
 }
 
 /**
@@ -212,7 +226,7 @@ export interface ApplyGuildBrandingResponse {
 }
 
 /**
- * What the dashboard has to hear before pointing Events at a channel.
+ * What the dashboard has to hear before pointing Events at a channel or a role.
  *
  * Asked of the bot because only the process in the server knows what it may do in a channel - and
  * because whichever bot answers is the one a save makes run Events there, the same as saving from
@@ -221,8 +235,16 @@ export interface ApplyGuildBrandingResponse {
 export interface GetGuildEventsStatusRequest {
     action: typeof IPC_REQUEST_ACTIONS.GET_GUILD_EVENTS_STATUS;
     guildId: string;
-    /** The channel being picked, or null when none is being asked about. */
-    channelId: string | null;
+    /** The text channels Events would post in - its own and the attendance copy's - that are being picked. */
+    channelIds: string[];
+    /** The roles Events would ping that are being picked. */
+    roleIds: string[];
+}
+
+/** Whether the bot can ping a role, so that pinging it notifies anybody. */
+export interface IGuildEventsRoleStatus {
+    /** The role lets anybody mention it, or the bot may mention every role. */
+    isPingable: boolean;
 }
 
 export interface GetGuildEventsStatusResponse {
@@ -233,10 +255,13 @@ export interface GetGuildEventsStatusResponse {
     isBotInGuild: boolean;
 
     /**
-     * What the bot lacks to post in the channel asked about - empty when it can, or when no channel
-     * was asked about - and null when it is not a text channel the bot can see.
+     * Each channel asked about: what the bot lacks to post there - empty when it can - or null when
+     * it is not a text channel the bot can see.
      */
-    missingPermissions: string[] | null;
+    channels: Record<string, string[] | null>;
+
+    /** Each role asked about, or null for a role the server does not have. */
+    roles: Record<string, IGuildEventsRoleStatus | null>;
 }
 
 export interface IPCDiscordChannelInfo {

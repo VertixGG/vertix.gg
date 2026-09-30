@@ -73,13 +73,16 @@ export const EVENTS_SCREEN_VARIABLES = {
     statusLine: "{enabledOn}",
     channelLine: "<#events>",
     subPostsLine: "{subPostsOn}",
+    checkInLeadMinutes: "15",
+    lateAfterMinutes: "10",
     errorLine: "{errorNone}"
 };
 
 export const EVENT_BOARD_CHECK_IN_VARIABLES = {
     eventName: "Raid Night",
     stateTitle: "{stateCheckIn}",
-    stateLine: "Starts today at 9:00 PM (in 15 minutes) in <#Raid>.\nSaid you're coming? Join the voice channel to check in.",
+    stateLine: "Starts today at 9:00 PM (in 15 minutes) in <#Raid>.\n" +
+        "Said you're coming? Join the voice channel to check in - by 9:10 PM to count as on time.",
     checkedInBlock: "\n\n**✅ Here (2)**\n<@Maya>\n<@Leo>",
     waitingBlock: "\n\n**⏳ Not here yet (2)**\n<@Sam>\n<@Noa>",
     onTimeBlock: "{blockHidden}",

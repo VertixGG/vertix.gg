@@ -519,6 +519,12 @@
         }
       },
       {
+        "name": "VertixBot/UI-General/EventsDashboardButton",
+        "content": {
+          "label": "Weitere Optionen"
+        }
+      },
+      {
         "name": "VertixBot/UI-General/EventsChooseButton",
         "content": {
           "label": "Events"
@@ -4109,9 +4115,9 @@
             "{stateMoved}": "Verschoben"
           },
           "stateLine": {
-            "{stateCheckIn}": "Beginnt <t:{startsAt}:F> (<t:{startsAt}:R>) in <#{voiceChannelId}>.\nZugesagt? Tritt dem Sprachkanal bei, um einzuchecken.",
+            "{stateCheckIn}": "Beginnt <t:{startsAt}:F> (<t:{startsAt}:R>) in <#{voiceChannelId}>.\nZugesagt? Tritt dem Sprachkanal bei, um einzuchecken - bis <t:{lateAt}:t>, um als pünktlich zu zählen.",
             "{stateRunning}": "Hat <t:{startsAt}:R> in <#{voiceChannelId}> begonnen.\nDer Check-in ist geschlossen - wer von der Liste jetzt kommt, ist zu spät.",
-            "{stateEnded}": "Fand <t:{startsAt}:F> in <#{voiceChannelId}> statt.\nZeiten sind Stunden:Minuten im Sprachkanal.",
+            "{stateEnded}": "Fand <t:{startsAt}:F> in <#{voiceChannelId}> statt.\nZeiten sind Stunden:Minuten im Sprachkanal.{minVoiceLine}",
             "{stateCanceled}": "Abgesagt - geplant war <t:{startsAt}:F>.",
             "{stateMoved}": "Verschoben auf <t:{movedToAt}:F>. Vorher erscheint eine neue Übersicht."
           },
@@ -4162,6 +4168,10 @@
           "walkInsMore": {
             "{moreShown}": "\n+{walkInsHidden} weitere",
             "{moreHidden}": ""
+          },
+          "minVoiceLine": {
+            "{minVoiceShown}": "\nWeniger als {minVoiceMinutes} Min. im Sprachkanal zählt als nicht gekommen.",
+            "{minVoiceHidden}": ""
           }
         },
         "arrayOptions": {
@@ -4213,7 +4223,7 @@
       "name": "VertixBot/UI-General/EventsEmbed",
       "content": {
         "title": "📅  Events",
-        "description": "Wenn ein geplantes Event in einem Sprachkanal gleich beginnt, erscheint eine Check-in-Übersicht. Wer sich als **Interessiert** markiert hat, checkt ein, indem er dem Sprachkanal beitritt; zehn Minuten nach Beginn wird markiert, wer nicht gekommen ist, ein Beitrag sucht Ersatz, und die Übersicht wird zur Anwesenheitsliste.\n\n**Events** {statusLine}\n**Beiträge in** {channelLine}\n**\"Ersatz gesucht\"-Beiträge** {subPostsLine}{errorLine}\n\nWähle den Kanal und schalte es dann ein. Ein Event an einem Generator zählt jeden Raum, den er öffnet.",
+        "description": "Wenn ein geplantes Event in einem Sprachkanal gleich beginnt, erscheint eine Check-in-Übersicht. Wer sich als **Interessiert** markiert hat, checkt ein, indem er dem Sprachkanal beitritt. Wenn der Check-in schließt, wird markiert, wer nicht gekommen ist, ein Beitrag sucht Ersatz, und die Übersicht wird zur Anwesenheitsliste.\n\n**Events** {statusLine}\n**Beiträge in** {channelLine}\n**\"Ersatz gesucht\"-Beiträge** {subPostsLine}\n**Check-in** öffnet {checkInLeadMinutes} Min. vor Beginn, schließt {lateAfterMinutes} Min. danach{errorLine}\n\nWähle den Kanal und schalte es dann ein. Zeiten, Pings, welche Events zählen und wohin die Anwesenheit kopiert wird, findest du unter **Weitere Optionen**. Ein Event an einem Generator zählt jeden Raum, den er öffnet.",
         "options": {
           "statusLine": {
             "{enabledOn}": "🟢 An",
@@ -4231,7 +4241,9 @@
             "{errorNone}": "",
             "{errorPostChannelMissing}": "\n\n⚠️ Der Kanal für die Beiträge existiert nicht mehr - wähle einen anderen.",
             "{errorPostChannelForbidden}": "\n\n⚠️ Der Bot kann in diesem Kanal nicht posten. Er braucht dort Kanal ansehen, Nachrichten senden und Links einbetten.",
-            "{errorEventChannelForbidden}": "\n\n⚠️ Der Bot konnte den Sprachkanal eines Events nicht sehen und daher niemanden einchecken. Gib ihm dort Kanal ansehen."
+            "{errorEventChannelForbidden}": "\n\n⚠️ Der Bot konnte den Sprachkanal eines Events nicht sehen und daher niemanden einchecken. Gib ihm dort Kanal ansehen.",
+            "{errorLogChannelMissing}": "\n\n⚠️ Der Kanal, in den die Anwesenheit kopiert wird, existiert nicht mehr - wähle unter Weitere Optionen einen anderen.",
+            "{errorLogChannelForbidden}": "\n\n⚠️ Der Bot kann die Kopie der Anwesenheit nicht posten. Er braucht in diesem Kanal Kanal ansehen, Nachrichten senden und Links einbetten."
           }
         }
       }

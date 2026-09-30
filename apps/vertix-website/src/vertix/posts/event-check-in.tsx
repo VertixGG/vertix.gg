@@ -105,6 +105,12 @@ export default function EventCheckIn() {
                 <li><b>10 minutes after</b>, whoever has not come is marked, and a post asks for as many subs as are missing.</li>
                 <li><b>When everyone has left</b>, the board turns into the attendance, with each member&apos;s time in voice.</li>
             </ul>
+            <p className="text-h5">
+                Those are the defaults. Press <b>More options</b> on the Events screen - or open{ " " }
+                <b>Events</b> on the dashboard - to change the timing, ping a role when check-in opens or in the sub post,
+                limit Events to some channels, count only members who stayed a while, or copy each attendance to a staff
+                channel. The dashboard shows an evening in your own timing, and every message the bot will post.
+            </p>
 
             <div className="discord-chat-container vc-frame-box m-0">
                 <DiscordUIComponentMessage

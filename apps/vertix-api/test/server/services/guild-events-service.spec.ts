@@ -3,25 +3,27 @@ import { jest } from "@jest/globals";
 import {
     GUILD_EVENT_RUN_PHASES,
     GUILD_EVENTS_DASHBOARD,
-    GUILD_EVENTS_SAVE_CODES
+    GUILD_EVENTS_LIMITS,
+    GUILD_EVENTS_SAVE_CODES,
+    GUILD_EVENTS_SETTINGS_DEFAULTS
 } from "@vertix.gg/definitions/src/guild-events-definitions";
 
-import type { GetGuildEventsStatusResponse } from "@vertix.gg/definitions/src/ipc-definitions";
+import type { TGuildEventsStoredSettings } from "@vertix.gg/definitions/src/guild-events-definitions";
+import type { IGuildEventsRoleStatus } from "@vertix.gg/definitions/src/ipc-definitions";
 
 const GUILD_ID = "830000000000000001",
     OTHER_GUILD_ID = "830000000000000002",
     USER_ID = "840000000000000001",
     CHANNEL_ID = "850000000000000001",
+    LOG_CHANNEL_ID = "850000000000000002",
+    VOICE_CHANNEL_ID = "860000000000000001",
+    ROLE_ID = "870000000000000001",
     APP_ID = "900000000000000001";
 
-interface ISettingsRow {
+type ISettingsRow = TGuildEventsStoredSettings & {
     guildId: string;
     applicationId: string;
-    enabled: boolean;
-    channelId: string | null;
-    subPostsEnabled: boolean;
-    lastError: string | null;
-}
+};
 
 interface IRunRow {
     id: string;
@@ -31,6 +33,20 @@ interface IRunRow {
     endedAt: Date | null;
     phase: string;
     voiceChannelId: string;
+    minVoiceSeconds?: number | null;
+}
+
+/**
+ * The bot, as the api hears it: every channel it is asked about takes a post and every role can be
+ * pinged, unless it is listed here as otherwise.
+ */
+interface IBot {
+    applicationId: string;
+    isBotInGuild: boolean;
+    /** What the bot lacks in a channel, or null for one that is not a text channel it can see. */
+    channels: Record<string, string[] | null>;
+    /** A role's answer, or null for one the server does not have. */
+    roles: Record<string, IGuildEventsRoleStatus | null>;
 }
 
 interface IAttendeeRow {
@@ -46,13 +62,13 @@ interface IAttendeeRow {
 }
 
 interface IWorld {
-    /** What the bot answers, or null when it cannot be asked. */
-    status: GetGuildEventsStatusResponse | null;
+    /** The bot that answers, or null when it cannot be asked. */
+    bot: IBot | null;
     settings: ISettingsRow | null;
     runs: IRunRow[];
     attendees: IAttendeeRow[];
-    /** Every channel the bot was asked about, in order. */
-    askedChannels: ( string | null )[];
+    /** Every question put to the bot, in order. */
+    asked: { channelIds: string[]; roleIds: string[] }[];
 }
 
 function makeRunId( index: number ) {
@@ -92,11 +108,11 @@ function makeAttendee( runId: string, userId: string, overrides: Partial<IAttend
  */
 async function makeService( world: Partial<IWorld> = {} ) {
     const settled: IWorld = {
-        status: { applicationId: APP_ID, isBotInGuild: true, missingPermissions: [] },
+        bot: { applicationId: APP_ID, isBotInGuild: true, channels: {}, roles: {} },
         settings: null,
         runs: [],
         attendees: [],
-        askedChannels: [],
+        asked: [],
         ... world
     };
 
@@ -108,14 +124,14 @@ async function makeService( world: Partial<IWorld> = {} ) {
 
     const save = jest.fn( async( guildId: string, applicationId: string, patch: Partial<ISettingsRow> ) => {
         settled.settings = {
-            guildId,
-            applicationId,
             enabled: false,
             channelId: null,
             subPostsEnabled: true,
             lastError: null,
             ... settled.settings,
-            ... patch
+            ... patch,
+            guildId,
+            applicationId
         };
 
         return settled.settings;
@@ -144,11 +160,18 @@ async function makeService( world: Partial<IWorld> = {} ) {
     } ) );
 
     const ipcService = {
-        isReady: () => null !== settled.status,
-        request: async( _request: string, _response: string, payload: { channelId: string | null } ) => {
-            settled.askedChannels.push( payload.channelId );
+        isReady: () => null !== settled.bot,
+        request: async( _request: string, _response: string, payload: { channelIds: string[]; roleIds: string[] } ) => {
+            const bot = settled.bot!;
 
-            return settled.status;
+            settled.asked.push( { channelIds: payload.channelIds, roleIds: payload.roleIds } );
+
+            return {
+                applicationId: bot.applicationId,
+                isBotInGuild: bot.isBotInGuild,
+                channels: Object.fromEntries( payload.channelIds.map( ( id ) => [ id, id in bot.channels ? bot.channels[ id ] : [] ] ) ),
+                roles: Object.fromEntries( payload.roleIds.map( ( id ) => [ id, id in bot.roles ? bot.roles[ id ] : { isPingable: true } ] ) )
+            };
         }
     };
 
@@ -172,13 +195,54 @@ describe( "VertixAPI/Services/GuildEvents", () => {
     afterEach( () => jest.restoreAllMocks() );
 
     describe( "readGuildEventsSettingsPatch()", () => {
-        it( "should read the three settings, and leave out what was not sent", async() => {
+        it( "should read the settings sent, and leave out what was not", async() => {
             // Arrange.
             const { readGuildEventsSettingsPatch } = await import( "@vertix.gg/api/src/server/services/guild-events-service" );
 
             // Act & Assert.
             expect( readGuildEventsSettingsPatch( { enabled: true, channelId: CHANNEL_ID } ) ).toEqual( { enabled: true, channelId: CHANNEL_ID } );
             expect( readGuildEventsSettingsPatch( { channelId: null, subPostsEnabled: false } ) ).toEqual( { channelId: null, subPostsEnabled: false } );
+            expect( readGuildEventsSettingsPatch( {
+                checkInLeadMinutes: 30,
+                lateAfterMinutes: 0,
+                checkInRoleId: ROLE_ID,
+                subRoleId: null,
+                checkInPingInterested: true,
+                logChannelId: LOG_CHANNEL_ID
+            } ) ).toEqual( {
+                checkInLeadMinutes: 30,
+                lateAfterMinutes: 0,
+                checkInRoleId: ROLE_ID,
+                subRoleId: null,
+                checkInPingInterested: true,
+                logChannelId: LOG_CHANNEL_ID
+            } );
+        } );
+
+        it( "should refuse a number the setting does not offer", async() => {
+            // Arrange.
+            const { readGuildEventsSettingsPatch } = await import( "@vertix.gg/api/src/server/services/guild-events-service" );
+
+            // Act & Assert.
+            expect( readGuildEventsSettingsPatch( { lateAfterMinutes: 7 } ) ).toBeNull();
+            expect( readGuildEventsSettingsPatch( { checkInLeadMinutes: "15" } ) ).toBeNull();
+            expect( readGuildEventsSettingsPatch( { maxDurationHours: 48 } ) ).toBeNull();
+        } );
+
+        it( "should read the channels Events is limited to once each, and refuse too many or a bad id", async() => {
+            // Arrange.
+            const { readGuildEventsSettingsPatch } = await import( "@vertix.gg/api/src/server/services/guild-events-service" );
+
+            const tooMany = Array.from( { length: GUILD_EVENTS_LIMITS.EVENT_CHANNELS_MAX + 1 }, ( _, index ) =>
+                String( 860000000000000100n + BigInt( index ) ) );
+
+            // Act & Assert.
+            expect( readGuildEventsSettingsPatch( { eventChannelIds: [ VOICE_CHANNEL_ID, VOICE_CHANNEL_ID ] } ) )
+                .toEqual( { eventChannelIds: [ VOICE_CHANNEL_ID ] } );
+            expect( readGuildEventsSettingsPatch( { eventChannelIds: [] } ) ).toEqual( { eventChannelIds: [] } );
+            expect( readGuildEventsSettingsPatch( { eventChannelIds: tooMany } ) ).toBeNull();
+            expect( readGuildEventsSettingsPatch( { eventChannelIds: [ "not-an-id" ] } ) ).toBeNull();
+            expect( readGuildEventsSettingsPatch( { eventChannelIds: VOICE_CHANNEL_ID } ) ).toBeNull();
         } );
 
         it( "should refuse anything else", async() => {
@@ -189,10 +253,40 @@ describe( "VertixAPI/Services/GuildEvents", () => {
             expect( readGuildEventsSettingsPatch( [] ) ).toBeNull();
             expect( readGuildEventsSettingsPatch( { enabled: "yes" } ) ).toBeNull();
             expect( readGuildEventsSettingsPatch( { channelId: "not-an-id" } ) ).toBeNull();
+            expect( readGuildEventsSettingsPatch( { subRoleId: 12 } ) ).toBeNull();
+        } );
+    } );
+
+    describe( "getSettings()", () => {
+        it( "should answer a server that never set Events up from the defaults", async() => {
+            // Arrange.
+            const { service } = await makeService();
+
+            // Act.
+            const settings = await service.getSettings( GUILD_ID );
+
+            // Assert.
+            expect( settings ).toMatchObject( {
+                enabled: false,
+                channelId: null,
+                lateAfterMinutes: GUILD_EVENTS_SETTINGS_DEFAULTS.lateAfterMinutes,
+                eventChannelIds: [],
+                logChannelId: null
+            } );
         } );
     } );
 
     describe( "saveSettings()", () => {
+        const withChannel = ( overrides: Partial<ISettingsRow> = {} ): ISettingsRow => ( {
+            guildId: GUILD_ID,
+            applicationId: APP_ID,
+            enabled: true,
+            channelId: CHANNEL_ID,
+            subPostsEnabled: true,
+            lastError: null,
+            ... overrides
+        } );
+
         it( "should save a picked channel under the bot that answered", async() => {
             // Arrange.
             const { service, world } = await makeService();
@@ -202,7 +296,7 @@ describe( "VertixAPI/Services/GuildEvents", () => {
 
             // Assert.
             expect( result.code ).toBe( GUILD_EVENTS_SAVE_CODES.SAVED );
-            expect( world.askedChannels ).toEqual( [ CHANNEL_ID ] );
+            expect( world.asked ).toEqual( [ { channelIds: [ CHANNEL_ID ], roleIds: [] } ] );
             expect( world.settings ).toMatchObject( { applicationId: APP_ID, channelId: CHANNEL_ID, enabled: false } );
         } );
 
@@ -215,14 +309,14 @@ describe( "VertixAPI/Services/GuildEvents", () => {
 
             // Assert.
             expect( result.code ).toBe( GUILD_EVENTS_SAVE_CODES.INVALID );
-            expect( world.askedChannels ).toHaveLength( 0 );
+            expect( world.asked ).toHaveLength( 0 );
             expect( save ).not.toHaveBeenCalled();
         } );
 
         it( "should refuse a channel the bot cannot post in, naming what it lacks", async() => {
             // Arrange.
             const { service, save } = await makeService( {
-                status: { applicationId: APP_ID, isBotInGuild: true, missingPermissions: [ "SendMessages", "EmbedLinks" ] }
+                bot: { applicationId: APP_ID, isBotInGuild: true, channels: { [ CHANNEL_ID ]: [ "SendMessages", "EmbedLinks" ] }, roles: {} }
             } );
 
             // Act.
@@ -231,6 +325,7 @@ describe( "VertixAPI/Services/GuildEvents", () => {
             // Assert.
             expect( result ).toEqual( {
                 code: GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN,
+                channel: "posts",
                 reasons: [ "Send Messages", "Embed Links" ]
             } );
             expect( save ).not.toHaveBeenCalled();
@@ -239,7 +334,7 @@ describe( "VertixAPI/Services/GuildEvents", () => {
         it( "should refuse a channel that is not a text channel the bot can see", async() => {
             // Arrange.
             const { service } = await makeService( {
-                status: { applicationId: APP_ID, isBotInGuild: true, missingPermissions: null }
+                bot: { applicationId: APP_ID, isBotInGuild: true, channels: { [ CHANNEL_ID ]: null }, roles: {} }
             } );
 
             // Act.
@@ -251,7 +346,7 @@ describe( "VertixAPI/Services/GuildEvents", () => {
 
         it( "should save nothing when the bot cannot be asked", async() => {
             // Arrange.
-            const { service, save } = await makeService( { status: null } );
+            const { service, save } = await makeService( { bot: null } );
 
             // Act.
             const result = await service.saveSettings( GUILD_ID, { channelId: CHANNEL_ID }, USER_ID );
@@ -261,25 +356,23 @@ describe( "VertixAPI/Services/GuildEvents", () => {
             expect( save ).not.toHaveBeenCalled();
         } );
 
-        it( "should check the channel again when Events is turned on", async() => {
+        it( "should check every channel Events posts in again when it is turned on", async() => {
             // Arrange.
             const { service, world } = await makeService( {
-                settings: { guildId: GUILD_ID, applicationId: APP_ID, enabled: false, channelId: CHANNEL_ID, subPostsEnabled: true, lastError: null }
+                settings: withChannel( { enabled: false, logChannelId: LOG_CHANNEL_ID } )
             } );
 
             // Act.
             await service.saveSettings( GUILD_ID, { enabled: true }, USER_ID );
 
             // Assert.
-            expect( world.askedChannels ).toEqual( [ CHANNEL_ID ] );
+            expect( world.asked ).toEqual( [ { channelIds: [ CHANNEL_ID, LOG_CHANNEL_ID ], roleIds: [] } ] );
             expect( world.settings?.enabled ).toBe( true );
         } );
 
         it( "should turn Events off when its channel is cleared", async() => {
             // Arrange.
-            const { service, world } = await makeService( {
-                settings: { guildId: GUILD_ID, applicationId: APP_ID, enabled: true, channelId: CHANNEL_ID, subPostsEnabled: true, lastError: null }
-            } );
+            const { service, world } = await makeService( { settings: withChannel() } );
 
             // Act.
             await service.saveSettings( GUILD_ID, { channelId: null }, USER_ID );
@@ -288,18 +381,106 @@ describe( "VertixAPI/Services/GuildEvents", () => {
             expect( world.settings ).toMatchObject( { channelId: null, enabled: false } );
         } );
 
-        it( "should switch the sub posts without checking the channel", async() => {
+        it( "should switch the sub posts without asking about any channel", async() => {
             // Arrange.
-            const { service, world } = await makeService( {
-                settings: { guildId: GUILD_ID, applicationId: APP_ID, enabled: true, channelId: CHANNEL_ID, subPostsEnabled: true, lastError: null }
-            } );
+            const { service, world } = await makeService( { settings: withChannel() } );
 
             // Act.
             await service.saveSettings( GUILD_ID, { subPostsEnabled: false }, USER_ID );
 
             // Assert.
-            expect( world.askedChannels ).toEqual( [ null ] );
+            expect( world.asked ).toEqual( [ { channelIds: [], roleIds: [] } ] );
             expect( world.settings ).toMatchObject( { subPostsEnabled: false, enabled: true, channelId: CHANNEL_ID } );
+        } );
+
+        it( "should save the timing and the channels Events is limited to as they are", async() => {
+            // Arrange.
+            const { service, world } = await makeService( { settings: withChannel() } );
+
+            // Act.
+            const result = await service.saveSettings( GUILD_ID, {
+                checkInLeadMinutes: 60,
+                lateAfterMinutes: 0,
+                eventChannelIds: [ VOICE_CHANNEL_ID ]
+            }, USER_ID );
+
+            // Assert.
+            expect( result.code ).toBe( GUILD_EVENTS_SAVE_CODES.SAVED );
+            expect( world.settings ).toMatchObject( { checkInLeadMinutes: 60, lateAfterMinutes: 0, eventChannelIds: [ VOICE_CHANNEL_ID ] } );
+        } );
+
+        it( "should refuse an attendance copy the bot cannot post, saying it is the copy's channel", async() => {
+            // Arrange.
+            const { service, save } = await makeService( {
+                settings: withChannel(),
+                bot: { applicationId: APP_ID, isBotInGuild: true, channels: { [ LOG_CHANNEL_ID ]: [ "ViewChannel" ] }, roles: {} }
+            } );
+
+            // Act.
+            const result = await service.saveSettings( GUILD_ID, { logChannelId: LOG_CHANNEL_ID }, USER_ID );
+
+            // Assert.
+            expect( result ).toEqual( { code: GUILD_EVENTS_SAVE_CODES.CHANNEL_FORBIDDEN, channel: "log", reasons: [ "View Channel" ] } );
+            expect( save ).not.toHaveBeenCalled();
+        } );
+
+        it( "should refuse to copy the attendance into the channel the boards already go to", async() => {
+            // Arrange.
+            const { service, world } = await makeService( { settings: withChannel() } );
+
+            // Act.
+            const result = await service.saveSettings( GUILD_ID, { logChannelId: CHANNEL_ID }, USER_ID );
+
+            // Assert.
+            expect( result.code ).toBe( GUILD_EVENTS_SAVE_CODES.INVALID );
+            expect( world.asked ).toHaveLength( 0 );
+        } );
+
+        it( "should save a role to ping once the bot says a ping of it reaches anybody", async() => {
+            // Arrange.
+            const { service, world } = await makeService( { settings: withChannel() } );
+
+            // Act.
+            const result = await service.saveSettings( GUILD_ID, { subRoleId: ROLE_ID }, USER_ID );
+
+            // Assert.
+            expect( result.code ).toBe( GUILD_EVENTS_SAVE_CODES.SAVED );
+            expect( world.asked ).toEqual( [ { channelIds: [], roleIds: [ ROLE_ID ] } ] );
+            expect( world.settings?.subRoleId ).toBe( ROLE_ID );
+        } );
+
+        it( "should refuse a role nobody would be notified by, and one the server does not have", async() => {
+            // Arrange.
+            const quiet = await makeService( {
+                settings: withChannel(),
+                bot: { applicationId: APP_ID, isBotInGuild: true, channels: {}, roles: { [ ROLE_ID ]: { isPingable: false } } }
+            } );
+            const gone = await makeService( {
+                settings: withChannel(),
+                bot: { applicationId: APP_ID, isBotInGuild: true, channels: {}, roles: { [ ROLE_ID ]: null } }
+            } );
+
+            // Act.
+            const notPingable = await quiet.service.saveSettings( GUILD_ID, { checkInRoleId: ROLE_ID }, USER_ID ),
+                missing = await gone.service.saveSettings( GUILD_ID, { checkInRoleId: ROLE_ID }, USER_ID );
+
+            // Assert.
+            expect( notPingable.code ).toBe( GUILD_EVENTS_SAVE_CODES.ROLE_NOT_PINGABLE );
+            expect( missing.code ).toBe( GUILD_EVENTS_SAVE_CODES.INVALID );
+            expect( quiet.save ).not.toHaveBeenCalled();
+            expect( gone.save ).not.toHaveBeenCalled();
+        } );
+
+        it( "should refuse @everyone as a role to ping, without asking the bot", async() => {
+            // Arrange.
+            const { service, world } = await makeService( { settings: withChannel() } );
+
+            // Act.
+            const result = await service.saveSettings( GUILD_ID, { checkInRoleId: GUILD_ID }, USER_ID );
+
+            // Assert.
+            expect( result.code ).toBe( GUILD_EVENTS_SAVE_CODES.INVALID );
+            expect( world.asked ).toHaveLength( 0 );
         } );
     } );
 
@@ -379,6 +560,46 @@ describe( "VertixAPI/Services/GuildEvents", () => {
             const { service } = await makeService( {
                 runs: [ run ],
                 attendees: [ makeAttendee( run.id, "1", { interested: false } ) ]
+            } );
+
+            // Act.
+            const detail = await service.getRun( GUILD_ID, run.id );
+
+            // Assert.
+            expect( detail?.attendees[ 0 ].kind ).toBe( "came" );
+        } );
+
+        it( "should hold a finished run to the least time in voice it ended with", async() => {
+            // Arrange.
+            const run = makeRun( 1, { minVoiceSeconds: 300 } );
+
+            const { service } = await makeService( {
+                runs: [ run ],
+                attendees: [
+                    makeAttendee( run.id, "stayed", { voiceSeconds: 300 } ),
+                    makeAttendee( run.id, "looked-in", { voiceSeconds: 299 } ),
+                    makeAttendee( run.id, "passed-by", { interested: false, voiceSeconds: 10 } )
+                ]
+            } );
+
+            // Act.
+            const detail = await service.getRun( GUILD_ID, run.id );
+
+            // Assert.
+            expect( detail?.attendees.map( ( attendee ) => [ attendee.userId, attendee.kind ] ) ).toEqual( [
+                [ "stayed", "came" ],
+                [ "looked-in", "no-show" ]
+            ] );
+            expect( detail?.counts ).toEqual( { "came": 1, "late": 0, "no-show": 1, "walk-in": 0 } );
+        } );
+
+        it( "should not hold a run still going to the least time - nobody's time is final yet", async() => {
+            // Arrange.
+            const run = makeRun( 1, { phase: GUILD_EVENT_RUN_PHASES.RUNNING, minVoiceSeconds: 300 } );
+
+            const { service } = await makeService( {
+                runs: [ run ],
+                attendees: [ makeAttendee( run.id, "just-came", { voiceSeconds: 10 } ) ]
             } );
 
             // Act.

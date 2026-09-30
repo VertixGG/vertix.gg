@@ -10,6 +10,13 @@ export interface DiscordUIComponentMessageProps {
     avatar?: string;
     timestamp?: string;
     mentionUsername?: string;
+    /**
+     * Everybody the message pings, each drawn as its own mention above the post - a role and a
+     * handful of members, say. Beside `mentionUsername` rather than instead of it: a panel addressed
+     * to the reader is one mention that also washes the message, while a post that pings several is
+     * only showing who it told.
+     */
+    mentions?: ReadonlyArray<string>;
     componentName: string;
     onElementClick?: ( elementName: string ) => void;
     variables?: Readonly<Record<string, string>>;
@@ -47,6 +54,7 @@ export function DiscordUIComponentMessage( {
     avatar,
     timestamp,
     mentionUsername,
+    mentions,
     componentName,
     onElementClick,
     variables,
@@ -90,6 +98,19 @@ export function DiscordUIComponentMessage( {
             { mentionUsername && (
                 <span className="discord-mention-pill">@{ mentionUsername }</span>
             ) }
+
+            { mentions?.length ? (
+                <div>
+                    { mentions.map( ( name, index ) => (
+                        // Spaced the way Discord spaces them - by the space between the mentions in
+                        // the message itself - rather than by a margin this package has no class for.
+                        <span key={ name }>
+                            { index ? " " : "" }
+                            <span className="discord-mention-pill">@{ name }</span>
+                        </span>
+                    ) ) }
+                </div>
+            ) : null }
 
             <DiscordUIComponentRenderer
                 componentName={ componentName }

@@ -90,6 +90,11 @@ const DISCORD_ANNOUNCEMENT_CHANNEL_TYPE = 5;
 
 const DISCORD_TEXT_CHANNEL_TYPES = [ 0, DISCORD_ANNOUNCEMENT_CHANNEL_TYPE ];
 
+const DISCORD_STAGE_CHANNEL_TYPE = 13;
+
+/** Where a scheduled event can be held: voice channels and stage channels. */
+const DISCORD_VOICE_CHANNEL_TYPES = [ 2, DISCORD_STAGE_CHANNEL_TYPE ];
+
 /** The bot answers this out of what it already holds, so a round trip is the whole of it. */
 const CONFIG_LIMITS_REQUEST_TIMEOUT_MS = 5000;
 
@@ -264,6 +269,8 @@ export interface GuildDiscordRole {
      */
     assignable?: boolean;
     reason?: TRoleUnassignableReason;
+    /** Whether anybody may mention the role - what a ping of it needs, unless the bot may mention every role. */
+    mentionable?: boolean;
 }
 
 export interface GuildDiscordChannel {
@@ -272,9 +279,16 @@ export interface GuildDiscordChannel {
     isAnnouncement: boolean;
 }
 
+export interface GuildDiscordVoiceChannel {
+    id: string;
+    name: string;
+    isStage: boolean;
+}
+
 export interface GuildDiscordOptions {
     roles: GuildDiscordRole[];
     textChannels: GuildDiscordChannel[];
+    voiceChannels: GuildDiscordVoiceChannel[];
 }
 
 export interface UpdateDynamicSettingsInput {
@@ -1141,8 +1155,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
     }
 
     /**
-     * Function getGuildDiscordOptions() :: The roles and text channels a generator's settings can
-     * point at.
+     * Function getGuildDiscordOptions() :: The roles, text channels and voice channels a server's
+     * settings can point at - a generator's, or Events'.
      *
      * Without this a form has nowhere to get names from, and an admin would be pasting snowflakes
      * into fields to set a log channel or a verified role.
@@ -1188,7 +1202,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     id: role.id,
                     name: role.id === guildId ? "@everyone" : role.name,
                     color: role.color,
-                    managed: role.managed
+                    managed: role.managed,
+                    mentionable: role.mentionable
                 } ) ),
 
             textChannels: channels
@@ -1198,6 +1213,15 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                     id: channel.id,
                     name: channel.name,
                     isAnnouncement: DISCORD_ANNOUNCEMENT_CHANNEL_TYPE === channel.type
+                } ) ),
+
+            voiceChannels: channels
+                .filter( ( channel ) => DISCORD_VOICE_CHANNEL_TYPES.includes( channel.type ) )
+                .sort( ( a, b ) => a.position - b.position )
+                .map( ( channel ) => ( {
+                    id: channel.id,
+                    name: channel.name,
+                    isStage: DISCORD_STAGE_CHANNEL_TYPE === channel.type
                 } ) )
         };
     }

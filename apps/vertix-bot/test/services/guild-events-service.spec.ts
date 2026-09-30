@@ -10,11 +10,16 @@ import {
 import {
     GUILD_EVENT_RUN_PHASES,
     GUILD_EVENTS_ERRORS,
+    GUILD_EVENTS_LIMITS,
+    GUILD_EVENTS_SETTINGS_DEFAULTS,
     GUILD_EVENTS_TIMINGS
 } from "@vertix.gg/definitions/src/guild-events-definitions";
 
 import { TestWithServiceLocatorMock } from "@vertix.gg/test-utils/src/test-with-service-locator-mock";
 
+import type { MessageMentionOptions } from "discord.js";
+
+import type { TGuildEventsStoredSettings } from "@vertix.gg/definitions/src/guild-events-definitions";
 import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 /** Shard 1 of 2 by discord's own arithmetic - which is what the shard test below relies on. */
@@ -27,16 +32,25 @@ const EVENT_ID = "700000000000000001",
     VOICE_CHANNEL_ID = "600000000000000001",
     POST_CHANNEL_ID = "600000000000000002",
     OTHER_VOICE_CHANNEL_ID = "600000000000000003",
-    ROOM_CHANNEL_ID = "600000000000000004";
+    ROOM_CHANNEL_ID = "600000000000000004",
+    LOG_CHANNEL_ID = "600000000000000005";
 
 const ALICE = "500000000000000001",
     BOB = "500000000000000002";
 
+const PING_ROLE_ID = "400000000000000001",
+    QUIET_ROLE_ID = "400000000000000002";
+
 const MINUTE = 60 * 1000;
 
-/** The event starts exactly as check-in opens at `NOW + CHECK_IN_LEAD_MS`. */
+/** The timing of a server that never set its own. */
+const CHECK_IN_LEAD = GUILD_EVENTS_SETTINGS_DEFAULTS.checkInLeadMinutes * MINUTE,
+    LATE_AFTER = GUILD_EVENTS_SETTINGS_DEFAULTS.lateAfterMinutes * MINUTE,
+    EMPTY_END = GUILD_EVENTS_SETTINGS_DEFAULTS.endAfterEmptyMinutes * MINUTE;
+
+/** The event starts exactly as check-in opens at `NOW + CHECK_IN_LEAD`. */
 const NOW = new Date( "2026-10-03T17:45:00.000Z" );
-const START = NOW.getTime() + GUILD_EVENTS_TIMINGS.CHECK_IN_LEAD_MS;
+const START = NOW.getTime() + CHECK_IN_LEAD;
 
 interface IRunRow {
     id: string;
@@ -55,6 +69,7 @@ interface IRunRow {
     endedAt: Date | null;
     checkpointAt: Date | null;
     lastError: string | null;
+    minVoiceSeconds?: number | null;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -72,14 +87,19 @@ interface IAttendeeRow {
     sessionStartedAt: Date | null;
 }
 
+/** Something the bot posted, as discord was handed it. */
+interface ISentPost {
+    adapter: string;
+    channelId: string;
+    args: UIArgs;
+    content?: string;
+    allowedMentions?: MessageMentionOptions;
+}
+
 interface IWorld {
-    settings: {
+    settings: TGuildEventsStoredSettings & {
         guildId: string;
         applicationId: string;
-        enabled: boolean;
-        channelId: string | null;
-        subPostsEnabled: boolean;
-        lastError: string | null;
     };
     runs: IRunRow[];
     attendees: IAttendeeRow[];
@@ -95,7 +115,9 @@ interface IWorld {
     roomRows: Map<string, { id: string; channelId: string; isDynamic: boolean; isScaling: boolean; ownerChannelId: string }>;
     /** Whether discord takes a post. */
     canPost: boolean;
-    sent: { adapter: string; args: UIArgs }[];
+    /** Whether the bot may mention every role, mentionable or not. */
+    canMentionEveryRole: boolean;
+    sent: ISentPost[];
     edits: { messageId: string; drawn: UIArgs }[];
     deletes: string[];
 }
@@ -121,6 +143,7 @@ async function makeService( world: Partial<IWorld> = {} ) {
         eventChannelRow: null,
         roomRows: new Map(),
         canPost: true,
+        canMentionEveryRole: false,
         sent: [],
         edits: [],
         deletes: [],
@@ -142,6 +165,7 @@ async function makeService( world: Partial<IWorld> = {} ) {
     jest.spyOn( GuildEventsManager, "$", "get" ).mockReturnValue( manager );
 
     const settingsModel = {
+        get: jest.fn( async() => settled.settings ),
         getEnabled: jest.fn( async( applicationId: string ) =>
             settled.settings.enabled && settled.settings.applicationId === applicationId ? [ settled.settings ] : [] ),
         markError: jest.fn( async( _guildId: string, error: string ) => {
@@ -246,17 +270,16 @@ async function makeService( world: Partial<IWorld> = {} ) {
         getMissingChannelPermissionsForBot: () => []
     } ) );
 
+    // The service draws with the adapter and posts through the channel, so what an adapter drew
+    // last is what the next post carries.
+    let lastDrawnBy = "";
+
     const makeAdapter = ( adapterName: string ) => ( {
-        send: jest.fn( async( _channel: object, args: UIArgs ) => {
-            if ( ! settled.canPost ) {
-                return null;
-            }
+        render: jest.fn( async( _channel: object, args: UIArgs ) => {
+            lastDrawnBy = adapterName;
 
-            settled.sent.push( { adapter: adapterName, args } );
-
-            return { id: `message-${ settled.sent.length }` };
-        } ),
-        render: jest.fn( async( _channel: object, args: UIArgs ) => args )
+            return args;
+        } )
     } );
 
     const adapters: Record<string, ReturnType<typeof makeAdapter>> = {
@@ -268,11 +291,23 @@ async function makeService( world: Partial<IWorld> = {} ) {
         get: ( name: string ) => "VertixGUI/UIService" === name ? { get: ( adapterName: string ) => adapters[ adapterName ] } : undefined
     } ) );
 
-    const me = { id: APP_ID };
+    const me = {
+        id: APP_ID,
+        permissions: { has: () => settled.canMentionEveryRole }
+    };
 
-    const postChannel = {
-        id: POST_CHANNEL_ID,
+    const makeTextChannel = ( id: string ) => ( {
+        id,
         type: ChannelType.GuildText,
+        send: jest.fn( async( { content, allowedMentions, ... args }: UIArgs & Pick<ISentPost, "content" | "allowedMentions"> ) => {
+            if ( ! settled.canPost ) {
+                throw new Error( "Missing Access" );
+            }
+
+            settled.sent.push( { adapter: lastDrawnBy, channelId: id, args, content, allowedMentions } );
+
+            return { id: `message-${ settled.sent.length }` };
+        } ),
         messages: {
             edit: jest.fn( async( messageId: string, drawn: UIArgs ) => {
                 settled.edits.push( { messageId, drawn } );
@@ -281,7 +316,7 @@ async function makeService( world: Partial<IWorld> = {} ) {
                 settled.deletes.push( messageId );
             } )
         }
-    };
+    } );
 
     const makeVoiceChannel = ( id: string ) => ( {
         id,
@@ -297,7 +332,8 @@ async function makeService( world: Partial<IWorld> = {} ) {
     } );
 
     const channels = new Map<string, object>( [
-        [ POST_CHANNEL_ID, postChannel ],
+        [ POST_CHANNEL_ID, makeTextChannel( POST_CHANNEL_ID ) ],
+        [ LOG_CHANNEL_ID, makeTextChannel( LOG_CHANNEL_ID ) ],
         [ VOICE_CHANNEL_ID, makeVoiceChannel( VOICE_CHANNEL_ID ) ],
         [ OTHER_VOICE_CHANNEL_ID, makeVoiceChannel( OTHER_VOICE_CHANNEL_ID ) ],
         [ ROOM_CHANNEL_ID, makeVoiceChannel( ROOM_CHANNEL_ID ) ]
@@ -326,6 +362,13 @@ async function makeService( world: Partial<IWorld> = {} ) {
         id: GUILD_ID,
         members: { me },
         channels: { cache: channels },
+        roles: {
+            cache: new Map( [
+                [ GUILD_ID, { id: GUILD_ID, mentionable: false } ],
+                [ PING_ROLE_ID, { id: PING_ROLE_ID, mentionable: true } ],
+                [ QUIET_ROLE_ID, { id: QUIET_ROLE_ID, mentionable: false } ]
+            ] )
+        },
         scheduledEvents: { cache: new Map( [ [ EVENT_ID, event ] ] ) },
         voiceStates: {
             get cache() {
@@ -572,7 +615,7 @@ describe( "VertixBot/Services/GuildEvents", () => {
             await service.sweep();
             await move( ALICE, VOICE_CHANNEL_ID );
 
-            at( START + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS );
+            at( START + LATE_AFTER );
 
             // Act.
             await service.sweep();
@@ -594,7 +637,7 @@ describe( "VertixBot/Services/GuildEvents", () => {
 
             await service.sweep();
 
-            at( START + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS );
+            at( START + LATE_AFTER );
 
             // Act.
             await service.sweep();
@@ -610,12 +653,12 @@ describe( "VertixBot/Services/GuildEvents", () => {
 
             await service.sweep();
 
-            at( START + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS );
+            at( START + LATE_AFTER );
 
             await service.sweep();
 
             // Act.
-            at( START + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS + MINUTE );
+            at( START + LATE_AFTER + MINUTE );
 
             await move( BOB, VOICE_CHANNEL_ID );
             await flushRedraws();
@@ -634,7 +677,7 @@ describe( "VertixBot/Services/GuildEvents", () => {
             await service.sweep();
             await move( ALICE, VOICE_CHANNEL_ID );
 
-            at( START + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS );
+            at( START + LATE_AFTER );
 
             await service.sweep();
 
@@ -643,7 +686,7 @@ describe( "VertixBot/Services/GuildEvents", () => {
             await move( ALICE, null );
 
             // Act.
-            at( START + 30 * MINUTE + GUILD_EVENTS_TIMINGS.EMPTY_END_AFTER_MS );
+            at( START + 30 * MINUTE + EMPTY_END );
 
             await service.sweep();
 
@@ -693,6 +736,281 @@ describe( "VertixBot/Services/GuildEvents", () => {
         } );
     } );
 
+    describe( "a server's own settings", () => {
+        it( "should open check-in as far ahead as the server set", async() => {
+            // Arrange.
+            const { service, world, at } = await makeService();
+
+            world.settings.checkInLeadMinutes = 30;
+
+            // Act.
+            at( START - 30 * MINUTE - 1 );
+
+            await service.sweep();
+
+            const before = world.sent.length;
+
+            at( START - 30 * MINUTE );
+
+            await service.sweep();
+
+            // Assert.
+            expect( before ).toBe( 0 );
+            expect( world.sent ).toHaveLength( 1 );
+        } );
+
+        it( "should tell members on the board until when they count as on time", async() => {
+            // Arrange.
+            const { service, world } = await makeService();
+
+            world.settings.lateAfterMinutes = 20;
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.sent[ 0 ].args ).toMatchObject( { lateAt: Math.floor( ( START + 20 * MINUTE ) / 1000 ) } );
+        } );
+
+        it( "should take a change of timing to a run already open", async() => {
+            // Arrange.
+            const { service, world, at } = await makeService();
+
+            await service.sweep();
+
+            world.settings.lateAfterMinutes = 30;
+
+            // Act.
+            at( START + LATE_AFTER );
+
+            await service.sweep();
+
+            const stillCheckingIn = world.runs[ 0 ].phase;
+
+            at( START + 30 * MINUTE );
+
+            await service.sweep();
+
+            // Assert.
+            expect( stillCheckingIn ).toBe( GUILD_EVENT_RUN_PHASES.CHECK_IN );
+            expect( world.runs[ 0 ].phase ).toBe( GUILD_EVENT_RUN_PHASES.RUNNING );
+        } );
+
+        it( "should open runs only for events held in the channels the server picked", async() => {
+            // Arrange.
+            const { service, world } = await makeService();
+
+            world.settings.eventChannelIds = [ OTHER_VOICE_CHANNEL_ID ];
+
+            // Act.
+            await service.sweep();
+
+            const elsewhere = world.sent.length;
+
+            world.settings.eventChannelIds = [ OTHER_VOICE_CHANNEL_ID, VOICE_CHANNEL_ID ];
+
+            await service.sweep();
+
+            // Assert.
+            expect( elsewhere ).toBe( 0 );
+            expect( world.sent ).toHaveLength( 1 );
+        } );
+    } );
+
+    describe( "pings", () => {
+        it( "should post the board without a ping when the server asked for none", async() => {
+            // Arrange.
+            const { service, world } = await makeService();
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.sent[ 0 ].content ).toBeUndefined();
+            expect( world.sent[ 0 ].allowedMentions ).toBeUndefined();
+        } );
+
+        it( "should ping the role, and the members on the roster not there yet, as check-in opens", async() => {
+            // Arrange.
+            const { service, world } = await makeService( { voice: new Map( [ [ ALICE, VOICE_CHANNEL_ID ] ] ) } );
+
+            world.settings.checkInRoleId = PING_ROLE_ID;
+            world.settings.checkInPingInterested = true;
+
+            // Act.
+            await service.sweep();
+
+            // Assert - Alice is in already; only Bob needs telling.
+            expect( world.sent[ 0 ] ).toMatchObject( {
+                content: `<@&${ PING_ROLE_ID }> <@${ BOB }>`,
+                allowedMentions: { roles: [ PING_ROLE_ID ], users: [ BOB ] }
+            } );
+        } );
+
+        it( "should leave out a role the server no longer has", async() => {
+            // Arrange.
+            const { service, world } = await makeService();
+
+            world.settings.checkInRoleId = "400000000000000099";
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.sent[ 0 ].content ).toBeUndefined();
+        } );
+
+        it( "should ping no more members by name than a message can hold", async() => {
+            // Arrange - more than the cap, on one page of the roster (the fake reads no further pages).
+            const roster = Array.from( { length: 99 }, ( _, index ) => String( 500000000000000100n + BigInt( index ) ) ),
+                { service, world } = await makeService( { roster } );
+
+            world.settings.checkInPingInterested = true;
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.sent[ 0 ].allowedMentions?.users ).toHaveLength( GUILD_EVENTS_LIMITS.PING_MEMBERS_MAX );
+            expect( world.sent[ 0 ].content!.length ).toBeLessThanOrEqual( 2000 );
+        } );
+
+        it( "should ping the server's role in the \"need a sub\" post", async() => {
+            // Arrange.
+            const { service, world, at } = await makeService();
+
+            world.settings.subRoleId = PING_ROLE_ID;
+
+            await service.sweep();
+
+            at( START + LATE_AFTER );
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.sent[ 1 ] ).toMatchObject( {
+                adapter: "VertixBot/UI-General/EventNeedSubAdapter",
+                content: `<@&${ PING_ROLE_ID }>`,
+                allowedMentions: { roles: [ PING_ROLE_ID ], users: [] }
+            } );
+        } );
+    } );
+
+    describe( "subs and attendance", () => {
+        it( "should not ask for subs until as many are missing as the server set", async() => {
+            // Arrange - nobody of the two came.
+            const { service, world, at } = await makeService();
+
+            world.settings.subMinMissing = 3;
+
+            await service.sweep();
+
+            at( START + LATE_AFTER );
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.runs[ 0 ] ).toMatchObject( { phase: GUILD_EVENT_RUN_PHASES.RUNNING, subsNeeded: 0 } );
+            expect( world.sent.map( ( sent ) => sent.adapter ) ).not.toContain( "VertixBot/UI-General/EventNeedSubAdapter" );
+        } );
+
+        it( "should hold the attendance to the least time in voice, and keep that least time on the run", async() => {
+            // Arrange - Alice looks in for two minutes, Bob stays half an hour.
+            const { service, world, move, at } = await makeService();
+
+            world.settings.minVoiceMinutes = 5;
+
+            await service.sweep();
+            await move( ALICE, VOICE_CHANNEL_ID );
+
+            at( NOW.getTime() + 2 * MINUTE );
+
+            await move( ALICE, null );
+
+            at( START );
+
+            await move( BOB, VOICE_CHANNEL_ID );
+
+            at( START + LATE_AFTER );
+
+            await service.sweep();
+
+            at( START + 30 * MINUTE );
+
+            await move( BOB, null );
+
+            // Act.
+            at( START + 30 * MINUTE + EMPTY_END );
+
+            await service.sweep();
+
+            // Assert.
+            expect( world.runs[ 0 ] ).toMatchObject( { phase: GUILD_EVENT_RUN_PHASES.ENDED, minVoiceSeconds: 5 * 60 } );
+            expect( world.edits.filter( ( edit ) => "message-1" === edit.messageId ).at( -1 )?.drawn ).toMatchObject( {
+                boardState: "ended",
+                minVoiceMinutes: 5,
+                onTime: [ `<@${ BOB }> · 0:30` ],
+                noShow: [ `<@${ ALICE }>` ]
+            } );
+        } );
+
+        it( "should copy the finished attendance to the server's log channel", async() => {
+            // Arrange.
+            const { service, world } = await makeService();
+
+            world.settings.logChannelId = LOG_CHANNEL_ID;
+
+            await service.sweep();
+
+            world.settings.enabled = false;
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.sent.filter( ( sent ) => LOG_CHANNEL_ID === sent.channelId ) ).toEqual( [ expect.objectContaining( {
+                adapter: "VertixBot/UI-General/EventBoardAdapter",
+                args: expect.objectContaining( { boardState: "ended", noShow: [ `<@${ ALICE }>`, `<@${ BOB }>` ] } )
+            } ) ] );
+        } );
+
+        it( "should not copy the attendance into the channel the board already ends in", async() => {
+            // Arrange.
+            const { service, world } = await makeService();
+
+            world.settings.logChannelId = POST_CHANNEL_ID;
+
+            await service.sweep();
+
+            world.settings.enabled = false;
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.sent ).toHaveLength( 1 );
+        } );
+
+        it( "should record a log channel that is gone, for the settings screen to say", async() => {
+            // Arrange.
+            const { service, world } = await makeService();
+
+            world.settings.logChannelId = "600000000000000099";
+
+            await service.sweep();
+
+            world.settings.enabled = false;
+
+            // Act.
+            await service.sweep();
+
+            // Assert.
+            expect( world.settings.lastError ).toBe( GUILD_EVENTS_ERRORS.LOG_CHANNEL_MISSING );
+        } );
+    } );
+
     describe( "names", () => {
         it( "should write the name the server shows on every row, so the attendance can be read back", async() => {
             // Arrange.
@@ -702,7 +1020,7 @@ describe( "VertixBot/Services/GuildEvents", () => {
             await move( ALICE, VOICE_CHANNEL_ID );
 
             // Act.
-            at( START + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS );
+            at( START + LATE_AFTER );
 
             await service.sweep();
 
@@ -713,15 +1031,20 @@ describe( "VertixBot/Services/GuildEvents", () => {
     } );
 
     describe( "getStatus()", () => {
-        it( "should say which bot is answering, and that it can post in a text channel", async() => {
+        it( "should say which bot is answering, and that it can post in each text channel asked about", async() => {
             // Arrange.
             const { service } = await makeService();
 
             // Act.
-            const status = service.getStatus( GUILD_ID, POST_CHANNEL_ID );
+            const status = service.getStatus( GUILD_ID, [ POST_CHANNEL_ID, LOG_CHANNEL_ID ], [] );
 
             // Assert.
-            expect( status ).toEqual( { applicationId: APP_ID, isBotInGuild: true, missingPermissions: [] } );
+            expect( status ).toEqual( {
+                applicationId: APP_ID,
+                isBotInGuild: true,
+                channels: { [ POST_CHANNEL_ID ]: [], [ LOG_CHANNEL_ID ]: [] },
+                roles: {}
+            } );
         } );
 
         it( "should answer no permissions at all for a channel that is not a text channel", async() => {
@@ -729,7 +1052,34 @@ describe( "VertixBot/Services/GuildEvents", () => {
             const { service } = await makeService();
 
             // Act & Assert.
-            expect( service.getStatus( GUILD_ID, VOICE_CHANNEL_ID ).missingPermissions ).toBeNull();
+            expect( service.getStatus( GUILD_ID, [ VOICE_CHANNEL_ID ], [] ).channels[ VOICE_CHANNEL_ID ] ).toBeNull();
+        } );
+
+        it( "should call a role pingable only when anybody may mention it, or the bot may mention every role", async() => {
+            // Arrange.
+            const { service, world } = await makeService();
+
+            // Act.
+            const quiet = service.getStatus( GUILD_ID, [], [ PING_ROLE_ID, QUIET_ROLE_ID ] ).roles;
+
+            world.canMentionEveryRole = true;
+
+            const loud = service.getStatus( GUILD_ID, [], [ QUIET_ROLE_ID ] ).roles;
+
+            // Assert.
+            expect( quiet ).toEqual( { [ PING_ROLE_ID ]: { isPingable: true }, [ QUIET_ROLE_ID ]: { isPingable: false } } );
+            expect( loud ).toEqual( { [ QUIET_ROLE_ID ]: { isPingable: true } } );
+        } );
+
+        it( "should answer null for a role the server does not have, and for @everyone", async() => {
+            // Arrange.
+            const { service } = await makeService();
+
+            // Act.
+            const roles = service.getStatus( GUILD_ID, [], [ "400000000000000099", GUILD_ID ] ).roles;
+
+            // Assert.
+            expect( roles ).toEqual( { "400000000000000099": null, [ GUILD_ID ]: null } );
         } );
 
         it( "should say when the bot is not in the server", async() => {
@@ -737,7 +1087,7 @@ describe( "VertixBot/Services/GuildEvents", () => {
             const { service } = await makeService();
 
             // Act & Assert.
-            expect( service.getStatus( "820000000000000099", null ).isBotInGuild ).toBe( false );
+            expect( service.getStatus( "820000000000000099", [], [] ).isBotInGuild ).toBe( false );
         } );
     } );
 
@@ -760,7 +1110,7 @@ describe( "VertixBot/Services/GuildEvents", () => {
                     boardMessageId: "message-1",
                     subPostMessageId: null,
                     subsNeeded: 0,
-                    frozenAt: new Date( START + GUILD_EVENTS_TIMINGS.NO_SHOW_AFTER_MS ),
+                    frozenAt: new Date( START + LATE_AFTER ),
                     endedAt: null,
                     checkpointAt,
                     lastError: null,

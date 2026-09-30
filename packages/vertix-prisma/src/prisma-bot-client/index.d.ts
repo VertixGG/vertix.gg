@@ -151,6 +151,27 @@ export type GuildBranding = $Result.DefaultSelection<Prisma.$GuildBrandingPayloa
  * touches its own - a bot never undoes, or counts as done, what the other one applied.
  */
 export type GuildBrandingState = $Result.DefaultSelection<Prisma.$GuildBrandingStatePayload>
+/**
+ * Model GuildEventSettings
+ * What Events does in a server - written from `/setup` -> Events.
+ * 
+ * One row per server. `applicationId` is the bot whose setup last saved it: two bots read this
+ * database, and only that one posts, so a server holding both is not sent every board twice.
+ */
+export type GuildEventSettings = $Result.DefaultSelection<Prisma.$GuildEventSettingsPayload>
+/**
+ * Model GuildEventRun
+ * One occurrence of a server's scheduled event, as one bot ran it.
+ * 
+ * Keyed by the occurrence's start as well as the event, because a recurring event keeps its id and
+ * moves its start on to the next occurrence. Per application, like `GuildBrandingState`.
+ */
+export type GuildEventRun = $Result.DefaultSelection<Prisma.$GuildEventRunPayload>
+/**
+ * Model GuildEventAttendee
+ * One member's part in a run: whether they said they would come, when they came, how long they stayed.
+ */
+export type GuildEventAttendee = $Result.DefaultSelection<Prisma.$GuildEventAttendeePayload>
 
 /**
  * Enums
@@ -441,6 +462,36 @@ export class PrismaClient<
     * ```
     */
   get guildBrandingState(): Prisma.GuildBrandingStateDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildEventSettings`: Exposes CRUD operations for the **GuildEventSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildEventSettings
+    * const guildEventSettings = await prisma.guildEventSettings.findMany()
+    * ```
+    */
+  get guildEventSettings(): Prisma.GuildEventSettingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildEventRun`: Exposes CRUD operations for the **GuildEventRun** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildEventRuns
+    * const guildEventRuns = await prisma.guildEventRun.findMany()
+    * ```
+    */
+  get guildEventRun(): Prisma.GuildEventRunDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.guildEventAttendee`: Exposes CRUD operations for the **GuildEventAttendee** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GuildEventAttendees
+    * const guildEventAttendees = await prisma.guildEventAttendee.findMany()
+    * ```
+    */
+  get guildEventAttendee(): Prisma.GuildEventAttendeeDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -898,7 +949,10 @@ export namespace Prisma {
     AICaptchaChallenge: 'AICaptchaChallenge',
     Subscription: 'Subscription',
     GuildBranding: 'GuildBranding',
-    GuildBrandingState: 'GuildBrandingState'
+    GuildBrandingState: 'GuildBrandingState',
+    GuildEventSettings: 'GuildEventSettings',
+    GuildEventRun: 'GuildEventRun',
+    GuildEventAttendee: 'GuildEventAttendee'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -917,7 +971,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "config" | "category" | "guild" | "guildInstall" | "guildActivityDay" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt" | "aICaptchaChallenge" | "subscription" | "guildBranding" | "guildBrandingState"
+      modelProps: "config" | "category" | "guild" | "guildInstall" | "guildActivityDay" | "guildData" | "guildCustomization" | "channel" | "channelData" | "user" | "userData" | "userChannelData" | "aIChannelPrompt" | "aICaptchaChallenge" | "subscription" | "guildBranding" | "guildBrandingState" | "guildEventSettings" | "guildEventRun" | "guildEventAttendee"
       txIsolationLevel: never
     }
     model: {
@@ -2179,6 +2233,228 @@ export namespace Prisma {
           }
         }
       }
+      GuildEventSettings: {
+        payload: Prisma.$GuildEventSettingsPayload<ExtArgs>
+        fields: Prisma.GuildEventSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildEventSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildEventSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.GuildEventSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildEventSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.GuildEventSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.GuildEventSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.GuildEventSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildEventSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload>
+          }
+          update: {
+            args: Prisma.GuildEventSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildEventSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildEventSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildEventSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.GuildEventSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildEventSettings>
+          }
+          groupBy: {
+            args: Prisma.GuildEventSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildEventSettingsGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildEventSettingsFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildEventSettingsAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildEventSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildEventSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
+      GuildEventRun: {
+        payload: Prisma.$GuildEventRunPayload<ExtArgs>
+        fields: Prisma.GuildEventRunFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildEventRunFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildEventRunFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload>
+          }
+          findFirst: {
+            args: Prisma.GuildEventRunFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildEventRunFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload>
+          }
+          findMany: {
+            args: Prisma.GuildEventRunFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload>[]
+          }
+          create: {
+            args: Prisma.GuildEventRunCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload>
+          }
+          createMany: {
+            args: Prisma.GuildEventRunCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildEventRunDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload>
+          }
+          update: {
+            args: Prisma.GuildEventRunUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildEventRunDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildEventRunUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildEventRunUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventRunPayload>
+          }
+          aggregate: {
+            args: Prisma.GuildEventRunAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildEventRun>
+          }
+          groupBy: {
+            args: Prisma.GuildEventRunGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildEventRunGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildEventRunFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildEventRunAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildEventRunCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildEventRunCountAggregateOutputType> | number
+          }
+        }
+      }
+      GuildEventAttendee: {
+        payload: Prisma.$GuildEventAttendeePayload<ExtArgs>
+        fields: Prisma.GuildEventAttendeeFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GuildEventAttendeeFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GuildEventAttendeeFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload>
+          }
+          findFirst: {
+            args: Prisma.GuildEventAttendeeFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GuildEventAttendeeFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload>
+          }
+          findMany: {
+            args: Prisma.GuildEventAttendeeFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload>[]
+          }
+          create: {
+            args: Prisma.GuildEventAttendeeCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload>
+          }
+          createMany: {
+            args: Prisma.GuildEventAttendeeCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.GuildEventAttendeeDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload>
+          }
+          update: {
+            args: Prisma.GuildEventAttendeeUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload>
+          }
+          deleteMany: {
+            args: Prisma.GuildEventAttendeeDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GuildEventAttendeeUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.GuildEventAttendeeUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GuildEventAttendeePayload>
+          }
+          aggregate: {
+            args: Prisma.GuildEventAttendeeAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGuildEventAttendee>
+          }
+          groupBy: {
+            args: Prisma.GuildEventAttendeeGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GuildEventAttendeeGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.GuildEventAttendeeFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.GuildEventAttendeeAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.GuildEventAttendeeCountArgs<ExtArgs>
+            result: $Utils.Optional<GuildEventAttendeeCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2275,6 +2551,9 @@ export namespace Prisma {
     subscription?: SubscriptionOmit
     guildBranding?: GuildBrandingOmit
     guildBrandingState?: GuildBrandingStateOmit
+    guildEventSettings?: GuildEventSettingsOmit
+    guildEventRun?: GuildEventRunOmit
+    guildEventAttendee?: GuildEventAttendeeOmit
   }
 
   /* Types for Logging */
@@ -19823,6 +20102,3211 @@ export namespace Prisma {
 
 
   /**
+   * Model GuildEventSettings
+   */
+
+  export type AggregateGuildEventSettings = {
+    _count: GuildEventSettingsCountAggregateOutputType | null
+    _min: GuildEventSettingsMinAggregateOutputType | null
+    _max: GuildEventSettingsMaxAggregateOutputType | null
+  }
+
+  export type GuildEventSettingsMinAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    applicationId: string | null
+    enabled: boolean | null
+    channelId: string | null
+    subPostsEnabled: boolean | null
+    lastError: string | null
+    lastErrorAt: Date | null
+    updatedByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildEventSettingsMaxAggregateOutputType = {
+    id: string | null
+    guildId: string | null
+    applicationId: string | null
+    enabled: boolean | null
+    channelId: string | null
+    subPostsEnabled: boolean | null
+    lastError: string | null
+    lastErrorAt: Date | null
+    updatedByUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildEventSettingsCountAggregateOutputType = {
+    id: number
+    guildId: number
+    applicationId: number
+    enabled: number
+    channelId: number
+    subPostsEnabled: number
+    lastError: number
+    lastErrorAt: number
+    updatedByUserId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GuildEventSettingsMinAggregateInputType = {
+    id?: true
+    guildId?: true
+    applicationId?: true
+    enabled?: true
+    channelId?: true
+    subPostsEnabled?: true
+    lastError?: true
+    lastErrorAt?: true
+    updatedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildEventSettingsMaxAggregateInputType = {
+    id?: true
+    guildId?: true
+    applicationId?: true
+    enabled?: true
+    channelId?: true
+    subPostsEnabled?: true
+    lastError?: true
+    lastErrorAt?: true
+    updatedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildEventSettingsCountAggregateInputType = {
+    id?: true
+    guildId?: true
+    applicationId?: true
+    enabled?: true
+    channelId?: true
+    subPostsEnabled?: true
+    lastError?: true
+    lastErrorAt?: true
+    updatedByUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GuildEventSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildEventSettings to aggregate.
+     */
+    where?: GuildEventSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventSettings to fetch.
+     */
+    orderBy?: GuildEventSettingsOrderByWithRelationInput | GuildEventSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildEventSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildEventSettings
+    **/
+    _count?: true | GuildEventSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildEventSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildEventSettingsMaxAggregateInputType
+  }
+
+  export type GetGuildEventSettingsAggregateType<T extends GuildEventSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildEventSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildEventSettings[P]>
+      : GetScalarType<T[P], AggregateGuildEventSettings[P]>
+  }
+
+
+
+
+  export type GuildEventSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildEventSettingsWhereInput
+    orderBy?: GuildEventSettingsOrderByWithAggregationInput | GuildEventSettingsOrderByWithAggregationInput[]
+    by: GuildEventSettingsScalarFieldEnum[] | GuildEventSettingsScalarFieldEnum
+    having?: GuildEventSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildEventSettingsCountAggregateInputType | true
+    _min?: GuildEventSettingsMinAggregateInputType
+    _max?: GuildEventSettingsMaxAggregateInputType
+  }
+
+  export type GuildEventSettingsGroupByOutputType = {
+    id: string
+    guildId: string
+    applicationId: string
+    enabled: boolean
+    channelId: string | null
+    subPostsEnabled: boolean
+    lastError: string | null
+    lastErrorAt: Date | null
+    updatedByUserId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: GuildEventSettingsCountAggregateOutputType | null
+    _min: GuildEventSettingsMinAggregateOutputType | null
+    _max: GuildEventSettingsMaxAggregateOutputType | null
+  }
+
+  type GetGuildEventSettingsGroupByPayload<T extends GuildEventSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildEventSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildEventSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildEventSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildEventSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildEventSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    guildId?: boolean
+    applicationId?: boolean
+    enabled?: boolean
+    channelId?: boolean
+    subPostsEnabled?: boolean
+    lastError?: boolean
+    lastErrorAt?: boolean
+    updatedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["guildEventSettings"]>
+
+
+
+  export type GuildEventSettingsSelectScalar = {
+    id?: boolean
+    guildId?: boolean
+    applicationId?: boolean
+    enabled?: boolean
+    channelId?: boolean
+    subPostsEnabled?: boolean
+    lastError?: boolean
+    lastErrorAt?: boolean
+    updatedByUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GuildEventSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "guildId" | "applicationId" | "enabled" | "channelId" | "subPostsEnabled" | "lastError" | "lastErrorAt" | "updatedByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["guildEventSettings"]>
+
+  export type $GuildEventSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildEventSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      guildId: string
+      applicationId: string
+      enabled: boolean
+      /**
+       * The text channel the boards, the "need a sub" posts and the attendance go to.
+       */
+      channelId: string | null
+      subPostsEnabled: boolean
+      /**
+       * A `GUILD_EVENTS_ERRORS` code - the last thing that stopped Events here, for the settings screen.
+       */
+      lastError: string | null
+      lastErrorAt: Date | null
+      /**
+       * The discord user who last changed it.
+       */
+      updatedByUserId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["guildEventSettings"]>
+    composites: {}
+  }
+
+  type GuildEventSettingsGetPayload<S extends boolean | null | undefined | GuildEventSettingsDefaultArgs> = $Result.GetResult<Prisma.$GuildEventSettingsPayload, S>
+
+  type GuildEventSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildEventSettingsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildEventSettingsCountAggregateInputType | true
+    }
+
+  export interface GuildEventSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildEventSettings'], meta: { name: 'GuildEventSettings' } }
+    /**
+     * Find zero or one GuildEventSettings that matches the filter.
+     * @param {GuildEventSettingsFindUniqueArgs} args - Arguments to find a GuildEventSettings
+     * @example
+     * // Get one GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildEventSettingsFindUniqueArgs>(args: SelectSubset<T, GuildEventSettingsFindUniqueArgs<ExtArgs>>): Prisma__GuildEventSettingsClient<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildEventSettings that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildEventSettingsFindUniqueOrThrowArgs} args - Arguments to find a GuildEventSettings
+     * @example
+     * // Get one GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildEventSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildEventSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildEventSettingsClient<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildEventSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventSettingsFindFirstArgs} args - Arguments to find a GuildEventSettings
+     * @example
+     * // Get one GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildEventSettingsFindFirstArgs>(args?: SelectSubset<T, GuildEventSettingsFindFirstArgs<ExtArgs>>): Prisma__GuildEventSettingsClient<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildEventSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventSettingsFindFirstOrThrowArgs} args - Arguments to find a GuildEventSettings
+     * @example
+     * // Get one GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildEventSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildEventSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildEventSettingsClient<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildEventSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.findMany()
+     * 
+     * // Get first 10 GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildEventSettingsWithIdOnly = await prisma.guildEventSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildEventSettingsFindManyArgs>(args?: SelectSubset<T, GuildEventSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildEventSettings.
+     * @param {GuildEventSettingsCreateArgs} args - Arguments to create a GuildEventSettings.
+     * @example
+     * // Create one GuildEventSettings
+     * const GuildEventSettings = await prisma.guildEventSettings.create({
+     *   data: {
+     *     // ... data to create a GuildEventSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildEventSettingsCreateArgs>(args: SelectSubset<T, GuildEventSettingsCreateArgs<ExtArgs>>): Prisma__GuildEventSettingsClient<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildEventSettings.
+     * @param {GuildEventSettingsCreateManyArgs} args - Arguments to create many GuildEventSettings.
+     * @example
+     * // Create many GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildEventSettingsCreateManyArgs>(args?: SelectSubset<T, GuildEventSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildEventSettings.
+     * @param {GuildEventSettingsDeleteArgs} args - Arguments to delete one GuildEventSettings.
+     * @example
+     * // Delete one GuildEventSettings
+     * const GuildEventSettings = await prisma.guildEventSettings.delete({
+     *   where: {
+     *     // ... filter to delete one GuildEventSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildEventSettingsDeleteArgs>(args: SelectSubset<T, GuildEventSettingsDeleteArgs<ExtArgs>>): Prisma__GuildEventSettingsClient<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildEventSettings.
+     * @param {GuildEventSettingsUpdateArgs} args - Arguments to update one GuildEventSettings.
+     * @example
+     * // Update one GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildEventSettingsUpdateArgs>(args: SelectSubset<T, GuildEventSettingsUpdateArgs<ExtArgs>>): Prisma__GuildEventSettingsClient<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildEventSettings.
+     * @param {GuildEventSettingsDeleteManyArgs} args - Arguments to filter GuildEventSettings to delete.
+     * @example
+     * // Delete a few GuildEventSettings
+     * const { count } = await prisma.guildEventSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildEventSettingsDeleteManyArgs>(args?: SelectSubset<T, GuildEventSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildEventSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildEventSettingsUpdateManyArgs>(args: SelectSubset<T, GuildEventSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildEventSettings.
+     * @param {GuildEventSettingsUpsertArgs} args - Arguments to update or create a GuildEventSettings.
+     * @example
+     * // Update or create a GuildEventSettings
+     * const guildEventSettings = await prisma.guildEventSettings.upsert({
+     *   create: {
+     *     // ... data to create a GuildEventSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildEventSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildEventSettingsUpsertArgs>(args: SelectSubset<T, GuildEventSettingsUpsertArgs<ExtArgs>>): Prisma__GuildEventSettingsClient<$Result.GetResult<Prisma.$GuildEventSettingsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildEventSettings that matches the filter.
+     * @param {GuildEventSettingsFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildEventSettings = await prisma.guildEventSettings.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildEventSettingsFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildEventSettings.
+     * @param {GuildEventSettingsAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildEventSettings = await prisma.guildEventSettings.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildEventSettingsAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildEventSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventSettingsCountArgs} args - Arguments to filter GuildEventSettings to count.
+     * @example
+     * // Count the number of GuildEventSettings
+     * const count = await prisma.guildEventSettings.count({
+     *   where: {
+     *     // ... the filter for the GuildEventSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildEventSettingsCountArgs>(
+      args?: Subset<T, GuildEventSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildEventSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildEventSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildEventSettingsAggregateArgs>(args: Subset<T, GuildEventSettingsAggregateArgs>): Prisma.PrismaPromise<GetGuildEventSettingsAggregateType<T>>
+
+    /**
+     * Group by GuildEventSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildEventSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildEventSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: GuildEventSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildEventSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildEventSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildEventSettings model
+   */
+  readonly fields: GuildEventSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildEventSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildEventSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildEventSettings model
+   */
+  interface GuildEventSettingsFieldRefs {
+    readonly id: FieldRef<"GuildEventSettings", 'String'>
+    readonly guildId: FieldRef<"GuildEventSettings", 'String'>
+    readonly applicationId: FieldRef<"GuildEventSettings", 'String'>
+    readonly enabled: FieldRef<"GuildEventSettings", 'Boolean'>
+    readonly channelId: FieldRef<"GuildEventSettings", 'String'>
+    readonly subPostsEnabled: FieldRef<"GuildEventSettings", 'Boolean'>
+    readonly lastError: FieldRef<"GuildEventSettings", 'String'>
+    readonly lastErrorAt: FieldRef<"GuildEventSettings", 'DateTime'>
+    readonly updatedByUserId: FieldRef<"GuildEventSettings", 'String'>
+    readonly createdAt: FieldRef<"GuildEventSettings", 'DateTime'>
+    readonly updatedAt: FieldRef<"GuildEventSettings", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildEventSettings findUnique
+   */
+  export type GuildEventSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventSettings to fetch.
+     */
+    where: GuildEventSettingsWhereUniqueInput
+  }
+
+  /**
+   * GuildEventSettings findUniqueOrThrow
+   */
+  export type GuildEventSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventSettings to fetch.
+     */
+    where: GuildEventSettingsWhereUniqueInput
+  }
+
+  /**
+   * GuildEventSettings findFirst
+   */
+  export type GuildEventSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventSettings to fetch.
+     */
+    where?: GuildEventSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventSettings to fetch.
+     */
+    orderBy?: GuildEventSettingsOrderByWithRelationInput | GuildEventSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildEventSettings.
+     */
+    cursor?: GuildEventSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildEventSettings.
+     */
+    distinct?: GuildEventSettingsScalarFieldEnum | GuildEventSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventSettings findFirstOrThrow
+   */
+  export type GuildEventSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventSettings to fetch.
+     */
+    where?: GuildEventSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventSettings to fetch.
+     */
+    orderBy?: GuildEventSettingsOrderByWithRelationInput | GuildEventSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildEventSettings.
+     */
+    cursor?: GuildEventSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildEventSettings.
+     */
+    distinct?: GuildEventSettingsScalarFieldEnum | GuildEventSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventSettings findMany
+   */
+  export type GuildEventSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventSettings to fetch.
+     */
+    where?: GuildEventSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventSettings to fetch.
+     */
+    orderBy?: GuildEventSettingsOrderByWithRelationInput | GuildEventSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildEventSettings.
+     */
+    cursor?: GuildEventSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventSettings.
+     */
+    skip?: number
+    distinct?: GuildEventSettingsScalarFieldEnum | GuildEventSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventSettings create
+   */
+  export type GuildEventSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildEventSettings.
+     */
+    data: XOR<GuildEventSettingsCreateInput, GuildEventSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * GuildEventSettings createMany
+   */
+  export type GuildEventSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildEventSettings.
+     */
+    data: GuildEventSettingsCreateManyInput | GuildEventSettingsCreateManyInput[]
+  }
+
+  /**
+   * GuildEventSettings update
+   */
+  export type GuildEventSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildEventSettings.
+     */
+    data: XOR<GuildEventSettingsUpdateInput, GuildEventSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which GuildEventSettings to update.
+     */
+    where: GuildEventSettingsWhereUniqueInput
+  }
+
+  /**
+   * GuildEventSettings updateMany
+   */
+  export type GuildEventSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildEventSettings.
+     */
+    data: XOR<GuildEventSettingsUpdateManyMutationInput, GuildEventSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildEventSettings to update
+     */
+    where?: GuildEventSettingsWhereInput
+    /**
+     * Limit how many GuildEventSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildEventSettings upsert
+   */
+  export type GuildEventSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildEventSettings to update in case it exists.
+     */
+    where: GuildEventSettingsWhereUniqueInput
+    /**
+     * In case the GuildEventSettings found by the `where` argument doesn't exist, create a new GuildEventSettings with this data.
+     */
+    create: XOR<GuildEventSettingsCreateInput, GuildEventSettingsUncheckedCreateInput>
+    /**
+     * In case the GuildEventSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildEventSettingsUpdateInput, GuildEventSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildEventSettings delete
+   */
+  export type GuildEventSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+    /**
+     * Filter which GuildEventSettings to delete.
+     */
+    where: GuildEventSettingsWhereUniqueInput
+  }
+
+  /**
+   * GuildEventSettings deleteMany
+   */
+  export type GuildEventSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildEventSettings to delete
+     */
+    where?: GuildEventSettingsWhereInput
+    /**
+     * Limit how many GuildEventSettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildEventSettings findRaw
+   */
+  export type GuildEventSettingsFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildEventSettings aggregateRaw
+   */
+  export type GuildEventSettingsAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildEventSettings without action
+   */
+  export type GuildEventSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventSettings
+     */
+    select?: GuildEventSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventSettings
+     */
+    omit?: GuildEventSettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GuildEventRun
+   */
+
+  export type AggregateGuildEventRun = {
+    _count: GuildEventRunCountAggregateOutputType | null
+    _avg: GuildEventRunAvgAggregateOutputType | null
+    _sum: GuildEventRunSumAggregateOutputType | null
+    _min: GuildEventRunMinAggregateOutputType | null
+    _max: GuildEventRunMaxAggregateOutputType | null
+  }
+
+  export type GuildEventRunAvgAggregateOutputType = {
+    subsNeeded: number | null
+  }
+
+  export type GuildEventRunSumAggregateOutputType = {
+    subsNeeded: number | null
+  }
+
+  export type GuildEventRunMinAggregateOutputType = {
+    id: string | null
+    applicationId: string | null
+    guildId: string | null
+    scheduledEventId: string | null
+    occurrenceStartAt: Date | null
+    name: string | null
+    voiceChannelId: string | null
+    phase: string | null
+    postChannelId: string | null
+    boardMessageId: string | null
+    subPostMessageId: string | null
+    subsNeeded: number | null
+    frozenAt: Date | null
+    endedAt: Date | null
+    checkpointAt: Date | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildEventRunMaxAggregateOutputType = {
+    id: string | null
+    applicationId: string | null
+    guildId: string | null
+    scheduledEventId: string | null
+    occurrenceStartAt: Date | null
+    name: string | null
+    voiceChannelId: string | null
+    phase: string | null
+    postChannelId: string | null
+    boardMessageId: string | null
+    subPostMessageId: string | null
+    subsNeeded: number | null
+    frozenAt: Date | null
+    endedAt: Date | null
+    checkpointAt: Date | null
+    lastError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildEventRunCountAggregateOutputType = {
+    id: number
+    applicationId: number
+    guildId: number
+    scheduledEventId: number
+    occurrenceStartAt: number
+    name: number
+    voiceChannelId: number
+    phase: number
+    postChannelId: number
+    boardMessageId: number
+    subPostMessageId: number
+    subsNeeded: number
+    frozenAt: number
+    endedAt: number
+    checkpointAt: number
+    lastError: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GuildEventRunAvgAggregateInputType = {
+    subsNeeded?: true
+  }
+
+  export type GuildEventRunSumAggregateInputType = {
+    subsNeeded?: true
+  }
+
+  export type GuildEventRunMinAggregateInputType = {
+    id?: true
+    applicationId?: true
+    guildId?: true
+    scheduledEventId?: true
+    occurrenceStartAt?: true
+    name?: true
+    voiceChannelId?: true
+    phase?: true
+    postChannelId?: true
+    boardMessageId?: true
+    subPostMessageId?: true
+    subsNeeded?: true
+    frozenAt?: true
+    endedAt?: true
+    checkpointAt?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildEventRunMaxAggregateInputType = {
+    id?: true
+    applicationId?: true
+    guildId?: true
+    scheduledEventId?: true
+    occurrenceStartAt?: true
+    name?: true
+    voiceChannelId?: true
+    phase?: true
+    postChannelId?: true
+    boardMessageId?: true
+    subPostMessageId?: true
+    subsNeeded?: true
+    frozenAt?: true
+    endedAt?: true
+    checkpointAt?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildEventRunCountAggregateInputType = {
+    id?: true
+    applicationId?: true
+    guildId?: true
+    scheduledEventId?: true
+    occurrenceStartAt?: true
+    name?: true
+    voiceChannelId?: true
+    phase?: true
+    postChannelId?: true
+    boardMessageId?: true
+    subPostMessageId?: true
+    subsNeeded?: true
+    frozenAt?: true
+    endedAt?: true
+    checkpointAt?: true
+    lastError?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GuildEventRunAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildEventRun to aggregate.
+     */
+    where?: GuildEventRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventRuns to fetch.
+     */
+    orderBy?: GuildEventRunOrderByWithRelationInput | GuildEventRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildEventRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildEventRuns
+    **/
+    _count?: true | GuildEventRunCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GuildEventRunAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GuildEventRunSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildEventRunMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildEventRunMaxAggregateInputType
+  }
+
+  export type GetGuildEventRunAggregateType<T extends GuildEventRunAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildEventRun]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildEventRun[P]>
+      : GetScalarType<T[P], AggregateGuildEventRun[P]>
+  }
+
+
+
+
+  export type GuildEventRunGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildEventRunWhereInput
+    orderBy?: GuildEventRunOrderByWithAggregationInput | GuildEventRunOrderByWithAggregationInput[]
+    by: GuildEventRunScalarFieldEnum[] | GuildEventRunScalarFieldEnum
+    having?: GuildEventRunScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildEventRunCountAggregateInputType | true
+    _avg?: GuildEventRunAvgAggregateInputType
+    _sum?: GuildEventRunSumAggregateInputType
+    _min?: GuildEventRunMinAggregateInputType
+    _max?: GuildEventRunMaxAggregateInputType
+  }
+
+  export type GuildEventRunGroupByOutputType = {
+    id: string
+    applicationId: string
+    guildId: string
+    scheduledEventId: string
+    occurrenceStartAt: Date
+    name: string
+    voiceChannelId: string
+    phase: string
+    postChannelId: string
+    boardMessageId: string | null
+    subPostMessageId: string | null
+    subsNeeded: number
+    frozenAt: Date | null
+    endedAt: Date | null
+    checkpointAt: Date | null
+    lastError: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: GuildEventRunCountAggregateOutputType | null
+    _avg: GuildEventRunAvgAggregateOutputType | null
+    _sum: GuildEventRunSumAggregateOutputType | null
+    _min: GuildEventRunMinAggregateOutputType | null
+    _max: GuildEventRunMaxAggregateOutputType | null
+  }
+
+  type GetGuildEventRunGroupByPayload<T extends GuildEventRunGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildEventRunGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildEventRunGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildEventRunGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildEventRunGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildEventRunSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    applicationId?: boolean
+    guildId?: boolean
+    scheduledEventId?: boolean
+    occurrenceStartAt?: boolean
+    name?: boolean
+    voiceChannelId?: boolean
+    phase?: boolean
+    postChannelId?: boolean
+    boardMessageId?: boolean
+    subPostMessageId?: boolean
+    subsNeeded?: boolean
+    frozenAt?: boolean
+    endedAt?: boolean
+    checkpointAt?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["guildEventRun"]>
+
+
+
+  export type GuildEventRunSelectScalar = {
+    id?: boolean
+    applicationId?: boolean
+    guildId?: boolean
+    scheduledEventId?: boolean
+    occurrenceStartAt?: boolean
+    name?: boolean
+    voiceChannelId?: boolean
+    phase?: boolean
+    postChannelId?: boolean
+    boardMessageId?: boolean
+    subPostMessageId?: boolean
+    subsNeeded?: boolean
+    frozenAt?: boolean
+    endedAt?: boolean
+    checkpointAt?: boolean
+    lastError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GuildEventRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "guildId" | "scheduledEventId" | "occurrenceStartAt" | "name" | "voiceChannelId" | "phase" | "postChannelId" | "boardMessageId" | "subPostMessageId" | "subsNeeded" | "frozenAt" | "endedAt" | "checkpointAt" | "lastError" | "createdAt" | "updatedAt", ExtArgs["result"]["guildEventRun"]>
+
+  export type $GuildEventRunPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildEventRun"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      applicationId: string
+      guildId: string
+      scheduledEventId: string
+      occurrenceStartAt: Date
+      name: string
+      voiceChannelId: string
+      /**
+       * A `GUILD_EVENT_RUN_PHASES` literal.
+       */
+      phase: string
+      postChannelId: string
+      boardMessageId: string | null
+      subPostMessageId: string | null
+      /**
+       * How many places the "need a sub" post asked for when it went up.
+       */
+      subsNeeded: number
+      frozenAt: Date | null
+      endedAt: Date | null
+      /**
+       * The last sweep that looked at the run - how far a visit is credited when the bot went down
+       * and the member was gone by the time it came back.
+       */
+      checkpointAt: Date | null
+      /**
+       * A `GUILD_EVENTS_ERRORS` code, so what failed is not tried again for the rest of the run.
+       */
+      lastError: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["guildEventRun"]>
+    composites: {}
+  }
+
+  type GuildEventRunGetPayload<S extends boolean | null | undefined | GuildEventRunDefaultArgs> = $Result.GetResult<Prisma.$GuildEventRunPayload, S>
+
+  type GuildEventRunCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildEventRunFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildEventRunCountAggregateInputType | true
+    }
+
+  export interface GuildEventRunDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildEventRun'], meta: { name: 'GuildEventRun' } }
+    /**
+     * Find zero or one GuildEventRun that matches the filter.
+     * @param {GuildEventRunFindUniqueArgs} args - Arguments to find a GuildEventRun
+     * @example
+     * // Get one GuildEventRun
+     * const guildEventRun = await prisma.guildEventRun.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildEventRunFindUniqueArgs>(args: SelectSubset<T, GuildEventRunFindUniqueArgs<ExtArgs>>): Prisma__GuildEventRunClient<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildEventRun that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildEventRunFindUniqueOrThrowArgs} args - Arguments to find a GuildEventRun
+     * @example
+     * // Get one GuildEventRun
+     * const guildEventRun = await prisma.guildEventRun.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildEventRunFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildEventRunFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildEventRunClient<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildEventRun that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventRunFindFirstArgs} args - Arguments to find a GuildEventRun
+     * @example
+     * // Get one GuildEventRun
+     * const guildEventRun = await prisma.guildEventRun.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildEventRunFindFirstArgs>(args?: SelectSubset<T, GuildEventRunFindFirstArgs<ExtArgs>>): Prisma__GuildEventRunClient<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildEventRun that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventRunFindFirstOrThrowArgs} args - Arguments to find a GuildEventRun
+     * @example
+     * // Get one GuildEventRun
+     * const guildEventRun = await prisma.guildEventRun.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildEventRunFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildEventRunFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildEventRunClient<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildEventRuns that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventRunFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildEventRuns
+     * const guildEventRuns = await prisma.guildEventRun.findMany()
+     * 
+     * // Get first 10 GuildEventRuns
+     * const guildEventRuns = await prisma.guildEventRun.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildEventRunWithIdOnly = await prisma.guildEventRun.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildEventRunFindManyArgs>(args?: SelectSubset<T, GuildEventRunFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildEventRun.
+     * @param {GuildEventRunCreateArgs} args - Arguments to create a GuildEventRun.
+     * @example
+     * // Create one GuildEventRun
+     * const GuildEventRun = await prisma.guildEventRun.create({
+     *   data: {
+     *     // ... data to create a GuildEventRun
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildEventRunCreateArgs>(args: SelectSubset<T, GuildEventRunCreateArgs<ExtArgs>>): Prisma__GuildEventRunClient<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildEventRuns.
+     * @param {GuildEventRunCreateManyArgs} args - Arguments to create many GuildEventRuns.
+     * @example
+     * // Create many GuildEventRuns
+     * const guildEventRun = await prisma.guildEventRun.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildEventRunCreateManyArgs>(args?: SelectSubset<T, GuildEventRunCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildEventRun.
+     * @param {GuildEventRunDeleteArgs} args - Arguments to delete one GuildEventRun.
+     * @example
+     * // Delete one GuildEventRun
+     * const GuildEventRun = await prisma.guildEventRun.delete({
+     *   where: {
+     *     // ... filter to delete one GuildEventRun
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildEventRunDeleteArgs>(args: SelectSubset<T, GuildEventRunDeleteArgs<ExtArgs>>): Prisma__GuildEventRunClient<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildEventRun.
+     * @param {GuildEventRunUpdateArgs} args - Arguments to update one GuildEventRun.
+     * @example
+     * // Update one GuildEventRun
+     * const guildEventRun = await prisma.guildEventRun.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildEventRunUpdateArgs>(args: SelectSubset<T, GuildEventRunUpdateArgs<ExtArgs>>): Prisma__GuildEventRunClient<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildEventRuns.
+     * @param {GuildEventRunDeleteManyArgs} args - Arguments to filter GuildEventRuns to delete.
+     * @example
+     * // Delete a few GuildEventRuns
+     * const { count } = await prisma.guildEventRun.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildEventRunDeleteManyArgs>(args?: SelectSubset<T, GuildEventRunDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildEventRuns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventRunUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildEventRuns
+     * const guildEventRun = await prisma.guildEventRun.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildEventRunUpdateManyArgs>(args: SelectSubset<T, GuildEventRunUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildEventRun.
+     * @param {GuildEventRunUpsertArgs} args - Arguments to update or create a GuildEventRun.
+     * @example
+     * // Update or create a GuildEventRun
+     * const guildEventRun = await prisma.guildEventRun.upsert({
+     *   create: {
+     *     // ... data to create a GuildEventRun
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildEventRun we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildEventRunUpsertArgs>(args: SelectSubset<T, GuildEventRunUpsertArgs<ExtArgs>>): Prisma__GuildEventRunClient<$Result.GetResult<Prisma.$GuildEventRunPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildEventRuns that matches the filter.
+     * @param {GuildEventRunFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildEventRun = await prisma.guildEventRun.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildEventRunFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildEventRun.
+     * @param {GuildEventRunAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildEventRun = await prisma.guildEventRun.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildEventRunAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildEventRuns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventRunCountArgs} args - Arguments to filter GuildEventRuns to count.
+     * @example
+     * // Count the number of GuildEventRuns
+     * const count = await prisma.guildEventRun.count({
+     *   where: {
+     *     // ... the filter for the GuildEventRuns we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildEventRunCountArgs>(
+      args?: Subset<T, GuildEventRunCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildEventRunCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildEventRun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventRunAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildEventRunAggregateArgs>(args: Subset<T, GuildEventRunAggregateArgs>): Prisma.PrismaPromise<GetGuildEventRunAggregateType<T>>
+
+    /**
+     * Group by GuildEventRun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventRunGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildEventRunGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildEventRunGroupByArgs['orderBy'] }
+        : { orderBy?: GuildEventRunGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildEventRunGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildEventRunGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildEventRun model
+   */
+  readonly fields: GuildEventRunFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildEventRun.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildEventRunClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildEventRun model
+   */
+  interface GuildEventRunFieldRefs {
+    readonly id: FieldRef<"GuildEventRun", 'String'>
+    readonly applicationId: FieldRef<"GuildEventRun", 'String'>
+    readonly guildId: FieldRef<"GuildEventRun", 'String'>
+    readonly scheduledEventId: FieldRef<"GuildEventRun", 'String'>
+    readonly occurrenceStartAt: FieldRef<"GuildEventRun", 'DateTime'>
+    readonly name: FieldRef<"GuildEventRun", 'String'>
+    readonly voiceChannelId: FieldRef<"GuildEventRun", 'String'>
+    readonly phase: FieldRef<"GuildEventRun", 'String'>
+    readonly postChannelId: FieldRef<"GuildEventRun", 'String'>
+    readonly boardMessageId: FieldRef<"GuildEventRun", 'String'>
+    readonly subPostMessageId: FieldRef<"GuildEventRun", 'String'>
+    readonly subsNeeded: FieldRef<"GuildEventRun", 'Int'>
+    readonly frozenAt: FieldRef<"GuildEventRun", 'DateTime'>
+    readonly endedAt: FieldRef<"GuildEventRun", 'DateTime'>
+    readonly checkpointAt: FieldRef<"GuildEventRun", 'DateTime'>
+    readonly lastError: FieldRef<"GuildEventRun", 'String'>
+    readonly createdAt: FieldRef<"GuildEventRun", 'DateTime'>
+    readonly updatedAt: FieldRef<"GuildEventRun", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildEventRun findUnique
+   */
+  export type GuildEventRunFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventRun to fetch.
+     */
+    where: GuildEventRunWhereUniqueInput
+  }
+
+  /**
+   * GuildEventRun findUniqueOrThrow
+   */
+  export type GuildEventRunFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventRun to fetch.
+     */
+    where: GuildEventRunWhereUniqueInput
+  }
+
+  /**
+   * GuildEventRun findFirst
+   */
+  export type GuildEventRunFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventRun to fetch.
+     */
+    where?: GuildEventRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventRuns to fetch.
+     */
+    orderBy?: GuildEventRunOrderByWithRelationInput | GuildEventRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildEventRuns.
+     */
+    cursor?: GuildEventRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildEventRuns.
+     */
+    distinct?: GuildEventRunScalarFieldEnum | GuildEventRunScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventRun findFirstOrThrow
+   */
+  export type GuildEventRunFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventRun to fetch.
+     */
+    where?: GuildEventRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventRuns to fetch.
+     */
+    orderBy?: GuildEventRunOrderByWithRelationInput | GuildEventRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildEventRuns.
+     */
+    cursor?: GuildEventRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildEventRuns.
+     */
+    distinct?: GuildEventRunScalarFieldEnum | GuildEventRunScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventRun findMany
+   */
+  export type GuildEventRunFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventRuns to fetch.
+     */
+    where?: GuildEventRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventRuns to fetch.
+     */
+    orderBy?: GuildEventRunOrderByWithRelationInput | GuildEventRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildEventRuns.
+     */
+    cursor?: GuildEventRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventRuns.
+     */
+    skip?: number
+    distinct?: GuildEventRunScalarFieldEnum | GuildEventRunScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventRun create
+   */
+  export type GuildEventRunCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildEventRun.
+     */
+    data: XOR<GuildEventRunCreateInput, GuildEventRunUncheckedCreateInput>
+  }
+
+  /**
+   * GuildEventRun createMany
+   */
+  export type GuildEventRunCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildEventRuns.
+     */
+    data: GuildEventRunCreateManyInput | GuildEventRunCreateManyInput[]
+  }
+
+  /**
+   * GuildEventRun update
+   */
+  export type GuildEventRunUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildEventRun.
+     */
+    data: XOR<GuildEventRunUpdateInput, GuildEventRunUncheckedUpdateInput>
+    /**
+     * Choose, which GuildEventRun to update.
+     */
+    where: GuildEventRunWhereUniqueInput
+  }
+
+  /**
+   * GuildEventRun updateMany
+   */
+  export type GuildEventRunUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildEventRuns.
+     */
+    data: XOR<GuildEventRunUpdateManyMutationInput, GuildEventRunUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildEventRuns to update
+     */
+    where?: GuildEventRunWhereInput
+    /**
+     * Limit how many GuildEventRuns to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildEventRun upsert
+   */
+  export type GuildEventRunUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildEventRun to update in case it exists.
+     */
+    where: GuildEventRunWhereUniqueInput
+    /**
+     * In case the GuildEventRun found by the `where` argument doesn't exist, create a new GuildEventRun with this data.
+     */
+    create: XOR<GuildEventRunCreateInput, GuildEventRunUncheckedCreateInput>
+    /**
+     * In case the GuildEventRun was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildEventRunUpdateInput, GuildEventRunUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildEventRun delete
+   */
+  export type GuildEventRunDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+    /**
+     * Filter which GuildEventRun to delete.
+     */
+    where: GuildEventRunWhereUniqueInput
+  }
+
+  /**
+   * GuildEventRun deleteMany
+   */
+  export type GuildEventRunDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildEventRuns to delete
+     */
+    where?: GuildEventRunWhereInput
+    /**
+     * Limit how many GuildEventRuns to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildEventRun findRaw
+   */
+  export type GuildEventRunFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildEventRun aggregateRaw
+   */
+  export type GuildEventRunAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildEventRun without action
+   */
+  export type GuildEventRunDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventRun
+     */
+    select?: GuildEventRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventRun
+     */
+    omit?: GuildEventRunOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GuildEventAttendee
+   */
+
+  export type AggregateGuildEventAttendee = {
+    _count: GuildEventAttendeeCountAggregateOutputType | null
+    _avg: GuildEventAttendeeAvgAggregateOutputType | null
+    _sum: GuildEventAttendeeSumAggregateOutputType | null
+    _min: GuildEventAttendeeMinAggregateOutputType | null
+    _max: GuildEventAttendeeMaxAggregateOutputType | null
+  }
+
+  export type GuildEventAttendeeAvgAggregateOutputType = {
+    voiceSeconds: number | null
+  }
+
+  export type GuildEventAttendeeSumAggregateOutputType = {
+    voiceSeconds: number | null
+  }
+
+  export type GuildEventAttendeeMinAggregateOutputType = {
+    id: string | null
+    runId: string | null
+    guildId: string | null
+    userId: string | null
+    displayName: string | null
+    interested: boolean | null
+    checkedInAt: Date | null
+    late: boolean | null
+    noShow: boolean | null
+    voiceSeconds: number | null
+    sessionStartedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildEventAttendeeMaxAggregateOutputType = {
+    id: string | null
+    runId: string | null
+    guildId: string | null
+    userId: string | null
+    displayName: string | null
+    interested: boolean | null
+    checkedInAt: Date | null
+    late: boolean | null
+    noShow: boolean | null
+    voiceSeconds: number | null
+    sessionStartedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GuildEventAttendeeCountAggregateOutputType = {
+    id: number
+    runId: number
+    guildId: number
+    userId: number
+    displayName: number
+    interested: number
+    checkedInAt: number
+    late: number
+    noShow: number
+    voiceSeconds: number
+    sessionStartedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GuildEventAttendeeAvgAggregateInputType = {
+    voiceSeconds?: true
+  }
+
+  export type GuildEventAttendeeSumAggregateInputType = {
+    voiceSeconds?: true
+  }
+
+  export type GuildEventAttendeeMinAggregateInputType = {
+    id?: true
+    runId?: true
+    guildId?: true
+    userId?: true
+    displayName?: true
+    interested?: true
+    checkedInAt?: true
+    late?: true
+    noShow?: true
+    voiceSeconds?: true
+    sessionStartedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildEventAttendeeMaxAggregateInputType = {
+    id?: true
+    runId?: true
+    guildId?: true
+    userId?: true
+    displayName?: true
+    interested?: true
+    checkedInAt?: true
+    late?: true
+    noShow?: true
+    voiceSeconds?: true
+    sessionStartedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GuildEventAttendeeCountAggregateInputType = {
+    id?: true
+    runId?: true
+    guildId?: true
+    userId?: true
+    displayName?: true
+    interested?: true
+    checkedInAt?: true
+    late?: true
+    noShow?: true
+    voiceSeconds?: true
+    sessionStartedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GuildEventAttendeeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildEventAttendee to aggregate.
+     */
+    where?: GuildEventAttendeeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventAttendees to fetch.
+     */
+    orderBy?: GuildEventAttendeeOrderByWithRelationInput | GuildEventAttendeeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GuildEventAttendeeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventAttendees from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventAttendees.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GuildEventAttendees
+    **/
+    _count?: true | GuildEventAttendeeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GuildEventAttendeeAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GuildEventAttendeeSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GuildEventAttendeeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GuildEventAttendeeMaxAggregateInputType
+  }
+
+  export type GetGuildEventAttendeeAggregateType<T extends GuildEventAttendeeAggregateArgs> = {
+        [P in keyof T & keyof AggregateGuildEventAttendee]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGuildEventAttendee[P]>
+      : GetScalarType<T[P], AggregateGuildEventAttendee[P]>
+  }
+
+
+
+
+  export type GuildEventAttendeeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GuildEventAttendeeWhereInput
+    orderBy?: GuildEventAttendeeOrderByWithAggregationInput | GuildEventAttendeeOrderByWithAggregationInput[]
+    by: GuildEventAttendeeScalarFieldEnum[] | GuildEventAttendeeScalarFieldEnum
+    having?: GuildEventAttendeeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GuildEventAttendeeCountAggregateInputType | true
+    _avg?: GuildEventAttendeeAvgAggregateInputType
+    _sum?: GuildEventAttendeeSumAggregateInputType
+    _min?: GuildEventAttendeeMinAggregateInputType
+    _max?: GuildEventAttendeeMaxAggregateInputType
+  }
+
+  export type GuildEventAttendeeGroupByOutputType = {
+    id: string
+    runId: string
+    guildId: string
+    userId: string
+    displayName: string | null
+    interested: boolean
+    checkedInAt: Date | null
+    late: boolean
+    noShow: boolean
+    voiceSeconds: number
+    sessionStartedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: GuildEventAttendeeCountAggregateOutputType | null
+    _avg: GuildEventAttendeeAvgAggregateOutputType | null
+    _sum: GuildEventAttendeeSumAggregateOutputType | null
+    _min: GuildEventAttendeeMinAggregateOutputType | null
+    _max: GuildEventAttendeeMaxAggregateOutputType | null
+  }
+
+  type GetGuildEventAttendeeGroupByPayload<T extends GuildEventAttendeeGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GuildEventAttendeeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GuildEventAttendeeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GuildEventAttendeeGroupByOutputType[P]>
+            : GetScalarType<T[P], GuildEventAttendeeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GuildEventAttendeeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    guildId?: boolean
+    userId?: boolean
+    displayName?: boolean
+    interested?: boolean
+    checkedInAt?: boolean
+    late?: boolean
+    noShow?: boolean
+    voiceSeconds?: boolean
+    sessionStartedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["guildEventAttendee"]>
+
+
+
+  export type GuildEventAttendeeSelectScalar = {
+    id?: boolean
+    runId?: boolean
+    guildId?: boolean
+    userId?: boolean
+    displayName?: boolean
+    interested?: boolean
+    checkedInAt?: boolean
+    late?: boolean
+    noShow?: boolean
+    voiceSeconds?: boolean
+    sessionStartedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GuildEventAttendeeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "runId" | "guildId" | "userId" | "displayName" | "interested" | "checkedInAt" | "late" | "noShow" | "voiceSeconds" | "sessionStartedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["guildEventAttendee"]>
+
+  export type $GuildEventAttendeePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GuildEventAttendee"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      runId: string
+      guildId: string
+      userId: string
+      /**
+       * The name the server showed for them - read off the roster or their voice state as the run saw it,
+       * so the attendance can be read back without asking discord who an id was.
+       */
+      displayName: string | null
+      /**
+       * On the event's "Interested" list - as it stood when the roster froze, once it has.
+       */
+      interested: boolean
+      /**
+       * The first time they were in the event's voice channels.
+       */
+      checkedInAt: Date | null
+      /**
+       * On the roster, and came only after it froze.
+       */
+      late: boolean
+      /**
+       * On the roster, and had not come when it froze. Cleared if they come after all.
+       */
+      noShow: boolean
+      /**
+       * Time in the event's voice channels over every visit that has ended.
+       */
+      voiceSeconds: number
+      /**
+       * When the visit still going began, or null when they are not there.
+       */
+      sessionStartedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["guildEventAttendee"]>
+    composites: {}
+  }
+
+  type GuildEventAttendeeGetPayload<S extends boolean | null | undefined | GuildEventAttendeeDefaultArgs> = $Result.GetResult<Prisma.$GuildEventAttendeePayload, S>
+
+  type GuildEventAttendeeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GuildEventAttendeeFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GuildEventAttendeeCountAggregateInputType | true
+    }
+
+  export interface GuildEventAttendeeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GuildEventAttendee'], meta: { name: 'GuildEventAttendee' } }
+    /**
+     * Find zero or one GuildEventAttendee that matches the filter.
+     * @param {GuildEventAttendeeFindUniqueArgs} args - Arguments to find a GuildEventAttendee
+     * @example
+     * // Get one GuildEventAttendee
+     * const guildEventAttendee = await prisma.guildEventAttendee.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GuildEventAttendeeFindUniqueArgs>(args: SelectSubset<T, GuildEventAttendeeFindUniqueArgs<ExtArgs>>): Prisma__GuildEventAttendeeClient<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GuildEventAttendee that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GuildEventAttendeeFindUniqueOrThrowArgs} args - Arguments to find a GuildEventAttendee
+     * @example
+     * // Get one GuildEventAttendee
+     * const guildEventAttendee = await prisma.guildEventAttendee.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GuildEventAttendeeFindUniqueOrThrowArgs>(args: SelectSubset<T, GuildEventAttendeeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GuildEventAttendeeClient<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildEventAttendee that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventAttendeeFindFirstArgs} args - Arguments to find a GuildEventAttendee
+     * @example
+     * // Get one GuildEventAttendee
+     * const guildEventAttendee = await prisma.guildEventAttendee.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GuildEventAttendeeFindFirstArgs>(args?: SelectSubset<T, GuildEventAttendeeFindFirstArgs<ExtArgs>>): Prisma__GuildEventAttendeeClient<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GuildEventAttendee that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventAttendeeFindFirstOrThrowArgs} args - Arguments to find a GuildEventAttendee
+     * @example
+     * // Get one GuildEventAttendee
+     * const guildEventAttendee = await prisma.guildEventAttendee.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GuildEventAttendeeFindFirstOrThrowArgs>(args?: SelectSubset<T, GuildEventAttendeeFindFirstOrThrowArgs<ExtArgs>>): Prisma__GuildEventAttendeeClient<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildEventAttendees that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventAttendeeFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GuildEventAttendees
+     * const guildEventAttendees = await prisma.guildEventAttendee.findMany()
+     * 
+     * // Get first 10 GuildEventAttendees
+     * const guildEventAttendees = await prisma.guildEventAttendee.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const guildEventAttendeeWithIdOnly = await prisma.guildEventAttendee.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GuildEventAttendeeFindManyArgs>(args?: SelectSubset<T, GuildEventAttendeeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GuildEventAttendee.
+     * @param {GuildEventAttendeeCreateArgs} args - Arguments to create a GuildEventAttendee.
+     * @example
+     * // Create one GuildEventAttendee
+     * const GuildEventAttendee = await prisma.guildEventAttendee.create({
+     *   data: {
+     *     // ... data to create a GuildEventAttendee
+     *   }
+     * })
+     * 
+     */
+    create<T extends GuildEventAttendeeCreateArgs>(args: SelectSubset<T, GuildEventAttendeeCreateArgs<ExtArgs>>): Prisma__GuildEventAttendeeClient<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GuildEventAttendees.
+     * @param {GuildEventAttendeeCreateManyArgs} args - Arguments to create many GuildEventAttendees.
+     * @example
+     * // Create many GuildEventAttendees
+     * const guildEventAttendee = await prisma.guildEventAttendee.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GuildEventAttendeeCreateManyArgs>(args?: SelectSubset<T, GuildEventAttendeeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a GuildEventAttendee.
+     * @param {GuildEventAttendeeDeleteArgs} args - Arguments to delete one GuildEventAttendee.
+     * @example
+     * // Delete one GuildEventAttendee
+     * const GuildEventAttendee = await prisma.guildEventAttendee.delete({
+     *   where: {
+     *     // ... filter to delete one GuildEventAttendee
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GuildEventAttendeeDeleteArgs>(args: SelectSubset<T, GuildEventAttendeeDeleteArgs<ExtArgs>>): Prisma__GuildEventAttendeeClient<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GuildEventAttendee.
+     * @param {GuildEventAttendeeUpdateArgs} args - Arguments to update one GuildEventAttendee.
+     * @example
+     * // Update one GuildEventAttendee
+     * const guildEventAttendee = await prisma.guildEventAttendee.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GuildEventAttendeeUpdateArgs>(args: SelectSubset<T, GuildEventAttendeeUpdateArgs<ExtArgs>>): Prisma__GuildEventAttendeeClient<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GuildEventAttendees.
+     * @param {GuildEventAttendeeDeleteManyArgs} args - Arguments to filter GuildEventAttendees to delete.
+     * @example
+     * // Delete a few GuildEventAttendees
+     * const { count } = await prisma.guildEventAttendee.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GuildEventAttendeeDeleteManyArgs>(args?: SelectSubset<T, GuildEventAttendeeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GuildEventAttendees.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventAttendeeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GuildEventAttendees
+     * const guildEventAttendee = await prisma.guildEventAttendee.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GuildEventAttendeeUpdateManyArgs>(args: SelectSubset<T, GuildEventAttendeeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one GuildEventAttendee.
+     * @param {GuildEventAttendeeUpsertArgs} args - Arguments to update or create a GuildEventAttendee.
+     * @example
+     * // Update or create a GuildEventAttendee
+     * const guildEventAttendee = await prisma.guildEventAttendee.upsert({
+     *   create: {
+     *     // ... data to create a GuildEventAttendee
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GuildEventAttendee we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GuildEventAttendeeUpsertArgs>(args: SelectSubset<T, GuildEventAttendeeUpsertArgs<ExtArgs>>): Prisma__GuildEventAttendeeClient<$Result.GetResult<Prisma.$GuildEventAttendeePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GuildEventAttendees that matches the filter.
+     * @param {GuildEventAttendeeFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const guildEventAttendee = await prisma.guildEventAttendee.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: GuildEventAttendeeFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a GuildEventAttendee.
+     * @param {GuildEventAttendeeAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const guildEventAttendee = await prisma.guildEventAttendee.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: GuildEventAttendeeAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of GuildEventAttendees.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventAttendeeCountArgs} args - Arguments to filter GuildEventAttendees to count.
+     * @example
+     * // Count the number of GuildEventAttendees
+     * const count = await prisma.guildEventAttendee.count({
+     *   where: {
+     *     // ... the filter for the GuildEventAttendees we want to count
+     *   }
+     * })
+    **/
+    count<T extends GuildEventAttendeeCountArgs>(
+      args?: Subset<T, GuildEventAttendeeCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GuildEventAttendeeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GuildEventAttendee.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventAttendeeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GuildEventAttendeeAggregateArgs>(args: Subset<T, GuildEventAttendeeAggregateArgs>): Prisma.PrismaPromise<GetGuildEventAttendeeAggregateType<T>>
+
+    /**
+     * Group by GuildEventAttendee.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GuildEventAttendeeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GuildEventAttendeeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GuildEventAttendeeGroupByArgs['orderBy'] }
+        : { orderBy?: GuildEventAttendeeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GuildEventAttendeeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGuildEventAttendeeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GuildEventAttendee model
+   */
+  readonly fields: GuildEventAttendeeFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GuildEventAttendee.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GuildEventAttendeeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GuildEventAttendee model
+   */
+  interface GuildEventAttendeeFieldRefs {
+    readonly id: FieldRef<"GuildEventAttendee", 'String'>
+    readonly runId: FieldRef<"GuildEventAttendee", 'String'>
+    readonly guildId: FieldRef<"GuildEventAttendee", 'String'>
+    readonly userId: FieldRef<"GuildEventAttendee", 'String'>
+    readonly displayName: FieldRef<"GuildEventAttendee", 'String'>
+    readonly interested: FieldRef<"GuildEventAttendee", 'Boolean'>
+    readonly checkedInAt: FieldRef<"GuildEventAttendee", 'DateTime'>
+    readonly late: FieldRef<"GuildEventAttendee", 'Boolean'>
+    readonly noShow: FieldRef<"GuildEventAttendee", 'Boolean'>
+    readonly voiceSeconds: FieldRef<"GuildEventAttendee", 'Int'>
+    readonly sessionStartedAt: FieldRef<"GuildEventAttendee", 'DateTime'>
+    readonly createdAt: FieldRef<"GuildEventAttendee", 'DateTime'>
+    readonly updatedAt: FieldRef<"GuildEventAttendee", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GuildEventAttendee findUnique
+   */
+  export type GuildEventAttendeeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventAttendee to fetch.
+     */
+    where: GuildEventAttendeeWhereUniqueInput
+  }
+
+  /**
+   * GuildEventAttendee findUniqueOrThrow
+   */
+  export type GuildEventAttendeeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventAttendee to fetch.
+     */
+    where: GuildEventAttendeeWhereUniqueInput
+  }
+
+  /**
+   * GuildEventAttendee findFirst
+   */
+  export type GuildEventAttendeeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventAttendee to fetch.
+     */
+    where?: GuildEventAttendeeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventAttendees to fetch.
+     */
+    orderBy?: GuildEventAttendeeOrderByWithRelationInput | GuildEventAttendeeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildEventAttendees.
+     */
+    cursor?: GuildEventAttendeeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventAttendees from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventAttendees.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildEventAttendees.
+     */
+    distinct?: GuildEventAttendeeScalarFieldEnum | GuildEventAttendeeScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventAttendee findFirstOrThrow
+   */
+  export type GuildEventAttendeeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventAttendee to fetch.
+     */
+    where?: GuildEventAttendeeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventAttendees to fetch.
+     */
+    orderBy?: GuildEventAttendeeOrderByWithRelationInput | GuildEventAttendeeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GuildEventAttendees.
+     */
+    cursor?: GuildEventAttendeeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventAttendees from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventAttendees.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GuildEventAttendees.
+     */
+    distinct?: GuildEventAttendeeScalarFieldEnum | GuildEventAttendeeScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventAttendee findMany
+   */
+  export type GuildEventAttendeeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * Filter, which GuildEventAttendees to fetch.
+     */
+    where?: GuildEventAttendeeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GuildEventAttendees to fetch.
+     */
+    orderBy?: GuildEventAttendeeOrderByWithRelationInput | GuildEventAttendeeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GuildEventAttendees.
+     */
+    cursor?: GuildEventAttendeeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GuildEventAttendees from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GuildEventAttendees.
+     */
+    skip?: number
+    distinct?: GuildEventAttendeeScalarFieldEnum | GuildEventAttendeeScalarFieldEnum[]
+  }
+
+  /**
+   * GuildEventAttendee create
+   */
+  export type GuildEventAttendeeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * The data needed to create a GuildEventAttendee.
+     */
+    data: XOR<GuildEventAttendeeCreateInput, GuildEventAttendeeUncheckedCreateInput>
+  }
+
+  /**
+   * GuildEventAttendee createMany
+   */
+  export type GuildEventAttendeeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GuildEventAttendees.
+     */
+    data: GuildEventAttendeeCreateManyInput | GuildEventAttendeeCreateManyInput[]
+  }
+
+  /**
+   * GuildEventAttendee update
+   */
+  export type GuildEventAttendeeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * The data needed to update a GuildEventAttendee.
+     */
+    data: XOR<GuildEventAttendeeUpdateInput, GuildEventAttendeeUncheckedUpdateInput>
+    /**
+     * Choose, which GuildEventAttendee to update.
+     */
+    where: GuildEventAttendeeWhereUniqueInput
+  }
+
+  /**
+   * GuildEventAttendee updateMany
+   */
+  export type GuildEventAttendeeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GuildEventAttendees.
+     */
+    data: XOR<GuildEventAttendeeUpdateManyMutationInput, GuildEventAttendeeUncheckedUpdateManyInput>
+    /**
+     * Filter which GuildEventAttendees to update
+     */
+    where?: GuildEventAttendeeWhereInput
+    /**
+     * Limit how many GuildEventAttendees to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildEventAttendee upsert
+   */
+  export type GuildEventAttendeeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * The filter to search for the GuildEventAttendee to update in case it exists.
+     */
+    where: GuildEventAttendeeWhereUniqueInput
+    /**
+     * In case the GuildEventAttendee found by the `where` argument doesn't exist, create a new GuildEventAttendee with this data.
+     */
+    create: XOR<GuildEventAttendeeCreateInput, GuildEventAttendeeUncheckedCreateInput>
+    /**
+     * In case the GuildEventAttendee was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GuildEventAttendeeUpdateInput, GuildEventAttendeeUncheckedUpdateInput>
+  }
+
+  /**
+   * GuildEventAttendee delete
+   */
+  export type GuildEventAttendeeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+    /**
+     * Filter which GuildEventAttendee to delete.
+     */
+    where: GuildEventAttendeeWhereUniqueInput
+  }
+
+  /**
+   * GuildEventAttendee deleteMany
+   */
+  export type GuildEventAttendeeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GuildEventAttendees to delete
+     */
+    where?: GuildEventAttendeeWhereInput
+    /**
+     * Limit how many GuildEventAttendees to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GuildEventAttendee findRaw
+   */
+  export type GuildEventAttendeeFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildEventAttendee aggregateRaw
+   */
+  export type GuildEventAttendeeAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * GuildEventAttendee without action
+   */
+  export type GuildEventAttendeeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GuildEventAttendee
+     */
+    select?: GuildEventAttendeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GuildEventAttendee
+     */
+    omit?: GuildEventAttendeeOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -20083,6 +23567,66 @@ export namespace Prisma {
   };
 
   export type GuildBrandingStateScalarFieldEnum = (typeof GuildBrandingStateScalarFieldEnum)[keyof typeof GuildBrandingStateScalarFieldEnum]
+
+
+  export const GuildEventSettingsScalarFieldEnum: {
+    id: 'id',
+    guildId: 'guildId',
+    applicationId: 'applicationId',
+    enabled: 'enabled',
+    channelId: 'channelId',
+    subPostsEnabled: 'subPostsEnabled',
+    lastError: 'lastError',
+    lastErrorAt: 'lastErrorAt',
+    updatedByUserId: 'updatedByUserId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GuildEventSettingsScalarFieldEnum = (typeof GuildEventSettingsScalarFieldEnum)[keyof typeof GuildEventSettingsScalarFieldEnum]
+
+
+  export const GuildEventRunScalarFieldEnum: {
+    id: 'id',
+    applicationId: 'applicationId',
+    guildId: 'guildId',
+    scheduledEventId: 'scheduledEventId',
+    occurrenceStartAt: 'occurrenceStartAt',
+    name: 'name',
+    voiceChannelId: 'voiceChannelId',
+    phase: 'phase',
+    postChannelId: 'postChannelId',
+    boardMessageId: 'boardMessageId',
+    subPostMessageId: 'subPostMessageId',
+    subsNeeded: 'subsNeeded',
+    frozenAt: 'frozenAt',
+    endedAt: 'endedAt',
+    checkpointAt: 'checkpointAt',
+    lastError: 'lastError',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GuildEventRunScalarFieldEnum = (typeof GuildEventRunScalarFieldEnum)[keyof typeof GuildEventRunScalarFieldEnum]
+
+
+  export const GuildEventAttendeeScalarFieldEnum: {
+    id: 'id',
+    runId: 'runId',
+    guildId: 'guildId',
+    userId: 'userId',
+    displayName: 'displayName',
+    interested: 'interested',
+    checkedInAt: 'checkedInAt',
+    late: 'late',
+    noShow: 'noShow',
+    voiceSeconds: 'voiceSeconds',
+    sessionStartedAt: 'sessionStartedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GuildEventAttendeeScalarFieldEnum = (typeof GuildEventAttendeeScalarFieldEnum)[keyof typeof GuildEventAttendeeScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -21502,6 +25046,303 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"GuildBrandingState"> | Date | string
   }
 
+  export type GuildEventSettingsWhereInput = {
+    AND?: GuildEventSettingsWhereInput | GuildEventSettingsWhereInput[]
+    OR?: GuildEventSettingsWhereInput[]
+    NOT?: GuildEventSettingsWhereInput | GuildEventSettingsWhereInput[]
+    id?: StringFilter<"GuildEventSettings"> | string
+    guildId?: StringFilter<"GuildEventSettings"> | string
+    applicationId?: StringFilter<"GuildEventSettings"> | string
+    enabled?: BoolFilter<"GuildEventSettings"> | boolean
+    channelId?: StringNullableFilter<"GuildEventSettings"> | string | null
+    subPostsEnabled?: BoolFilter<"GuildEventSettings"> | boolean
+    lastError?: StringNullableFilter<"GuildEventSettings"> | string | null
+    lastErrorAt?: DateTimeNullableFilter<"GuildEventSettings"> | Date | string | null
+    updatedByUserId?: StringNullableFilter<"GuildEventSettings"> | string | null
+    createdAt?: DateTimeFilter<"GuildEventSettings"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildEventSettings"> | Date | string
+  }
+
+  export type GuildEventSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    enabled?: SortOrder
+    channelId?: SortOrder
+    subPostsEnabled?: SortOrder
+    lastError?: SortOrder
+    lastErrorAt?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    guildId?: string
+    AND?: GuildEventSettingsWhereInput | GuildEventSettingsWhereInput[]
+    OR?: GuildEventSettingsWhereInput[]
+    NOT?: GuildEventSettingsWhereInput | GuildEventSettingsWhereInput[]
+    applicationId?: StringFilter<"GuildEventSettings"> | string
+    enabled?: BoolFilter<"GuildEventSettings"> | boolean
+    channelId?: StringNullableFilter<"GuildEventSettings"> | string | null
+    subPostsEnabled?: BoolFilter<"GuildEventSettings"> | boolean
+    lastError?: StringNullableFilter<"GuildEventSettings"> | string | null
+    lastErrorAt?: DateTimeNullableFilter<"GuildEventSettings"> | Date | string | null
+    updatedByUserId?: StringNullableFilter<"GuildEventSettings"> | string | null
+    createdAt?: DateTimeFilter<"GuildEventSettings"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildEventSettings"> | Date | string
+  }, "id" | "guildId">
+
+  export type GuildEventSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    enabled?: SortOrder
+    channelId?: SortOrder
+    subPostsEnabled?: SortOrder
+    lastError?: SortOrder
+    lastErrorAt?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GuildEventSettingsCountOrderByAggregateInput
+    _max?: GuildEventSettingsMaxOrderByAggregateInput
+    _min?: GuildEventSettingsMinOrderByAggregateInput
+  }
+
+  export type GuildEventSettingsScalarWhereWithAggregatesInput = {
+    AND?: GuildEventSettingsScalarWhereWithAggregatesInput | GuildEventSettingsScalarWhereWithAggregatesInput[]
+    OR?: GuildEventSettingsScalarWhereWithAggregatesInput[]
+    NOT?: GuildEventSettingsScalarWhereWithAggregatesInput | GuildEventSettingsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildEventSettings"> | string
+    guildId?: StringWithAggregatesFilter<"GuildEventSettings"> | string
+    applicationId?: StringWithAggregatesFilter<"GuildEventSettings"> | string
+    enabled?: BoolWithAggregatesFilter<"GuildEventSettings"> | boolean
+    channelId?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
+    subPostsEnabled?: BoolWithAggregatesFilter<"GuildEventSettings"> | boolean
+    lastError?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
+    lastErrorAt?: DateTimeNullableWithAggregatesFilter<"GuildEventSettings"> | Date | string | null
+    updatedByUserId?: StringNullableWithAggregatesFilter<"GuildEventSettings"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"GuildEventSettings"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GuildEventSettings"> | Date | string
+  }
+
+  export type GuildEventRunWhereInput = {
+    AND?: GuildEventRunWhereInput | GuildEventRunWhereInput[]
+    OR?: GuildEventRunWhereInput[]
+    NOT?: GuildEventRunWhereInput | GuildEventRunWhereInput[]
+    id?: StringFilter<"GuildEventRun"> | string
+    applicationId?: StringFilter<"GuildEventRun"> | string
+    guildId?: StringFilter<"GuildEventRun"> | string
+    scheduledEventId?: StringFilter<"GuildEventRun"> | string
+    occurrenceStartAt?: DateTimeFilter<"GuildEventRun"> | Date | string
+    name?: StringFilter<"GuildEventRun"> | string
+    voiceChannelId?: StringFilter<"GuildEventRun"> | string
+    phase?: StringFilter<"GuildEventRun"> | string
+    postChannelId?: StringFilter<"GuildEventRun"> | string
+    boardMessageId?: StringNullableFilter<"GuildEventRun"> | string | null
+    subPostMessageId?: StringNullableFilter<"GuildEventRun"> | string | null
+    subsNeeded?: IntFilter<"GuildEventRun"> | number
+    frozenAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
+    endedAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
+    checkpointAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
+    lastError?: StringNullableFilter<"GuildEventRun"> | string | null
+    createdAt?: DateTimeFilter<"GuildEventRun"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildEventRun"> | Date | string
+  }
+
+  export type GuildEventRunOrderByWithRelationInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    guildId?: SortOrder
+    scheduledEventId?: SortOrder
+    occurrenceStartAt?: SortOrder
+    name?: SortOrder
+    voiceChannelId?: SortOrder
+    phase?: SortOrder
+    postChannelId?: SortOrder
+    boardMessageId?: SortOrder
+    subPostMessageId?: SortOrder
+    subsNeeded?: SortOrder
+    frozenAt?: SortOrder
+    endedAt?: SortOrder
+    checkpointAt?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventRunWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    applicationId_scheduledEventId_occurrenceStartAt?: GuildEventRunApplicationIdScheduledEventIdOccurrenceStartAtCompoundUniqueInput
+    AND?: GuildEventRunWhereInput | GuildEventRunWhereInput[]
+    OR?: GuildEventRunWhereInput[]
+    NOT?: GuildEventRunWhereInput | GuildEventRunWhereInput[]
+    applicationId?: StringFilter<"GuildEventRun"> | string
+    guildId?: StringFilter<"GuildEventRun"> | string
+    scheduledEventId?: StringFilter<"GuildEventRun"> | string
+    occurrenceStartAt?: DateTimeFilter<"GuildEventRun"> | Date | string
+    name?: StringFilter<"GuildEventRun"> | string
+    voiceChannelId?: StringFilter<"GuildEventRun"> | string
+    phase?: StringFilter<"GuildEventRun"> | string
+    postChannelId?: StringFilter<"GuildEventRun"> | string
+    boardMessageId?: StringNullableFilter<"GuildEventRun"> | string | null
+    subPostMessageId?: StringNullableFilter<"GuildEventRun"> | string | null
+    subsNeeded?: IntFilter<"GuildEventRun"> | number
+    frozenAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
+    endedAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
+    checkpointAt?: DateTimeNullableFilter<"GuildEventRun"> | Date | string | null
+    lastError?: StringNullableFilter<"GuildEventRun"> | string | null
+    createdAt?: DateTimeFilter<"GuildEventRun"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildEventRun"> | Date | string
+  }, "id" | "applicationId_scheduledEventId_occurrenceStartAt">
+
+  export type GuildEventRunOrderByWithAggregationInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    guildId?: SortOrder
+    scheduledEventId?: SortOrder
+    occurrenceStartAt?: SortOrder
+    name?: SortOrder
+    voiceChannelId?: SortOrder
+    phase?: SortOrder
+    postChannelId?: SortOrder
+    boardMessageId?: SortOrder
+    subPostMessageId?: SortOrder
+    subsNeeded?: SortOrder
+    frozenAt?: SortOrder
+    endedAt?: SortOrder
+    checkpointAt?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GuildEventRunCountOrderByAggregateInput
+    _avg?: GuildEventRunAvgOrderByAggregateInput
+    _max?: GuildEventRunMaxOrderByAggregateInput
+    _min?: GuildEventRunMinOrderByAggregateInput
+    _sum?: GuildEventRunSumOrderByAggregateInput
+  }
+
+  export type GuildEventRunScalarWhereWithAggregatesInput = {
+    AND?: GuildEventRunScalarWhereWithAggregatesInput | GuildEventRunScalarWhereWithAggregatesInput[]
+    OR?: GuildEventRunScalarWhereWithAggregatesInput[]
+    NOT?: GuildEventRunScalarWhereWithAggregatesInput | GuildEventRunScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildEventRun"> | string
+    applicationId?: StringWithAggregatesFilter<"GuildEventRun"> | string
+    guildId?: StringWithAggregatesFilter<"GuildEventRun"> | string
+    scheduledEventId?: StringWithAggregatesFilter<"GuildEventRun"> | string
+    occurrenceStartAt?: DateTimeWithAggregatesFilter<"GuildEventRun"> | Date | string
+    name?: StringWithAggregatesFilter<"GuildEventRun"> | string
+    voiceChannelId?: StringWithAggregatesFilter<"GuildEventRun"> | string
+    phase?: StringWithAggregatesFilter<"GuildEventRun"> | string
+    postChannelId?: StringWithAggregatesFilter<"GuildEventRun"> | string
+    boardMessageId?: StringNullableWithAggregatesFilter<"GuildEventRun"> | string | null
+    subPostMessageId?: StringNullableWithAggregatesFilter<"GuildEventRun"> | string | null
+    subsNeeded?: IntWithAggregatesFilter<"GuildEventRun"> | number
+    frozenAt?: DateTimeNullableWithAggregatesFilter<"GuildEventRun"> | Date | string | null
+    endedAt?: DateTimeNullableWithAggregatesFilter<"GuildEventRun"> | Date | string | null
+    checkpointAt?: DateTimeNullableWithAggregatesFilter<"GuildEventRun"> | Date | string | null
+    lastError?: StringNullableWithAggregatesFilter<"GuildEventRun"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"GuildEventRun"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GuildEventRun"> | Date | string
+  }
+
+  export type GuildEventAttendeeWhereInput = {
+    AND?: GuildEventAttendeeWhereInput | GuildEventAttendeeWhereInput[]
+    OR?: GuildEventAttendeeWhereInput[]
+    NOT?: GuildEventAttendeeWhereInput | GuildEventAttendeeWhereInput[]
+    id?: StringFilter<"GuildEventAttendee"> | string
+    runId?: StringFilter<"GuildEventAttendee"> | string
+    guildId?: StringFilter<"GuildEventAttendee"> | string
+    userId?: StringFilter<"GuildEventAttendee"> | string
+    displayName?: StringNullableFilter<"GuildEventAttendee"> | string | null
+    interested?: BoolFilter<"GuildEventAttendee"> | boolean
+    checkedInAt?: DateTimeNullableFilter<"GuildEventAttendee"> | Date | string | null
+    late?: BoolFilter<"GuildEventAttendee"> | boolean
+    noShow?: BoolFilter<"GuildEventAttendee"> | boolean
+    voiceSeconds?: IntFilter<"GuildEventAttendee"> | number
+    sessionStartedAt?: DateTimeNullableFilter<"GuildEventAttendee"> | Date | string | null
+    createdAt?: DateTimeFilter<"GuildEventAttendee"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildEventAttendee"> | Date | string
+  }
+
+  export type GuildEventAttendeeOrderByWithRelationInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    guildId?: SortOrder
+    userId?: SortOrder
+    displayName?: SortOrder
+    interested?: SortOrder
+    checkedInAt?: SortOrder
+    late?: SortOrder
+    noShow?: SortOrder
+    voiceSeconds?: SortOrder
+    sessionStartedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventAttendeeWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    runId_userId?: GuildEventAttendeeRunIdUserIdCompoundUniqueInput
+    AND?: GuildEventAttendeeWhereInput | GuildEventAttendeeWhereInput[]
+    OR?: GuildEventAttendeeWhereInput[]
+    NOT?: GuildEventAttendeeWhereInput | GuildEventAttendeeWhereInput[]
+    runId?: StringFilter<"GuildEventAttendee"> | string
+    guildId?: StringFilter<"GuildEventAttendee"> | string
+    userId?: StringFilter<"GuildEventAttendee"> | string
+    displayName?: StringNullableFilter<"GuildEventAttendee"> | string | null
+    interested?: BoolFilter<"GuildEventAttendee"> | boolean
+    checkedInAt?: DateTimeNullableFilter<"GuildEventAttendee"> | Date | string | null
+    late?: BoolFilter<"GuildEventAttendee"> | boolean
+    noShow?: BoolFilter<"GuildEventAttendee"> | boolean
+    voiceSeconds?: IntFilter<"GuildEventAttendee"> | number
+    sessionStartedAt?: DateTimeNullableFilter<"GuildEventAttendee"> | Date | string | null
+    createdAt?: DateTimeFilter<"GuildEventAttendee"> | Date | string
+    updatedAt?: DateTimeFilter<"GuildEventAttendee"> | Date | string
+  }, "id" | "runId_userId">
+
+  export type GuildEventAttendeeOrderByWithAggregationInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    guildId?: SortOrder
+    userId?: SortOrder
+    displayName?: SortOrder
+    interested?: SortOrder
+    checkedInAt?: SortOrder
+    late?: SortOrder
+    noShow?: SortOrder
+    voiceSeconds?: SortOrder
+    sessionStartedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GuildEventAttendeeCountOrderByAggregateInput
+    _avg?: GuildEventAttendeeAvgOrderByAggregateInput
+    _max?: GuildEventAttendeeMaxOrderByAggregateInput
+    _min?: GuildEventAttendeeMinOrderByAggregateInput
+    _sum?: GuildEventAttendeeSumOrderByAggregateInput
+  }
+
+  export type GuildEventAttendeeScalarWhereWithAggregatesInput = {
+    AND?: GuildEventAttendeeScalarWhereWithAggregatesInput | GuildEventAttendeeScalarWhereWithAggregatesInput[]
+    OR?: GuildEventAttendeeScalarWhereWithAggregatesInput[]
+    NOT?: GuildEventAttendeeScalarWhereWithAggregatesInput | GuildEventAttendeeScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GuildEventAttendee"> | string
+    runId?: StringWithAggregatesFilter<"GuildEventAttendee"> | string
+    guildId?: StringWithAggregatesFilter<"GuildEventAttendee"> | string
+    userId?: StringWithAggregatesFilter<"GuildEventAttendee"> | string
+    displayName?: StringNullableWithAggregatesFilter<"GuildEventAttendee"> | string | null
+    interested?: BoolWithAggregatesFilter<"GuildEventAttendee"> | boolean
+    checkedInAt?: DateTimeNullableWithAggregatesFilter<"GuildEventAttendee"> | Date | string | null
+    late?: BoolWithAggregatesFilter<"GuildEventAttendee"> | boolean
+    noShow?: BoolWithAggregatesFilter<"GuildEventAttendee"> | boolean
+    voiceSeconds?: IntWithAggregatesFilter<"GuildEventAttendee"> | number
+    sessionStartedAt?: DateTimeNullableWithAggregatesFilter<"GuildEventAttendee"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"GuildEventAttendee"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GuildEventAttendee"> | Date | string
+  }
+
   export type ConfigCreateInput = {
     id?: string
     key: string
@@ -22905,6 +26746,351 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type GuildEventSettingsCreateInput = {
+    id?: string
+    guildId: string
+    applicationId: string
+    enabled?: boolean
+    channelId?: string | null
+    subPostsEnabled?: boolean
+    lastError?: string | null
+    lastErrorAt?: Date | string | null
+    updatedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventSettingsUncheckedCreateInput = {
+    id?: string
+    guildId: string
+    applicationId: string
+    enabled?: boolean
+    channelId?: string | null
+    subPostsEnabled?: boolean
+    lastError?: string | null
+    lastErrorAt?: Date | string | null
+    updatedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventSettingsUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    channelId?: NullableStringFieldUpdateOperationsInput | string | null
+    subPostsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventSettingsUncheckedUpdateInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    channelId?: NullableStringFieldUpdateOperationsInput | string | null
+    subPostsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventSettingsCreateManyInput = {
+    id?: string
+    guildId: string
+    applicationId: string
+    enabled?: boolean
+    channelId?: string | null
+    subPostsEnabled?: boolean
+    lastError?: string | null
+    lastErrorAt?: Date | string | null
+    updatedByUserId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventSettingsUpdateManyMutationInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    channelId?: NullableStringFieldUpdateOperationsInput | string | null
+    subPostsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventSettingsUncheckedUpdateManyInput = {
+    guildId?: StringFieldUpdateOperationsInput | string
+    applicationId?: StringFieldUpdateOperationsInput | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    channelId?: NullableStringFieldUpdateOperationsInput | string | null
+    subPostsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    lastErrorAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventRunCreateInput = {
+    id?: string
+    applicationId: string
+    guildId: string
+    scheduledEventId: string
+    occurrenceStartAt: Date | string
+    name: string
+    voiceChannelId: string
+    phase: string
+    postChannelId: string
+    boardMessageId?: string | null
+    subPostMessageId?: string | null
+    subsNeeded?: number
+    frozenAt?: Date | string | null
+    endedAt?: Date | string | null
+    checkpointAt?: Date | string | null
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventRunUncheckedCreateInput = {
+    id?: string
+    applicationId: string
+    guildId: string
+    scheduledEventId: string
+    occurrenceStartAt: Date | string
+    name: string
+    voiceChannelId: string
+    phase: string
+    postChannelId: string
+    boardMessageId?: string | null
+    subPostMessageId?: string | null
+    subsNeeded?: number
+    frozenAt?: Date | string | null
+    endedAt?: Date | string | null
+    checkpointAt?: Date | string | null
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventRunUpdateInput = {
+    applicationId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    scheduledEventId?: StringFieldUpdateOperationsInput | string
+    occurrenceStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    voiceChannelId?: StringFieldUpdateOperationsInput | string
+    phase?: StringFieldUpdateOperationsInput | string
+    postChannelId?: StringFieldUpdateOperationsInput | string
+    boardMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    subPostMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    subsNeeded?: IntFieldUpdateOperationsInput | number
+    frozenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkpointAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventRunUncheckedUpdateInput = {
+    applicationId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    scheduledEventId?: StringFieldUpdateOperationsInput | string
+    occurrenceStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    voiceChannelId?: StringFieldUpdateOperationsInput | string
+    phase?: StringFieldUpdateOperationsInput | string
+    postChannelId?: StringFieldUpdateOperationsInput | string
+    boardMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    subPostMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    subsNeeded?: IntFieldUpdateOperationsInput | number
+    frozenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkpointAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventRunCreateManyInput = {
+    id?: string
+    applicationId: string
+    guildId: string
+    scheduledEventId: string
+    occurrenceStartAt: Date | string
+    name: string
+    voiceChannelId: string
+    phase: string
+    postChannelId: string
+    boardMessageId?: string | null
+    subPostMessageId?: string | null
+    subsNeeded?: number
+    frozenAt?: Date | string | null
+    endedAt?: Date | string | null
+    checkpointAt?: Date | string | null
+    lastError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventRunUpdateManyMutationInput = {
+    applicationId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    scheduledEventId?: StringFieldUpdateOperationsInput | string
+    occurrenceStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    voiceChannelId?: StringFieldUpdateOperationsInput | string
+    phase?: StringFieldUpdateOperationsInput | string
+    postChannelId?: StringFieldUpdateOperationsInput | string
+    boardMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    subPostMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    subsNeeded?: IntFieldUpdateOperationsInput | number
+    frozenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkpointAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventRunUncheckedUpdateManyInput = {
+    applicationId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    scheduledEventId?: StringFieldUpdateOperationsInput | string
+    occurrenceStartAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    voiceChannelId?: StringFieldUpdateOperationsInput | string
+    phase?: StringFieldUpdateOperationsInput | string
+    postChannelId?: StringFieldUpdateOperationsInput | string
+    boardMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    subPostMessageId?: NullableStringFieldUpdateOperationsInput | string | null
+    subsNeeded?: IntFieldUpdateOperationsInput | number
+    frozenAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    checkpointAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventAttendeeCreateInput = {
+    id?: string
+    runId: string
+    guildId: string
+    userId: string
+    displayName?: string | null
+    interested?: boolean
+    checkedInAt?: Date | string | null
+    late?: boolean
+    noShow?: boolean
+    voiceSeconds?: number
+    sessionStartedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventAttendeeUncheckedCreateInput = {
+    id?: string
+    runId: string
+    guildId: string
+    userId: string
+    displayName?: string | null
+    interested?: boolean
+    checkedInAt?: Date | string | null
+    late?: boolean
+    noShow?: boolean
+    voiceSeconds?: number
+    sessionStartedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventAttendeeUpdateInput = {
+    runId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    late?: BoolFieldUpdateOperationsInput | boolean
+    noShow?: BoolFieldUpdateOperationsInput | boolean
+    voiceSeconds?: IntFieldUpdateOperationsInput | number
+    sessionStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventAttendeeUncheckedUpdateInput = {
+    runId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    late?: BoolFieldUpdateOperationsInput | boolean
+    noShow?: BoolFieldUpdateOperationsInput | boolean
+    voiceSeconds?: IntFieldUpdateOperationsInput | number
+    sessionStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventAttendeeCreateManyInput = {
+    id?: string
+    runId: string
+    guildId: string
+    userId: string
+    displayName?: string | null
+    interested?: boolean
+    checkedInAt?: Date | string | null
+    late?: boolean
+    noShow?: boolean
+    voiceSeconds?: number
+    sessionStartedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GuildEventAttendeeUpdateManyMutationInput = {
+    runId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    late?: BoolFieldUpdateOperationsInput | boolean
+    noShow?: BoolFieldUpdateOperationsInput | boolean
+    voiceSeconds?: IntFieldUpdateOperationsInput | number
+    sessionStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GuildEventAttendeeUncheckedUpdateManyInput = {
+    runId?: StringFieldUpdateOperationsInput | string
+    guildId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    interested?: BoolFieldUpdateOperationsInput | boolean
+    checkedInAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    late?: BoolFieldUpdateOperationsInput | boolean
+    noShow?: BoolFieldUpdateOperationsInput | boolean
+    voiceSeconds?: IntFieldUpdateOperationsInput | number
+    sessionStartedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -23915,6 +28101,186 @@ export namespace Prisma {
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
     isSet?: boolean
+  }
+
+  export type GuildEventSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    enabled?: SortOrder
+    channelId?: SortOrder
+    subPostsEnabled?: SortOrder
+    lastError?: SortOrder
+    lastErrorAt?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    enabled?: SortOrder
+    channelId?: SortOrder
+    subPostsEnabled?: SortOrder
+    lastError?: SortOrder
+    lastErrorAt?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    guildId?: SortOrder
+    applicationId?: SortOrder
+    enabled?: SortOrder
+    channelId?: SortOrder
+    subPostsEnabled?: SortOrder
+    lastError?: SortOrder
+    lastErrorAt?: SortOrder
+    updatedByUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventRunApplicationIdScheduledEventIdOccurrenceStartAtCompoundUniqueInput = {
+    applicationId: string
+    scheduledEventId: string
+    occurrenceStartAt: Date | string
+  }
+
+  export type GuildEventRunCountOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    guildId?: SortOrder
+    scheduledEventId?: SortOrder
+    occurrenceStartAt?: SortOrder
+    name?: SortOrder
+    voiceChannelId?: SortOrder
+    phase?: SortOrder
+    postChannelId?: SortOrder
+    boardMessageId?: SortOrder
+    subPostMessageId?: SortOrder
+    subsNeeded?: SortOrder
+    frozenAt?: SortOrder
+    endedAt?: SortOrder
+    checkpointAt?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventRunAvgOrderByAggregateInput = {
+    subsNeeded?: SortOrder
+  }
+
+  export type GuildEventRunMaxOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    guildId?: SortOrder
+    scheduledEventId?: SortOrder
+    occurrenceStartAt?: SortOrder
+    name?: SortOrder
+    voiceChannelId?: SortOrder
+    phase?: SortOrder
+    postChannelId?: SortOrder
+    boardMessageId?: SortOrder
+    subPostMessageId?: SortOrder
+    subsNeeded?: SortOrder
+    frozenAt?: SortOrder
+    endedAt?: SortOrder
+    checkpointAt?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventRunMinOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    guildId?: SortOrder
+    scheduledEventId?: SortOrder
+    occurrenceStartAt?: SortOrder
+    name?: SortOrder
+    voiceChannelId?: SortOrder
+    phase?: SortOrder
+    postChannelId?: SortOrder
+    boardMessageId?: SortOrder
+    subPostMessageId?: SortOrder
+    subsNeeded?: SortOrder
+    frozenAt?: SortOrder
+    endedAt?: SortOrder
+    checkpointAt?: SortOrder
+    lastError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventRunSumOrderByAggregateInput = {
+    subsNeeded?: SortOrder
+  }
+
+  export type GuildEventAttendeeRunIdUserIdCompoundUniqueInput = {
+    runId: string
+    userId: string
+  }
+
+  export type GuildEventAttendeeCountOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    guildId?: SortOrder
+    userId?: SortOrder
+    displayName?: SortOrder
+    interested?: SortOrder
+    checkedInAt?: SortOrder
+    late?: SortOrder
+    noShow?: SortOrder
+    voiceSeconds?: SortOrder
+    sessionStartedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventAttendeeAvgOrderByAggregateInput = {
+    voiceSeconds?: SortOrder
+  }
+
+  export type GuildEventAttendeeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    guildId?: SortOrder
+    userId?: SortOrder
+    displayName?: SortOrder
+    interested?: SortOrder
+    checkedInAt?: SortOrder
+    late?: SortOrder
+    noShow?: SortOrder
+    voiceSeconds?: SortOrder
+    sessionStartedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventAttendeeMinOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    guildId?: SortOrder
+    userId?: SortOrder
+    displayName?: SortOrder
+    interested?: SortOrder
+    checkedInAt?: SortOrder
+    late?: SortOrder
+    noShow?: SortOrder
+    voiceSeconds?: SortOrder
+    sessionStartedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GuildEventAttendeeSumOrderByAggregateInput = {
+    voiceSeconds?: SortOrder
   }
 
   export type ConfigCreatevaluesInput = {

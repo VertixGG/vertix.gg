@@ -16,6 +16,7 @@ import authRoutePlugin from "@vertix.gg/api/src/server/routes/auth-route";
 import dashboardRoutePlugin from "@vertix.gg/api/src/server/routes/dashboard-route";
 import managementRoutePlugin from "@vertix.gg/api/src/server/routes/management-route";
 import brandingRoutePlugin from "@vertix.gg/api/src/server/routes/branding-route";
+import eventsRoutePlugin from "@vertix.gg/api/src/server/routes/events-route";
 import customizationRoutePlugin from "@vertix.gg/api/src/server/routes/customization-route";
 import languageRoutePlugin from "@vertix.gg/api/src/server/routes/language-route";
 import { requireAuth } from "@vertix.gg/api/src/server/middleware/auth-middleware";
@@ -103,6 +104,7 @@ export async function createApp(): Promise<FastifyInstance> {
         await protectedRoutes.register( dashboardRoutePlugin );
         await protectedRoutes.register( managementRoutePlugin );
         await protectedRoutes.register( brandingRoutePlugin );
+        await protectedRoutes.register( eventsRoutePlugin );
         await protectedRoutes.register( customizationRoutePlugin );
         await protectedRoutes.register( languageRoutePlugin );
         await protectedRoutes.register( subscriptionRoutePlugin );

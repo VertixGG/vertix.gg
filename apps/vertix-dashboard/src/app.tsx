@@ -15,6 +15,7 @@ import { GuildGeneratorsQuery } from "@vertix.gg/dashboard/src/features/generato
 import { ServerConfigQuery } from "@vertix.gg/dashboard/src/features/server-config/query/server-config-query";
 import { BotPresenceQuery } from "@vertix.gg/dashboard/src/features/bot-presence/query/bot-presence-query";
 import { BrandingQuery } from "@vertix.gg/dashboard/src/features/branding/query/branding-query";
+import { EventsQuery } from "@vertix.gg/dashboard/src/features/events/query/events-query";
 
 import { AuthProvider, ProtectedRoute, LoginPage, ServerSelectionPage } from "@vertix.gg/dashboard/src/features/auth";
 
@@ -25,6 +26,7 @@ import { GeneratorsPage } from "@vertix.gg/dashboard/src/pages/generators-page";
 import { ServerConfigPage } from "@vertix.gg/dashboard/src/pages/server-config-page";
 import { BillingPage } from "@vertix.gg/dashboard/src/pages/billing-page";
 import { BrandingPage } from "@vertix.gg/dashboard/src/pages/branding-page";
+import { EventsPage } from "@vertix.gg/dashboard/src/pages/events-page";
 
 import { API_CONFIG } from "@vertix.gg/dashboard/src/lib/config";
 
@@ -43,6 +45,7 @@ client.registerModule( GuildGeneratorsQuery );
 client.registerModule( ServerConfigQuery );
 client.registerModule( BotPresenceQuery );
 client.registerModule( BrandingQuery );
+client.registerModule( EventsQuery );
 
 export function App() {
     return (
@@ -74,6 +77,7 @@ export function App() {
                             <Route path="/generators/:masterChannelId/edit" element={ <GeneratorsPage /> } />
                             <Route path="/server-options" element={ <ServerConfigPage /> } />
                             <Route path="/branding" element={ <BrandingPage /> } />
+                            <Route path="/events" element={ <EventsPage /> } />
                             <Route path="/billing" element={ <BillingPage /> } />
 
                             { /* The page was called Management until it was named after what it

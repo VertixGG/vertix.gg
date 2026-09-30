@@ -16,6 +16,7 @@ export const GUIDES_NAVIGATION: DocsNavigation = {
             pages: [
                 { title: "Enable Features", href: "/posts/enable-features" },
                 { title: "Logs Channel", href: "/posts/how-to-setup-logs-channel" },
+                { title: "Event Check-in", href: "/posts/event-check-in" },
                 { title: "Name Placeholders", href: "/posts/channel-name-placeholders" },
                 { title: "Disable AutoStatus", href: "/posts/disable-auto-status" },
             ],

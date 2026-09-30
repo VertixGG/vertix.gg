@@ -71,7 +71,8 @@ export const ROUTE_META: readonly RouteMeta[] = [
         title: "Temporary Voice Channel Features | VoiceChannels",
         description:
             "Every control a VoiceChannels channel gives its owner, in the v3 and v2 interfaces, "
-            + "and the auto-scaling pools that open and close channels as people arrive.",
+            + "the auto-scaling pools that open and close channels as people arrive, and check-ins "
+            + "for your scheduled events.",
         priority: 0.9,
     },
     {
@@ -99,6 +100,15 @@ export const ROUTE_META: readonly RouteMeta[] = [
         description:
             "Automatically create and remove Discord voice channels as demand changes, so your "
             + "server never runs out of capacity and never leaves empty channels behind.",
+        priority: 0.9,
+    },
+    {
+        path: "/features/events",
+        sourcePath: "src/vertix/pages/features/events.tsx",
+        title: "Discord Event Attendance — Check-in, No-shows & Subs | VoiceChannels",
+        description:
+            "Check-in boards for Discord scheduled events: members check in by joining voice, "
+            + "no-shows are marked, a post asks for subs, and the board ends as the attendance. Free.",
         priority: 0.9,
     },
     {
@@ -144,6 +154,15 @@ export const ROUTE_META: readonly RouteMeta[] = [
         description:
             "Send temporary voice channel activity to a log channel, with a separate log per "
             + "voice channels generator.",
+        priority: 0.7,
+    },
+    {
+        path: "/posts/event-check-in",
+        sourcePath: "src/vertix/posts/event-check-in.tsx",
+        title: "How to Set Up Event Check-in | VoiceChannels",
+        description:
+            "Turn on check-ins, no-shows and attendance for your server's scheduled voice events "
+            + "in two steps, and see what happens before, during and after one.",
         priority: 0.7,
     },
     {

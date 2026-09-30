@@ -464,3 +464,104 @@ model GuildBrandingState {
   @@unique([guildId, applicationId])
   @@index([applicationId])
 }
+
+/// What Events does in a server - written from `/setup` -> Events.
+///
+/// One row per server. `applicationId` is the bot whose setup last saved it: two bots read this
+/// database, and only that one posts, so a server holding both is not sent every board twice.
+model GuildEventSettings {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  guildId         String    @unique
+  applicationId   String
+  // ---
+  enabled         Boolean   @default(false)
+  /// The text channel the boards, the "need a sub" posts and the attendance go to.
+  channelId       String?
+  subPostsEnabled Boolean   @default(true)
+  // ---
+  /// A `GUILD_EVENTS_ERRORS` code - the last thing that stopped Events here, for the settings screen.
+  lastError       String?
+  lastErrorAt     DateTime?
+  /// The discord user who last changed it.
+  updatedByUserId String?
+
+  // ---
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([applicationId, enabled])
+}
+
+/// One occurrence of a server's scheduled event, as one bot ran it.
+///
+/// Keyed by the occurrence's start as well as the event, because a recurring event keeps its id and
+/// moves its start on to the next occurrence. Per application, like `GuildBrandingState`.
+model GuildEventRun {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  applicationId     String
+  guildId           String
+  scheduledEventId  String
+  occurrenceStartAt DateTime
+  // ---
+  name              String
+  voiceChannelId    String
+  /// A `GUILD_EVENT_RUN_PHASES` literal.
+  phase             String
+  // ---
+  postChannelId     String
+  boardMessageId    String?
+  subPostMessageId  String?
+  /// How many places the "need a sub" post asked for when it went up.
+  subsNeeded        Int       @default(0)
+  // ---
+  frozenAt          DateTime?
+  endedAt           DateTime?
+  /// The last sweep that looked at the run - how far a visit is credited when the bot went down
+  /// and the member was gone by the time it came back.
+  checkpointAt      DateTime?
+  /// A `GUILD_EVENTS_ERRORS` code, so what failed is not tried again for the rest of the run.
+  lastError         String?
+
+  // ---
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([applicationId, scheduledEventId, occurrenceStartAt])
+  @@index([applicationId, phase])
+  @@index([guildId, occurrenceStartAt])
+}
+
+/// One member's part in a run: whether they said they would come, when they came, how long they stayed.
+model GuildEventAttendee {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  // ---
+  runId            String    @db.ObjectId
+  guildId          String
+  userId           String
+  /// The name the server showed for them - read off the roster or their voice state as the run saw it,
+  /// so the attendance can be read back without asking discord who an id was.
+  displayName      String?
+  // ---
+  /// On the event's "Interested" list - as it stood when the roster froze, once it has.
+  interested       Boolean   @default(false)
+  /// The first time they were in the event's voice channels.
+  checkedInAt      DateTime?
+  /// On the roster, and came only after it froze.
+  late             Boolean   @default(false)
+  /// On the roster, and had not come when it froze. Cleared if they come after all.
+  noShow           Boolean   @default(false)
+  // ---
+  /// Time in the event's voice channels over every visit that has ended.
+  voiceSeconds     Int       @default(0)
+  /// When the visit still going began, or null when they are not there.
+  sessionStartedAt DateTime?
+
+  // ---
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([runId, userId])
+  @@index([guildId, userId])
+}

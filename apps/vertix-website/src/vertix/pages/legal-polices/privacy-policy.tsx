@@ -6,6 +6,7 @@ This privacy policy explains how the creators of VoiceChannels collect, use, and
 
 1. Collection of Personal Information
 When you use VoiceChannels, the bot may collect certain personal information that you provide, such as your Discord user ID, server ID, and messages you send to the bot.
+In a server that turns on Events, it also keeps, for each scheduled event held in a voice channel, who marked themselves Interested, when they joined its voice channels and for how long, so that it can post the attendance.
 This information is necessary for the bot to provide its services.
 
 2. Use of Personal Information

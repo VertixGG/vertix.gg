@@ -230,3 +230,75 @@ describe( "VertixBot/Services/ManagementIPC/branding", () => {
         expect( asked ).toEqual( [ `reconcile:${ GUILD_ID }` ] );
     } );
 } );
+
+async function makeEventsRouter() {
+    await TestWithServiceLocatorMock.withUIServiceMock();
+
+    const asked: string[] = [];
+
+    const { ManagementIPCService } = await import( "@vertix.gg/bot/src/services/management-ipc-service" );
+
+    const service = Object.create( ManagementIPCService.prototype ) as InstanceType<typeof ManagementIPCService>;
+
+    Object.assign( service, {
+        logger: { log: () => undefined, warn: () => undefined, error: () => undefined },
+        services: {
+            guildEventsService: {
+                getStatus: ( guildId: string, channelId: string | null ) => {
+                    asked.push( `${ guildId }:${ channelId }` );
+
+                    return { applicationId: "900000000000000001", isBotInGuild: true, missingPermissions: [] };
+                }
+            }
+        }
+    } );
+
+    const request = ( channelId: string | null ) => service[ "handleIPCRequest" ]( {
+        id: "request-1",
+        payload: { action: "get_guild_events_status", guildId: GUILD_ID, channelId }
+    } as Parameters<typeof service[ "handleIPCRequest" ]>[ 0 ] );
+
+    return { asked, request };
+}
+
+/**
+ * The dashboard asks before it points Events at a channel - and the bot that answers is the one the
+ * save makes run Events, so it has to be the shard holding the server, and only that one.
+ */
+describe( "VertixBot/Services/ManagementIPC/events", () => {
+    afterEach( () => {
+        jest.restoreAllMocks();
+
+        delete process.env.SHARD_COUNT;
+        delete process.env.SHARD_IDS;
+    } );
+
+    it( "should ask the Events service about the channel being picked", async() => {
+        // Arrange.
+        const { asked, request } = await makeEventsRouter();
+
+        // Act.
+        const answer = await request( "850000000000000001" );
+
+        // Assert.
+        expect( answer ).toMatchObject( { applicationId: "900000000000000001", isBotInGuild: true } );
+        expect( asked ).toEqual( [ `${ GUILD_ID }:850000000000000001` ] );
+    } );
+
+    it( "should leave a guild another shard holds to that shard", async() => {
+        // Arrange - the guild is on shard 1, and this process runs shard 0.
+        process.env.SHARD_COUNT = "2";
+        process.env.SHARD_IDS = "0";
+
+        const { IPC_NO_RESPONSE } = await import( "@vertix.gg/base/src/modules/ipc/ipc-service" );
+
+        const { asked, request } = await makeEventsRouter();
+
+        // Act.
+        const answer = await request( null );
+
+        // Assert.
+        expect( answer ).toBe( IPC_NO_RESPONSE );
+        expect( asked ).toEqual( [] );
+    } );
+} );

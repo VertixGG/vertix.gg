@@ -24,6 +24,16 @@ export function isRecordNotFound( error: unknown ): boolean {
 }
 
 /**
+ * Function isUniqueConstraintFailed() :: "Unique constraint failed on the fields".
+ *
+ * A row somebody else wrote first - another process, or this one before a restart - which for a
+ * caller creating something that may already exist is an answer: read the one that is there.
+ */
+export function isUniqueConstraintFailed( error: unknown ): boolean {
+    return hasCode( error, "P2002" );
+}
+
+/**
  * Function isDatabaseUnavailable() :: The database could not be reached at all.
  *
  * `P1001` cannot reach the server, `P1017` the server closed the connection, and `P2010` is a raw

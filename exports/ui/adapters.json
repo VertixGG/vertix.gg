@@ -390,6 +390,88 @@
         ]
     },
     {
+        "name": "VertixBot/UI-General/EventsAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-General/EventsComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildVoice",
+            "GuildText"
+        ],
+        "permissions": "268435504",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getReplyArgs",
+                "handler": "VertixBot/UI-General/EventsAdapter/Hooks/GetReplyArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-General/EventBoardAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-General/EventBoardComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-General/EventBoardAdapter/Hooks/GetStartArgs"
+            }
+        ]
+    },
+    {
+        "name": "VertixBot/UI-General/EventNeedSubAdapter",
+        "adapterKind": "execution",
+        "component": "VertixBot/UI-General/EventNeedSubComponent",
+        "module": "VertixBot/UI-General/Module",
+        "instanceType": "Dynamic",
+        "channelTypes": [
+            "GuildText"
+        ],
+        "permissions": "0",
+        "executionSteps": [
+            {
+                "key": "default",
+                "elementsGroup": null,
+                "embedsGroup": null,
+                "markdownGroup": null,
+                "hooks": []
+            }
+        ],
+        "bindings": [],
+        "hooks": [
+            {
+                "hook": "getStartArgs",
+                "handler": "VertixBot/UI-General/EventNeedSubAdapter/Hooks/GetStartArgs"
+            }
+        ]
+    },
+    {
         "name": "VertixBot/UI-V2/ClaimResultAdapter",
         "adapterKind": "execution",
         "component": "VertixBot/UI-V2/ClaimResultComponent",

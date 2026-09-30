@@ -66,6 +66,8 @@ import {
 
 import { LanguageChooseButton } from "@vertix.gg/bot/src/ui/general/language/language-choose-button";
 
+import { EventsChooseButton } from "@vertix.gg/bot/src/ui/general/events/events-choose-button";
+
 import { BadwordsModal } from "@vertix.gg/bot/src/ui/general/badwords/badwords-modal";
 
 import { SetupScalingConfigModal } from "@vertix.gg/bot/src/ui/general/setup/elements/setup-scaling-config-modal";
@@ -626,6 +628,22 @@ async function onLanguageChooseClicked(
         .get( "VertixBot/UI-General/LanguageAdapter" )?.editReply( interaction, {} );
 }
 
+/**
+ * Function onEventsChooseClicked() :: Hand the setup screen over to the Events screen.
+ *
+ * Its args come off once the Events screen is drawn: they are what tells the tip rotation the
+ * message is still this screen's, and a tip landing afterwards would draw setup back over Events.
+ */
+async function onEventsChooseClicked(
+    context: IAdapterContext<UIDefaultButtonChannelTextInteraction, ISetupArgs>,
+    interaction: UIDefaultButtonChannelTextInteraction
+) {
+    await ServiceLocator.$.get<UIService>( "VertixGUI/UIService" )
+        .get( "VertixBot/UI-General/EventsAdapter" )?.editReply( interaction, {} );
+
+    context.deleteArgs( interaction );
+}
+
 const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilder<ISetupArgs>( "VertixBot/UI-General/SetupEmbed", SETUP_EMBED_VARS ) )
     .setThumbnail( VERTIX_BRAND_THUMBNAIL_URL )
     .setTitle( "🛠  Setup VoiceChannels" )
@@ -921,7 +939,7 @@ const SetupEmbed = EmbedBuilderUtils.setVertixDefaultColorBrand( new EmbedBuilde
 const SetupElementsGroup = new ElementsGroupBuilder( "VertixBot/UI-General/SetupElementsGroup" )
     .addRow( [ SetupMasterEditSelectMenu ] )
     .addRow( [ SetupMasterCreateSelectMenu ] )
-    .addRow( [ LanguageChooseButton, ServerOptionsEditButton ] )
+    .addRow( [ LanguageChooseButton, ServerOptionsEditButton, EventsChooseButton ] )
     .build();
 
 /**
@@ -1192,6 +1210,7 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
             .addTransition( "CreateMasterChannelV3", { from: "Initial", to: "Initial" } )
             .addTransition( "EditMaster", { from: "Initial", to: "Initial" } )
             .addTransition( "ChooseLanguage", { from: "Initial", to: "Initial" } )
+            .addTransition( "ChooseEvents", { from: "Initial", to: "Initial" } )
             .addTransition( "OpenBadwordsModal", {
                 from: [ "Initial", "ServerOptionsBadwords" ],
                 to: "ServerOptionsBadwords"
@@ -1342,6 +1361,12 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
                 transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage"
             } )
+            .addHandoffPoint( {
+                flowName: "VertixBot/UI-General/EventsFlow",
+                description: "Handoff to the Events settings flow",
+                sourceState: "VertixBot/UI-General/SetupFlow/States/Initial",
+                transition: "VertixBot/UI-General/SetupFlow/Transitions/ChooseEvents"
+            } )
             .addEdgeSourceMapping( {
                 triggeringElementId: "VertixBot/UI-General/SetupMasterCreateSelectMenu",
                 transitionName: "CreateMasterChannel",
@@ -1366,6 +1391,11 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 triggeringElementId: "VertixBot/UI-General/LanguageChooseButton",
                 transitionName: "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
                 targetFlowName: "VertixBot/UI-General/LanguageFlow"
+            } )
+            .addEdgeSourceMapping( {
+                triggeringElementId: "VertixBot/UI-General/EventsChooseButton",
+                transitionName: "VertixBot/UI-General/SetupFlow/Transitions/ChooseEvents",
+                targetFlowName: "VertixBot/UI-General/EventsFlow"
             } )
             .bindSelectMenu<UIDefaultStringSelectMenuChannelTextInteraction>(
                 "VertixBot/UI-General/SetupMasterCreateSelectMenu",
@@ -1484,6 +1514,13 @@ const SetupAdapter = new AdminExecutionAdapterBuilder<BaseGuildTextChannel, Setu
                 "ChooseLanguage",
                 async( context, interaction ) => {
                     await onLanguageChooseClicked( context, interaction );
+                }
+            )
+            .bindButton<UIDefaultButtonChannelTextInteraction>(
+                "VertixBot/UI-General/EventsChooseButton",
+                "ChooseEvents",
+                async( context, interaction ) => {
+                    await onEventsChooseClicked( context, interaction );
                 }
             )
             .bindModal<UIDefaultModalChannelTextInteraction>(

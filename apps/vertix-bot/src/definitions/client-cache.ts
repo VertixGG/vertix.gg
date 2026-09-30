@@ -85,8 +85,12 @@ function isInVoice( guild: Guild | null, userId: string ): boolean {
  * **will** break functionality, and the bot reads all five constantly.
  *
  * The managers set to `0` are the ones nothing in this repo touches - a search for each of
- * `bans`, `stickers`, `scheduledEvents`, `autoModerationRules`, `invites` and `threads` returns no
- * reader. `GuildEmojiManager` is *not* among them: emoji are read in 28 places.
+ * `bans`, `stickers`, `autoModerationRules`, `invites` and `threads` returns no reader.
+ * `GuildEmojiManager` is *not* among them: emoji are read in 28 places.
+ *
+ * Nor is `GuildScheduledEventManager`: Events reads `scheduledEvents` on every sweep. At `0`
+ * discord.js drops the events a guild arrives with and never emits a delete, and a guild holds at
+ * most a hundred of them, so they are kept whole.
  */
 export function createClientCacheFactory(): CacheFactory {
     return Options.cacheWithLimits( {
@@ -123,7 +127,6 @@ export function createClientCacheFactory(): CacheFactory {
         AutoModerationRuleManager: 0,
         GuildBanManager: 0,
         GuildInviteManager: 0,
-        GuildScheduledEventManager: 0,
         GuildStickerManager: 0,
         ReactionManager: 0,
         ReactionUserManager: 0,

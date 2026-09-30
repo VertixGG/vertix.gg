@@ -19,6 +19,7 @@ import { NoOpCustomizationProvider } from "@vertix.gg/gui/src/customization/cust
 import type { UIDefinitionLoader } from "@vertix.gg/gui/src/runtime/ui-definition-loader";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
+import type { UIElementButtonUrlBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-url-base";
 
 import type { UIElementChannelSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-channel-select-menu";
 import type { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
@@ -475,7 +476,7 @@ export class UIService extends ServiceWithDependenciesBase<{
                 }
 
                 public getButtonTranslatedContent(
-                    button: UIElementButtonBase,
+                    button: UIElementButtonBase | UIElementButtonUrlBase,
                     _languageCode: string | undefined
                 ): Promise<UIElementButtonLanguageContent> {
                     return Promise.resolve( button.getTranslatableContent() );

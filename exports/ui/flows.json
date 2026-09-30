@@ -260,6 +260,7 @@
                     "VertixBot/UI-General/SetupFlow/Transitions/CreateMasterChannelV3",
                     "VertixBot/UI-General/SetupFlow/Transitions/EditMaster",
                     "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
+                    "VertixBot/UI-General/SetupFlow/Transitions/ChooseEvents",
                     "VertixBot/UI-General/SetupFlow/Transitions/OpenBadwordsModal",
                     "VertixBot/UI-General/SetupFlow/Transitions/OpenMasterCreate",
                     "VertixBot/UI-General/SetupFlow/Transitions/OpenMasterEdit",
@@ -515,6 +516,22 @@
                     {
                         "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/LanguageChooseButton",
                         "sourceEntity": "VertixBot/UI-General/LanguageChooseButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/SetupFlow/States/Initial",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/SetupFlow/Transitions/ChooseEvents",
+                "from": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "to": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/SetupFlow/Handlers/VertixBot/UI-General/EventsChooseButton",
+                        "sourceEntity": "VertixBot/UI-General/EventsChooseButton",
                         "handlerKind": "button",
                         "navigation": {
                             "targetState": "VertixBot/UI-General/SetupFlow/States/Initial",
@@ -1200,6 +1217,13 @@
                 "sourceState": "VertixBot/UI-General/SetupFlow/States/Initial",
                 "transition": "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
                 "integrationType": "GENERIC"
+            },
+            {
+                "flowName": "VertixBot/UI-General/EventsFlow",
+                "description": "Handoff to the Events settings flow",
+                "sourceState": "VertixBot/UI-General/SetupFlow/States/Initial",
+                "transition": "VertixBot/UI-General/SetupFlow/Transitions/ChooseEvents",
+                "integrationType": "GENERIC"
             }
         ],
         "edgeSourceMappings": [
@@ -1227,6 +1251,11 @@
                 "triggeringElementId": "VertixBot/UI-General/LanguageChooseButton",
                 "transitionName": "VertixBot/UI-General/SetupFlow/Transitions/ChooseLanguage",
                 "targetFlowName": "VertixBot/UI-General/LanguageFlow"
+            },
+            {
+                "triggeringElementId": "VertixBot/UI-General/EventsChooseButton",
+                "transitionName": "VertixBot/UI-General/SetupFlow/Transitions/ChooseEvents",
+                "targetFlowName": "VertixBot/UI-General/EventsFlow"
             }
         ],
         "hooks": [],
@@ -1323,6 +1352,186 @@
         }
     },
     {
+        "name": "VertixBot/UI-General/EventsFlow",
+        "module": "VertixBot/UI-General/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-General/EventsFlow/States/Initial",
+        "states": [
+            {
+                "key": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "transitions": [
+                    "VertixBot/UI-General/EventsFlow/Transitions/SelectChannel",
+                    "VertixBot/UI-General/EventsFlow/Transitions/ToggleEnabled",
+                    "VertixBot/UI-General/EventsFlow/Transitions/ToggleSubPosts",
+                    "VertixBot/UI-General/EventsFlow/Transitions/Done"
+                ],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-General/EventsComponent"
+                }
+            },
+            {
+                "key": "VertixBot/UI-General/EventsFlow/States/Completed",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-General/EventsComponent"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "name": "VertixBot/UI-General/EventsFlow/Transitions/SelectChannel",
+                "from": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "to": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/EventsFlow/Handlers/VertixBot/UI-General/EventsChannelSelectMenu",
+                        "sourceEntity": "VertixBot/UI-General/EventsChannelSelectMenu",
+                        "handlerKind": "channel-select",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/EventsFlow/States/Initial",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/EventsFlow/Transitions/ToggleEnabled",
+                "from": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "to": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/EventsFlow/Handlers/VertixBot/UI-General/EventsEnableButton",
+                        "sourceEntity": "VertixBot/UI-General/EventsEnableButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/EventsFlow/States/Initial",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/EventsFlow/Transitions/ToggleSubPosts",
+                "from": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "to": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/EventsFlow/Handlers/VertixBot/UI-General/EventsSubPostsButton",
+                        "sourceEntity": "VertixBot/UI-General/EventsSubPostsButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/EventsFlow/States/Initial",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "VertixBot/UI-General/EventsFlow/Transitions/Done",
+                "from": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "to": "VertixBot/UI-General/EventsFlow/States/Completed",
+                "triggeredBy": [
+                    {
+                        "handlerId": "VertixBot/UI-General/EventsFlow/Handlers/VertixBot/UI-General/DoneButton",
+                        "sourceEntity": "VertixBot/UI-General/DoneButton",
+                        "handlerKind": "button",
+                        "navigation": {
+                            "targetState": "VertixBot/UI-General/EventsFlow/States/Completed",
+                            "executionStep": "default"
+                        }
+                    }
+                ]
+            }
+        ],
+        "requiredData": [],
+        "entryPoints": [
+            {
+                "flowName": "VertixBot/UI-General/SetupFlow",
+                "description": "Entry point triggered by SetupFlow via the Events button",
+                "targetState": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "transition": "VertixBot/UI-General/SetupFlow/Transitions/ChooseEvents",
+                "integrationType": "GENERIC"
+            }
+        ],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/EventBoardFlow",
+        "module": "VertixBot/UI-General/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-General/EventBoardFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-General/EventBoardFlow/States/Default",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-General/EventBoardComponent",
+                    "previewDefaultVars": {
+                        "boardState": "check-in",
+                        "eventName": "Raid Night",
+                        "startsAt": "1791057600",
+                        "voiceChannelId": "123456789"
+                    }
+                }
+            }
+        ],
+        "transitions": [],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
+        "name": "VertixBot/UI-General/EventNeedSubFlow",
+        "module": "VertixBot/UI-General/Module",
+        "flowKind": "virtual",
+        "initialState": "VertixBot/UI-General/EventNeedSubFlow/States/Default",
+        "states": [
+            {
+                "key": "VertixBot/UI-General/EventNeedSubFlow/States/Default",
+                "transitions": [],
+                "hooks": [],
+                "options": {
+                    "executionStep": "default",
+                    "component": "VertixBot/UI-General/EventNeedSubComponent",
+                    "previewDefaultVars": {
+                        "eventName": "Raid Night",
+                        "startsAt": "1791057600",
+                        "voiceChannelId": "123456789",
+                        "stillNeeded": "2"
+                    }
+                }
+            }
+        ],
+        "transitions": [],
+        "requiredData": [],
+        "entryPoints": [],
+        "handoffPoints": [],
+        "edgeSourceMappings": [],
+        "hooks": [],
+        "options": {
+            "generatedFrom": "TransactionBuilder",
+            "isVirtual": true
+        }
+    },
+    {
         "name": "VertixBot/UI-General/CommandsFlow",
         "module": "VertixBot/UI-General/Module",
         "flowKind": "system",
@@ -1340,7 +1549,8 @@
                     "VertixBot/Commands/ManageRoles",
                     "VertixBot/Commands/ManageServerOptions",
                     "VertixBot/Commands/ManageBadwords",
-                    "VertixBot/Commands/ManageLanguage"
+                    "VertixBot/Commands/ManageLanguage",
+                    "VertixBot/Commands/ManageEvents"
                 ],
                 "hooks": []
             },
@@ -1390,6 +1600,10 @@
             {
                 "from": "VertixBot/Commands/ManageLanguage",
                 "to": "VertixBot/UI-General/LanguageFlow/States/Initial"
+            },
+            {
+                "from": "VertixBot/Commands/ManageEvents",
+                "to": "VertixBot/UI-General/EventsFlow/States/Initial"
             }
         ],
         "requiredData": [
@@ -1431,6 +1645,10 @@
             },
             {
                 "transition": "VertixBot/Commands/ManageLanguage",
+                "fields": []
+            },
+            {
+                "transition": "VertixBot/Commands/ManageEvents",
                 "fields": []
             }
         ],
@@ -1512,6 +1730,14 @@
                 "description": "Slash command entry: ManageLanguage",
                 "targetState": "VertixBot/UI-General/CommandsFlow/States/Initial",
                 "transition": "VertixBot/Commands/ManageLanguage",
+                "requiredData": [],
+                "integrationType": "COMMAND"
+            },
+            {
+                "flowName": "VertixBot/UI-General/CommandsFlow",
+                "description": "Slash command entry: ManageEvents",
+                "targetState": "VertixBot/UI-General/CommandsFlow/States/Initial",
+                "transition": "VertixBot/Commands/ManageEvents",
                 "requiredData": [],
                 "integrationType": "COMMAND"
             }
@@ -1604,6 +1830,15 @@
                 "sourceState": "VertixBot/UI-General/CommandsFlow/States/Initial",
                 "targetState": "VertixBot/UI-General/LanguageFlow/States/Initial",
                 "transition": "VertixBot/Commands/ManageLanguage",
+                "requiredData": [],
+                "integrationType": "COMMAND"
+            },
+            {
+                "flowName": "VertixBot/UI-General/EventsFlow",
+                "description": "Handoff: ManageEvents",
+                "sourceState": "VertixBot/UI-General/CommandsFlow/States/Initial",
+                "targetState": "VertixBot/UI-General/EventsFlow/States/Initial",
+                "transition": "VertixBot/Commands/ManageEvents",
                 "requiredData": [],
                 "integrationType": "COMMAND"
             }

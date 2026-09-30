@@ -2,7 +2,7 @@ import RouterLink from "@vertix.gg/website/src/vertix/ui/router-link";
 
 import { DynamicChannelV3Emoji } from "@vertix.gg/website/src/vertix/components/discord/dynamic-channel-v3-emoji";
 
-import { FEATURE_PRODUCTS } from "@vertix.gg/website/src/vertix/docs/features-navigation";
+import { FEATURE_PRODUCTS, SERVER_TOOLS } from "@vertix.gg/website/src/vertix/docs/features-navigation";
 
 import { toDynamicChannelFeatureHref } from "@vertix.gg/website/src/vertix/shared/dynamic-channel-features";
 
@@ -71,6 +71,14 @@ export default function Features() {
 
             <div className="mt-10 flex flex-col gap-6">
                 { FEATURE_PRODUCTS.map( ( product ) =>
+                    <ProductCard key={ product.href } product={ product }/>
+                ) }
+            </div>
+
+            <h2 className="mt-12 text-h5">Server tools</h2>
+
+            <div className="mt-4 flex flex-col gap-6">
+                { SERVER_TOOLS.map( ( product ) =>
                     <ProductCard key={ product.href } product={ product }/>
                 ) }
             </div>

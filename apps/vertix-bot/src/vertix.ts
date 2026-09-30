@@ -229,7 +229,9 @@ export default async function Main( { enableListeners }: {
             "GuildVoiceStates",
             // Privileged: drives the game name shown in the dynamic channel status.
             "GuildPresences",
-            "DirectMessages"
+            "DirectMessages",
+            // Not privileged: the server's scheduled events, which Events runs its check-ins on.
+            "GuildScheduledEvents"
         ],
         partials: [ Partials.Channel ],
         // `{ shards: "auto" }` unless SHARD_COUNT and SHARD_IDS are both set. Resolved once above

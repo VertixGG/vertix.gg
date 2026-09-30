@@ -44,7 +44,8 @@ const HelpEmbed = new EmbedBuilder( "VertixBot/UI-General/HelpEmbed" )
         "`/manage edit` ∙ edit an existing one\n" +
         "`/manage roles` ∙ voice, verified and staff roles\n" +
         "`/manage server-options` ∙ roles, bad words and claim timings\n" +
-        "`/manage language` ∙ the language the bot speaks here\n\n" +
+        "`/manage language` ∙ the language the bot speaks here\n" +
+        "`/manage events` ∙ check-ins and attendance for scheduled events\n\n" +
 
         "New here? Start with **Setup** below - it walks the whole thing in a few minutes. " +
         "**Dashboard** configures everything without typing a command, and if none of the guides " +

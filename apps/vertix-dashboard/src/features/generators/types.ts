@@ -88,6 +88,8 @@ export interface GuildDiscordRole {
 export interface GuildDiscordChannel {
     id: string;
     name: string;
+    /** An announcement channel rather than a plain text one - absent from an api older than the flag. */
+    isAnnouncement?: boolean;
 }
 
 /**

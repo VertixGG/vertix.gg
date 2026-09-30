@@ -15,6 +15,9 @@ declare global {
         export type User = PrismaTypes.User;
         export type UserData = PrismaTypes.UserData;
         export type UserChannelData = PrismaTypes.UserChannelData;
+        export type GuildEventSettings = PrismaTypes.GuildEventSettings;
+        export type GuildEventRun = PrismaTypes.GuildEventRun;
+        export type GuildEventAttendee = PrismaTypes.GuildEventAttendee;
         export type ModalContentLanguage = PrismaTypes.ModalContentLanguage;
         export type ElementButtonContent = PrismaTypes.ElementButtonContent;
         export type ElementTextInputContentLanguage = PrismaTypes.ElementTextInputContentLanguage;

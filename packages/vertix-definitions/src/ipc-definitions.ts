@@ -15,7 +15,8 @@ export const IPC_REQUEST_ACTIONS = {
     GET_CONFIG_LIMITS: "get_config_limits",
     GET_GENERATOR_DEFAULTS: "get_generator_defaults",
     GET_GUILD_BRANDING_STATUS: "get_guild_branding_status",
-    APPLY_GUILD_BRANDING: "apply_guild_branding"
+    APPLY_GUILD_BRANDING: "apply_guild_branding",
+    GET_GUILD_EVENTS_STATUS: "get_guild_events_status"
 } as const;
 
 /**
@@ -77,6 +78,11 @@ export interface IPCGuildRole {
 export interface IPCGuildChannel {
     id: string;
     name: string;
+    /**
+     * An announcement channel rather than a plain text one. Both are offered where a setting only
+     * posts; Events edits its board for hours and takes plain text channels only.
+     */
+    isAnnouncement: boolean;
 }
 
 export interface GetGuildOptionsResponse {
@@ -205,6 +211,34 @@ export interface ApplyGuildBrandingResponse {
     message?: string;
 }
 
+/**
+ * What the dashboard has to hear before pointing Events at a channel.
+ *
+ * Asked of the bot because only the process in the server knows what it may do in a channel - and
+ * because whichever bot answers is the one a save makes run Events there, the same as saving from
+ * its `/setup`.
+ */
+export interface GetGuildEventsStatusRequest {
+    action: typeof IPC_REQUEST_ACTIONS.GET_GUILD_EVENTS_STATUS;
+    guildId: string;
+    /** The channel being picked, or null when none is being asked about. */
+    channelId: string | null;
+}
+
+export interface GetGuildEventsStatusResponse {
+    /** The bot answering. */
+    applicationId: string;
+
+    /** Whether the bot is in the server at all. */
+    isBotInGuild: boolean;
+
+    /**
+     * What the bot lacks to post in the channel asked about - empty when it can, or when no channel
+     * was asked about - and null when it is not a text channel the bot can see.
+     */
+    missingPermissions: string[] | null;
+}
+
 export interface IPCDiscordChannelInfo {
     id: string;
     name: string;
@@ -226,4 +260,5 @@ export type IPCManagementRequestPayload =
     | GetConfigLimitsRequest
     | GetGeneratorDefaultsRequest
     | GetGuildBrandingStatusRequest
-    | ApplyGuildBrandingRequest;
+    | ApplyGuildBrandingRequest
+    | GetGuildEventsStatusRequest;

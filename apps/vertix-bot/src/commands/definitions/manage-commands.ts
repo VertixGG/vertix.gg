@@ -94,6 +94,14 @@ export const MANAGE_COMMAND_GROUP: ICommandGroupDefinition = {
             adapterName: "VertixBot/UI-General/LanguageAdapter",
             flowTransition: "VertixBot/Commands/ManageLanguage",
             flowTargetState: "VertixBot/UI-General/LanguageFlow/States/Initial"
+        },
+        {
+            name: "events",
+            description: "Check-ins, no-shows and attendance for this server's scheduled events.",
+            tier: COMMAND_TIERS.ADMIN,
+            adapterName: "VertixBot/UI-General/EventsAdapter",
+            flowTransition: "VertixBot/Commands/ManageEvents",
+            flowTargetState: "VertixBot/UI-General/EventsFlow/States/Initial"
         }
     ]
 };

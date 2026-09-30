@@ -34,6 +34,15 @@ export const FEATURE_PRODUCTS: readonly FeatureProduct[] = [
     },
 ];
 
+/** What the bot does for a server beyond its channels. */
+export const SERVER_TOOLS: readonly FeatureProduct[] = [
+    {
+        title: "Events",
+        href: "/features/events",
+        features: [],
+    },
+];
+
 function toDocsPage( product: FeatureProduct ): DocsPage {
     if ( ! product.features.length ) {
         return { title: product.title, href: product.href };
@@ -56,6 +65,10 @@ export const FEATURES_NAVIGATION: DocsNavigation = {
         {
             title: "Channel types",
             pages: FEATURE_PRODUCTS.map( toDocsPage ),
+        },
+        {
+            title: "Server tools",
+            pages: SERVER_TOOLS.map( toDocsPage ),
         },
     ],
 };

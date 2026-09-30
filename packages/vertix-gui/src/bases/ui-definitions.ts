@@ -24,6 +24,9 @@ export const UI_CUSTOM_ID_SEPARATOR = ":";
 
 export const UI_IMAGE_EMPTY_LINE_URL = "https://i.imgur.com/NthLO3W.png";
 
+/** A thin blue line along the bottom of an embed - the empty line's visible sibling. */
+export const UI_IMAGE_BLUE_LINE_URL = "https://i.imgur.com/sGjDVJ4.png";
+
 export type UIArgs = { [key: string]: any };
 
 export type UIType = "component" | "element" | "embed" | "modal" | "markdown";

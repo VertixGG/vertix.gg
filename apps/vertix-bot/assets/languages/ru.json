@@ -491,6 +491,38 @@
         "content": {
           "label": "Features"
         }
+      },
+      {
+        "name": "VertixBot/UI-General/EventJoinVoiceButton",
+        "content": {
+          "label": "🔊  Зайти в голосовой"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsEnableButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "turnOnText": "Включить",
+            "turnOffText": "Выключить"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsSubPostsButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "subPostsOffText": "Не искать замену",
+            "subPostsOnText": "Искать замену"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsChooseButton",
+        "content": {
+          "label": "События"
+        }
       }
     ],
     "textInputs": [
@@ -1551,6 +1583,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
         "content": {
           "placeholder": "🔎 Выберите канал"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsChannelSelectMenu",
+        "content": {
+          "placeholder": "📅 ∙ Канал событий"
         }
       }
     ]
@@ -4054,7 +4092,148 @@
       "name": "VertixBot/UI-General/HelpEmbed",
       "content": {
         "title": "❔ VoiceChannels help",
-        "description": "VoiceChannels gives your server voice channels that create themselves. Join the generator channel and you get your own, which is deleted when the last person leaves.\n\n**Your channel**\nAnything below works while you are in a channel you own.\n`/voice rename` ∙ name it\n`/voice limit` ∙ how many may join\n`/voice privacy` ∙ public, private or hidden\n`/voice status` ∙ the status shown on it\n`/voice access` ∙ grant, deny or kick members\n\n**Anyone**\n`/voice invite` ∙ invite someone to a channel\n`/voice claim` ∙ take over a channel whose owner left\n\n**Server admins**\n`/setup` ∙ set up and configure the bot\n`/manage new-generator` ∙ add another generator\n`/manage edit` ∙ edit an existing one\n`/manage roles` ∙ voice, verified and staff roles\n`/manage server-options` ∙ roles, bad words and claim timings\n`/manage language` ∙ the language the bot speaks here\n\nNew here? Start with **Setup** below - it walks the whole thing in a few minutes. **Dashboard** configures everything without typing a command, and if none of the guides help, the **Support Server** is a person."
+        "description": "VoiceChannels gives your server voice channels that create themselves. Join the generator channel and you get your own, which is deleted when the last person leaves.\n\n**Your channel**\nAnything below works while you are in a channel you own.\n`/voice rename` ∙ name it\n`/voice limit` ∙ how many may join\n`/voice privacy` ∙ public, private or hidden\n`/voice status` ∙ the status shown on it\n`/voice access` ∙ grant, deny or kick members\n\n**Anyone**\n`/voice invite` ∙ invite someone to a channel\n`/voice claim` ∙ take over a channel whose owner left\n\n**Server admins**\n`/setup` ∙ set up and configure the bot\n`/manage new-generator` ∙ add another generator\n`/manage edit` ∙ edit an existing one\n`/manage roles` ∙ voice, verified and staff roles\n`/manage server-options` ∙ roles, bad words and claim timings\n`/manage language` ∙ the language the bot speaks here\n`/manage events` ∙ check-ins and attendance for scheduled events\n\nNew here? Start with **Setup** below - it walks the whole thing in a few minutes. **Dashboard** configures everything without typing a command, and if none of the guides help, the **Support Server** is a person."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventBoardEmbed",
+      "content": {
+        "title": "📅  {eventName} · {stateTitle}",
+        "description": "{stateLine}{checkedInBlock}{waitingBlock}{onTimeBlock}{lateBlock}{noShowBlock}{walkInsBlock}",
+        "options": {
+          "stateTitle": {
+            "{stateCheckIn}": "Отметка",
+            "{stateRunning}": "Идёт",
+            "{stateEnded}": "Посещаемость",
+            "{stateCanceled}": "Отменено",
+            "{stateMoved}": "Перенесено"
+          },
+          "stateLine": {
+            "{stateCheckIn}": "Начало <t:{startsAt}:F> (<t:{startsAt}:R>) в <#{voiceChannelId}>.\nОбещали прийти? Зайдите в голосовой канал, чтобы отметиться.",
+            "{stateRunning}": "Началось <t:{startsAt}:R> в <#{voiceChannelId}>.\nОтметка закрыта - кто из списка придёт сейчас, опоздал.",
+            "{stateEnded}": "Прошло <t:{startsAt}:F> в <#{voiceChannelId}>.\nВремя указано в часах:минутах в голосовом канале.",
+            "{stateCanceled}": "Отменено - было назначено на <t:{startsAt}:F>.",
+            "{stateMoved}": "Перенесено на <t:{movedToAt}:F>. Новая доска появится до начала."
+          },
+          "checkedInBlock": {
+            "{blockShown}": "\n\n**✅ На месте ({checkedInCount})**\n{checkedIn}{checkedInMore}",
+            "{blockHidden}": ""
+          },
+          "waitingBlock": {
+            "{blockShown}": "\n\n**⏳ Ещё нет ({waitingCount})**\n{waiting}{waitingMore}",
+            "{blockHidden}": ""
+          },
+          "onTimeBlock": {
+            "{blockShown}": "\n\n**✅ Пришли ({onTimeCount})**\n{onTime}{onTimeMore}",
+            "{blockHidden}": ""
+          },
+          "lateBlock": {
+            "{blockShown}": "\n\n**🕒 Опоздали ({lateCount})**\n{late}{lateMore}",
+            "{blockHidden}": ""
+          },
+          "noShowBlock": {
+            "{blockShown}": "\n\n**❌ Не пришли ({noShowCount})**\n{noShow}{noShowMore}",
+            "{blockHidden}": ""
+          },
+          "walkInsBlock": {
+            "{blockShown}": "\n\n**👋 Пришли без записи ({walkInsCount})**\n{walkIns}{walkInsMore}",
+            "{blockHidden}": ""
+          },
+          "checkedInMore": {
+            "{moreShown}": "\n+ещё {checkedInHidden}",
+            "{moreHidden}": ""
+          },
+          "waitingMore": {
+            "{moreShown}": "\n+ещё {waitingHidden}",
+            "{moreHidden}": ""
+          },
+          "onTimeMore": {
+            "{moreShown}": "\n+ещё {onTimeHidden}",
+            "{moreHidden}": ""
+          },
+          "lateMore": {
+            "{moreShown}": "\n+ещё {lateHidden}",
+            "{moreHidden}": ""
+          },
+          "noShowMore": {
+            "{moreShown}": "\n+ещё {noShowHidden}",
+            "{moreHidden}": ""
+          },
+          "walkInsMore": {
+            "{moreShown}": "\n+ещё {walkInsHidden}",
+            "{moreHidden}": ""
+          }
+        },
+        "arrayOptions": {
+          "checkedIn": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "waiting": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "onTime": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "late": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "noShow": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "walkIns": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventNeedSubEmbed",
+      "content": {
+        "title": "{stateTitle}",
+        "description": "{stateLine}",
+        "options": {
+          "stateTitle": {
+            "{stateOpen}": "🙋  {eventName}: нужно ещё {stillNeeded}",
+            "{stateFilled}": "✅  {eventName}: снова все в сборе"
+          },
+          "stateLine": {
+            "{stateOpen}": "Началось <t:{startsAt}:R>, и некоторые из обещавших не пришли.\nЗайдите в <#{voiceChannelId}>, чтобы занять место.",
+            "{stateFilled}": "Все места заняты - спасибо всем, кто подключился."
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventsEmbed",
+      "content": {
+        "title": "📅  События",
+        "description": "Когда запланированное событие в голосовом канале вот-вот начнётся, появляется доска отметок. Кто нажал **Интересует**, отмечается, зайдя в голосовой канал; через десять минут после начала отмечаются те, кто не пришёл, пост ищет замену, а доска превращается в список посещаемости.\n\n**События** {statusLine}\n**Публикует в** {channelLine}\n**Посты «нужна замена»** {subPostsLine}{errorLine}\n\nВыберите канал, затем включите. Событие на генераторе учитывает все комнаты, которые он откроет.",
+        "options": {
+          "statusLine": {
+            "{enabledOn}": "🟢 Вкл.",
+            "{enabledOff}": "⚪ Выкл."
+          },
+          "channelLine": {
+            "{channelSet}": "<#{eventsChannelId}>",
+            "{channelUnset}": "Не выбран"
+          },
+          "subPostsLine": {
+            "{subPostsOn}": "Вкл.",
+            "{subPostsOff}": "Выкл."
+          },
+          "errorLine": {
+            "{errorNone}": "",
+            "{errorPostChannelMissing}": "\n\n⚠️ Канала для публикаций больше нет - выберите другой.",
+            "{errorPostChannelForbidden}": "\n\n⚠️ Бот не может писать в этот канал. Ему там нужны права «Просматривать канал», «Отправлять сообщения» и «Встраивать ссылки».",
+            "{errorEventChannelForbidden}": "\n\n⚠️ Бот не видел голосовой канал события, поэтому никого не смог отметить. Дайте ему там право «Просматривать канал»."
+          }
+        }
       }
     }
   ],

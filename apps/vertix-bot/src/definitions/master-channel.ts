@@ -174,6 +174,16 @@ export const DEFAULT_LFM_CHANNEL_BOT_PERMISSIONS = new PermissionsBitField( [
     Flags.EmbedLinks
 ] );
 
+/**
+ * What the bot has to hold on the channel Events posts in - the check-in boards, the "need a sub"
+ * posts and the attendance each board ends as.
+ */
+export const DEFAULT_EVENTS_CHANNEL_BOT_PERMISSIONS = new PermissionsBitField( [
+    Flags.ViewChannel,
+    Flags.SendMessages,
+    Flags.EmbedLinks
+] );
+
 export const DEFAULT_SETUP_PERMISSIONS = [
     PermissionsBitField.Flags.ManageGuild,
     PermissionsBitField.Flags.ManageChannels,

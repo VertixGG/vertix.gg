@@ -127,7 +127,7 @@
       {
         "name": "VertixBot/UI-General/WelcomeInviteButton",
         "content": {
-          "label": "Vertixを招待"
+          "label": "VoiceChannelsを招待"
         }
       },
       {
@@ -490,6 +490,38 @@
         "name": "VertixBot/UI-General/HelpFeaturesButton",
         "content": {
           "label": "Features"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventJoinVoiceButton",
+        "content": {
+          "label": "🔊  ボイスに参加"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsEnableButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "turnOnText": "オンにする",
+            "turnOffText": "オフにする"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsSubPostsButton",
+        "content": {
+          "label": "{displayText}",
+          "options": {
+            "subPostsOffText": "代わり募集をやめる",
+            "subPostsOnText": "代わりを募集する"
+          }
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsChooseButton",
+        "content": {
+          "label": "イベント"
         }
       }
     ],
@@ -1551,6 +1583,12 @@
         "name": "VertixBot/UI-V3/DynamicChannelLfmChannelMenu",
         "content": {
           "placeholder": "🔎 チャンネルを選択"
+        }
+      },
+      {
+        "name": "VertixBot/UI-General/EventsChannelSelectMenu",
+        "content": {
+          "placeholder": "📅 ∙ イベントチャンネル"
         }
       }
     ]
@@ -4054,7 +4092,148 @@
       "name": "VertixBot/UI-General/HelpEmbed",
       "content": {
         "title": "❔ VoiceChannels help",
-        "description": "VoiceChannels gives your server voice channels that create themselves. Join the generator channel and you get your own, which is deleted when the last person leaves.\n\n**Your channel**\nAnything below works while you are in a channel you own.\n`/voice rename` ∙ name it\n`/voice limit` ∙ how many may join\n`/voice privacy` ∙ public, private or hidden\n`/voice status` ∙ the status shown on it\n`/voice access` ∙ grant, deny or kick members\n\n**Anyone**\n`/voice invite` ∙ invite someone to a channel\n`/voice claim` ∙ take over a channel whose owner left\n\n**Server admins**\n`/setup` ∙ set up and configure the bot\n`/manage new-generator` ∙ add another generator\n`/manage edit` ∙ edit an existing one\n`/manage roles` ∙ voice, verified and staff roles\n`/manage server-options` ∙ roles, bad words and claim timings\n`/manage language` ∙ the language the bot speaks here\n\nNew here? Start with **Setup** below - it walks the whole thing in a few minutes. **Dashboard** configures everything without typing a command, and if none of the guides help, the **Support Server** is a person."
+        "description": "VoiceChannels gives your server voice channels that create themselves. Join the generator channel and you get your own, which is deleted when the last person leaves.\n\n**Your channel**\nAnything below works while you are in a channel you own.\n`/voice rename` ∙ name it\n`/voice limit` ∙ how many may join\n`/voice privacy` ∙ public, private or hidden\n`/voice status` ∙ the status shown on it\n`/voice access` ∙ grant, deny or kick members\n\n**Anyone**\n`/voice invite` ∙ invite someone to a channel\n`/voice claim` ∙ take over a channel whose owner left\n\n**Server admins**\n`/setup` ∙ set up and configure the bot\n`/manage new-generator` ∙ add another generator\n`/manage edit` ∙ edit an existing one\n`/manage roles` ∙ voice, verified and staff roles\n`/manage server-options` ∙ roles, bad words and claim timings\n`/manage language` ∙ the language the bot speaks here\n`/manage events` ∙ check-ins and attendance for scheduled events\n\nNew here? Start with **Setup** below - it walks the whole thing in a few minutes. **Dashboard** configures everything without typing a command, and if none of the guides help, the **Support Server** is a person."
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventBoardEmbed",
+      "content": {
+        "title": "📅  {eventName} · {stateTitle}",
+        "description": "{stateLine}{checkedInBlock}{waitingBlock}{onTimeBlock}{lateBlock}{noShowBlock}{walkInsBlock}",
+        "options": {
+          "stateTitle": {
+            "{stateCheckIn}": "チェックイン",
+            "{stateRunning}": "開催中",
+            "{stateEnded}": "出席",
+            "{stateCanceled}": "中止",
+            "{stateMoved}": "日時変更"
+          },
+          "stateLine": {
+            "{stateCheckIn}": "<t:{startsAt}:F>（<t:{startsAt}:R>）に <#{voiceChannelId}> で開始。\n参加予定の方は、ボイスチャンネルに入ってチェックインしてください。",
+            "{stateRunning}": "<t:{startsAt}:R> に <#{voiceChannelId}> で開始しました。\nチェックインは締め切りました。リストの人がこれから来た場合は遅刻になります。",
+            "{stateEnded}": "<t:{startsAt}:F> に <#{voiceChannelId}> で開催。\n時間はボイスにいた 時間:分 です。",
+            "{stateCanceled}": "中止になりました（予定: <t:{startsAt}:F>）。",
+            "{stateMoved}": "<t:{movedToAt}:F> に変更されました。それまでに新しいボードが投稿されます。"
+          },
+          "checkedInBlock": {
+            "{blockShown}": "\n\n**✅ 参加中 ({checkedInCount})**\n{checkedIn}{checkedInMore}",
+            "{blockHidden}": ""
+          },
+          "waitingBlock": {
+            "{blockShown}": "\n\n**⏳ まだ来ていない ({waitingCount})**\n{waiting}{waitingMore}",
+            "{blockHidden}": ""
+          },
+          "onTimeBlock": {
+            "{blockShown}": "\n\n**✅ 出席 ({onTimeCount})**\n{onTime}{onTimeMore}",
+            "{blockHidden}": ""
+          },
+          "lateBlock": {
+            "{blockShown}": "\n\n**🕒 遅刻 ({lateCount})**\n{late}{lateMore}",
+            "{blockHidden}": ""
+          },
+          "noShowBlock": {
+            "{blockShown}": "\n\n**❌ 欠席 ({noShowCount})**\n{noShow}{noShowMore}",
+            "{blockHidden}": ""
+          },
+          "walkInsBlock": {
+            "{blockShown}": "\n\n**👋 飛び入り ({walkInsCount})**\n{walkIns}{walkInsMore}",
+            "{blockHidden}": ""
+          },
+          "checkedInMore": {
+            "{moreShown}": "\n+{checkedInHidden}人",
+            "{moreHidden}": ""
+          },
+          "waitingMore": {
+            "{moreShown}": "\n+{waitingHidden}人",
+            "{moreHidden}": ""
+          },
+          "onTimeMore": {
+            "{moreShown}": "\n+{onTimeHidden}人",
+            "{moreHidden}": ""
+          },
+          "lateMore": {
+            "{moreShown}": "\n+{lateHidden}人",
+            "{moreHidden}": ""
+          },
+          "noShowMore": {
+            "{moreShown}": "\n+{noShowHidden}人",
+            "{moreHidden}": ""
+          },
+          "walkInsMore": {
+            "{moreShown}": "\n+{walkInsHidden}人",
+            "{moreHidden}": ""
+          }
+        },
+        "arrayOptions": {
+          "checkedIn": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "waiting": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "onTime": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "late": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "noShow": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          },
+          "walkIns": {
+            "format": "{value}{separator}",
+            "separator": "\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventNeedSubEmbed",
+      "content": {
+        "title": "{stateTitle}",
+        "description": "{stateLine}",
+        "options": {
+          "stateTitle": {
+            "{stateOpen}": "🙋  {eventName} あと{stillNeeded}人募集",
+            "{stateFilled}": "✅  {eventName} 満員になりました"
+          },
+          "stateLine": {
+            "{stateOpen}": "<t:{startsAt}:R> に始まりましたが、参加予定の人が一部来ていません。\n<#{voiceChannelId}> に入って参加しましょう。",
+            "{stateFilled}": "すべての枠が埋まりました。参加してくれた皆さん、ありがとう！"
+          }
+        }
+      }
+    },
+    {
+      "name": "VertixBot/UI-General/EventsEmbed",
+      "content": {
+        "title": "📅  イベント",
+        "description": "ボイスチャンネルで予定されたイベントが始まる直前に、チェックインボードが投稿されます。**興味あり** を押した人は、ボイスチャンネルに入るとチェックインになります。開始から10分後、来ていない人がマークされ、代わりを募集する投稿が出て、ボードは出席記録になります。\n\n**イベント** {statusLine}\n**投稿先** {channelLine}\n**代わり募集の投稿** {subPostsLine}{errorLine}\n\nチャンネルを選んでからオンにしてください。ジェネレーターで開催するイベントは、そこから開かれたすべてのルームを数えます。",
+        "options": {
+          "statusLine": {
+            "{enabledOn}": "🟢 オン",
+            "{enabledOff}": "⚪ オフ"
+          },
+          "channelLine": {
+            "{channelSet}": "<#{eventsChannelId}>",
+            "{channelUnset}": "未選択"
+          },
+          "subPostsLine": {
+            "{subPostsOn}": "オン",
+            "{subPostsOff}": "オフ"
+          },
+          "errorLine": {
+            "{errorNone}": "",
+            "{errorPostChannelMissing}": "\n\n⚠️ 投稿先のチャンネルが削除されています。別のチャンネルを選んでください。",
+            "{errorPostChannelForbidden}": "\n\n⚠️ ボットがそのチャンネルに投稿できません。「チャンネルを見る」「メッセージを送信」「埋め込みリンク」の権限が必要です。",
+            "{errorEventChannelForbidden}": "\n\n⚠️ ボットがイベントのボイスチャンネルを見られなかったため、チェックインできませんでした。そこで「チャンネルを見る」権限を付与してください。"
+          }
+        }
       }
     }
   ],

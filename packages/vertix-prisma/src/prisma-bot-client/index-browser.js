@@ -322,6 +322,57 @@ exports.Prisma.GuildBrandingStateScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.GuildEventSettingsScalarFieldEnum = {
+  id: 'id',
+  guildId: 'guildId',
+  applicationId: 'applicationId',
+  enabled: 'enabled',
+  channelId: 'channelId',
+  subPostsEnabled: 'subPostsEnabled',
+  lastError: 'lastError',
+  lastErrorAt: 'lastErrorAt',
+  updatedByUserId: 'updatedByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.GuildEventRunScalarFieldEnum = {
+  id: 'id',
+  applicationId: 'applicationId',
+  guildId: 'guildId',
+  scheduledEventId: 'scheduledEventId',
+  occurrenceStartAt: 'occurrenceStartAt',
+  name: 'name',
+  voiceChannelId: 'voiceChannelId',
+  phase: 'phase',
+  postChannelId: 'postChannelId',
+  boardMessageId: 'boardMessageId',
+  subPostMessageId: 'subPostMessageId',
+  subsNeeded: 'subsNeeded',
+  frozenAt: 'frozenAt',
+  endedAt: 'endedAt',
+  checkpointAt: 'checkpointAt',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.GuildEventAttendeeScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  guildId: 'guildId',
+  userId: 'userId',
+  displayName: 'displayName',
+  interested: 'interested',
+  checkedInAt: 'checkedInAt',
+  late: 'late',
+  noShow: 'noShow',
+  voiceSeconds: 'voiceSeconds',
+  sessionStartedAt: 'sessionStartedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -364,7 +415,10 @@ exports.Prisma.ModelName = {
   AICaptchaChallenge: 'AICaptchaChallenge',
   Subscription: 'Subscription',
   GuildBranding: 'GuildBranding',
-  GuildBrandingState: 'GuildBrandingState'
+  GuildBrandingState: 'GuildBrandingState',
+  GuildEventSettings: 'GuildEventSettings',
+  GuildEventRun: 'GuildEventRun',
+  GuildEventAttendee: 'GuildEventAttendee'
 };
 
 /**

@@ -8,6 +8,7 @@ import type {
 } from "@vertix.gg/gui/src/bases/ui-language-definitions";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
+import type { UIElementButtonUrlBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-url-base";
 import type { UIElementStringSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-string-select-menu";
 import type { UIElementUserSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-user-select-menu";
 import type { UIElementRoleSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-role-select-menu";
@@ -19,7 +20,7 @@ import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 
 export interface UILanguageManagerInterface {
     getButtonTranslatedContent(
-        button: UIElementButtonBase,
+        button: UIElementButtonBase | UIElementButtonUrlBase,
         languageCode: string | undefined
     ): Promise<UIElementButtonLanguageContent>;
 

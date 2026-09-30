@@ -86,7 +86,9 @@ const DYNAMIC_SETTINGS_BY_VERSION = {
     }
 } as const;
 
-const DISCORD_TEXT_CHANNEL_TYPES = [ 0, 5 ];
+const DISCORD_ANNOUNCEMENT_CHANNEL_TYPE = 5;
+
+const DISCORD_TEXT_CHANNEL_TYPES = [ 0, DISCORD_ANNOUNCEMENT_CHANNEL_TYPE ];
 
 /** The bot answers this out of what it already holds, so a round trip is the whole of it. */
 const CONFIG_LIMITS_REQUEST_TIMEOUT_MS = 5000;
@@ -267,6 +269,7 @@ export interface GuildDiscordRole {
 export interface GuildDiscordChannel {
     id: string;
     name: string;
+    isAnnouncement: boolean;
 }
 
 export interface GuildDiscordOptions {
@@ -1193,7 +1196,8 @@ export class ManagementService extends ServiceWithDependenciesBase<{
                 .sort( ( a, b ) => a.position - b.position )
                 .map( ( channel ) => ( {
                     id: channel.id,
-                    name: channel.name
+                    name: channel.name,
+                    isAnnouncement: DISCORD_ANNOUNCEMENT_CHANNEL_TYPE === channel.type
                 } ) )
         };
     }

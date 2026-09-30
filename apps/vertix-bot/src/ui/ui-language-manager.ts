@@ -67,6 +67,7 @@ import type { UIModalBase } from "@vertix.gg/gui/src/bases/ui-modal-base";
 import type { UIService } from "@vertix.gg/gui/src/ui-service";
 
 import type { UIElementButtonBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-base";
+import type { UIElementButtonUrlBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-button-url-base";
 import type { UIElementChannelSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-channel-select-menu";
 import type { UIElementInputBase } from "@vertix.gg/gui/src/bases/element-types/ui-element-input-base";
 import type { UIElementRoleSelectMenu } from "@vertix.gg/gui/src/bases/element-types/ui-element-role-select-menu";
@@ -192,7 +193,7 @@ export class UILanguageManager extends InitializeBase implements UILanguageManag
     }
 
     public async getButtonTranslatedContent(
-        button: UIElementButtonBase,
+        button: UIElementButtonBase | UIElementButtonUrlBase,
         languageCode: string | undefined
     ): Promise<UIElementButtonLanguageContent> {
         languageCode = languageCode || UI_LANGUAGES_INITIAL_CODE;

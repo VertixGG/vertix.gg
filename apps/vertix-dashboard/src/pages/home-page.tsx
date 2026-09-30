@@ -3,8 +3,9 @@ import { withCommands } from "@zenflux/react-commander/with-commands";
 import { QueryComponent } from "@zenflux/react-commander/query/component";
 import { Navigate } from "react-router-dom";
 
-import { Server, Users, Radio, Layers, Activity, Hash, Gauge } from "lucide-react";
+import { Server, Users, Radio, Layers, Activity, Hash, Gauge, DoorOpen, Zap } from "lucide-react";
 
+import { DASHBOARD_STATS_WINDOWS } from "@vertix.gg/definitions/src/dashboard-stats-definitions";
 import { DEFAULT_CUSTOMIZATION_GUILD_ID } from "@vertix.gg/definitions/src/ui-customization-definitions";
 
 import { GlobalStatsQuery } from "@vertix.gg/dashboard/src/features/home/query/global-stats-query";
@@ -14,6 +15,9 @@ import { StatCard } from "@vertix.gg/dashboard/src/features/home/components/stat
 import { GuildHeader } from "@vertix.gg/dashboard/src/features/home/components/guild-header";
 import { GeneratorsPanel } from "@vertix.gg/dashboard/src/features/home/components/generators-panel";
 import { QuickActions } from "@vertix.gg/dashboard/src/features/home/components/quick-actions";
+import { ActivitySection } from "@vertix.gg/dashboard/src/features/home/components/activity-section";
+import { EventsStatsSection } from "@vertix.gg/dashboard/src/features/home/components/events-stats-section";
+import { GrowthSection } from "@vertix.gg/dashboard/src/features/home/components/growth-section";
 import { formatCount, formatShare } from "@vertix.gg/dashboard/src/features/home/lib/format";
 
 import type { DCommandFunctionComponent } from "@zenflux/react-commander/definitions";
@@ -23,6 +27,7 @@ import type { GlobalStats, GuildStats, GuildDetails } from "@vertix.gg/dashboard
 
 interface AuthSelectedState {
     selectedGuild: AuthState[ "selectedGuild" ];
+    isOwner: AuthState[ "isOwner" ];
 }
 
 function LoadingSkeleton( { count }: { count: number } ) {
@@ -90,19 +95,35 @@ const GlobalStatsDisplayComponent: DCommandFunctionComponent<GlobalStatsDisplayP
     const stats = state.globalStats;
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard
                 title="Total Guilds"
                 value={ formatCount( stats.totalGuilds ) }
                 icon={ Server }
-                description="Servers that have Vertix set up"
+                description="Every server that has added the bot"
             />
             <StatCard
-                title="Active Guilds"
+                title="Still Installed"
                 value={ formatCount( stats.activeGuilds ) }
                 icon={ Activity }
-                description={ `${ formatShare( stats.activeGuilds, stats.totalGuilds ) }% of all servers` }
+                description={ `${ formatShare( stats.activeGuilds, stats.totalGuilds ) }% of every server that added it` }
             />
+            { undefined !== stats.activeThisWeek && (
+                <StatCard
+                    title="Active This Week"
+                    value={ formatCount( stats.activeThisWeek ) }
+                    icon={ Zap }
+                    description="Servers whose members made a room"
+                />
+            ) }
+            { undefined !== stats.roomsThisWeek && (
+                <StatCard
+                    title="Rooms This Week"
+                    value={ formatCount( stats.roomsThisWeek ) }
+                    icon={ DoorOpen }
+                    description="Made by members across every server"
+                />
+            ) }
             <StatCard
                 title="Total Users"
                 value={ formatCount( stats.totalUsers ) }
@@ -323,7 +344,8 @@ export function HomePage() {
     const [ authState ] = useCommandState<AuthState, AuthSelectedState>(
         "Dashboard/Auth",
         ( state: AuthState ): AuthSelectedState => ( {
-            selectedGuild: state.selectedGuild
+            selectedGuild: state.selectedGuild,
+            isOwner: state.isOwner
         } )
     );
 
@@ -335,6 +357,23 @@ export function HomePage() {
         <div className="flex-1 p-6 overflow-auto">
             <GuildStatsSection selectedGuild={ authState.selectedGuild } />
 
+            { authState.selectedGuild && (
+                <>
+                    <section className="mb-8">
+                        <SectionTitle
+                            title="Activity"
+                            hint={ `Rooms members made, the last ${ DASHBOARD_STATS_WINDOWS.ACTIVITY_DAYS } days` }
+                        />
+                        <ActivitySection guildId={ authState.selectedGuild.id } />
+                    </section>
+
+                    <section className="mb-8">
+                        <SectionTitle title="Events" hint={ `The last ${ DASHBOARD_STATS_WINDOWS.EVENTS_DAYS } days` } />
+                        <EventsStatsSection guildId={ authState.selectedGuild.id } />
+                    </section>
+                </>
+            ) }
+
             <section className="mb-8">
                 <SectionTitle title="Generators" hint="Busiest first" />
                 <GeneratorsSection selectedGuild={ authState.selectedGuild } />
@@ -345,10 +384,22 @@ export function HomePage() {
                 <QuickActions />
             </section>
 
-            <section>
+            <section className={ authState.isOwner ? "mb-8" : undefined }>
                 <SectionTitle title="Across every server" hint="How the bot is doing overall" />
                 <GlobalStatsSection />
             </section>
+
+            { /* Business figures - installs, by the link they came through - asked for only by the owner,
+                 and refused by the api to anybody else. */ }
+            { authState.isOwner && (
+                <section>
+                    <SectionTitle
+                        title="Growth"
+                        hint={ `Only you see this - installs from the last ${ DASHBOARD_STATS_WINDOWS.GROWTH_DAYS } days` }
+                    />
+                    <GrowthSection />
+                </section>
+            ) }
         </div>
     );
 }

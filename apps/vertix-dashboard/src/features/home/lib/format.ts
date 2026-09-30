@@ -81,3 +81,19 @@ export function formatShare( value: number, total: number ): number {
 
     return Math.round( ( value / total ) * 100 );
 }
+
+/**
+ * Function formatDay() :: A UTC day, `YYYY-MM-DD`, the way the charts name it - "Sep 21".
+ *
+ * Read and written in UTC, the zone the counts are kept in - read in the viewer's own, a day would be
+ * named as the one before it for anybody west of Greenwich.
+ */
+export function formatDay( day: string ): string {
+    const date = new Date( `${ day }T00:00:00.000Z` );
+
+    if ( Number.isNaN( date.getTime() ) ) {
+        return day;
+    }
+
+    return date.toLocaleDateString( undefined, { month: "short", day: "numeric", timeZone: "UTC" } );
+}

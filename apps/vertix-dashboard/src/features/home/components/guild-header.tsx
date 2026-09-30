@@ -1,4 +1,4 @@
-import { CheckCircle2, AlertTriangle, CalendarDays, Clock } from "lucide-react";
+import { CheckCircle2, AlertTriangle, CalendarDays, Clock, DoorOpen, Wrench } from "lucide-react";
 
 import { formatDate, formatRelative } from "@vertix.gg/dashboard/src/features/home/lib/format";
 
@@ -14,7 +14,13 @@ interface GuildHeaderProps {
  * The stats endpoint already answers all of this - the page simply never asked.
  */
 export function GuildHeader( { stats }: GuildHeaderProps ) {
-    const since = formatDate( stats.createdAt );
+    // The latest time the bot was added, else the first - a server that removed it and added it back
+    // started over then. Its first generator and first room are only known since they were recorded,
+    // so each is said when it is known and left out, rather than called unknown, when it is not.
+    const addedAt = formatDate( stats.joinedAt ?? stats.createdAt ),
+        setUpAt = formatDate( stats.setupAt ),
+        firstRoomAt = formatDate( stats.firstRoomAt );
+
     const lastActive = formatRelative( stats.lastActiveAt );
 
     return (
@@ -45,8 +51,20 @@ export function GuildHeader( { stats }: GuildHeaderProps ) {
             <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 text-sm text-text-secondary">
                 <span className="flex items-center gap-2">
                     <CalendarDays className="w-4 h-4 text-accent-muted" />
-                    Set up { since ?? "at an unknown date" }
+                    Added { addedAt ?? "at an unknown date" }
                 </span>
+                { setUpAt && (
+                    <span className="flex items-center gap-2">
+                        <Wrench className="w-4 h-4 text-accent-muted" />
+                        First generator { setUpAt }
+                    </span>
+                ) }
+                { firstRoomAt && (
+                    <span className="flex items-center gap-2">
+                        <DoorOpen className="w-4 h-4 text-accent-muted" />
+                        First room { firstRoomAt }
+                    </span>
+                ) }
                 <span className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-accent-muted" />
                     Last channel activity { lastActive ?? "never" }

@@ -5,6 +5,10 @@ export interface GlobalStats {
     totalMasterChannels: number;
     totalDynamicChannels: number;
     totalUsers: number;
+    /** Rooms made across every server in the last seven days - absent from an API older than the counts. */
+    roomsThisWeek?: number;
+    /** Servers that made a room in the last seven days - absent from an API older than the counts. */
+    activeThisWeek?: number;
 }
 
 export interface GuildStats {
@@ -16,6 +20,13 @@ export interface GuildStats {
     isInGuild: boolean;
     createdAt: string;
     lastActiveAt: string | null;
+    /**
+     * When the bot was last added, its first generator and its first room. Null when that was never
+     * recorded - it only has been since these were kept - and absent from an API older than them.
+     */
+    joinedAt?: string | null;
+    setupAt?: string | null;
+    firstRoomAt?: string | null;
 }
 
 export interface MasterChannelCategory {
@@ -25,6 +36,8 @@ export interface MasterChannelCategory {
 
 export interface MasterChannelInfo {
     channelId: string;
+    /** The generator's channel name, as the bot sees it - null when the bot could not say, absent from an older API. */
+    name?: string | null;
     categoryId: string | null;
     createdAt: string;
     dynamicChannelsCount: number;

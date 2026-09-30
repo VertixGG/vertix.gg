@@ -1,5 +1,8 @@
 import {
     getGlobalStats,
+    getGrowthStats,
+    getGuildActivity,
+    getGuildEventsStats,
     getGuildStats,
     getGuildDetails,
     getGuildBotPresence
@@ -25,6 +28,17 @@ async function requireGuildAccess(
     if ( !selectedGuild || selectedGuild.id !== guildId ) {
         return reply.status( 403 ).send( { error: "Access denied" } );
     }
+}
+
+/**
+ * Function isOwnerRequest() :: Whether the request comes from the owner of the bot.
+ *
+ * Never true while no owner is configured - an unset id would otherwise match a session without one.
+ */
+export function isOwnerRequest( request: FastifyRequest ): boolean {
+    const ownerId = process.env.OWNERD_ID;
+
+    return !! ownerId && request.session.userId === ownerId;
 }
 
 async function handleGetGlobalStats( _request: FastifyRequest, reply: FastifyReply ) {
@@ -72,6 +86,43 @@ async function handleGetGuildDetails(
     }
 }
 
+async function handleGetGuildActivity(
+    request: FastifyRequest<{ Params: GuildParams }>,
+    reply: FastifyReply
+) {
+    try {
+        return await getGuildActivity( request.params.guildId );
+    } catch( error ) {
+        handleError( handleGetGuildActivity, error, reply, "Failed to fetch guild activity" );
+    }
+}
+
+async function handleGetGuildEventsStats(
+    request: FastifyRequest<{ Params: GuildParams }>,
+    reply: FastifyReply
+) {
+    try {
+        return await getGuildEventsStats( request.params.guildId );
+    } catch( error ) {
+        handleError( handleGetGuildEventsStats, error, reply, "Failed to fetch guild events stats" );
+    }
+}
+
+/**
+ * What became of every install, by the link it came through - business figures, for the owner only.
+ */
+async function handleGetGrowthStats( request: FastifyRequest, reply: FastifyReply ) {
+    if ( ! isOwnerRequest( request ) ) {
+        return reply.status( 403 ).send( { error: "Access denied" } );
+    }
+
+    try {
+        return await getGrowthStats();
+    } catch( error ) {
+        handleError( handleGetGrowthStats, error, reply, "Failed to fetch growth stats" );
+    }
+}
+
 async function handleGetGuildBotPresence(
     request: FastifyRequest<{ Params: GuildParams }>,
     reply: FastifyReply
@@ -89,6 +140,8 @@ const dashboardRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance
     // Global stats doesn't need guild access check
     fastify.get( "/dashboard/stats/global", handleGetGlobalStats );
 
+    fastify.get( "/dashboard/stats/growth", handleGetGrowthStats );
+
     // Guild-specific routes need access check
     fastify.register( async( guildRoutes ) => {
         guildRoutes.addHook( "preHandler", requireGuildAccess );
@@ -96,6 +149,16 @@ const dashboardRoutePlugin: FastifyPluginAsync = async( fastify: FastifyInstance
         guildRoutes.get<{ Params: GuildParams }>(
             "/dashboard/stats/guild/:guildId",
             handleGetGuildStats
+        );
+
+        guildRoutes.get<{ Params: GuildParams }>(
+            "/dashboard/stats/guild/:guildId/activity",
+            handleGetGuildActivity
+        );
+
+        guildRoutes.get<{ Params: GuildParams }>(
+            "/dashboard/stats/guild/:guildId/events",
+            handleGetGuildEventsStats
         );
 
         guildRoutes.get<{ Params: GuildParams }>(

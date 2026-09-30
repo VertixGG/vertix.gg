@@ -187,4 +187,152 @@ describe( "VertixAPI/DashboardService/getGuildDetails", () => {
         expect( details.maxActiveDynamicChannels ).toBeNull();
         expect( details.masterChannels[ 0 ].category ).toBeNull();
     } );
+
+    it( "should name the generator by its channel's name, as the bot has it", async() => {
+        const { read } = await makeGuildDetails( {
+            channelInfo: {
+                masterChannel: { id: A_GENERATOR, name: "➕ New Room", memberCount: 0, position: 0 },
+                category: null,
+                dynamicChannels: []
+            }
+        } );
+
+        expect( ( await read() ).masterChannels[ 0 ].name ).toBe( "➕ New Room" );
+    } );
+
+    it( "should leave the generator unnamed when the bot could not say", async() => {
+        const { read } = await makeGuildDetails( { channelInfo: null } );
+
+        expect( ( await read() ).masterChannels[ 0 ].name ).toBeNull();
+    } );
+} );
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Late in a UTC day, so a window of days is not the same as that many twenty-four hours. */
+const NOW = new Date( "2026-12-01T22:00:00.000Z" );
+
+const midnightDaysAgo = ( days: number ) => new Date( Date.UTC( 2026, 11, 1 ) - days * DAY_MS );
+
+/**
+ * The figures the home page reads off the counts the bot keeps - rooms per day, events, installs.
+ */
+describe( "VertixAPI/DashboardService/stats", () => {
+    beforeEach( () => {
+        jest.useFakeTimers();
+        jest.setSystemTime( NOW );
+    } );
+
+    afterEach( () => {
+        jest.useRealTimers();
+        jest.restoreAllMocks();
+    } );
+
+    async function getClient() {
+        const { PrismaBotClient } = await import( "@vertix.gg/prisma/bot-client" );
+
+        return PrismaBotClient.$.getClient();
+    }
+
+    it( "should add up the rooms made across every server in the last week, and the servers they were made in", async() => {
+        const client = await getClient();
+
+        jest.spyOn( client.guild, "count" ).mockResolvedValue( 3 as never );
+        jest.spyOn( client.channel, "count" ).mockResolvedValue( 0 as never );
+        jest.spyOn( client.channel, "groupBy" ).mockResolvedValue( [] as never );
+        jest.spyOn( client.user, "count" ).mockResolvedValue( 0 as never );
+
+        const findMany = jest.spyOn( client.guildActivityDay, "findMany" ).mockResolvedValue( [
+            { guildId: A_GUILD, roomsCreated: 4 },
+            { guildId: A_GUILD, roomsCreated: 2 },
+            { guildId: ANOTHER_GUILD, roomsCreated: 1 }
+        ] as never );
+
+        const { getGlobalStats } = await import( "@vertix.gg/api/src/server/services/dashboard-service" );
+
+        const stats = await getGlobalStats();
+
+        expect( stats ).toMatchObject( { roomsThisWeek: 7, activeThisWeek: 2 } );
+        expect( findMany.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+            where: { day: { gte: midnightDaysAgo( 6 ) }, roomsCreated: { gt: 0 } }
+        } );
+    } );
+
+    it( "should read a server's rooms per day over the window, with the day counting began", async() => {
+        const client = await getClient();
+
+        const findMany = jest.spyOn( client.guildActivityDay, "findMany" ).mockResolvedValue( [
+            { day: midnightDaysAgo( 0 ), roomsCreated: 3 }
+        ] as never );
+
+        jest.spyOn( client.guildActivityDay, "findFirst" ).mockResolvedValue( { day: midnightDaysAgo( 12 ) } as never );
+
+        const { getGuildActivity } = await import( "@vertix.gg/api/src/server/services/dashboard-service" );
+
+        const activity = await getGuildActivity( A_GUILD );
+
+        expect( activity ).toMatchObject( { roomsThisWeek: 3, countedSince: "2026-11-19" } );
+        expect( activity.days.at( -1 ) ).toEqual( { day: "2026-12-01", count: 3 } );
+        expect( findMany.mock.calls[ 0 ][ 0 ] ).toMatchObject( { where: { guildId: A_GUILD, day: { gte: midnightDaysAgo( 29 ) } } } );
+    } );
+
+    it( "should read the attendance of the ended runs only", async() => {
+        const client = await getClient();
+
+        jest.spyOn( client.guildEventSettings, "findUnique" ).mockResolvedValue( { enabled: true } as never );
+        jest.spyOn( client.guildEventRun, "findMany" ).mockResolvedValue( [
+            { id: "ended", phase: "ended", minVoiceSeconds: null },
+            { id: "running", phase: "running", minVoiceSeconds: null }
+        ] as never );
+
+        const attendees = jest.spyOn( client.guildEventAttendee, "findMany" ).mockResolvedValue( [
+            { runId: "ended", userId: "1", displayName: "Maya", interested: true, checkedInAt: NOW, late: false, voiceSeconds: 600 }
+        ] as never );
+
+        const { getGuildEventsStats } = await import( "@vertix.gg/api/src/server/services/dashboard-service" );
+
+        const stats = await getGuildEventsStats( A_GUILD );
+
+        expect( stats ).toMatchObject( { isEnabled: true, held: 1, came: 1 } );
+        expect( attendees.mock.calls[ 0 ][ 0 ] ).toMatchObject( { where: { runId: { in: [ "ended" ] } } } );
+    } );
+
+    it( "should not ask for attendance when no event has ended", async() => {
+        const client = await getClient();
+
+        jest.spyOn( client.guildEventSettings, "findUnique" ).mockResolvedValue( null as never );
+        jest.spyOn( client.guildEventRun, "findMany" ).mockResolvedValue( [] as never );
+
+        const attendees = jest.spyOn( client.guildEventAttendee, "findMany" );
+
+        const { getGuildEventsStats } = await import( "@vertix.gg/api/src/server/services/dashboard-service" );
+
+        expect( await getGuildEventsStats( A_GUILD ) ).toMatchObject( { isEnabled: false, held: 0, regulars: [] } );
+        expect( attendees ).not.toHaveBeenCalled();
+    } );
+
+    it( "should count the installs in the growth window, day by day, the way the activation report does", async() => {
+        const client = await getClient();
+
+        jest.spyOn( client.guild, "findMany" ).mockResolvedValue( [ {
+            guildId: A_GUILD,
+            name: "A guild",
+            isInGuild: true,
+            createdAt: midnightDaysAgo( 200 ),
+            joinedAt: new Date( midnightDaysAgo( 2 ).getTime() + 60 * 60 * 1000 ),
+            leftAt: null,
+            setupAt: null,
+            firstRoomAt: null
+        } ] as never );
+        jest.spyOn( client.guildInstall, "findMany" ).mockResolvedValue( [] as never );
+        jest.spyOn( client.guildActivityDay, "findMany" ).mockResolvedValue( [] as never );
+
+        const { getGrowthStats } = await import( "@vertix.gg/api/src/server/services/dashboard-service" );
+
+        const growth = await getGrowthStats();
+
+        expect( growth.total ).toMatchObject( { installs: 1, stillInstalled: 1 } );
+        expect( growth.installsPerDay.find( ( day ) => "2026-11-29" === day.day ) ).toEqual( { day: "2026-11-29", count: 1 } );
+        expect( growth.since ).toBe( "2026-09-03" );
+    } );
 } );

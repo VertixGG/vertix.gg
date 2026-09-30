@@ -137,9 +137,14 @@ export function GeneratorsPanel( { masterChannels, maxActiveDynamicChannels }: G
                         <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
                             <div className="flex items-center gap-3 min-w-0">
                                 <Radio className="w-4 h-4 text-accent-muted shrink-0" />
+                                { /* By its name when the bot could say, with the id beside it - the id is what an admin
+                                     searches Discord for, and all there is when the bot could not answer. */ }
                                 <span className="text-text-primary font-medium truncate">
-                                    { master.channelId }
+                                    { master.name ?? master.channelId }
                                 </span>
+                                { master.name && (
+                                    <span className="text-xs text-text-muted font-mono shrink-0">{ master.channelId }</span>
+                                ) }
                             </div>
 
                             <span className="text-sm text-text-secondary shrink-0">

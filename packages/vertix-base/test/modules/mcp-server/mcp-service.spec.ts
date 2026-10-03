@@ -1,4 +1,4 @@
-import { formatLogParams } from "@vertix.gg/base/src/modules/mcp-server/mcp-service";
+import { formatLogParams, serializeLogEntry } from "@vertix.gg/base/src/modules/mcp-server/mcp-service";
 
 describe( "VertixBase/Modules/MCPService", () => {
     describe( "formatLogParams()", () => {
@@ -43,6 +43,30 @@ describe( "VertixBase/Modules/MCPService", () => {
 
         it( "should answer an empty string when there are no params", () => {
             expect( formatLogParams( [] ) ).toBe( "" );
+        } );
+    } );
+
+    describe( "serializeLogEntry()", () => {
+        it( "should keep the params when they serialize", () => {
+            const body = JSON.parse( serializeLogEntry( { params: [ { id: "1" } ], formatted: "line" } ) );
+
+            expect( body ).toEqual( { params: [ { id: "1" } ], formatted: "line" } );
+        } );
+
+        it( "should send the line without its params when one is circular", () => {
+            const circular: Record<string, unknown> = { name: "loop" };
+
+            circular.self = circular;
+
+            const body = JSON.parse( serializeLogEntry( { params: [ circular ], formatted: "line [Circular *1]" } ) );
+
+            expect( body ).toEqual( { formatted: "line [Circular *1]" } );
+        } );
+
+        it( "should send the line without its params when one is a bigint", () => {
+            const body = JSON.parse( serializeLogEntry( { params: [ BigInt( 1 ) ], formatted: "line 1n" } ) );
+
+            expect( body ).toEqual( { formatted: "line 1n" } );
         } );
     } );
 } );

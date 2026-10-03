@@ -24,6 +24,23 @@ export function formatLogParams( params: unknown[] ): string {
         .join( " " );
 }
 
+/**
+ * Function serializeLogEntry() :: The body a line is posted as.
+ *
+ * A param `JSON.stringify()` cannot take - an object that refers back to itself, a discord.js
+ * structure holding its client, a bigint - makes it throw, and that used to happen inside the
+ * send's `try`, so the line was dropped and the server marked unavailable until the next health
+ * check. Such an entry goes without its raw `params` instead: `formatted` already carries them,
+ * rendered by `formatLogParams()`, which copes with all three.
+ */
+export function serializeLogEntry( logEntry: { params?: unknown[] } ): string {
+    try {
+        return JSON.stringify( logEntry );
+    } catch {
+        return JSON.stringify( { ...logEntry, params: undefined } );
+    }
+}
+
 export class MCPService extends ServiceBase {
     private static loggerServerUrl: string;
     private static isServerAvailable: boolean = false;
@@ -173,7 +190,7 @@ export class MCPService extends ServiceBase {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify( logEntry ),
+                body: serializeLogEntry( logEntry ),
                 signal: AbortSignal.timeout( 1000 )
             } );
 

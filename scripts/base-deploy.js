@@ -1,12 +1,22 @@
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
 
 const PROJECT_ROOT = join( import.meta.dirname, ".." );
 const ENV_PATH = join( PROJECT_ROOT, ".env" );
 
-function parseEnvFile() {
-    const content = readFileSync( ENV_PATH, "utf-8" );
+/**
+ * What a production build is given on top of `.env` - Paddle's live checkout values, kept apart so the
+ * dev servers stay on the sandbox. Git-ignored, and written on the machine that deploys.
+ *
+ * Handed to the build as its environment rather than left for vite to find: bun has already copied
+ * `.env` into the environment, and `loadEnv()` with an empty prefix lets the environment win over every
+ * file - so a `.env.production.local` vite read for itself would lose to the sandbox values.
+ */
+const PRODUCTION_ENV_PATH = join( PROJECT_ROOT, ".env.production.local" );
+
+function parseEnvFile( path = ENV_PATH ) {
+    const content = readFileSync( path, "utf-8" );
     const vars = {};
 
     for ( const line of content.split( "\n" ) ) {
@@ -55,11 +65,17 @@ function deploy( { envPrefix, appDir, buildCommand } ) {
     const config = resolveDeployConfig( envPrefix );
     const distDir = join( appDir, "dist" );
 
+    if ( ! existsSync( PRODUCTION_ENV_PATH ) ) {
+        console.error( `Missing ${ PRODUCTION_ENV_PATH } - a build without it opens Paddle's sandbox checkout in production.` );
+        process.exit( 1 );
+    }
+
     console.log( `Building ${ envPrefix.toLowerCase() }...` );
 
     execSync( buildCommand, {
         cwd: appDir,
         stdio: "inherit",
+        env: { ...process.env, ...parseEnvFile( PRODUCTION_ENV_PATH ) },
     } );
 
     console.log( "Uploading to server and replacing content..." );

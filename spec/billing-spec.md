@@ -1,9 +1,10 @@
 # Billing spec
 
-> **Status: built, and proven end to end against the Paddle sandbox.** A real purchase has gone
-> through checkout, the webhook, the row and back out as an allowance, and a real cancellation has
-> been recorded. What is left is not code: Paddle's live account needs seller verification and both
-> domains approved before it can take money. Going live is a change of environment variables.
+> **Status: live since 2026-10-03.** Proven end to end against the Paddle sandbox first - a real
+> purchase went through checkout, the webhook, the row and back out as an allowance, and a real
+> cancellation was recorded. Production now runs Paddle's live account: the box's `.env` holds the
+> live key, webhook secret, client-side token and price, and the website and dashboard are built from
+> `.env.production.local`. A first live purchase is still to be made.
 
 Two limits, both now enforced:
 
@@ -290,25 +291,32 @@ vulnerability — which fails four.
 
 ## Still open
 
-**Going live is not a code change.** Both environment-dependent places already read
-`PADDLE_ENVIRONMENT`, and `production` is a value Paddle.js accepts. What remains is Paddle's own:
+**Live since 2026-10-03.** Going live took no code beyond the build's environment (below). What was
+set, and what is still open:
 
-| | who |
+| | state |
 |---|---|
-| Seller verification — identity, business details | **theirs** |
-| Payouts — a bank account | **theirs** |
-| Domain approval for `voicechannels.online` **and** `dashboard.voicechannels.online` | Paddle's review; both submitted, pending |
-| The default payment link | blocked on the approval above, and required before any checkout works |
-| A live API key — `subscription.read` + customer portal session (write) | **theirs**, pasted straight into `.env` |
-| Swapping the five `PADDLE_*` vars, rebuilding the dashboard, restarting the API | mine |
+| Seller verification — identity | done (Sumsub verified 2026-10-03) |
+| Payouts — a bank account or Payoneer | **open, the owner's**: nothing is paid out until it is set |
+| Domain approval | `voicechannels.online` approved; the checkout runs on its `/checkout`, because `dashboard.` was refused |
+| The default payment link | `https://voicechannels.online/pricing` |
+| The live catalogue | Pro $4/month `pri_01m3278jhg48qzf6t9pb0akmfg`; Plus and Ultimate archived |
+| The notification destination | `https://api.voicechannels.online/api/webhooks/paddle`, the five subscription events |
+| The live API key | `subscription.read`, `customer_portal_session.write`, plus `notification_setting.read` and `client_token.read` so the go-live script could read the webhook secret and the token with it. **Expires 2027-10-03** - replace it before then, or the cancel and change-card links quietly disappear |
+| The box's `.env` | the five `PADDLE_*` values live, `PADDLE_PRICE_PLUS` and `PADDLE_PRICE_ULTIMATE` dropped, the sandbox file kept in `~/vertix-env-backups/` |
+| The api **and both bot shards** restarted | the bots read `PADDLE_PRICE_PRO` too - an allowance is a price id the bot recognises |
+| A first live purchase, then a cancellation | **open** - Paddle suggests a 100%-off discount code, so it costs nothing |
 
-The live catalogue, the notification destination and the client-side token already exist.
-Subdomains are not approved by default — the checkout runs on `dashboard.`, so the apex alone is not
-enough.
+**The website and dashboard are built with live values the dev servers never see.** They come from
+`.env.production.local` at the repo root - git-ignored, written on the machine that deploys - which
+`scripts/base-deploy.js` hands to the build as its environment. Vite cannot be left to find it: bun
+copies `.env` into every process it starts, and `loadEnv()` with an empty prefix lets the environment
+win over every file, so the sandbox values would beat it. A deploy without that file refuses to run,
+because the build it would make opens Paddle's sandbox checkout in production.
 
-**The dashboard's price id is baked in at build time**, through vite `define`, so a swap of the
-environment is not complete until the dashboard is rebuilt and redeployed. A config-only change
-leaves the old price id in the bundle.
+**The dashboard's price id is baked in at build time**, through vite `define`, so a change of the
+price is not complete until the dashboard is rebuilt and redeployed. A config-only change leaves the
+old price id in the bundle.
 
 Also open:
 
@@ -317,11 +325,11 @@ Also open:
   comparison post and the dashboard read that table; two places cannot and quote it by hand - the
   `/pricing` description in the website's `site-meta.ts`, which the sitemap step imports as plain
   data, and the dashboard's no-script `index.html`.
-- A stale sandbox subscription row will need clearing at the cutover: it names a sandbox price that
-  matches nothing live, so it would quietly stop granting anything. A sandbox row naming Plus or
-  Ultimate already grants nothing, even in the sandbox.
-- Archiving Plus and Ultimate's prices in both Paddle catalogues. Nothing here sells them any more,
-  and a subscription naming one resolves to no tier.
+- The one sandbox subscription row, the VoiceChannels server's, stopped granting at the cutover: it
+  names a sandbox price that matches nothing live. A live purchase for that server replaces it - the
+  row is one per guild.
+- Archiving Plus and Ultimate's prices in the sandbox catalogue too (the live ones are archived).
+  Nothing here sells them any more, and a subscription naming one resolves to no tier.
 - Whether the free tier stays at 2 once there is something to sell.
 - Resuming a scheduled cancellation. Buying the same plan again would create a *second* subscription
   and charge for it immediately; resuming is `scheduled_change: null` and needs `subscription.write`.
@@ -335,14 +343,13 @@ Steps 1 to 7 are done — the Discord code out, the price table and row, the web
 check, the writes turned on against the sandbox, the service reading the row, the dashboard opening
 a checkout, and the sandbox purchase that proved `custom_data` survives the trip.
 
+The cutover to live is done too (2026-10-03): verification, the default payment link, the live API
+key, the swapped environment, the api and both bot shards restarted, and both sites rebuilt.
+
 What is left, in order:
 
-1. Paddle verification and payouts.
-2. Domain approval, then the default payment link.
-3. The live API key, into `.env`.
-4. Swap the environment (dropping `PADDLE_PRICE_PLUS` and `PADDLE_PRICE_ULTIMATE`, which nothing
-   reads any more), rebuild and redeploy the dashboard, restart the API, clear the stale row.
-5. A real purchase on live, then a real cancellation.
+1. Payouts.
+2. A real purchase on live, then a real cancellation.
 **Already done and not repeated here:** the room cap (`M-01` to `M-04`), the enforcement and both
 refusals (`M-08` to `M-11`), and the plans page. None of them were affected by the change of
 provider — which is the point of the allowance having been one number all along.

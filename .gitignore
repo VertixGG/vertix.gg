@@ -9,6 +9,7 @@ node_modules
 
 # files
 .env
+.env.production.local
 packages/vertix-base/src/encryption/key.ts
 
 # TypeScript incremental build cache

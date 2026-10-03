@@ -127,6 +127,7 @@
 
 ## Configuration & Security Notes
 - The bot loads secrets via `dotenv`; keep `.env*` files local, exclude tokens or Prisma URLs from commits, and prefer `scripts/backup-bot-prisma.js` for encrypted backups.
+- **Production builds of the website and dashboard need `.env.production.local`** at the repo root - git-ignored, on the machine that deploys - holding Paddle's live checkout values, while `.env` keeps the sandbox ones for the dev servers. `scripts/base-deploy.js` hands that file to the build as its environment, because bun copies `.env` into every process it starts and vite's `loadEnv()` with an empty prefix lets the environment beat every file - and it refuses to deploy without it, since that build would open the sandbox checkout in production. See `spec/billing-spec.md`.
 - Test Discord flows in isolated guilds and avoid posting invite links or member IDs in public trackers.
 
 ## Cursor rules

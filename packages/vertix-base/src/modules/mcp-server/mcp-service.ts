@@ -1,3 +1,5 @@
+import { inspect } from "node:util";
+
 import { EventBus } from "@vertix.gg/base/src/modules/event-bus/event-bus";
 
 import { ServiceBase } from "@vertix.gg/base/src/modules/service/service-base";
@@ -6,6 +8,21 @@ import type { TLogLevelName } from "@vertix.gg/base/src/modules/logger";
 
 const LOGGER_SERVER_HTTP_PORT = process.env.LOGGER_SERVER_HTTP_PORT ? parseInt( process.env.LOGGER_SERVER_HTTP_PORT, 10 ) : 3090;
 const LOGGER_SERVER_HOST = process.env.LOGGER_SERVER_HOST || "localhost";
+
+/**
+ * Function formatLogParams() :: Renders a line's params the way the process's own console does.
+ *
+ * The logger server prints `formatted` and nothing else, so a param left out of it is a param
+ * nobody reading the logs ever sees - which is how every `logger.error( caller, "", e )` reached
+ * the box as an `[ERROR]` line ending in a colon. `inspect()` is what `console.log()` uses: an
+ * error comes out with its stack, the fields discord.js and prisma hang on it (`code`, `status`,
+ * `url`, `meta`) and its `cause`, and a circular object prints instead of throwing.
+ */
+export function formatLogParams( params: unknown[] ): string {
+    return params
+        .map( ( param ) => "string" === typeof param ? param : inspect( param, { depth: 4, colors: false } ) )
+        .join( " " );
+}
 
 export class MCPService extends ServiceBase {
     private static loggerServerUrl: string;
@@ -133,6 +150,8 @@ export class MCPService extends ServiceBase {
                 : param
         );
 
+        const renderedParams = params?.length ? " " + formatLogParams( params ) : "";
+
         // Create a log entry with all the relevant information
         const logEntry = {
             timestamp: new Date().getTime(),
@@ -144,7 +163,7 @@ export class MCPService extends ServiceBase {
             messagePrefix,
             message,
             params: normalizedParams,
-            formatted: `${ prefix }[+${ timeDiff }ms][${ source }]${ messagePrefix }: ${ message }`
+            formatted: `${ prefix }[+${ timeDiff }ms][${ source }]${ messagePrefix }: ${ message }${ renderedParams }`
         };
 
         // Send log to logger server via HTTP

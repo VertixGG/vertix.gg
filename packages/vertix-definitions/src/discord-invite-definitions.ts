@@ -55,7 +55,10 @@ export const INSTALL_SOURCES = [
     // field, which the list's own page hands out.
     "listing-topgg",
     "listing-discordbotlist",
-    "listing-discordbots"
+    "listing-discordbots",
+    // Written nowhere in the code either: the site's invite page as the r/discordapp post links it,
+    // `/invite-vertix?src=post-reddit`.
+    "post-reddit"
 ] as const;
 
 export type TInstallSource = typeof INSTALL_SOURCES[ number ];

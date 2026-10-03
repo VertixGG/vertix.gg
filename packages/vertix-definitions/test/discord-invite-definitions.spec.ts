@@ -52,6 +52,10 @@ describe( "VertixDefinitions/DiscordInvite", () => {
             // Act & Assert.
             expect( isInstallSource( "site-home" ) ).toBe( true );
             expect( isInstallSource( "dashboard-bot-missing" ) ).toBe( true );
+            expect( isInstallSource( "bot-room-panel" ) ).toBe( true );
+            expect( isInstallSource( "bot-generator-panel" ) ).toBe( true );
+            expect( isInstallSource( "bot-welcome" ) ).toBe( true );
+            expect( isInstallSource( "listing-topgg" ) ).toBe( true );
             expect( isInstallSource( "site-home " ) ).toBe( false );
             expect( isInstallSource( "" ) ).toBe( false );
             expect( isInstallSource( null ) ).toBe( false );

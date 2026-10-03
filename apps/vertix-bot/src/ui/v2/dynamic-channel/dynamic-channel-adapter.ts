@@ -10,6 +10,7 @@ import { ChannelModel } from "@vertix.gg/data/src/models/channel/channel-model";
 import { Logger } from "@vertix.gg/base/src/modules/logger";
 
 import { pickRoleButtons } from "@vertix.gg/bot/src/utils/dynamic-channel-buttons";
+import { BotInvite } from "@vertix.gg/bot/src/utils/bot-invite";
 
 import { DynamicExecutionAdapterBuilder } from "@vertix.gg/bot/src/ui/v2/dynamic-channel/base/dynamic-execution-adapter-builder";
 
@@ -351,12 +352,18 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
     .build();
 
 class DynamicChannelAdapter extends DynamicChannelAdapterBase {
+    private inviteLine: string | null = null;
+
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( !this.getArgsManager().getArgsById( this, message.id ) ) {
             await this.awakeInternal( message, {} );
         }
 
         return super.editMessage( message, newArgs );
+    }
+
+    protected async onAfterBuild( args: UIArgs ) {
+        this.inviteLine = await BotInvite.$.resolveLine( args._guildId, "bot-room-panel" );
     }
 
     protected getMessage(
@@ -372,7 +379,7 @@ class DynamicChannelAdapter extends DynamicChannelAdapterBase {
             }
         }
 
-        return result;
+        return BotInvite.$.addLine( result, this.inviteLine );
     }
 }
 

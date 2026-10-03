@@ -6,6 +6,7 @@ import { DynamicChannelComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-channe
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 import { DynamicChannelUIData } from "@vertix.gg/bot/src/data/dynamic-channel/dynamic-channel-ui-data";
+import { BotInvite } from "@vertix.gg/bot/src/utils/bot-invite";
 
 import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
@@ -229,12 +230,18 @@ const DynamicChannelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefaultBu
     .build();
 
 class DynamicChannelAdapter extends DynamicChannelAdapterBase {
+    private inviteLine: string | null = null;
+
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( !this.getArgsManager().getArgsById( this, message.id ) ) {
             await this.awakeInternal( message, newArgs );
         }
 
         return super.editMessage( message, newArgs );
+    }
+
+    protected async onAfterBuild( args: UIArgs ) {
+        this.inviteLine = await BotInvite.$.resolveLine( args._guildId, "bot-room-panel" );
     }
 
     protected getMessage(
@@ -250,7 +257,7 @@ class DynamicChannelAdapter extends DynamicChannelAdapterBase {
             }
         }
 
-        return result;
+        return BotInvite.$.addLine( result, this.inviteLine );
     }
 }
 

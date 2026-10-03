@@ -1,9 +1,9 @@
 /**
  * The application the bot is handed out as, and what each place asks Discord for on its behalf.
  *
- * Shared rather than app-local because three surfaces hand the bot out - the site's invite page, the
- * dashboard's "the bot is not in this server" modal, and the bot's own welcome message - and a
- * second copy of an id is how a site ends up inviting one application while selling plans for
+ * Shared rather than app-local because several surfaces hand the bot out - the site's invite page, the
+ * dashboard's "the bot is not in this server" modal, and the bot's own welcome message and panels -
+ * and a second copy of an id is how a site ends up inviting one application while selling plans for
  * another. Nothing fails when they drift; somebody just installs the wrong bot.
  */
 export const DISCORD_APP_ID = "1538844311062581339";
@@ -47,7 +47,15 @@ export const INSTALL_SOURCES = [
     "site-post",
     "site-invite",
     "dashboard-bot-missing",
-    "github-readme"
+    "github-readme",
+    "bot-room-panel",
+    "bot-generator-panel",
+    "bot-welcome",
+    // Written nowhere in the code: each is the `state` of the link pasted into that list's invite
+    // field, which the list's own page hands out.
+    "listing-topgg",
+    "listing-discordbotlist",
+    "listing-discordbots"
 ] as const;
 
 export type TInstallSource = typeof INSTALL_SOURCES[ number ];

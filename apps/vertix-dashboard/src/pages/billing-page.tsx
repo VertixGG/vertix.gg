@@ -55,14 +55,18 @@ interface ITierFeature {
  * What a tier gets you, in the order somebody reads it.
  *
  * The lines a plan is bought for come first and stand out: the generator count, and the bot's own
- * profile where the tier includes it. Everything after them is on every plan, and saying so on each
- * card is what stops somebody hunting for the catch.
+ * profile where the tier includes it - along with panels the bot draws without its own links, which it
+ * does wherever the tier includes branding. Everything after them is on every plan, and saying so on
+ * each card is what stops somebody hunting for the catch.
  */
 function tierFeatures( tier: { maxMasterChannels: number; includesBranding: boolean } ): ITierFeature[] {
     return [
         { label: `${ formatMasterChannelAllowance( tier.maxMasterChannels ) } generators`, isOwn: true },
         ... tier.includesBranding
-            ? [ { label: "Your own bot name, avatar, banner and bio in this server", isOwn: true } ]
+            ? [
+                { label: "Your own bot name, avatar, banner and bio in this server", isOwn: true },
+                { label: "No \"Add VoiceChannels\" or \"Vote VoiceChannels\" links on your panels", isOwn: true }
+            ]
             : [],
         { label: "Join-to-create setups and auto-scaling pools", isOwn: false },
         { label: "Every voice-channel control", isOwn: false },

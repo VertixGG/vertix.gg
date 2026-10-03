@@ -6,12 +6,14 @@ import { DynamicChannelPanelComponent } from "@vertix.gg/bot/src/ui/v3/dynamic-c
 import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-channel-claim-manager";
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 import { DynamicChannelUIData } from "@vertix.gg/bot/src/data/dynamic-channel/dynamic-channel-ui-data";
+import { BOT_INVITE_LINE_PLACEMENTS, BotInvite } from "@vertix.gg/bot/src/utils/bot-invite";
 
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 import type {
+    UIAdapterStartContext,
     UIDefaultButtonChannelVoiceInteraction
 } from "@vertix.gg/gui/src/bases/ui-interaction-interfaces";
-import type { Message } from "discord.js";
+import type { BaseMessageOptions, Message } from "discord.js";
 import type UIService from "@vertix.gg/gui/src/ui-service";
 
 const logger = new Logger( "VertixBot/UI-V3/DynamicChannelPanelAdapter" );
@@ -235,12 +237,32 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
     .build();
 
 class DynamicChannelPanelAdapter extends DynamicChannelPanelAdapterBase {
+    private inviteLine: string | null = null;
+
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( !this.getArgsManager().getArgsById( this, message.id ) ) {
             await this.awakeInternal( message, newArgs );
         }
 
         return super.editMessage( message, newArgs );
+    }
+
+    protected async onAfterBuild( args: UIArgs ) {
+        this.inviteLine = await BotInvite.$.resolveLine( args._guildId, "bot-generator-panel" );
+    }
+
+    protected getMessage(
+        from: UIAdapterBuildSource,
+        context: UIAdapterStartContext | UIDefaultButtonChannelVoiceInteraction,
+        argsFromManager: UIArgs
+    ): BaseMessageOptions {
+        // The panel closes on "Available Features:", the heading over the button sheet - the line
+        // goes above it rather than between the heading and what it heads.
+        return BotInvite.$.addLine(
+            super.getMessage( from, context, argsFromManager ),
+            this.inviteLine,
+            BOT_INVITE_LINE_PLACEMENTS.ABOVE_LAST_PARAGRAPH
+        );
     }
 }
 

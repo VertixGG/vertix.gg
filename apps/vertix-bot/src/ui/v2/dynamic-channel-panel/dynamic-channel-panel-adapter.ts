@@ -16,9 +16,11 @@ import { DynamicChannelClaimManager } from "@vertix.gg/bot/src/managers/dynamic-
 
 import { DynamicChannelVoteManager } from "@vertix.gg/bot/src/managers/dynamic-channel-vote-manager";
 
-import type { Message } from "discord.js";
+import { BotInvite } from "@vertix.gg/bot/src/utils/bot-invite";
 
-import type { UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
+import type { BaseMessageOptions, Message } from "discord.js";
+
+import type { UIAdapterBuildSource, UIArgs } from "@vertix.gg/gui/src/bases/ui-definitions";
 
 import type {
     UIAdapterStartContext,
@@ -314,12 +316,26 @@ const DynamicChannelPanelAdapterBase = new DynamicExecutionAdapterBuilder<UIDefa
     .build();
 
 class DynamicChannelPanelAdapter extends DynamicChannelPanelAdapterBase {
+    private inviteLine: string | null = null;
+
     public async editMessage( message: Message<true>, newArgs?: UIArgs ) {
         if ( !this.getArgsManager().getArgsById( this, message.id ) ) {
             await this.awakeInternal( message, newArgs || {} );
         }
 
         return super.editMessage( message, newArgs );
+    }
+
+    protected async onAfterBuild( args: UIArgs ) {
+        this.inviteLine = await BotInvite.$.resolveLine( args._guildId, "bot-generator-panel" );
+    }
+
+    protected getMessage(
+        from: UIAdapterBuildSource,
+        context: UIAdapterStartContext | UIDefaultButtonChannelVoiceInteraction,
+        argsFromManager: UIArgs
+    ): BaseMessageOptions {
+        return BotInvite.$.addLine( super.getMessage( from, context, argsFromManager ), this.inviteLine );
     }
 }
 

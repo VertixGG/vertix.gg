@@ -51,11 +51,14 @@ function describeAllowance( maxMasterChannels: number ): string {
 }
 
 /**
- * The one thing a plan buys besides generators, worded for a plan card.
+ * What a plan buys besides generators, worded for a plan card.
  *
- * Called branding here because that is what the dashboard page it is set on is called.
+ * Called branding here because that is what the dashboard page it is set on is called. The panels'
+ * line goes with it: the bot leaves it off wherever the plan includes branding, and nowhere else.
  */
 const BRANDING_EXTRA = "branding - the bot's own name, avatar, banner and bio in your server";
+
+const PANEL_LINE_EXTRA = "no \"Add VoiceChannels\" or \"Vote VoiceChannels\" links on your panels";
 
 /**
  * Function describeUpgrade() :: What a paid tier adds to free, as the sentence the intro ends on.
@@ -69,8 +72,9 @@ function describeUpgrade( tier: { name: string; maxMasterChannels: number; inclu
         return `${ tier.name } adds ${ generators }.`;
     }
 
-    return `${ tier.name } adds two things: ${ generators }, and branding - the bot's own name, avatar, `
-        + "banner and bio in your server.";
+    return `${ tier.name } adds three things: ${ generators }, branding - the bot's own name, avatar, `
+        + "banner and bio in your server - and panels without our \"Add VoiceChannels\" and \"Vote "
+        + "VoiceChannels\" links.";
 }
 
 /**
@@ -105,7 +109,7 @@ const PLANS: IPlan[] = [
             ? formatMasterChannelAllowance( tier.maxMasterChannels )
             : `${ formatMasterChannelAllowance( tier.maxMasterChannels ) } generators`,
         note: describeAllowance( tier.maxMasterChannels ),
-        extras: tier.includesBranding ? [ BRANDING_EXTRA ] : [],
+        extras: tier.includesBranding ? [ BRANDING_EXTRA, PANEL_LINE_EXTRA ] : [],
         href: planCheckoutUrl( tier.slug ),
         isFeatured: FEATURED_TIER_SLUG === tier.slug,
         isFree: false
@@ -116,9 +120,9 @@ const PLANS: IPlan[] = [
  * What every plan carries, free included, which is the point worth making.
  *
  * No control a channel's owner or a server's admin uses is behind a plan - not a button, not a
- * command, not a language. A plan buys generators, and the bot's own profile in the server, and
- * nothing on this list - so it is printed once rather than ticked down both columns, which would say
- * the same thing in each of them.
+ * command, not a language. A plan buys generators, the bot's own profile in the server and panels
+ * without our links, and nothing on this list - so it is printed once rather than ticked down both
+ * columns, which would say the same thing in each of them.
  */
 const IN_EVERY_PLAN = [
     "Every control a channel owner has - rename, limit, privacy, access, region, bitrate and the rest",
@@ -126,7 +130,7 @@ const IN_EVERY_PLAN = [
     "The dashboard, the interface editor and per-language wording",
     "Seven languages",
     "Twenty channels open at once, on every generator",
-    "No command that asks anybody to vote for us"
+    "Nothing locked behind a vote"
 ];
 
 const QUESTIONS = [

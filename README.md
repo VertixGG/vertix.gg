@@ -22,7 +22,7 @@ powered by an **open-source framework** for declaring Discord UIs as state machi
 
 <br/>
 
-**[🚀 Invite Vlk](https://voicechannels.online/invite-vertix?src=github-readme)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://voicechannels.online/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.voicechannels.online)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://voicechannels.online/changelog)**
+**[🚀 Invite VoiceChannels](https://voicechannels.online/invite-vertix?src=github-readme)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📖 Documentation](https://voicechannels.online/welcome)**&nbsp;&nbsp;·&nbsp;&nbsp;**[🎛️ Dashboard](https://dashboard.voicechannels.online)**&nbsp;&nbsp;·&nbsp;&nbsp;**[📜 Changelog](https://voicechannels.online/changelog)**
 
 </div>
 
@@ -521,7 +521,7 @@ See it in action without installing anything:
 Most of the best features in **VoiceChannels** started as a spark of an idea from a community member. Your feedback is our roadmap.
 
 - 🐛 **Bug reports & feature requests:** [open an issue](https://github.com/VertixGG/vertix.gg/issues)
-- 💬 **Got an idea or want to chat?** Join the [Discord community](https://voicechannels.online/invite-vertix)
+- 💬 **Got an idea or want to chat?** Join the [Discord community](https://discord.gg/dEwKeQefUU)
 - 🤝 **Want to contribute?** PRs are welcome — see [Quick Start](#quick-start--run-vertix-locally) to get a local environment running
 
 

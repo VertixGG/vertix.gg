@@ -2,6 +2,8 @@ import { UIElementButtonUrlBase } from "@vertix.gg/gui/src/bases/element-types/u
 
 import { UIInstancesTypes } from "@vertix.gg/gui/src/bases/ui-definitions";
 
+import { BotInvite } from "@vertix.gg/bot/src/utils/bot-invite";
+
 export class WelcomeInviteButton extends UIElementButtonUrlBase {
     public static getName() {
         return "VertixBot/UI-General/WelcomeInviteButton";
@@ -16,6 +18,6 @@ export class WelcomeInviteButton extends UIElementButtonUrlBase {
     }
 
     protected async getURL(): Promise<string> {
-        return "https://discord.com/oauth2/authorize?client_id=1538844311062581339&permissions=286354576&scope=bot%20applications.commands";
+        return BotInvite.$.getUrl( "bot-welcome" );
     }
 }

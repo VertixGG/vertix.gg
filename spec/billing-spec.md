@@ -4,7 +4,8 @@
 > purchase went through checkout, the webhook, the row and back out as an allowance, and a real
 > cancellation was recorded. Production now runs Paddle's live account: the box's `.env` holds the
 > live key, webhook secret, client-side token and price, and the website and dashboard are built from
-> `.env.production.local`. A first live purchase is still to be made.
+> `.env.production.local`. Paddle approved the account on 2026-10-04, and the first live purchase went
+> through that day - checkout, webhook, row and the dashboard's Pro, with working management links.
 
 Two limits, both now enforced:
 
@@ -305,7 +306,9 @@ set, and what is still open:
 | The live API key | `subscription.read`, `customer_portal_session.write`, plus `notification_setting.read` and `client_token.read` so the go-live script could read the webhook secret and the token with it. **Expires 2027-10-03** - replace it before then, or the cancel and change-card links quietly disappear |
 | The box's `.env` | the five `PADDLE_*` values live, `PADDLE_PRICE_PLUS` and `PADDLE_PRICE_ULTIMATE` dropped, the sandbox file kept in `~/vertix-env-backups/` |
 | The api **and both bot shards** restarted | the bots read `PADDLE_PRICE_PRO` too - an allowance is a price id the bot recognises |
-| A first live purchase, then a cancellation | **open** - Paddle suggests a 100%-off discount code, so it costs nothing |
+| Paddle's own account review | done 2026-10-04. Until then every live checkout failed with `transaction_checkout_not_enabled` ("Something went wrong") |
+| A first live purchase | done 2026-10-04 with a single-use 100%-off code (since archived): `subscription.created recorded`, the row on the live price, Pro on the dashboard. Paddle asks for a card or PayPal even at $0 due today |
+| A first live cancellation | **open** |
 
 **The website and dashboard are built with live values the dev servers never see.** They come from
 `.env.production.local` at the repo root - git-ignored, written on the machine that deploys - which
@@ -325,9 +328,8 @@ Also open:
   comparison post and the dashboard read that table; two places cannot and quote it by hand - the
   `/pricing` description in the website's `site-meta.ts`, which the sitemap step imports as plain
   data, and the dashboard's no-script `index.html`.
-- The one sandbox subscription row, the VoiceChannels server's, stopped granting at the cutover: it
-  names a sandbox price that matches nothing live. A live purchase for that server replaces it - the
-  row is one per guild.
+- The one sandbox subscription row, the VoiceChannels server's, stopped granting at the cutover and
+  was replaced by that server's live purchase on 2026-10-04 - the row is one per guild.
 - Archiving Plus and Ultimate's prices in the sandbox catalogue too (the live ones are archived).
   Nothing here sells them any more, and a subscription naming one resolves to no tier.
 - Whether the free tier stays at 2 once there is something to sell.
@@ -349,7 +351,7 @@ key, the swapped environment, the api and both bot shards restarted, and both si
 What is left, in order:
 
 1. Payouts.
-2. A real purchase on live, then a real cancellation.
+2. A real cancellation on live (the purchase is done).
 **Already done and not repeated here:** the room cap (`M-01` to `M-04`), the enforcement and both
 refusals (`M-08` to `M-11`), and the plans page. None of them were affected by the change of
 provider — which is the point of the allowance having been one number all along.

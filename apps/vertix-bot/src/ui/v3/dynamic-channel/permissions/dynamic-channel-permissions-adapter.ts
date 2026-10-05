@@ -181,8 +181,15 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 "GrantSuccess",
                 async( context, interaction ) => {
                     const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
-                    const userId = voiceInteraction.values[ 0 ];
-                    const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
+                    const userId = voiceInteraction.values.at( 0 );
+
+                    if ( ! userId ) {
+                        await context.updateInteractionDefer( voiceInteraction );
+                        return;
+                    }
+
+                    const member = voiceInteraction.guild.members.cache.get( userId ) ||
+                        await voiceInteraction.guild.members.fetch( userId ).catch( () => null );
 
                     if ( !member ) {
                         await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
@@ -229,8 +236,15 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 "DenySuccess",
                 async( context, interaction ) => {
                     const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
-                    const userId = voiceInteraction.values[ 0 ];
-                    const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
+                    const userId = voiceInteraction.values.at( 0 );
+
+                    if ( ! userId ) {
+                        await context.updateInteractionDefer( voiceInteraction );
+                        return;
+                    }
+
+                    const member = voiceInteraction.guild.members.cache.get( userId ) ||
+                        await voiceInteraction.guild.members.fetch( userId ).catch( () => null );
 
                     if ( !member ) {
                         await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
@@ -267,8 +281,15 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 "BlockSuccess",
                 async( context, interaction ) => {
                     const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
-                    const userId = voiceInteraction.values[ 0 ];
-                    const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
+                    const userId = voiceInteraction.values.at( 0 );
+
+                    if ( ! userId ) {
+                        await context.updateInteractionDefer( voiceInteraction );
+                        return;
+                    }
+
+                    const member = voiceInteraction.guild.members.cache.get( userId ) ||
+                        await voiceInteraction.guild.members.fetch( userId ).catch( () => null );
 
                     if ( !member ) {
                         await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
@@ -311,8 +332,15 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 "UnblockSuccess",
                 async( context, interaction ) => {
                     const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
-                    const userId = voiceInteraction.values[ 0 ];
-                    const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
+                    const userId = voiceInteraction.values.at( 0 );
+
+                    if ( ! userId ) {
+                        await context.updateInteractionDefer( voiceInteraction );
+                        return;
+                    }
+
+                    const member = voiceInteraction.guild.members.cache.get( userId ) ||
+                        await voiceInteraction.guild.members.fetch( userId ).catch( () => null );
 
                     if ( !member ) {
                         await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );
@@ -350,8 +378,15 @@ const DynamicChannelPermissionsAdapter = new DynamicExecutionAdapterBuilder<Defa
                 "KickSuccess",
                 async( context, interaction ) => {
                     const voiceInteraction = interaction as unknown as UIDefaultUserSelectMenuChannelVoiceInteraction;
-                    const userId = voiceInteraction.values[ 0 ];
-                    const member = voiceInteraction.guild.members.cache.get( userId ) || await voiceInteraction.guild.members.fetch( userId );
+                    const userId = voiceInteraction.values.at( 0 );
+
+                    if ( ! userId ) {
+                        await context.updateInteractionDefer( voiceInteraction );
+                        return;
+                    }
+
+                    const member = voiceInteraction.guild.members.cache.get( userId ) ||
+                        await voiceInteraction.guild.members.fetch( userId ).catch( () => null );
 
                     if ( !member ) {
                         await context.ephemeralWithStep( voiceInteraction, "VertixBot/UI-V3/DynamicChannelPermissionsStateError", {} );

@@ -1898,9 +1898,11 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
             return;
         }
 
-        await this.log( undefined, newState.channel as VoiceChannel, this.createDynamicChannel, "", {
-            ownerDisplayName: displayName,
-            newState
+        // The generator as it was on entry, never `newState.channel` read now: discord.js patches the
+        // cached voice state in place, so a member who moved on while the room was being made would
+        // have this line looked up under wherever they went - which is no generator.
+        await this.log( undefined, masterChannel as VoiceChannel, this.createDynamicChannel, "", {
+            ownerDisplayName: displayName
         } );
 
         // Move the user into a new channel.
@@ -3199,9 +3201,7 @@ export class DynamicChannelService extends ServiceWithDependenciesBase<{
                 break;
 
             case this.createDynamicChannel:
-                if ( meta.newState.channel ) {
-                    masterChannelId = meta.newState.channel.id;
-                }
+                masterChannelId = channel.id;
 
                 message = `➕  Dynamic channel has been **created**, owner: \`${ meta.ownerDisplayName }\``;
                 break;

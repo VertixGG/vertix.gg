@@ -66,6 +66,134 @@ function aGuild( options: {
     };
 }
 
+const GUILD_ID = "850000000000000001",
+    GENERATOR_ID = "850000000000000002",
+    ELSEWHERE_ID = "850000000000000003",
+    ROOM_ID = "850000000000000004",
+    OWNER_ID = "850000000000000005";
+
+type Creator = { createDynamicChannel( args: unknown ): Promise<unknown> };
+
+/**
+ * Stands up what `createDynamicChannel()` reaches for on a generator nobody has configured, with the
+ * real `log()` behind it - its "Cannot find master channel DB" is the symptom - and records which
+ * generator the line announcing the room was filed under.
+ *
+ * `newState` is shaped the way discord.js keeps it: `channel` a getter over `channelId`, on the one
+ * cached object every later voice update patches. That getter answering differently at the end of the
+ * creation than at its start is the whole of the bug, so a plain object would not reproduce it.
+ */
+async function createDynamicChannel( options: { movesWhileCreating: boolean } ) {
+    await TestWithServiceLocatorMock.withUIServiceMock();
+
+    const { DynamicChannelService } = await import( "@vertix.gg/bot/src/services/dynamic-channel-service" );
+
+    // `MasterChannelDataManager` resolves its configuration the moment it is constructed, and the
+    // real registry is only populated by the bot's startup. The specs next door stub it the same way.
+    const { ConfigManager } = await import( "@vertix.gg/data/src/managers/config-manager" );
+
+    jest.spyOn( ConfigManager.$, "get" ).mockReturnValue( { getKeys: () => ( {} ) } as never );
+
+    const { ChannelModel } = await import( "@vertix.gg/data/src/models/channel/channel-model" );
+    const { UserModel } = await import( "@vertix.gg/data/src/models/user-model" );
+    const { MasterChannelDataManager } = await import( "@vertix.gg/data/src/managers/master-channel-data-manager" );
+    const { GuildDataManager } = await import( "@vertix.gg/data/src/managers/guild-data-manager" );
+    const { PermissionsManager } = await import( "@vertix.gg/bot/src/managers/permissions-manager" );
+
+    const generatorDB = { id: "generator-db-id", channelId: GENERATOR_ID, version: "0.0.0.2" };
+
+    // Only the generator has a row - the channel the member went on to is an ordinary one.
+    jest.spyOn( ChannelModel.$, "getByChannelId" )
+        .mockImplementation( async( channelId ) => ( GENERATOR_ID === channelId ? generatorDB : null ) as never );
+
+    jest.spyOn( UserModel.$, "ensure" ).mockResolvedValue( { userId: OWNER_ID } as never );
+
+    jest.spyOn( MasterChannelDataManager.$, "getChannelAutosave" ).mockResolvedValue( false as never );
+    jest.spyOn( MasterChannelDataManager.$, "getChannelDefaultUserLimit" ).mockResolvedValue( undefined as never );
+    jest.spyOn( MasterChannelDataManager.$, "getChannelStaffRoles" ).mockResolvedValue( [] as never );
+    jest.spyOn( MasterChannelDataManager.$, "getChannelDefaultPrivacyState" ).mockResolvedValue( "public" as never );
+    jest.spyOn( MasterChannelDataManager.$, "getChannelVerifiedRoles" ).mockResolvedValue( [] as never );
+    jest.spyOn( MasterChannelDataManager.$, "getChannelNameTemplate" ).mockResolvedValue( "a-room" as never );
+
+    jest.spyOn( GuildDataManager.$, "maskBadwords" ).mockImplementation( async( _guildId, name ) => name as never );
+
+    // Building the real one asks the locator for the app service, which nothing here registers.
+    jest.spyOn( PermissionsManager, "$", "get" ).mockReturnValue( {
+        getChannelDefaultPermissions: () => ( {} ),
+        mergeChannelPermissionOverwrites: () => []
+    } as never );
+
+    const channels = new Map<string, unknown>();
+
+    const guild = {
+        id: GUILD_ID,
+        name: "a-guild",
+        memberCount: 9,
+        members: { cache: new Map() },
+        channels: { cache: channels }
+    };
+
+    const aChannel = ( id: string, name: string ) => ( { id, name, guild, guildId: GUILD_ID, userLimit: 0, parent: null } );
+
+    channels.set( GENERATOR_ID, aChannel( GENERATOR_ID, "join-to-create" ) );
+    channels.set( ELSEWHERE_ID, aChannel( ELSEWHERE_ID, "general" ) );
+
+    const newState = {
+        id: OWNER_ID,
+        member: { id: OWNER_ID },
+        channelId: GENERATOR_ID,
+        get channel() {
+            return channels.get( this.channelId ) ?? null;
+        },
+        setChannel: async() => undefined
+    };
+
+    const recorded = { errors: [] as string[], filedUnder: [] as string[] };
+
+    const prototype = DynamicChannelService.prototype as unknown as Record<string, Function>;
+
+    const state = {
+        createDynamicChannel: prototype.createDynamicChannel,
+        log: prototype.log,
+        getChannelDefaultInheritedProperties: () => ( {} ),
+        getUserCurrentGame: () => null,
+        getDynamicChannelTemplateIndex: async() => 1,
+        assembleChannelNameTemplate: async( template: string ) => template,
+        logInChannelDebounce: async( masterChannelDB: { channelId: string } ) =>
+            void recorded.filedUnder.push( masterChannelDB.channelId ),
+        logger: {
+            info: () => undefined,
+            log: () => undefined,
+            admin: () => undefined,
+            error: ( _caller: unknown, message: string ) => void recorded.errors.push( message )
+        },
+        services: {
+            channelService: {
+                create: async() => {
+                    // Discord takes a moment to make the room, and the member is free to click
+                    // somewhere else in the meantime - the update lands on the same object.
+                    if ( options.movesWhileCreating ) {
+                        newState.channelId = ELSEWHERE_ID;
+                    }
+
+                    // Not voice based, so the panel the room is given a second later is never drawn.
+                    return { channel: { id: ROOM_ID, isVoiceBased: () => false }, db: Promise.resolve( {} ) };
+                }
+            }
+        }
+    };
+
+    await ( state as unknown as Creator ).createDynamicChannel( {
+        username: "owner",
+        displayName: "Owner",
+        guild,
+        oldState: {},
+        newState
+    } );
+
+    return recorded;
+}
+
 describe( "VertixBot/Services/DynamicChannel", () => {
     describe( "resolveTargetChannel()", () => {
         it( "should answer with the voice channel the interaction is already in", async() => {
@@ -208,6 +336,33 @@ describe( "VertixBot/Services/DynamicChannel", () => {
 
             // Assert.
             expect( result ).toBeNull();
+        } );
+    } );
+
+    describe( "createDynamicChannel()", () => {
+        afterEach( () => {
+            jest.restoreAllMocks();
+        } );
+
+        /**
+         * The regression, from production: a member clicked the generator and then another channel
+         * within the half second discord took to make their room. The line announcing the room was
+         * looked up under the channel they went to, found no generator there, and logged "Cannot find
+         * master channel DB" instead of reaching the generator's logs channel.
+         */
+        it.each( [
+            [ "stayed in the generator", false ],
+            [ "moved on while the room was being made", true ]
+        ] )( "should file the line announcing the room under the generator when the member %s", async(
+            _case,
+            movesWhileCreating
+        ) => {
+            // Act.
+            const { errors, filedUnder } = await createDynamicChannel( { movesWhileCreating } );
+
+            // Assert.
+            expect( errors ).toEqual( [] );
+            expect( filedUnder ).toEqual( [ GENERATOR_ID ] );
         } );
     } );
 } );

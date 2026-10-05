@@ -59,6 +59,9 @@ describe( "VertixDefinitions/DiscordInvite", () => {
             expect( isInstallSource( "post-reddit" ) ).toBe( true );
             expect( isInstallSource( "listing-boticord" ) ).toBe( true );
             expect( isInstallSource( "listing-discordbotsgg" ) ).toBe( true );
+            expect( isInstallSource( "listing-discordlistgg" ) ).toBe( true );
+            expect( isInstallSource( "listing-voidbots" ) ).toBe( true );
+            expect( isInstallSource( "listing-del" ) ).toBe( true );
             expect( isInstallSource( "site-home " ) ).toBe( false );
             expect( isInstallSource( "" ) ).toBe( false );
             expect( isInstallSource( null ) ).toBe( false );

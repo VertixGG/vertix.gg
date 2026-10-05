@@ -120,6 +120,18 @@ async function onDeleteConfirmModalSubmitted(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultModalChannelTextInteraction
 ) {
+    // Deleting a pool deletes every room it has open, the pool and its category - one discord
+    // request each, one after another - and that outlasts the three seconds discord gives to
+    // answer. Unanswered, the modal stays open on "Something went wrong" while the pool is gone
+    // behind it, so the modal is answered first and the screen edited afterwards.
+    if ( ! interaction.deferred && ! interaction.replied ) {
+        try {
+            await interaction.deferUpdate();
+        } catch {
+            return;
+        }
+    }
+
     const inputId = context.customIdStrategy.generateId(
         "VertixBot/UI-V3/ScalingSetupEditAdapter:VertixBot/UI-General/DeleteConfirmInput"
     );

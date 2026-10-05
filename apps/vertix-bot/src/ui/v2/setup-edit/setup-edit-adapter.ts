@@ -501,6 +501,18 @@ async function onDeleteConfirmModalSubmitted(
     context: IExecutionAdapterContext<Interactions>,
     interaction: UIDefaultModalChannelTextInteraction
 ) {
+    // Deleting a generator deletes its control panel, every room it has open, the generator and its
+    // category - one discord request each, one after another - and that outlasts the three seconds
+    // discord gives to answer. Unanswered, the modal stays open on "Something went wrong" while the
+    // generator is gone behind it, so the modal is answered first and the screen edited afterwards.
+    if ( ! interaction.deferred && ! interaction.replied ) {
+        try {
+            await interaction.deferUpdate();
+        } catch {
+            return;
+        }
+    }
+
     const inputId = context.customIdStrategy.generateId(
         "VertixBot/UI-V2/SetupEditAdapter:VertixBot/UI-General/DeleteConfirmInput"
     );

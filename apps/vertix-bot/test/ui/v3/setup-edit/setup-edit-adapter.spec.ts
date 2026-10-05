@@ -18,7 +18,8 @@ import type {
 } from "@vertix.gg/bot/src/ui/v3/dynamic-channel/primary-message/dynamic-channel-primary-message-elements-group";
 
 const GUILD_ID = "guild-id",
-    MASTER_CHANNEL_DB_ID = "master-channel-db-id";
+    MASTER_CHANNEL_DB_ID = "master-channel-db-id",
+    MASTER_CHANNEL_ID = "master-channel-id";
 
 // Imported once the ui service is there to answer: the elements group builds every button it
 // knows about as the module loads, and a button reaches for the ui service as it is constructed.
@@ -135,5 +136,102 @@ describe( "VertixBot/UI-V3/SetupEditAdapter/buttons", () => {
 
         expect( context.editReplyWithStep ).toHaveBeenCalledTimes( 1 );
         expect( logged ).toHaveBeenCalledWith( expect.any( Function ), failure );
+    } );
+} );
+
+function setupDelete( deleting: () => Promise<boolean>, answering: () => Promise<unknown> = async() => {} ) {
+    const deleteDynamicMasterChannelWithCleanup = jest.fn( deleting ),
+        editReply = jest.fn<( interaction: object, args: UIArgs ) => Promise<void>>().mockResolvedValue( undefined );
+
+    const services: Record<string, object> = {
+        "VertixBot/Services/ChannelCleanup": { deleteDynamicMasterChannelWithCleanup },
+        "VertixGUI/UIService": { get: () => ( { editReply } ) }
+    };
+
+    jest.spyOn( ServiceLocator, "$", "get" ).mockReturnValue( {
+        get: ( name: string ) => services[ name ]
+    } as never );
+
+    const context = {
+            customIdStrategy: { generateId: ( id: string ) => id },
+            getArgs: () => ( { masterChannelId: MASTER_CHANNEL_ID } ),
+            deleteArgs: jest.fn()
+        },
+        // The modal as discord hands it back, confirmed, from the setup screen it was opened on.
+        submit = {
+            guildId: GUILD_ID,
+            channel: {},
+            deferred: false,
+            replied: false,
+            fields: { getTextInputValue: () => "delete" },
+            deferUpdate: jest.fn( answering )
+        };
+
+    const onDeleteConfirmed = getBoundHandler<typeof context, typeof submit>(
+        SetupEditAdapter,
+        "VertixBot/UI-General/DeleteConfirmModal"
+    );
+
+    return { context, submit, onDeleteConfirmed, deleteDynamicMasterChannelWithCleanup, editReply };
+}
+
+/**
+ * Deleting a generator is a discord request for its control panel, for every room it has open, for
+ * the generator and for its category, one after another. Discord gives up on an answer after three
+ * seconds, and a modal it gave up on stays open on "Something went wrong" - over a generator that
+ * is gone by then.
+ */
+describe( "VertixBot/UI-V3/SetupEditAdapter/delete", () => {
+    beforeAll( async() => {
+        await TestWithServiceLocatorMock.withUIServiceMock();
+
+        ( { SetupEditAdapter } = await import( "@vertix.gg/bot/src/ui/v3/setup-edit/setup-edit-adapter" ) );
+    } );
+
+    afterEach( () => {
+        jest.restoreAllMocks();
+    } );
+
+    it( "should answer the modal before the generator is deleted", async() => {
+        let finishDeleting!: ( deleted: boolean ) => void;
+
+        const { context, submit, onDeleteConfirmed, deleteDynamicMasterChannelWithCleanup, editReply } = setupDelete(
+            () => new Promise<boolean>( ( resolve ) => {
+                finishDeleting = resolve;
+            } )
+        );
+
+        const handled = onDeleteConfirmed( context, submit );
+
+        await settle();
+
+        // The deleting is under way and has not come back - and the modal is answered regardless.
+        expect( deleteDynamicMasterChannelWithCleanup ).toHaveBeenCalledWith( {
+            guildId: GUILD_ID,
+            masterChannelId: MASTER_CHANNEL_ID
+        } );
+        expect( submit.deferUpdate ).toHaveBeenCalledTimes( 1 );
+        expect( editReply ).not.toHaveBeenCalled();
+
+        finishDeleting( true );
+
+        await handled;
+
+        expect( editReply ).toHaveBeenCalledWith( submit, {} );
+    } );
+
+    it( "should delete nothing when the modal can no longer be answered", async() => {
+        const { context, submit, onDeleteConfirmed, deleteDynamicMasterChannelWithCleanup, editReply } = setupDelete(
+            async() => true,
+            async() => {
+                throw new Error( "Unknown interaction" );
+            }
+        );
+
+        await expect( onDeleteConfirmed( context, submit ) ).resolves.toBeUndefined();
+
+        // Discord shows that modal an error - the generator must not vanish behind it.
+        expect( deleteDynamicMasterChannelWithCleanup ).not.toHaveBeenCalled();
+        expect( editReply ).not.toHaveBeenCalled();
     } );
 } );

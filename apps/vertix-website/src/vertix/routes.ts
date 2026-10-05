@@ -98,6 +98,18 @@ const routes = [
         path: "/posts/disable-auto-status",
         component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/disable-auto-status" ) ),
     },
+    {
+        path: "/posts/private-voice-channels",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/private-voice-channels" ) ),
+    },
+    {
+        path: "/posts/numbered-voice-channels",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/numbered-voice-channels" ) ),
+    },
+    {
+        path: "/posts/event-attendance",
+        component: React.lazy( () => import( "@vertix.gg/website/src/vertix/posts/event-attendance" ) ),
+    },
     // ---
     {
         path: "/welcome",

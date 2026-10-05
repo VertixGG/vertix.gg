@@ -24,7 +24,7 @@ export default function HowToSetup() {
                             searchTerm="/setup"
                             items={ [ {
                                 command: "/setup",
-                                description: "Displaying VoiceChannels setup wizard in ephemeral mode.",
+                                description: "Set up and configure VoiceChannels for this server.",
                                 botName: "VoiceChannels",
                                 botAvatar: VertixAvatar,
                             } ] }

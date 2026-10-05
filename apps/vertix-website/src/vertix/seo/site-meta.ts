@@ -193,6 +193,33 @@ export const ROUTE_META: readonly RouteMeta[] = [
         priority: 0.7,
     },
     {
+        path: "/posts/private-voice-channels",
+        sourcePath: "src/vertix/posts/private-voice-channels.tsx",
+        title: "Private Temporary Voice Channels in Discord | VoiceChannels",
+        description:
+            "Let members lock, hide and cap their own temporary voice channel - trusted and blocked "
+            + "lists, knock to join, transfer and claim. Every room control is free.",
+        priority: 0.8,
+    },
+    {
+        path: "/posts/numbered-voice-channels",
+        sourcePath: "src/vertix/posts/numbered-voice-channels.tsx",
+        title: "Numbered Auto Voice Channels for Discord | VoiceChannels",
+        description:
+            "An auto-scaling pool of numbered voice channels - Room-1, Room-2 - that opens a room before "
+            + "the last one fills, closes the spares and renumbers itself.",
+        priority: 0.8,
+    },
+    {
+        path: "/posts/event-attendance",
+        sourcePath: "src/vertix/posts/event-attendance.tsx",
+        title: "How to Track Discord Event Attendance | VoiceChannels",
+        description:
+            "Track who joined your Discord event: a check-in board before the start, no-shows marked "
+            + "after it, a call for subs, and an attendance log of who came. Free.",
+        priority: 0.8,
+    },
+    {
         path: "/pricing",
         sourcePath: "src/vertix/pages/pricing.tsx",
         title: "Plans and Pricing | VoiceChannels",

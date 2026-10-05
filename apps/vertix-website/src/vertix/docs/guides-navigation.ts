@@ -22,6 +22,14 @@ export const GUIDES_NAVIGATION: DocsNavigation = {
             ],
         },
         {
+            title: "How-to guides",
+            pages: [
+                { title: "Private Rooms", href: "/posts/private-voice-channels" },
+                { title: "Numbered Rooms", href: "/posts/numbered-voice-channels" },
+                { title: "Event Attendance", href: "/posts/event-attendance" },
+            ],
+        },
+        {
             title: "Resources",
             pages: [
                 { title: "Comparison", href: "/posts/comparison" },

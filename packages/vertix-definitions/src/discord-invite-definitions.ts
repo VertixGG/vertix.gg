@@ -57,6 +57,8 @@ export const INSTALL_SOURCES = [
     "listing-discordbotlist",
     "listing-discordbots",
     "listing-botlistme",
+    "listing-boticord",
+    "listing-discordbotsgg",
     // Written nowhere in the code either: the site's invite page as the r/discordapp post links it,
     // `/invite-vertix?src=post-reddit`.
     "post-reddit"

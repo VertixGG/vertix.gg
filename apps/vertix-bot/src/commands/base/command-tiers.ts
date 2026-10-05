@@ -14,6 +14,13 @@ export const COMMAND_TIERS = {
     /** Anyone in the server. The command's own handler decides what it will do for them. */
     ANY: "any",
 
+    /**
+     * Anyone in the server, and nothing is asked of the server either - not even that the bot can
+     * manage channels. For a command that only describes the bot, which has to work in a server
+     * that added it with no permissions at all: that is where somebody needs it most.
+     */
+    PUBLIC: "public",
+
     /** Server administrators. Discord enforces this one itself, from the command's declared permissions. */
     ADMIN: "admin"
 } as const;

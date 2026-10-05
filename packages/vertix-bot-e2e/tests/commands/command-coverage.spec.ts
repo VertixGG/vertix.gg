@@ -18,7 +18,7 @@ const COVERED_GENERAL_COMMANDS = [ "/setup", "/help", "/welcome" ];
  * change that cost the suite nothing. What actually matters is the other direction: a tier the suite
  * has no way to arrange would leave its commands untested while the loops still looked green.
  */
-const SATISFIABLE_TIERS = [ "admin", "any", "in-channel", "owner" ];
+const SATISFIABLE_TIERS = [ "admin", "any", "public", "in-channel", "owner" ];
 
 test.describe( "command coverage", () => {
     test( "every command outside a group has a test of its own", async() => {

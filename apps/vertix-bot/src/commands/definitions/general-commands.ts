@@ -14,7 +14,9 @@ import type { ICommandDefinition } from "@vertix.gg/bot/src/commands/definitions
  *
  * `help` is open to anyone - `G-01`. A member who cannot manage the guild could not read the help
  * before that, and its screen now asks the server for nothing at all so that it cannot fail for
- * them either.
+ * them either. Nor does it ask anything of the bot: it is `PUBLIC`, not `ANY`, because a server
+ * that added the bot without permissions was answered "missing permissions" for asking what the
+ * bot is - which is how list reviewers met it, and why top.gg declined it.
  *
  * `welcome` is not, despite `G-02`. It is the screen a server sees when the bot joins and it ends
  * in a Setup button, so it is the front of configuration rather than a description of the bot -
@@ -33,7 +35,7 @@ export const GENERAL_COMMAND_DEFINITIONS: ICommandDefinition[] = [
     {
         name: "help",
         description: "Get help with VoiceChannels.",
-        tier: COMMAND_TIERS.ANY,
+        tier: COMMAND_TIERS.PUBLIC,
         adapterName: "VertixBot/UI-General/HelpAdapter",
         flowTransition: "VertixBot/Commands/Help",
         flowTargetState: "VertixBot/UI-General/HelpFlow/States/Initial"

@@ -221,7 +221,7 @@ async function resolveCommandChannel(
     interaction: CommandInteraction<"cached">,
     tier: TCommandTier
 ): Promise<VoiceChannel | null> {
-    if ( COMMAND_TIERS.ADMIN === tier ) {
+    if ( COMMAND_TIERS.ADMIN === tier || COMMAND_TIERS.PUBLIC === tier ) {
         return null;
     }
 

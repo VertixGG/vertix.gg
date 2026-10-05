@@ -40,6 +40,9 @@ export async function passesCommandTier(
             // No channel of the caller's own is assumed - only that the bot can act at all.
             return await dynamicChannelBotPermissionsRequirements( interaction );
 
+        case COMMAND_TIERS.PUBLIC:
+            return true;
+
         case COMMAND_TIERS.ADMIN:
             return await passesAdminTier( interaction );
     }

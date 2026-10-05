@@ -1,4 +1,4 @@
-export type TCommandTierName = "owner" | "any" | "in-channel" | "admin";
+export type TCommandTierName = "owner" | "any" | "public" | "in-channel" | "admin";
 
 export interface ICatalogCommand {
     name: string;

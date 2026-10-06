@@ -1,23 +1,17 @@
-import { DiscordChannelList, DiscordChannelWizard, DiscordRoleSelectDropdown, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
+import { DiscordRoleSelectDropdown, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 
 import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
 import RouterLink from "@vertix.gg/website/src/vertix/ui/router-link";
 
+import { RoleWalkthrough } from "@vertix.gg/website/src/vertix/pages/features/server-roles/role-walkthrough";
 import { ServerSettingsSteps } from "@vertix.gg/website/src/vertix/pages/features/server-roles/server-settings-steps";
+import { VERIFIED_ROLES_WALKTHROUGH } from "@vertix.gg/website/src/vertix/pages/features/server-roles/server-roles-walkthroughs";
 
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 
-import {
-    DYNAMIC_CHANNELS_CATEGORY_NAME,
-    GENERATOR_CHANNEL_NAME,
-    VERIFIED_ROLE_MENTION,
-    VERIFIED_ROLES_WIZARD_STEPS,
-    VERIFIED_VIEW_CHANNELS,
-    WELCOME_CATEGORY_NAME,
-    WELCOME_CHANNELS
-} from "@vertix.gg/website/src/vertix/shared/server-roles-data";
+import { VERIFIED_ROLE_MENTION } from "@vertix.gg/website/src/vertix/shared/server-roles-data";
 
 import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
 
@@ -33,11 +27,11 @@ export default function VerifiedRolesPage() {
             { /* Overview */ }
             <section className="mb-12">
                 <p className="text-lg text-vc-ice-dim">
-                    Who your dynamic channels are for. Out of the box that is <strong>@everyone</strong>: every
-                    member sees the generator, opens a room and joins one. Narrow it to the role your members
-                    earn - <strong>@Member</strong>, say - and the bot keeps everyone else out: the generator, its
-                    category and every room it makes are gone from their channel list. The same roles are what a
-                    room&apos;s privacy works on. It is free.
+                    Who your dynamic channels are for. On a server that makes new members verify first, pick the role
+                    they earn - <strong>@Member</strong>, say - and the bot keeps everyone without it out: the
+                    generator, its category and every room it makes are gone from their channel list. The same roles
+                    are what a room&apos;s Private and Hidden act on. Out of the box the list is{ " " }
+                    <strong>@everyone</strong>, which keeps nobody out. It is free.
                 </p>
 
                 <div className="grid grid-cols-12 gap-4">
@@ -68,48 +62,92 @@ export default function VerifiedRolesPage() {
                 </div>
             </section>
 
-            { /* Who Sees What */ }
+            { /* How It Works */ }
             <section className="mb-12">
-                <h2 className="text-h4 mb-4">Who Sees What</h2>
-                <p className="text-vc-ice-dim mb-6">
-                    A server where newcomers see only <strong>#rules</strong> and <strong>#get-verified</strong> until
-                    they earn <strong>@Member</strong>, with the verified roles narrowed to <strong>@Member</strong>:
-                </p>
-                <div className="grid grid-cols-12 gap-6 mb-6">
-                    <div className="col-span-12 md:col-span-6">
-                        <p className="text-h5 text-vc-ice-dim mb-2">Holding @Member</p>
-                        <DiscordChannelList title={ WELCOME_CATEGORY_NAME } channels={ WELCOME_CHANNELS }/>
-                        <DiscordChannelList title={ DYNAMIC_CHANNELS_CATEGORY_NAME } channels={ VERIFIED_VIEW_CHANNELS }/>
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                        <p className="text-h5 text-vc-ice-dim mb-2">A newcomer without it</p>
-                        <DiscordChannelList title={ WELCOME_CATEGORY_NAME } channels={ WELCOME_CHANNELS }/>
-                    </div>
-                </div>
-                <p className="text-vc-ice-dim mb-0">
-                    Left at <strong>@everyone</strong>, the newcomer would see <strong>{ GENERATOR_CHANNEL_NAME }</strong>{ " " }
-                    and every public room too - which is the whole reason to narrow it. A narrower list hides rather
-                    than locks: a public room is public to the roles on the list, and nobody else sees it at all.
-                </p>
-            </section>
-
-            <hr />
-
-            { /* Privacy */ }
-            <section className="mb-12">
-                <h2 className="text-h4 mb-4">Public, Private, Hidden</h2>
+                <h2 className="text-h4 mb-4">How It Works</h2>
                 <p className="text-vc-ice-dim">
-                    A room&apos;s privacy is written onto the roles on the list. Here is one room through its three
-                    states, as somebody holding <strong>@Member</strong> sees it:
+                    It is built for servers that make new members verify first - read the rules, pass a captcha, get a
+                    role - before they can see anything. The rooms follow the same gate:
                 </p>
-                <DiscordChannelWizard
-                    steps={ VERIFIED_ROLES_WIZARD_STEPS }
-                    autoPlay={ true }
-                    autoPlayInterval={ 4000 }
-                    showStepIndicators={ true }
-                    showNavigation={ true }
-                    pauseOnHover={ true }
-                />
+                <ol className="text-vc-ice-dim mb-6">
+                    <li>
+                        <strong>Pick the roles your members earn</strong> - <strong>@Member</strong>, say. Left at{ " " }
+                        <strong>@everyone</strong>, the default, there is no gate: every member is on the list.
+                    </li>
+                    <li>
+                        <strong>Everybody without one is kept out.</strong> The generator, its category, its control panel
+                        and every room it makes disappear from their channel list - they can neither open a room nor
+                        join one.
+                    </li>
+                    <li>
+                        <strong>A room&apos;s privacy works on the same roles.</strong> When its owner sets it Private, the
+                        roles on the list can still see it but not join; Hidden takes it off their list.
+                    </li>
+                </ol>
+
+                <h3 className="text-h5 text-vc-cyan mb-4">What it does to permissions</h3>
+                <p className="text-vc-ice-dim">
+                    The bot writes this onto every room, and rewrites it whenever the list or the room&apos;s privacy
+                    changes:
+                </p>
+                <div className="overflow-x-auto mb-4">
+                    <table className="vc-table">
+                        <thead>
+                            <tr>
+                                <th>Who</th>
+                                <th>Public room</th>
+                                <th>Private room</th>
+                                <th>Hidden room</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>The roles on the list</td>
+                                <td>See and join</td>
+                                <td>See, cannot join</td>
+                                <td>Cannot see it</td>
+                            </tr>
+                            <tr>
+                                <td>Everyone else</td>
+                                <td>Cannot see it</td>
+                                <td>Cannot see it</td>
+                                <td>Cannot see it</td>
+                            </tr>
+                            <tr>
+                                <td>Members the owner trusts</td>
+                                <td>See and join</td>
+                                <td>See and join</td>
+                                <td>See and join</td>
+                            </tr>
+                            <tr>
+                                <td>Members the owner blocks</td>
+                                <td>Cannot see it</td>
+                                <td>Cannot see it</td>
+                                <td>Cannot see it</td>
+                            </tr>
+                            <tr>
+                                <td><RouterLink to="/features/staff-roles">Staff roles</RouterLink></td>
+                                <td>See and join</td>
+                                <td>See and join</td>
+                                <td>See and join</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p className="text-vc-ice-dim mb-6">
+                    &quot;Everyone else&quot; only exists once the list is narrower than <strong>@everyone</strong>: a
+                    public room is then public to the roles on the list, and nobody else sees it at all. The generator,
+                    its category and its control panel are kept to the same roles. A room&apos;s owner always gets into
+                    it, and Discord lets members with Administrator into every channel.
+                </p>
+
+                <h3 className="text-h5 text-vc-cyan mb-4">Through a member&apos;s eyes</h3>
+                <p className="text-vc-ice-dim">
+                    Sam&apos;s Discord, on a server where newcomers see only <strong>#rules</strong> and{ " " }
+                    <strong>#get-verified</strong> until they earn <strong>@Member</strong>. Press{ " " }
+                    <strong>Next</strong> to see what the verified roles change for Sam.
+                </p>
+                <RoleWalkthrough steps={ VERIFIED_ROLES_WALKTHROUGH }/>
             </section>
 
             <hr />
@@ -179,25 +217,6 @@ export default function VerifiedRolesPage() {
                     server&apos;s list. The wizard that makes a new generator asks for its verified roles too, as its
                     third step.
                 </p>
-            </section>
-
-            <hr />
-
-            { /* Who Else */ }
-            <section className="mb-12">
-                <h2 className="text-h4 mb-4">Who Else Gets In</h2>
-                <p className="text-vc-ice-dim">The list is who the rooms are for. A few more get in regardless:</p>
-                <ul className="text-vc-ice-dim mb-0">
-                    <li>The room&apos;s owner, always.</li>
-                    <li>
-                        <RouterLink to="/features/staff-roles">Staff roles</RouterLink>, whatever state the room is in.
-                    </li>
-                    <li>
-                        Members the owner trusts, on the list or not. It cuts both ways: a member the owner blocks
-                        stays out, on the list or not.
-                    </li>
-                    <li>Members with Administrator - Discord lets them into every channel.</li>
-                </ul>
             </section>
 
             <hr />

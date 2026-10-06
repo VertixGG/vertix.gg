@@ -1,21 +1,19 @@
-import { DiscordChannelWizard, DiscordRoleSelectDropdown, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
+import { DiscordRoleSelectDropdown, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 
 import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
 import RouterLink from "@vertix.gg/website/src/vertix/ui/router-link";
 
+import { RoleWalkthrough } from "@vertix.gg/website/src/vertix/pages/features/server-roles/role-walkthrough";
 import { ServerSettingsSteps } from "@vertix.gg/website/src/vertix/pages/features/server-roles/server-settings-steps";
+import { STAFF_ROLES_WALKTHROUGH } from "@vertix.gg/website/src/vertix/pages/features/server-roles/server-roles-walkthroughs";
 
 import { DEMO_MEMBERS, DEMO_OWNER } from "@vertix.gg/website/src/vertix/pages/features/dynamic-channel-v3-features/dynamic-channel-v3-constants";
 
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 
-import {
-    FROM_SERVER_OPTIONS,
-    STAFF_ROLE_MENTIONS,
-    STAFF_ROLES_WIZARD_STEPS
-} from "@vertix.gg/website/src/vertix/shared/server-roles-data";
+import { FROM_SERVER_OPTIONS, STAFF_ROLE_MENTIONS } from "@vertix.gg/website/src/vertix/shared/server-roles-data";
 
 import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
 
@@ -31,9 +29,9 @@ export default function StaffRolesPage() {
             { /* Overview */ }
             <section className="mb-12">
                 <p className="text-lg text-vc-ice-dim">
-                    Roles no room can shut out. Whatever its owner chooses, a room still shows itself to a staff role
-                    and lets it connect - and the owner cannot block or kick somebody who holds one. Your moderators
-                    reach any room without being let in one at a time. It is free.
+                    For your moderators: roles no room can shut out. Whatever its owner chooses, a room still shows
+                    itself to a staff role and lets it connect - and the owner cannot block or kick somebody who holds
+                    one. Your moderators reach any room without being let in one at a time. It is free.
                 </p>
 
                 <div className="grid grid-cols-12 gap-4">
@@ -68,50 +66,38 @@ export default function StaffRolesPage() {
             <section className="mb-12">
                 <h2 className="text-h4 mb-4">How It Works</h2>
                 <p className="text-vc-ice-dim">
-                    { DEMO_OWNER }&apos;s room, and { DEMO_MEMBERS.mia.username }, who holds{ " " }
-                    <strong>@Moderator</strong> - one of the server&apos;s staff roles.
+                    It is for your moderators. A room belongs to its owner, who can make it private, hide it, block
+                    people from it and kick them out of it - and staff roles are the exception to all four:
                 </p>
-                <DiscordChannelWizard
-                    steps={ STAFF_ROLES_WIZARD_STEPS }
-                    autoPlay={ true }
-                    autoPlayInterval={ 4000 }
-                    showStepIndicators={ true }
-                    showNavigation={ true }
-                    pauseOnHover={ true }
-                />
-            </section>
+                <ol className="text-vc-ice-dim mb-6">
+                    <li><strong>They always see the room</strong> - Hidden never takes it off their list.</li>
+                    <li>
+                        <strong>They always get in</strong> - Private never locks them out, and nobody has to trust them
+                        first.
+                    </li>
+                    <li>
+                        <strong>They cannot be blocked or kicked</strong> - the owner&apos;s Block and Kick refuse a staff
+                        member, and say why.
+                    </li>
+                </ol>
 
-            { /* The Refusal */ }
-            <section className="mb-12">
-                <h2 className="text-h4 mb-4">Block and Kick</h2>
-                <p className="text-vc-ice-dim mb-4">
-                    When an owner picks a staff member to block or kick, the bot does nothing to them and tells the
-                    owner why. With a logs channel set, the attempt is written there too.
+                <h3 className="text-h5 text-vc-cyan mb-4">What it does to permissions</h3>
+                <p className="text-vc-ice-dim mb-6">
+                    The bot allows every staff role View Channel and Connect on each room, and leaves the staff roles
+                    out whenever it writes a room&apos;s privacy - so no state takes that away. That is all it grants: a
+                    way into any room, not the room itself. A room&apos;s panel answers to its owner alone, and anybody
+                    else who presses it - staff included - is told it is not their channel. To move, mute or disconnect
+                    somebody, a moderator uses the Discord permissions their own role already has, and a room whose
+                    owner has left is claimed by staff the same way as by anyone else in it.
                 </p>
-                <div className="discord-chat-container m-0">
-                    <DiscordUIComponentMessage
-                        author="VoiceChannels"
-                        avatar={ VertixAvatar }
-                        timestamp="Today at 9:12 PM"
-                        componentName="VertixBot/UI-V3/DynamicChannelPermissionsComponent"
-                        preferredEmbedsGroup="VertixBot/UI-General/StaffMemberEmbedGroup"
-                        variables={ { staffMemberDisplayName: DEMO_MEMBERS.mia.username } }
-                        hideElements={ true }
-                        ephemeral={ true }
-                    />
-                </div>
-            </section>
 
-            { /* Access, Not Control */ }
-            <section className="mb-12">
-                <h2 className="text-h4 mb-4">A Way In, Not the Controls</h2>
-                <p className="text-vc-ice-dim mb-0">
-                    A staff role gets a moderator into any room; it does not hand them the room. A room&apos;s panel
-                    answers to its owner alone, and anybody else who presses it - staff included - is told it is not
-                    their channel. To move, mute or disconnect somebody, a moderator uses the Discord permissions their
-                    own role already has. And a room whose owner has left is claimed by staff the same way as by anyone
-                    else in it.
+                <h3 className="text-h5 text-vc-cyan mb-4">Through members&apos; eyes</h3>
+                <p className="text-vc-ice-dim">
+                    { DEMO_OWNER }&apos;s room, side by side through the eyes of two members: Alex, and{ " " }
+                    { DEMO_MEMBERS.mia.username }, who holds <strong>@Moderator</strong> - one of the server&apos;s staff
+                    roles. Press <strong>Next</strong> to follow what the owner does to it.
                 </p>
+                <RoleWalkthrough steps={ STAFF_ROLES_WALKTHROUGH }/>
             </section>
 
             <hr />
@@ -259,6 +245,11 @@ export default function StaffRolesPage() {
                         blocked until the owner unblocks them - a block on a member outranks any role.
                     </li>
                     <li>
+                        <strong>Refusals are logged.</strong> With a{ " " }
+                        <RouterLink to="/posts/how-to-setup-logs-channel">logs channel</RouterLink> set, an owner&apos;s
+                        attempt to block or kick a staff member is written there too.
+                    </li>
+                    <li>
                         <strong>Auto-scaling pools do not use it.</strong> An{ " " }
                         <RouterLink to="/features/auto-scaling">auto-scaling</RouterLink> pool&apos;s rooms take their
                         permissions from the pool&apos;s category, which you set in Discord.
@@ -280,12 +271,6 @@ export default function StaffRolesPage() {
             { /* FAQ */ }
             <section className="mb-12">
                 <h2 className="text-h4 mb-4">Questions</h2>
-
-                <h3 className="text-h5">Can staff use another member&apos;s panel?</h3>
-                <p className="text-vc-ice-dim">
-                    No. Every room&apos;s panel answers to its owner alone. Staff get in; what they do there is down to
-                    their own Discord permissions.
-                </p>
 
                 <h3 className="text-h5">Can an owner keep staff out?</h3>
                 <p className="text-vc-ice-dim">

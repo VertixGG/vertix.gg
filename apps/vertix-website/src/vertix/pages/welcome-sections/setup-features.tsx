@@ -14,8 +14,8 @@ export default function SetupFeatures() {
                                 <li className="mb-2">🌐 <strong>Language Select</strong> - Speak your language.</li>
                                 <li className="mb-2">🚫 <strong>Bad-Words Filter</strong> - Keep your channel names clean.</li>
                                 <li className="mb-2">🛡️ <strong>Verified Roles</strong> - Decide who the channels are for.</li>
-                                <li className="mb-2">👮 <strong>Staff Roles</strong> - Who may act on a channel they don't own.</li>
-                                <li className="mb-2">🎧 <strong>Voice Role</strong> - Handed out while a member sits in voice.</li>
+                                <li className="mb-2">👮 <strong>Staff Roles</strong> - Who no channel can shut out.</li>
+                                <li className="mb-2">🎧 <strong>Voice Role</strong> - Handed out while a member sits in a dynamic channel.</li>
                                 <li className="mb-2">⏱️ <strong>Claim Timings</strong> - How long an abandoned channel waits, and how long the vote runs.</li>
                             </ul>
                         </div>

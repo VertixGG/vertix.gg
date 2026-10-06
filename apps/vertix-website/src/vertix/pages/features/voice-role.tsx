@@ -1,19 +1,17 @@
-import { DiscordChannelWizard, DiscordRoleSelectDropdown, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
+import { DiscordRoleSelectDropdown, DiscordUIComponentMessage } from "@vertix.gg/discord-ui";
 
 import VertixAvatar from "@vertix.gg/assets/brand/vc-avatar.webp";
 import UserAvatar from "@vertix.gg/assets/brand/user-avatar.webp";
 
 import RouterLink from "@vertix.gg/website/src/vertix/ui/router-link";
 
+import { RoleWalkthrough } from "@vertix.gg/website/src/vertix/pages/features/server-roles/role-walkthrough";
 import { ServerSettingsSteps } from "@vertix.gg/website/src/vertix/pages/features/server-roles/server-settings-steps";
+import { VOICE_ROLE_WALKTHROUGH } from "@vertix.gg/website/src/vertix/pages/features/server-roles/server-roles-walkthroughs";
 
 import { DASHBOARD_URL } from "@vertix.gg/website/src/vertix/shared/dashboard";
 
-import {
-    FROM_SERVER_OPTIONS,
-    VOICE_ROLE_MENTION,
-    VOICE_ROLE_WIZARD_STEPS
-} from "@vertix.gg/website/src/vertix/shared/server-roles-data";
+import { FROM_SERVER_OPTIONS, VOICE_ROLE_MENTION } from "@vertix.gg/website/src/vertix/shared/server-roles-data";
 
 import { SETUP_EMPTY_VARIABLES } from "@vertix.gg/website/src/vertix/components/discord/preview-variables";
 
@@ -30,8 +28,8 @@ export default function VoiceRolePage() {
             <section className="mb-12">
                 <p className="text-lg text-vc-ice-dim">
                     A role VoiceChannels gives a member while they are in one of its rooms, and takes back the
-                    moment they leave. Give that role a text channel and the channel opens to whoever is talking
-                    right now; list it separately and the member list groups them at the top. It is free.
+                    moment they leave. Use it to open a text channel to whoever is talking right now, to colour their
+                    names while they talk, or to group them together in the member list. It is free.
                 </p>
 
                 <div className="grid grid-cols-12 gap-4">
@@ -66,16 +64,55 @@ export default function VoiceRolePage() {
             <section className="mb-12">
                 <h2 className="text-h4 mb-4">How It Works</h2>
                 <p className="text-vc-ice-dim">
-                    An evening on a server whose voice role is <strong>@Voice</strong>.
+                    You pick a role once. From then on the bot does two things with it, and nothing else:
                 </p>
-                <DiscordChannelWizard
-                    steps={ VOICE_ROLE_WIZARD_STEPS }
-                    autoPlay={ true }
-                    autoPlayInterval={ 4000 }
-                    showStepIndicators={ true }
-                    showNavigation={ true }
-                    pauseOnHover={ true }
-                />
+                <ol className="text-vc-ice-dim mb-6">
+                    <li>
+                        <strong>Gives it</strong> to a member the moment they land in a room a generator made - their
+                        own room or anybody else&apos;s.
+                    </li>
+                    <li>
+                        <strong>Takes it back</strong> the moment they leave voice, or move to a channel the bot did not
+                        make.
+                    </li>
+                </ol>
+
+                <h3 className="text-h5 text-vc-cyan mb-4">What it does to permissions</h3>
+                <p className="text-vc-ice-dim">
+                    Nothing on its own - the bot never writes the voice role into any channel&apos;s permissions. The
+                    role carries whatever you give it, and only for as long as it is held, so what it is for is up to
+                    you:
+                </p>
+                <ul className="text-vc-ice-dim">
+                    <li>
+                        <strong>A text channel for whoever is talking.</strong> On <strong>#voice-chat</strong>, take View
+                        Channel from <strong>@everyone</strong> and allow it for <strong>@Voice</strong>. The channel
+                        appears for a member the moment they join a room, and is gone again when they leave.
+                    </li>
+                    <li>
+                        <strong>A colour or a badge while talking.</strong> Give <strong>@Voice</strong> a colour or an
+                        icon, and it shows on a member&apos;s name only while they are in voice.
+                    </li>
+                    <li>
+                        <strong>Everyone in voice, together.</strong> Switch on{ " " }
+                        <strong>Display role members separately from online members</strong> for the role, and the
+                        member list puts everyone in a room under a heading of its own.
+                    </li>
+                </ul>
+                <p className="text-vc-ice-dim mb-6">
+                    Anybody who can open a room can hold the role, so give it nothing you would not give everybody in
+                    voice. It has no say over who can see or join the rooms either - that is what{ " " }
+                    <RouterLink to="/features/verified-roles">verified roles</RouterLink> and{ " " }
+                    <RouterLink to="/features/staff-roles">staff roles</RouterLink> are for.
+                </p>
+
+                <h3 className="text-h5 text-vc-cyan mb-4">Through a member&apos;s eyes</h3>
+                <p className="text-vc-ice-dim">
+                    Alex&apos;s Discord, on a server whose voice role is <strong>@Voice</strong> and whose{ " " }
+                    <strong>#voice-chat</strong> only <strong>@Voice</strong> can see. Press <strong>Next</strong> to
+                    follow Alex through an evening.
+                </p>
+                <RoleWalkthrough steps={ VOICE_ROLE_WALKTHROUGH }/>
             </section>
 
             <hr />
@@ -243,8 +280,9 @@ export default function VoiceRolePage() {
                         generator channel itself and the server&apos;s other voice channels do not.
                     </li>
                     <li>
-                        <strong>Give it a role of its own.</strong> Leaving a room takes the role off, whoever gave it -
-                        so a rank, a colour or any role members hold for another reason is the wrong one to pick.
+                        <strong>Make a role just for this.</strong> Leaving a room takes the role off whoever holds it,
+                        however they came by it - so a rank, or any role members hold for another reason, is the wrong
+                        one to pick.
                     </li>
                     <li>
                         <strong>One room, one role.</strong> A member is in one room at a time, and a room gives one
@@ -273,24 +311,9 @@ export default function VoiceRolePage() {
             <section className="mb-12">
                 <h2 className="text-h4 mb-4">Questions</h2>
 
-                <h3 className="text-h5">What is it good for?</h3>
-                <p className="text-vc-ice-dim">
-                    A text channel only the people in voice can see: give <strong>@Voice</strong> View Channel on it and
-                    take View Channel from <strong>@everyone</strong>. Or switch on{ " " }
-                    <strong>Display role members separately from online members</strong> for the role, and everyone
-                    talking is grouped at the top of the member list.
-                </p>
-
                 <h3 className="text-h5">Can a member hold two voice roles?</h3>
                 <p className="text-vc-ice-dim">
                     No. A generator&apos;s own role replaces the server&apos;s, and a member is only ever in one room.
-                </p>
-
-                <h3 className="text-h5">What about who can see the rooms?</h3>
-                <p className="text-vc-ice-dim">
-                    That is a different setting: <RouterLink to="/features/verified-roles">verified roles</RouterLink>{ " " }
-                    decide who the rooms are for, and <RouterLink to="/features/staff-roles">staff roles</RouterLink>{ " " }
-                    who no room can keep out.
                 </p>
 
                 <h3 className="text-h5">Does it cost anything?</h3>

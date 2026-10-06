@@ -144,7 +144,8 @@ function renderCell( cell: string | null | undefined ) {
 
 /**
  * A cell in the audit table. A string is what that bot calls the feature, `null` is absent
- * entirely, and `undefined` is a row nobody has checked - which nothing is any more.
+ * entirely, and `undefined` is a cell nobody has checked - which is only the other bots' answers on
+ * keeping the rooms to chosen roles, a row that used to be filed, wrongly, as getting past the lock.
  *
  * The two gates are deliberately separate. `"Paid"` is a subscription and nothing else; `"Vote"`
  * is a subscription or a vote on top.gg, which the bot hands back as a link. They are not the
@@ -205,8 +206,9 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
             { capability: "Start rooms public, private or hidden", cells: [ "Default privacy", "Lock by default", "Privacy mode", "Default state" ] },
             { capability: "Start rooms at a set limit", cells: [ "Default limit", null, "User limit", "User limit" ] },
             { capability: "Bitrate set by the generator", cells: [ "Inherited", null, "Setting", "Setting" ] },
-            { capability: "Roles that get in past the lock (per generator)", cells: [ "Verified roles", null, "Access roles", "Moderator role" ] },
-            { capability: "Roles that can act on any room (per generator)", cells: [ "Staff roles", null, null, "Moderator role" ] },
+            { capability: "Keep the rooms to the roles you pick (per generator)", cells: [ "Verified roles", undefined, undefined, undefined ] },
+            { capability: "Roles that get in past the lock (per generator)", cells: [ "Staff roles", null, "Access roles", "Moderator role" ] },
+            { capability: "Roles that can act on any room (per generator)", cells: [ null, null, null, "Moderator role" ] },
             { capability: "A role while somebody is in a room (per generator)", cells: [ "Voice role", null, "Paid", null ] },
             { capability: "Remember each owner's settings", cells: [ "Auto save", "Global profile", "Recover settings", null ] },
             { capability: "Let the bot write the status itself", cells: [ "Auto status", null, null, null ] },
@@ -222,8 +224,9 @@ const AUDIT: { group: string, rows: AuditRow[] }[] = [
     {
         group: "What you can configure on guild level",
         rows: [
-            { capability: "Roles that get in past the lock (server-wide)", cells: [ "Verified roles", "Paid", null, null ] },
-            { capability: "Roles that can act on any room (server-wide)", cells: [ "Staff roles", "Staff role", null, null ] },
+            { capability: "Keep the rooms to the roles you pick (server-wide)", cells: [ "Verified roles", undefined, undefined, undefined ] },
+            { capability: "Roles that get in past the lock (server-wide)", cells: [ "Staff roles", "Paid", null, null ] },
+            { capability: "Roles that can act on any room (server-wide)", cells: [ null, "Staff role", null, null ] },
             { capability: "A role while somebody is in a room (server-wide)", cells: [ "Voice role", "Paid", null, "One free" ] },
             { capability: "Keep chosen words out of room names (server-wide)", cells: [ "Badwords", "Blacklisted Words", null, null ] },
             { capability: "Speak the member's own language", cells: [ "Seven languages", "Per server", "17 languages", null ] },

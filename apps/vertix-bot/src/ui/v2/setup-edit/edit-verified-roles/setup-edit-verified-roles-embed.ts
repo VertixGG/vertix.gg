@@ -31,7 +31,7 @@ const SetupEditVerifiedRolesEmbed = new EmbedBuilder<UIArgs, typeof vars>( "Vert
         vars.verifiedRolesDisplay
     ) )
     .setFooterText( () =>
-        "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged."
+        "Note: The changes are applied immediately to the existing dynamic channels."
     )
     .setOptions( () => ( {
         verifiedRolesDisplay: {

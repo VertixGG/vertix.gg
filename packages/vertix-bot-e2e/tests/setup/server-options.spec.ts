@@ -30,7 +30,7 @@ test.describe( "server options", () => {
         );
 
         // Matched as a prefix: discord draws an option's description under its label, so the text of
-        // the row is "Voice Role\nThe role given to members while they are in a voice channel".
+        // the row is "Voice Role\nThe role given to members while they are in a dynamic channel".
         for ( const value of [ "editVoiceRole", "editVerifiedRoles", "editStaffRoles" ] ) {
             const label = BotCatalog.$.selectOptionLabel( "VertixBot/UI-General/ServerOptionsEditSelectMenu", value );
 

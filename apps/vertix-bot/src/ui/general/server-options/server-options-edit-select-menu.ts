@@ -61,7 +61,7 @@ export class ServerOptionsEditSelectMenu extends UIElementStringSelectMenu {
         return [
             {
                 label: "Voice Role",
-                description: "The role given to members while they are in a voice channel",
+                description: "The role given to members while they are in a dynamic channel",
                 value: EDIT_VOICE_ROLE,
                 emoji: { name: "🎙️" }
             },
@@ -73,7 +73,7 @@ export class ServerOptionsEditSelectMenu extends UIElementStringSelectMenu {
             },
             {
                 label: "Staff Roles",
-                description: "Who may act on a channel they do not own",
+                description: "Who no channel can shut out, and no owner can block or kick",
                 value: EDIT_STAFF_ROLES,
                 emoji: { name: "🔑" }
             },

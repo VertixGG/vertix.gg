@@ -45,7 +45,7 @@ export class SetupEditVerifiedRolesEmbed extends VerifiedRolesEmbed {
     }
 
     protected getFooter() {
-        return "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.";
+        return "Note: The changes are applied immediately to the existing dynamic channels.";
     }
 
     protected getLogic( args: UIArgs ) {

@@ -854,7 +854,7 @@
           "selectOptions": [
             {
               "label": "ボイスロール",
-              "description": "ボイスチャンネルにいる間メンバーに付与されるロール",
+              "description": "ダイナミックチャンネルにいる間メンバーに付与されるロール",
               "value": "editVoiceRole"
             },
             {
@@ -864,7 +864,7 @@
             },
             {
               "label": "スタッフロール",
-              "description": "自分のものではないチャンネルを操作できる人",
+              "description": "どのチャンネルからも締め出されず、ブロックやキックもされない人",
               "value": "editStaffRoles"
             },
             {
@@ -1880,14 +1880,14 @@
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
         "title": "⚙️  サーバー設定",
-        "description": "個々のジェネレーターではなく、サーバー全体に関わる設定です。\n\n**Voice Role** — ボイスチャンネルにいる間、メンバーに付与されます。\n**Verified Roles** — ダイナミックチャンネルを使える対象です。\n**Staff Roles** — 自分のものではないチャンネルを操作できる人です。\n**Bad Words** — チャンネル名に使えない単語です。\n**Claim** — 放置されたチャンネルが待つ時間と、投票の長さです。\n\n変更したい項目を選んでください。"
+        "description": "個々のジェネレーターではなく、サーバー全体に関わる設定です。\n\n**Voice Role** — ダイナミックチャンネルにいる間、メンバーに付与されます。\n**Verified Roles** — ダイナミックチャンネルを使える対象です。\n**Staff Roles** — どのチャンネルからも締め出されず、オーナーにブロックやキックもされない人です。\n**Bad Words** — チャンネル名に使えない単語です。\n**Claim** — 放置されたチャンネルが待つ時間と、投票の長さです。\n\n変更したい項目を選んでください。"
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
         "title": "🛡️  サーバーロール",
-        "description": "このサーバーのダイナミックチャンネルが従うロールです。\n\n**Voice Role** — ボイスチャンネルにいる間メンバーに付与され、退出すると外されます。\n**Verified Roles** — チャンネルを使える対象です。それ以外は入れません。\n**Staff Roles** — 自分のものではないチャンネルを操作できる人です。\n\n変更したい項目を選んでください。"
+        "description": "このサーバーのダイナミックチャンネルが従うロールです。\n\n**Voice Role** — ダイナミックチャンネルにいる間メンバーに付与され、退出すると外されます。\n**Verified Roles** — チャンネルを使える対象です。それ以外は入れません。\n**Staff Roles** — どのチャンネルからも締め出されず、オーナーにブロックやキックもされない人です。\n\n変更したい項目を選んでください。"
       }
     },
     {
@@ -2814,7 +2814,7 @@
       "content": {
         "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
         "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n空のままにすると、サーバー全体の認証済みロールが使われます。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
-        "footer": "注意: 変更は編集後に状態が変わるダイナミックチャンネルにのみ適用され、チャンネル内の既存のロールは変更されません。",
+        "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -3942,7 +3942,7 @@
       "content": {
         "title": "🛡️  マスターチャンネル #{index} の認証済みロールを編集",
         "description": "認証済みロールを編集すると、マスターチャンネル #{index} が作成したダイナミックチャンネルに影響します。\n\n空のままにすると、サーバー全体の認証済みロールが使われます。\n\n**_現在の認証済みロール_**\n\n> {verifiedRolesDisplay}",
-        "footer": "注意: 変更は編集後に状態が変わるダイナミックチャンネルにのみ適用され、チャンネル内の既存のロールは変更されません。",
+        "footer": "注意: 変更は既存のダイナミックチャンネルに即座に適用されます。",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",

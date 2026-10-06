@@ -1879,14 +1879,14 @@
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
         "title": "⚙️  Server settings",
-        "description": "Settings that belong to the whole server rather than to one generator.\n\n**Voice Role** — given to members while they are in a voice channel.\n**Verified Roles** — who dynamic channels are for.\n**Staff Roles** — who may act on a channel they do not own.\n**Bad Words** — words a member cannot put in a channel name.\n**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\nPick one to change it."
+        "description": "Settings that belong to the whole server rather than to one generator.\n\n**Voice Role** — given to members while they are in a dynamic channel.\n**Verified Roles** — who dynamic channels are for.\n**Staff Roles** — who no channel can shut out, and no owner can block or kick.\n**Bad Words** — words a member cannot put in a channel name.\n**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\nPick one to change it."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
         "title": "🛡️  Server roles",
-        "description": "Which roles this server's dynamic channels answer to.\n\n**Voice Role** — given to members while they are in a voice channel, and taken back when they leave.\n**Verified Roles** — who the channels are for. Everyone else is kept out.\n**Staff Roles** — who may act on a channel they do not own.\n\nPick one to change it."
+        "description": "Which roles this server's dynamic channels answer to.\n\n**Voice Role** — given to members while they are in a dynamic channel, and taken back when they leave.\n**Verified Roles** — who the channels are for. Everyone else is kept out.\n**Staff Roles** — who no channel can shut out, and no owner can block or kick.\n\nPick one to change it."
       }
     },
     {
@@ -2817,7 +2817,7 @@
       "content": {
         "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
         "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\nLeaving it empty falls back to the server wide verified roles.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
-        "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
+        "footer": "Note: The changes are applied immediately to the existing dynamic channels.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -3967,7 +3967,7 @@
       "content": {
         "title": "🛡️  Edit Verified Roles Of Master Channel #{index}",
         "description": "Editing verified roles will impact the dynamic channels created by Master Channel #{index}.\n\nLeaving it empty falls back to the server wide verified roles.\n\n**_Current Verified Roles_**\n\n> {verifiedRolesDisplay}",
-        "footer": "Note: The changes will only affect dynamic channels that change their state after the editing, the old roles in the channel will be be unchanged.",
+        "footer": "Note: The changes are applied immediately to the existing dynamic channels.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",

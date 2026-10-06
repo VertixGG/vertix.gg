@@ -18,9 +18,9 @@ const SetupServerOptionsEmbed = new EmbedBuilder( "VertixBot/UI-General/SetupSer
     .setTitle( "⚙️  Server settings" )
     .setDescription(
         "Settings that belong to the whole server rather than to one generator.\n\n" +
-        "**Voice Role** — given to members while they are in a voice channel.\n" +
+        "**Voice Role** — given to members while they are in a dynamic channel.\n" +
         "**Verified Roles** — who dynamic channels are for.\n" +
-        "**Staff Roles** — who may act on a channel they do not own.\n" +
+        "**Staff Roles** — who no channel can shut out, and no owner can block or kick.\n" +
         "**Bad Words** — words a member cannot put in a channel name.\n" +
         "**Claim** — how long an abandoned channel waits, and how long the vote runs.\n\n" +
         "Pick one to change it."
@@ -34,10 +34,10 @@ const SetupServerOptionsRolesEmbed = new EmbedBuilder( "VertixBot/UI-General/Set
     .setTitle( "🛡️  Server roles" )
     .setDescription(
         "Which roles this server's dynamic channels answer to.\n\n" +
-        "**Voice Role** — given to members while they are in a voice channel, and taken back when " +
+        "**Voice Role** — given to members while they are in a dynamic channel, and taken back when " +
         "they leave.\n" +
         "**Verified Roles** — who the channels are for. Everyone else is kept out.\n" +
-        "**Staff Roles** — who may act on a channel they do not own.\n\n" +
+        "**Staff Roles** — who no channel can shut out, and no owner can block or kick.\n\n" +
         "Pick one to change it."
     )
     .build();

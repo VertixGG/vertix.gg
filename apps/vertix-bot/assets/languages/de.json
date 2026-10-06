@@ -854,7 +854,7 @@
           "selectOptions": [
             {
               "label": "Sprachrolle",
-              "description": "Die Rolle, die Mitglieder in einem Sprachkanal erhalten",
+              "description": "Die Rolle, die Mitglieder in einem dynamischen Kanal erhalten",
               "value": "editVoiceRole"
             },
             {
@@ -864,7 +864,7 @@
             },
             {
               "label": "Team-Rollen",
-              "description": "Wer in einem fremden Kanal handeln darf",
+              "description": "Wen kein Kanal aussperren und kein Besitzer blockieren oder kicken kann",
               "value": "editStaffRoles"
             },
             {
@@ -1880,14 +1880,14 @@
       "name": "VertixBot/UI-General/SetupServerOptionsEmbed",
       "content": {
         "title": "⚙️  Servereinstellungen",
-        "description": "Einstellungen, die dem ganzen Server gehören und nicht einem einzelnen Generator.\n\n**Voice Role** — wird Mitgliedern gegeben, solange sie in einem Sprachkanal sind.\n**Verified Roles** — für wen dynamische Kanäle da sind.\n**Staff Roles** — wer bei einem Kanal eingreifen darf, der ihm nicht gehört.\n**Bad Words** — Wörter, die ein Mitglied nicht in einen Kanalnamen setzen darf.\n**Claim** — wie lange ein verlassener Kanal wartet und wie lange die Abstimmung läuft.\n\nWähle eine Option, um sie zu ändern."
+        "description": "Einstellungen, die dem ganzen Server gehören und nicht einem einzelnen Generator.\n\n**Voice Role** — wird Mitgliedern gegeben, solange sie in einem dynamischen Kanal sind.\n**Verified Roles** — für wen dynamische Kanäle da sind.\n**Staff Roles** — wen kein Kanal aussperren und kein Besitzer blockieren oder kicken kann.\n**Bad Words** — Wörter, die ein Mitglied nicht in einen Kanalnamen setzen darf.\n**Claim** — wie lange ein verlassener Kanal wartet und wie lange die Abstimmung läuft.\n\nWähle eine Option, um sie zu ändern."
       }
     },
     {
       "name": "VertixBot/UI-General/SetupServerOptionsRolesEmbed",
       "content": {
         "title": "🛡️  Serverrollen",
-        "description": "Auf welche Rollen die dynamischen Kanäle dieses Servers hören.\n\n**Voice Role** — wird Mitgliedern gegeben, solange sie in einem Sprachkanal sind, und wieder entzogen, wenn sie gehen.\n**Verified Roles** — für wen die Kanäle da sind. Alle anderen bleiben draußen.\n**Staff Roles** — wer bei einem Kanal eingreifen darf, der ihm nicht gehört.\n\nWähle eine Option, um sie zu ändern."
+        "description": "Auf welche Rollen die dynamischen Kanäle dieses Servers hören.\n\n**Voice Role** — wird Mitgliedern gegeben, solange sie in einem dynamischen Kanal sind, und wieder entzogen, wenn sie gehen.\n**Verified Roles** — für wen die Kanäle da sind. Alle anderen bleiben draußen.\n**Staff Roles** — wen kein Kanal aussperren und kein Besitzer blockieren oder kicken kann.\n\nWähle eine Option, um sie zu ändern."
       }
     },
     {
@@ -2814,7 +2814,7 @@
       "content": {
         "title": "🛡️  Verifizierte Rollen von Master-Kanal #{index} bearbeiten",
         "description": "Das Bearbeiten der verifizierten Rollen wirkt sich auf die dynamischen Kanäle aus, die von Master-Kanal #{index} erstellt wurden.\n\nBleiben sie leer, gelten die serverweiten verifizierten Rollen.\n\n**_Aktuelle verifizierte Rollen_**\n\n> {verifiedRolesDisplay}",
-        "footer": "Hinweis: Die Änderungen betreffen nur dynamische Kanäle, die ihren Zustand nach der Bearbeitung ändern. Die bisherigen Rollen im Kanal bleiben unverändert.",
+        "footer": "Hinweis: Die Änderungen werden sofort auf die bestehenden dynamischen Kanäle angewendet.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
@@ -3942,7 +3942,7 @@
       "content": {
         "title": "🛡️  Verifizierte Rollen von Master-Kanal #{index} bearbeiten",
         "description": "Das Bearbeiten der verifizierten Rollen wirkt sich auf die dynamischen Kanäle aus, die von Master-Kanal #{index} erstellt wurden.\n\nBleiben sie leer, gelten die serverweiten verifizierten Rollen.\n\n**_Aktuelle verifizierte Rollen_**\n\n> {verifiedRolesDisplay}",
-        "footer": "Hinweis: Die Änderungen betreffen nur dynamische Kanäle, die ihren Zustand nach der Bearbeitung ändern. Die bisherigen Rollen im Kanal bleiben unverändert.",
+        "footer": "Hinweis: Die Änderungen werden sofort auf die bestehenden dynamischen Kanäle angewendet.",
         "options": {
           "verifiedRolesDisplay": {
             "{verifiedRoles}": "{verifiedRoles}",
